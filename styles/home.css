@@ -1,9 +1,11 @@
 .banner {
     align-items: center;
     color: #FFF;
-    background: linear-gradient(#A34FDE, #405BFF);
-    opacity: 0.85;
+    /* background: linear-gradient(#A34FDE, #405BFF);
+    opacity: 0.85; */
     /* filter: blur(250px); */
+    background-image: url('/hero-bg.png');
+    background-size: cover;
     width: 100%;
     text-align: center;
     padding: 4.5em 0 4.5em 0;
@@ -38,4 +40,34 @@
     font-style: normal;
     font-weight: 400;
     line-height: 155%; /* 31px */
+}
+
+.home-card {
+    background: var(--Card-gradient, linear-gradient(201deg, #58595B -25.37%, #212121 75.5%));
+    padding: 4em;
+    color: #FFF;
+}
+
+.home-card h2 {
+    color: var(--grayscale-white-00, var(--Dotted-Stroke, #FFF));
+    margin-top: 2em;
+
+    /* LD H5 */
+    font-family: "Sohne";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%; /* 23.4px */
+    margin-bottom: 1em;
+}
+
+.home-card p {
+    color: var(--grayscale-gray-03, #D1D3D4);
+
+    /* LD Small Body */
+    font-family: "Sohne Light";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%; /* 24px */
 }
