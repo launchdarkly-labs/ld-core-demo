@@ -12,7 +12,7 @@ const AirlineInfoCard = ({
   imgSrc: any;
 }) => {
   return (
-    <Card className="flex sm:w-[340px] sm:h-[460px] border-0 flex-col animate-fade-in grid-rows-2
+    <Card className="flex sm:w-[340px] sm:h-[430px] border-0 flex-col animate-fade-in grid-rows-2
      bg-slate-900 z-0 !rounded-none relative">
       <CardHeader className="!space-y-0 !p-0">
         <img src={imgSrc.src} className="w-full h-full object-fit" />
