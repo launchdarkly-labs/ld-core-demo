@@ -61,6 +61,7 @@ module.exports = {
         ldlightgray: "#939598",
         ldstoreheader: "#D1D3D4",
         awsorange: "#FF9900",
+        airlinePurple: "#7084FF",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
