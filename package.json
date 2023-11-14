@@ -35,6 +35,7 @@
     "next": "^14.0.1",
     "pg": "^8.11.3",
     "postgres": "^3.4.3",
+    "prismjs": "^1.29.0",
     "react": "^18",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
