@@ -1,0 +1,41 @@
+.banner {
+    align-items: center;
+    color: #FFF;
+    background: linear-gradient(#A34FDE, #405BFF);
+    opacity: 0.85;
+    /* filter: blur(250px); */
+    width: 100%;
+    text-align: center;
+    padding: 4.5em 0 4.5em 0;
+}
+
+.banner div {
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+}
+
+.banner h1 {
+    /* LD H1 */
+    font-family: "Audimat";
+    font-size: 68px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 110%; /* 74.8px */
+    background: var(--gradients-gradient-pale, linear-gradient(57deg, #F5FDB2 -7.07%, #7A8DFF 125.67%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+}
+
+.banner p {
+    color: var(--grayscale-gray-03, #D1D3D4);
+    text-align: center;
+    /* LD Large Body */
+    font-family: "Sohne Light";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 155%; /* 31px */
+}
