@@ -17,12 +17,12 @@ const AirlineInfoCard = ({
       <CardHeader className="!space-y-0 !p-0">
         <img src={imgSrc.src} className="w-full h-full object-fit" />
       </CardHeader>
-      <div className="p-[2.5rem] flex flex-col gap-y-2 bg-gradient-to-b from-[#58595B] to-[#212121] h-full">
-        <CardTitle className="flex justify-center !font-normal">
-          <p className=" text-3xl text-gray-300 text-center">{headerTitleText}</p>
+      <div className="pt-[2.5rem] px-[2.5rem] flex flex-col gap-y-2 bg-gradient-to-b from-[#58595B] to-[#212121] h-full">
+        <CardTitle className="!font-normal !text-left">
+          <p className=" text-2xl text-gray-300 ">{headerTitleText}</p>
         </CardTitle>
         <CardContent className="p-0 ">
-          <p className="text-gray-300 pt-2 text-lg !font-normal text-center">{subtitleText}</p>
+          <p className="text-gray-300 pt-2 text-lg !font-normal text-left">{subtitleText}</p>
         </CardContent>
 
         <ArrowRight className="h-6 w-6 text-airlinePurple cursor-pointer mt-auto absolute bottom-0 mb-6" />
