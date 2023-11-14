@@ -14,6 +14,9 @@ import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
 import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
+import airplaneImg from "@/assets/img/airways/airplane.jpg"
+import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg"
+import airplaneDining from "@/assets/img/airways/airplaneDining.jpg"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -242,25 +245,21 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative flex justify-center  gap-x-24 mb-14 z-0 ">
+        <div className="relative flex justify-center gap-x-24 py-14 z-0 bg-white !font-sohne ">
           <AirlineInfoCard
-            headerTitleText="Wheels-Up On Launch Airways!"
-            subtitleText="Launch into the skies. Live the life of comfort, spead,
-            and excitement as board any of our hundreds of flights a month.
-            Travel globally, without the risk."
-            imgSrc="planefleet.jpg"
+            headerTitleText="Wheels up"
+            subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
+            imgSrc={airplaneImg}
           />
           <AirlineInfoCard
-            headerTitleText='Toggle "On" Your Next Get Away'
-            subtitleText="With more than 100 points of presence globally, you'll be able to fly anywhere you
-            need in the blink of eye. Resolve your travel, ship your family faster."
-            imgSrc="travel.jpg"
+            headerTitleText='Ready for an adventure'
+            subtitleText="The world is open for travel. Plan your next adventure."
+            imgSrc={hotAirBalloonImg}
           />
           <AirlineInfoCard
-            headerTitleText="Launch Club Loyalty Program"
-            subtitleText="The more you fly, the more your status grows. Enjoy free upgrades, priority
-            boarding, exlusive flights and more! Reach Platinum Tier status today!"
-            imgSrc="travelticket.jpg"
+            headerTitleText="Experience luxury"
+            subtitleText="Choose Launch Platinum. Select on longer flights."
+            imgSrc={airplaneDining}
           />
         </div>
       </motion.main>
