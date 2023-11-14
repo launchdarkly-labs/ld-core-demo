@@ -12,11 +12,12 @@ const AirlineInfoCard = ({
   imgSrc: any;
 }) => {
   return (
-    <Card className="flex sm:w-[340px] sm:h-[460px] border-0 flex-col animate-fade-in grid-rows-2 bg-slate-900 z-0 !rounded-none relative">
+    <Card className="flex sm:w-[340px] sm:h-[460px] border-0 flex-col animate-fade-in grid-rows-2
+     bg-slate-900 z-0 !rounded-none relative">
       <CardHeader className="!space-y-0 !p-0">
         <img src={imgSrc.src} className="w-full h-full object-fit" />
       </CardHeader>
-      <div className="p-[2.5rem] flex flex-col gap-y-2">
+      <div className="p-[2.5rem] flex flex-col gap-y-2 bg-gradient-to-b from-[#58595B] to-[#212121] h-full">
         <CardTitle className="flex justify-center !font-normal">
           <p className=" text-3xl text-gray-300 text-center">{headerTitleText}</p>
         </CardTitle>
