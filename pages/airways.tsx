@@ -245,7 +245,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative flex justify-center gap-x-24 py-14 z-0 bg-white !font-sohne ">
+        <div className="relative flex flex-col sm:flex-row justify-center gap-x-0 gap-y-6 sm:gap-x-24 py-14 z-0 bg-white !font-sohne ">
           <AirlineInfoCard
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
