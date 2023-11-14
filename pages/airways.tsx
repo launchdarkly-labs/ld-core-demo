@@ -1,10 +1,5 @@
 import { Inter } from "next/font/google";
-import {
-  ArrowRightCircle,
-  CalendarIcon,
-  MoveHorizontalIcon,
-  Plane,
-} from "lucide-react";
+import { ArrowRightCircle, CalendarIcon, MoveHorizontalIcon, Plane } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import AirportPicker from "@/components/ui/airwayscomponents/airportPicker";
 import { motion, useAnimation, useInView } from "framer-motion";
@@ -13,15 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
+import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -105,9 +97,7 @@ export default function Home() {
                   {fromLocation}
                 </p>
               </button>
-              <p className="text-center text-xs font-audimat uppercase">
-                Origin
-              </p>
+              <p className="text-center text-xs font-audimat uppercase">Origin</p>
             </div>
             <MoveHorizontalIcon
               strokeWidth={1}
@@ -126,9 +116,7 @@ export default function Home() {
                   {toLocation}
                 </p>
               </button>
-              <p className="text-center text-xs font-audimat uppercase">
-                Destination
-              </p>
+              <p className="text-center text-xs font-audimat uppercase">Destination</p>
             </div>
             {showSearch && activeField && (
               <AirportPicker
@@ -156,9 +144,7 @@ export default function Home() {
                       {startDate ? (
                         <div className="flex flex-col items-center">
                           <p className="text-2xl">Depart</p>
-                          <p className="text-3xl">
-                            {startDate.toLocaleDateString("en-US")}
-                          </p>
+                          <p className="text-3xl">{startDate.toLocaleDateString("en-US")}</p>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-4 border-b-2 border-gray-600 py-2 pr-12">
@@ -187,9 +173,7 @@ export default function Home() {
                       {returnDate ? (
                         <div className="flex flex-col items-center">
                           <p className="text-2xl">Return</p>
-                          <p className="text-3xl">
-                            {returnDate.toLocaleDateString("en-US")}
-                          </p>
+                          <p className="text-3xl">{returnDate.toLocaleDateString("en-US")}</p>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-4 border-b-2 border-gray-600 py-2 pr-12">
@@ -234,21 +218,14 @@ export default function Home() {
                     !returnDate
                   }
                 >
-                  <ArrowRightCircle
-                    className="fill-blue-900"
-                    strokeWidth={1}
-                    size={64}
-                  />
+                  <ArrowRightCircle className="fill-blue-900" strokeWidth={1} size={64} />
                 </motion.button>
               </div>
             </div>
           </motion.div>
         </div>
         <div className="relative grid xl:flex xl:py-24 mb-8 w-full shadow-2xl items-center text-white">
-          <img
-            src="interior.png"
-            className="absolute w-full h-full object-cover z-10 opacity-30"
-          />
+          <img src="interior.png" className="absolute w-full h-full object-cover z-10 opacity-30" />
           <div className="flex mx-auto w-2/3 z-10">
             <div className="grid mx-auto w-2/3">
               <div className="grid mx-auto text-center">
@@ -257,9 +234,8 @@ export default function Home() {
                 </p>
 
                 <p className="textlg: md:text-xl xl:text-2xl font-light pt-4 w-4/5 xl:w-2/3 mx-auto ">
-                  Launch into the skies. In the air in milliseconds, reach
-                  your destination without risk, and ship your travel dreams
-                  faster than ever before.
+                  Launch into the skies. In the air in milliseconds, reach your destination without
+                  risk, and ship your travel dreams faster than ever before.
                 </p>
               </div>
             </div>
@@ -267,57 +243,25 @@ export default function Home() {
         </div>
 
         <div className="relative flex justify-center  gap-x-24 mb-14 z-0 ">
-          <Card className="flex w-[320px] h-auto border-0 relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900 z-0">
-            <CardHeader>
-              <img src="planefleet.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat text-center">
-                Wheels-Up On Launch Airways!
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight pt-2 text-lg text-center">
-                Launch into the skies. Live the life of comfort, spead,
-                and excitement as board any of our hundreds of flights a month.
-                Travel globally, without the risk.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="flex w-[320px] h-auto border-0  relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900">
-            <CardHeader>
-              <img src="travel.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat text-center">
-                Toggle "On" Your Next Get Away 
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight  pt-2 text-lg text-center">
-                With more than 100 points of presence globally, you'll be able
-                to fly anywhere you need in the blink of eye. Resolve your
-                travel, ship your family faster.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="flex w-[320px] h-auto border-0 relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900">
-            <CardHeader>
-              <img src="travelticket.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat  text-center">
-                Launch Club Loyalty Program
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight pt-2 text-lg text-center">
-                The more you fly, the more your status grows. Enjoy free
-                upgrades, priority boarding, exlusive flights and more! Reach{" "}
-                <span className="font-bold">Platinum Tier</span> status today!
-              </p>
-            </CardContent>
-          </Card>
+          <AirlineInfoCard
+            headerTitleText="Wheels-Up On Launch Airways!"
+            subtitleText="Launch into the skies. Live the life of comfort, spead,
+            and excitement as board any of our hundreds of flights a month.
+            Travel globally, without the risk."
+            imgSrc="planefleet.jpg"
+          />
+          <AirlineInfoCard
+            headerTitleText='Toggle "On" Your Next Get Away'
+            subtitleText="With more than 100 points of presence globally, you'll be able to fly anywhere you
+            need in the blink of eye. Resolve your travel, ship your family faster."
+            imgSrc="travel.jpg"
+          />
+          <AirlineInfoCard
+            headerTitleText="Launch Club Loyalty Program"
+            subtitleText="The more you fly, the more your status grows. Enjoy free upgrades, priority
+            boarding, exlusive flights and more! Reach Platinum Tier status today!"
+            imgSrc="travelticket.jpg"
+          />
         </div>
       </motion.main>
     </>
