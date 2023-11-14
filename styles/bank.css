@@ -1,7 +1,7 @@
 .accounttext {
   color: #58595b;
   font-family: Sohne;
-  font-size: 13.699px;
+  font-size: 15.699px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
@@ -10,7 +10,7 @@
 .accountsecondary {
   color: #58595b;
   font-family: Sohne;
-  font-size: 12.699px;
+  font-size: 14.699px;
   font-style: normal;
   font-weight: 300;
   line-height: normal;
@@ -19,7 +19,7 @@
 .balancetext {
   color: rgba(40, 40, 40, 0.53);
   font-family: Sohne;
-  font-size: 13.699px;
+  font-size: 15.699px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -28,7 +28,7 @@
 .aprtext {
   color: var(--gray-700, #58595b);
   font-family: Sohne;
-  font-size: 12.7px;
+  font-size: 14.7px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
@@ -37,7 +37,7 @@
 .duetext {
   color: var(--base-extended-blue-blue-05, #405bff);
   font-family: Sohne;
-  font-size: 16.699px;
+  font-size: 18.699px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
@@ -46,7 +46,7 @@
 .balance {
   color: #282828;
   font-family: Sohne;
-  font-size: 21.936px;
+  font-size: 23.936px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
