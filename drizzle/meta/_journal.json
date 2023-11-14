@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1699846417734,
+      "tag": "0000_modern_leo",
+      "breakpoints": true
+    }
+  ]
+}
