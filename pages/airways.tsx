@@ -100,7 +100,7 @@ export default function Home() {
       >
         <NavBar variant={"airlines"} />
         <div className="flex flex-row py-20  space-x-20 items-center bg-gradient-airways">
-          <div className="flex items-center  mx-auto">
+          <div className="flex items-center mx-auto justify-stretch">
             <motion.div
               initial={{ scale: 0.25, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -227,26 +227,41 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative grid xl:flex xl:py-52 w-full items-center text-white">
-          <img
-            src="dudeguy.png"
-            className="absolute
-             w-full h-full object-cover z-10"
-          />
-
-          <div className="flex flex-col w-1/3 z-20 ml-44">
-            <p className="text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat">Launch Airways</p>
-
-            <p className="textlg: md:text-xl xl:text-2xl font-light pt-4  ">
-              Launch into the skies. In the air in milliseconds, reach your destination without
-              risk, and ship your travel dreams faster than ever before.
-            </p>
-
-            <Button className="bg-pink-600 rounded-none w-1/3 text-3xl px-2 py-8 mt-8">
-              Book Now
-            </Button>
+        <section className="bg-slate-100 salient-hero-image">
+          <div className="flex flex-col">
+            <div className={`relative`}>
+              <div aria-hidden="true" className="absolute hidden h-full w-1/2 lg:block" />
+              <div className="relative lg:bg-transparent">
+                <div className={`mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-2 lg:px-8 `}>
+                  <div className=" max-w-2xl py-12 lg:max-w-none lg:py-32 z-10">
+                    <div className={`flex flex-col`}>
+                      <h1 className={`text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat`}>
+                        Launch Airways
+                      </h1>
+                      <p className={`text-lg md:text-xl xl:text-2xl font-light pt-4  `}>
+                        Launch into the skies. In the air in milliseconds, reach your destination
+                        without risk, and ship your travel dreams faster than ever before.
+                      </p>
+                      <div className="mt-6">
+                        <Button className="bg-pink-600 rounded-none w-1/3 text-3xl px-2 py-8 mt-8">
+                          Book Now
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={`h-48 w-full sm:h-64 lg:absolute lg:top-0 lg:h-full lg:w-full`}>
+                <img
+                  src={"dudeguy.png"}
+                  alt={"imageType"}
+                  className="h-full w-full object-cover object-center"
+                  aria-label={`hero image`}
+                />
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
         <div className="relative flex flex-col sm:flex-row justify-center gap-x-0 gap-y-6 sm:gap-x-24 py-14 z-0 bg-white !font-sohne ">
           <AirlineInfoCard
