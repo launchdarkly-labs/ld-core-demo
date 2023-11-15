@@ -44,9 +44,8 @@ const payments = [
 
 
 export function VRgalaxy() {
-:components/ui/marketcomponents/vrgalaxy.tsx
+  :components/ui/marketcomponents/vrgalaxy.tsx
   const router = useRouter();
-
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -78,4 +77,5 @@ export function VRgalaxy() {
       </SheetContent>
     </Sheet>
   );
-}
+}}
+
