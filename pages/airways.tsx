@@ -21,6 +21,7 @@ import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { Button } from "@/components/ui/button";
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
+import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -102,55 +103,16 @@ export default function Home() {
         <NavBar variant={"airlines"} />
         <div className="flex flex-row py-20  space-x-20 items-center bg-gradient-airways">
           <div className="flex items-center mx-auto">
-            <motion.div
-              initial={{ scale: 0.25, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.25 }}
-              className="flex"
-            >
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setActiveField("from");
-                    setShowSearch(true);
-                  }}
-                >
-                  <p className="text-3xl md:text-4xl xl:text-6xl font-audimat px-4 py-2 ">
-                    {fromLocation}
-                  </p>
-                </button>
-                <p className="text-center text-xs font-audimat uppercase">Origin</p>
-              </div>
-              <MoveHorizontalIcon
-                strokeWidth={1}
-                width={50}
-                size={50}
-                className="stroke-ldblue mr-8"
-              />
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setActiveField("to");
-                    setShowSearch(true);
-                  }}
-                >
-                  <p className="text-3xl md:text-4xl xl:text-6xl font-audimat  px-4   py-2 ">
-                    {toLocation}
-                  </p>
-                </button>
-                <p className="text-center text-xs font-audimat uppercase">Destination</p>
-              </div>
-              {showSearch && activeField && (
-                <AirportPicker
-                  setToLocation={setToLocation}
-                  setFromLocation={setFromLocation}
-                  setShowSearch={setShowSearch}
-                  activeField={activeField}
-                  toLocation={toLocation}
-                  fromLocation={fromLocation}
-                />
-              )}
-            </motion.div>
+            <AirlineDestination
+              setActiveField={setActiveField}
+              setShowSearch={setShowSearch}
+              fromLocation={fromLocation}
+              toLocation={toLocation}
+              showSearch={showSearch}
+              activeField={activeField}
+              setToLocation={setToLocation}
+              setFromLocation={setFromLocation}
+            />
 
             <div className="">
               <div className="flex items-center text-xl px-16 font-audimat">
