@@ -10,6 +10,7 @@ import {
   Tooltip,
   AreaChart,
   Area,
+  ResponsiveContainer,
 } from "recharts";
 import {
   AreaChartIcon,
@@ -40,12 +41,6 @@ import {
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -190,7 +185,7 @@ export default function Bank() {
         </motion.main>
       ) : (
         <motion.main
-          className={`relative w-full font-roboto`}
+          className={`relative w-full font-roboto pb-20`}
           initial="initial"
           animate="in"
           exit="out"
@@ -242,11 +237,9 @@ export default function Bank() {
             </div>
           </div>
 
-
-    
           <div className=" w-full  px-8 ">
             <div className="flex flex-col xl:flex-row py-8 gap-x-8">
-              <div className="flex w-full font-sohne h-[425px]">
+              <div className="flex w-full h-[425px]">
                 <div className="px-6 shadow-xl bg-gradient-blue">
                   <div className="justify-center xl:justify-start">
                     <div>
@@ -255,52 +248,52 @@ export default function Bank() {
                       </p>
                     </div>
                     <div className="flex flex-row gap-4">
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white ">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-grow font-sohne h-full">
-                {federatedAccounts && (
-                  <div className="px-6 gap-4  bg-ldcardgrey  h-[425px]">
+              {federatedAccounts && (
+                <div className="h-full">
+                  <div className="px-6 gap-4 w-full bg-ldcardgrey h-[425px]">
                     <div>
                       <p className="text-black font-sohne py-6 text-[24px]">
                         Federated Account Access
                       </p>
                     </div>
-                    <div className="flex flex-row gap-4 justify-center">
-                      <div className="p-4 h-[300px] w-[300px] bg-white ">
+                    <div className="flex flex-row gap-4 justify-start">
+                      <div className="p-4 h-[300px] w-[250px] bg-white ">
                         <FederatedCheckingAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-[250px] bg-white">
                         <FederatedCreditAccount />
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {wealthManagement ? (
-              <div className="px-6 py-2 bg-ldcardgrey">
+              <div className="px-6 bg-ldcardgrey h-[425px]">
                 <div>
                   <p className="text-black font-sohne py-6 text-[24px]">
                     Wealth Management
                   </p>
                 </div>
-                <div className="flex w-full space-x-4">
+                <div className="flex w-full h-[300px] space-x-4">
                   <div className="flex p-4 w-5/12 rounded-none bg-white justify-center">
+                  <ResponsiveContainer>
+
                     <AreaChart
-                      width={500}
-                      height={350}
                       data={data}
                       margin={{
                         top: 10,
@@ -340,9 +333,10 @@ export default function Bank() {
                         </linearGradient>
                       </defs>
                     </AreaChart>
+                      </ResponsiveContainer>
                   </div>
 
-                  <div className="p-6 bg-white w-3/12 rounded-none">
+                  <div className="p-6 bg-white w-3/12 h-full">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -355,7 +349,7 @@ export default function Bank() {
                     </div>
 
                     <div className="flex flex-col">
-                      <div className="">
+                      <div className="pt-16">
                         <p className="cardaccounttext">
                           Total Investment Balance:{" "}
                         </p>
@@ -368,28 +362,6 @@ export default function Bank() {
                     </div>
                   </div>
 
-                  {/* <div className="p-4 bg-white w-3/12 rounded-none">
-                    <div className="bg-blue-300/30 rounded-full flex items-center justify-center  w-10 h-10 ">
-                      <AreaChartIcon className="text-blue-700" />
-                    </div>
-
-                    <div className="flex flex-grow ">
-                      <p className="accounttext">
-                        Brokerage Account{" "}
-                        <span className="accountsecondary">(***6552)</span>
-                      </p>
-                    </div>
-
-                    <div className="grid pl-4 pt-8 space-y-1">
-                      <p className="cardaccounttext">
-                        Total investment balance
-                      </p>
-                      <p className="moneytext">$184,278</p>
-                      <p className="accountsecondary">
-                        Over Lifetime of Account
-                      </p>
-                    </div>
-                  </div> */}
                   {aiFinancial && (
                     <div className="relative p-4 w-4/12 rounded-none bg-white ">
                       <div>
@@ -414,7 +386,7 @@ export default function Bank() {
                           </div>
                         </div>
                       </div>
-                      <div className="overflow-auto max-h-[150px]">
+                      <div className="overflow-auto max-h-[350px]">
                         <p className="my-4">{aiResponse}</p>
                       </div>
                     </div>
