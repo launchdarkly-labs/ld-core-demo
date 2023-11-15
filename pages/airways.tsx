@@ -13,6 +13,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
+import NavBar from "@/components/ui/navbar";
 import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
 import airplaneImg from "@/assets/img/airways/airplane.jpg"
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg"
@@ -71,17 +72,8 @@ export default function Home() {
         transition={pageTransition}
         className={`flex h-full bg-slate-950 text-white flex-col font-audimat`}
       >
-        <div className="flex h-20 shadow-2xl ">
-          <div className="ml-4 flex items-center text-3xl">
-            <CSNav />
-            <Plane className="mr-2" />
-            <p className="flex font-audimat">Launch Airways</p>
-          </div>
-          <div className="flex space-x-6 ml-auto mr-4 items-center">
-            <RegistrationForm />
-            <LoginScreen />
-          </div>
-        </div>
+        <NavBar variant={"airlines"} />
+        <div className="flex h-20 shadow-2xl"></div>
         <div className="flex flex-row items-center place-content-center mx-auto my-4">
           <motion.div
             initial={{ scale: 0.25, opacity: 0 }}

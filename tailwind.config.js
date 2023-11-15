@@ -48,6 +48,7 @@ module.exports = {
         robotolight: ["Roboto-Light"],
         robotothin: ["Roboto-Thin"],
         audimat: ["Audimat"],
+        sohnelight: ["Sohne Light"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -61,6 +62,15 @@ module.exports = {
         ldlightgray: "#939598",
         ldstoreheader: "#D1D3D4",
         awsorange: "#FF9900",
+        navgray: "#282828",
+        airlinetext: "#D1D3D4",
+        airlinepurple: "#A34FDE",
+        airlinepink: "#FF386B",
+        airlineinactive: "#939598",
+        banklightblue: "#3DD6F5",
+        bankdarkblue: "#405BFF",
+        marketblue: "#3DD6F5",
+        marketgreen: "#EBFF38",
         airlinePurple: "#7084FF",
         primary: {
           DEFAULT: "hsl(var(--primary))",
