@@ -27,5 +27,6 @@ export default async function handler(
     const db = drizzle(client);
 
     const checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
+    // @ts-ignore
     res.status(200).json(checkingTransactions)
 }
