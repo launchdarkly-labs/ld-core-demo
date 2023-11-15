@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Button } from "./button";
 
 const NavBar = React.forwardRef<any>(
-  ({ className, variant, ...props }, ref) => {
+  ({ className, variant, ...props }, ref, handleLogout, isLoggedIn) => {
     let navBarClass = "";
     switch (variant) {
       case "airlines":
@@ -132,7 +134,8 @@ const NavBar = React.forwardRef<any>(
             >
               Statements
             </button>
-            <div className="flex space-x-6 ml-auto mr-4 items-center">
+            {isLoggedIn ? (
+                <div className="flex space-x-6 ml-auto mr-4 items-center">
               <Search color={"white"} />
               <MessageCircle color={"white"} />
               <Avatar>
@@ -142,6 +145,33 @@ const NavBar = React.forwardRef<any>(
               {/* <RegistrationForm />
             <LoginScreen /> */}
             </div>
+            ) : (            
+            <div className="flex space-x-6 ml-auto mr-4 items-center">
+              <Search color={"white"} />
+              <MessageCircle color={"white"} />
+              <Popover>
+                <PopoverTrigger>
+                  <Avatar className="h-16 w-16 mr-8">
+                    <AvatarImage src="woman.png" className="" />
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent className="w-[300px] h-[400px]">
+                  <div className="grid space-y-4">
+                    <p className="text-center text-xl font-audimat">
+                      Welcome to Your Account!
+                    </p>
+                    <img
+                      src="woman.png"
+                      className="rounded-full h-32 mx-auto"
+                    />
+                    <Button onClick={handleLogout}>Logout</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              {/* <RegistrationForm />
+            <LoginScreen /> */}
+            </div>
+            )};
           </nav>
         );
       case "market":
