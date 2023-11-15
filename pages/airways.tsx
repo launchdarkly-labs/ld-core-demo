@@ -144,7 +144,6 @@ console.log(bookedTrips)
               </p>
             </div>
             {showSearch && activeField && (
-              
               <AirportPicker
                 setToLocation={setToLocation}
                 setFromLocation={setFromLocation}
