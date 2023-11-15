@@ -29,7 +29,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { shopmore } from "@/components/ui/marketcomponents/shopmore";
+import { VRstore } from "@/components/ui/marketcomponents/stores/VRstore";
+import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
+
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -121,12 +123,15 @@ export default function Marketplace() {
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
 
-              <SheetTrigger<>
-              <shopmore  />
+                <div>
+                <div className="p-4 h-[300px] w-[300px]">
+                  <VRstore />
+                </div>
+                </div>
 
 
                 <div>
-                  <img src="computers.png" className="h-[300px]" />
+                <MacroCenter  />
                 </div>
                 <div>
                   <img src="electronics.png" className="h-[300px]" />

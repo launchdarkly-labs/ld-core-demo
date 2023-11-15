@@ -83,6 +83,8 @@ export function FederatedCheckingAccount() {
           </div>
         </div>
       </SheetTrigger>
+
+      
       <SheetContent className="w-1/2 overflow-y-scroll" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
