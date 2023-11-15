@@ -19,6 +19,17 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { shopmore } from "@/components/ui/marketcomponents/shopmore";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -43,7 +54,9 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
+
   
+ 
 
   return (
     <motion.div
@@ -107,9 +120,11 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
-                <div>
-                  <img src="gaming.png" className="h-[300px]" />
-                </div>
+
+              <SheetTrigger<>
+              <shopmore  />
+
+
                 <div>
                   <img src="computers.png" className="h-[300px]" />
                 </div>

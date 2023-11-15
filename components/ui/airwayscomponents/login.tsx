@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import LoginContext from "@/utils/contexts/login";
 import { useContext } from "react";
 import { useState } from "react";
-import BookedFlights from "./bookedFlights";
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -40,12 +40,19 @@ export default function LoginScreen() {
   return (
     <Popover>
       <PopoverTrigger>
-        <Button
-          variant={"ghost"}
-          className="text-white bg-blue-700 font-audimat text-md uppercase px-8 rounded-none"
-        >
-          {isLoggedIn ? "Account" : "Log In"}
-        </Button>
+        {isLoggedIn ? (
+          <Avatar>
+            <AvatarImage src="/woman.png" alt="woman" />
+            <AvatarFallback>LD</AvatarFallback>
+          </Avatar>
+        ) : (
+          <Button
+            variant={"ghost"}
+            className="text-white bg-gradient-to-r from-airlinepurple to-airlinepink font-audimat text-sm uppercase px-8 rounded-full"
+          >
+            Login
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="dark w-[600px]">
         <div>
@@ -64,7 +71,6 @@ export default function LoginScreen() {
           </div>
           {isLoggedIn && (
             <div className="mx-auto text-center pt-4 font-robotobold text-xl">
-              <BookedFlights />
               <p className="pt-4">
                 Thank you for flying Launch Airways at{" "}
                 <span className="text-2xl">Platinum Tier</span>!
