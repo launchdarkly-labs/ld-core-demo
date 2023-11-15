@@ -38,7 +38,8 @@ import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
 
 
-import { VRgalaxy } from "@/components/ui/marketcomponents/stores/VRgalaxy";
+import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
+import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
 
 export default function Marketplace() {
   const flags = useFlags();

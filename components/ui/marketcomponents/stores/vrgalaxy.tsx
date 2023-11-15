@@ -42,11 +42,8 @@ const payments = [
   { month: "12/2022", amount: 4123, status: "cleared" }
 ];
 
-<<<<<<<< HEAD:components/ui/marketcomponents/stores/VRstore.tsx
-export function VRstore() {
-========
+
 export function VRgalaxy() {
->>>>>>>> ebb15c43a1c617929f387d7a55a93dca6afb3d9b:components/ui/marketcomponents/vrgalaxy.tsx
   const router = useRouter();
 
   return (
