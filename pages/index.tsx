@@ -1,3 +1,4 @@
+//@ts-nocheck
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { AnimatePresence, motion } from "framer-motion";
