@@ -103,8 +103,8 @@ export default function Home() {
         <NavBar variant={"airlines"} />
 
         <header className="py-20 bg-gradient-airways">
-          <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-y-6 lg:gap-y-0">
+          <div className="lg:mx-auto max-w-7xl px-[1.7rem] lg:px-[2rem]">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-y-6 lg:gap-y-0">
               <AirlineDestination
                 setActiveField={setActiveField}
                 setShowSearch={setShowSearch}

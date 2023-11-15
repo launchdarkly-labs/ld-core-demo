@@ -27,28 +27,29 @@ const AirlineDestination = ({
       initial={{ scale: 0.25, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className="flex items-center gap-x-6"
+      className="flex items-center gap-x-6 justify-between w-full sm:w-auto"
     >
-      <div className="relative">
+      <div className="relative text-center">
         <button
           onClick={() => {
             setActiveField("from");
             setShowSearch(true);
           }}
         >
-          <p className="text-3xl md:text-4xl xl:text-6xl font-audimat px-4 py-2 ">{fromLocation}</p>
+          <p className="text-3xl md:text-4xl xl:text-6xl font-audimat py-2 ">{fromLocation}</p>
         </button>
         <p className="text-center text-xs font-audimat uppercase">Origin</p>
       </div>
       <MoveHorizontalIcon className="h-10 w-10 text-marketblue" />
-      <div className="relative">
+      <div className="relative text-center">
         <button
           onClick={() => {
             setActiveField("to");
             setShowSearch(true);
           }}
+          className = ""
         >
-          <p className="text-3xl md:text-4xl xl:text-6xl font-audimat  px-4   py-2 ">
+          <p className="text-3xl md:text-4xl xl:text-6xl font-audimat py-2 ">
             {toLocation}
           </p>
         </button>
