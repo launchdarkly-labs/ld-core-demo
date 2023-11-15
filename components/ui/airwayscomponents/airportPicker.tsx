@@ -83,7 +83,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className="w-[427px] h-[275px] relative">
+    <div className="w-[427px] h-[275px] relative ">
       <div className="w-[427px] h-[285px] left-0 top-0 absolute bg-white rounded-[5px] shadow" />
       <button className="ml-auto absolute top-5 right-5 text-neutral-400" onClick={handleClose}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-neutral-800" viewBox="0 0 20 20" fill="currentColor">
@@ -93,12 +93,10 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
       <div className="w-[321px] h-[173px] left-[53px] top-[51px] absolute flex-col justify-start items-start gap-[20px] inline-flex">
         
         <div className="px-[10px] justify-start items-start gap-0 inline-flex">
-          <div className="text-neutral-800 text-[10px] font-medium font-sohne uppercase leading-[3px] tracking-wides">Search</div>
+        <div className="text-neutral-800 text-[10px] font-medium font-sohne uppercase leading-[3px] tracking-widest">Search</div>
         </div>
 
-       <div className="w-80 h-1 border-2 justify-center mx-auto">
-  <div className="w-1/4 bg-gradient-to-r from-purple-500 via-purple-500 to-rose-500"></div>
-</div>
+        <div className="w-80 h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
 
         <div className="flex-col justify-start items-start gap-[15px] flex">
           <div className="flex-col justify-start items-start flex">
@@ -111,12 +109,18 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
                 placeholder="Airport"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  background: "linear-gradient(to right, #F43F5E, #8B5CF6)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
               />
 
               <div className="border-b-4 border-ldblue mb-2 text-white" />
 
             </div>
-            <div className="w-[321px] h-[0px] border border-zinc-900"></div>
+            <div className="w-80 h-1 border-b-2 border-purple-500 justify-center mx-auto"></div>
+
           </div>
 
           <div className="w-36 h-[21px] text-neutral-700 text-xs font-normal font-sohne leading-[18px] tracking-wide">
@@ -129,7 +133,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
                     <li
                       key={index}
                       onClick={() => handleSelect(airport)}
-                      className="cursor-pointer hover:border-purple-500 hover:font-bold hover:border-purple-500"
+                      className="cursor-pointer hover:text-purple-500 hover:font-bold hover:border-purple-500"
                     >
                       {airport.cityName} ({airport.airportCode})
                     </li>
