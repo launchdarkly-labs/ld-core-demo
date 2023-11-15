@@ -41,6 +41,7 @@ module.exports = {
       fontFamily: {
         sohne: ["Sohne"],
         sohnemono: ["Sohne Mono"],
+        sohnelight: ["Sohne Light"],
         audimat: ["Audimat"],
         roboto: ["Roboto"],
         robotobold: ["Roboto-Bold"],
@@ -70,6 +71,7 @@ module.exports = {
         bankdarkblue: "#405BFF",
         marketblue: "#3DD6F5",
         marketgreen: "#EBFF38",
+        airlinePurple: "#7084FF",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

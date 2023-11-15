@@ -43,6 +43,8 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
+  
+
   return (
     <motion.div
       initial="initial"
