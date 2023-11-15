@@ -22,6 +22,13 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
+import NavBar from "@/components/ui/navbar";
+import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
+import airplaneImg from "@/assets/img/airways/airplane.jpg";
+import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
+import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
+import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
+import { Button } from "@/components/ui/button";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,6 +41,7 @@ export default function Home() {
   const [showSearch, setShowSearch] = useState(false);
   const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
   const { bookedTrips, setBookedTrips } = useContext(TripsContext);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [returnDate, setReturnDate] = useState<Date | undefined>(undefined);
 
@@ -41,16 +49,31 @@ export default function Home() {
     setShowSearch(true);
   }
 
+
+  useEffect(() => {
+console.log(date)
+console.log(bookedTrips)
+  }, [bookedTrips]);
+
+
   function bookTrip() {
-    const tripId = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number
+    const startDate = `${date.from.getMonth() + 1}/${date.from.getDate()}/${date.from.getFullYear()}`;
+    const returnDate = `${date.to.getMonth() + 1}/${date.to.getDate()}/${date.to.getFullYear()}`;
+    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
+    const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
+  
+    const outboundTrip = { id: tripIdOutbound, from: fromLocation, to: toLocation, depart: startDate, type: 'Outbound' };
+    const returnTrip = { id: tripIdReturn, from: toLocation, to: fromLocation, depart: returnDate, type: 'Return' };
+  
     setBookedTrips([
       ...bookedTrips,
-      { id: tripId, from: fromLocation, to: toLocation, startDate, returnDate },
+      outboundTrip,
+      returnTrip
     ]);
-
+  
     toast({
       title: "Flight booked",
-      description: `Your flight from ${fromLocation} to ${toLocation} has been booked.`,
+      description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
     });
   }
 
@@ -74,25 +97,15 @@ export default function Home() {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className={`flex h-full bg-slate-950 text-white flex-col font-audimat`}
+        className={`flex h-screen bg-gradient-airways text-white flex-col font-audimat`}
       >
-        <div className="flex h-20 shadow-2xl ">
-          <div className="ml-4 flex items-center text-3xl">
-            <CSNav />
-            <Plane className="mr-2" />
-            <p className="flex font-audimat">Launch Airways</p>
-          </div>
-          <div className="flex space-x-6 ml-auto mr-4 items-center">
-            <RegistrationForm />
-            <LoginScreen />
-          </div>
-        </div>
-        <div className="flex flex-row items-center place-content-center mx-auto my-4">
+        <NavBar variant={"airlines"} />
+        <div className="flex flex-row my-20 mx-auto space-x-20 items-center">
           <motion.div
             initial={{ scale: 0.25, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.25 }}
-            className="flex items-center mx-auto"
+            className="flex"
           >
             <div className="relative">
               <button
@@ -142,23 +155,17 @@ export default function Home() {
             )}
           </motion.div>
 
-          <motion.div
-            initial={{ scale: 0.25, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.25 }}
-            className="w-full flex justify-center"
-          >
-            <div className="flex space-x-10 items-center text-xl px-16 font-audimat">
-              <div>
+          <div className="">
+            <div className="flex items-center text-xl px-16 font-audimat">
+              <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+              {/* <div>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button>
+                    
                       {startDate ? (
                         <div className="flex flex-col items-center">
                           <p className="text-2xl">Depart</p>
-                          <p className="text-3xl">
-                            {startDate.toLocaleDateString("en-US")}
-                          </p>
+                          <p className="text-3xl">{startDate.toLocaleDateString("en-US")}</p>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-4 border-b-2 border-gray-600 py-2 pr-12">
@@ -168,14 +175,15 @@ export default function Home() {
                           </p>
                         </div>
                       )}
-                    </button>
+                    
                   </PopoverTrigger>
                   <PopoverContent>
                     <Calendar
-                      mode="single"
-                      selected={startDate}
-                      onSelect={setStartDate}
-                      className="rounded-md border"
+                      mode="range"
+                      // selected={startDate}
+                      
+                      // onSelect={setStartDate}
+                      className=""
                     />
                   </PopoverContent>
                 </Popover>
@@ -187,9 +195,7 @@ export default function Home() {
                       {returnDate ? (
                         <div className="flex flex-col items-center">
                           <p className="text-2xl">Return</p>
-                          <p className="text-3xl">
-                            {returnDate.toLocaleDateString("en-US")}
-                          </p>
+                          <p className="text-3xl">{returnDate.toLocaleDateString("en-US")}</p>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-4 border-b-2 border-gray-600 py-2 pr-12">
@@ -210,114 +216,59 @@ export default function Home() {
                     />
                   </PopoverContent>
                 </Popover>
-              </div>
-              <div className="px-16">
+              </div> */}
+              <div className="ml-20">
                 <motion.button
-                  whileTap={{ scale: 0.5, color: "green" }}
+                  whileTap={{ scale: 0.5 }}
                   onClick={() => bookTrip()}
-                  className={` items-center fill-blue-800 ${
-                    !toLocation ||
-                    toLocation === "To" ||
-                    !fromLocation ||
-                    fromLocation === "From" ||
-                    !startDate ||
-                    !returnDate
-                      ? "opacity-50 cursor-not-allowed "
-                      : ""
-                  }`}
-                  disabled={
-                    !toLocation ||
-                    toLocation === "To" ||
-                    !fromLocation ||
-                    fromLocation === "From" ||
-                    !startDate ||
-                    !returnDate
-                  }
+                  className={` items-center `}
+                  
                 >
-                  <ArrowRightCircle
-                    className="fill-blue-900"
-                    strokeWidth={1}
-                    size={64}
-                  />
+                  <img src="ArrowButton.png" width={75} className="" />
                 </motion.button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-        <div className="relative grid xl:flex xl:py-24 mb-8 w-full shadow-2xl items-center text-white">
-          <img
-            src="interior.png"
-            className="absolute w-full h-full object-cover z-10 opacity-30"
-          />
-          <div className="flex mx-auto w-2/3 z-10">
-            <div className="grid mx-auto w-2/3">
-              <div className="grid mx-auto text-center">
-                <p className="text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat ">
-                  Launch Airways
-                </p>
-
-                <p className="textlg: md:text-xl xl:text-2xl font-light pt-4 w-4/5 xl:w-2/3 mx-auto ">
-                  Launch into the skies. In the air in milliseconds, reach
-                  your destination without risk, and ship your travel dreams
-                  faster than ever before.
-                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative flex justify-center  gap-x-24 mb-14 z-0 ">
-          <Card className="flex w-[320px] h-auto border-0 relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900 z-0">
-            <CardHeader>
-              <img src="planefleet.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat text-center">
-                Wheels-Up On Launch Airways!
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight pt-2 text-lg text-center">
-                Launch into the skies. Live the life of comfort, spead,
-                and excitement as board any of our hundreds of flights a month.
-                Travel globally, without the risk.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="flex w-[320px] h-auto border-0  relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900">
-            <CardHeader>
-              <img src="travel.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat text-center">
-                Toggle "On" Your Next Get Away 
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight  pt-2 text-lg text-center">
-                With more than 100 points of presence globally, you'll be able
-                to fly anywhere you need in the blink of eye. Resolve your
-                travel, ship your family faster.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="flex w-[320px] h-auto border-0 relative flex-col justify-center items-center animate-fade-in grid-rows-2 bg-slate-900">
-            <CardHeader>
-              <img src="travelticket.jpg" className="mx-auto" />
-            </CardHeader>
-            <CardTitle className="flex justify-center p-2 py-4">
-              <p className="font-bold text-3xl text-gray-300 font-audimat  text-center">
-                Launch Club Loyalty Program
-              </p>
-            </CardTitle>
-            <CardContent>
-              <p className="text-gray-300 font-robotolight pt-2 text-lg text-center">
-                The more you fly, the more your status grows. Enjoy free
-                upgrades, priority boarding, exlusive flights and more! Reach{" "}
-                <span className="font-bold">Platinum Tier</span> status today!
-              </p>
-            </CardContent>
-          </Card>
+        <div className="relative grid xl:flex xl:py-52 w-full items-center text-white">
+          <img
+            src="dudeguy.png"
+            className="absolute
+             w-full h-full object-cover z-10"
+          />
+
+          <div className="flex flex-col w-1/3 z-20 ml-44">
+            <p className="text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat">
+              Launch Airways
+            </p>
+
+            <p className="textlg: md:text-xl xl:text-2xl font-light pt-4  ">
+              Launch into the skies. In the air in milliseconds, reach your
+              destination without risk, and ship your travel dreams faster than
+              ever before.
+            </p>
+
+            <Button className="bg-pink-600 rounded-none w-1/3 text-3xl px-2 py-8 mt-8">Book Now</Button>
+          </div>
+        </div>
+
+        <div className="relative flex flex-col sm:flex-row justify-center gap-x-0 gap-y-6 sm:gap-x-24 py-14 z-0 bg-white !font-sohne ">
+          <AirlineInfoCard
+            headerTitleText="Wheels up"
+            subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
+            imgSrc={airplaneImg}
+          />
+          <AirlineInfoCard
+            headerTitleText="Ready for an adventure"
+            subtitleText="The world is open for travel. Plan your next adventure."
+            imgSrc={hotAirBalloonImg}
+          />
+          <AirlineInfoCard
+            headerTitleText="Experience luxury"
+            subtitleText="Choose Launch Platinum. Select on longer flights."
+            imgSrc={airplaneDining}
+          />
         </div>
       </motion.main>
     </>
