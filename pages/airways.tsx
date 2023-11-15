@@ -1,10 +1,5 @@
 import { Inter } from "next/font/google";
-import {
-  ArrowRightCircle,
-  CalendarIcon,
-  MoveHorizontalIcon,
-  Plane,
-} from "lucide-react";
+import { ArrowRightCircle, CalendarIcon, MoveHorizontalIcon, Plane } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import AirportPicker from "@/components/ui/airwayscomponents/airportPicker";
 import { motion, useAnimation, useInView } from "framer-motion";
@@ -13,11 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
@@ -28,7 +19,9 @@ import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
-import { Button } from "@/components/ui/button";
+
+import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
+import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,28 +42,36 @@ export default function Home() {
     setShowSearch(true);
   }
 
-
   useEffect(() => {
-console.log(date)
-console.log(bookedTrips)
+    console.log(date);
+    console.log(bookedTrips);
   }, [bookedTrips]);
 
-
   function bookTrip() {
-    const startDate = `${date.from.getMonth() + 1}/${date.from.getDate()}/${date.from.getFullYear()}`;
+    const startDate = `${
+      date.from.getMonth() + 1
+    }/${date.from.getDate()}/${date.from.getFullYear()}`;
     const returnDate = `${date.to.getMonth() + 1}/${date.to.getDate()}/${date.to.getFullYear()}`;
     const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
     const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
-  
-    const outboundTrip = { id: tripIdOutbound, from: fromLocation, to: toLocation, depart: startDate, type: 'Outbound' };
-    const returnTrip = { id: tripIdReturn, from: toLocation, to: fromLocation, depart: returnDate, type: 'Return' };
-  
-    setBookedTrips([
-      ...bookedTrips,
-      outboundTrip,
-      returnTrip
-    ]);
-  
+
+    const outboundTrip = {
+      id: tripIdOutbound,
+      from: fromLocation,
+      to: toLocation,
+      depart: startDate,
+      type: "Outbound",
+    };
+    const returnTrip = {
+      id: tripIdReturn,
+      from: toLocation,
+      to: fromLocation,
+      depart: returnDate,
+      type: "Return",
+    };
+
+    setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
+
     toast({
       title: "Flight booked",
       description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
@@ -97,68 +98,27 @@ console.log(bookedTrips)
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className={`flex h-screen bg-gradient-airways text-white flex-col font-audimat`}
+        className={`flex h-screen text-white flex-col font-audimat`}
       >
         <NavBar variant={"airlines"} />
-        <div className="flex flex-row my-20 mx-auto space-x-20 items-center">
-          <motion.div
-            initial={{ scale: 0.25, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.25 }}
-            className="flex"
-          >
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setActiveField("from");
-                  setShowSearch(true);
-                }}
-              >
-                <p className="text-3xl md:text-4xl xl:text-6xl font-audimat px-4 py-2 ">
-                  {fromLocation}
-                </p>
-              </button>
-              <p className="text-center text-xs font-audimat uppercase">
-                Origin
-              </p>
-            </div>
-            <MoveHorizontalIcon
-              strokeWidth={1}
-              width={50}
-              size={50}
-              className="stroke-ldblue mr-8"
-            />
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setActiveField("to");
-                  setShowSearch(true);
-                }}
-              >
-                <p className="text-3xl md:text-4xl xl:text-6xl font-audimat  px-4   py-2 ">
-                  {toLocation}
-                </p>
-              </button>
-              <p className="text-center text-xs font-audimat uppercase">
-                Destination
-              </p>
-            </div>
-            {showSearch && activeField && (
-              <AirportPicker
+
+        <header className="py-20 bg-gradient-airways">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col lg:flex-row items-center justify-between">
+              <AirlineDestination
+                setActiveField={setActiveField}
+                setShowSearch={setShowSearch}
+                fromLocation={fromLocation}
+                toLocation={toLocation}
+                showSearch={showSearch}
+                activeField={activeField}
                 setToLocation={setToLocation}
                 setFromLocation={setFromLocation}
-                setShowSearch={setShowSearch}
-                activeField={activeField}
-                toLocation={toLocation}
-                fromLocation={fromLocation}
               />
-            )}
-          </motion.div>
 
-          <div className="">
-            <div className="flex items-center text-xl px-16 font-audimat">
-              <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-              {/* <div>
+              <div className="flex items-center text-xl font-audimat">
+                <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+                {/* <div>
                 <Popover>
                   <PopoverTrigger asChild>
                     
@@ -217,43 +177,26 @@ console.log(bookedTrips)
                   </PopoverContent>
                 </Popover>
               </div> */}
-              <div className="ml-20">
-                <motion.button
-                  whileTap={{ scale: 0.5 }}
-                  onClick={() => bookTrip()}
-                  className={` items-center `}
-                  
-                >
-                  <img src="ArrowButton.png" width={75} className="" />
-                </motion.button>
+                <div className="ml-20">
+                  <motion.button
+                    whileTap={{ scale: 0.5 }}
+                    onClick={() => bookTrip()}
+                    className={` items-center `}
+                  >
+                    <img src="ArrowButton.png" width={75} className="" />
+                  </motion.button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="relative grid xl:flex xl:py-52 w-full items-center text-white">
-          <img
-            src="dudeguy.png"
-            className="absolute
-             w-full h-full object-cover z-10"
-          />
+        <AirlineHero />
 
-          <div className="flex flex-col w-1/3 z-20 ml-44">
-            <p className="text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat">
-              Launch Airways
-            </p>
-
-            <p className="textlg: md:text-xl xl:text-2xl font-light pt-4  ">
-              Launch into the skies. In the air in milliseconds, reach your
-              destination without risk, and ship your travel dreams faster than
-              ever before.
-            </p>
-
-            <Button className="bg-pink-600 rounded-none w-1/3 text-3xl px-2 py-8 mt-8">Book Now</Button>
-          </div>
-        </div>
-
-        <div className="relative flex flex-col sm:flex-row justify-center gap-x-0 gap-y-6 sm:gap-x-24 py-14 z-0 bg-white !font-sohne ">
+        <section
+          className="relative flex flex-col sm:flex-row justify-center 
+        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 "
+        >
           <AirlineInfoCard
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
@@ -269,7 +212,7 @@ console.log(bookedTrips)
             subtitleText="Choose Launch Platinum. Select on longer flights."
             imgSrc={airplaneDining}
           />
-        </div>
+        </section>
       </motion.main>
     </>
   );

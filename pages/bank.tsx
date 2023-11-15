@@ -236,9 +236,11 @@ export default function Bank() {
                         </p>
                       </div>
                       <div className="flex flex-row gap-4 justify-start">
+
                         <div className="p-4 h-[300px] w-[250px] bg-white ">
                           <FederatedCheckingAccount />
                         </div>
+                        
                         <div className="p-4 h-[300px] w-[250px] bg-white">
                           <FederatedCreditAccount />
                         </div>
