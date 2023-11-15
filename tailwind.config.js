@@ -37,7 +37,7 @@ module.exports = {
         card3: "linear-gradient(187.72deg, #FF386B -57.74%, #EBFF38 222.08%)",
         card4bottom:
           "linear-gradient(39.47deg, #A34FDE -17.19%, #FF386B 148.9%)",
-      }),
+        bankblue: "linear-gradient(225deg, #3DD6F5 -5.3%, #405BFF 112.86%)",      }),
       fontFamily: {
         sohne: ["Sohne"],
         sohnemono: ["Sohne Mono"],
