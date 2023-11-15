@@ -41,20 +41,28 @@ export function LoginComponent({isLoggedIn, setIsLoggedIn, loginUser}: LoginComp
   }
 
   return (
-    <Card className="w-[275px] rounded-none font-audimat">
-      <CardHeader className="text-center">
-        <CardTitle>Global Scale Login</CardTitle>
-        <CardDescription>Access your account here</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid justify-center">
-            <img src='woman.png' className="rounded-full h-36" /> 
-        </div>
+    <div className="w-[425px] bg-white font-audimat shadow-xl">
+      <div className="flex flex-col justify-center mx-auto text-center">
+        <img src='ToggleBankBlue.png' width={64} className="pt-10 mx-auto pb-4" />
+        <p className="text-4xl font-sohnelight pb-12">Toggle<span className="font-bold">Bank</span></p>
+      </div>
+      <div>
         
-      </CardContent>
-      <CardFooter className="">
-        <Button onClick={handleLogin} className="w-2/3 mx-auto font-audimat text-xl">Login with SSO</Button>
-      </CardFooter>
-    </Card>
+      </div>
+      <div className="w-full px-8">
+        <div>
+      <Input placeholder="Email" className="mb-8 outline-none border-0 border-b-2 text-xl" />
+      </div>
+        <Button onClick={handleLogin} className="w-full mx-auto font-audimat rounded-none bg-blue-500 text-xl">Login with SSO</Button>
+      </div>
+      <div className="flex flex-row justify-between px-8 pb-10 pt-4">
+        <div>
+          <p>Forgot Password?</p>
+        </div>
+        <div>
+          <p>Don't have an account? <a href='/bank' className='text-blue-600'>Sign Up</a></p>
+        </div>
+      </div>
+    </div>
   )
 }

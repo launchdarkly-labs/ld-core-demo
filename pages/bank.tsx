@@ -42,6 +42,7 @@ import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
 import NavBar from "@/components/ui/navbar";
+import BankInfoCard from "@/components/ui/bankcomponents/bankInfoCard";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -122,7 +123,7 @@ export default function Bank() {
     <AnimatePresence mode="wait">
       {!isLoggedIn ? (
         <motion.main
-          className={`relative w-full font-audimat`}
+          className={`relative w-full h-screen font-audimat`}
           initial="initial"
           animate="in"
           exit="out"
@@ -132,16 +133,17 @@ export default function Bank() {
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
             <NavBar variant={"bank"} isLoggedIn={isLoggedIn} />
           </div>
-          <div className="h-1/3 w-full bg-white ">
-            <div className="w-full bg-gradient-releases py-8 px-12 xl:px-36 flex justify-between">
-              <div className=" grid text-white w-1/3 items-center">
-                <p className="text-6xl font-audimat">Global Scale Financial</p>
-                <p className="text-2xl font-audimat">
-                  Your one stop for connecting a global network of consumers and
-                  businesses. Transacting billions of dollars every day.
+          <div className="h-2/5 w-full bg-bankblue ">
+            <div className="w-full py-14 px-12 xl:px-32 2xl:px-[400px] flex justify-between">
+              <div className="flex flex-col text-white w-1/3 justify-start">
+                <img src='ToggleBankHeader.png' width={52} className='pb-8' />
+                <p className="text-6xl font-audimat">Welcome to</p>
+                <p className="text-6xl font-audimat">Toggle Bank</p>
+                <p className="text-2xl font-sohnelight pt-8">
+                  Login to access your account
                 </p>
               </div>
-              <div className="flex justify-end pr-10">
+              <div className="flex justify-end pr-30">
                 <LoginComponent
                   isLoggedIn={isLoggedIn}
                   setIsLoggedIn={setIsLoggedIn}
@@ -150,35 +152,38 @@ export default function Bank() {
               </div>
             </div>
           </div>
-          <div className="flex justify-center">
-            <p className="text-4xl mx-auto text-center font-semibold font-audimat py-8">
-              Globally available for services you need
-            </p>
+          
+          <div className="w-3/4 flex font-sohnelight text-center justify-center mx-auto space-x-24 pt-24">
+            <div className="grid items-center justify-items-center">
+              <img src='Checking.png' width={96} className="pb-2" />
+              {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
+              <p className="text-2xl ">Checking</p>
+            </div>
+            <div className="grid items-center justify-items-center">
+            <img src='Business.png' width={96} className="pb-2" />
+              {/* <PiggyBank size={96} strokeWidth={1} className="pb-2" /> */}
+              <p className="text-2xl ">Business</p>
+            </div>
+            <div className="grid items-center justify-items-center">
+            <img src='Credit.png' width={96} className="pb-2" /> 
+              {/* <CreditCard size={96} strokeWidth={1} className="pb-2" /> */}
+              <p className="text-2xl ">Credit Cards</p>
+            </div>
+            <div className="grid items-center justify-items-center">
+            <img src='Savings.png' width={96} className="pb-2" />
+              {/* <Home size={96} strokeWidth={1} className="pb-2" /> */}
+              <p className="text-2xl ">Savings</p>
+            </div>
+            <div className="grid items-center justify-items-center">
+            <img src='Mortgage.png' width={96} className="pb-2" />
+              {/* <CandlestickChart size={96} strokeWidth={1} className="pb-2" /> */}
+              <p className="text-2xl ">Mortgages</p>
+            </div>
           </div>
-          <div className="w-3/4 flex font-audimat text-center justify-center mx-auto space-x-12">
-            <div className="grid items-center justify-items-center">
-              <Banknote size={96} strokeWidth={1} className="pb-2" />
-              <p className="text-2xl text-blue-700">Checking</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <PiggyBank size={96} strokeWidth={1} className="pb-2" />
-              <p className="text-2xl text-blue-700">Savings</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <CreditCard size={96} strokeWidth={1} className="pb-2" />
-              <p className="text-2xl text-blue-700">Credit Cards</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <Home size={96} strokeWidth={1} className="pb-2" />
-              <p className="text-2xl text-blue-700">Mortgage</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <CandlestickChart size={96} strokeWidth={1} className="pb-2" />
-              <p className="text-2xl text-blue-700">Stock Trading</p>
-            </div>
-          </div>
-          <div className="">
-            <ScrollingTestimonials />
+          <div className="flex flex-row space-x-14 mx-44 mt-12 mb-10 justify-center">
+            <BankInfoCard imgSrc='House.png' headerTitleText="Home Mortgages" subtitleText="Toggle the light on and come home. Were here to help." key={1} />
+            <BankInfoCard imgSrc='Smoochy.png' headerTitleText="Wealth Management" subtitleText="Use next generation tooling to ensure your future is safe." key={1} />
+            <BankInfoCard imgSrc='Cards.png' headerTitleText="Sign Up For Toggle Card" subtitleText="Special offers for our most qualified members. Terms apply." key={1} />
           </div>
         </motion.main>
       ) : (
