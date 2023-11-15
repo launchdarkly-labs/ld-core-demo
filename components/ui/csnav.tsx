@@ -59,22 +59,22 @@ export function CSNav({variant}) {
             </div>
           <motion.div initial={{ x: -100, opacity: 0 }} whileHover={{ scale: 1.05 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1, duration: 0.5 }}>
             <div onClick={goRelease}>
-              <CSCard className="bg-gradient-releases" herotext="Navigate to De-Risked Releases" />
+              <CSCard className="bg-gradient-releases cursor-pointer" herotext="Navigate to De-Risked Releases" />
             </div>
             </motion.div>
             <motion.div initial={{ x: -100, opacity: 0 }} whileHover={{ scale: 1.05 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.5 }}>
             <div onClick={goTargeting}>
-              <CSCard className="bg-gradient-targeting" herotext="Navigate to Targeted Experiences" />
+              <CSCard className="bg-gradient-targeting cursor-pointer" herotext="Navigate to Targeted Experiences" />
             </div>
             </motion.div>
             <motion.div initial={{ x: -100, opacity: 0 }} whileHover={{ scale: 1.05 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 0.5 }}>
             <div onClick={goExp}>
-              <CSCard className="bg-gradient-experimentation" herotext="Navigate to Product Experimentation" />
+              <CSCard className="bg-gradient-experimentation cursor-pointer" herotext="Navigate to Product Experimentation" />
             </div>
             </motion.div>
             <motion.div initial={{ x: -100, opacity: 0 }} whileHover={{ scale: 1.05 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7, duration: 0.5 }}> 
             <div onClick={goMobile}>
-              <CSCard className="bg-gradient-mobile" herotext="Navigate to Mobile Optimization" />
+              <CSCard className="bg-gradient-mobile cursor-pointer" herotext="Navigate to Mobile Optimization" />
             </div>
             </motion.div>
           </div>
