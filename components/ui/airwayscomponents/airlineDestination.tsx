@@ -27,9 +27,9 @@ const AirlineDestination = ({
       initial={{ scale: 0.25, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className=""
+      className={``}
     >
-      <div className="flex items-center gap-x-6 justify-between  relative">
+      <div className={`flex items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
         <div className=" text-center">
           <button
             onClick={() => {
@@ -57,14 +57,16 @@ const AirlineDestination = ({
       </div>
 
       {showSearch && activeField && (
-        <AirportPicker
-          setToLocation={setToLocation}
-          setFromLocation={setFromLocation}
-          setShowSearch={setShowSearch}
-          activeField={activeField}
-          toLocation={toLocation}
-          fromLocation={fromLocation}
-        />
+        <>
+          <AirportPicker
+            setToLocation={setToLocation}
+            setFromLocation={setFromLocation}
+            setShowSearch={setShowSearch}
+            activeField={activeField}
+            toLocation={toLocation}
+            fromLocation={fromLocation}
+          />
+        </>
       )}
     </motion.div>
   );

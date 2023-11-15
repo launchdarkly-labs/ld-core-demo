@@ -81,9 +81,9 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className="w-[427px] h-[275px] bg-white rounded-md shadow absolute z-20 mt-4">
-      <button className="text-neutral-400 cursor-pointer bg-red-500 " onClick={handleClose}>
-        <XIcon className="h-7 w-7 cursor-pointer ml-auto  left-0" />
+    <div className="w-[427px] h-[275px] bg-white rounded-md shadow-md absolute z-20 mt-4">
+      <button className="cursor-pointer absolute right-0 mr-3 mt-3 h-7 w-7" onClick={handleClose}>
+        <XIcon className="cursor-pointer h-full w-full text-neutral-400  " />
       </button>
       <div className="w-[321px] h-[173px] left-[53px] top-[51px] absolute flex-col justify-start items-start gap-[20px] inline-flex">
         <div className="px-[10px] justify-start items-start gap-0 inline-flex">
