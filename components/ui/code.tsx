@@ -1,6 +1,7 @@
 import "prismjs/themes/prism-tomorrow.css";
 import Prism from "prismjs";
 import "prismjs/components/prism-csharp";
+import "prismjs/components/prism-java";
 import { useEffect } from "react";
 
 export default function Code({
