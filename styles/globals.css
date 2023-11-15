@@ -86,6 +86,11 @@
 }
 
 @font-face {
+  font-family: "Sohne Light";
+  src: url("/fonts/sohne-light.otf");
+}
+
+@font-face {
   font-family: "Roboto";
   src: url("/fonts/Roboto-Regular.ttf");
 }
