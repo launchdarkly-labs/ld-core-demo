@@ -81,43 +81,33 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className="w-[427px] h-[275px] bg-white rounded-md shadow-md absolute z-20 mt-4">
-      <button className="cursor-pointer absolute right-0 mr-3 mt-3 h-7 w-7" onClick={handleClose}>
-        <XIcon className="cursor-pointer h-full w-full text-neutral-400  " />
+    <div className="w-[427px] h-[275px] bg-white rounded-md shadow-md absolute z-20 mt-4 p-[1rem] font-sohne font-normal ">
+      <button className="cursor-pointer h-7 w-7 float-right" onClick={handleClose}>
+        <XIcon className="cursor-pointer h-full w-full text-neutral-400 " />
       </button>
-      <div className="w-[321px] h-[173px] left-[53px] top-[51px] absolute flex-col justify-start items-start gap-[20px] inline-flex">
-        <div className="px-[10px] justify-start items-start gap-0 inline-flex">
-          <div className="text-neutral-800 text-[10px] font-medium font-sohne uppercase leading-[3px] tracking-widest">
+      <div className="m-6">
+        <div className="mb-3">
+          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest border-b-4 w-[4rem] border-pink-500 ">
             Search
           </div>
+          <div className="w-full border-b-2 border-neutral-300"/>
         </div>
-
-        <div className="w-80 h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
 
         <div className="flex-col justify-start items-start gap-[15px] flex">
           <div className="flex-col justify-start items-start flex">
-            <div className="w-[88px] flex-col justify-start items-start flex">
-              <div className="text-neutral-500 text-base font-normal font-sohne leading-normal ">
-                {activeField === "from" ? "Origin" : "Destination"}
-              </div>
-              <input
-                className="w-[300px] h-[70px] text-zinc-500 text-[60px] font-normal font-sohne leading-[66.65px] outline-none"
-                placeholder="Airport"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  background: "linear-gradient(to right, #F43F5E, #8B5CF6)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              />
-
-              <div className="border-b-4 border-ldblue mb-2 text-white" />
+            <div className="text-neutral-500 text-base leading-normal mb-2 ">
+              {activeField === "from" ? "Origin" : "Destination"}
             </div>
-            <div className="w-80 h-1 border-b-2 border-purple-500 justify-center mx-auto"></div>
+            <input
+              className="w-full text-airlineBlack text-[60px]  
+                 leading-[66.65px] outline-none border-b-2 border-airlineBlack pb-4"
+              placeholder="Airport"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          <div className="w-36 h-[21px] text-neutral-700 text-xs font-normal font-sohne leading-[18px] tracking-wide">
+          <div className="w-36 h-[21px] text-neutral-700 text-base  leading-[18px] tracking-wide">
             {searchTerm && filteredAirports.length === 0 ? (
               <p>No airports found</p>
             ) : (
@@ -138,8 +128,6 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
           </div>
         </div>
       </div>
-      <div className="w-6 h-6 left-[390px] top-[14px] absolute" />
-      <div className="w-6 h-6 left-[360.97px] top-[147px] absolute origin-top-left rotate-45" />
     </div>
   );
 };

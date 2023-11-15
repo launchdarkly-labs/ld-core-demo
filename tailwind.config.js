@@ -78,6 +78,7 @@ module.exports = {
         marketblue: "#3DD6F5",
         marketgreen: "#EBFF38",
         airlinePurple: "#7084FF",
+        airlineBlack: "#2C2C2C",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
