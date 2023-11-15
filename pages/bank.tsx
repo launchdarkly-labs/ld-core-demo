@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CSNav } from "@/components/ui/csnav";
 import { LoginComponent } from "@/components/ui/bankcomponents/logincomponent";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -10,34 +8,18 @@ import {
   Tooltip,
   AreaChart,
   Area,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
-import {
-  AreaChartIcon,
-  ArrowRight,
-  Banknote,
-  CandlestickChart,
-  CreditCard,
-  Globe,
-  Home,
-  PiggyBank,
-  Sparkle,
-} from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AreaChartIcon } from "lucide-react";
 import { useContext, useState } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
-import ScrollingTestimonials from "@/components/ui/testimonials";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { checkData } from "@/lib/checkingdata";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
@@ -131,15 +113,19 @@ export default function Bank() {
           transition={pageTransition}
         >
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
-            <NavBar variant={"bank"}/>
+            <NavBar variant={"bank"} />
           </div>
           <div className="h-2/5 w-full bg-bankblue ">
-            <div className="w-full py-14 px-12 xl:px-32 2xl:px-[400px] flex justify-between">
+            <div className="w-full py-14 px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex justify-between">
               <div className="flex flex-col text-white w-1/3 justify-start">
-                <img src='ToggleBankHeader.png' width={52} className='pb-8' />
-                <p className="text-6xl font-audimat">Welcome to</p>
-                <p className="text-6xl font-audimat">Toggle Bank</p>
-                <p className="text-2xl font-sohnelight pt-8">
+                <img src="ToggleBankHeader.png" width={52} className="pb-8" />
+                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat">
+                  Welcome to
+                </p>
+                <p className="text-xl lg:text-6xl 3xl:text-[112px] font-audimat">
+                  Toggle Bank
+                </p>
+                <p className="text-xl lg:text-2xl 3xl:text-4xl font-sohnelight pt-8">
                   Login to access your account
                 </p>
               </div>
@@ -152,38 +138,53 @@ export default function Bank() {
               </div>
             </div>
           </div>
-          
+
           <div className="w-3/4 flex font-sohnelight text-center justify-center mx-auto space-x-24 pt-24">
             <div className="grid items-center justify-items-center">
-              <img src='Checking.png' width={96} className="pb-2" />
+              <img src="Checking.png" width={96} className="pb-2" />
               {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
               <p className="text-2xl ">Checking</p>
             </div>
             <div className="grid items-center justify-items-center">
-            <img src='Business.png' width={96} className="pb-2" />
+              <img src="Business.png" width={96} className="pb-2" />
               {/* <PiggyBank size={96} strokeWidth={1} className="pb-2" /> */}
               <p className="text-2xl ">Business</p>
             </div>
             <div className="grid items-center justify-items-center">
-            <img src='Credit.png' width={96} className="pb-2" /> 
+              <img src="Credit.png" width={96} className="pb-2" />
               {/* <CreditCard size={96} strokeWidth={1} className="pb-2" /> */}
               <p className="text-2xl ">Credit Cards</p>
             </div>
             <div className="grid items-center justify-items-center">
-            <img src='Savings.png' width={96} className="pb-2" />
+              <img src="Savings.png" width={96} className="pb-2" />
               {/* <Home size={96} strokeWidth={1} className="pb-2" /> */}
               <p className="text-2xl ">Savings</p>
             </div>
             <div className="grid items-center justify-items-center">
-            <img src='Mortgage.png' width={96} className="pb-2" />
+              <img src="Mortgage.png" width={96} className="pb-2" />
               {/* <CandlestickChart size={96} strokeWidth={1} className="pb-2" /> */}
               <p className="text-2xl ">Mortgages</p>
             </div>
           </div>
           <div className="flex flex-row space-x-14 mx-44 mt-12 mb-10 justify-center">
-            <BankInfoCard imgSrc='House.png' headerTitleText="Home Mortgages" subtitleText="Toggle the light on and come home. Were here to help." key={1} />
-            <BankInfoCard imgSrc='Smoochy.png' headerTitleText="Wealth Management" subtitleText="Use next generation tooling to ensure your future is safe." key={1} />
-            <BankInfoCard imgSrc='Cards.png' headerTitleText="Sign Up For Toggle Card" subtitleText="Special offers for our most qualified members. Terms apply." key={1} />
+            <BankInfoCard
+              imgSrc="House.png"
+              headerTitleText="Home Mortgages"
+              subtitleText="Toggle the light on and come home. Were here to help."
+              key={1}
+            />
+            <BankInfoCard
+              imgSrc="Smoochy.png"
+              headerTitleText="Wealth Management"
+              subtitleText="Use next generation tooling to ensure your future is safe."
+              key={1}
+            />
+            <BankInfoCard
+              imgSrc="Cards.png"
+              headerTitleText="Sign Up For Toggle Card"
+              subtitleText="Special offers for our most qualified members. Terms apply."
+              key={1}
+            />
           </div>
         </motion.main>
       ) : (
@@ -195,12 +196,16 @@ export default function Bank() {
           variants={pageVariants}
           transition={pageTransition}
         >
-          <NavBar variant={"bank"} handleLogout={handleLogout}/>
+          <NavBar variant={"bank"} handleLogout={handleLogout} />
 
-          <div className=" w-full  px-8 ">
-            <div className="flex flex-col xl:flex-row py-8 gap-x-8">
+          <div className=" w-full px-8 ">
+            <div
+              className={`flex flex-col xl:flex-row py-8 ${
+                federatedAccounts ? "gap-x-8" : ""
+              }`}
+            >
               <div className="flex w-full h-[425px]">
-                <div className="px-6 shadow-xl bg-gradient-blue">
+                <div className="px-6 shadow-xl bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <div>
                       <p className="text-white font-sohne py-6 text-[24px]">
@@ -208,13 +213,13 @@ export default function Bank() {
                       </p>
                     </div>
                     <div className="flex flex-row gap-4">
-                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white ">
+                      <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
@@ -245,61 +250,42 @@ export default function Bank() {
             </div>
 
             {wealthManagement ? (
-              <div className="px-6 py-2 bg-ldcardgrey h-[425px]">
+              <div className="px-6 py-2 bg-ldcardgrey h-[425px] shadow-2xl">
                 <div>
                   <p className="text-black font-sohne py-6 text-[24px]">
                     Wealth Management
                   </p>
                 </div>
-                <div className="flex w-full h-[300px] space-x-4">
-                  <div className="flex p-4 w-5/12 rounded-none bg-white justify-center">
-                    <ResponsiveContainer>
-                      <AreaChart
-                        width={500}
-                        height={350}
-                        data={data}
-                        margin={{
-                          top: 10,
-                          right: 30,
-                          left: 0,
-                          bottom: 0,
-                        }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Area
-                          type="monotone"
-                          dataKey="balance"
-                          stroke="#8884d8"
-                          fill="url(#colorUv)"
-                        />
-                        <defs>
-                          <linearGradient
-                            id="colorUv"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#00c0e7"
-                              stopOpacity={1}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#a34fde"
-                              stopOpacity={1}
-                            />
-                          </linearGradient>
-                        </defs>
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
+                <div className="grid grid-cols-5 gap-4 w-full h-[300px]">
+                  {aiFinancial && (
+                    <div className="relative p-4 col-span-2 w-full bg-white ">
+                      <div className="flex">
+                        <div className="pb-2">
+                          <p className="aiinsightstext pb-1">
+                            Wealth Insights AI
+                          </p>
 
-                  <div className="p-6 bg-white w-3/12 h-full">
+                          <p className="text-blue-500 accountsecondary">
+                            Powered By AWS Bedrock
+                          </p>
+                        </div>
+                        <div className="absolute bottom-5 right-5">
+                          <Button
+                            onClick={() => {
+                              submitQuery(prompt);
+                            }}
+                            className=" rounded-none text-xl bg-blue-700 font-audimat items-center"
+                          >
+                            Generate Insights
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="overflow-auto max-h-[150px]">
+                        <p className="my-4 font-sohnelight">{aiResponse}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-6 bg-white col-span-1 h-full">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -324,85 +310,64 @@ export default function Bank() {
                       <div></div>
                     </div>
                   </div>
+                  <div
+                    className={`flex flex-col p-4 w-full bg-white justify-center ${
+                      aiFinancial ? "col-span-2" : "col-span-4"
+                    }`}
+                  >
+                    <p className="aiinsightstext">6-Month Account Trend</p>
+                    <ResponsiveContainer>
+                      <AreaChart
+                        data={data}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 0,
+                          bottom: 10,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Area
+                          type="monotone"
+                          dataKey="balance"
+                          stroke="#8884d8"
+                          fill="url(#colorUv)"
+                        />
 
-                  {/* <div className="p-4 bg-white w-3/12 rounded-none">
-                    <div className="bg-blue-300/30 rounded-full flex items-center justify-center  w-10 h-10 ">
-                      <AreaChartIcon className="text-blue-700" />
-                    </div>
-
-                    <div className="flex flex-grow ">
-                      <p className="accounttext">
-                        Brokerage Account{" "}
-                        <span className="accountsecondary">(***6552)</span>
-                      </p>
-                    </div>
-
-                    <div className="grid pl-4 pt-8 space-y-1">
-                      <p className="cardaccounttext">
-                        Total investment balance
-                      </p>
-                      <p className="moneytext">$184,278</p>
-                      <p className="accountsecondary">
-                        Over Lifetime of Account
-                      </p>
-                    </div>
-                  </div> */}
-                  {aiFinancial && (
-                    <div className="relative p-4 w-4/12 rounded-none bg-white ">
-                      <div>
-                        <div className="flex">
-                          <div className="pb-2">
-                            <p className="aiinsightstext">
-                              AI Insights from{" "}
-                              <span className="text-awsorange">
-                                AWS Bedrock
-                              </span>
-                            </p>
-                          </div>
-                          <div className="absolute bottom-5 right-5">
-                            <Button
-                              onClick={() => {
-                                submitQuery(prompt);
-                              }}
-                              className=" rounded-none text-xl bg-blue-700 font-audimat items-center"
-                            >
-                              Generate
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="overflow-auto max-h-[350px]">
-                        <p className="my-4">{aiResponse}</p>
-                      </div>
-                    </div>
-                  )}
+                        <defs>
+                          <linearGradient
+                            id="colorUv"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#00c0e7"
+                              stopOpacity={1}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#a34fde"
+                              stopOpacity={1}
+                            />
+                          </linearGradient>
+                        </defs>
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <Card className="mx-auto text-center text-4xl items-center h-[325px] gap-x-4 py-2 flex justify-center font-audimat rounded-none">
-                <Card className="w-1/2 h-full mx-4 rounded-none shadow-2xl">
-                  <CardHeader>
-                    <CardTitle>Earn Shared Rewards on Launch Airways</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <img src="airways.png" className="max-h-[200px] mx-auto" />
-                  </CardContent>
-                </Card>
-                <Card className="w-1/2 h-full mx-4 rounded-none shadow-2xl">
-                  <CardHeader>
-                    <CardTitle>
-                      Exclusive Store Access at Galaxy Marketplace
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <img
-                      src="marketplace.png"
-                      className="max-h-[200px] mx-auto"
-                    />
-                  </CardContent>
-                </Card>
-              </Card>
-            )}
+            ) : null}
+
+            <div className="flex flex-row w-full h-[425px] py-2 items-center space-x-20 justify-center">
+              <img src="CC.png" />
+              <img src="Loan.png" />
+            </div>
           </div>
         </motion.main>
       )}

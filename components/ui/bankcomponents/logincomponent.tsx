@@ -41,21 +41,21 @@ export function LoginComponent({isLoggedIn, setIsLoggedIn, loginUser}: LoginComp
   }
 
   return (
-    <div className="w-[425px] bg-white font-audimat shadow-xl">
+    <div className="w-[425px] 3xl:h-[500px] bg-white font-audimat shadow-xl">
       <div className="flex flex-col justify-center mx-auto text-center">
         <img src='ToggleBankBlue.png' width={64} className="pt-10 mx-auto pb-4" />
-        <p className="text-4xl font-sohnelight pb-12">Toggle<span className="font-bold">Bank</span></p>
+        <p className="text-4xl font-sohnelight pb-12 3xl:pb-24">Toggle<span className="font-bold">Bank</span></p>
       </div>
       <div>
         
       </div>
       <div className="w-full px-8">
         <div>
-      <Input placeholder="Email" className="mb-8 outline-none border-0 border-b-2 text-xl" />
+      <Input placeholder="Email" className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 text-xl" />
       </div>
         <Button onClick={handleLogin} className="w-full mx-auto font-audimat rounded-none bg-blue-500 text-xl">Login with SSO</Button>
       </div>
-      <div className="flex flex-row justify-between px-8 pb-10 pt-4">
+      <div className="flex flex-row justify-between px-8 pb-8 pt-4 3xl:pt-14">
         <div>
           <p>Forgot Password?</p>
         </div>
