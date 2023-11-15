@@ -41,6 +41,7 @@ import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
 import { FederatedMortgage } from "@/components/ui/bankcomponents/federatedMortgage";
+import NavBar from "@/components/ui/navbar";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -134,12 +135,7 @@ export default function Bank() {
           >
             <ArrowRight className="text-zinc-500" size={36} />
           </div> */}
-          <div className="flex h-20 shadow-2xl bg-ldgrey ">
-            <div className="ml-4 flex items-center text-3xl">
-              <CSNav />
-              <img src="ToggleBank.png" className="pl-4" />
-            </div>
-          </div>
+          <NavBar variant={'bank'}/>
           <div className="h-1/3 w-full bg-white ">
             <div className="w-full bg-gradient-releases py-8 px-12 xl:px-36 flex justify-between">
               <div className=" grid text-white w-1/3 items-center">

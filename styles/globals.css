@@ -110,6 +110,11 @@
   src: url("/fonts/Audimat3000-Regulier.otf");
 }
 
+@font-face {
+  font-family: "Sohne Light";
+  src: url("/fonts/sohne-light.otf");
+}
+
 .herotext {
   -webkit-text-fill-color: transparent;
   -moz-text-fill-color: transparent;
