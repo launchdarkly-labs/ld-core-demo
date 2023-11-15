@@ -67,7 +67,8 @@ export function FederatedCheckingAccount() {
               <Landmark className="text-gray-700" />
             </div>
             <div className="">
-              <p className="accounttext">Checking Acocount (***2982)</p>
+              <p className="accounttext pb-1">Checking (***2982)</p>
+              <br />
             </div>
           </div>
 

@@ -55,7 +55,8 @@ export function MorgtgageAccount() {
               <HomeIcon className="text-blue-700" />
             </div>
             <div className="">
-              <p className="accounttext">Mortgage Account (***6503)</p>
+              <p className="accounttext">Mortgage (***6503)</p>
+              <p className="aprtext pt-2">APR $3.875</p>
             </div>
           </div>
 
@@ -63,7 +64,7 @@ export function MorgtgageAccount() {
             <div className="space-y-2">
               <p className="balancetext">Remaining Balance: </p>
               <p className="balance">$712,124</p>
-              <p className="aprtext">APR $3.875</p>
+              
               </div>
               <div>
               <p className="duetext">Next Due: 14th</p>

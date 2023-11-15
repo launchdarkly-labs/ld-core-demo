@@ -9,7 +9,7 @@
 
 .accountsecondary {
   color: #58595b;
-  font-family: Sohne;
+  font-family: 'Sohne Light';
   font-size: 14.699px;
   font-style: normal;
   font-weight: 300;
@@ -27,10 +27,10 @@
 
 .aprtext {
   color: var(--gray-700, #58595b);
-  font-family: Sohne;
+  font-family: 'Sohne Light';
   font-size: 14.7px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 200;
   line-height: normal;
 }
 
