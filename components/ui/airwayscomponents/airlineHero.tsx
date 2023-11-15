@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 
-const AirlineHero = () => {
+const AirlineHero = ({ showSearch }: { showSearch: any }) => {
   return (
-    <section className=" airline-hero-image">
+    <section className={`airline-hero-image ${showSearch ? "blur-lg" : ""}`}>
       <div className="flex flex-col">
         <div className={`relative`}>
           <div aria-hidden="true" className="absolute hidden h-full w-1/2 lg:block" />

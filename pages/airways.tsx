@@ -98,11 +98,11 @@ export default function Home() {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className={`flex h-screen text-white flex-col font-audimat`}
+        className={`flex h-screen text-white flex-col font-audimat   `}
       >
         <NavBar variant={"airlines"} />
 
-        <header className="py-20 bg-gradient-airways">
+        <header className={`py-20 bg-gradient-airways`}>
           <div className="lg:mx-auto max-w-7xl px-[1.7rem] lg:px-[2rem]">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-y-6 lg:gap-y-0">
               <AirlineDestination
@@ -116,7 +116,9 @@ export default function Home() {
                 setFromLocation={setFromLocation}
               />
 
-              <div className="flex items-center text-xl font-audimat">
+              <div
+                className={`flex items-center text-xl font-audimat ${showSearch ? "" : ""}`}
+              >
                 <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
                 {/* <div>
                 <Popover>
@@ -191,11 +193,13 @@ export default function Home() {
           </div>
         </header>
 
-        <AirlineHero />
+        <AirlineHero showSearch={showSearch} />
 
         <section
-          className="relative flex flex-col sm:flex-row justify-center 
-        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 "
+          className={`relative flex flex-col sm:flex-row justify-center 
+        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 ${
+          showSearch ? "blur-lg" : ""
+        }`}
         >
           <AirlineInfoCard
             headerTitleText="Wheels up"
