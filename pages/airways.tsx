@@ -104,7 +104,7 @@ export default function Home() {
 
         <header className="py-20 bg-gradient-airways">
           <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col lg:flex-row items-center justify-between">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-y-6 lg:gap-y-0">
               <AirlineDestination
                 setActiveField={setActiveField}
                 setShowSearch={setShowSearch}
