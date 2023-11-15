@@ -17,7 +17,7 @@ import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
 
 
-export function CSNav() {
+export function CSNav({variant}) {
   const router = useRouter();
 
   function goHome() {

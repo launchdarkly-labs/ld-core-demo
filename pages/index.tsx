@@ -4,6 +4,7 @@ import {  AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Globe } from "lucide-react";
 import { useRouter } from 'next/router'
 import { CSNav } from "@/components/ui/csnav";
+import NavBar from "@/components/ui/navbar";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -56,13 +57,7 @@ export default function Home() {
         variants={pageVariants}
         transition={pageTransition}
       >
-        <div className="absolute top-0 w-full text-white flex h-20 shadow-2xl ">
-            <div className="ml-4 flex items-center text-3xl">
-            <CSNav />
-            
-           <img src="ld-white-wide.png" className="h-1/2 pl-4" /> 
-           </div>
-        </div>
+        <NavBar />
       
       <div onClick={goToNext} className="border-2 border-white/20 hover:border-white/60 absolute p-4 right-2 top-1/2 transform -translate-y-1/2">
       <ArrowRight className="text-zinc-500" size={36} />

@@ -22,6 +22,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
+import NavBar from "@/components/ui/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -76,17 +77,8 @@ export default function Home() {
         transition={pageTransition}
         className={`flex h-full bg-slate-950 text-white flex-col font-audimat`}
       >
-        <div className="flex h-20 shadow-2xl ">
-          <div className="ml-4 flex items-center text-3xl">
-            <CSNav />
-            <Plane className="mr-2" />
-            <p className="flex font-audimat">Launch Airways</p>
-          </div>
-          <div className="flex space-x-6 ml-auto mr-4 items-center">
-            <RegistrationForm />
-            <LoginScreen />
-          </div>
-        </div>
+        <NavBar variant={"airlines"} />
+        <div className="flex h-20 shadow-2xl"></div>
         <div className="flex flex-row items-center place-content-center mx-auto my-4">
           <motion.div
             initial={{ scale: 0.25, opacity: 0 }}
@@ -257,9 +249,9 @@ export default function Home() {
                 </p>
 
                 <p className="textlg: md:text-xl xl:text-2xl font-light pt-4 w-4/5 xl:w-2/3 mx-auto ">
-                  Launch into the skies. In the air in milliseconds, reach
-                  your destination without risk, and ship your travel dreams
-                  faster than ever before.
+                  Launch into the skies. In the air in milliseconds, reach your
+                  destination without risk, and ship your travel dreams faster
+                  than ever before.
                 </p>
               </div>
             </div>
@@ -278,8 +270,8 @@ export default function Home() {
             </CardTitle>
             <CardContent>
               <p className="text-gray-300 font-robotolight pt-2 text-lg text-center">
-                Launch into the skies. Live the life of comfort, spead,
-                and excitement as board any of our hundreds of flights a month.
+                Launch into the skies. Live the life of comfort, spead, and
+                excitement as board any of our hundreds of flights a month.
                 Travel globally, without the risk.
               </p>
             </CardContent>
@@ -290,7 +282,7 @@ export default function Home() {
             </CardHeader>
             <CardTitle className="flex justify-center p-2 py-4">
               <p className="font-bold text-3xl text-gray-300 font-audimat text-center">
-                Toggle "On" Your Next Get Away 
+                Toggle "On" Your Next Get Away
               </p>
             </CardTitle>
             <CardContent>
