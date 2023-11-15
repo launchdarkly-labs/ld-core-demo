@@ -10,6 +10,7 @@ import {
   Tooltip,
   AreaChart,
   Area,
+  ResponsiveContainer
 } from "recharts";
 import {
   AreaChartIcon,
@@ -40,12 +41,6 @@ import {
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import NavBar from "@/components/ui/navbar";
 
 export default function Bank() {
@@ -135,7 +130,7 @@ export default function Bank() {
           transition={pageTransition}
         >
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
-            <NavBar variant={'bank'}/>
+            <NavBar variant={"bank"} isLoggedIn={isLoggedIn} />
           </div>
           <div className="h-1/3 w-full bg-white ">
             <div className="w-full bg-gradient-releases py-8 px-12 xl:px-36 flex justify-between">
@@ -188,61 +183,18 @@ export default function Bank() {
         </motion.main>
       ) : (
         <motion.main
-          className={`relative w-full font-roboto`}
+          className={`relative w-full font-roboto pb-20`}
           initial="initial"
           animate="in"
           exit="out"
           variants={pageVariants}
           transition={pageTransition}
         >
-          <div className=" h-20 flex flex-row w-full justify-between bg-ldgrey">
-            <div className="ml-4 flex items-center text-3xl">
-              <CSNav />
-              <img src="ToggleBank.png" className="pl-4" />
-
-              <div className="pl-24 summary-border">
-                <p className="text-white text-[16px] font-sohne">Summary</p>
-              </div>
-              <div className="pl-16">
-                <p className="text-gray-500 text-[16px] font-sohne">
-                  Transfers
-                </p>
-              </div>
-              <div className="pl-16">
-                <p className="text-gray-500 text-[16px] font-sohne">Deposits</p>
-              </div>
-              <div className="pl-16">
-                <p className="text-gray-500 text-[16px] font-sohne">
-                  External Accounts
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Popover>
-                <PopoverTrigger>
-                  <Avatar className="h-16 w-16 mr-8">
-                    <AvatarImage src="woman.png" className="" />
-                  </Avatar>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] h-[400px]">
-                  <div className="grid space-y-4">
-                    <p className="text-center text-xl font-audimat">
-                      Welcome to Your Account!
-                    </p>
-                    <img
-                      src="woman.png"
-                      className="rounded-full h-32 mx-auto"
-                    />
-                    <Button onClick={handleLogout}>Logout</Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
+          <NavBar variant={"bank"} handleLogout={handleLogout} />
 
           <div className=" w-full  px-8 ">
             <div className="flex flex-col xl:flex-row py-8 gap-x-8">
-              <div className="flex w-full font-sohne h-[425px]">
+              <div className="flex w-full h-[425px]">
                 <div className="px-6 shadow-xl bg-gradient-blue">
                   <div className="justify-center xl:justify-start">
                     <div>
@@ -251,13 +203,13 @@ export default function Bank() {
                       </p>
                     </div>
                     <div className="flex flex-row gap-4">
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white ">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  min-w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3  min-w-[250px] bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
@@ -266,18 +218,20 @@ export default function Bank() {
               </div>
               <div className="flex flex-grow font-sohne h-full">
                 {federatedAccounts && (
-                  <div className="px-6 gap-4  bg-ldcardgrey  h-[425px]">
-                    <div>
-                      <p className="text-black font-sohne py-6 text-[24px]">
-                        Federated Account Access
-                      </p>
-                    </div>
-                    <div className="flex flex-row gap-4 justify-center">
-                      <div className="p-4 h-[300px] w-[300px] bg-white ">
-                        <FederatedCheckingAccount />
+                  <div className="h-full">
+                    <div className="px-6 gap-4 w-full bg-ldcardgrey  h-[425px]">
+                      <div>
+                        <p className="text-black font-sohne py-6 text-[24px]">
+                          Federated Account Access
+                        </p>
                       </div>
-                      <div className="p-4 h-[300px] w-[300px] bg-white">
-                        <FederatedCreditAccount />
+                      <div className="flex flex-row gap-4 justify-start">
+                        <div className="p-4 h-[300px] w-[250px] bg-white ">
+                          <FederatedCheckingAccount />
+                        </div>
+                        <div className="p-4 h-[300px] w-[250px] bg-white">
+                          <FederatedCreditAccount />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -286,59 +240,61 @@ export default function Bank() {
             </div>
 
             {wealthManagement ? (
-              <div className="px-6 py-2 bg-ldcardgrey">
+              <div className="px-6 py-2 bg-ldcardgrey h-[425px]">
                 <div>
                   <p className="text-black font-sohne py-6 text-[24px]">
                     Wealth Management
                   </p>
                 </div>
-                <div className="flex w-full space-x-4">
+                <div className="flex w-full h-[300px] space-x-4">
                   <div className="flex p-4 w-5/12 rounded-none bg-white justify-center">
-                    <AreaChart
-                      width={500}
-                      height={350}
-                      data={data}
-                      margin={{
-                        top: 10,
-                        right: 30,
-                        left: 0,
-                        bottom: 0,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Area
-                        type="monotone"
-                        dataKey="balance"
-                        stroke="#8884d8"
-                        fill="url(#colorUv)"
-                      />
-                      <defs>
-                        <linearGradient
-                          id="colorUv"
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="5%"
-                            stopColor="#00c0e7"
-                            stopOpacity={1}
-                          />
-                          <stop
-                            offset="95%"
-                            stopColor="#a34fde"
-                            stopOpacity={1}
-                          />
-                        </linearGradient>
-                      </defs>
-                    </AreaChart>
+                    <ResponsiveContainer>
+                      <AreaChart
+                        width={500}
+                        height={350}
+                        data={data}
+                        margin={{
+                          top: 10,
+                          right: 30,
+                          left: 0,
+                          bottom: 0,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Area
+                          type="monotone"
+                          dataKey="balance"
+                          stroke="#8884d8"
+                          fill="url(#colorUv)"
+                        />
+                        <defs>
+                          <linearGradient
+                            id="colorUv"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#00c0e7"
+                              stopOpacity={1}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#a34fde"
+                              stopOpacity={1}
+                            />
+                          </linearGradient>
+                        </defs>
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
 
-                  <div className="p-6 bg-white w-3/12 rounded-none">
+                  <div className="p-6 bg-white w-3/12 h-full">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -351,7 +307,7 @@ export default function Bank() {
                     </div>
 
                     <div className="flex flex-col">
-                      <div className="">
+                      <div className="pt-16">
                         <p className="cardaccounttext">
                           Total Investment Balance:{" "}
                         </p>
@@ -410,7 +366,7 @@ export default function Bank() {
                           </div>
                         </div>
                       </div>
-                      <div className="overflow-auto max-h-[150px]">
+                      <div className="overflow-auto max-h-[350px]">
                         <p className="my-4">{aiResponse}</p>
                       </div>
                     </div>
