@@ -14,9 +14,9 @@ import {
 
 import { Home, HomeIcon, Menu, Navigation } from "lucide-react";
 import { useRouter } from "next/router";
-import { CSCard } from "../ldcscard";
+import { CSCard } from "../../ldcscard";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "../card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../card";
 import {
   Table,
   TableBody,
@@ -25,8 +25,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../table";
+} from "@/components/ui/table";
 import { useEffect, useState } from "react";
+
+interface InventoryItem {
+  id: string | number;
+  item: string;
+  cost: number;
+}
 
 export function VRgalaxy() {
   const router = useRouter();
@@ -43,18 +49,20 @@ export function VRgalaxy() {
     <Sheet>
       <SheetTrigger asChild>
       <div>
-        <img src="gaming.png" className="h-[300px]" />
-        </div>
-
+        <img src="gaming.png" alt="VR Gaming" className="h-[300px]" />
+      </div>
       </SheetTrigger>
 
 
       <SheetContent className="w-1/2" side="right">
         
         <SheetHeader>
+
           <SheetTitle className="font-sohne text-2xl">
             Welcome to VR Galaxy
           </SheetTitle>
+
+
           <SheetDescription className="font-sohne">
             Your home for todays VR equipment!
           </SheetDescription>
@@ -69,7 +77,7 @@ export function VRgalaxy() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {inventory.map((item) => (
+            {inventory.map((item: InventoryItem) => (
               <TableRow key={item.id}>
                 <TableCell>{item.item}</TableCell>
                 <TableCell>{item.cost}</TableCell>

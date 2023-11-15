@@ -29,7 +29,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { VRgalaxy, shopmore } from "@/components/ui/marketcomponents/vrgalaxy";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -37,6 +36,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
+import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
+import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
+import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -116,17 +118,25 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
+              
+              {/* Store individual callouts */}
+              {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div>
                   <VRgalaxy />
                 </div>
+              
                 <div>
-                  <img src="computers.png" className="h-[300px]" />
+                  <MacroCenter />
                 </div>
+              
                 <div>
-                  <img src="electronics.png" className="h-[300px]" />
+                  <TheBoominBox />
                 </div>
               </div>
             </div>
+
+            {/* Categories */}
+
             <div>
               <div className="flex justify-between items-center pb-10">
                 <div>
