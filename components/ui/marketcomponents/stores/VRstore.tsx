@@ -43,8 +43,8 @@ const payments = [
 ];
 
 
-export function VRstore() {
-
+export function VRgalaxy() {
+:components/ui/marketcomponents/vrgalaxy.tsx
   const router = useRouter();
 
   return (

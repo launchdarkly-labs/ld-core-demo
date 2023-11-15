@@ -38,7 +38,7 @@ import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
 
 
-import { VRstore } from "@/components/ui/marketcomponents/stores/VRstore";
+import { VRgalaxy } from "@/components/ui/marketcomponents/stores/VRstore";
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -121,7 +121,7 @@ export default function Marketplace() {
               
               {/* Store individual callouts */}
                 <div>
-                  <VRgalaxy />
+                  <VRstore />
                 </div>
               
                 <div>
