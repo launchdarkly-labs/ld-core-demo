@@ -28,9 +28,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { VRstore } from "@/components/ui/marketcomponents/stores/VRstore";
-import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
+} from "@/components/ui/sheet";
+import { VRgalaxy, shopmore } from "@/components/ui/marketcomponents/vrgalaxy";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
-
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -56,10 +54,6 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
-
-  
- 
-
   return (
     <motion.div
       initial="initial"
@@ -69,7 +63,7 @@ export default function Marketplace() {
       transition={pageTransition}
       className="h-full"
     >
-      <NavBar variant={'market'}/>
+      <NavBar variant={"market"} />
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
@@ -122,16 +116,11 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
-
                 <div>
-                <div className="p-4 h-[300px] w-[300px]">
-                  <VRstore />
+                  <VRgalaxy />
                 </div>
-                </div>
-
-
                 <div>
-                <MacroCenter  />
+                  <img src="computers.png" className="h-[300px]" />
                 </div>
                 <div>
                   <img src="electronics.png" className="h-[300px]" />
