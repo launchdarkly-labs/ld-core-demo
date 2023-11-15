@@ -27,7 +27,7 @@ const AirlineDestination = ({
       initial={{ scale: 0.25, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className="flex"
+      className="flex items-center gap-x-6"
     >
       <div className="relative">
         <button
@@ -40,7 +40,7 @@ const AirlineDestination = ({
         </button>
         <p className="text-center text-xs font-audimat uppercase">Origin</p>
       </div>
-      <MoveHorizontalIcon strokeWidth={1} width={50} size={50} className="stroke-ldblue mr-8" />
+      <MoveHorizontalIcon className="h-10 w-10 text-marketblue" />
       <div className="relative">
         <button
           onClick={() => {

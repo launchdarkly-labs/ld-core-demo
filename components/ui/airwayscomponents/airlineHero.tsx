@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 
 const AirlineHero = () => {
   return (
-    <section className="bg-slate-100 salient-hero-image">
+    <section className=" airline-hero-image">
       <div className="flex flex-col">
         <div className={`relative`}>
           <div aria-hidden="true" className="absolute hidden h-full w-1/2 lg:block" />
           <div className="relative bg-transparent">
             <div className={`mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 lg:px-8 `}>
-              <div className=" max-w-2xl py-12 lg:max-w-none lg:py-32 z-10">
+              <div className=" max-w-2xl py-32 lg:max-w-none lg:py-32 z-10">
                 <div className={`flex flex-col`}>
                   <h1 className={`text-4xl md:text-6xl xl:text-7xl pb-4 font-audimat`}>
                     Launch Airways
