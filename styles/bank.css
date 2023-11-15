@@ -1,7 +1,7 @@
 .accounttext {
   color: #58595b;
   font-family: Sohne;
-  font-size: 15.699px;
+  font-size: 16.699px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
@@ -19,7 +19,7 @@
 .balancetext {
   color: rgba(40, 40, 40, 0.53);
   font-family: Sohne;
-  font-size: 15.699px;
+  font-size: 17.699px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -27,7 +27,7 @@
 
 .aprtext {
   color: var(--gray-700, #58595b);
-  font-family: 'Sohne Light';
+  font-family: SohneLight;
   font-size: 14.7px;
   font-style: normal;
   font-weight: 200;
@@ -39,14 +39,14 @@
   font-family: Sohne;
   font-size: 18.699px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   line-height: normal;
 }
 
 .balance {
   color: #282828;
   font-family: Sohne;
-  font-size: 23.936px;
+  font-size: 26.936px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -55,4 +55,9 @@
 @font-face {
     font-family: "Sohne";
     src: url("/fonts/sohne.otf");
+  }
+
+  @font-face {
+    font-family: "SohneLight";
+    src: url("/fonts/sohne-light.otf");
   }
