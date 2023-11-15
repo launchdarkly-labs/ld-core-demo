@@ -62,11 +62,12 @@ export function FederatedCreditAccount() {
       <SheetTrigger asChild>
         <div className="h-full grid p-2">
           <div className="flex flex-col items-start space-y-4">
-            <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-              <CreditCard className="text-blue-700" />
+            <div className="bg-gray-300/30 rounded-full flex items-center justify-center w-10 h-10">
+              <CreditCard className="text-gray-700" />
             </div>
             <div className="">
               <p className="accounttext">Platinum Credit (***3487)</p>
+              <p className="aprtext pt-2">APR $13.875</p>
             </div>
           </div>
 
@@ -74,7 +75,7 @@ export function FederatedCreditAccount() {
             <div className="space-y-2">
               <p className="balancetext">Total Credit Balance: </p>
               <p className="balance">$1,203</p>
-              <p className="aprtext">APR $13.875</p>
+              
             </div>
             <div>
               <p className="duetext">Next Due: 23rd</p>

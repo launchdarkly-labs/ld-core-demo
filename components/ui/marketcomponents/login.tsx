@@ -9,6 +9,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import LoginContext from "@/utils/contexts/login";
 import { useContext } from "react";
 import { useState } from "react";
@@ -21,7 +22,7 @@ const formSchema = z.object({
   password: z.string().min(4, { message: "Invalid email address" }),
 });
 
-export default function LoginScreen() {
+export default function MarketLoginScreen() {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
     useContext(LoginContext);
   const [username, setUsername] = useState("");
@@ -40,12 +41,19 @@ export default function LoginScreen() {
   return (
     <Popover>
       <PopoverTrigger>
-        <Button
-          variant={"ghost"}
-          className="text-white bg-blue-700 font-sohne text-md px-8 rounded-none"
-        >
-          {isLoggedIn ? "Account" : "Login"}
-        </Button>
+        {isLoggedIn ? (
+          <Avatar>
+            <AvatarImage src='/woman.png' alt='woman'/>
+            <AvatarFallback>LD</AvatarFallback>
+          </Avatar>
+        ) : (
+          <Button
+            variant={"ghost"}
+            className="text-white bg-gradient-to-r from-marketblue to-marketgreen font-audimat text-sm text-black uppercase px-8 rounded-full"
+          >
+            Login
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="dark w-[400px]">
         <div>

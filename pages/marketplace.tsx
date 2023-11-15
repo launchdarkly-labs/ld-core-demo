@@ -36,6 +36,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LoginScreen from "@/components/ui/marketcomponents/login";
+import NavBar from "@/components/ui/navbar";
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -66,20 +67,7 @@ export default function Marketplace() {
       transition={pageTransition}
       className="h-full"
     >
-      <div className="flex h-20 bg-black shadow-2xl justify-between text-white font-audimat ">
-        <div className="ml-4 flex items-center text-3xl">
-          <CSNav />
-          <p className="flex font-robotobold marketplace italic px-2">
-            Galaxy Marketplace
-          </p>
-        </div>
-        <div className="flex gap-x-8 mr-8 items-center">
-          <Button className="px-12 text-lg rounded-none font-sohne bg-black border-2">
-            Admin
-          </Button>
-          <LoginScreen />
-        </div>
-      </div>
+      <NavBar variant={'market'}/>
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
