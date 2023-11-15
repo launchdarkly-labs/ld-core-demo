@@ -34,7 +34,7 @@ interface InventoryItem {
   cost: number;
 }
 
-export function VRgalaxy() {
+export function VRgalaxy({addToCart}) {
   const router = useRouter();
 
   const [inventory, setInventory] = useState([]);
@@ -44,6 +44,11 @@ export function VRgalaxy() {
       .then(response => response.json())
       .then(data => setInventory(data));
   }, []);
+
+
+  function test() {
+    console.log("ran")
+  }
 
   return (
     <Sheet>
@@ -82,7 +87,9 @@ export function VRgalaxy() {
                 <TableCell>{item.item}</TableCell>
                 <TableCell>{item.cost}</TableCell>
                 <TableCell>
-                  <Button>Buy Now</Button>
+                  <div>
+                  <Button className="rounded-none bg-blue-600 font-sohne" onClick={() => addToCart(item)}>Buy Now</Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

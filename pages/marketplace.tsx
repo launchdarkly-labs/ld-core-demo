@@ -41,6 +41,8 @@ import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 
 export default function Marketplace() {
+  const [cart, setCart] = useState([])
+
   const flags = useFlags();
   console.log(flags);
 
@@ -55,6 +57,15 @@ export default function Marketplace() {
     ease: "anticipate",
     duration: 0.5,
   };
+
+  const addToCart = (item) => {
+    console.log("Adding")
+    setCart([...cart, item]);
+  };
+
+  useEffect(() => {
+    console.log(cart)
+  }, [cart]);
 
   return (
     <motion.div
@@ -122,7 +133,7 @@ export default function Marketplace() {
               {/* Store individual callouts */}
               {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div>
-                  <VRgalaxy />
+                  <VRgalaxy addToCart={addToCart} />
                 </div>
               
                 <div>
