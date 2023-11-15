@@ -1,4 +1,5 @@
 import { CSNav } from "@/components/ui/csnav";
+import NavBar from "@/components/ui/navbar";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
@@ -25,13 +26,7 @@ const MobilePage = () => {
         transition={pageTransition}
         className="flex items-center justify-center h-screen bg-ldblack"
       >
-        <div className="absolute top-0 w-full text-white flex h-20 shadow-2xl ">
-          <div className="ml-4 flex items-center text-3xl">
-            <CSNav />
-
-            <img src="ld-white-wide.png" className="h-1/2 pl-4" />
-          </div>
-        </div>
+        <NavBar />
         <video
           src="https://utfs.io/f/16ca2adf-2508-4794-acb5-283e83764b49-nelf4r.mp4"
           controls

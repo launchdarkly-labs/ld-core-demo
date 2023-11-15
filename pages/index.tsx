@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Globe } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSNav } from "@/components/ui/csnav";
+import NavBar from "@/components/ui/navbar";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,23 +48,19 @@ export default function Home() {
   };
 
   return (
-    <main className="h-full flex-col items-center justify-center bg-ldblack">
-      <div className="w-full text-white flex h-20 shadow-2xl">
-        <div className="ml-4 flex items-center text-3xl">
-          <CSNav />
-
-          <img src="ld-white-wide.png" className="h-1/2 pl-4" />
-        </div>
-      </div>
-
-      <div className="banner">
-        <div>
-          <h1>Connecting code to customers</h1>
-          <p>
-            Maximize the value of every software feature through safer releases,
-            targeted experiences, experimentation, and more.
-          </p>
-        </div>
+    <AnimatePresence mode="wait">
+    <motion.main
+        className={`relative flex h-screen flex-col items-center justify-center bg-ldblack`}
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+      >
+        <NavBar />
+      
+      <div onClick={goToNext} className="border-2 border-white/20 hover:border-white/60 absolute p-4 right-2 top-1/2 transform -translate-y-1/2">
+      <ArrowRight className="text-zinc-500" size={36} />
       </div>
       <div className="flex flex-wrap items-center justify-center pt-10 mx-auto w-1/2 gap-8 mt-8 pb-12">
         <div className="flex flex-row gap-8">
