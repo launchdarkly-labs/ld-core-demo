@@ -4,14 +4,16 @@ import { useContext } from "react";
 import { CSNav } from "./csnav";
 import { Search, MessageCircle } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
-import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
+import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { Button } from "./button";
+import BookedFlights from "./airwayscomponents/bookedFlights";
+import MarketLoginScreen from "./marketcomponents/login";
 
 const NavBar = React.forwardRef<any>(
   ({ className, variant, handleLogout, ...props }, ref) => {
@@ -44,45 +46,39 @@ const NavBar = React.forwardRef<any>(
                 {"\u00A0"}Airways
               </p>
             </div>
-            <button
-              href="/airways"
-              className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Book
-            </button>
-            <button
-              href="/airways"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              My Bookings
-            </button>
-            <button
-              href="/airways"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Checkin
-            </button>
-            <button
-              href="/airways"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Flight Status
-            </button>
+            {isLoggedIn ? (
+              <>
+                <button
+                  href="/airways"
+                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom outline-none"
+                >
+                  Book
+                </button>
+                <BookedFlights />
+                <button
+                  href="/airways"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Checkin
+                </button>
+                <button
+                  href="/airways"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Flight Status
+                </button>
+              </>
+            ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <Search />
               <MessageCircle />
-              <Avatar>
-                <AvatarImage src="/woman.png" alt="woman" />
-                <AvatarFallback>LD</AvatarFallback>
-              </Avatar>
-              {/* <RegistrationForm />
-            <LoginScreen /> */}
+              <LoginScreen />
             </div>
           </nav>
         );
       case "bank":
         return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
+          <nav className="sticky w-full place-content-start flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
             <div className="items-center flex">
               <CSNav />
             </div>
@@ -101,53 +97,41 @@ const NavBar = React.forwardRef<any>(
                 />
               </svg>
             </div>
+            {isLoggedIn ? (
+            <>    
             <button
               href="/bank"
-              className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
+              className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
             >
               Summary
             </button>
             <button
-              href="/airways"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              My Bookings
-            </button>
-            <button
               href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
+              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
             >
               Transfers
             </button>
             <button
               href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
+              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
             >
               Deposits
             </button>
             <button
               href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
+              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
             >
               External Accounts
             </button>
             <button
               href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
+              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
             >
               Statements
             </button>
+            </>) : null}
             {!isLoggedIn ? (
-                <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <Search color={"white"} />
-              <MessageCircle color={"white"} />
-              <Avatar>
-                <AvatarImage src="/woman.png" alt="woman" />
-                <AvatarFallback>LD</AvatarFallback>
-              </Avatar>
-              {/* <RegistrationForm />
-            <LoginScreen /> */}
-            </div>
+                null
             ) : (            
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <Search color={"white"} />
@@ -174,7 +158,7 @@ const NavBar = React.forwardRef<any>(
               {/* <RegistrationForm />
             <LoginScreen /> */}
             </div>
-            )};
+            )}
           </nav>
         );
       case "market":
@@ -201,45 +185,44 @@ const NavBar = React.forwardRef<any>(
                 <strong className="font-sohne">Market</strong>place
               </p>
             </div>
-            <button
-              href="/marketplace"
-              className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              All
-            </button>
-            <button
-              href="/marketplace"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Account
-            </button>
-            <button
-              href="/marketplace"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Buy Again
-            </button>
-            <button
-              href="/marketplace"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Today's Deals
-            </button>
-            <button
-              href="/marketplace"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom focus:outline-none"
-            >
-              Sale
-            </button>
+            {isLoggedIn ? (
+              <>
+                <button
+                  href="/marketplace"
+                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  All
+                </button>
+                <button
+                  href="/marketplace"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Account
+                </button>
+                <button
+                  href="/marketplace"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Buy Again
+                </button>
+                <button
+                  href="/marketplace"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Today's Deals
+                </button>
+                <button
+                  href="/marketplace"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Sale
+                </button>
+              </>
+            ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <Search color={"white"} />
               <MessageCircle color={"white"} />
-              <Avatar>
-                <AvatarImage src="/woman.png" alt="woman" />
-                <AvatarFallback>LD</AvatarFallback>
-              </Avatar>
-              {/* <RegistrationForm />
-            <LoginScreen /> */}
+              <MarketLoginScreen />
             </div>
           </nav>
         );
