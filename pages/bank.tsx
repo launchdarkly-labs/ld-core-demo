@@ -257,7 +257,7 @@ export default function Bank() {
                         <CreditAccount />
                       </div>
                       <div className="p-4 h-[300px] w-[300px] bg-white">
-                        <MorgtgageAccount />
+                        <MortgageAccount />
                       </div>
                     </div>
                   </div>
