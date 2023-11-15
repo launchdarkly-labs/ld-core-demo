@@ -100,7 +100,7 @@ export default function Home() {
       >
         <NavBar variant={"airlines"} />
         <div className="flex flex-row py-20  space-x-20 items-center bg-gradient-airways">
-          <div className="flex items-center mx-auto justify-stretch">
+          <div className="flex items-center mx-auto">
             <motion.div
               initial={{ scale: 0.25, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
