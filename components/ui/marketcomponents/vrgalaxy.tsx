@@ -42,7 +42,7 @@ const payments = [
   { month: "12/2022", amount: 4123, status: "cleared" }
 ];
 
-export function shopmore() {
+export function VRgalaxy() {
   const router = useRouter();
 
   return (
