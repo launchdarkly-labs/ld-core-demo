@@ -130,7 +130,7 @@ export default function Bank() {
           transition={pageTransition}
         >
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
-            <NavBar variant={"bank"} isLoggedIn={isLoggedIn} />
+            <NavBar variant={"bank"}/>
           </div>
           <div className="h-1/3 w-full bg-white ">
             <div className="w-full bg-gradient-releases py-8 px-12 xl:px-36 flex justify-between">
@@ -190,7 +190,7 @@ export default function Bank() {
           variants={pageVariants}
           transition={pageTransition}
         >
-          <NavBar variant={"bank"} handleLogout={handleLogout} />
+          <NavBar variant={"bank"} handleLogout={handleLogout}/>
 
           <div className=" w-full  px-8 ">
             <div className="flex flex-col xl:flex-row py-8 gap-x-8">

@@ -1,5 +1,6 @@
 //@ts-nocheck
 import * as React from "react";
+import { useContext } from "react";
 import { CSNav } from "./csnav";
 import { Search, MessageCircle } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
@@ -9,10 +10,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import LoginContext from "@/utils/contexts/login";
 import { Button } from "./button";
 
 const NavBar = React.forwardRef<any>(
-  ({ className, variant, ...props }, ref, handleLogout, isLoggedIn) => {
+  ({ className, variant, handleLogout, ...props }, ref) => {
+    const { isLoggedIn } = useContext(LoginContext);
     let navBarClass = "";
     switch (variant) {
       case "airlines":
@@ -134,7 +137,7 @@ const NavBar = React.forwardRef<any>(
             >
               Statements
             </button>
-            {isLoggedIn ? (
+            {!isLoggedIn ? (
                 <div className="flex space-x-6 ml-auto mr-4 items-center">
               <Search color={"white"} />
               <MessageCircle color={"white"} />
@@ -151,7 +154,7 @@ const NavBar = React.forwardRef<any>(
               <MessageCircle color={"white"} />
               <Popover>
                 <PopoverTrigger>
-                  <Avatar className="h-16 w-16 mr-8">
+                  <Avatar>
                     <AvatarImage src="woman.png" className="" />
                   </Avatar>
                 </PopoverTrigger>
