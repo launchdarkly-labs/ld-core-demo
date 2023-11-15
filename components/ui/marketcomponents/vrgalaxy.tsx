@@ -26,24 +26,18 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-
-const payments = [
-  { month: "11/2023", amount: 4123, status: "cleared" },
-  { month: "10/2023", amount: 4123, status: "cleared" },
-  { month: "09/2023", amount: 4123, status: "cleared" },
-  { month: "08/2023", amount: 4123, status: "cleared" },
-  { month: "07/2023", amount: 4123, status: "cleared" },
-  { month: "06/2023", amount: 4123, status: "cleared" },
-  { month: "05/2023", amount: 4123, status: "cleared" },
-  { month: "04/2023", amount: 4123, status: "cleared" },
-  { month: "03/2023", amount: 4123, status: "cleared" },
-  { month: "02/2023", amount: 4123, status: "cleared" },
-  { month: "01/2023", amount: 4123, status: "cleared" },
-  { month: "12/2022", amount: 4123, status: "cleared" }
-];
+import { useEffect, useState } from "react";
 
 export function VRgalaxy() {
   const router = useRouter();
+
+  const [inventory, setInventory] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/storeInventory?storename=vrgalaxy')
+      .then(response => response.json())
+      .then(data => setInventory(data));
+  }, []);
 
   return (
     <Sheet>
@@ -59,13 +53,33 @@ export function VRgalaxy() {
         
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
-            Federated Mortgage Account
+            Welcome to VR Galaxy
           </SheetTitle>
           <SheetDescription className="font-sohne">
-            Your home loan balance statement
+            Your home for todays VR equipment!
           </SheetDescription>
         </SheetHeader>
-       
+        <Table>
+          <TableCaption>VR Galaxy Inventory</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Item</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {inventory.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.item}</TableCell>
+                <TableCell>{item.cost}</TableCell>
+                <TableCell>
+                  <Button>Buy Now</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
         <SheetFooter>
           {/* <SheetClose asChild>
             <Button type="submit">Save changes</Button>
