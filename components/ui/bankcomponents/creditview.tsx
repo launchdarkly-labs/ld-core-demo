@@ -108,6 +108,7 @@ export function CreditAccount() {
             </div>
             <div className="">
               <p className="accounttext">Platinum Credit (***3487)</p>
+              <p className="aprtext pt-2">APR $13.875</p>
             </div>
           </div>
 
@@ -115,7 +116,7 @@ export function CreditAccount() {
             <div className="space-y-2">
               <p className="balancetext">Total Credit Balance: </p>
               <p className="balance">$1,203</p>
-              <p className="aprtext">APR $13.875</p>
+              
               </div>
               <div>
               <p className="duetext">Next Due: 23rd</p>

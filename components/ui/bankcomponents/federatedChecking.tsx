@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Banknote, Menu, Navigation } from "lucide-react";
+import { Banknote, Landmark, Menu, Navigation } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "../ldcscard";
 import { motion } from "framer-motion";
@@ -63,11 +63,12 @@ export function FederatedCheckingAccount() {
       <SheetTrigger asChild>
       <div className="h-full grid p-2">
           <div className="flex flex-col items-start space-y-4">
-            <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-              <Banknote className="text-blue-700" />
+            <div className="bg-gray-300/30 rounded-full flex items-center justify-center w-10 h-10">
+              <Landmark className="text-gray-700" />
             </div>
             <div className="">
-              <p className="accounttext">Checking Acocount (***2982)</p>
+              <p className="accounttext pb-1">Checking (***2982)</p>
+              <br />
             </div>
           </div>
 

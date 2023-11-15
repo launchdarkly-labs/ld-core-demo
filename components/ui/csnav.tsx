@@ -45,7 +45,7 @@ export function CSNav({variant}) {
       <SheetTrigger asChild>
         <Menu size={24} className='text-white' />
       </SheetTrigger>
-      <SheetContent className="bg-ldblack dark" side="left">
+      <SheetContent className="" side="left">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">Demo Navigation</SheetTitle>
           <SheetDescription className="font-sohne">

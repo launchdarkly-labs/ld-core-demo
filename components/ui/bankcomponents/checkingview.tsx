@@ -67,14 +67,15 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
             <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
               <Banknote className="text-blue-700" />
             </div>
-            <div className="">
-              <p className="accounttext">Checking Acocount (***2982)</p>
+            <div className="pb-1">
+              <p className="accounttext">Checking (***2982)</p>
+             <br /> 
             </div>
           </div>
 
           <div className="flex flex-col justify-between">
             <div className="space-y-2">
-              <p className="balancetext">Total Balance: </p>
+              <p className="balancetext">Total Checking Balance: </p>
               <p className="balance">$83,758</p>
             </div>
           </div>
