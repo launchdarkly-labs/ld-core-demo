@@ -10,7 +10,6 @@ export default function Code({
   code: string;
 }) {
   useEffect(() => {
-    console.log("Prism", Prism);
     Prism.highlightAll();
   }, []);
   return (
