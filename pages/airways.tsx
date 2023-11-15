@@ -19,7 +19,7 @@ import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
-import { Button } from "@/components/ui/button";
+
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 
@@ -101,22 +101,23 @@ export default function Home() {
         className={`flex h-screen  text-white flex-col font-audimat`}
       >
         <NavBar variant={"airlines"} />
-        <div className="flex flex-row py-20  space-x-20 items-center bg-gradient-airways">
-          <div className="flex flex-col lg:flex-row items-center mx-auto">
-            <AirlineDestination
-              setActiveField={setActiveField}
-              setShowSearch={setShowSearch}
-              fromLocation={fromLocation}
-              toLocation={toLocation}
-              showSearch={showSearch}
-              activeField={activeField}
-              setToLocation={setToLocation}
-              setFromLocation={setFromLocation}
-            />
+        <header className="py-20 bg-gradient-airways">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col lg:flex-row items-center justify-between">
+              <AirlineDestination
+                setActiveField={setActiveField}
+                setShowSearch={setShowSearch}
+                fromLocation={fromLocation}
+                toLocation={toLocation}
+                showSearch={showSearch}
+                activeField={activeField}
+                setToLocation={setToLocation}
+                setFromLocation={setFromLocation}
+              />
 
-            <div className="flex items-center text-xl px-16 font-audimat">
-              <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-              {/* <div>
+              <div className="flex items-center text-xl font-audimat">
+                <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+                {/* <div>
                 <Popover>
                   <PopoverTrigger asChild>
                     
@@ -175,23 +176,26 @@ export default function Home() {
                   </PopoverContent>
                 </Popover>
               </div> */}
-              <div className="ml-20">
-                <motion.button
-                  whileTap={{ scale: 0.5 }}
-                  onClick={() => bookTrip()}
-                  className={` items-center `}
-                >
-                  <img src="ArrowButton.png" width={75} className="" />
-                </motion.button>
+                <div className="ml-20">
+                  <motion.button
+                    whileTap={{ scale: 0.5 }}
+                    onClick={() => bookTrip()}
+                    className={` items-center `}
+                  >
+                    <img src="ArrowButton.png" width={75} className="" />
+                  </motion.button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </header>
 
         <AirlineHero />
 
-        <div className="relative flex flex-col sm:flex-row justify-center 
-        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 ">
+        <section
+          className="relative flex flex-col sm:flex-row justify-center 
+        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 "
+        >
           <AirlineInfoCard
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
@@ -207,7 +211,7 @@ export default function Home() {
             subtitleText="Choose Launch Platinum. Select on longer flights."
             imgSrc={airplaneDining}
           />
-        </div>
+        </section>
       </motion.main>
     </>
   );
