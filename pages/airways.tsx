@@ -102,7 +102,7 @@ export default function Home() {
       >
         <NavBar variant={"airlines"} />
         <div className="flex flex-row py-20  space-x-20 items-center bg-gradient-airways">
-          <div className="flex items-center mx-auto">
+          <div className="flex flex-col lg:flex-row items-center mx-auto">
             <AirlineDestination
               setActiveField={setActiveField}
               setShowSearch={setShowSearch}
@@ -114,10 +114,9 @@ export default function Home() {
               setFromLocation={setFromLocation}
             />
 
-            <div className="">
-              <div className="flex items-center text-xl px-16 font-audimat">
-                <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-                {/* <div>
+            <div className="flex items-center text-xl px-16 font-audimat">
+              <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+              {/* <div>
                 <Popover>
                   <PopoverTrigger asChild>
                     
@@ -176,15 +175,14 @@ export default function Home() {
                   </PopoverContent>
                 </Popover>
               </div> */}
-                <div className="ml-20">
-                  <motion.button
-                    whileTap={{ scale: 0.5 }}
-                    onClick={() => bookTrip()}
-                    className={` items-center `}
-                  >
-                    <img src="ArrowButton.png" width={75} className="" />
-                  </motion.button>
-                </div>
+              <div className="ml-20">
+                <motion.button
+                  whileTap={{ scale: 0.5 }}
+                  onClick={() => bookTrip()}
+                  className={` items-center `}
+                >
+                  <img src="ArrowButton.png" width={75} className="" />
+                </motion.button>
               </div>
             </div>
           </div>
@@ -192,7 +190,8 @@ export default function Home() {
 
         <AirlineHero />
 
-        <div className="relative flex flex-col sm:flex-row justify-center gap-x-0 gap-y-6 sm:gap-x-24 py-14 z-0 bg-white !font-sohne ">
+        <div className="relative flex flex-col sm:flex-row justify-center 
+        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 ">
           <AirlineInfoCard
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
