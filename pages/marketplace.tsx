@@ -28,8 +28,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { shopmore } from "@/components/ui/marketcomponents/shopmore";
+} from "@/components/ui/sheet";
+import { VRgalaxy, shopmore } from "@/components/ui/marketcomponents/vrgalaxy";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -54,10 +54,6 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
-
-  
- 
-
   return (
     <motion.div
       initial="initial"
@@ -67,7 +63,7 @@ export default function Marketplace() {
       transition={pageTransition}
       className="h-full"
     >
-      <NavBar variant={'market'}/>
+      <NavBar variant={"market"} />
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
@@ -120,11 +116,9 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
-
-              <SheetTrigger<>
-              <shopmore  />
-
-
+                <div>
+                  <VRgalaxy />
+                </div>
                 <div>
                   <img src="computers.png" className="h-[300px]" />
                 </div>
