@@ -40,6 +40,7 @@ import NavBar from "@/components/ui/navbar";
 
 import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
+import { TheBoominBox } from "@/components/ui/marketcomponents/stores/theboominbox";
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -121,6 +122,7 @@ export default function Marketplace() {
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
               
               {/* Store individual callouts */}
+              {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div>
                   <VRgalaxy />
                 </div>
@@ -130,10 +132,13 @@ export default function Marketplace() {
                 </div>
               
                 <div>
-                  <img src="electronics.png" className="h-[300px]" />
+                  <TheBoominBox />
                 </div>
               </div>
             </div>
+
+            {/* Categories */}
+
             <div>
               <div className="flex justify-between items-center pb-10">
                 <div>
