@@ -46,9 +46,12 @@ export default function BookedFlights() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="bg-blue-700 text-xl font-audimat text-white">
-          View Current Flights
-        </Button>
+        <button
+          href="/airways"
+          className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
+        >
+          My Bookings
+        </button>
       </SheetTrigger>
       <SheetContent className="w-1/2 overflow-y-scroll dark" side="right">
         <SheetHeader>
@@ -113,7 +116,9 @@ export default function BookedFlights() {
                         </button>
                       </div>
                       <div className="flex items-center mx-auto">
-                        <Button className="bg-awsorange text-white font-audimat text-xl">AI Travel Insights</Button>
+                        <Button className="bg-awsorange text-white font-audimat text-xl">
+                          AI Travel Insights
+                        </Button>
                       </div>
                     </div>
                   </div>

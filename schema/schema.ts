@@ -45,3 +45,10 @@ export const bookedflights = pgTable('bookedflights', {
     destination: text('destination'),
     clublevel: text('clublevel'), 
 })
+
+export const galaxymarketplace = pgTable('galaxymarketplace', {
+    id: serial('id').primaryKey(),
+    vendor: text('vendor'),
+    item: text('item'),
+    cost: text('cost')
+})

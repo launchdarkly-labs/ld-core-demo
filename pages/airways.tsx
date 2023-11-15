@@ -98,9 +98,10 @@ export default function Home() {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className={`flex h-screen  text-white flex-col font-audimat`}
+        className={`flex h-screen text-white flex-col font-audimat`}
       >
         <NavBar variant={"airlines"} />
+
         <header className="py-20 bg-gradient-airways">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col lg:flex-row items-center justify-between">

@@ -19,6 +19,16 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
@@ -26,6 +36,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LoginScreen from "@/components/ui/marketcomponents/login";
 import NavBar from "@/components/ui/navbar";
+
+
+import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
+import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
 
 export default function Marketplace() {
   const flags = useFlags();
@@ -43,8 +57,6 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
-  
-
   return (
     <motion.div
       initial="initial"
@@ -54,7 +66,7 @@ export default function Marketplace() {
       transition={pageTransition}
       className="h-full"
     >
-      <NavBar variant={'market'}/>
+      <NavBar variant={"market"} />
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
@@ -107,12 +119,16 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
+              
+              {/* Store individual callouts */}
                 <div>
-                  <img src="gaming.png" className="h-[300px]" />
+                  <VRgalaxy />
                 </div>
+              
                 <div>
-                  <img src="computers.png" className="h-[300px]" />
+                  <MacroCenter />
                 </div>
+              
                 <div>
                   <img src="electronics.png" className="h-[300px]" />
                 </div>
