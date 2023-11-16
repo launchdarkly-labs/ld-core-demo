@@ -129,12 +129,18 @@ export default function Bank() {
             <NavBar variant={"bank"} />
           </div>
           <header className="w-full bg-bankblue mb-[4rem]">
-            <div className="w-full py-14 sm:py-[8rem] px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex flex-col sm:flex-row justify-between
-             items-center sm:items-start">
-              <div className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/3 justify-start mb-4 sm:mb-0 gap-y-6">
+            <div
+              className="w-full py-14 sm:py-[8rem] px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex flex-col sm:flex-row justify-between
+             items-center sm:items-start"
+            >
+              <div
+                className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+              text-white w-full sm:w-1/3 justify-start mb-4 sm:mb-0 gap-y-6"
+              >
                 {/* <img src="ToggleBankHeader.png" width={52} className="pb-0" /> */}
-                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">Welcome to ToggleBank </p>
+                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">
+                  Welcome to ToggleBank{" "}
+                </p>
                 <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
                   Login to access your account
                 </p>
@@ -147,12 +153,12 @@ export default function Bank() {
                   loginUser={loginUser}
                 />
               </div>
-
             </div>
           </header>
 
           <section
-            className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8
+            className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
+            sm:gap-y-0 gap-x-8
           sm:gap-x-12 lg:gap-x-24"
           >
             {bankingServicesArr.map((ele) => {
