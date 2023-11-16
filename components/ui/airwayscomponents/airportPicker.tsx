@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import debounce from "lodash/debounce"; // Add this
 import { Airports as airports } from "@/lib/airports";
+import { XIcon } from "lucide-react";
 
 interface AirportPickerProps {
   setFromLocation: (location: string) => void;
@@ -51,10 +52,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setShowSearch(false);
       }
     }
@@ -83,52 +81,39 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className="w-[427px] h-[275px] relative ">
-      <div className="w-[427px] h-[285px] left-0 top-0 absolute bg-white rounded-[5px] shadow" />
-      <button className="ml-auto absolute top-5 right-5 text-neutral-400" onClick={handleClose}>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-neutral-800" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 1a9 9 0 100 18A9 9 0 0010 1zm4.95 12.95a.75.75 0 01-1.06 1.06L10 11.06l-3.89 3.89a.75.75 0 11-1.06-1.06L8.94 10 5.05 6.11a.75.75 0 111.06-1.06L10 8.94l3.89-3.89a.75.75 0 111.06 1.06L11.06 10l3.89 3.89z" clipRule="evenodd" />
-        </svg>
+    <div className={`w-[430px] h-[275px] bg-white rounded-md shadow-md absolute
+     z-20 mt-4 p-[1rem] font-sohne font-normal ${activeField === "from" ? "" : "md:ml-[9rem] lg:ml-[9.5rem]"}`}>
+      <button className="cursor-pointer h-7 w-7 float-right" onClick={handleClose}>
+        <XIcon className="cursor-pointer h-full w-full text-neutral-400 " />
       </button>
-      <div className="w-[321px] h-[173px] left-[53px] top-[51px] absolute flex-col justify-start items-start gap-[20px] inline-flex">
-
-        <div className="px-[10px] justify-start items-start gap-0 inline-flex">
-          <div className="text-neutral-800 text-[10px] font-medium font-sohne uppercase leading-[3px] tracking-widest">Search</div>
+      <div className="m-6 flex flex-col gap-y-6">
+        <div className="">
+          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest border-b-4 pb-2 w-[7rem] border-pink-500 text-center ">
+            Search
+          </div>
+          <div className="w-full border-b-2 border-neutral-300"/>
         </div>
-
-        <div className="w-80 h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
 
         <div className="flex-col justify-start items-start gap-[15px] flex">
           <div className="flex-col justify-start items-start flex">
-            <div className="w-[88px] flex-col justify-start items-start flex">
-              <div className="text-neutral-500 text-base font-normal font-sohne leading-normal ">
-                {activeField === "from" ? "Origin" : "Destination"}
-              </div>
-              <input
-                className="w-[300px] h-[70px] text-zinc-500 text-[60px] font-normal font-sohne leading-[66.65px] outline-none"
-                placeholder="Airport"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  background: "linear-gradient(to right, #F43F5E, #8B5CF6)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              />
-
-              <div className="border-b-4 border-ldblue mb-2 text-white" />
-
+            <div className="text-neutral-500 text-base leading-normal mb-2 ">
+              {activeField === "from" ? "Origin" : "Destination"}
             </div>
-            <div className="w-80 h-1 border-b-2 border-purple-500 justify-center mx-auto"></div>
-
+            <input
+              className="w-full text-airlineBlack text-[60px]  
+                 leading-[66.65px] outline-none border-b-2 border-airlineBlack pb-4"
+              placeholder="Airport"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          <div className="w-36 h-[21px] text-neutral-700 text-xs font-normal font-sohne leading-[18px] tracking-wide">
+          <div className="w-full text-airlineBlack text-base  leading-[18px] tracking-wide">
             {searchTerm && filteredAirports.length === 0 ? (
               <p>No airports found</p>
             ) : (
               searchTerm && (
-                <ul>
+                <ul className="flex flex-row">
                   {filteredAirports.slice(0, 3).map((airport, index) => (
                     <li
                       key={index}
@@ -144,11 +129,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
           </div>
         </div>
       </div>
-      <div className="w-6 h-6 left-[390px] top-[14px] absolute" />
-      <div className="w-6 h-6 left-[360.97px] top-[147px] absolute origin-top-left rotate-45"
-      />
     </div>
-
   );
 };
 
