@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEffect } from "react";
 
 interface InventoryItem {
   id: string | number;
@@ -36,10 +37,16 @@ interface InventoryItem {
 export function StoreCart({ cart, setCart }) {
   const router = useRouter();
 
-  const totalCost = cart.reduce(
+  let totalCost;
+  
+  useEffect(()=>{
+    totalCost = cart.reduce(
     (total, item: InventoryItem) => total + Number(item.cost),
     0
   );
+  }, [cart])
+
+  
 
   const checkOut = () => {
     setCart([]);
