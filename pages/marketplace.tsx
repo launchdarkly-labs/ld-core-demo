@@ -41,13 +41,12 @@ import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 
 export default function Marketplace() {
-  const [cart, setCart] = useState([])
-  const [headerLabel, setHeaderLabel] = useState<string>("")
+  const [cart, setCart] = useState([]);
+  const [headerLabel, setHeaderLabel] = useState<string>("");
 
-
-  const LDClient = useLDClient()
+  const LDClient = useLDClient();
   const flags = useFlags();
-  const { storeAttentionCallout, storeHeaders  } = useFlags()
+  const { storeAttentionCallout, storeHeaders } = useFlags();
 
   const pageVariants = {
     initial: { x: "100%" },
@@ -62,18 +61,18 @@ export default function Marketplace() {
   };
 
   const addToCart = (item: any) => {
-    console.log("Adding Item to Store")
-    LDClient?.track('item-added', LDClient.getContext(), 1)
-    console.log("Adding")
+    console.log("Adding Item to Store");
+    LDClient?.track("item-added", LDClient.getContext(), 1);
+    console.log("Adding");
     setCart([...cart, item]);
   };
 
   useEffect(() => {
-    console.log(cart)
+    console.log(cart);
   }, [cart]);
-  
+
   useEffect(() => {
-   setHeaderLabel(storeAttentionCallout)
+    setHeaderLabel(storeAttentionCallout);
   }, [storeAttentionCallout]);
 
   return (
@@ -138,19 +137,22 @@ export default function Marketplace() {
                 </div>
               </div>
               <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
-              
-              {/* Store individual callouts */}
-              {/* Individual callouts can be found components/ui/marketcomponents/stores */}
+                {/* Store individual callouts */}
+                {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div>
-                  <VRgalaxy storeHeaders={storeHeaders} headerLabel={headerLabel} addToCart={addToCart} />
+                  <VRgalaxy
+                    storeHeaders={storeHeaders}
+                    headerLabel={headerLabel}
+                    addToCart={addToCart}
+                  />
                 </div>
-              
+
                 <div>
-                  <MacroCenter />
+                  <MacroCenter addToCart={addToCart} />
                 </div>
-              
+
                 <div>
-                  <TheBoominBox />
+                  <TheBoominBox addToCart={addToCart} />
                 </div>
               </div>
             </div>
