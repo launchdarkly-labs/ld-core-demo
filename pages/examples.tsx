@@ -9,7 +9,7 @@ import {
 
 export default function ExamplesPage() {
   return (
-    <main className="h-full flex-col items-center justify-center bg-ldblack">
+    <main className="min-h-screen flex-col items-center justify-center bg-ldblack">
       <div className="w-full text-white flex h-20 shadow-2xl">
         <NavBar />
       </div>
@@ -72,6 +72,67 @@ if (value) {
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>
+              <h2 className="text-2xl">LaunchDarkly in AWS Serverless</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <h2 className="text-2xl font-bold my-3.5">
+                Using LaunchDarkly in Lambda
+              </h2>
+              <p>Choose the appropriate SDK (ex. Node)</p>
+              <Code
+                language={"js"}
+                code={`const LaunchDarkly = require('launchdarkly-node-server-sdk')
+const client = LaunchDarkly.init(process.env.LAUNCHDARKLY_SDK_KEY)
+
+await client.waitForInitialization();
+const flagValue = await client.variation("my-flag", { kind: "user", key: "anonymous" }`}
+              />
+
+              <h2 className="text-2xl font-bold my-3.5">
+                Caching data in a data store
+              </h2>
+              <p>This example uses the Node runtime.</p>
+              <Code
+                language={"java"}
+                code={`const LaunchDarkly = require("launchdarkly-node-server-sdk");
+// The SDK add-on for DynamoDB support
+const {
+  DynamoDBFeatureStore,
+} = require("launchdarkly-node-server-sdk-dynamodb");
+
+const store = DynamoDBFeatureStore(process.env.DYNAMODB_TABLE);
+// useLdd launches the client in daemon mode where flag values come
+// from the data store (i.e. dynamodb)
+const options = {
+	featureStore: store,
+	useLdd: true,
+};
+const client = LaunchDarkly.init(process.env.LAUNCHDARKLY_SDK_KEY, options);`}
+              />
+              <h2 className="text-2xl font-bold my-3.5">
+                Recording LaunchDarkly events
+              </h2>
+              <p>Flush events and close the client on Lambda shutdown.</p>
+              <Code
+                language={"js"}
+                code={`process.on('SIGTERM', async () => {
+    console.info('[runtime] SIGTERM received');
+
+    console.info('[runtime] cleaning up');
+    // flush is currently required for the Node SDK
+    await client.flush()
+    client.close();
+    console.info('LaunchDarkly connection closed');
+    
+    console.info('[runtime] exiting');
+    process.exit(0)
+});`}
+              />
+              <p>Be sure to check out LaunchDarkly's AWS integrations!</p>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger>
               <h2 className="text-2xl">Migrations</h2>
             </AccordionTrigger>
             <AccordionContent>
@@ -116,7 +177,7 @@ var migration = new MigrationBuilder<string, string, string, string>(_client)
               <p>Migrations without the worry!</p>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-3">
+          <AccordionItem value="item-4">
             <AccordionTrigger>
               <h2 className="text-2xl">Mobile Targeting</h2>
             </AccordionTrigger>
