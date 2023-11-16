@@ -37,21 +37,11 @@ import {
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-    let navChild;
+    let navChild, navLogo;
     switch (variant) {
       case "airlines":
         navChild = (
           <>
-            <div className="ml-4 sm:ml-8 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-                <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
-              </svg>
-              <p className="text-base flex font-sohnelight">
-                <strong className="font-semibold font-sohne">Launch</strong>
-                {"\u00A0"}
-                {"\u00A0"}Airways
-              </p>
-            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="ml-4 cursor-pointer block sm:hidden">
@@ -95,6 +85,7 @@ const NavBar = React.forwardRef<any>(
                 {launchClubLoyalty && <LaunchClub />}
               </div>
             ) : null}
+
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
               <Search className="cursor-pointer hidden sm:block" />
               <MessageCircle className=" cursor-pointer hidden sm:block" />
@@ -102,15 +93,23 @@ const NavBar = React.forwardRef<any>(
             </div>
           </>
         );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
+            </svg>
+            <p className="text-base flex font-sohnelight">
+              <strong className="font-semibold font-sohne">Launch</strong>
+              {"\u00A0"}
+              {"\u00A0"}Airways
+            </p>
+          </>
+        );
         break;
       case "bank":
         navChild = (
           <>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
-                <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
-              </svg>
-            </div>
             {isLoggedIn ? (
               <>
                 <button
@@ -145,6 +144,7 @@ const NavBar = React.forwardRef<any>(
                 </button>
               </>
             ) : null}
+
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
                 <Search color={"white"} />
@@ -183,18 +183,18 @@ const NavBar = React.forwardRef<any>(
             )}
           </>
         );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
+              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
+            </svg>
+          </>
+        );
         break;
       case "market":
         navChild = (
           <>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-                <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
-              </svg>
-              <p className="text-base flex text-white font-sohnelight">
-                <strong className="font-sohne">Market</strong>place
-              </p>
-            </div>
             {isLoggedIn ? (
               <>
                 <button
@@ -237,17 +237,28 @@ const NavBar = React.forwardRef<any>(
             </div>
           </>
         );
-        break;
-      default:
-        navChild = (
+
+        navLogo = (
           <>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg xmlns="http://www.w3.org/2000/svg" height="28" width="200" className="pr-2">
-                <image href="/ld-logo.svg" height="28" width="174" alt="LaunchDarkly" />
-              </svg>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
+              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
+            </svg>
           </>
         );
+
+        break;
+      default:
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
+            </svg>
+            <p className="text-base flex text-white font-sohnelight">
+              <strong className="font-sohne">Market</strong>place
+            </p>
+          </>
+        );
+        navChild = null;
     }
 
     return (
@@ -255,6 +266,7 @@ const NavBar = React.forwardRef<any>(
         <div className="items-center flex">
           <CSNav />
         </div>
+        <div className="ml-4 sm:ml-8 flex items-center">{navLogo}</div>
         {navChild}
       </nav>
     );
