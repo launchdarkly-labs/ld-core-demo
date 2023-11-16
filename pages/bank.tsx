@@ -34,8 +34,7 @@ export default function Bank() {
   const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
   const router = useRouter();
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
-    useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
 
   function goAirways() {
     router.push("/airways");
@@ -57,9 +56,7 @@ export default function Bank() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
@@ -109,6 +106,14 @@ export default function Bank() {
     setCookie("ldcontext", context);
   }
 
+  const bankingServicesArr = [
+    { imgSrc: "Checking.png", title: "Checking" },
+    { imgSrc: "Business.png", title: "Business" },
+    { imgSrc: "Credit.png", title: "Credit Card" },
+    { imgSrc: "Savings.png", title: "Savings" },
+    { imgSrc: "Mortgage.png", title: "Mortgages" },
+  ];
+
   return (
     <AnimatePresence mode="wait">
       {!isLoggedIn ? (
@@ -123,58 +128,48 @@ export default function Bank() {
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
             <NavBar variant={"bank"} />
           </div>
-          <div className="h-2/5 w-full bg-bankblue ">
-            <div className="w-full py-14 px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex justify-between">
-              <div className="flex flex-col text-white w-1/3 justify-start">
-                <img src="ToggleBankHeader.png" width={52} className="pb-8" />
-                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat">
-                  Welcome to
-                </p>
-                <p className="text-xl lg:text-6xl 3xl:text-[112px] font-audimat">
-                  Toggle Bank
-                </p>
-                <p className="text-xl lg:text-2xl 3xl:text-4xl font-sohnelight pt-8">
+          <header className="w-full bg-bankblue mb-[4rem]">
+            <div className="w-full py-14 sm:py-[8rem] px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex flex-col sm:flex-row justify-between
+             items-center sm:items-start">
+              <div className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+              text-white w-full sm:w-1/3 justify-start mb-4 sm:mb-0 gap-y-6">
+                {/* <img src="ToggleBankHeader.png" width={52} className="pb-0" /> */}
+                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">Welcome to ToggleBank </p>
+                <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
                   Login to access your account
                 </p>
               </div>
-              <div className="flex justify-end pr-30">
+
+              <div className="w-full sm:w-auto">
                 <LoginComponent
                   isLoggedIn={isLoggedIn}
                   setIsLoggedIn={setIsLoggedIn}
                   loginUser={loginUser}
                 />
               </div>
-            </div>
-          </div>
 
-          <div className="w-3/4 flex font-sohnelight text-center justify-center mx-auto space-x-24 pt-24">
-            <div className="grid items-center justify-items-center">
-              <img src="Checking.png" width={96} className="pb-2" />
-              {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Checking</p>
             </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Business.png" width={96} className="pb-2" />
-              {/* <PiggyBank size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Business</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Credit.png" width={96} className="pb-2" />
-              {/* <CreditCard size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Credit Cards</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Savings.png" width={96} className="pb-2" />
-              {/* <Home size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Savings</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Mortgage.png" width={96} className="pb-2" />
-              {/* <CandlestickChart size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Mortgages</p>
-            </div>
-          </div>
-          <div className="flex flex-row space-x-14 mx-44 mt-12 mb-10 justify-center">
+          </header>
+
+          <section
+            className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8
+          sm:gap-x-12 lg:gap-x-24"
+          >
+            {bankingServicesArr.map((ele) => {
+              return (
+                <div className="grid items-center justify-items-center">
+                  <img src={ele?.imgSrc} width={96} className="pb-2" />
+                  {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
+                  <p className="text-xl lg:text-2xl ">{ele?.title} </p>
+                </div>
+              );
+            })}
+          </section>
+
+          <section
+            className="flex flex-col gap-y-8 sm:gap-y-8 sm:flex-row sm:gap-x-6 lg:gap-x-14
+           mx-auto py-12 justify-center px-4 lg:px-8"
+          >
             <BankInfoCard
               imgSrc="House.png"
               headerTitleText="Home Mortgages"
@@ -193,7 +188,7 @@ export default function Bank() {
               subtitleText="Special offers for our most qualified members. Terms apply."
               key={1}
             />
-          </div>
+          </section>
         </motion.main>
       ) : (
         <motion.main
@@ -207,18 +202,12 @@ export default function Bank() {
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
           <div className=" w-full px-8 ">
-            <div
-              className={`flex flex-col xl:flex-row py-8 ${
-                federatedAccounts ? "gap-x-8" : ""
-              }`}
-            >
+            <div className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-x-8" : ""}`}>
               <div className="flex w-full h-[425px]">
                 <div className="px-6 shadow-xl bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <div>
-                      <p className="text-white font-sohne py-6 text-[24px]">
-                        Account Summary
-                      </p>
+                      <p className="text-white font-sohne py-6 text-[24px]">Account Summary</p>
                     </div>
                     <div className="flex flex-row gap-4">
                       <div className="p-4 h-[300px] w-1/3  bg-white ">
@@ -249,10 +238,7 @@ export default function Bank() {
                             onClick={() => setFederatedAccountOne(true)}
                             className="flex p-4 h-[300px] w- bg-white items-center "
                           >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
+                            <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
                         ) : (
                           <motion.div
@@ -271,10 +257,7 @@ export default function Bank() {
                             onClick={() => setFederatedAccountTwo(true)}
                             className="flex p-4 h-[300px] w-[250px] bg-white items-center "
                           >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
+                            <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
                         ) : (
                           <motion.div
@@ -297,9 +280,7 @@ export default function Bank() {
             {wealthManagement ? (
               <div className="px-6 py-2 bg-ldcardgrey h-[425px] shadow-2xl">
                 <div>
-                  <p className="text-black font-sohne py-6 text-[24px]">
-                    Wealth Management
-                  </p>
+                  <p className="text-black font-sohne py-6 text-[24px]">Wealth Management</p>
                 </div>
                 <div className="grid grid-cols-5 gap-4 w-full h-[300px]">
                   {aiFinancial && (
@@ -309,9 +290,7 @@ export default function Bank() {
                           <div>
                             <p className="aiinsightstext pb-1">
                               Wealth Insights{" "}
-                              <span className="accountsecondary">
-                                AI Powered By AWS Bedrock
-                              </span>
+                              <span className="accountsecondary">AI Powered By AWS Bedrock</span>
                             </p>
                           </div>
 
@@ -326,8 +305,7 @@ export default function Bank() {
                             }}
                             className="flex text-xl bg-transparent font-sohnelight hover:bg-transparent hover:text-blue-700 hover:scale-110 text-blue-700 items-center"
                           >
-                            Generate{" "}
-                            <ArrowRight className="text-blue-700 ml-2" />
+                            Generate <ArrowRight className="text-blue-700 ml-2" />
                           </Button>
                         </div>
                       </div>
@@ -346,21 +324,15 @@ export default function Bank() {
                         <AreaChartIcon className="text-blue-700" />
                       </div>
                       <div className="">
-                        <p className="accounttext">
-                          Brokerage Account (***6552)
-                        </p>
+                        <p className="accounttext">Brokerage Account (***6552)</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col">
                       <div className="pt-16">
-                        <p className="cardaccounttext">
-                          Total Investment Balance:{" "}
-                        </p>
+                        <p className="cardaccounttext">Total Investment Balance: </p>
                         <p className="moneytext">$184,278</p>
-                        <p className="accountsecondary">
-                          Over Lifetime of Account
-                        </p>
+                        <p className="accountsecondary">Over Lifetime of Account</p>
                       </div>
                       <div></div>
                     </div>
@@ -393,23 +365,9 @@ export default function Bank() {
                         />
 
                         <defs>
-                          <linearGradient
-                            id="colorUv"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#00c0e7"
-                              stopOpacity={1}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#a34fde"
-                              stopOpacity={1}
-                            />
+                          <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00c0e7" stopOpacity={1} />
+                            <stop offset="95%" stopColor="#a34fde" stopOpacity={1} />
                           </linearGradient>
                         </defs>
                       </AreaChart>
