@@ -16,6 +16,7 @@ import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
 
+
 const NavBar = React.forwardRef<any>(
   ({cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);

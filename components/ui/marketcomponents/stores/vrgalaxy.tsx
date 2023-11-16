@@ -34,7 +34,9 @@ interface InventoryItem {
   cost: number;
 }
 
-export function VRgalaxy({addToCart}) {
+
+// @ts-nocheck
+export function VRgalaxy({addToCart}:{addToCart: any}) {
   const router = useRouter();
 
   const [inventory, setInventory] = useState([]);

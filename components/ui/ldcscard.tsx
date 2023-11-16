@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from "@/lib/utils"
 
-export const CSCard = ({className, herotext}) => {
+export const CSCard = ({className, herotext}: {className: any, herotext: any}) => {
   return (
     <div className={cn("card w-full py-12 rounded-xl text-white", className)}>
       <div className="card-content p-4">

@@ -34,10 +34,10 @@ interface InventoryItem {
   cost: number;
 }
 // @ts-nocheck
-export function StoreCart({ cart, setCart }) {
+export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
   const router = useRouter();
 
-  const totalCost = cart.reduce((total, item: InventoryItem) => total + Number(item.cost), 0);
+  const totalCost = cart.reduce((total: any, item: InventoryItem) => total + Number(item.cost), 0);
   
   
 
