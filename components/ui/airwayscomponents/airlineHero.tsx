@@ -19,7 +19,7 @@ const AirlineHero = ({ showSearch }: { showSearch: any }) => {
                     without risk, and ship your travel dreams faster than ever before.
                   </p>
                   <div className="mt-6">
-                    <Button className="bg-pink-600 rounded-none h-full w-full sm:w-1/3 text-3xl px-2 py-8 mt-8">
+                    <Button className="bg-pink-600 rounded-none h-full w-1/2 sm:w-1/3 text-3xl px-2 py-8 mt-8">
                       Book Now
                     </Button>
                   </div>
