@@ -15,6 +15,7 @@ import { Menu, Navigation } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
+import {useState} from 'react';
 
 
 export function CSNav() {

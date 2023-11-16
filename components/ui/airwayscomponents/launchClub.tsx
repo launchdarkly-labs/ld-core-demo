@@ -112,10 +112,7 @@ export default function LaunchClub() {
         </button>
       </SheetTrigger>
       {!enrolledInLaunchClub ? (
-        <SheetContent
-          className="w-1/2 overflow-y-scroll bg-white"
-          side="right"
-        >
+        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center">
               <div className="flex items-center text-3xl flex-col">
