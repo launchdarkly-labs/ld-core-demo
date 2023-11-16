@@ -85,9 +85,9 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
       <button className="cursor-pointer h-7 w-7 float-right" onClick={handleClose}>
         <XIcon className="cursor-pointer h-full w-full text-neutral-400 " />
       </button>
-      <div className="m-6">
-        <div className="mb-3">
-          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest border-b-4 w-[4rem] border-pink-500 ">
+      <div className="m-6 flex flex-col gap-y-6">
+        <div className="">
+          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest border-b-4 pb-2 w-[7rem] border-pink-500 text-center ">
             Search
           </div>
           <div className="w-full border-b-2 border-neutral-300"/>
@@ -107,12 +107,12 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
             />
           </div>
 
-          <div className="w-36 h-[21px] text-neutral-700 text-base  leading-[18px] tracking-wide">
+          <div className="w-full text-airlineBlack text-base  leading-[18px] tracking-wide">
             {searchTerm && filteredAirports.length === 0 ? (
               <p>No airports found</p>
             ) : (
               searchTerm && (
-                <ul>
+                <ul className="flex flex-row">
                   {filteredAirports.slice(0, 3).map((airport, index) => (
                     <li
                       key={index}
