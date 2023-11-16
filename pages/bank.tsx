@@ -106,6 +106,14 @@ export default function Bank() {
     setCookie("ldcontext", context);
   }
 
+  const bankingServicesArr = [
+    { imgSrc: "Checking.png", title: "Checking" },
+    { imgSrc: "Business.png", title: "Business" },
+    { imgSrc: "Credit.png", title: "Credit Card" },
+    { imgSrc: "Savings.png", title: "Savings" },
+    { imgSrc: "Mortgage.png", title: "Mortgages" },
+  ];
+
   return (
     <AnimatePresence mode="wait">
       {!isLoggedIn ? (
@@ -120,7 +128,7 @@ export default function Bank() {
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
             <NavBar variant={"bank"} />
           </div>
-          <div className="h-2/5 w-full bg-bankblue ">
+          <header className="h-2/5 w-full bg-bankblue mb-[4rem]">
             <div className="w-full py-14 px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex justify-between">
               <div className="flex flex-col text-white w-1/3 justify-start">
                 <img src="ToggleBankHeader.png" width={52} className="pb-8" />
@@ -138,34 +146,21 @@ export default function Bank() {
                 />
               </div>
             </div>
-          </div>
+          </header>
 
-          <section className="w-3/4 flex font-sohnelight text-center justify-center mx-auto space-x-24 pt-24">
-            <div className="grid items-center justify-items-center">
-              <img src="Checking.png" width={96} className="pb-2" />
-              {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Checking</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Business.png" width={96} className="pb-2" />
-              {/* <PiggyBank size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Business</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Credit.png" width={96} className="pb-2" />
-              {/* <CreditCard size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Credit Cards</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Savings.png" width={96} className="pb-2" />
-              {/* <Home size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Savings</p>
-            </div>
-            <div className="grid items-center justify-items-center">
-              <img src="Mortgage.png" width={96} className="pb-2" />
-              {/* <CandlestickChart size={96} strokeWidth={1} className="pb-2" /> */}
-              <p className="text-2xl ">Mortgages</p>
-            </div>
+          <section
+            className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8
+          sm:gap-x-12 lg:gap-x-24"
+          >
+            {bankingServicesArr.map((ele) => {
+              return (
+                <div className="grid items-center justify-items-center">
+                  <img src={ele?.imgSrc} width={96} className="pb-2" />
+                  {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
+                  <p className="text-xl lg:text-2xl ">{ele?.title} </p>
+                </div>
+              );
+            })}
           </section>
 
           <section
