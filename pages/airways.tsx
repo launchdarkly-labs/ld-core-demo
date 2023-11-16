@@ -49,9 +49,9 @@ export default function Home() {
 
   function bookTrip() {
     const startDate = `${
-      date.from.getMonth() + 1
-    }/${date.from.getDate()}/${date.from.getFullYear()}`;
-    const returnDate = `${date.to.getMonth() + 1}/${date.to.getDate()}/${date.to.getFullYear()}`;
+      date!.from.getMonth() + 1
+    }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
+    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
     const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
     const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
 

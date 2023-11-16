@@ -47,7 +47,6 @@ export default function BookedFlights() {
     <Sheet>
       <SheetTrigger asChild>
         <button
-          href="/airways"
           className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
         >
           My Bookings
@@ -70,7 +69,7 @@ export default function BookedFlights() {
           <AnimatePresence>
             {bookedTrips.map(
               (
-                trip: { id: number; from: string; to: string },
+                trip: { id: number; from: string; to: string, type: string, depart: string },
                 index: number
               ) => (
                 <motion.div
@@ -82,7 +81,7 @@ export default function BookedFlights() {
                   exit="exit" // Add this line
                 >
 
-                  <div className="max-w-lg mx-auto bg-white shadow-md overflow-hidden items-stretch ">
+                  <div className="max-w-lg bg-white shadow-md overflow-hidden items-stretch ">
                     <div className="md:flex">
                       <div className="p-8">
                         <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">{trip.type} flight</div>

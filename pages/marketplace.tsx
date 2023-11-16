@@ -58,7 +58,7 @@ export default function Marketplace() {
     duration: 0.5,
   };
 
-  const addToCart = (item) => {
+  const addToCart = (item: any) => {
     console.log("Adding")
     setCart([...cart, item]);
   };

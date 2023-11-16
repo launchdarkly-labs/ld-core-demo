@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/popover";
 
 type FlightCalendarProps = {
-    date: Date | null;
-    setDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    date: any
+    setDate: any
     className?: string;
   } & React.HTMLAttributes<HTMLDivElement>;
 
