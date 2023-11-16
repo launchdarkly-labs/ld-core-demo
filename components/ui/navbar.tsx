@@ -14,6 +14,7 @@ import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
+import { StoreCart } from "./marketcomponents/stores/storecart";
 
 const NavBar = React.forwardRef<any>(
   ({ className, variant, handleLogout, ...props }, ref) => {
@@ -70,6 +71,7 @@ const NavBar = React.forwardRef<any>(
               </>
             ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
+              <StoreCart />
               <Search />
               <MessageCircle />
               <LoginScreen />
