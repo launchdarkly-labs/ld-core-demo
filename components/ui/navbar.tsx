@@ -37,33 +37,14 @@ import {
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-    let navChild, navLogo, navLinkMobileDropdown;
-    const navLinkStyling = "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom"
-    
+    let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
+    const navLinkStyling =
+      "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
+
     switch (variant) {
       case "airlines":
-        
         navChild = (
           <>
-            {isLoggedIn ? (
-              <div className="hidden sm:flex">
-                <button
-                  href="/airways"
-                  className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
-                >
-                  Book
-                </button>
-                <BookedFlights />
-                <button
-                  href="/airways"
-                  className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
-                >
-                  Check-In
-                </button>
-                {launchClubLoyalty && <LaunchClub />}
-              </div>
-            ) : null}
-
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
               <Search className="cursor-pointer hidden sm:block" />
               <MessageCircle className=" cursor-pointer hidden sm:block" />
@@ -102,49 +83,34 @@ const NavBar = React.forwardRef<any>(
             </div>
           </>
         );
+
+        navLinksGroup = (
+          <>
+            {" "}
+            <button
+              href="/airways"
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
+            >
+              Book
+            </button>
+            <BookedFlights />
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
+            >
+              Check-In
+            </button>
+            {launchClubLoyalty && <LaunchClub />}
+          </>
+        );
         break;
       case "bank":
         navChild = (
           <>
-            {isLoggedIn ? (
-              <>
-                <button
-                  href="/bank"
-                  className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-                >
-                  Summary
-                </button>
-                <button
-                  href="/bank"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-                >
-                  Transfers
-                </button>
-                <button
-                  href="/bank"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-                >
-                  Deposits
-                </button>
-                <button
-                  href="/bank"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-                >
-                  External Accounts
-                </button>
-                <button
-                  href="/bank"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-                >
-                  Statements
-                </button>
-              </>
-            ) : null}
-
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
-                <Search color={"white"} className="hidden sm:block"/>
-                <MessageCircle color={"white"} className="hidden sm:block"/>
+                <Search color={"white"} className="hidden sm:block" />
+                <MessageCircle color={"white"} className="hidden sm:block" />
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -206,48 +172,49 @@ const NavBar = React.forwardRef<any>(
           </>
         );
 
+        navLinksGroup = (
+          <>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Summary
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Transfers
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Deposits
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              External Accounts
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Statements
+            </button>
+          </>
+        );
+
         break;
       case "market":
         navChild = (
           <>
-            {isLoggedIn ? (
-              <>
-                <button
-                  href="/marketplace"
-                  className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
-                >
-                  All
-                </button>
-                <button
-                  href="/marketplace"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
-                >
-                  Account
-                </button>
-                <button
-                  href="/marketplace"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
-                >
-                  Buy Again
-                </button>
-                <button
-                  href="/marketplace"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
-                >
-                  Today's Deals
-                </button>
-                <button
-                  href="/marketplace"
-                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
-                >
-                  Sale
-                </button>
-              </>
-            ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} className="hidden sm:block"/>
-              <MessageCircle color={"white"} className="hidden sm:block"/>
+              <Search color={"white"} className="hidden sm:block" />
+              <MessageCircle color={"white"} className="hidden sm:block" />
               <MarketLoginScreen />
             </div>
           </>
@@ -279,6 +246,41 @@ const NavBar = React.forwardRef<any>(
                 <MessageCircle className=" cursor-pointer " />
               </DropdownMenuItem>
             </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              All
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Account
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling}  text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Buy Again
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Today's Deals
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Sale
+            </button>
           </>
         );
 
@@ -315,6 +317,9 @@ const NavBar = React.forwardRef<any>(
             <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
           </DropdownMenuPortal>
         </DropdownMenu>
+        {isLoggedIn ? (
+          <div className="hidden sm:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+        ) : null}
         {navChild}
       </nav>
     );
