@@ -18,7 +18,7 @@ import { StoreCart } from "./marketcomponents/stores/storecart";
 import LaunchClub from "./airwayscomponents/launchClub";
 
 const NavBar = React.forwardRef<any>(
-  ({ className, variant, handleLogout, ...props }, ref) => {
+  ({cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
     let navBarClass = "";
     switch (variant) {
@@ -217,7 +217,7 @@ const NavBar = React.forwardRef<any>(
               </>
             ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <StoreCart />
+              <StoreCart cart={cart} setCart={setCart} />
               <Search color={"white"} />
               <MessageCircle color={"white"} />
               <MarketLoginScreen />

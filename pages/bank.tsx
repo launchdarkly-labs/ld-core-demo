@@ -10,7 +10,7 @@ import {
   Area,
   ResponsiveContainer,
 } from "recharts";
-import { AreaChartIcon } from "lucide-react";
+import { AreaChartIcon, ArrowRight } from "lucide-react";
 import { useContext, useState } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
@@ -25,6 +25,7 @@ import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federat
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
 import NavBar from "@/components/ui/navbar";
 import BankInfoCard from "@/components/ui/bankcomponents/bankInfoCard";
+import { BounceLoader } from "react-spinners";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -236,11 +237,10 @@ export default function Bank() {
                         </p>
                       </div>
                       <div className="flex flex-row gap-4 justify-start">
-
                         <div className="p-4 h-[300px] w-[250px] bg-white ">
                           <FederatedCheckingAccount />
                         </div>
-                        
+
                         <div className="p-4 h-[300px] w-[250px] bg-white">
                           <FederatedCreditAccount />
                         </div>
@@ -261,30 +261,40 @@ export default function Bank() {
                 <div className="grid grid-cols-5 gap-4 w-full h-[300px]">
                   {aiFinancial && (
                     <div className="relative p-4 col-span-2 w-full bg-white ">
-                      <div className="flex">
-                        <div className="pb-2">
-                          <p className="aiinsightstext pb-1">
-                            Wealth Insights AI
-                          </p>
+                      <div className="">
+                        <div className="flex  justify-between pb-2">
+                          <div>
+                            <p className="aiinsightstext pb-1">
+                              Wealth Insights{" "}
+                              <span className="accountsecondary">
+                                AI Powered By AWS Bedrock
+                              </span>
+                            </p>
+                          </div>
 
-                          <p className="text-blue-500 accountsecondary">
-                            Powered By AWS Bedrock
-                          </p>
+                          <div>
+                            <img src="aws.png" />
+                          </div>
                         </div>
                         <div className="absolute bottom-5 right-5">
                           <Button
                             onClick={() => {
                               submitQuery(prompt);
                             }}
-                            className=" rounded-none text-xl bg-blue-700 font-audimat items-center"
+                            className="flex text-xl bg-transparent font-sohnelight hover:bg-transparent hover:text-blue-700 hover:scale-110 text-blue-700 items-center"
                           >
-                            Generate Insights
+                            Generate{" "}
+                            <ArrowRight className="text-blue-700 ml-2" />
                           </Button>
                         </div>
                       </div>
-                      <div className="overflow-auto max-h-[150px]">
-                        <p className="my-4 font-sohnelight">{aiResponse}</p>
-                      </div>
+                      <div className="overflow-auto h-[150px] flex justify-center items-center">
+  {loading ? (
+    <BounceLoader color="#1D4ED8" size={100} />                          
+  ) : (
+    <p className="my-4 font-sohnelight">{aiResponse}</p>
+  )}
+</div>
                     </div>
                   )}
                   <div className="p-6 bg-white col-span-1 h-full">
