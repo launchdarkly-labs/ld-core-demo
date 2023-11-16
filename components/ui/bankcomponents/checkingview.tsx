@@ -27,6 +27,7 @@ import {
 } from "../table";
 import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 type Transaction = {
   id: number;
@@ -46,6 +47,8 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const router = useRouter();
 
+  const { financialDBMigration } = useFlags()
+
   async function getTransactions() {
     const response = await fetch("/api/checkingdata");
     const transactionsJson: Transaction[] = await response.json();
@@ -55,7 +58,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
 
   useEffect(() => {
     getTransactions();
-  }, []);
+  }, [financialDBMigration]);
 
   console.log(wealthManagement);
 

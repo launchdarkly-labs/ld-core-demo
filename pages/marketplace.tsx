@@ -29,7 +29,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useFlags } from "launchdarkly-react-client-sdk";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,9 +42,12 @@ import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominB
 
 export default function Marketplace() {
   const [cart, setCart] = useState([])
+  const [headerLabel, setHeaderLabel] = useState<string>("")
 
+
+  const LDClient = useLDClient()
   const flags = useFlags();
-  console.log(flags);
+  const { storeAttentionCallout, storeHeaders  } = useFlags()
 
   const pageVariants = {
     initial: { x: "100%" },
@@ -59,6 +62,8 @@ export default function Marketplace() {
   };
 
   const addToCart = (item: any) => {
+    console.log("Adding Item to Store")
+    LDClient?.track('item-added', LDClient.getContext(), 1)
     console.log("Adding")
     setCart([...cart, item]);
   };
@@ -66,6 +71,10 @@ export default function Marketplace() {
   useEffect(() => {
     console.log(cart)
   }, [cart]);
+  
+  useEffect(() => {
+   setHeaderLabel(storeAttentionCallout)
+  }, [storeAttentionCallout]);
 
   return (
     <motion.div
@@ -115,7 +124,7 @@ export default function Marketplace() {
             </div>
           </div>
         </div>
-        <div className="mx-52 pt-14 ">
+        <div className="mx-24 3xl:mx-52 pt-14 ">
           <div className="space-y-16">
             <div>
               <div className="flex justify-between items-center pb-10">
@@ -133,7 +142,7 @@ export default function Marketplace() {
               {/* Store individual callouts */}
               {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div>
-                  <VRgalaxy addToCart={addToCart} />
+                  <VRgalaxy storeHeaders={storeHeaders} headerLabel={headerLabel} addToCart={addToCart} />
                 </div>
               
                 <div>

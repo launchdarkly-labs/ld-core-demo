@@ -64,7 +64,7 @@ export function MacroCenter() {
 
 
           <SheetDescription className="font-sohne">
-            Your home loan balance statement
+            Computer Parts and Consumer Electronics
           </SheetDescription>
         </SheetHeader>
        

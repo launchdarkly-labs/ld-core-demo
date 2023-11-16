@@ -31,6 +31,7 @@
     "date-fns": "^2.30.0",
     "drizzle-orm": "^0.29.0",
     "framer-motion": "^10.16.4",
+    "launchdarkly-node-server-sdk": "^7.0.3",
     "launchdarkly-react-client-sdk": "^3.0.9",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
