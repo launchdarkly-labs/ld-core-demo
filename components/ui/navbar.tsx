@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle } from "lucide-react";
+import { Search, MessageCircle, Menu, Navigation } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -16,124 +16,101 @@ import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
 import LaunchClub from "./airwayscomponents/launchClub";
-
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+} from "./dropdown-menu";
 
 const NavBar = React.forwardRef<any>(
-  ({launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
+  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-    let navBarClass = "";
+    let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
+    const navLinkStyling =
+      "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
+
     switch (variant) {
       case "airlines":
-        return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="40"
-                width="50"
-                className="pr-2"
-              >
-                <image
-                  href="/launch-airways.svg"
-                  height="40"
-                  width="40"
-                  alt="Launch Airways"
-                />
-              </svg>
-              <p className="text-base flex font-sohnelight">
-                <strong className="font-semibold font-sohne">Launch</strong>
-                {"\u00A0"}
-                {"\u00A0"}Airways
-              </p>
-            </div>
-            {isLoggedIn ? (
-              <>
-                <button
-                  href="/airways"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom outline-none"
-                >
-                  Book
-                </button>
-                <BookedFlights />
-                <button
-                  href="/airways"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Checkin
-                </button>
-                { launchClubLoyalty &&
-                <LaunchClub />}
-              </>
-            ) : null}
-            <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <Search />
-              <MessageCircle />
+        navChild = (
+          <>
+            <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+              <Search className="cursor-pointer hidden sm:block" />
+              <MessageCircle className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
             </div>
-          </nav>
+          </>
         );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
+            </svg>
+            <p className="text-base flex font-sohnelight">
+              <strong className="font-semibold font-sohne">Launch</strong>
+              {"\u00A0"}
+              {"\u00A0"}Airways
+            </p>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
+            <DropdownMenuItem>
+              <BookedFlights />
+            </DropdownMenuItem>
+            <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            {" "}
+            <button
+              href="/airways"
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
+            >
+              Book
+            </button>
+            <BookedFlights />
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
+            >
+              Check-In
+            </button>
+            {launchClubLoyalty && <LaunchClub />}
+          </>
+        );
+        break;
       case "bank":
-        return (
-          <nav className="sticky w-full place-content-start flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="28"
-                width="174"
-                className="pr-2"
-              >
-                <image
-                  href="/toggle-bank.svg"
-                  height="28"
-                  width="174"
-                  alt="Toggle Bank"
-                />
-              </svg>
-            </div>
-            {isLoggedIn ? (
-              <>
-                <button
-                  href="/bank"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Summary
-                </button>
-                <button
-                  href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Transfers
-                </button>
-                <button
-                  href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Deposits
-                </button>
-                <button
-                  href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  External Accounts
-                </button>
-                <button
-                  href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Statements
-                </button>
-              </>
-            ) : null}
+        navChild = (
+          <>
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
-                <Search color={"white"} />
-                <MessageCircle color={"white"} />
+                <Search color={"white"} className="hidden sm:block" />
+                <MessageCircle color={"white"} className="hidden sm:block" />
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -166,100 +143,186 @@ const NavBar = React.forwardRef<any>(
             <LoginScreen /> */}
               </div>
             )}
-          </nav>
+          </>
         );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
+              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
+            </svg>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Summary
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Transfers
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Deposits
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              External Accounts
+            </button>
+            <button
+              href="/bank"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Statements
+            </button>
+          </>
+        );
+
+        break;
       case "market":
-        return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="40"
-                width="50"
-                className="pr-2"
-              >
-                <image
-                  href="/marketplace.svg"
-                  height="40"
-                  width="40"
-                  alt="Marketplace"
-                />
-              </svg>
-              <p className="text-base flex text-white font-sohnelight">
-                <strong className="font-sohne">Market</strong>place
-              </p>
-            </div>
-            {isLoggedIn ? (
-              <>
-                <button
-                  href="/marketplace"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  All
-                </button>
-                <button
-                  href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Account
-                </button>
-                <button
-                  href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Buy Again
-                </button>
-                <button
-                  href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Today's Deals
-                </button>
-                <button
-                  href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Sale
-                </button>
-              </>
-            ) : null}
+        navChild = (
+          <>
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} />
-              <MessageCircle color={"white"} />
+              <Search color={"white"} className="hidden sm:block" />
+              <MessageCircle color={"white"} className="hidden sm:block" />
               <MarketLoginScreen />
             </div>
-          </nav>
+          </>
         );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
+            </svg>
+            <p className="text-base flex text-white font-sohnelight">
+              <strong className="font-sohne">Market</strong>place
+            </p>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              All
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Account
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling}  text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Buy Again
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Today's Deals
+            </button>
+            <button
+              href="/marketplace"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+            >
+              Sale
+            </button>
+          </>
+        );
+
+        break;
       default:
-        return (
-          <nav className="absolute w-full place-content-start flex top-0 bg-navgray font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="28"
-                width="200"
-                className="pr-2"
-              >
-                <image
-                  href="/ld-logo.svg"
-                  height="28"
-                  width="174"
-                  alt="LaunchDarkly"
-                />
-              </svg>
-            </div>
-          </nav>
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
+            </svg>
+            <p className="text-base flex text-white font-sohnelight">
+              <strong className="font-sohne">Market</strong>place
+            </p>
+          </>
         );
+        navChild = null;
+
+        navLinkMobileDropdown = null;
     }
 
-    return <div ref={ref} className={cn(navBarClass)} {...props} />;
+    return (
+      <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
+        <div className="items-center flex">
+          <CSNav />
+        </div>
+        <div className="ml-4 sm:ml-8 flex items-center">{navLogo}</div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="ml-4 cursor-pointer block sm:hidden text-white">
+              <Menu size={24} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
+          </DropdownMenuPortal>
+        </DropdownMenu>
+        {isLoggedIn ? (
+          <div className="hidden sm:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+        ) : null}
+        {navChild}
+      </nav>
+    );
   }
 );
 
