@@ -88,10 +88,10 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
       </button>
       <div className="m-6 flex flex-col gap-y-6">
         <div className="">
-          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest border-b-4 pb-2 w-[7rem] border-pink-500 text-center ">
+          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest w-[7rem] pb-2 border-pink-500 text-center ">
             Search
           </div>
-          <div className="w-full border-b-2 border-neutral-300"/>
+          <div className="w-full h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
         </div>
 
         <div className="flex-col justify-start items-start gap-[15px] flex">
@@ -101,14 +101,19 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
             </div>
             <input
               className="w-full text-airlineBlack text-[60px]  
-                 leading-[66.65px] outline-none border-b-2 border-airlineBlack pb-4"
+                 leading-[66.65px] outline-none border-b-2 border-airlinePurple pb-4"
               placeholder="Airport"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                background: "linear-gradient(to right, #F43F5E, #8B5CF6)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
             />
           </div>
 
-          <div className="w-full text-airlineBlack text-base  leading-[18px] tracking-wide">
+          <div className="w-full h-full text-airlineBlack text-base  leading-[18px] tracking-widest">
             {searchTerm && filteredAirports.length === 0 ? (
               <p>No airports found</p>
             ) : (
