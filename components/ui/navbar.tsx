@@ -96,66 +96,74 @@ const NavBar = React.forwardRef<any>(
               </svg>
             </div>
             {isLoggedIn ? (
-            <>    
-            <button
-              href="/bank"
-              className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-            >
-              Summary
-            </button>
-            <button
-              href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-            >
-              Transfers
-            </button>
-            <button
-              href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-            >
-              Deposits
-            </button>
-            <button
-              href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-            >
-              External Accounts
-            </button>
-            <button
-              href="/bank"
-              className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
-            >
-              Statements
-            </button>
-            </>) : null}
-            {!isLoggedIn ? (
-                null
-            ) : (            
-            <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <Search color={"white"} />
-              <MessageCircle color={"white"} />
-              <Popover>
-                <PopoverTrigger>
-                  <Avatar>
-                    <AvatarImage src="woman.png" className="" />
-                  </Avatar>
-                </PopoverTrigger>
-                <PopoverContent className="w-[300px] h-[400px]">
-                  <div className="grid space-y-4">
-                    <p className="text-center text-xl font-audimat">
-                      Welcome to Your Account!
-                    </p>
-                    <img
-                      src="woman.png"
-                      className="rounded-full h-32 mx-auto"
-                    />
-                    <Button onClick={handleLogout}>Logout</Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              {/* <RegistrationForm />
+              <>
+                <button
+                  href="/bank"
+                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Summary
+                </button>
+                <button
+                  href="/bank"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Transfers
+                </button>
+                <button
+                  href="/bank"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Deposits
+                </button>
+                <button
+                  href="/bank"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  External Accounts
+                </button>
+                <button
+                  href="/bank"
+                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                >
+                  Statements
+                </button>
+              </>
+            ) : null}
+            {!isLoggedIn ? null : (
+              <div className="flex space-x-6 ml-auto mr-4 items-center">
+                <Search color={"white"} />
+                <MessageCircle color={"white"} />
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage src="woman.png" className="" />
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] h-[400px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img src="woman.png" className="rounded-full h-48" />
+                      </div>
+                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                        <p className="pt-4">
+                          Thank you banking with us{"  "}
+                          <span className="text-2xl">Platinum Member</span>!
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <Button
+                          onClick={handleLogout}
+                          className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-lg rounded-none"
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
+                {/* <RegistrationForm />
             <LoginScreen /> */}
-            </div>
+              </div>
             )}
           </nav>
         );
