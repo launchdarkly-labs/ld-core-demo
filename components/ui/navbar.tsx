@@ -15,6 +15,7 @@ import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
+import LaunchClub from "./airwayscomponents/launchClub";
 
 
 const NavBar = React.forwardRef<any>(
@@ -63,12 +64,7 @@ const NavBar = React.forwardRef<any>(
                 >
                   Checkin
                 </button>
-                <button
-                  href="/airways"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
-                >
-                  Flight Status
-                </button>
+                <LaunchClub />
               </>
             ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
