@@ -48,7 +48,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-full flex-col items-center justify-center bg-ldblack overflow-y sm:overflow-y-hidden">
+    <main className="h-full sm:h-screen flex-col items-center justify-center bg-ldblack ">
       <div className="w-full text-white flex h-20 shadow-2xl">
         <NavBar />
       </div>
