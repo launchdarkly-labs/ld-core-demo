@@ -57,13 +57,13 @@ export default function Home() {
         <div>
           <h1>Connecting code to customers</h1>
           <p>
-            Maximize the value of every software feature through safer releases, targeted
-            experiences, experimentation, and more.
+            Maximize the value of every software feature through safer releases,
+            targeted experiences, experimentation, and more.
           </p>
         </div>
       </header>
       <section className="py-8 bg-ldblack h-full">
-        <div className="mx-auto flex flex-col w-1/2 ">
+        <div className="flex flex-col mx-[25%]">
           <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
             <div className="w-full sm:w-1/2 home-card">
               <svg
@@ -73,7 +73,12 @@ export default function Home() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_52)" />
+                <rect
+                  width="44"
+                  height="44"
+                  rx="22"
+                  fill="url(#paint0_linear_2085_52)"
+                />
                 <path
                   fill-rule="evenodd"
                   clip-rule="evenodd"
@@ -123,7 +128,12 @@ export default function Home() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_26)" />
+                <rect
+                  width="44"
+                  height="44"
+                  rx="22"
+                  fill="url(#paint0_linear_2085_26)"
+                />
                 <path
                   d="M32.6847 22.2292L34.0001 23.5217L27.8646 29.5625L24.6043 26.3542L25.9197 25.0617L27.8646 26.9683L32.6847 22.2292ZM22.2553 26.3542L25.0741 29.1042H15.6782V27.2708C15.6782 25.245 19.0419 23.6042 23.1949 23.6042L24.9707 23.705L22.2553 26.3542ZM23.1949 14.4375C24.1917 14.4375 25.1476 14.8238 25.8524 15.5114C26.5573 16.1991 26.9532 17.1317 26.9532 18.1042C26.9532 19.0766 26.5573 20.0093 25.8524 20.6969C25.1476 21.3845 24.1917 21.7708 23.1949 21.7708C22.1981 21.7708 21.2422 21.3845 20.5373 20.6969C19.8325 20.0093 19.4366 19.0766 19.4366 18.1042C19.4366 17.1317 19.8325 16.1991 20.5373 15.5114C21.2422 14.8238 22.1981 14.4375 23.1949 14.4375Z"
                   fill="white"
@@ -159,7 +169,9 @@ export default function Home() {
               </svg>
 
               <h2>Targeted Experiences</h2>
-              <p>Deliver targeted product experiences to any customer segment.</p>
+              <p>
+                Deliver targeted product experiences to any customer segment.
+              </p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
@@ -171,7 +183,12 @@ export default function Home() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_38)" />
+                <rect
+                  width="44"
+                  height="44"
+                  rx="22"
+                  fill="url(#paint0_linear_2085_38)"
+                />
                 <g filter="url(#filter0_d_2085_38)">
                   <path
                     fill-rule="evenodd"
@@ -248,7 +265,10 @@ export default function Home() {
               </svg>
 
               <h2>Measure & Experiment</h2>
-              <p>Customize the business impact of every product feature through experimentation.</p>
+              <p>
+                Customize the business impact of every product feature through
+                experimentation.
+              </p>
             </div>
             <div className="w-full sm:w-1/2 home-card">
               <svg
@@ -258,7 +278,12 @@ export default function Home() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_129)" />
+                <rect
+                  width="44"
+                  height="44"
+                  rx="22"
+                  fill="url(#paint0_linear_2085_129)"
+                />
                 <path
                   fill-rule="evenodd"
                   clip-rule="evenodd"
@@ -298,7 +323,9 @@ export default function Home() {
               </svg>
 
               <h2>Mobile App Control</h2>
-              <p>Release mobile features and fixes on your schedule, not theirs</p>
+              <p>
+                Release mobile features and fixes on your schedule, not theirs
+              </p>
             </div>
           </div>
         </div>
