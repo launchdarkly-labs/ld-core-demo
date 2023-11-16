@@ -37,14 +37,11 @@ import {
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-
+    let navChild;
     switch (variant) {
       case "airlines":
-        return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
+        navChild = (
+          <>
             <div className="ml-4 sm:ml-8 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
                 <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
@@ -103,14 +100,12 @@ const NavBar = React.forwardRef<any>(
               <MessageCircle className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
             </div>
-          </nav>
+          </>
         );
+        break;
       case "bank":
-        return (
-          <nav className="sticky w-full place-content-start flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
+        navChild = (
+          <>
             <div className="ml-8 flex items-center text-3xl">
               <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
                 <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
@@ -186,14 +181,12 @@ const NavBar = React.forwardRef<any>(
             <LoginScreen /> */}
               </div>
             )}
-          </nav>
+          </>
         );
+        break;
       case "market":
-        return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
+        navChild = (
+          <>
             <div className="ml-8 flex items-center text-3xl">
               <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
                 <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
@@ -242,24 +235,29 @@ const NavBar = React.forwardRef<any>(
               <MessageCircle color={"white"} />
               <MarketLoginScreen />
             </div>
-          </nav>
+          </>
         );
+        break;
       default:
-        return (
-          <nav className="absolute w-full place-content-start flex top-0 bg-navgray font-audimat transition-all duration-150 h-12 md:h-20 p-6">
-            <div className="items-center flex">
-              <CSNav />
-            </div>
+        navChild = (
+          <>
             <div className="ml-8 flex items-center text-3xl">
               <svg xmlns="http://www.w3.org/2000/svg" height="28" width="200" className="pr-2">
                 <image href="/ld-logo.svg" height="28" width="174" alt="LaunchDarkly" />
               </svg>
             </div>
-          </nav>
+          </>
         );
     }
 
-    // return <div ref={ref} className={cn(navBarClass)} {...props} />;
+    return (
+      <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
+        <div className="items-center flex">
+          <CSNav />
+        </div>
+        {navChild}
+      </nav>
+    );
   }
 );
 
