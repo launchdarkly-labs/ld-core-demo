@@ -13,7 +13,7 @@ import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
 
 export default function BookedFlights() {
-  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
+  const { bookedTrips, cancelTrip, setBookedTrips, enrolledInLaunchClub } = useContext(TripsContext);
   const [status, setStatus] = useState("Economy");
 
   console.log(bookedTrips);
