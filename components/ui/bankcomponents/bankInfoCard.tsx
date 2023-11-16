@@ -12,12 +12,12 @@ const BankInfoCard = ({
   imgSrc: any;
 }) => {
   return (
-    <div className="flex sm:w-[375px] sm:h-[375px] border-0 flex-col grid-rows-2
+    <div className="flex w-full h-full sm:w-[375px] sm:h-[375px] border-0 flex-col grid-rows-2
      bg-white shadow-2xl z-0 !rounded-none relative">
       <div className="!space-y-0 !p-0">
         <img src={imgSrc} className="w-full h-full object-fit" />
       </div>
-      <div className="pt-4 px-10 flex flex-col gap-y-2 bg-white h-full">
+      <div className="p-8 flex flex-col gap-y-2 bg-white h-full">
         <div className="font-sohne text-black">
           <p className=" text-2xl">{headerTitleText}</p>
         </div>
