@@ -140,7 +140,7 @@ export default function Bank() {
                 </p>
               </div>
 
-              <div className="flex justify-end pr-30 mx-8 sm:mx-0">
+              <div className="w-full sm:w-auto">
                 <LoginComponent
                   isLoggedIn={isLoggedIn}
                   setIsLoggedIn={setIsLoggedIn}
