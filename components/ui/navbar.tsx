@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle } from "lucide-react";
+import { Search, MessageCircle, Menu, Navigation } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -16,32 +16,38 @@ import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
 import LaunchClub from "./airwayscomponents/launchClub";
-
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+} from "./dropdown-menu";
 
 const NavBar = React.forwardRef<any>(
-  ({launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
+  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-    let navBarClass = "";
+   
     switch (variant) {
       case "airlines":
         return (
-          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-12 md:h-20 p-6">
+          <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
             <div className="items-center flex">
               <CSNav />
             </div>
-            <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="40"
-                width="50"
-                className="pr-2"
-              >
-                <image
-                  href="/launch-airways.svg"
-                  height="40"
-                  width="40"
-                  alt="Launch Airways"
-                />
+            <div className="ml-4 sm:ml-8 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+                <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
               </svg>
               <p className="text-base flex font-sohnelight">
                 <strong className="font-semibold font-sohne">Launch</strong>
@@ -49,8 +55,23 @@ const NavBar = React.forwardRef<any>(
                 {"\u00A0"}Airways
               </p>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="ml-4 cursor-pointer block sm:hidden">
+                  <Menu size={24} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>awefwef</DropdownMenuItem>
+                  <DropdownMenuItem>awefwef</DropdownMenuItem>
+                  <DropdownMenuItem>awefwef</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenuPortal>
+            </DropdownMenu>
+
             {isLoggedIn ? (
-              <>
+              <div className="hidden sm:flex">
                 <button
                   href="/airways"
                   className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom outline-none"
@@ -62,15 +83,14 @@ const NavBar = React.forwardRef<any>(
                   href="/airways"
                   className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
                 >
-                  Checkin
+                  Check-In
                 </button>
-                { launchClubLoyalty &&
-                <LaunchClub />}
-              </>
+                {launchClubLoyalty && <LaunchClub />}
+              </div>
             ) : null}
-            <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <Search />
-              <MessageCircle />
+            <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+              <Search className="cursor-pointer hidden sm:block" />
+              <MessageCircle className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
             </div>
           </nav>
@@ -82,18 +102,8 @@ const NavBar = React.forwardRef<any>(
               <CSNav />
             </div>
             <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="28"
-                width="174"
-                className="pr-2"
-              >
-                <image
-                  href="/toggle-bank.svg"
-                  height="28"
-                  width="174"
-                  alt="Toggle Bank"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
+                <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
               </svg>
             </div>
             {isLoggedIn ? (
@@ -175,18 +185,8 @@ const NavBar = React.forwardRef<any>(
               <CSNav />
             </div>
             <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="40"
-                width="50"
-                className="pr-2"
-              >
-                <image
-                  href="/marketplace.svg"
-                  height="40"
-                  width="40"
-                  alt="Marketplace"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+                <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
               </svg>
               <p className="text-base flex text-white font-sohnelight">
                 <strong className="font-sohne">Market</strong>place
@@ -241,25 +241,15 @@ const NavBar = React.forwardRef<any>(
               <CSNav />
             </div>
             <div className="ml-8 flex items-center text-3xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="28"
-                width="200"
-                className="pr-2"
-              >
-                <image
-                  href="/ld-logo.svg"
-                  height="28"
-                  width="174"
-                  alt="LaunchDarkly"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" height="28" width="200" className="pr-2">
+                <image href="/ld-logo.svg" height="28" width="174" alt="LaunchDarkly" />
               </svg>
             </div>
           </nav>
         );
     }
 
-    return <div ref={ref} className={cn(navBarClass)} {...props} />;
+    // return <div ref={ref} className={cn(navBarClass)} {...props} />;
   }
 );
 
