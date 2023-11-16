@@ -53,7 +53,7 @@ export default function Home() {
         <NavBar />
       </div>
 
-      <header className="banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center">
+      <header className="banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center ">
         <div>
           <h1>Connecting code to customers</h1>
           <p>
