@@ -168,7 +168,7 @@ export default function BookedFlights() {
                             </PopoverTrigger>
                             <PopoverContent onCloseAutoFocus={() => setAIResponse("")} className="relative w-[400px] h-[400px] mt-2">
                               <p className="text-lg mb-4 font-sohne">AI Travel Insights <span className="text-sm">powereed by AWS Bedrock</span> </p>
-                              <p>{aiResponse}</p>
+                              <p className="max-h-[250px] overflow-y-auto">{aiResponse}</p>
                               <Button onClick={() => submitQuery(trip.to)} className="absolute flex bottom-5 right-5 bg-transparent  text-blue-700 hover:bg-transparent hover:text-black mx-auto">
                                 Generate <ArrowRight className="text-blue-700" />
                               </Button>
