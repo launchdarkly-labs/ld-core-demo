@@ -37,36 +37,11 @@ import {
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-    let navChild, navLogo;
+    let navChild, navLogo, navLinkMobileDropdown;
     switch (variant) {
       case "airlines":
         navChild = (
           <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="ml-4 cursor-pointer block sm:hidden">
-                  <Menu size={24} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Book</DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BookedFlights />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>Check-In</DropdownMenuItem>
-                  <div className="flex justify-between">
-                    <DropdownMenuItem>
-                      <Search className="cursor-pointer" />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <MessageCircle className=" cursor-pointer " />
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenuPortal>
-            </DropdownMenu>
-
             {isLoggedIn ? (
               <div className="hidden sm:flex">
                 <button
@@ -104,6 +79,24 @@ const NavBar = React.forwardRef<any>(
               {"\u00A0"}
               {"\u00A0"}Airways
             </p>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
+            <DropdownMenuItem>
+              <BookedFlights />
+            </DropdownMenuItem>
+            <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
           </>
         );
         break;
@@ -191,6 +184,26 @@ const NavBar = React.forwardRef<any>(
             </svg>
           </>
         );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
+
+            <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
+          </>
+        );
+
         break;
       case "market":
         navChild = (
@@ -240,9 +253,31 @@ const NavBar = React.forwardRef<any>(
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
-              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
             </svg>
+            <p className="text-base flex text-white font-sohnelight">
+              <strong className="font-sohne">Market</strong>place
+            </p>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
+
+            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <MessageCircle className=" cursor-pointer " />
+              </DropdownMenuItem>
+            </div>
           </>
         );
 
@@ -259,6 +294,8 @@ const NavBar = React.forwardRef<any>(
           </>
         );
         navChild = null;
+
+        navLinkMobileDropdown = null;
     }
 
     return (
@@ -267,6 +304,16 @@ const NavBar = React.forwardRef<any>(
           <CSNav />
         </div>
         <div className="ml-4 sm:ml-8 flex items-center">{navLogo}</div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="ml-4 cursor-pointer block sm:hidden text-white">
+              <Menu size={24} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
+          </DropdownMenuPortal>
+        </DropdownMenu>
         {navChild}
       </nav>
     );
