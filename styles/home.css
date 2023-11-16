@@ -40,6 +40,7 @@
     background: var(--Card-gradient, linear-gradient(201deg, #58595B -25.37%, #212121 75.5%));
     padding: 4em;
     color: #FFF;
+    min-width: 20%;
 }
 
 .home-card h2 {

@@ -14,6 +14,7 @@ import {
 
 import { Home, HomeIcon, Menu, Navigation } from "lucide-react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { CSCard } from "../../ldcscard";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../../card";
@@ -27,48 +28,74 @@ import {
   TableRow,
 } from "../../table";
 
-const payments = [
-  { month: "11/2023", amount: 4123, status: "cleared" },
-  { month: "10/2023", amount: 4123, status: "cleared" },
-  { month: "09/2023", amount: 4123, status: "cleared" },
-  { month: "08/2023", amount: 4123, status: "cleared" },
-  { month: "07/2023", amount: 4123, status: "cleared" },
-  { month: "06/2023", amount: 4123, status: "cleared" },
-  { month: "05/2023", amount: 4123, status: "cleared" },
-  { month: "04/2023", amount: 4123, status: "cleared" },
-  { month: "03/2023", amount: 4123, status: "cleared" },
-  { month: "02/2023", amount: 4123, status: "cleared" },
-  { month: "01/2023", amount: 4123, status: "cleared" },
-  { month: "12/2022", amount: 4123, status: "cleared" }
-];
+interface InventoryItem {
+  id: string | number;
+  item: string;
+  cost: number;
+}
 
-
-export function TheBoominBox() {
+export function TheBoominBox({ addToCart }: { addToCart: any }) {
   const router = useRouter();
+
+  const [inventory, setInventory] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/storeInventory?storename=boominbox")
+      .then((response) => response.json())
+      .then((data) => setInventory(data));
+  }, []);
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-      <div>
-      <img src="electronics.png" alt="The Boomin' Box" className="h-[300px]" />
-      </div>
+        <div>
+          <img
+            src="electronics.png"
+            alt="The Boomin' Box"
+            className="h-[300px]"
+          />
+        </div>
       </SheetTrigger>
 
-
       <SheetContent className="w-1/2" side="right">
-        
         <SheetHeader>
-
           <SheetTitle className="font-sohne text-2xl">
             The Boomin' Box
           </SheetTitle>
 
-
           <SheetDescription className="font-sohne">
-           Beats for the audiophiles in the crowd! 
+            Beats for the audiophiles in the crowd!
           </SheetDescription>
         </SheetHeader>
-       
+        <Table>
+          <TableCaption>The Boomin' Box Inventory</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Item</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {inventory.map((item: InventoryItem) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.item}</TableCell>
+                <TableCell>{item.cost}</TableCell>
+                <TableCell>
+                  <div>
+                    <Button
+                      className="rounded-none bg-blue-600 font-sohne"
+                      onClick={() => addToCart(item)}
+                    >
+                      Buy Now
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
         <SheetFooter>
           {/* <SheetClose asChild>
             <Button type="submit">Save changes</Button>
