@@ -50,7 +50,7 @@ export default function LoginScreen() {
         ) : (
           <Button
             variant={"ghost"}
-            className="text-white bg-gradient-to-r from-airlinepurple to-airlinepink font-audimat text-sm uppercase px-8 rounded-full"
+            className="text-white bg-gradient-to-r from-airlinepurple to-airlinepink font-audimat text-sm uppercase px-8 rounded-none"
           >
             Login
           </Button>
@@ -128,7 +128,7 @@ export default function LoginScreen() {
               <div className="mx-auto text-center">
                 <Button
                   onClick={handleLogout}
-                  className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
+                  className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg rounded-none"
                 >
                   Logout
                 </Button>

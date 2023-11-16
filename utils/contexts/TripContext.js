@@ -8,6 +8,7 @@ export default TripsContext;
 // Continue in TripsContext.js
 export const TripsProvider = ({ children }) => {
     const [bookedTrips, setBookedTrips] = useState([]);
+    const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
 
     const cancelTrip = (index) => {
         setBookedTrips(prevTrips => {
@@ -19,7 +20,7 @@ export const TripsProvider = ({ children }) => {
     
   
     return (
-      <TripsContext.Provider value={{ bookedTrips, setBookedTrips, cancelTrip }}>
+      <TripsContext.Provider value={{ bookedTrips, setBookedTrips, cancelTrip, enrolledInLaunchClub, setEnrolledInLaunchClub }}>
         {children}
       </TripsContext.Provider>
     );

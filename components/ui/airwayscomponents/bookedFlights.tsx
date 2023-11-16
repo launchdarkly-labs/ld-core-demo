@@ -13,7 +13,7 @@ import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
 
 export default function BookedFlights() {
-  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
+  const { bookedTrips, cancelTrip, setBookedTrips, enrolledInLaunchClub } = useContext(TripsContext);
   const [status, setStatus] = useState("Economy");
 
   console.log(bookedTrips);
@@ -47,7 +47,6 @@ export default function BookedFlights() {
     <Sheet>
       <SheetTrigger asChild>
         <button
-          href="/airways"
           className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
         >
           My Bookings
