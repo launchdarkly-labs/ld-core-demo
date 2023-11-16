@@ -11,12 +11,6 @@
     padding: 4.5em 0 4.5em 0;
 }
 
-.banner div {
-    margin-left: auto;
-    margin-right: auto;
-    width: 30%;
-}
-
 .banner h1 {
     /* LD H1 */
     font-family: "Audimat";
