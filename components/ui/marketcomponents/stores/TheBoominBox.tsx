@@ -65,7 +65,7 @@ export function TheBoominBox() {
 
 
           <SheetDescription className="font-sohne">
-            Your home loan balance statement
+           Beats for the audiophiles in the crowd! 
           </SheetDescription>
         </SheetHeader>
        

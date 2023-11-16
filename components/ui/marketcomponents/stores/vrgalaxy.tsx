@@ -12,10 +12,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { Home, HomeIcon, Menu, Navigation } from "lucide-react";
+import { Home, HomeIcon, Menu, Navigation, Sparkle } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "../../ldcscard";
-import { motion } from "framer-motion";
+import { animate, motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../../card";
 import {
   Table,
@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 
 interface InventoryItem {
   id: string | number;
@@ -34,41 +35,73 @@ interface InventoryItem {
   cost: number;
 }
 
-
 // @ts-nocheck
-export function VRgalaxy({addToCart}:{addToCart: any}) {
+export function VRgalaxy({
+  headerLabel,
+  storeHeaders,
+  addToCart,
+}: {
+  headerLabel: string;
+  storeHeaders: string;
+  addToCart: any;
+}) {
+  const LDClient = useLDClient();
   const router = useRouter();
 
   const [inventory, setInventory] = useState([]);
 
+  console.log(headerLabel);
+
   useEffect(() => {
-    fetch('/api/storeInventory?storename=vrgalaxy')
-      .then(response => response.json())
-      .then(data => setInventory(data));
+    fetch("/api/storeInventory?storename=vrgalaxy")
+      .then((response) => response.json())
+      .then((data) => setInventory(data));
   }, []);
 
-
-  function test() {
-    console.log("ran")
+  async function storeOpened() {
+    console.log("Tracking store access");
+    LDClient?.track("store-accessed", LDClient.getContext(), 1);
   }
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-      <div>
-        <img src="gaming.png" alt="VR Gaming" className="h-[300px]" />
-      </div>
+      <SheetTrigger
+        onClick={() => {
+          storeOpened();
+        }}
+        asChild
+      >
+        <div className="relative flex items-center justify-center">
+          {storeHeaders && (
+            <motion.div
+              initial={{ scale: 0, x: "-100%" }}
+              animate={{ scale: 1.15, x: "0%" }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                duration: 1.5,
+              }}
+              onAnimationComplete={() => {
+                animate({ scale: 1.0 });
+              }}
+              className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
+            >
+              <p className="flex items-center font-sohne mx-auto text-white text-xl text-center">
+                <Sparkle className="mr-1" /> {headerLabel}
+                <Sparkle className="ml-1" />
+              </p>
+            </motion.div>
+          )}
+          <img src="gaming.png" alt="VR Gaming" className="h-[300px] z-0" />
+        </div>
       </SheetTrigger>
 
-
       <SheetContent className="w-1/2" side="right">
-        
         <SheetHeader>
-
           <SheetTitle className="font-sohne text-2xl">
             Welcome to VR Galaxy
           </SheetTitle>
-
 
           <SheetDescription className="font-sohne">
             Your home for todays VR equipment!
@@ -90,7 +123,12 @@ export function VRgalaxy({addToCart}:{addToCart: any}) {
                 <TableCell>{item.cost}</TableCell>
                 <TableCell>
                   <div>
-                  <Button className="rounded-none bg-blue-600 font-sohne" onClick={() => addToCart(item)}>Buy Now</Button>
+                    <Button
+                      className="rounded-none bg-blue-600 font-sohne"
+                      onClick={() => addToCart(item)}
+                    >
+                      Buy Now
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

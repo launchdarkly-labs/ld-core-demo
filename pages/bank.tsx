@@ -221,10 +221,10 @@ export default function Bank() {
                       </p>
                     </div>
                     <div className="flex flex-row gap-4">
-                      <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white ">
+                      <div className="p-4 h-[300px] w-1/3  bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3  bg-white">
                         <CreditAccount />
                       </div>
                       <div className="p-4 h-[300px] w-1/3 bg-white">
@@ -247,7 +247,7 @@ export default function Bank() {
                         {!federatedAccountOne ? (
                           <div
                             onClick={() => setFederatedAccountOne(true)}
-                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
+                            className="flex p-4 h-[300px] w- bg-white items-center "
                           >
                             <PlusSquare
                               size={96}
@@ -303,7 +303,7 @@ export default function Bank() {
                 </div>
                 <div className="grid grid-cols-5 gap-4 w-full h-[300px]">
                   {aiFinancial && (
-                    <div className="relative p-4 col-span-2 w-full bg-white ">
+                    <div className="relative p-4 col-span-2 w-full max-h-[300px] bg-white ">
                       <div className="">
                         <div className="flex  justify-between pb-2">
                           <div>
@@ -340,7 +340,7 @@ export default function Bank() {
                       </div>
                     </div>
                   )}
-                  <div className="p-6 bg-white col-span-1 h-full">
+                  <div className="p-6 bg-white col-span-1 max-h-[300px] h-full">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -366,7 +366,7 @@ export default function Bank() {
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full bg-white justify-center ${
+                    className={`flex flex-col p-4 w-full max-h-[300px] bg-white justify-center ${
                       aiFinancial ? "col-span-2" : "col-span-4"
                     }`}
                   >

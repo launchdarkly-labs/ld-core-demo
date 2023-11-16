@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect } from "react";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 
 interface InventoryItem {
   id: string | number;
@@ -37,18 +38,28 @@ interface InventoryItem {
 export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
   const router = useRouter();
 
+  const LDClient = useLDClient()
+
   const totalCost = cart.reduce((total: any, item: InventoryItem) => total + Number(item.cost), 0);
   
-  
+  const cartClick = () => {
+    console.log("Tracking Cart View")
+    LDClient?.track('cart-accessed', LDClient.getContext(), 1) 
+  }
 
   const checkOut = () => {
     setCart([]);
     router.push("/marketplace");
   };
 
+  const checkOutTracking = () => {
+    console.log("Tracking Checkout")
+    LDClient?.track('customer-checkout', LDClient.getContext(), 1)
+  }
+
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger onClick={() => cartClick()} asChild>
         <div>
           <ShoppingCart color={"white"} />
         </div>
@@ -85,7 +96,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
               Transaction Total: ${totalCost}
             </p>
             <SheetTrigger onClick={checkOut} asChild>
-              <Button onClick={checkOut} className="w-full">
+              <Button onClick={checkOutTracking} className="w-full">
                 Checkout
               </Button>
             </SheetTrigger>
