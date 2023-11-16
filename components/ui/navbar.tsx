@@ -38,22 +38,25 @@ const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown;
+    const navLinkStyling = "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom"
+    
     switch (variant) {
       case "airlines":
+        
         navChild = (
           <>
             {isLoggedIn ? (
               <div className="hidden sm:flex">
                 <button
                   href="/airways"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom outline-none"
+                  className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
                 >
                   Book
                 </button>
                 <BookedFlights />
                 <button
                   href="/airways"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
                 >
                   Check-In
                 </button>
@@ -107,31 +110,31 @@ const NavBar = React.forwardRef<any>(
               <>
                 <button
                   href="/bank"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
                 >
                   Summary
                 </button>
                 <button
                   href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
                 >
                   Transfers
                 </button>
                 <button
                   href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
                 >
                   Deposits
                 </button>
                 <button
                   href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
                 >
                   External Accounts
                 </button>
                 <button
                   href="/bank"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
                 >
                   Statements
                 </button>
@@ -140,8 +143,8 @@ const NavBar = React.forwardRef<any>(
 
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
-                <Search color={"white"} />
-                <MessageCircle color={"white"} />
+                <Search color={"white"} className="hidden sm:block"/>
+                <MessageCircle color={"white"} className="hidden sm:block"/>
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -188,7 +191,6 @@ const NavBar = React.forwardRef<any>(
         navLinkMobileDropdown = (
           <>
             <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
-
             <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
             <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
             <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
@@ -212,31 +214,31 @@ const NavBar = React.forwardRef<any>(
               <>
                 <button
                   href="/marketplace"
-                  className="ml-12 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-white text-sm font-sohnelight font-medium transition-colors hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
                 >
                   All
                 </button>
                 <button
                   href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
                 >
                   Account
                 </button>
                 <button
                   href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
                 >
                   Buy Again
                 </button>
                 <button
                   href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
                 >
                   Today's Deals
                 </button>
                 <button
                   href="/marketplace"
-                  className="mx-6 pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive focus:text-airlinetext text-sm font-sohnelight font-medium transition-colors hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px] bg-no-repeat bg-bottom"
+                  className={`${navLinkStyling} mx-6 text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
                 >
                   Sale
                 </button>
@@ -244,8 +246,8 @@ const NavBar = React.forwardRef<any>(
             ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} />
-              <MessageCircle color={"white"} />
+              <Search color={"white"} className="hidden sm:block"/>
+              <MessageCircle color={"white"} className="hidden sm:block"/>
               <MarketLoginScreen />
             </div>
           </>
@@ -265,7 +267,6 @@ const NavBar = React.forwardRef<any>(
         navLinkMobileDropdown = (
           <>
             <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
-
             <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
             <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
             <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
