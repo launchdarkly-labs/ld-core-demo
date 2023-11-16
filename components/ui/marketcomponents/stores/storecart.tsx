@@ -37,15 +37,8 @@ interface InventoryItem {
 export function StoreCart({ cart, setCart }) {
   const router = useRouter();
 
-  let totalCost;
+  const totalCost = cart.reduce((total, item: InventoryItem) => total + Number(item.cost), 0);
   
-  useEffect(()=>{
-    totalCost = cart.reduce(
-    (total, item: InventoryItem) => total + Number(item.cost),
-    0
-  );
-  }, [cart])
-
   
 
   const checkOut = () => {

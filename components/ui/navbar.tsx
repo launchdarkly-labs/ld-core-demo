@@ -221,7 +221,7 @@ const NavBar = React.forwardRef<any>(
               </>
             ) : null}
             <div className="flex space-x-6 ml-auto mr-4 items-center">
-              <StoreCart cart={cart} />
+              <StoreCart cart={cart} setCart={setCart} />
               <Search color={"white"} />
               <MessageCircle color={"white"} />
               <MarketLoginScreen />
