@@ -354,6 +354,41 @@ var migration = new MigrationBuilder<string, string, string, string>(_client)
               <p>Painlessly target device and OS!</p>
             </AccordionContent>
           </AccordionItem>
+          <AccordionItem value="item-5">
+            <AccordionTrigger>
+              <h2 className="text-2xl">Experimentation</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <h2 className="text-2xl font-bold my-3.5">
+                Track custom events for experimentation
+              </h2>
+
+              <Code
+                language={"js"}
+                code={`client.track('something-happened');
+
+client.track('something-happened-with-custom-data', { someData: 2 });`}
+              />
+
+              <h2 className="text-2xl font-bold my-3.5">
+                Flushing events on the edge
+              </h2>
+              <p>
+                In edge environments, events need to be flished to prevent loss
+                of data (ex. Cloudflare).
+              </p>
+              <Code
+                language={"js"}
+                code={`executionContext.waitUntil(
+  client.flush((err, res) => {
+    console.log('flushed events');
+  }),
+);
+;`}
+              />
+              <p>Create experiments around the metrics that matter to you!</p>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </div>
     </main>
