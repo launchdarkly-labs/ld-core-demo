@@ -81,7 +81,8 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className="w-[427px] h-[275px] bg-white rounded-md shadow-md absolute z-20 mt-4 p-[1rem] font-sohne font-normal ">
+    <div className={`w-[430px] h-[275px] bg-white rounded-md shadow-md absolute
+     z-20 mt-4 p-[1rem] font-sohne font-normal ${activeField === "from" ? "" : "md:ml-[9rem] lg:ml-[9.5rem]"}`}>
       <button className="cursor-pointer h-7 w-7 float-right" onClick={handleClose}>
         <XIcon className="cursor-pointer h-full w-full text-neutral-400 " />
       </button>
