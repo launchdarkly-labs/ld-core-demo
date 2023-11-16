@@ -76,7 +76,7 @@ export default function Marketplace() {
       transition={pageTransition}
       className="h-full"
     >
-      <NavBar variant={"market"} />
+      <NavBar cart={cart} setCart={setCart} variant={"market"} />
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
