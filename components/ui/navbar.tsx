@@ -37,7 +37,7 @@ import {
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn } = useContext(LoginContext);
-   
+
     switch (variant) {
       case "airlines":
         return (
@@ -63,9 +63,19 @@ const NavBar = React.forwardRef<any>(
               </DropdownMenuTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>awefwef</DropdownMenuItem>
-                  <DropdownMenuItem>awefwef</DropdownMenuItem>
-                  <DropdownMenuItem>awefwef</DropdownMenuItem>
+                  <DropdownMenuItem>Book</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BookedFlights />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Check-In</DropdownMenuItem>
+                  <div className="flex justify-between">
+                    <DropdownMenuItem>
+                      <Search className="cursor-pointer" />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <MessageCircle className=" cursor-pointer " />
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenuPortal>
             </DropdownMenu>
