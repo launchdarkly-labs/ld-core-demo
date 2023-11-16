@@ -22,7 +22,7 @@ if (typeof window !== "undefined") {
       kind: "multi",
       user: {
         key: uniqueKey,
-        name: "anonymous",
+        name: "Jenn",
         appName: "DefaultDemo",
       },
       device: {

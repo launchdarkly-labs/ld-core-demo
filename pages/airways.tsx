@@ -25,9 +25,11 @@ import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestina
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Airways() {
   const flags = useFlags();
-  console.log(flags);
+  const { launchClubLoyalty } = useFlags() 
+
+
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
   const [toLocation, setToLocation] = useState("To");
@@ -100,7 +102,7 @@ export default function Home() {
         transition={pageTransition}
         className={`flex h-screen text-white flex-col font-audimat   `}
       >
-        <NavBar variant={"airlines"} />
+        <NavBar launchClubLoyalty={launchClubLoyalty} variant={"airlines"} />
 
         <header className={`py-20 bg-gradient-airways`}>
           <div className="lg:mx-auto max-w-7xl px-[1.7rem] lg:px-[2rem]">
