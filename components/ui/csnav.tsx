@@ -20,7 +20,6 @@ import {useState} from 'react';
 
 export function CSNav() {
   const router = useRouter();
-  const [sheetOpen, setSheetOpen] = useState(false)
 
   function goHome() {
     router.push("/");
@@ -47,7 +46,7 @@ export function CSNav() {
       <SheetTrigger asChild>
         <Menu size={24} className='text-white' />
       </SheetTrigger>
-      <SheetContent className="" side="left" sheetOpen={sheetOpen} setSheetOpen={setSheetOpen}>
+      <SheetContent className="" side="left">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">Demo Navigation</SheetTitle>
           <SheetDescription className="font-sohne">

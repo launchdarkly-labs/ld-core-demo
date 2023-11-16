@@ -28,7 +28,6 @@ export default function LaunchClub() {
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext)
   const [username, setUsername] = useState("");
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [status, setStatus] = useState("Economy");
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,22 +99,16 @@ export default function LaunchClub() {
   };
 
   return (
-    <Sheet open={sheetOpen}>
+    <Sheet>
       <SheetTrigger asChild>
         <button
-          onClick={() => setSheetOpen(true)}
           className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
         >
           Launch Club
         </button>
       </SheetTrigger>
       {!enrolledInLaunchClub ? (
-        <SheetContent
-          className="w-1/2 overflow-y-scroll bg-white"
-          side="right"
-          sheetOpen={sheetOpen}
-          setSheetOpen={setSheetOpen}
-        >
+        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center">
               <div className="flex items-center text-3xl flex-col">
@@ -167,14 +160,14 @@ export default function LaunchClub() {
                 ))}
               </div>
               <div className="flex flex-col">
-                <Button
-                  onClick={() => {
-                    setEnrolledInLaunchClub(true), setSheetOpen(false);
-                  }}
-                  className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
-                >
-                  Enroll Today!
-                </Button>
+                <SheetTrigger asChild>
+                  <Button
+                    onClick={() => setEnrolledInLaunchClub(true)}
+                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
+                  >
+                    Enroll Today!
+                  </Button>
+                </SheetTrigger>
               </div>
             </SheetDescription>
           </SheetHeader>
@@ -187,12 +180,7 @@ export default function LaunchClub() {
           ></motion.div>
         </SheetContent>
       ) : (
-        <SheetContent
-          className="w-1/2 overflow-y-scroll bg-white"
-          side="right"
-          sheetOpen={sheetOpen}
-          setSheetOpen={setSheetOpen}
-        >
+        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohnelight text-3xl flex items-center justify-center">
               <div className="mx-auto flex place-content-center w-full">
@@ -227,12 +215,14 @@ export default function LaunchClub() {
                 ))}
               </div>
               <div className="my-2">
-                <Button
-                  onClick={handleLogout}
-                  className="w-full mx-auto font-sohnelight text-black rounded-none bg-transparent hover:bg-red-500 text-lg"
-                >
-                  Logout
-                </Button>
+                <SheetTrigger asChild>
+                  <Button
+                    onClick={handleLogout}
+                    className="w-full mx-auto font-sohnelight text-black rounded-none bg-transparent hover:bg-red-500 text-lg"
+                  >
+                    Logout
+                  </Button>
+                </SheetTrigger>
               </div>
             </SheetDescription>
           </SheetHeader>
