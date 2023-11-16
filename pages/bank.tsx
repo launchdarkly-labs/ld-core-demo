@@ -10,7 +10,7 @@ import {
   Area,
   ResponsiveContainer,
 } from "recharts";
-import { AreaChartIcon, ArrowRight } from "lucide-react";
+import { AreaChartIcon, ArrowRight, PlusSquare } from "lucide-react";
 import { useContext, useState } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
@@ -30,6 +30,8 @@ import { BounceLoader } from "react-spinners";
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
+  const [federatedAccountOne, setFederatedAccountOne] = useState(false);
+  const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
   const router = useRouter();
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
@@ -90,6 +92,11 @@ export default function Bank() {
     type: "tween",
     ease: "anticipate",
     duration: 0.5,
+  };
+
+  const variants = {
+    hidden: { scaleY: 0, originY: 1 }, // start from the base of the div
+    visible: { scaleY: 1, originY: 1 }, // grow up to the top of the div
   };
 
   const ldclient = useLDClient();
@@ -220,7 +227,7 @@ export default function Bank() {
                       <div className="p-4 h-[300px] w-1/3 min-w-[250px] bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-[300px] bg-white">
+                      <div className="p-4 h-[300px] w-1/3 bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
@@ -237,13 +244,49 @@ export default function Bank() {
                         </p>
                       </div>
                       <div className="flex flex-row gap-4 justify-start">
-                        <div className="p-4 h-[300px] w-[250px] bg-white ">
-                          <FederatedCheckingAccount />
-                        </div>
+                        {!federatedAccountOne ? (
+                          <div
+                            onClick={() => setFederatedAccountOne(true)}
+                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
+                          >
+                            <PlusSquare
+                              size={96}
+                              className="text-gray-400 mx-auto"
+                            />
+                          </div>
+                        ) : (
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={variants}
+                            transition={{ duration: 0.5 }}
+                            className="p-4 h-[300px] w-[250px] bg-white "
+                          >
+                            <FederatedCheckingAccount />
+                          </motion.div>
+                        )}
 
-                        <div className="p-4 h-[300px] w-[250px] bg-white">
-                          <FederatedCreditAccount />
-                        </div>
+                        {!federatedAccountTwo ? (
+                          <div
+                            onClick={() => setFederatedAccountTwo(true)}
+                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
+                          >
+                            <PlusSquare
+                              size={96}
+                              className="text-gray-400 mx-auto"
+                            />
+                          </div>
+                        ) : (
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={variants}
+                            transition={{ duration: 0.5 }}
+                            className="p-4 h-[300px] w-[250px] bg-white"
+                          >
+                            <FederatedCreditAccount />
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -289,12 +332,12 @@ export default function Bank() {
                         </div>
                       </div>
                       <div className="overflow-auto h-[150px] flex justify-center items-center">
-  {loading ? (
-    <BounceLoader color="#1D4ED8" size={100} />                          
-  ) : (
-    <p className="my-4 font-sohnelight">{aiResponse}</p>
-  )}
-</div>
+                        {loading ? (
+                          <BounceLoader color="#1D4ED8" size={100} />
+                        ) : (
+                          <p className="my-4 font-sohnelight">{aiResponse}</p>
+                        )}
+                      </div>
                     </div>
                   )}
                   <div className="p-6 bg-white col-span-1 h-full">
