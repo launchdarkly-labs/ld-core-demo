@@ -39,64 +39,101 @@ export default function MarketLoginScreen() {
   };
 
   return (
-    <Popover>
+   <Popover>
       <PopoverTrigger>
         {isLoggedIn ? (
           <Avatar>
-            <AvatarImage src='/woman.png' alt='woman'/>
+            <AvatarImage src="/woman.png" alt="woman" />
             <AvatarFallback>LD</AvatarFallback>
           </Avatar>
         ) : (
           <Button
             variant={"ghost"}
-            className="text-white bg-gradient-to-r from-marketblue to-marketgreen font-audimat text-sm text-black uppercase px-8 rounded-full"
+            className="text-white bg-gradient-to-r from-marketblue text-black to-marketgreen font-audimat text-sm uppercase px-8 rounded-none"
           >
             Login
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="dark w-[400px]">
+      <PopoverContent className="dark w-[400px] bg-white">
         <div>
-          <p className="text-sm mx-auto text-center font-robotobold">
-            Galaxy Marketplace
-          </p>
+          {!isLoggedIn ? (
+            <div className="my-10 flex items-center text-3xl flex-col">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="138"
+                width="230"
+                className="pr-2"
+              >
+                <image
+                  href="/galaxy-marketplace.svg"
+                  height="138"
+                  width="230"
+                  alt="Launch Airways"
+                />
+              </svg>
+            </div>
+          ) : (
+            <div className="mx-auto flex place-content-center w-full">
+              <img src="woman.png" className="rounded-full h-48" />
+            </div>
+          )}
           {isLoggedIn && (
-            <p className="outfitters text-2xl font-robotobold text-center py-4">
+            <p className="outfitters text-2xl text-black font-sohne text-center py-4">
               Welcome Back!
             </p>
           )}
         </div>
         <div className="grid justify-center">
-          <div className="mx-auto">
-            <img src="woman.png" className="rounded-full h-48" />
-          </div>
-          {/* {isLoggedIn && (
-            <div className="mx-auto text-center pt-4 font-robotobold text-xl">
-              <BookedFlights />
-              <p className="pt-4">
-                Thank you for flying Launch Airways at{" "}
-                <span className="text-2xl">Platinum Tier</span>!
-              </p>
-            </div>
-          )} */}
+          {!isLoggedIn ? (
+            <>
+              <div className="w-full px-8">
+                <div>
+                  <Input
+                    placeholder="Email"
+                    className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 border-zinc-200 rounded-none text-lg bg-white"
+                  />
+                </div>
+                <Button
+                  onClick={handleLogin}
+                  className="w-full mx-auto font-sohnelight text-black rounded-none bg-gradient-to-tr from-marketblue to-marketgreen text-lg"
+                >
+                  Sign in with SSO
+                </Button>
+              </div>
 
-          <div className="mx-auto pt-8 font-audimat">
-            {!isLoggedIn ? (
-              <Button
-                onClick={handleLogin}
-                className="text-xl bg-blue-700 text-white items-center"
-              >
-                Login with SSO
-              </Button>
-            ) : (
-              <Button
-                onClick={handleLogout}
-                className="text-xl bg-red-700 text-white items-center"
-              >
-                Logout
-              </Button>
-            )}
-          </div>
+              <div className="flex flex-row justify-between px-4 pb-8 pt-4 3xl:pt-14">
+                <div className="text-blue-600 text-xs">
+                  <p>Forgot Password?</p>
+                </div>
+                <div>
+                  <p className="text-black text-xs">
+                    Don't have an account?{" "}
+                    <a href="/bank" className="text-blue-600">
+                      Sign Up
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                <p className="pt-4">
+                  Thank you for shopping with us as a{" "} 
+                  <span className="text-2xl">Premium Member</span>!
+                </p>
+              </div>
+              <div className="mx-auto text-center">
+                <Button
+                  onClick={handleLogout}
+                  className="text-xl bg-red-700 text-black items-center my-6 w-full bg-gradient-to-tr from-marketblue to-marketgreen text-lg rounded-none"
+                >
+                  Logout
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </PopoverContent>
     </Popover>
