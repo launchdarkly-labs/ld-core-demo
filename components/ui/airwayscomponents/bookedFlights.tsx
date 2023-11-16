@@ -53,14 +53,12 @@ export default function BookedFlights() {
           My Bookings
         </button>
       </SheetTrigger>
-      <SheetContent className="w-1/2 overflow-y-scroll dark" side="right">
+      <SheetContent className="w-1/2 overflow-y-scroll light" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
-            Your Booked Flights
+            <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose">Your booked flights</div>
           </SheetTitle>
-          <SheetDescription className="font-sohne">
-            Thank you for flying with us!
-          </SheetDescription>
+
         </SheetHeader>
 
         <motion.div
@@ -77,48 +75,35 @@ export default function BookedFlights() {
               ) => (
                 <motion.div
                   key={trip.id}
-                  className="w-full border-2 border-black/10 shadow-2xl rounded-2xl mb-4 mt-8 bg-slate-900 text-white"
+                  className=" mb-4 mt-8 text-white items-stretch flex justify-center"
                   variants={childVariants}
                   initial="hidden"
                   animate="show"
                   exit="exit" // Add this line
                 >
-                  <div key={index} className="flex justify-between p-4">
-                    <div className="flex flex-col text-white">
-                      <p className="text-2xl">
-                        <span className="font-bold">Confirmation Number:</span>{" "}
-                        {trip.id}
-                      </p>
-                      <p className="text-2xl">
-                        <span className="font-bold">Traveling from:</span>{" "}
-                        {trip.from}
-                      </p>
-                      <p className="text-2xl">
-                        <span className="font-bold">Destiation:</span> {trip.to}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-white text-2xl">Fare Type: {status}</p>
-                    </div>
-                    <div className="grid">
-                      <div className="flex items-center space-x-4">
-                        <button
-                          onClick={() => handleCancel(index)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2"
-                        >
-                          Platinum Upgrade
-                        </button>
-                        <button
-                          onClick={() => handleCancel(index)}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2"
-                        >
-                          Cancel Flight
-                        </button>
+
+                  <div className="max-w-lg mx-auto bg-white shadow-md overflow-hidden items-stretch ">
+                    <div className="md:flex">
+                      <div className="p-8">
+                        <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">{trip.type} flight</div>
+
+                        <p className="mt-2 text-black">{trip.depart}</p>
+                        <p className="mt-2 text-black">{trip.from} - {trip.to}</p>
+                        <p className="mt-2 text-black">Confirmation Number: {trip.id}</p>
                       </div>
-                      <div className="flex items-center mx-auto">
-                        <Button className="bg-awsorange text-white font-audimat text-xl">
-                          AI Travel Insights
-                        </Button>
+                      <div className="p-8 bg-gradient-to-r from-purple-100 to-rose-100 md:flex-shrink-0">
+                        <div className="flex flex-col items-center justify-center space-y-4"> {/* Modified */}
+                          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full">
+                            Upgrade
+                          </button>
+
+                          <button className="hover:bg-purple-500 text-white font-bold py-2 px-4 bg-gradient-to-r from-purple-500 to-rose-500 w-full">
+                            AI Travel Insights
+                          </button>
+                          <div className="mt-4 text-right items-center justify-center"> {/* Modified */}
+                            <a href="#" className="text-sm text-black underline hover:text-indigo-500">Cancel Flight</a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
