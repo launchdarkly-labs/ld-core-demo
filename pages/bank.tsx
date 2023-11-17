@@ -129,11 +129,9 @@ export default function Bank() {
       {!isLoggedIn ? (
         <motion.main
           className={`relative w-full h-screen font-audimat`}
-          initial="initial"
-          animate="in"
-          exit="out"
-          variants={pageVariants}
-          transition={pageTransition}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex h-20 shadow-2xl bg-ldgrey ">
             <NavBar variant={"bank"} />

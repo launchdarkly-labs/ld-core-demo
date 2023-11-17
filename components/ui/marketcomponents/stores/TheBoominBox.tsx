@@ -65,7 +65,7 @@ export function TheBoominBox({
         </div>
       </SheetTrigger>
 
-      <SheetContent className="w-1/2" side="right">
+      <SheetContent className="w-3/4 lg:w-1/2" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
             The Boomin' Box
