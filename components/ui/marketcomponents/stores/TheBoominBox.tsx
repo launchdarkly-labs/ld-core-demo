@@ -34,7 +34,15 @@ interface InventoryItem {
   cost: number;
 }
 
-export function TheBoominBox({ addToCart }: { addToCart: any }) {
+export function TheBoominBox({
+  addToCart,
+  open,
+  setOpen,
+}: {
+  addToCart: any;
+  open: boolean;
+  setOpen: any;
+}) {
   const router = useRouter();
 
   const [inventory, setInventory] = useState([]);
@@ -46,7 +54,7 @@ export function TheBoominBox({ addToCart }: { addToCart: any }) {
   }, []);
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <div>
           <img

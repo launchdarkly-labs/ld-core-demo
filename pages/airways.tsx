@@ -94,6 +94,7 @@ export default function Airways() {
 
   return (
     <>
+    <Toaster ></Toaster>
       <motion.main
         initial="initial"
         animate="in"

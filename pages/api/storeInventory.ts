@@ -31,10 +31,15 @@ export default async function handler(
   const db = drizzle(client);
   // @ts-ignore
 
-  const storeInventory = await db
-    .select()
-    .from(galaxymarketplace)
-    .where(eq(galaxymarketplace.vendor, storename));
+  let storeInventory;
+  if (storename === "all") {
+    storeInventory = await db.select().from(galaxymarketplace);
+  } else {
+    storeInventory = await db
+      .select()
+      .from(galaxymarketplace)
+      .where(eq(galaxymarketplace.vendor, storename));
+  }
   // @ts-ignore
   console.log(storeInventory);
 
