@@ -34,7 +34,15 @@ interface InventoryItem {
   cost: number;
 }
 
-export function MacroCenter({ addToCart }: { addToCart: any }) {
+export function MacroCenter({
+  addToCart,
+  open,
+  setOpen,
+}: {
+  addToCart: any;
+  open: boolean;
+  setOpen: any;
+}) {
   const router = useRouter();
 
   const [inventory, setInventory] = useState([]);
@@ -46,7 +54,7 @@ export function MacroCenter({ addToCart }: { addToCart: any }) {
   }, []);
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <div>
           <img src="computers.png" alt="MacroCenter" className="h-[300px]" />
