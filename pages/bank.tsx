@@ -208,21 +208,25 @@ export default function Bank() {
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
           <div className=" w-full px-8 ">
-            <div className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-x-8" : ""}`}>
-              <div className="flex w-full h-[425px]">
-                <div className="px-6 shadow-xl bg-gradient-blue w-full">
+            <div
+              className={`flex flex-col xl:flex-row py-8 ${
+                federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
+              }`}
+            >
+              <div className="flex w-full h-full sm:h-[425px] ">
+                <div className="p-6 shadow-xl bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <div>
-                      <p className="text-white font-sohne py-6 text-[24px]">Account Summary</p>
+                      <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
                     </div>
-                    <div className="flex flex-row gap-4">
-                      <div className="p-4 h-[300px] w-1/3  bg-white ">
+                    <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
+                      <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3  bg-white">
+                      <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px] w-1/3 bg-white">
+                      <div className="p-4 h-[300px]w-full sm:w-1/3 bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
@@ -232,13 +236,13 @@ export default function Bank() {
               <div className="flex flex-grow font-sohne h-full">
                 {federatedAccounts && (
                   <div className="h-full">
-                    <div className="px-6 gap-4 w-full bg-ldcardgrey h-[425px]">
+                    <div className="p-6 gap-4 w-full bg-ldcardgrey h-full sm:h-[425px]">
                       <div>
-                        <p className="text-black font-sohne py-6 text-[24px]">
+                        <p className="text-black font-sohne mb-6 text-[24px]">
                           Federated Account Access
                         </p>
                       </div>
-                      <div className="flex flex-row gap-4 justify-start">
+                      <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 justify-start">
                         {!federatedAccountOne ? (
                           <div
                             onClick={() => setFederatedAccountOne(true)}
@@ -284,13 +288,12 @@ export default function Bank() {
             </div>
 
             {wealthManagement ? (
-              <div className="px-6 py-2 bg-ldcardgrey h-[425px] shadow-2xl">
-                <div>
-                  <p className="text-black font-sohne py-6 text-[24px]">Wealth Management</p>
-                </div>
-                <div className="grid grid-cols-5 gap-4 w-full h-[300px]">
+              <section className=" p-6 bg-ldcardgrey h-full sm:h-[425px] shadow-2xl mb-6">
+                <h3 className="text-black font-sohne mb-6 text-[24px]">Wealth Management</h3>
+
+                <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                   {aiFinancial && (
-                    <div className="relative p-4 col-span-2 w-full max-h-[300px] bg-white ">
+                    <div className="relative p-4 col-span-2 w-full h-full sm:h-[300px] bg-white ">
                       <div className="">
                         <div className="flex  justify-between pb-2">
                           <div>
@@ -324,7 +327,7 @@ export default function Bank() {
                       </div>
                     </div>
                   )}
-                  <div className="p-6 bg-white col-span-1 max-h-[300px] h-full">
+                  <div className="p-6 bg-white col-span-1 h-full sm:h-[300px]">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -337,19 +340,19 @@ export default function Bank() {
                     <div className="flex flex-col">
                       <div className="pt-16">
                         <p className="cardaccounttext">Total Investment Balance: </p>
-                        <p className="moneytext">$184,278</p>
+                        <p className="moneytext text-base sm:text-3xl">$184,278</p>
                         <p className="accountsecondary">Over Lifetime of Account</p>
                       </div>
                       <div></div>
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full max-h-[300px] bg-white justify-center ${
+                    className={`flex flex-col p-4 w-full h-full sm:h-[300px] bg-white justify-center ${
                       aiFinancial ? "col-span-2" : "col-span-4"
                     }`}
                   >
                     <p className="aiinsightstext">6-Month Account Trend</p>
-                    <ResponsiveContainer>
+                    <ResponsiveContainer className={"h-full"}>
                       <AreaChart
                         data={data}
                         margin={{
@@ -380,10 +383,10 @@ export default function Bank() {
                     </ResponsiveContainer>
                   </div>
                 </div>
-              </div>
+              </section>
             ) : null}
 
-            <div className="flex flex-row w-full h-[425px] py-2 items-center space-x-20 justify-center">
+            <div className="flex flex-col sm:flex-row w-full h-full sm:h-[425px] items-center gap-y-8 sm:gap-x-20 justify-center">
               <img src="CC.png" />
               <img src="Loan.png" />
             </div>
