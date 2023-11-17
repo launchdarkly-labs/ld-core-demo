@@ -40,10 +40,14 @@ export function VRgalaxy({
   headerLabel,
   storeHeaders,
   addToCart,
+  open,
+  setOpen,
 }: {
   headerLabel: string;
   storeHeaders: string;
   addToCart: any;
+  open: boolean;
+  setOpen: any;
 }) {
   const LDClient = useLDClient();
   const router = useRouter();
@@ -64,7 +68,7 @@ export function VRgalaxy({
   }
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         onClick={() => {
           storeOpened();
@@ -85,8 +89,7 @@ export function VRgalaxy({
               className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
             >
               <p className="flex items-center font-sohne mx-auto uppercase text-white text-xl text-center">
-                 {headerLabel}
-                
+                {headerLabel}
               </p>
             </motion.div>
           )}
