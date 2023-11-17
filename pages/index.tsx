@@ -55,7 +55,7 @@ export default function Home() {
 
       <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
         <div className="absolute z-50">
-          <h1 className="w-full sm:w-2/3 mx-auto">Connecting code to customers</h1>
+          <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Connecting code to customers</h1>
           <p className="w-3/5 text-center mx-auto">
             Maximize the value of every software feature through safer releases,
             targeted experiences, experimentation, and more.
@@ -64,7 +64,7 @@ export default function Home() {
         <div className="hidden sm:block absolute top-16 left-40 z-10">
           <img src="/hero/Vector 965.png" />
         </div>
-        <div className="absolute top-0 right-24 z-10">
+        <div className="hidden sm:block absolute top-0 right-24 z-10">
           <img src="/hero/Group 481368.png" />
         </div>
         <div className="blur-sm sm:blur-none absolute top-20 right-0 z-10">
@@ -76,22 +76,22 @@ export default function Home() {
         <div className="blur-sm sm:blur-none absolute bottom-[-40px] left-0 z-10">
           <img src="/hero/Group 481364.png" className="bottom-0 left-0" />
         </div>
-        <div className="hidden sm:block absolute bottom-[160px] right-56 z-10">
+        <div className="hidden xl:block absolute bottom-[160px] right-56 z-10">
           <img src="/hero/Rectangle 3467774.png" />
         </div>
-        <div className="hidden sm:block absolute bottom-[165px] right-[68px] z-10">
+        <div className="hidden xl:block absolute bottom-[165px] right-[68px] z-10">
           <img src="/hero/Rectangle 3467775.png" />
         </div>
         <div className="blur-sm sm:blur-none absolute bottom-20 right-10 z-10">
           <img src="/hero/Group 481309.png" />
         </div>
-        <div className="blur-sm sm:blur-none absolute bottom-28 left-64 z-30">
+        <div className="blur-sm lg:blur-none absolute bottom-28 left-64 z-30">
           <img src="/hero/Group 481366.png" />
         </div>
-        <div className="hidden sm:block absolute bottom-62 left-32 z-10">
+        <div className="hidden lg:block absolute bottom-62 left-32 z-10">
           <img src="/hero/Group 481365.png" />
         </div>
-        <div className="hidden sm:block absolute bottom-62 left-32 z-10">
+        <div className="hidden lg:block absolute bottom-62 left-32 z-10">
           <img src="/hero/Group 481365.png" />
         </div>
       </header>
