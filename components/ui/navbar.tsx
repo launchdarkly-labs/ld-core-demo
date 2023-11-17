@@ -286,23 +286,23 @@ const NavBar = React.forwardRef<any>(
 
         break;
       default:
-        navLogo = (
-          <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
-            </svg>
-            <p className="text-base flex text-white font-sohnelight">
-              <strong className="font-sohne">Market</strong>place
-            </p>
-          </>
-        );
+        // navLogo = (
+        //   <>
+        //     <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+        //       <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
+        //     </svg>
+        //     <p className="text-base flex text-white font-sohnelight">
+        //       <strong className="font-sohne">Market</strong>place
+        //     </p>
+        //   </>
+        // );
         navChild = null;
 
         navLinkMobileDropdown = null;
     }
 
     return (
-      <nav className="sticky w-full place-content-between flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
+      <nav className="sticky w-full flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
         <div className="items-center flex">
           <CSNav />
         </div>
