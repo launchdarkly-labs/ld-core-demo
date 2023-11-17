@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import LoginContext from "@/utils/contexts/login";
 import { useContext } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 // import BookedFlights from "./bookedFlights";
 
@@ -27,6 +27,7 @@ export default function MarketLoginScreen() {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
     useContext(LoginContext);
   const [username, setUsername] = useState("");
+  const inputRef = useRef();
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -34,10 +35,15 @@ export default function MarketLoginScreen() {
     setUsername("");
   };
 
-  const handleLogin = async () => {
-    await setIsLoggedIn(true);
-    await loginUser("Jenn");
-  };
+  function handleLogin(e) {
+    setIsLoggedIn(true);
+    let email = inputRef.current?.value;
+    console.log(email);
+    if (!email) {
+      email = "jenn@launchmail.io";
+    }
+    loginUser("Jenn", email);
+  }
 
   return (
     <Dialog>
@@ -91,12 +97,14 @@ export default function MarketLoginScreen() {
                 <div>
                   <Input
                     placeholder="Email"
+                    defaultValue={"jenn@launchmail.io"}
+                    ref={inputRef}
                     className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 border-zinc-200 rounded-none text-lg bg-white"
                   />
                 </div>
                 <DialogTrigger asChild>
                   <Button
-                    onClick={handleLogin}
+                    onClick={(e) => handleLogin(e)}
                     className="w-full mx-auto font-sohnelight text-black rounded-none bg-gradient-to-tr from-marketblue to-marketgreen text-lg"
                   >
                     Sign in with SSO
