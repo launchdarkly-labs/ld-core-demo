@@ -65,7 +65,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
         </div>
       </SheetTrigger>
 
-      <SheetContent className="w-1/3" side="right">
+      <SheetContent className="w-full sm:w-1/2 lg:w-1/3" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">Your Cart</SheetTitle>
 
