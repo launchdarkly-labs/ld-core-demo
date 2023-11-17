@@ -40,6 +40,7 @@ import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter
 import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
+import { is } from "drizzle-orm";
 
 
 export default function Marketplace() {
@@ -171,25 +172,25 @@ export default function Marketplace() {
         <div className="mx-24 3xl:mx-52 pt-14 ">
           <div className="space-y-16">
             <div>
-              <div className="flex justify-between items-center pb-10">
+
+{/* Popular Shops heading and row */}
+
+
+            <div className="flex justify-center pb-10">
                 <div>
-                  <p className="shoptext text-xl">Popular Shops</p>
+                  <p className="shoptext text-xl mx-20">Popular Shops</p>
                 </div>
                 <div>
-                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray">
+                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray mx-20">
                     Search Popular
                   </Button>
                 </div>
               </div>
-          
-
-
-
-
 
                 {/* Store individual callouts */}
                 {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                 <div className="flex grid xl:flex flex-row gap-20 justify-center">
+                  
                 <div className="prodcard">
                   <VRgalaxy
                     storeHeaders={storeHeaders}
@@ -257,7 +258,7 @@ export default function Marketplace() {
                   </Button>
                 </div>
               </div>
-              <div className="flex grid xl:flex flex-row gap-20 justify-center">
+              <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
                 <div>
                   <img src="software.png" className="h-[300px]" />
                 </div>
