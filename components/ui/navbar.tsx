@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle, Menu, Navigation } from "lucide-react";
+import { Search, MessageCircle, Menu, PanelTopOpen } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -310,7 +310,7 @@ const NavBar = React.forwardRef<any>(
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="ml-4 cursor-pointer block sm:hidden text-white">
-              <Menu size={24} />
+              <PanelTopOpen size={24} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuPortal>
