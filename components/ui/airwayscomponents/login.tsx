@@ -12,7 +12,7 @@ import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import LoginContext from "@/utils/contexts/login";
 import { useContext } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import BookedFlights from "./bookedFlights";
 import { Dialog, DialogContent, DialogTrigger } from "../dialog";
@@ -25,9 +25,10 @@ const formSchema = z.object({
 });
 
 export default function LoginScreen() {
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
-    useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
+  useContext(LoginContext);
   const [username, setUsername] = useState("");
+  const inputRef = useRef(null);
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -35,9 +36,14 @@ export default function LoginScreen() {
     setUsername("");
   };
 
-  const handleLogin = async () => {
-    await setIsLoggedIn(true);
-    await loginUser("Jenn");
+  function handleLogin(e) {
+    setIsLoggedIn(true);
+    let email = inputRef.current?.value;
+    console.log(inputRef.current.value);
+    if (!email) {
+      email = "jenn@launchmail.io";
+    }
+    loginUser("Jenn", email);
   };
 
   return (
@@ -93,19 +99,20 @@ export default function LoginScreen() {
                 <div>
                   <Input
                     placeholder="Email"
+                    defaultValue={"jenn@launchmail.io"}
+                    ref={inputRef}
                     className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 border-zinc-200 rounded-none text-lg bg-white"
                   />
                 </div>
                 <DialogTrigger asChild>
                   <Button
-                    onClick={handleLogin}
+                    onClick={(e) => handleLogin(e)}
                     className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
                   >
                     Sign in with SSO
                   </Button>
                 </DialogTrigger>
               </div>
-
               <div className="flex flex-row justify-between px-4 pb-8 pt-4 3xl:pt-14">
                 <div className="text-blue-600 text-xs">
                   <p>Forgot Password?</p>
