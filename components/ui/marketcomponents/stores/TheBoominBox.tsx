@@ -60,7 +60,7 @@ export function TheBoominBox({
           <img
             src="electronics.png"
             alt="The Boomin' Box"
-            className="h-[300px]"
+            className="h-[300px] sm:h-[350px]"
           />
         </div>
       </SheetTrigger>
