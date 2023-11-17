@@ -48,10 +48,10 @@ export default function ArchitecturePage() {
                 Delivering 20 Trillion Feature Flags Daily
               </h3>
               <p>
-                LaunchDarkly's <strong>Flag Delivery Network</strong> ensures
-                flags are globally available.
+                A global <strong>Flag Delivery Network</strong> ensures
+                consistent performance from anywhere.
               </p>
-              <img src="/img/FDN.png" className="my-4 w-full" />
+              <img src="/img/FDN.avif" className="my-4 w-full" />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
@@ -60,6 +60,10 @@ export default function ArchitecturePage() {
             </AccordionTrigger>
             <AccordionContent>
               <h3 className="text-2xl font-bold my-3.5">High Performance</h3>
+              <p>
+                Evaluate and transmit only the minimally required data for a
+                secure and safe customer experience.
+              </p>
               <h3 className="text-2xl font-bold my-3.5">
                 Initialize the SDK client
               </h3>
