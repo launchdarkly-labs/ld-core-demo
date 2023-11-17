@@ -41,6 +41,7 @@ import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 
+
 export default function Marketplace() {
   const [cart, setCart] = useState([]);
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -180,9 +181,15 @@ export default function Marketplace() {
                   </Button>
                 </div>
               </div>
-              <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
+          
+
+
+
+
+
                 {/* Store individual callouts */}
                 {/* Individual callouts can be found components/ui/marketcomponents/stores */}
+                <div className=".responsive-div flex grid xl:flex flex-row space-x-20 mx-auto justify-center">
                 <div className="prodcard">
                   <VRgalaxy
                     storeHeaders={storeHeaders}
@@ -193,7 +200,7 @@ export default function Marketplace() {
                   />
                 </div>
 
-                <div>
+                <div className="prodcard" >
                   <MacroCenter
                     addToCart={addToCart}
                     open={openMacroCenter}
@@ -201,7 +208,7 @@ export default function Marketplace() {
                   />
                 </div>
 
-                <div>
+                <div className="prodcard" >
                   <TheBoominBox
                     addToCart={addToCart}
                     open={openBoominBox}
