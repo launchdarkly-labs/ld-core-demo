@@ -235,7 +235,7 @@ export default function Marketplace() {
               </div>
 
 
-              <div className="flex grid xl:flex flex-row gap-20 justify-between">
+              <div className="flex grid xl:flex flex-row justify-between">
                 <div>
                   <img src="Hardware.png" className="h-[300px]" />
                 </div>
