@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { AreaChartIcon, ArrowRight, PlusSquare } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
@@ -28,12 +28,14 @@ import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federated
 import NavBar from "@/components/ui/navbar";
 import BankInfoCard from "@/components/ui/bankcomponents/bankInfoCard";
 import { BounceLoader } from "react-spinners";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
   const [federatedAccountOne, setFederatedAccountOne] = useState(false);
   const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
+  const [aiPrompt, setAIPrompt] = useState("")
   const router = useRouter();
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
@@ -42,11 +44,17 @@ export default function Bank() {
     router.push("/airways");
   }
 
-  const { wealthManagement, aiFinancial, federatedAccounts } = useFlags();
+  
+
+  const { wealthManagement, federatedAccounts, aiPromptText } = useFlags();
+
+  useEffect(() => {
+    setAIPrompt(aiPromptText)
+  }, [aiPromptText]);
 
   const money = JSON.stringify(checkData);
 
-  const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
+  // const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
 
   async function submitQuery(query: any) {
     try {
@@ -54,7 +62,7 @@ export default function Bank() {
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
-        body: JSON.stringify({ prompt: query }),
+        body: JSON.stringify({ prompt: aiPrompt + query }),
       });
 
       if (!response.ok) {
@@ -300,11 +308,11 @@ export default function Bank() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                     <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full lg:h-[300px] bg-white ">
                       <div className="">
-                        <div className="flex  justify-between pb-2">
+                        <div className="flex justify-between pb-2">
                           <div>
-                            <p className="aiinsightstext pb-1">
-                              Wealth Insights{" "}
-                              <span className="accountsecondary">AI Powered By AWS Bedrock</span>
+                            <p className="aiinsightstext">
+                              Wealth Insights AI {" "}
+                              <span className="accountsecondary">Powered By AWS Bedrock</span>
                             </p>
                           </div>
 
@@ -312,7 +320,18 @@ export default function Bank() {
                             <img src="aws.png" />
                           </div>
                         </div>
-                        <div className="absolute bottom-5 right-5">
+                        <div className="absolute flex flex-row justify-between bottom-5 right-5">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button className="bg-blue-500 rounded-none font-sohne">View Prompt</Button>
+                            </DialogTrigger>
+                            <DialogContent className="">
+                              <div className="m-4 fontsohnelight">
+                                <p className="aiinsightstext text-xl pb-4">Current AWS Bedrock Configured Prompt -</p>
+                              {aiPrompt}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                           <Button
                             onClick={() => {
                               submitQuery(prompt);
@@ -327,7 +346,7 @@ export default function Bank() {
                         {loading ? (
                           <BounceLoader color="#1D4ED8" size={100} />
                         ) : (
-                          <p className="my-4 font-sohnelight">{aiResponse}</p>
+                          <p className="my-4 font-sohnelight pt-4">{aiResponse}</p>
                         )}
                       </div>
                     </div>
@@ -352,9 +371,7 @@ export default function Bank() {
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full h-full lg:h-[300px] bg-white justify-center ${
-                      aiFinancial ? "sm:col-span-1 lg:col-span-2" : "sm:col-span-1 lg:col-span-4"
-                    }`}
+                    className={`flex flex-col p-4 w-full h-full lg:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
                   >
                     <p className="aiinsightstext text-lg lg:text-2xl ">6-Month Account Trend</p>
                     <ResponsiveContainer className={"h-full"}>
