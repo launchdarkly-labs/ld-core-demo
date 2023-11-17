@@ -218,20 +218,23 @@ export default function Marketplace() {
               </div>
             </div>
 
-            {/* Categories */}
+            {/* Categories header +*/}
 
             <div>
               <div className="flex justify-between items-center pb-10">
                 <div>
                   <p className="shoptext">Shop By Category</p>
                 </div>
+                
                 <div>
                   <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray">
                     Search Categories
                   </Button>
                 </div>
               </div>
-              <div className="grid xl:flex flex-row space-x-10 xl:space-x-20 mx-auto justify-center">
+
+
+              <div className="flex grid xl:flex flex-row gap-20 justify-center">
                 <div>
                   <img src="Hardware.png" className="h-[300px]" />
                 </div>
@@ -254,7 +257,7 @@ export default function Marketplace() {
                   </Button>
                 </div>
               </div>
-              <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
+              <div className="flex grid xl:flex flex-row gap-20 justify-center">
                 <div>
                   <img src="software.png" className="h-[300px]" />
                 </div>
