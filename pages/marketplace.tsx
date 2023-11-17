@@ -39,14 +39,26 @@ import NavBar from "@/components/ui/navbar";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
 import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
+import { ReactSearchAutocomplete } from "react-search-autocomplete";
 
 export default function Marketplace() {
   const [cart, setCart] = useState([]);
   const [headerLabel, setHeaderLabel] = useState<string>("");
+  const [products, setProducts] = useState([]);
+  const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
+  const [openMacroCenter, setOpenMacroCenter] = useState(false);
+  const [openBoominBox, setOpenBoominBox] = useState(false);
 
   const LDClient = useLDClient();
   const flags = useFlags();
   const { storeAttentionCallout, storeHeaders } = useFlags();
+
+  interface InventoryItem {
+    id: string | number;
+    item: string;
+    cost: number;
+    vendor: string;
+  }
 
   const pageVariants = {
     initial: { x: "100%" },
@@ -68,12 +80,38 @@ export default function Marketplace() {
   };
 
   useEffect(() => {
+    fetch("/api/storeInventory?storename=all")
+      .then((response) => response.json())
+      .then((data) => setProducts(data));
+  }, []);
+
+  useEffect(() => {
     console.log(cart);
   }, [cart]);
 
   useEffect(() => {
     setHeaderLabel(storeAttentionCallout);
   }, [storeAttentionCallout]);
+
+  const handleOnSelect = (item: InventoryItem) => {
+    if (item.vendor === "vrgalaxy") {
+      setOpenVRGalaxy(true);
+    }
+    if (item.vendor === "macrocenter") {
+      setOpenMacroCenter(true);
+    }
+    if (item.vendor === "boominbox") {
+      setOpenBoominBox(true);
+    }
+  };
+
+  const formatResult = (item: InventoryItem) => {
+    return (
+      <>
+        <span style={{ display: "block", textAlign: "left" }}>{item.item}</span>
+      </>
+    );
+  };
 
   return (
     <motion.div
@@ -96,10 +134,15 @@ export default function Marketplace() {
               A galaxy of stores at your fingertips
             </p>
             <div className="mx-auto w-3/4">
-              <Input
-                className="rounded-full text-black"
+              <ReactSearchAutocomplete
+                items={products}
+                onSelect={handleOnSelect}
+                autoFocus
+                formatResult={formatResult}
+                fuseOptions={{ keys: ["item"] }}
+                resultStringKeyName="item"
                 placeholder="Browse a Galaxy of Storefronts"
-              ></Input>
+              />
             </div>
             <div className="pt-4 space-x-2 space-y-2">
               <Badge className="text-lg  border-2 border-gray-500 text-ldlightgray bg-market-header">
@@ -144,15 +187,25 @@ export default function Marketplace() {
                     storeHeaders={storeHeaders}
                     headerLabel={headerLabel}
                     addToCart={addToCart}
+                    open={openVRGalaxy}
+                    setOpen={setOpenVRGalaxy}
                   />
                 </div>
 
                 <div>
-                  <MacroCenter addToCart={addToCart} />
+                  <MacroCenter
+                    addToCart={addToCart}
+                    open={openMacroCenter}
+                    setOpen={setOpenMacroCenter}
+                  />
                 </div>
 
                 <div>
-                  <TheBoominBox addToCart={addToCart} />
+                  <TheBoominBox
+                    addToCart={addToCart}
+                    open={openBoominBox}
+                    setOpen={setOpenBoominBox}
+                  />
                 </div>
               </div>
             </div>

@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
+import { MdHome } from "react-icons/md";
 
 const payments = [
   { month: "11/2023", amount: 4123, status: "cleared" },
@@ -52,7 +53,7 @@ export function MorgtgageAccount() {
 
           <div className="flex flex-col items-start space-y-4">
             <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-              <HomeIcon className="text-blue-700" />
+              <MdHome className="text-blue-700 h-6 w-6" />
             </div>
             <div className="">
               <p className="accounttext">Mortgage (***6503)</p>

@@ -28,6 +28,8 @@ import {
 import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
 import { useFlags } from "launchdarkly-react-client-sdk";
+import { CiMoneyCheck1 } from "react-icons/ci";
+
 
 type Transaction = {
   id: number;
@@ -68,7 +70,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         <div className="h-full grid p-2">
           <div className="flex flex-col items-start space-y-4">
             <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-              <Banknote className="text-blue-700" />
+              <CiMoneyCheck1 className="text-blue-700 h-8 w-8" />
             </div>
             <div className="pb-1">
               <p className="accounttext">Checking (***2982)</p>
