@@ -12,6 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MdCreditCard } from "react-icons/md";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 
 import { CreditCard, Menu, Navigation } from "lucide-react";
@@ -86,6 +87,7 @@ type Transaction = {
 };
 
 export function CreditAccount() {
+  const { financialDBMigration } = useFlags()
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const router = useRouter();
 
@@ -98,7 +100,7 @@ export function CreditAccount() {
 
   useEffect(() => {
     getTransactions();
-  }, []);
+  }, [financialDBMigration]);
 
   return (
     <Sheet>
