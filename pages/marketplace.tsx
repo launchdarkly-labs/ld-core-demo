@@ -156,7 +156,7 @@ export default function Marketplace() {
           </div>
         </header>
 
-        <div className="mx-8 sm:mx-24 3xl:mx-52 pt-14 ">
+        <div className="mx-8 sm:mx-12 xl:mx-auto pt-14 ">
           <div className="space-y-16">
             <div>
               {/* Popular Shops heading and row */}
@@ -174,7 +174,7 @@ export default function Marketplace() {
 
               {/* Store individual callouts */}
               {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
+              <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
                 <div className="prodcard">
                   <VRgalaxy
                     storeHeaders={storeHeaders}
@@ -218,15 +218,15 @@ export default function Marketplace() {
                 </div>
               </div>
 
-              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
+              <div className="flex flex-col lg:flex-row gap-8 justify-between items-center">
                 <div>
-                  <img src="Hardware.png" className="h-[300px]" />
+                  <img src="Hardware.png" className="h-[300px] sm:h-[350px]" />
                 </div>
                 <div>
-                  <img src="smarthome.png" className="h-[300px]" />
+                  <img src="smarthome.png" className="h-[300px] sm:h-[350px]" />
                 </div>
                 <div>
-                  <img src="networking.png" className="h-[300px]" />
+                  <img src="networking.png" className="h-[300px] sm:h-[350px]" />
                 </div>
               </div>
             </div>
@@ -241,15 +241,15 @@ export default function Marketplace() {
                   </Button>
                 </div>
               </div>
-              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
+              <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
                 <div>
-                  <img src="software.png" className="h-[300px]" />
+                  <img src="software.png" className="h-[300px] sm:h-[350px]" />
                 </div>
                 <div>
-                  <img src="makers.png" className="h-[300px]" />
+                  <img src="makers.png" className="h-[300px] sm:h-[350px]" />
                 </div>
                 <div>
-                  <img src="toys.png" className="h-[300px]" />
+                  <img src="toys.png" className="h-[300px] sm:h-[350px]" />
                 </div>
               </div>
             </div>

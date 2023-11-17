@@ -93,7 +93,7 @@ export function VRgalaxy({
               </p>
             </motion.div>
           )}
-          <img src="gaming.png" alt="VR Gaming" className="h-[300px] z-0" />
+          <img src="gaming.png" alt="VR Gaming" className="h-[300px] sm:h-[350px] z-0" />
         </div>
       </SheetTrigger>
 

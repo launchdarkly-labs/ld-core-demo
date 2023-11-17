@@ -57,7 +57,7 @@ export function MacroCenter({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <div>
-          <img src="computers.png" alt="MacroCenter" className="h-[300px]" />
+          <img src="computers.png" alt="MacroCenter" className="h-[300px] sm:h-[350px]" />
         </div>
       </SheetTrigger>
 
