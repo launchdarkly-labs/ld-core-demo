@@ -56,7 +56,8 @@ export default function MarketLoginScreen() {
         ) : (
           <Button
             variant={"ghost"}
-            className="text-white bg-gradient-to-r from-marketblue text-black to-marketgreen font-audimat text-sm uppercase px-8 rounded-none"
+            className="text-white bg-gradient-to-r from-marketblue text-black to-marketgreen
+             font-audimat text-sm uppercase px-4 sm:px-8 rounded-none "
           >
             Login
           </Button>
