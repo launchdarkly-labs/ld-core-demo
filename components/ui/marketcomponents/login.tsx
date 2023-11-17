@@ -70,7 +70,6 @@ export default function MarketLoginScreen() {
                   href="/galaxy-marketplace.svg"
                   height="138"
                   width="230"
-                  alt="Launch Airways"
                 />
               </svg>
             </div>

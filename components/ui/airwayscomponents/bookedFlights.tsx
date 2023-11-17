@@ -127,9 +127,9 @@ export default function BookedFlights() {
                   animate="show"
                   exit="exit" // Add this line
                 >
-                  <div className=" bg-white shadow-md overflow-hidden items-stretch ">
+                  <div className=" bg-white shadow-md w-full overflow-hidden items-stretch ">
                     <div className="md:flex">
-                      <div className="p-8 relative">
+                      <div className="p-8 relative w-2/3">
                         <p className="absolute top-2 left-2 text-black text-sm">
                           Ticket {trip.id}
                         </p>
