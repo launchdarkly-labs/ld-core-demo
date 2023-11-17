@@ -176,7 +176,7 @@ export default function Marketplace() {
 {/* Popular Shops heading and row */}
 
 
-            <div className="flex justify-center pb-10">
+            <div className="flex justify-between items-center pb-10">
                 <div>
                   <p className="shoptext text-xl mx-20">Popular Shops</p>
                 </div>
@@ -189,7 +189,7 @@ export default function Marketplace() {
 
                 {/* Store individual callouts */}
                 {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-                <div className="flex grid xl:flex flex-row gap-20 justify-center">
+                <div className="flex grid xl:flex flex-row gap-20 justify-between">
                   
                 <div className="prodcard">
                   <VRgalaxy
@@ -201,7 +201,7 @@ export default function Marketplace() {
                   />
                 </div>
 
-                <div className="prodcard" >
+                <div className="prodcard">
                   <MacroCenter
                     addToCart={addToCart}
                     open={openMacroCenter}
@@ -235,7 +235,7 @@ export default function Marketplace() {
               </div>
 
 
-              <div className="flex grid xl:flex flex-row gap-20 justify-center">
+              <div className="flex grid xl:flex flex-row gap-20 justify-between">
                 <div>
                   <img src="Hardware.png" className="h-[300px]" />
                 </div>
