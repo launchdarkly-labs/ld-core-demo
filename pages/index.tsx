@@ -96,7 +96,7 @@ export default function Home() {
         </div>
       </header>
       <section className="py-8 bg-ldblack h-full">
-        <div className="flex flex-col mx-8 sm:mx-[25%]">
+        <div className="flex flex-col mx-8 xl:mx-[25%]">
           <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
             <div className="w-full sm:w-1/2 home-card">
               <svg
