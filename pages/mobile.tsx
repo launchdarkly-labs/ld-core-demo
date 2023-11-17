@@ -24,9 +24,11 @@ const MobilePage = () => {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className="flex items-center justify-center h-screen bg-ldblack"
+        className="flex flex-col items-center justify-center h-screen bg-ldblack"
       >
+        <div className="absolute top-0 w-full">
         <NavBar />
+        </div>
         <video
           src="https://utfs.io/f/16ca2adf-2508-4794-acb5-283e83764b49-nelf4r.mp4"
           controls
