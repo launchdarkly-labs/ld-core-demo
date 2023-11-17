@@ -47,13 +47,11 @@ export function CSNav() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Menu size={24} className="text-white" />
+        <Menu size={24} className="text-white cursor-pointer" />
       </SheetTrigger>
       <SheetContent className="" side="left">
         <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl">
-            Demo Navigation
-          </SheetTitle>
+          <SheetTitle className="font-sohne text-2xl">Demo Navigation</SheetTitle>
           <SheetDescription className="font-sohne">
             Explore the core services of LaunchDarkly
           </SheetDescription>
@@ -61,11 +59,7 @@ export function CSNav() {
         <div className="grid gap-4 py-4">
           <div className="grid items-center gap-4">
             <div>
-              <Button
-                onClick={goHome}
-                variant={"secondary"}
-                className="w-full rounded-xl"
-              >
+              <Button onClick={goHome} variant={"secondary"} className="w-full rounded-xl">
                 Go Home
               </Button>
             </div>
@@ -122,11 +116,7 @@ export function CSNav() {
               </div>
             </motion.div>
             <div>
-              <Button
-                onClick={goCode}
-                variant={"secondary"}
-                className="w-full rounded-xl"
-              >
+              <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
                 Code Examples
               </Button>
             </div>

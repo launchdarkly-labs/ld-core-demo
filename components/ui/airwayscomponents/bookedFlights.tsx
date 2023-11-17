@@ -87,14 +87,15 @@ export default function BookedFlights() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom">
+        <button className="sm:mx-6 sm:pb-12 text-sm font-sohnelight sm:pt-1.5 bg-transparent sm:mr-4 sm:flex sm:items-start sm:text-airlineinactive
+         sm:hover:text-white sm:hover:bg-gradient-to-r sm:from-airlinepurple sm:to-airlinepink sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom">
           My Bookings
         </button>
       </SheetTrigger>
-      <SheetContent className="w-2/3 overflow-y-scroll light" side="right">
-        <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl">
-            <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose">
+      <SheetContent className="w-full sm:w-1/2 overflow-y-scroll light" side="right">
+        <SheetHeader className="!text-center">
+          <SheetTitle className="font-sohne text-2xl ">
+            <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose ">
               Your booked flights
             </div>
           </SheetTitle>
