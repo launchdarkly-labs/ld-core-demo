@@ -126,14 +126,14 @@ export default function Marketplace() {
       <main
         className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
       >
-        <div className="relative h-2/3 py-28 bg-market-header grid items-center justify-center">
+        <header className="relative h-2/3 py-28 bg-market-header grid items-center justify-center">
           <img src="elipse.png" className="absolute right-0 top-0" />
           <img src="union.png" className="absolute left-0 bottom-0" />
-          <div className="grid w-2/3 text-center mx-auto">
-            <p className="flex justify-center items-center market-header text-7xl mx-auto pb-8 font-audimat">
+          <div className="flex flex-col text-center px-4 sm:mx-auto items-center ">
+            <h1 className="flex justify-center items-center market-header text-7xl mx-auto pb-8 font-audimat">
               A galaxy of stores at your fingertips
-            </p>
-            <div className="mx-auto w-3/4">
+            </h1>
+            <div className="w-full sm:w-3/4">
               <ReactSearchAutocomplete
                 items={products}
                 onSelect={handleOnSelect}
@@ -144,7 +144,7 @@ export default function Marketplace() {
                 placeholder="Browse a Galaxy of Storefronts"
               />
             </div>
-            <div className="pt-4 space-x-2 space-y-2">
+            <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
               <Badge className="text-lg  border-2 border-gray-500 text-ldlightgray bg-market-header">
                 Accessories
               </Badge>
@@ -165,7 +165,8 @@ export default function Marketplace() {
               </Badge>
             </div>
           </div>
-        </div>
+        </header>
+
         <div className="mx-24 3xl:mx-52 pt-14 ">
           <div className="space-y-16">
             <div>
