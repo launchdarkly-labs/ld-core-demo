@@ -141,7 +141,7 @@ export default function Marketplace() {
               
               {/* Store individual callouts */}
               {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-                <div>
+                <div className="prodcard">
                   <VRgalaxy storeHeaders={storeHeaders} headerLabel={headerLabel} addToCart={addToCart} />
                 </div>
               
