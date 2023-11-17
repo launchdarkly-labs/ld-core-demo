@@ -61,10 +61,10 @@ export default function Home() {
             targeted experiences, experimentation, and more.
           </p>
         </div>
-        <div className="absolute top-16 left-40 z-10">
+        <div className="hidden sm:absolute top-16 left-40 z-10">
           <img src="/hero/Vector 965.png" />
         </div>
-        <div className="blur-sm sm:blur-none absolute top-0 right-24 z-10">
+        <div className="hidden sm:absolute top-0 right-24 z-10">
           <img src="/hero/Group 481368.png" />
         </div>
         <div className="blur-sm sm:blur-none absolute top-20 right-0 z-10">
