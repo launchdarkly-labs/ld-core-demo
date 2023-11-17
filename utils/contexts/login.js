@@ -13,12 +13,14 @@ export const LoginProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
 
-    const loginUser = async (user) => {
+    const loginUser = async (user, email) => {
         const context = await client?.getContext();
         context.user.name = user;
+        context.user.email = email;
         setIsLoggedIn(true)
         setUser(user)
         console.log("updated context - "+ JSON.stringify(context))
+        client.identify(context);
       };
 
     const logoutUser = async () => {

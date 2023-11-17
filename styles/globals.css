@@ -207,3 +207,10 @@ line-height: normal;
   background: blue;
   width: 100%;
 }
+
+.responsive-div {
+  /* default styles */
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
