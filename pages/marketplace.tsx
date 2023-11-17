@@ -51,18 +51,6 @@ export default function Marketplace() {
     vendor: string;
   }
 
-  const pageVariants = {
-    initial: { x: "100%" },
-    in: { x: 0 },
-    out: { x: 0 },
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.5,
-  };
-
   const addToCart = (item: any) => {
     console.log("Adding Item to Store");
     LDClient?.track("item-added", LDClient.getContext(), 1);
@@ -106,12 +94,10 @@ export default function Marketplace() {
 
   return (
     <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
-      className="h-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className=""
     >
       <NavBar cart={cart} setCart={setCart} variant={"market"} />
       <main className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>

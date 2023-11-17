@@ -1,5 +1,10 @@
 import { Inter } from "next/font/google";
-import { ArrowRightCircle, CalendarIcon, MoveHorizontalIcon, Plane } from "lucide-react";
+import {
+  ArrowRightCircle,
+  CalendarIcon,
+  MoveHorizontalIcon,
+  Plane,
+} from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import AirportPicker from "@/components/ui/airwayscomponents/airportPicker";
 import { motion, useAnimation, useInView } from "framer-motion";
@@ -8,7 +13,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CSNav } from "@/components/ui/csnav";
 import { RegistrationForm } from "@/components/ui/airwayscomponents/stepregistration";
@@ -27,8 +36,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Airways() {
   const flags = useFlags();
-  const { launchClubLoyalty } = useFlags() 
-
+  const { launchClubLoyalty } = useFlags();
 
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
@@ -53,7 +61,9 @@ export default function Airways() {
     const startDate = `${
       date!.from.getMonth() + 1
     }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
+    const returnDate = `${
+      date!.to.getMonth() + 1
+    }/${date!.to.getDate()}/${date!.to.getFullYear()}`;
     const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
     const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
 
@@ -94,13 +104,11 @@ export default function Airways() {
 
   return (
     <>
-    <Toaster ></Toaster>
+      <Toaster></Toaster>
       <motion.main
-        initial="initial"
-        animate="in"
-        exit="out"
-        variants={pageVariants}
-        transition={pageTransition}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         className={`flex h-screen text-white flex-col font-audimat   `}
       >
         <NavBar launchClubLoyalty={launchClubLoyalty} variant={"airlines"} />
@@ -120,9 +128,15 @@ export default function Airways() {
               />
 
               <div
-                className={`flex items-center text-xl font-audimat ${showSearch ? "" : ""}`}
+                className={`flex items-center text-xl font-audimat ${
+                  showSearch ? "" : ""
+                }`}
               >
-                <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+                <FlightCalendar
+                  date={date}
+                  setDate={setDate}
+                  className="font-audimat"
+                />
                 {/* <div>
                 <Popover>
                   <PopoverTrigger asChild>
