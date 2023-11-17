@@ -208,12 +208,13 @@ export default function Bank() {
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
           <div className=" w-full px-8 ">
-            <div
+
+            <section
               className={`flex flex-col xl:flex-row py-8 ${
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
               }`}
             >
-              <div className="flex w-full h-full sm:h-[425px] ">
+              <section className="flex w-full h-full sm:h-[425px] ">
                 <div className="p-6 shadow-xl bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <div>
@@ -232,10 +233,11 @@ export default function Bank() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-grow font-sohne h-full">
+              </section>
+
+              <section className="flex flex-grow font-sohne h-full">
                 {federatedAccounts && (
-                  <div className="h-full">
+                  <div className="h-full w-full sm:w-auto">
                     <div className="p-6 gap-4 w-full bg-ldcardgrey h-full sm:h-[425px]">
                       <div>
                         <p className="text-black font-sohne mb-6 text-[24px]">
@@ -246,7 +248,7 @@ export default function Bank() {
                         {!federatedAccountOne ? (
                           <div
                             onClick={() => setFederatedAccountOne(true)}
-                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
+                            className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
                           >
                             <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
@@ -265,7 +267,7 @@ export default function Bank() {
                         {!federatedAccountTwo ? (
                           <div
                             onClick={() => setFederatedAccountTwo(true)}
-                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
+                            className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
                           >
                             <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
@@ -284,16 +286,17 @@ export default function Bank() {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
+              </section>
+
+            </section>
 
             {wealthManagement ? (
               <section className=" p-6 bg-ldcardgrey h-full sm:h-[425px] shadow-2xl mb-6">
                 <h3 className="text-black font-sohne mb-6 text-[24px]">Wealth Management</h3>
 
-                <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                   {aiFinancial && (
-                    <div className="relative p-4 col-span-2 w-full h-full sm:h-[300px] bg-white ">
+                    <div className="relative p-4 sm:col-span-2 w-full h-full sm:h-[300px] bg-white ">
                       <div className="">
                         <div className="flex  justify-between pb-2">
                           <div>
@@ -327,7 +330,7 @@ export default function Bank() {
                       </div>
                     </div>
                   )}
-                  <div className="p-6 bg-white col-span-1 h-full sm:h-[300px]">
+                  <div className="p-6 bg-white sm:col-span-1 h-full sm:h-[300px]">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -348,7 +351,7 @@ export default function Bank() {
                   </div>
                   <div
                     className={`flex flex-col p-4 w-full h-full sm:h-[300px] bg-white justify-center ${
-                      aiFinancial ? "col-span-2" : "col-span-4"
+                      aiFinancial ? "sm:col-span-2" : "sm:col-span-4"
                     }`}
                   >
                     <p className="aiinsightstext">6-Month Account Trend</p>
