@@ -57,7 +57,7 @@ export default function LoginScreen() {
         ) : (
           <Button
             variant={"ghost"}
-            className="text-white bg-gradient-to-r from-airlinepurple to-airlinepink font-audimat text-sm uppercase px-8 rounded-none"
+            className="text-white bg-gradient-to-r from-airlinepurple to-airlinepink font-audimat text-sm uppercase px-4 sm:px-8  rounded-none"
           >
             Login
           </Button>

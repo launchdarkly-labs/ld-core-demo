@@ -211,7 +211,7 @@ const NavBar = React.forwardRef<any>(
       case "market":
         navChild = (
           <>
-            <div className="flex space-x-6 ml-auto mr-4 items-center">
+            <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
               <Search color={"white"} className="hidden sm:block" />
               <MessageCircle color={"white"} className="hidden sm:block" />
@@ -222,10 +222,10 @@ const NavBar = React.forwardRef<any>(
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-0 sm:pr-2">
               <image href="/market.png" height="40" width="40" alt="Marketplace" />
             </svg>
-            <p className="text-base flex text-white font-sohnelight">
+            <p className="text-sm sm:text-base flex text-white font-sohnelight">
               <strong className="font-sohne">Galaxy</strong>{' '}Marketplace
             </p>
           </>
@@ -306,10 +306,10 @@ const NavBar = React.forwardRef<any>(
         <div className="items-center flex">
           <CSNav />
         </div>
-        <div className="ml-4 sm:ml-8 flex items-center">{navLogo}</div>
+        <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="ml-4 cursor-pointer block sm:hidden text-white">
+            <button className="ml-2 cursor-pointer block sm:hidden text-white">
               <PanelTopOpen size={24} />
             </button>
           </DropdownMenuTrigger>
