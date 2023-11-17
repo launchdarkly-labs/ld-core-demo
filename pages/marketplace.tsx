@@ -189,7 +189,7 @@ export default function Marketplace() {
 
                 {/* Store individual callouts */}
                 {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-                <div className=".responsive-div flex grid xl:flex flex-row space-x-20 mx-auto justify-center">
+                <div className="grid xl: grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 flex grid xl:flex flex-row gap-20 justify-center">
                 <div className="prodcard">
                   <VRgalaxy
                     storeHeaders={storeHeaders}
