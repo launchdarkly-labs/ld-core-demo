@@ -1,11 +1,5 @@
 import { Inter } from "next/font/google";
-import {
-  ArrowRightCircle,
-  CalendarIcon,
-  MoveHorizontalIcon,
-  Plane,
-  Search,
-} from "lucide-react";
+import { ArrowRightCircle, CalendarIcon, MoveHorizontalIcon, Plane, Search } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import AirportPicker from "@/components/ui/airwayscomponents/airportPicker";
 import { motion, useAnimation, useInView } from "framer-motion";
@@ -14,11 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
   Sheet,
   SheetClose,
@@ -41,7 +31,6 @@ import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { is } from "drizzle-orm";
-
 
 export default function Marketplace() {
   const [cart, setCart] = useState([]);
@@ -125,9 +114,7 @@ export default function Marketplace() {
       className="h-full"
     >
       <NavBar cart={cart} setCart={setCart} variant={"market"} />
-      <main
-        className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}
-      >
+      <main className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>
         <header className="relative h-2/3 py-28 bg-market-header grid items-center justify-center">
           <img src="elipse.png" className="absolute right-0 top-0" />
           <img src="union.png" className="absolute left-0 bottom-0" />
@@ -169,28 +156,25 @@ export default function Marketplace() {
           </div>
         </header>
 
-        <div className="mx-24 3xl:mx-52 pt-14 ">
+        <div className="mx-8 sm:mx-24 3xl:mx-52 pt-14 ">
           <div className="space-y-16">
             <div>
+              {/* Popular Shops heading and row */}
 
-{/* Popular Shops heading and row */}
-
-
-            <div className="flex justify-between items-center pb-10">
+              <div className="flex justify-between pb-10">
                 <div>
-                  <p className="shoptext text-xl mx-20">Popular Shops</p>
+                  <p className="shoptext text-xl">Popular Shops</p>
                 </div>
                 <div>
-                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray mx-20">
+                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray h-full">
                     Search Popular
                   </Button>
                 </div>
               </div>
 
-                {/* Store individual callouts */}
-                {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-                <div className="flex grid xl:flex flex-row gap-20 justify-between">
-                  
+              {/* Store individual callouts */}
+              {/* Individual callouts can be found components/ui/marketcomponents/stores */}
+              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
                 <div className="prodcard">
                   <VRgalaxy
                     storeHeaders={storeHeaders}
@@ -209,7 +193,7 @@ export default function Marketplace() {
                   />
                 </div>
 
-                <div className="prodcard" >
+                <div className="prodcard">
                   <TheBoominBox
                     addToCart={addToCart}
                     open={openBoominBox}
@@ -226,16 +210,15 @@ export default function Marketplace() {
                 <div>
                   <p className="shoptext">Shop By Category</p>
                 </div>
-                
+
                 <div>
-                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray">
+                  <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
                     Search Categories
                   </Button>
                 </div>
               </div>
 
-
-              <div className="flex grid xl:flex flex-row justify-between">
+              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
                 <div>
                   <img src="Hardware.png" className="h-[300px]" />
                 </div>
@@ -253,12 +236,12 @@ export default function Marketplace() {
                   <p className="shoptext">Trending Now</p>
                 </div>
                 <div>
-                  <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray">
+                  <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
                     Search Trending
                   </Button>
                 </div>
               </div>
-              <div className="grid xl:flex flex-row space-x-20 mx-auto justify-center">
+              <div className="flex flex-col lg:flex-row gap-20 justify-center items-center">
                 <div>
                   <img src="software.png" className="h-[300px]" />
                 </div>
