@@ -40,7 +40,7 @@ export default function MarketLoginScreen() {
   };
 
   return (
-   <Dialog>
+    <Dialog>
       <DialogTrigger asChild>
         {isLoggedIn ? (
           <Avatar>
@@ -95,12 +95,14 @@ export default function MarketLoginScreen() {
                     className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 border-zinc-200 rounded-none text-lg bg-white"
                   />
                 </div>
-                <Button
-                  onClick={handleLogin}
-                  className="w-full mx-auto font-sohnelight text-black rounded-none bg-gradient-to-tr from-marketblue to-marketgreen text-lg"
-                >
-                  Sign in with SSO
-                </Button>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={handleLogin}
+                    className="w-full mx-auto font-sohnelight text-black rounded-none bg-gradient-to-tr from-marketblue to-marketgreen text-lg"
+                  >
+                    Sign in with SSO
+                  </Button>
+                </DialogTrigger>
               </div>
 
               <div className="flex flex-row justify-between px-4 pb-8 pt-4 3xl:pt-14">
@@ -121,17 +123,19 @@ export default function MarketLoginScreen() {
             <>
               <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                 <p className="pt-4">
-                  Thank you for shopping with us as a{" "} 
+                  Thank you for shopping with us as a{" "}
                   <span className="text-2xl">Premium Member</span>!
                 </p>
               </div>
               <div className="mx-auto text-center">
-                <Button
-                  onClick={handleLogout}
-                  className="text-xl bg-red-700 text-black items-center my-6 w-full bg-gradient-to-tr from-marketblue to-marketgreen text-lg rounded-none"
-                >
-                  Logout
-                </Button>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={handleLogout}
+                    className="text-xl bg-red-700 text-black items-center my-6 w-full bg-gradient-to-tr from-marketblue to-marketgreen text-lg rounded-none"
+                  >
+                    Logout
+                  </Button>
+                </DialogTrigger>
               </div>
             </>
           )}
