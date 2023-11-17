@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import LoginContext from "@/utils/contexts/login";
 import { useContext } from "react";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 // import BookedFlights from "./bookedFlights";
 
 const formSchema = z.object({
@@ -39,8 +40,8 @@ export default function MarketLoginScreen() {
   };
 
   return (
-   <Popover>
-      <PopoverTrigger>
+   <Dialog>
+      <DialogTrigger asChild>
         {isLoggedIn ? (
           <Avatar>
             <AvatarImage src="/woman.png" alt="woman" />
@@ -54,8 +55,8 @@ export default function MarketLoginScreen() {
             Login
           </Button>
         )}
-      </PopoverTrigger>
-      <PopoverContent className="dark w-[400px] bg-white">
+      </DialogTrigger>
+      <DialogContent className="dark w-[400px] bg-white">
         <div>
           {!isLoggedIn ? (
             <div className="my-10 flex items-center text-3xl flex-col">
@@ -135,7 +136,7 @@ export default function MarketLoginScreen() {
             </>
           )}
         </div>
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }

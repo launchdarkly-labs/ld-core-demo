@@ -49,17 +49,17 @@ export function CSNav() {
       <SheetTrigger asChild>
         <Menu size={24} className="text-white cursor-pointer" />
       </SheetTrigger>
-      <SheetContent className="" side="left">
-        <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl">Demo Navigation</SheetTitle>
-          <SheetDescription className="font-sohne">
-            Explore the core services of LaunchDarkly
-          </SheetDescription>
+      <SheetContent className="overflow-y-scroll" side="left">
+        <SheetHeader className="mx-4">
+          <SheetTitle className="font-sohne text-2xl">
+            <img src='logo.png' className='w-64' />
+          </SheetTitle>
+          
         </SheetHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 mx-4">
           <div className="grid items-center gap-4">
             <div>
-              <Button onClick={goHome} variant={"secondary"} className="w-full rounded-xl">
+              <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
                 Go Home
               </Button>
             </div>
