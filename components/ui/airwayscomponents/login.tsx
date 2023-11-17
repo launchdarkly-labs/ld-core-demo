@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import BookedFlights from "./bookedFlights";
+import { Dialog, DialogContent, DialogTrigger } from "../dialog";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -40,8 +41,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Dialog>
+      <DialogTrigger asChild>
         {isLoggedIn ? (
           <Avatar>
             <AvatarImage src="/woman.png" alt="woman" />
@@ -55,8 +56,8 @@ export default function LoginScreen() {
             Login
           </Button>
         )}
-      </PopoverTrigger>
-      <PopoverContent className="dark w-[400px] bg-white">
+      </DialogTrigger>
+      <DialogContent className="dark w-[400px] bg-white">
         <div>
           {!isLoggedIn ? (
             <div className="my-10 flex items-center text-3xl flex-col">
@@ -107,13 +108,19 @@ export default function LoginScreen() {
                 <div className="text-blue-600 text-xs">
                   <p>Forgot Password?</p>
                 </div>
-                <div>
+                <div className="flex flex-col">
+                  <div>
                   <p className="text-black text-xs">
-                    Don't have an account?{" "}
-                    <a href="/bank" className="text-blue-600">
-                      Sign Up
-                    </a>
-                  </p>
+                    Don't have an account?</p>
+                    </div>
+                    <div>
+                    <div className="flex justify-end">
+                      <a href="/bank" className="text-blue-600 text-xs">
+                        Sign Up
+                      </a>
+                    </div>
+                    </div>
+                  
                 </div>
               </div>
             </>
@@ -136,7 +143,7 @@ export default function LoginScreen() {
             </>
           )}
         </div>
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }

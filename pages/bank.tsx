@@ -138,11 +138,11 @@ export default function Bank() {
               text-white w-full sm:w-1/3 justify-start mb-4 sm:mb-0 gap-y-6"
               >
                 {/* <img src="ToggleBankHeader.png" width={52} className="pb-0" /> */}
-                <p className="text-2xl lg:text-6xl 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">
+                <p className="text-2xl lg:text-6xl xl:text-[74px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">
                   Welcome to ToggleBank{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
-                  Login to access your account
+                  Serving more than 100,000 customers, and 10 trillion in capital every day
                 </p>
               </div>
 
@@ -232,7 +232,7 @@ export default function Bank() {
               <div className="flex flex-grow font-sohne h-full">
                 {federatedAccounts && (
                   <div className="h-full">
-                    <div className="px-6 gap-4 w-full bg-ldcardgrey  h-[425px]">
+                    <div className="px-6 gap-4 w-full bg-ldcardgrey h-[425px]">
                       <div>
                         <p className="text-black font-sohne py-6 text-[24px]">
                           Federated Account Access
@@ -242,7 +242,7 @@ export default function Bank() {
                         {!federatedAccountOne ? (
                           <div
                             onClick={() => setFederatedAccountOne(true)}
-                            className="flex p-4 h-[300px] w- bg-white items-center "
+                            className="flex p-4 h-[300px] w-[250px] bg-white items-center "
                           >
                             <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>

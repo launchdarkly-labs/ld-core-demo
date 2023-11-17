@@ -223,10 +223,10 @@ const NavBar = React.forwardRef<any>(
         navLogo = (
           <>
             <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-              <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
+              <image href="/market.png" height="40" width="40" alt="Marketplace" />
             </svg>
             <p className="text-base flex text-white font-sohnelight">
-              <strong className="font-sohne">Market</strong>place
+              <strong className="font-sohne">Galaxy</strong>{' '}Marketplace
             </p>
           </>
         );
