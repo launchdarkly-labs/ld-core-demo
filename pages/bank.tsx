@@ -291,12 +291,12 @@ export default function Bank() {
             </section>
 
             {wealthManagement ? (
-              <section className=" p-6 bg-ldcardgrey h-full sm:h-[425px] shadow-2xl mb-6">
+              <section className=" p-6 bg-ldcardgrey h-full lg:h-[425px] shadow-2xl mb-6">
                 <h3 className="text-black font-sohne mb-6 text-[24px]">Wealth Management</h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                   {aiFinancial && (
-                    <div className="relative p-4 sm:col-span-2 w-full h-full sm:h-[300px] bg-white ">
+                    <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full lg:h-[300px] bg-white ">
                       <div className="">
                         <div className="flex  justify-between pb-2">
                           <div>
@@ -330,7 +330,7 @@ export default function Bank() {
                       </div>
                     </div>
                   )}
-                  <div className="p-6 bg-white sm:col-span-1 h-full sm:h-[300px]">
+                  <div className="p-6 bg-white sm:col-span-1 h-full lg:h-[300px]">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AreaChartIcon className="text-blue-700" />
@@ -350,11 +350,11 @@ export default function Bank() {
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full h-full sm:h-[300px] bg-white justify-center ${
-                      aiFinancial ? "sm:col-span-2" : "sm:col-span-4"
+                    className={`flex flex-col p-4 w-full h-full lg:h-[300px] bg-white justify-center ${
+                      aiFinancial ? "sm:col-span-1 lg:col-span-2" : "sm:col-span-1 lg:col-span-4"
                     }`}
                   >
-                    <p className="aiinsightstext">6-Month Account Trend</p>
+                    <p className="aiinsightstext text-lg lg:text-2xl ">6-Month Account Trend</p>
                     <ResponsiveContainer className={"h-full"}>
                       <AreaChart
                         data={data}
@@ -389,9 +389,9 @@ export default function Bank() {
               </section>
             ) : null}
 
-            <div className="flex flex-col sm:flex-row w-full h-full sm:h-[425px] items-center gap-y-8 sm:gap-x-20 justify-center">
-              <img src="CC.png" />
-              <img src="Loan.png" />
+            <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 lg:gap-x-8 justify-center mx-auto">
+              <img src="CC.png" className="object-fit lg:w-1/2 xl:w-auto"/>
+              <img src="Loan.png" className="object-fit lg:w-1/2 xl:w-auto" />
             </div>
           </div>
         </motion.main>
