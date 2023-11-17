@@ -29,10 +29,7 @@ export default function BookedFlights() {
   const [loading, setLoading] = useState(false)
 
   console.log(bookedTrips);
-
-
   
-
   async function submitQuery(airport: any) {
     try {
       const prompt: string = `Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${airport}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here.`;
@@ -61,10 +58,6 @@ export default function BookedFlights() {
       setLoading(false);
     }
   }
-
-
-
-
 
   const handleCancel = (index: any) => {
     // Maybe show a confirmation dialog here
@@ -98,7 +91,7 @@ export default function BookedFlights() {
           My Bookings
         </button>
       </SheetTrigger>
-      <SheetContent className="w-1/2 overflow-y-scroll light" side="right">
+      <SheetContent className="w-2/3 overflow-y-scroll light" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
             <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose">
@@ -178,7 +171,7 @@ export default function BookedFlights() {
                             {" "}
                             {/* Modified */}
                             <button
-                              onClick={handleCancel}
+                              onClick={() => handleCancel(trip.id)}
                               className="text-sm text-black underline hover:text-indigo-500"
                             >
                               Cancel Flight

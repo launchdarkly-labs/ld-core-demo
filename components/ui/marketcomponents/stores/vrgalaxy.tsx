@@ -82,14 +82,11 @@ export function VRgalaxy({
                 damping: 20,
                 duration: 1.5,
               }}
-              onAnimationComplete={() => {
-                animate({ scale: 1.0 });
-              }}
               className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
             >
-              <p className="flex items-center font-sohne mx-auto text-white text-xl text-center">
-                <Sparkle className="mr-1" /> {headerLabel}
-                <Sparkle className="ml-1" />
+              <p className="flex items-center font-sohne mx-auto uppercase text-white text-xl text-center">
+                 {headerLabel}
+                
               </p>
             </motion.div>
           )}
@@ -124,7 +121,7 @@ export function VRgalaxy({
                 <TableCell>
                   <div>
                     <Button
-                      className="rounded-none bg-blue-600 font-sohne"
+                      className="store rounded-none bg-blue-600 font-sohne"
                       onClick={() => addToCart(item)}
                     >
                       Buy Now

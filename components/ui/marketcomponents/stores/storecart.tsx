@@ -61,7 +61,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
     <Sheet>
       <SheetTrigger onClick={() => cartClick()} asChild>
         <div>
-          <ShoppingCart color={"white"} />
+          <ShoppingCart className="cart" color={"white"} />
         </div>
       </SheetTrigger>
 
@@ -96,7 +96,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
               Transaction Total: ${totalCost}
             </p>
             <SheetTrigger onClick={checkOut} asChild>
-              <Button onClick={checkOutTracking} className="w-full">
+              <Button onClick={checkOutTracking} className="checkout w-full">
                 Checkout
               </Button>
             </SheetTrigger>
