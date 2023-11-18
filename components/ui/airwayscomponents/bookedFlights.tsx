@@ -67,6 +67,7 @@ export default function BookedFlights() {
       bookedTrips.filter((_: any, tripIndex: number) => tripIndex !== index)
     );
   };
+  
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -118,10 +118,14 @@ export default function Marketplace() {
         <header className="relative h-2/3 py-28 bg-market-header grid items-center justify-center">
           <img src="elipse.png" className="absolute right-0 top-0" />
           <img src="union.png" className="absolute left-0 bottom-0" />
-          <div className="flex flex-col text-center px-4 sm:mx-auto items-center ">
-            <h1 className="flex justify-center items-center market-header text-7xl mx-auto pb-8 font-audimat">
+         
+          <div className="flex flex-col  text-center px-4 items-center">
+            
+            <h1 className="flex justify-center max-w-md market-header  text-7xl pb-8  font-audimat">
               A galaxy of stores at your fingertips
             </h1>
+
+
             <div className="w-full sm:w-3/4">
               <ReactSearchAutocomplete
                 items={products}
