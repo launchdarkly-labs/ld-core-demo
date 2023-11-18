@@ -44,6 +44,10 @@ export function CSNav() {
     router.push("/examples");
   }
 
+  function goArchitecture() {
+    router.push("/architecture");
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -56,7 +60,7 @@ export function CSNav() {
           </SheetTitle>
           
         </SheetHeader>
-        <div className="grid gap-4 py-4 mx-4">
+        <div className="grid gap-4 py-4">
           <div className="grid items-center gap-4">
             <div>
               <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
@@ -118,6 +122,11 @@ export function CSNav() {
             <div>
               <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
                 Code Examples
+              </Button>
+            </div>
+            <div>
+              <Button onClick={goArchitecture} variant={"secondary"} className="w-full rounded-xl">
+                Architecture
               </Button>
             </div>
           </div>
