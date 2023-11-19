@@ -30,7 +30,7 @@ const MobilePage = () => {
         <NavBar />
         </div>
         <video
-          src="https://utfs.io/f/16ca2adf-2508-4794-acb5-283e83764b49-nelf4r.mp4"
+          src="https://utfs.io/f/b0429b52-31a7-41c2-8eba-a940e74b0273-w5y19k.mp4"
           controls
           className="h-3/4 w-3/4 rounded-xl shadow-2xl"
         >

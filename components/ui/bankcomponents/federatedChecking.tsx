@@ -49,7 +49,25 @@ export function FederatedCheckingAccount() {
 
   async function getTransactions() {
     const response = await fetch("/api/checkingdata");
-    const transactionsJson: Transaction[] = await response.json();
+    let transactionsJson: Transaction[];
+    if (response.status == 200) {
+      const data = await response.json();
+      console.log("The data is... ", data);
+      transactionsJson = data;
+    } else {
+      transactionsJson = [
+        {
+          id: 0,
+          date: "",
+          merchant: "",
+          status: "Server Error",
+          amount: 0,
+          accounttype: "",
+          user: "",
+        },
+      ];
+    }
+    console.log(transactionsJson);
     setTransactions(transactionsJson);
     return transactionsJson;
   }
