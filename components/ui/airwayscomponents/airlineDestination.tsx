@@ -7,19 +7,23 @@ const AirlineDestination = ({
   setActiveField,
   setShowSearch,
   fromLocation,
+  setFromCity,
   toLocation,
   showSearch,
   activeField,
   setToLocation,
+  setToCity,
   setFromLocation,
 }: {
   setActiveField: any;
   setShowSearch: any;
+  setFromCity: any;
   fromLocation: string;
   toLocation: string;
   showSearch: boolean;
   activeField: any;
   setToLocation: any;
+  setToCity: any;
   setFromLocation: any;
 }) => {
   return (
@@ -61,9 +65,11 @@ const AirlineDestination = ({
           <AirportPicker
             setToLocation={setToLocation}
             setFromLocation={setFromLocation}
+            setFromCity={setFromCity}
             setShowSearch={setShowSearch}
             activeField={activeField}
             toLocation={toLocation}
+            setToCity={setToCity}
             fromLocation={fromLocation}
           />
         </>

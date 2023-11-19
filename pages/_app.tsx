@@ -35,6 +35,9 @@ if (typeof window !== "undefined") {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         country: "US",
       },
+      experience: {
+        key: uniqueKey
+      }
     },
   });
 

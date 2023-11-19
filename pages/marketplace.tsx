@@ -105,10 +105,10 @@ export default function Marketplace() {
           <img src="elipse.png" className="absolute right-0 top-0" />
           <img src="union.png" className="absolute left-0 bottom-0" />
           <div className="flex flex-col text-center px-4 sm:mx-auto items-center ">
-            <h1 className="flex justify-center items-center market-header text-7xl mx-auto pb-8 font-audimat">
+            <h1 className="flex justify-center items-center market-header marketplace text-7xl mx-auto pb-8 w-full lg:w-1/2 font-audimat">
               A galaxy of stores at your fingertips
             </h1>
-            <div className="w-full sm:w-3/4">
+            <div className="w-full sm:w-3/4 lg:w-1/2">
               <ReactSearchAutocomplete
                 items={products}
                 onSelect={handleOnSelect}
@@ -120,7 +120,7 @@ export default function Marketplace() {
               />
             </div>
             <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
-              <Badge className="text-lg  border-2 border-gray-500 text-ldlightgray bg-market-header">
+              <Badge className="text-lg border-2 border-gray-500 text-ldlightgray bg-market-header">
                 Accessories
               </Badge>
               <Badge className="text-lg bg-market-header border-2 border-gray-500 text-ldlightgray">

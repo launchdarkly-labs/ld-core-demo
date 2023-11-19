@@ -1,5 +1,5 @@
 // TripsContext.js
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 const TripsContext = createContext();
 
@@ -7,20 +7,45 @@ export default TripsContext;
 
 // Continue in TripsContext.js
 export const TripsProvider = ({ children }) => {
-    const [bookedTrips, setBookedTrips] = useState([]);
-    const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
+    const [bookedTrips, setBookedTrips] = useState([{
+        airplane: "a380",
+        depart: "12/1/2023",
+        from: "DXB",
+        fromCity: "Dubai",
+        id: 906,
+        to: "SFO",
+        toCity: "San Francisco",
+        type: "Outbound"
+    },{
+      airplane: "a380",
+      depart: "12/8/2023",
+      from: "SFO",
+      fromCity: "San Francisco",
+      id: 842,
+      to: "DXB",
+      toCity: "Dubai",
+      type: "Outbound"
+  }]);
 
+    
+    useEffect(() => {
+        console.log(bookedTrips)
+    }, [bookedTrips]);
+    
     const cancelTrip = (index) => {
         setBookedTrips(prevTrips => {
+          console.log("Current Trips - "+prevTrips)
+          console.log("index -"+index)
           const newTrips = [...prevTrips];
           newTrips.splice(index, 1);
+          console.log("Updated Trips - "+newTrips)
           return newTrips;
         });
       };
     
   
     return (
-      <TripsContext.Provider value={{ bookedTrips, setBookedTrips, cancelTrip, enrolledInLaunchClub, setEnrolledInLaunchClub }}>
+      <TripsContext.Provider value={{ bookedTrips, setBookedTrips, cancelTrip }}>
         {children}
       </TripsContext.Provider>
     );

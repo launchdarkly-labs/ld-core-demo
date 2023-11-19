@@ -37,7 +37,7 @@ export default function LoginScreen() {
   };
 
   function handleLogin(e) {
-    setIsLoggedIn(true);
+    // setIsLoggedIn(true);
     let email = inputRef.current?.value;
     console.log(inputRef.current.value);
     if (!email) {
