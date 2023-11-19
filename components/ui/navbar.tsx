@@ -33,10 +33,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 } from "./dropdown-menu";
+import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
-    const { isLoggedIn } = useContext(LoginContext);
+    const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
@@ -46,6 +47,9 @@ const NavBar = React.forwardRef<any>(
         navChild = (
           <>
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+              {enrolledInLaunchClub &&
+              <LaunchClubStatus />
+            }
               <Search className="cursor-pointer hidden sm:block" />
               <MessageCircle className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
@@ -100,7 +104,7 @@ const NavBar = React.forwardRef<any>(
             >
               Check-In
             </button>
-            {launchClubLoyalty && <LaunchClub />}
+            {/* {enrolledInLaunchClub && <LaunchClub />} */}
           </>
         );
         break;

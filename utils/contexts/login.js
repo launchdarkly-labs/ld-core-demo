@@ -1,6 +1,6 @@
 // TripsContext.js
 import { useLDClient } from 'launchdarkly-react-client-sdk';
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 
 const LoginContext = createContext();
@@ -12,6 +12,12 @@ export const LoginProvider = ({ children }) => {
     const client = useLDClient();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
+    const [launchClubStatus, setLaunchClubStatus] = useState("economy")
+
+    useEffect(() => {
+      console.log("isLoggedIn from context - "+isLoggedIn)
+    }, [isLoggedIn])
 
     const loginUser = async (user, email) => {
         const context = await client?.getContext();
@@ -31,10 +37,26 @@ export const LoginProvider = ({ children }) => {
         context.user.name = "anonymous";
         client.identify(context); 
     }
+
+    const setPlaneContext = async (plane) => {
+      const context = await client?.getContext(); 
+      context.experience.airplane = plane 
+      console.log("Plane context registered for trip as - "+plane)
+      client.identify(context)
+    }
+
+    const upgradeLaunchClub = async (status) => {
+      const context = await client?.getContext(); 
+      setLaunchClubStatus(status)
+      context.user.launchclub = status 
+      console.log("User upgraded to "+status+" status")
+      client.identify(context) 
+    }
+
     
   
     return (
-      <LoginContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn, loginUser, logoutUser }}>
+      <LoginContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn, enrolledInLaunchClub, upgradeLaunchClub, setPlaneContext, setEnrolledInLaunchClub, launchClubStatus, setLaunchClubStatus, loginUser, logoutUser }}>
         {children}
       </LoginContext.Provider>
     );

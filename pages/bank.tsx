@@ -246,9 +246,9 @@ export default function Bank() {
               <section className="flex flex-grow font-sohne h-full">
                 {federatedAccounts && (
                   <div className="h-full w-full sm:w-auto">
-                    <div className="p-6 gap-4 w-full bg-ldcardgrey h-full sm:h-[425px]">
+                    <div className="p-6 gap-4 w-full bg-gradient-mobile h-full sm:h-[425px]">
                       <div>
-                        <p className="text-black font-sohne mb-6 text-[24px]">
+                        <p className="text-white font-sohne mb-6 text-[24px]">
                           Federated Account Access
                         </p>
                       </div>
@@ -299,9 +299,9 @@ export default function Bank() {
             </section>
 
             {wealthManagement ? (
-              <section className="p-6 bg-ldcardgrey h-full lg:h-[425px] shadow-2xl mb-6">
+              <section className="p-6 bg-gradient-blue h-full lg:h-[425px] shadow-2xl mb-6">
                 <div>
-                  <h3 className="text-black font-sohne py-6 text-[24px]">Wealth Management</h3>
+                  <h3 className=" font-sohne py-6 text-[24px] text-white">Wealth Management</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                     <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full lg:h-[300px] bg-white ">
@@ -406,7 +406,7 @@ export default function Bank() {
               </section>
             ) : null}
 
-            <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 lg:gap-x-8 justify-center mx-auto">
+            <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 lg:gap-x-8 justify-between mx-auto">
               <img src="CC.png" className="object-fit lg:w-1/2 xl:w-auto"/>
               <img src="Loan.png" className="object-fit lg:w-1/2 xl:w-auto" />
             </div>

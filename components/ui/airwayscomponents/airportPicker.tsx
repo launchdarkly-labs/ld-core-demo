@@ -8,6 +8,8 @@ interface AirportPickerProps {
   setFromLocation: (location: string) => void;
   setToLocation: (location: string) => void;
   setShowSearch: (show: boolean) => void;
+  setFromCity: any;
+  setToCity: any;
   activeField: "from" | "to";
   toLocation: string;
   fromLocation: string;
@@ -22,7 +24,9 @@ export interface Airport {
 
 const AirportPicker: React.FC<AirportPickerProps> = ({
   setFromLocation,
+  setFromCity,
   setToLocation,
+  setToCity,
   setShowSearch,
   activeField,
   toLocation,
@@ -52,7 +56,10 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setShowSearch(false);
       }
     }
@@ -69,8 +76,10 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
     setSelectedAirport(airport);
     if (activeField === "from" && airport.cityName !== toLocation) {
       setFromLocation(airport.airportCode);
+      setFromCity(airport.cityName);
     } else if (activeField === "to" && airport.cityName !== fromLocation) {
       setToLocation(airport.airportCode);
+      setToCity(airport.cityName);
     }
     setShowSearch(false);
     setShowMap(true); // Add this line
@@ -81,9 +90,16 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   };
 
   return (
-    <div className={`w-[430px] h-[275px] bg-white rounded-md shadow-md absolute
-     z-20 mt-4 p-[1rem] font-sohne font-normal ${activeField === "from" ? "" : "md:ml-[9rem] lg:ml-[9.5rem]"}`}>
-      <button className="cursor-pointer h-7 w-7 float-right" onClick={handleClose}>
+    <div
+      className={`w-[430px] bg-white rounded-md shadow-md absolute
+     z-20 mt-4 p-[1rem] font-sohne font-normal ${
+       activeField === "from" ? "" : "md:ml-[9rem] lg:ml-[9.5rem]"
+     }`}
+    >
+      <button
+        className="cursor-pointer h-7 w-7 float-right"
+        onClick={handleClose}
+      >
         <XIcon className="cursor-pointer h-full w-full text-neutral-400 " />
       </button>
       <div className="m-6 flex flex-col gap-y-6">
@@ -118,7 +134,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
               <p>No airports found</p>
             ) : (
               searchTerm && (
-                <ul className="flex flex-row">
+                <ul className="grid space-y-2">
                   {filteredAirports.slice(0, 3).map((airport, index) => (
                     <li
                       key={index}

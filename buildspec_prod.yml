@@ -1,0 +1,33 @@
+# A buildspec.yml file informs AWS CodeBuild of all the actions that should be
+# taken during a build execution for our application. We are able to divide the
+# build execution in separate pre-defined phases for logical organization, and
+# list the commands that will be executed on the provisioned build server
+# performing a build execution job.
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      # Retrieves docker credentials so that the subsequent docker push command is
+      # authorized. Authentication is performed automatically by the AWS CLI
+      # using the AWS credentials associated with the IAM role assigned to the
+      # instances in your AWS CodeBuild project.
+      - REPOSITORY_URI=$REPOSITORY_URI # This was started. Just replace REPLACEME_REPO_URI with your ECR Repo URI
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+  build:
+    commands:
+      - docker -v
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - echo docker build -t $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker build -t $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker tag $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:latest
+      - printf '[{"name":"interactions-service","imageUri":"%s"}]' $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

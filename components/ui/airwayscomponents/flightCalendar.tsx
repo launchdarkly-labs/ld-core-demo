@@ -8,7 +8,12 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { isBefore, endOfDay } from "date-fns";
 
 type FlightCalendarProps = {
   date: any;
@@ -16,7 +21,11 @@ type FlightCalendarProps = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export function FlightCalendar({ date, setDate, className }: FlightCalendarProps) {
+export function FlightCalendar({
+  date,
+  setDate,
+  className,
+}: FlightCalendarProps) {
   //   const [date, setDate] = React.useState<DateRange | undefined>({
   //     from: new Date(2022, 0, 20),
   //     to: addDays(new Date(2022, 0, 20), 20),
@@ -58,6 +67,7 @@ export function FlightCalendar({ date, setDate, className }: FlightCalendarProps
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+            disabled={(date) => isBefore(date, endOfDay(new Date()))}
           />
         </PopoverContent>
       </Popover>

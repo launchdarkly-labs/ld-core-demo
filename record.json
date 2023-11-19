@@ -1,0 +1,19 @@
+{
+  "Comment": "Create a CNAME record",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "ld-booth-2.launchdarklydemos.com",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "a5d10340bbaf648f59155186d2cac8c2-637418027.us-east-2.elb.amazonaws.com"
+          }
+        ]
+      }
+    }
+  ]
+}
+

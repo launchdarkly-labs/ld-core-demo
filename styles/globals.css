@@ -130,18 +130,10 @@
 }
 
 .marketplace {
-  background: linear-gradient(126.73deg, #ffffff -2.64%, #b6b6b6 72.44%);
+  background: var(--gradients-gradient-yg, linear-gradient(225deg, #EBFF38 -7.08%, #3DD6F5 90.68%));
+  background-clip: text;
   -webkit-background-clip: text;
-  -moz-background-clip: text;
-  color: transparent;
-}
-
-.market-header {
-  background: linear-gradient(57deg, #f5fdb2 -7.07%, #7a8dff 125.67%),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
-  color: transparent;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .card1image {

@@ -18,7 +18,7 @@ import BookedFlights from "./bookedFlights";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 
-export default function LaunchClub() {
+export default function LaunchSignUp() {
 
   const client = useLDClient();
 
@@ -29,7 +29,7 @@ export default function LaunchClub() {
   } = useContext(TripsContext);
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, enrolledInLaunchClub,
-    setEnrolledInLaunchClub } = useContext(LoginContext)
+    setEnrolledInLaunchClub, setLaunchClubStatus } = useContext(LoginContext)
   const [status, setStatus] = useState("Economy");
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,10 +38,11 @@ export default function LaunchClub() {
     setUsername("");
   };
 
-  const updateLaunchClubStatus = async () => {
+  const enrollLaunchClub = async () => {
     setEnrolledInLaunchClub(true)
+    setLaunchClubStatus('standard')
     const context = await client?.getContext();
-    context.user.launchclub = "platinum" 
+    context.user.launchclub = "standard" 
     client.identify(context);
   };
 
@@ -103,12 +104,8 @@ export default function LaunchClub() {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <button
-          className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
-        >
-          Launch Club
-        </button>
+      <SheetTrigger className="text-white z-50" asChild>
+          <Button className="bg-pink-600 rounded-none h-2/3 w-1/2 mx-auto text-3xl px-2">Join Launch Club</Button>
       </SheetTrigger>
       {!enrolledInLaunchClub ? (
         <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
@@ -166,7 +163,7 @@ export default function LaunchClub() {
                 <SheetTrigger as child>
                 <Button
                   onClick={() => {
-                    updateLaunchClubStatus()
+                    enrollLaunchClub()
                   }}
                   className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
                 >
