@@ -30,7 +30,6 @@ import { useEffect, useState } from "react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CiMoneyCheck1 } from "react-icons/ci";
 
-
 type Transaction = {
   id: number;
   date: string;
@@ -49,11 +48,29 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const router = useRouter();
 
-  const { financialDBMigration } = useFlags()
+  const { financialDBMigration } = useFlags();
 
   async function getTransactions() {
     const response = await fetch("/api/checkingdata");
-    const transactionsJson: Transaction[] = await response.json();
+    let transactionsJson: Transaction[];
+    if (response.status == 200) {
+    const data = await response.json();
+    console.log("The data is... ", data);
+    transactionsJson = data;
+  } else {
+      transactionsJson = [
+        {
+          id: 0,
+          date: "",
+          merchant: "",
+          status: "Server Error",
+          amount: 0,
+          accounttype: "",
+          user: "",
+        },
+      ];
+    }
+    console.log(transactionsJson);
     setTransactions(transactionsJson);
     return transactionsJson;
   }
@@ -74,7 +91,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
             </div>
             <div className="pb-1">
               <p className="accounttext">Checking (***2982)</p>
-             <br /> 
+              <br />
             </div>
           </div>
 
@@ -85,8 +102,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
             </div>
           </div>
 
-          <div>
-          </div>
+          <div></div>
         </div>
       </SheetTrigger>
       <SheetContent className="w-1/2 overflow-y-scroll" side="right">
