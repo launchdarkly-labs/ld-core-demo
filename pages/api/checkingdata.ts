@@ -42,13 +42,13 @@ export default async function handler(
       async function getMyData() {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
         console.log("random failure number: " + randomNumber)
-        if (randomNumber <= 50) {
+        if (randomNumber <= 30) {
           console.log("Error caught -")
           throw new Error('Simulated failure');
         }
-        console.log("waiting 5 seconds")
-        await delay(5000)
-        console.log("waited 5 seconds")
+        console.log("waiting 3 seconds")
+        await delay(3000)
+        console.log("waited 3 seconds")
         return checkData
       }
 
