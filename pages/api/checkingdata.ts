@@ -11,64 +11,87 @@ import * as ld from '@launchdarkly/node-server-sdk'
 
 
 type Data = {
-    id: number,
-    date: string | null,
-    merchant: string | null,
-    status: string | null,
-    amount: string | null,
-    accounttype: string | null,
-    user: string | null
+  id: number,
+  date: string | null,
+  merchant: string | null,
+  status: string | null,
+  amount: string | null,
+  accounttype: string | null,
+  user: string | null
 }[]
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<Data[]>
+  req: NextApiRequest,
+  res: NextApiResponse<Data[] | { error: string }>
 ) {
-    const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-    const clientContext: any = getCookie('ldcontext', { req, res })
-    const connectionString = process.env.DB_URL
-    if (!connectionString) {
-        throw new Error('DATABASE_URL is not set')
-    }
-    const client = postgres(connectionString)
-    const db = drizzle(client);
 
-    const config: ld.LDMigrationOptions = {
-      readOld: async(key?: string) => {
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
+  const clientContext: any = getCookie('ldcontext', { req, res })
+  const connectionString = process.env.DB_URL
+  if (!connectionString) {
+    throw new Error('DATABASE_URL is not set')
+  }
+  const client = postgres(connectionString)
+  const db = drizzle(client);
+
+  const config: ld.LDMigrationOptions = {
+    readOld: async (key?: string) => {
+      async function getMyData() {
+        const randomNumber = Math.floor(Math.random() * 100) + 1;
+        console.log("random failure number: " + randomNumber)
+        if (randomNumber <= 50) {
+          console.log("Error caught -")
+          throw new Error('Simulated failure');
+        }
+        console.log("waiting 5 seconds")
+        await delay(5000)
+        console.log("waited 5 seconds")
+        return checkData
+      }
+
+      const result = await getMyData()
+
+      if (result) {
+        console.log(result)
+        return ld.LDMigrationSuccess(result);
+      } else {
         //@ts-ignore
-        return [
-        ld.LDMigrationSuccess,
-        checkData
-        ]
-      },
+        return ld.LDMigrationError(new Error('Simulated failure'))
+      }
+    },
 
-      readNew: async(key?: string) => {      
-        let checkingTransactions;
-        checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
+    readNew: async (key?: string) => {
+      let checkingTransactions;
+      checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
+
+      if (checkingTransactions) {
         console.log(checkingTransactions)
-      // @ts-ignore
-        return [
-        ld.LDMigrationSuccess,
-        checkingTransactions
-        ]
-      },
+        return ld.LDMigrationSuccess(checkingTransactions)
+      } else {
+        // @ts-ignore
+        return ld.LDMigrationError(checkingTransactions.error as Error)
+      }
+    },
 
-      WriteOld: async(params?: {key: string, value: any}) => {
-            res.status(200)
+    WriteOld: async (params?: { key: string, value: any }) => {
+      res.status(200)
 
-      },
+    },
 
-      WriteNew: async(params?: {key: string, value: any}) => {
-            res.status(200)
-      },
+    WriteNew: async (params?: { key: string, value: any }) => {
+      res.status(200)
+    },
 
-      execution: new ld.LDConcurrentExecution(),
-      latencyTracking: true,
-      errorTracking: true,
+    execution: new ld.LDConcurrentExecution(),
+    latencyTracking: true,
+    errorTracking: true,
 
-    }
-
-    const migration = new ld.createMigration(ldClient, config)
+  }
+  //@ts-ignore
+  const migration = new ld.createMigration(ldClient, config)
 
   let jsonObject
 
@@ -83,9 +106,14 @@ export default async function handler(
   }
 
   if (req.method === 'GET') {
-  const checkingTransactions = await migration.read('financialDBMigration', jsonObject, 'off')
-  console.log(checkingTransactions)
-  res.status(200).json(checkingTransactions[1])
-   
-}
+    const checkingTransactions = await migration.read('financialDBMigration', jsonObject, 'off')
+
+    if (checkingTransactions.success) {
+      console.log("the success is - " + JSON.stringify(checkingTransactions))
+      res.status(200).json(checkingTransactions.result)
+    } else {
+      console.log("the failure is - " + JSON.stringify(checkingTransactions))
+      res.status(502).json({ error: 'Server encountered an error processing the request.' })
+    }
+  }
 }
