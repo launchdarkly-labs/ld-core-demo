@@ -7,27 +7,69 @@ import { eq } from 'drizzle-orm';
 import postgres from 'postgres'
 import { transactions } from '@/schema/schema'
 import { checkData } from '@/lib/checkingdata';
+import * as ld from '@launchdarkly/node-server-sdk'
 
 
 type Data = {
-  id: number,
-  date: string | null,
-  merchant: string | null,
-  status: string | null,
-  amount: string | null,
-  accounttype: string | null,
-  user: string | null
+    id: number,
+    date: string | null,
+    merchant: string | null,
+    status: string | null,
+    amount: string | null,
+    accounttype: string | null,
+    user: string | null
 }[]
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data[]>
+    req: NextApiRequest,
+    res: NextApiResponse<Data[]>
 ) {
+    const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
+    const clientContext: any = getCookie('ldcontext', { req, res })
+    const connectionString = process.env.DB_URL
+    if (!connectionString) {
+        throw new Error('DATABASE_URL is not set')
+    }
+    const client = postgres(connectionString)
+    const db = drizzle(client);
 
-  const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-  const clientContext: any = getCookie('ldcontext', { req, res })
+    const config: ld.LDMigrationOptions = {
+      readOld: async(key?: string) => {
+        //@ts-ignore
+        return [
+        ld.LDMigrationSuccess,
+        checkData
+        ]
+      },
 
-  let dbMigration;
+      readNew: async(key?: string) => {      
+        let checkingTransactions;
+        checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
+        console.log(checkingTransactions)
+      // @ts-ignore
+        return [
+        ld.LDMigrationSuccess,
+        checkingTransactions
+        ]
+      },
+
+      WriteOld: async(params?: {key: string, value: any}) => {
+            res.status(200)
+
+      },
+
+      WriteNew: async(params?: {key: string, value: any}) => {
+            res.status(200)
+      },
+
+      execution: new ld.LDConcurrentExecution(),
+      latencyTracking: true,
+      errorTracking: true,
+
+    }
+
+    const migration = new ld.createMigration(ldClient, config)
+
   let jsonObject
 
   if (clientContext == undefined) {
@@ -40,23 +82,10 @@ export default async function handler(
     jsonObject = JSON.parse(json);
   }
 
-  dbMigration = await ldClient.variation("financialDBMigration", jsonObject, 'off')
-
-  const connectionString = process.env.DB_URL
-  if (!connectionString) {
-    throw new Error('DATABASE_URL is not set')
-  }
-  const client = postgres(connectionString)
-  const db = drizzle(client);
-
-
-  if (dbMigration === 'complete') {
-
-    const checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
-    // @ts-ignore
-    res.status(200).json(checkingTransactions)
-  } else {
-    // @ts-ignore 
-    res.status(200).json(checkData)
-  }
+  if (req.method === 'GET') {
+  const checkingTransactions = await migration.read('financialDBMigration', jsonObject, 'off')
+  console.log(checkingTransactions)
+  res.status(200).json(checkingTransactions[1])
+   
+}
 }
