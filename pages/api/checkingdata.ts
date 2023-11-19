@@ -25,8 +25,12 @@ export default async function handler(
   res: NextApiResponse<Data[] | { error: string }>
 ) {
 
-  function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  function delay(low: number, high: number) {
+    const min = low * 1000;
+    const max = high * 1000; 
+    const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+    console.log("Delay is: "+randomDelay)
+    return new Promise(resolve => setTimeout(resolve, randomDelay));
   }
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
   const clientContext: any = getCookie('ldcontext', { req, res })
@@ -46,9 +50,9 @@ export default async function handler(
           console.log("Error caught -")
           throw new Error('Simulated failure');
         }
-        console.log("waiting 3 seconds")
-        await delay(3000)
-        console.log("waited 3 seconds")
+        console.log("Waiting delay")
+        await delay(1,3)
+        console.log("Delay complete")
         return checkData
       }
 
