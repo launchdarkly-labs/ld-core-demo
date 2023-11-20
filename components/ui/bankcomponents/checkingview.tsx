@@ -21,6 +21,7 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -54,10 +55,10 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
     const response = await fetch("/api/checkingdata");
     let transactionsJson: Transaction[];
     if (response.status == 200) {
-    const data = await response.json();
-    console.log("The data is... ", data);
-    transactionsJson = data;
-  } else {
+      const data = await response.json();
+      console.log("The data is... ", data);
+      transactionsJson = data;
+    } else {
       transactionsJson = [
         {
           id: 0,
@@ -116,7 +117,9 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         </SheetHeader>
 
         <Table className="">
-          <TableCaption>Your Checking Account Transactions</TableCaption>
+          <TableCaption><Button className="flex rounded-none bg-blue-700 text-lg font-sohnelight" onClick={getTransactions}>
+              Refresh Data
+            </Button></TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>

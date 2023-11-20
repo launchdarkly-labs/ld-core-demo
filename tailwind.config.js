@@ -17,6 +17,12 @@ module.exports = {
       },
     },
     extend: {
+      width: {
+        '80': '80%', // Add this line
+      },
+      height: {
+        '80': '80%', // Add this line
+      },
       screens: {
         "3xl": "2500px",
       },

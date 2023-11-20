@@ -48,7 +48,25 @@ export function FederatedCreditAccount() {
 
   async function getTransactions() {
     const response = await fetch("/api/checkingdata");
-    const transactionsJson: Transaction[] = await response.json();
+    let transactionsJson: Transaction[];
+    if (response.status == 200) {
+      const data = await response.json();
+      console.log("The data is... ", data);
+      transactionsJson = data;
+    } else {
+      transactionsJson = [
+        {
+          id: 0,
+          date: "",
+          merchant: "",
+          status: "Server Error",
+          amount: 0,
+          accounttype: "",
+          user: "",
+        },
+      ];
+    }
+    console.log(transactionsJson);
     setTransactions(transactionsJson);
     return transactionsJson;
   }
@@ -75,7 +93,6 @@ export function FederatedCreditAccount() {
             <div className="space-y-2">
               <p className="balancetext">Total Credit Balance: </p>
               <p className="balance">$1,203</p>
-              
             </div>
             <div>
               <p className="duetext">Next Due: 23rd</p>
@@ -86,15 +103,15 @@ export function FederatedCreditAccount() {
       <SheetContent className="w-1/2 overflow-y-scroll" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
-            Checking Account
+            Federated Credit Account
           </SheetTitle>
           <SheetDescription className="font-sohne">
-            Understand the Balance of Your Checking Accounts
+            Understand the Balance of Your Credit Account
           </SheetDescription>
         </SheetHeader>
 
         <Table className="">
-          <TableCaption>Your Checking Account Transactions</TableCaption>
+          <TableCaption>Your Credit Account Transactions</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>

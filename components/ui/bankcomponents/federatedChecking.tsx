@@ -106,7 +106,7 @@ export function FederatedCheckingAccount() {
       <SheetContent className="w-1/2 overflow-y-scroll" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
-            Checking Account
+            Federated Checking Account
           </SheetTitle>
           <SheetDescription className="font-sohne">
             Understand the Balance of Your Checking Accounts
