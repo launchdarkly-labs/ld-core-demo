@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import ReleaseIcon from "./public/Release-Icon.png";
 
 export function CSNav() {
   const router = useRouter();
@@ -77,6 +78,7 @@ export function CSNav() {
                 <CSCard
                   className="bg-gradient-releases cursor-pointer"
                   herotext="Navigate to De-Risked Releases"
+                  
                 />
               </div>
             </motion.div>
