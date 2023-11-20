@@ -61,7 +61,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
     <Sheet>
       <SheetTrigger onClick={() => cartClick()} asChild>
         <div>
-          <ShoppingCart className="cart" color={"white"} />
+          <ShoppingCart className="cart" color={"white"} className="cursor-pointer"/>
         </div>
       </SheetTrigger>
 

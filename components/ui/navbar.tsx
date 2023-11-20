@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle, Menu, PanelTopOpen } from "lucide-react";
+import { Search, MessageCircle, Menu, PanelTopOpen, QrCode } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -47,11 +47,9 @@ const NavBar = React.forwardRef<any>(
         navChild = (
           <>
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-              {enrolledInLaunchClub &&
-              <LaunchClubStatus />
-            }
+              {enrolledInLaunchClub && <LaunchClubStatus />}
               <Search className="cursor-pointer hidden sm:block" />
-              <MessageCircle className=" cursor-pointer hidden sm:block" />
+              <QrCode className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
             </div>
           </>
@@ -82,7 +80,7 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <MessageCircle className=" cursor-pointer " />
+                <QrCode className=" cursor-pointer " />
               </DropdownMenuItem>
             </div>
           </>
@@ -114,7 +112,7 @@ const NavBar = React.forwardRef<any>(
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
                 <Search color={"white"} className="hidden sm:block" />
-                <MessageCircle color={"white"} className="hidden sm:block" />
+                <QrCode color={"white"} className="hidden sm:block" />
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -170,7 +168,7 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <MessageCircle className=" cursor-pointer " />
+                <QrCode className=" cursor-pointer " />
               </DropdownMenuItem>
             </div>
           </>
@@ -217,8 +215,8 @@ const NavBar = React.forwardRef<any>(
           <>
             <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} className="hidden sm:block" />
-              <MessageCircle color={"white"} className="hidden sm:block" />
+              <Search color={"white"} className="hidden sm:block cursor-pointer" />
+              <QrCode color={"white"} className="hidden sm:block cursor-pointer" />
               <MarketLoginScreen />
             </div>
           </>
@@ -230,7 +228,7 @@ const NavBar = React.forwardRef<any>(
               <image href="/market.png" height="40" width="40" alt="Marketplace" />
             </svg>
             <p className="text-sm sm:text-base flex text-white font-sohnelight">
-              <strong className="font-sohne">Galaxy</strong>{' '}Marketplace
+              <strong className="font-sohne">Galaxy</strong> Marketplace
             </p>
           </>
         );
@@ -247,7 +245,7 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <MessageCircle className=" cursor-pointer " />
+                <QrCode className=" cursor-pointer " />
               </DropdownMenuItem>
             </div>
           </>
@@ -300,14 +298,13 @@ const NavBar = React.forwardRef<any>(
         //     </p>
         //   </>
         // );
-        navChild = null;
-
+        navChild = <QrCode className="flex self-center" />;
         navLinkMobileDropdown = null;
     }
 
     return (
       <nav className="sticky w-full flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
-        <div className="items-center flex">
+        <div className="items-center flex gap-x-6 text-white">
           <CSNav />
         </div>
         <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
