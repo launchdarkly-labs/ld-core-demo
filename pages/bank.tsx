@@ -401,9 +401,9 @@ export default function Bank() {
               </section>
             ) : null}
 
-            <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 lg:gap-x-8 justify-between mx-auto">
-              <img src="CC.png" className="object-fit lg:w-1/2 xl:w-auto" />
-              <img src="Loan.png" className="object-fit lg:w-1/2 xl:w-auto" />
+            <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 sm:gap-x-4 xl:gap-x-8 justify-between lg:justify-center mx-auto">
+              <img src="CC.png" className="object-contain lg:w-1/2 xl:w-auto" />
+              <img src="Loan.png" className="object-contain lg:w-1/2 xl:w-auto" />
             </div>
           </div>
         </motion.main>
