@@ -21,7 +21,6 @@ import { setCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { AiOutlineAreaChart } from "react-icons/ai";
 
-
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
@@ -35,7 +34,7 @@ export default function Bank() {
   const [aiResponse, setAIResponse] = useState<string>("");
   const [federatedAccountOne, setFederatedAccountOne] = useState(false);
   const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState("")
+  const [aiPrompt, setAIPrompt] = useState("");
   const router = useRouter();
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
@@ -44,12 +43,10 @@ export default function Bank() {
     router.push("/airways");
   }
 
-  
-
   const { wealthManagement, federatedAccounts, aiPromptText } = useFlags();
 
   useEffect(() => {
-    setAIPrompt(aiPromptText)
+    setAIPrompt(aiPromptText);
   }, [aiPromptText]);
 
   const money = JSON.stringify(checkData);
@@ -216,7 +213,6 @@ export default function Bank() {
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
           <div className=" w-full px-8 ">
-
             <section
               className={`flex flex-col xl:flex-row py-8 ${
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
@@ -295,68 +291,67 @@ export default function Bank() {
                   </div>
                 )}
               </section>
-
             </section>
 
             {wealthManagement ? (
-              <section className="p-6 bg-gradient-blue h-full lg:h-[425px] shadow-2xl mb-6">
-                <div>
-                  <h3 className=" font-sohne py-6 text-[24px] text-white">Wealth Management</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
-                    <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full lg:h-[300px] bg-white ">
-                      <div className="">
-                        <div className="flex justify-between pb-2">
-                          <div>
-                            <p className="aiinsightstext">
-                              Wealth Insights AI {" "}
-                              <span className="accountsecondary">Powered By AWS Bedrock</span>
-                            </p>
-                          </div>
+              <section className="p-6 bg-gradient-blue h-full xl:h-[425px] shadow-2xl mb-6">
+                <h3 className=" font-sohne py-6 text-[24px] text-white">Wealth Management</h3>
 
-                          <div>
-                            <img src="aws.png" />
-                          </div>
-                        </div>
-                        <div className="absolute flex flex-row justify-between bottom-5 right-5">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button className="bg-blue-500 rounded-none font-sohne">View Prompt</Button>
-                            </DialogTrigger>
-                            <DialogContent className="">
-                              <div className="m-4 fontsohnelight">
-                                <p className="aiinsightstext text-xl pb-4">Current AWS Bedrock Configured Prompt -</p>
-                              {aiPrompt}
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                          <Button
-                            onClick={() => {
-                              submitQuery(prompt);
-                            }}
-                            className="flex text-xl bg-transparent font-sohnelight hover:bg-transparent hover:text-blue-700 hover:scale-110 text-blue-700 items-center"
-                          >
-                            Generate <ArrowRight className="text-blue-700 ml-2" />
-                          </Button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full ">
+                  <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full xl:h-[300px] bg-white ">
+                    <div className="">
+                      <div className="flex justify-between pb-2 gap-x-2">
+                        <p className="aiinsightstext">
+                          Wealth Insights AI <br/>
+                          <span className="accountsecondary">Powered By AWS Bedrock</span>
+                        </p>
+
+                        <div>
+                          <img src="aws.png" />
                         </div>
                       </div>
-                      <div className="overflow-auto h-[150px] flex justify-center items-center">
-                        {loading ? (
-                          <BounceLoader color="#1D4ED8" size={100} />
-                        ) : (
-                          <p className="my-4 font-sohnelight pt-4">{aiResponse}</p>
-                        )}
+                      <div className="absolute flex flex-row sm:flex-col lg:flex-row justify-between bottom-5 right-5">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="bg-blue-500 rounded-none font-sohne">
+                              View Prompt
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="">
+                            <div className="m-4 fontsohnelight">
+                              <p className="aiinsightstext text-xl pb-4">
+                                Current AWS Bedrock Configured Prompt -
+                              </p>
+                              {aiPrompt}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          onClick={() => {
+                            submitQuery(prompt);
+                          }}
+                          className="flex text-xl bg-transparent font-sohnelight hover:bg-transparent hover:text-blue-700 hover:scale-110 text-blue-700 items-center"
+                        >
+                          Generate <ArrowRight className="text-blue-700 ml-2" />
+                        </Button>
                       </div>
                     </div>
-                  
-                  <div className="p-6 bg-white sm:col-span-1 h-full lg:h-[300px]">
+                    <div className="overflow-auto h-[150px] flex justify-center items-center">
+                      {loading ? (
+                        <BounceLoader color="#1D4ED8" size={100} />
+                      ) : (
+                        <p className="my-4 font-sohnelight pt-4">{aiResponse}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-white sm:col-span-1 h-full xl:h-[300px]">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
                       </div>
-                      <div className="">
-                        <p className="accounttext">Brokerage Account (***6552)</p>
-                      </div>
+
+                      <p className="accounttext">Brokerage Account (***6552)</p>
                     </div>
 
                     <div className="flex flex-col">
@@ -369,7 +364,7 @@ export default function Bank() {
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full h-full lg:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
+                    className={`flex flex-col p-4 w-full h-full xl:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
                   >
                     <p className="aiinsightstext text-lg lg:text-2xl ">6-Month Account Trend</p>
                     <ResponsiveContainer className={"h-full"}>
@@ -407,7 +402,7 @@ export default function Bank() {
             ) : null}
 
             <div className="flex flex-col lg:flex-row w-full h-full items-center gap-y-8 lg:gap-x-8 justify-between mx-auto">
-              <img src="CC.png" className="object-fit lg:w-1/2 xl:w-auto"/>
+              <img src="CC.png" className="object-fit lg:w-1/2 xl:w-auto" />
               <img src="Loan.png" className="object-fit lg:w-1/2 xl:w-auto" />
             </div>
           </div>
