@@ -14,7 +14,9 @@ export default function ExamplesPage() {
         <NavBar />
       </div>
       <div className="text-white w-1/2 mx-auto space-y-2 pb-5">
-        <h1 className="text-3xl font-bold my-3.5">Code Samples</h1>
+        <h1 className="text-4xl font-bold my-3.5 font-['Audimat']">
+          Code Samples
+        </h1>
         <Accordion type="single" collapsible className="w-full text-white">
           <AccordionItem value="item-1">
             <AccordionTrigger>
