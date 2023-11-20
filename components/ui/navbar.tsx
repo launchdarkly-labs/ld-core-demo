@@ -313,7 +313,7 @@ const NavBar = React.forwardRef<any>(
         <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="ml-2 cursor-pointer block sm:hidden text-white">
+            <button className="ml-2 cursor-pointer block lg:hidden text-white">
               <PanelTopOpen size={24} />
             </button>
           </DropdownMenuTrigger>
@@ -322,7 +322,7 @@ const NavBar = React.forwardRef<any>(
           </DropdownMenuPortal>
         </DropdownMenu>
         {isLoggedIn ? (
-          <div className="hidden sm:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
         ) : null}
         {navChild}
       </nav>

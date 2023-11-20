@@ -98,7 +98,10 @@ export default function Home() {
       <section className="py-8 bg-ldblack h-full">
         <div className="flex flex-col mx-8 xl:mx-[25%]">
           <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
+
+            
             <div className="w-full sm:w-1/2 home-card">
+            <a href="/bank">
               <svg
                 width="44"
                 height="44"
@@ -152,8 +155,13 @@ export default function Home() {
 
               <h2>De-Risk Deploys</h2>
               <p>Deploy more often and release without risk.</p>
+              </a>
             </div>
+            
+
+
             <div className="w-full sm:w-1/2 home-card">
+              <a href="airways">
               <svg
                 width="44"
                 height="44"
@@ -200,15 +208,18 @@ export default function Home() {
                   </linearGradient>
                 </defs>
               </svg>
-
               <h2>Targeted Experiences</h2>
               <p>
                 Deliver targeted product experiences to any customer segment.
               </p>
+              </a>
             </div>
           </div>
+
+
           <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
             <div className="w-full sm:w-1/2 home-card">
+            <a href="/marketplace">
               <svg
                 width="44"
                 height="44"
@@ -296,14 +307,16 @@ export default function Home() {
                   </linearGradient>
                 </defs>
               </svg>
-
               <h2>Measure & Experiment</h2>
               <p>
                 Customize the business impact of every product feature through
                 experimentation.
               </p>
+              </a>
             </div>
+            
             <div className="w-full sm:w-1/2 home-card">
+              <a href="/mobile">
               <svg
                 width="44"
                 height="44"
@@ -359,6 +372,8 @@ export default function Home() {
               <p>
                 Release mobile features and fixes on your schedule, not theirs
               </p>
+
+            </a>
             </div>
           </div>
         </div>

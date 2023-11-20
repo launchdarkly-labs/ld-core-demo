@@ -411,7 +411,7 @@ export default function Bank() {
                     </div>
                   </div>
                   <div
-                    className={`flex flex-col p-4 w-full h-full lg:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
+                    className={`flex flex-col p-4 w-full h-full xl:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
                   >
                     <p className="aiinsightstext text-lg lg:text-2xl ">
                       6-Month Account Trend
