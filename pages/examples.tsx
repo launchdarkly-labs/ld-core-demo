@@ -376,7 +376,7 @@ client.track('something-happened-with-custom-data', { someData: 2 });`}
                 Flushing events on the edge
               </h2>
               <p>
-                In edge environments, events need to be flished to prevent loss
+                In edge environments, events need to be flushed to prevent loss
                 of data (ex. Cloudflare).
               </p>
               <Code
