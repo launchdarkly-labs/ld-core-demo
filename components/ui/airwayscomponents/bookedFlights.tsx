@@ -11,13 +11,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
-import { ArrowRight, PersonStanding, PlaneIcon, Wifi } from "lucide-react";
+import { ArrowRight, PersonStanding, PlaneIcon, Wifi, Plane } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
 
 export default function BookedFlights() {
@@ -43,9 +39,7 @@ export default function BookedFlights() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
@@ -71,9 +65,7 @@ export default function BookedFlights() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
@@ -100,9 +92,7 @@ export default function BookedFlights() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
@@ -119,11 +109,8 @@ export default function BookedFlights() {
 
   const handleCancel = async (index: any) => {
     cancelTrip(index);
-    await setBookedTrips(
-      bookedTrips.filter((_: any, tripIndex: number) => tripIndex !== index)
-    );
+    await setBookedTrips(bookedTrips.filter((_: any, tripIndex: number) => tripIndex !== index));
   };
-  
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -144,36 +131,30 @@ export default function BookedFlights() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-  <button
-    className="sm:mx-6 sm:pb-12 text-sm font-sohnelight sm:pt-1.5 bg-transparent sm:mr-4 sm:flex sm:items-start sm:text-airlineinactive
+        <button
+          className="sm:mx-6 lg:pb-12 text-sm font-sohnelight sm:pt-1.5 bg-transparent sm:mr-4 sm:flex sm:items-start sm:text-airlineinactive
     sm:hover:text-white sm:hover:bg-gradient-to-r sm:from-airlinepurple sm:to-airlinepink sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom relative"
-  >
-    My Bookings
-    {bookedTrips.length > 0 && (
-      <span className="absolute bottom-[35px] right-[-25px] bg-pink-700 rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
-        {bookedTrips.length}
-      </span>
-    )}
-  </button>
-</SheetTrigger>
-      <SheetContent
-        className="w-full sm:w-3/4 lg:w-1/2 overflow-y-scroll light"
-        side="right"
-      >
+        >
+          <span className="hidden lg:block">My Bookings</span>
+          <Plane className = "block lg:hidden text-white" title="My Bookings"/>
+          {bookedTrips.length > 0 && (
+            <span className="absolute bottom-[20px] right-[-20px] lg:bottom-[35px] lg:right-[-25px] bg-pink-700 rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
+              {bookedTrips.length}
+            </span>
+          )}
+        </button>
+      </SheetTrigger>
+      <SheetContent className="w-full sm:w-3/4 lg:w-1/2 overflow-y-scroll light" side="right">
         <SheetHeader className="!text-center">
           <SheetTitle className="font-sohne text-2xl ">
             <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose ">
               Your booked flights
             </div>
+            
           </SheetTitle>
         </SheetHeader>
 
-        <motion.div
-          className="w-full"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
+        <motion.div className="w-full" variants={containerVariants} initial="hidden" animate="show">
           <AnimatePresence>
             {bookedTrips.map(
               (
@@ -200,9 +181,7 @@ export default function BookedFlights() {
                   <div className=" bg-white shadow-md w-full overflow-hidden items-stretch ">
                     <div className="md:flex">
                       <div className="pt-8 pl-2 relative w-2/3">
-                        <p className="absolute top-2 left-2 text-black text-sm">
-                          Ticket {trip.id}
-                        </p>
+                        <p className="absolute top-2 left-2 text-black text-sm">Ticket {trip.id}</p>
                         <div className=" text-black">
                           <div className="flex justify-between items-center px-2">
                             <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">
@@ -212,20 +191,13 @@ export default function BookedFlights() {
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <p
-                                    onClick={() =>
-                                      travelLocationsInfo(
-                                        trip.toCity,
-                                        trip.fromCity
-                                      )
-                                    }
+                                    onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
                                     className="mt-2 uppercase  text-lg flex font-bold underline text-blue-500"
                                   >
                                     {trip.fromCity} <ArrowRight /> {trip.toCity}
                                   </p>
                                 </PopoverTrigger>
-                                <PopoverContent
-                                  onCloseAutoFocus={() => setAIResponse("")}
-                                >
+                                <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                   {loading ? (
                                     <div className="flex justify-center">
                                       <BounceLoader color="#2b6cb0" />
@@ -234,9 +206,7 @@ export default function BookedFlights() {
                                     <div>
                                       <p className="text-lg mb-4 font-sohne">
                                         AI Travel Insights{" "}
-                                        <span className="text-sm">
-                                          powereed by AWS Bedrock
-                                        </span>{" "}
+                                        <span className="text-sm">powereed by AWS Bedrock</span>{" "}
                                       </p>
                                       <p>{aiResponse}</p>
                                     </div>
@@ -260,17 +230,13 @@ export default function BookedFlights() {
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <p
-                                      onClick={() =>
-                                        planeDetails(trip.airplane)
-                                      }
+                                      onClick={() => planeDetails(trip.airplane)}
                                       className="cursor-pointer underline text-blue-500"
                                     >
                                       {trip.airplane}
                                     </p>
                                   </PopoverTrigger>
-                                  <PopoverContent
-                                    onCloseAutoFocus={() => setAIResponse("")}
-                                  >
+                                  <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                     {loading ? (
                                       <div className="flex justify-center">
                                         <BounceLoader color="#2b6cb0" />
@@ -279,9 +245,7 @@ export default function BookedFlights() {
                                       <div>
                                         <p className="text-lg mb-4 font-sohne">
                                           AI Travel Insights{" "}
-                                          <span className="text-sm">
-                                            powereed by AWS Bedrock
-                                          </span>{" "}
+                                          <span className="text-sm">powereed by AWS Bedrock</span>{" "}
                                         </p>
                                         <p>{aiResponse}</p>
                                       </div>
@@ -296,21 +260,18 @@ export default function BookedFlights() {
 
                           {launchClubLoyalty && (
                             <div className="grid lg:flex mx-auto items-center justify-center space-x-4 mt-4">
-                              {priorityBoarding && 
-                              <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
-                                <PersonStanding className="text-blue-700 mr-2" />{" "}
-                                Launch Priority
-                              </p>
-                              }
-                              {mealPromoExperience && 
-                              <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
-                                <PlaneIcon className="text-green-700 mr-2" />{" "}
-                                A380 Meal Promo
-                              </p>
-                              }
+                              {priorityBoarding && (
+                                <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
+                                  <PersonStanding className="text-blue-700 mr-2" /> Launch Priority
+                                </p>
+                              )}
+                              {mealPromoExperience && (
+                                <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
+                                  <PlaneIcon className="text-green-700 mr-2" /> A380 Meal Promo
+                                </p>
+                              )}
                               <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
-                                <Wifi className="text-green-700 mr-2" /> Free
-                                WiFi
+                                <Wifi className="text-green-700 mr-2" /> Free WiFi
                               </p>
                             </div>
                           )}
@@ -339,9 +300,7 @@ export default function BookedFlights() {
                               >
                                 <p className="text-lg mb-4 font-sohne">
                                   AI Travel Insights{" "}
-                                  <span className="text-sm">
-                                    powereed by AWS Bedrock
-                                  </span>{" "}
+                                  <span className="text-sm">powereed by AWS Bedrock</span>{" "}
                                 </p>
                                 <div className=" overflow-y-auto flex justify-center items-center">
                                   {loading ? (
@@ -359,8 +318,7 @@ export default function BookedFlights() {
                                     onClick={() => submitQuery(trip.to)}
                                     className="absolute flex bottom-5 right-5 bg-transparent  text-blue-700 hover:bg-transparent hover:text-black mx-auto"
                                   >
-                                    Generate{" "}
-                                    <ArrowRight className="text-blue-700" />
+                                    Generate <ArrowRight className="text-blue-700" />
                                   </Button>
                                 )}
                               </PopoverContent>

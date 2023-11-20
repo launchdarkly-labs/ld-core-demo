@@ -49,6 +49,7 @@ const NavBar = React.forwardRef<any>(
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
               {enrolledInLaunchClub && <LaunchClubStatus />}
               <Search className="cursor-pointer hidden sm:block" />
+              <div className="block lg:hidden"><BookedFlights /></div>
               <QrCode className=" cursor-pointer hidden sm:block" />
               <LoginScreen />
             </div>
@@ -70,11 +71,13 @@ const NavBar = React.forwardRef<any>(
 
         navLinkMobileDropdown = (
           <>
-            <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
-            <DropdownMenuItem>
-              <BookedFlights />
-            </DropdownMenuItem>
-            <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+            {isLoggedIn ? (
+              <>
+                <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
+
+                <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+              </>
+            ) : null}
             <div className="flex justify-between">
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
@@ -158,11 +161,16 @@ const NavBar = React.forwardRef<any>(
 
         navLinkMobileDropdown = (
           <>
-            <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
+            {isLoggedIn ? (
+              <>
+                <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
+              </>
+            ) : null}
+
             <div className="flex justify-between">
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
@@ -235,11 +243,16 @@ const NavBar = React.forwardRef<any>(
 
         navLinkMobileDropdown = (
           <>
-            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
+            {isLoggedIn ? (
+              <>
+                <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
+              </>
+            ) : null}
+
             <div className="flex justify-between">
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
