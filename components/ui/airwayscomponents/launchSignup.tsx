@@ -19,17 +19,19 @@ import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 
 export default function LaunchSignUp() {
-
   const client = useLDClient();
 
-  const {
-    bookedTrips,
-    cancelTrip,
-    setBookedTrips,
-  } = useContext(TripsContext);
+  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, enrolledInLaunchClub,
-    setEnrolledInLaunchClub, setLaunchClubStatus } = useContext(LoginContext)
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    loginUser,
+    logoutUser,
+    enrolledInLaunchClub,
+    setEnrolledInLaunchClub,
+    setLaunchClubStatus,
+  } = useContext(LoginContext);
   const [status, setStatus] = useState("Economy");
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,13 +41,12 @@ export default function LaunchSignUp() {
   };
 
   const enrollLaunchClub = async () => {
-    setEnrolledInLaunchClub(true)
-    setLaunchClubStatus('standard')
+    setEnrolledInLaunchClub(true);
+    setLaunchClubStatus("standard");
     const context = await client?.getContext();
-    context.user.launchclub = "standard" 
+    context.user.launchclub = "standard";
     client.identify(context);
   };
-
 
   const perks = [
     {
@@ -63,8 +64,7 @@ export default function LaunchSignUp() {
     {
       name: "LaunchPad Access",
       img: "/launchpad.jpg",
-      description:
-        "Stock up for flights with access to LaunchPad locations at airports worldwide.",
+      description: "Stock up for flights with access to LaunchPad locations at airports worldwide.",
     },
   ];
 
@@ -105,55 +105,40 @@ export default function LaunchSignUp() {
   return (
     <Sheet>
       <SheetTrigger className="text-white z-50" asChild>
-          <Button className="bg-pink-600 rounded-none h-full sm:h-2/3 w-1/2 mx-auto text-3xl px-2">Join Launch Club</Button>
+        <Button className="bg-pink-600 rounded-none h-full sm:h-2/3 w-1/2 mx-auto text-3xl px-2">
+          Join Launch Club
+        </Button>
       </SheetTrigger>
       {!enrolledInLaunchClub ? (
         <SheetContent className="w-full lg:w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center">
               <div className="flex items-center text-3xl flex-col">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="200"
-                  width="350"
-                  className="pr-2"
-                >
-                  <image
-                    href="/launch-airways.svg"
-                    height="200"
-                    width="350"
-                    alt="Launch Airways"
-                  />
+                <svg xmlns="http://www.w3.org/2000/svg" height="200" width="350" className="pr-2">
+                  <image href="/launch-airways.svg" height="200" width="350" alt="Launch Airways" />
                 </svg>
               </div>
             </SheetTitle>
-            <SheetDescription className="font-sohnelight flex flex-col items-center justify-center">
+            <SheetDescription className="font-sohnelight flex flex-col items-center justify-center text-center">
               <div className="flex">
-                <h1 className="text-black text-4xl">
-                  Launch Club Loyalty Program
-                </h1>
+                <h1 className="text-black text-4xl">Launch Club Loyalty Program</h1>
               </div>
               <div className="flex text-xl my-4 text-black text-center">
-                Introducing our the new Launch Airways loyalty program. Join now
-                for exclusive member perks that increase the more you fly!
+                Introducing our the new Launch Airways loyalty program. Join now for exclusive
+                member perks that increase the more you fly!
               </div>
               <div className="flex flex-col sm:flex-row gap-4 place-content-between w-full my-10">
                 {perks.map((perks, index) => (
                   <Card
                     key={index}
-                    className="flex flex-col items-center justify-center h-1/3 w-full sm:w-1/3 align-items-center drop-shadow-2xl "
+                    className="flex flex-col items-center justify-center h-auto w-full
+                    align-items-center drop-shadow-2xl p-4 gap-y-2"
                   >
-                    <CardHeader>
-                      <Image
-                        src={perks.img}
-                        height={200}
-                        width={200}
-                        alt="image"
-                        className=""
-                      />
+                    <CardHeader className="!p-0">
+                      <Image src={perks.img} height={200} width={200} alt="image"  />
                     </CardHeader>
-                    <CardTitle className="text-lg">{perks.name}</CardTitle>
-                    <CardContent className="m-2 text-sm text-center">
+                    <CardTitle className="text-lg ">{perks.name}</CardTitle>
+                    <CardContent className="text-sm text-center !p-0">
                       {perks.description}
                     </CardContent>
                   </Card>
@@ -161,14 +146,14 @@ export default function LaunchSignUp() {
               </div>
               <div className="flex flex-col">
                 <SheetTrigger as child>
-                <Button
-                  onClick={() => {
-                    enrollLaunchClub()
-                  }}
-                  className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
-                >
-                  Enroll Today!
-                </Button>
+                  <Button
+                    onClick={() => {
+                      enrollLaunchClub();
+                    }}
+                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
+                  >
+                    Enroll Today!
+                  </Button>
                 </SheetTrigger>
               </div>
             </SheetDescription>
@@ -182,10 +167,7 @@ export default function LaunchSignUp() {
           ></motion.div>
         </SheetContent>
       ) : (
-        <SheetContent
-          className="w-1/2 overflow-y-scroll bg-white"
-          side="right"
-        >
+        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohnelight text-3xl flex items-center justify-center">
               <div className="mx-auto flex place-content-center w-full">
@@ -194,14 +176,11 @@ export default function LaunchSignUp() {
             </SheetTitle>
             <SheetDescription className="font-sohne flex flex-col items-center justify-center">
               <div className="flex">
-                <h1 className="text-black text-4xl">
-                  Welcome Launch Club Member
-                </h1>
+                <h1 className="text-black text-4xl">Welcome Launch Club Member</h1>
               </div>
               <div className="flex text-xl my-4 text-black text-center">
-                Track your tier, see the number of flights taken, and redeem
-                miles for tickets and other purchases. Thank you for being a
-                member!
+                Track your tier, see the number of flights taken, and redeem miles for tickets and
+                other purchases. Thank you for being a member!
               </div>
               <div className="flex flex-row gap-4 place-content-between w-full my-10">
                 {rewards.map((rewards, index) => (
