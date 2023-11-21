@@ -84,4 +84,4 @@ jobs:
       run: rm -rf ./.github/workflows/deploy_files
 
     - name: Remove .env file
-      run: rm ./env
+      run: rm ./.env
