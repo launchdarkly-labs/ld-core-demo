@@ -106,7 +106,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
           <div></div>
         </div>
       </SheetTrigger>
-      <SheetContent className="w-1/2 overflow-y-scroll" side="right">
+      <SheetContent className="w-full lg:w-1/2 overflow-auto" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
             Checking Account

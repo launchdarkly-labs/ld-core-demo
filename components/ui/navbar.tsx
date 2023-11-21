@@ -309,7 +309,7 @@ const NavBar = React.forwardRef<any>(
       default:
         navLogo = <img src={LDLogoWhite.src} alt="" className="" />;
         navChild = (
-          <div className="ml-auto cursor-pointer">
+          <div className="ml-auto cursor-pointer flex self-center">
             <QRCodeImage />
           </div>
         );
