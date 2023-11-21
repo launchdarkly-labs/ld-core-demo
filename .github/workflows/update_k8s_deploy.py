@@ -28,10 +28,10 @@ def update_deploy_files():
 	# Example usage
 	file_path = "./.github/workflows/deploy_files/deploy.yaml"
 	replacements = {
-		"SERVICE_NAME": "{0}".format(namespace),
-		"HOST_URL": "{0}".format(url),
-		"SERVICE_NAME_FOR_INGRESS": "{0}".format(namespace),
-		"IMAGE_URL": "{0}".format(image_url)
+		"placeholder1": "{0}".format(namespace),
+		"placeholder2": "{0}".format(url),
+		"placeholder3": "{0}".format(namespace),
+		"placeholder4": "{0}".format(image_url)
 	}
         
 	replace_placeholders(file_path, replacements)
