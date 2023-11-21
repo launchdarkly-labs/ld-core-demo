@@ -40,6 +40,7 @@ jobs:
       run: python  ./.github/workflows/get_ld_values.py
       env:
         LD_ENV_KEY: ld-demo-${{ matrix.environment }}
+        LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
     - name: Create .env file
       run: |
