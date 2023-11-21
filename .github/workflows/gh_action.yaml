@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        environment: [1, 2, 3]
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -65,6 +65,9 @@ jobs:
       env:
         NAMESPACE: demo${{ matrix.environment }}
         IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
+
+    - name: Check Deploy file
+    run: cat ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml
     
     - name: Applying deploy file to Kubernetes
       uses: kodermax/kubectl-aws-eks@master
@@ -76,9 +79,7 @@ jobs:
       with:
         args: rollout restart deployment/ld-core-demo-deployment -n demo${{ matrix.environment }}
 
-    - name: Check Deploy file
-      run: cat ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml
-
+   
     - name: Delete the deploy file
       run: rm -rf ./.github/workflows/deploy_files
 
