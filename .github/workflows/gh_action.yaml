@@ -67,7 +67,7 @@ jobs:
         IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
     - name: Check Deploy file
-    run: cat ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml
+      run: cat ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml
     
     - name: Applying deploy file to Kubernetes
       uses: kodermax/kubectl-aws-eks@master
