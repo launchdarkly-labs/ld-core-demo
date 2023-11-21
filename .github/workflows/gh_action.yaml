@@ -62,9 +62,9 @@ jobs:
 
     - name: Update K8s Deploy File
       run: python update_k8s_deploy.py
-        env:
-          NAMESPACE: demo-${{ matrix.environment }}-test
-          IMAGE_TAG: ld-demo-${{ matrix.environment }}-${{ github.run_number }}
+      env:
+        NAMESPACE: demo-${{ matrix.environment }}-test
+        IMAGE_TAG: ld-demo-${{ matrix.environment }}-${{ github.run_number }}
     
     - name: Applying deploy file to Kubernetes
       uses: kodermax/kubectl-aws-eks@master
