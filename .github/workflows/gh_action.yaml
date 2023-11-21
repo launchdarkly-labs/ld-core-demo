@@ -71,6 +71,14 @@ jobs:
       with:
         args: apply -f ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml -n demo${{ matrix.environment }}
 
+    - name: Restart pods
+      uses: kodermax/kubectl-aws-eks@master
+      with:
+        args: rollout restart deployment/ld-core-demo-deployment -n demo${{ matrix.environment }}
+
+    - name: Check Deploy file
+      run: cat ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml
+
     - name: Delete the deploy file
       run: rm -rf ./.github/workflows/deploy_files
 
