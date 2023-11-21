@@ -72,7 +72,7 @@ jobs:
         args: apply -f ./.github/workflows/deploy_files/demo-${{ matrix.environment }}-test-deploy.yaml -n demo-${{ matrix.environment }}-test
 
     - name: Delete the deploy file
-      run: rm ./.github/workflows/deploy_files/demo-${{ matrix.environment }}-test-deploy.yaml
+      run: rm -rf ./.github/workflows/deploy_files
 
     - name: Remove .env file
       run: rm ./env
