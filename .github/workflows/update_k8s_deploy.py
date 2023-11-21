@@ -6,20 +6,10 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-import textwrap
 
 def main():
 
     update_deploy_files()
-
-def replace_placeholders(input_file, output_file, replacements):
-    with open(input_file, "r") as f_in:
-        with open(output_file, "w") as f_out:
-            for line in f_in:
-                for placeholder, value in replacements.items():
-                    if placeholder in line:
-                        line = textwrap.indent(value, line.index(placeholder) * ' ')
-                f_out.write(line)
 
 def update_deploy_files():
 
@@ -31,14 +21,20 @@ def update_deploy_files():
 
 	input_file = "./.github/workflows/deploy.yaml"
 	output_file = "./.github/workflows/deploy_files/{0}-deploy.yaml".format(namespace)
-	replacements = {
-    "SERVICE_NAME": 'name: {0} \n'.format(namespace),
-    "HOST_URL": '- host: {0} \n'.format(url),
-    "SERVICE_NAME_FOR_INGRESS": 'name: {0}\n'.format(namespace),
-    "IMAGE_URL": 'image: {0} \n'.format(image_url)
-	}
-        
-	replace_placeholders(input_file, output_file, replacements)
+	with open(input_file, "r") as f_in:
+		with open(output_file, "w") as f_out:
+			#Replace placeholders with values
+			for line in f_in:
+				if "SERVICE_NAME" in line:
+					line = '  name: {0} \n'.format(namespace)
+				if "HOST_URL" in line: 
+					line = '    - host: {0} \n'.format(url)
+				if "SERVICE_NAME_FOR_INGRESS" in line:
+					line = '                    name: {0} \n'.format(namespace)
+				if "IMAGE_URL" in line:
+					line = '          image: {0} \n'.format(image_url)
+			    
+				f_out.write(line)
 
 if __name__ == "__main__":
 	main()
