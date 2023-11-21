@@ -1,6 +1,11 @@
 name: Sync to AWS CodeCommit
 
-on: push
+on:
+  push:
+    branches:
+      - 'release-*'
+    tags: 
+      - release
 
 jobs:
   sync:

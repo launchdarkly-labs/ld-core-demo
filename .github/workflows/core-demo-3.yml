@@ -3,8 +3,10 @@ name: Sync to AWS CodeCommit
 on:
   push:
     branches:
-      - main # or your specific branch
-
+      - 'release-*'
+    tags: 
+      - release
+      
 jobs:
   sync:
     environment: core-demo-3
