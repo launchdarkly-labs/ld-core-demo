@@ -36,3 +36,10 @@ yarn-error.log*
 next-env.d.ts
 .vscode
 .env
+
+Archive.zip
+deployment.yaml
+insertScript.js
+secrets.yaml
+trustpolicy.json
+
