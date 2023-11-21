@@ -13,11 +13,13 @@ def main():
 
 def update_deploy_files():
 
+	create_folder = os.mkdir("./.github/workflows/deploy_files")
+
 	namespace = os.getenv('NAMESPACE')
 	url = "{0}.launchdarklydemos.com".format(namespace)
 	image_url = "955116512041.dkr.ecr.us-east-1.amazonaws.com/ld-core-demo:{0}".format(os.getenv('IMAGE_TAG'))
 
-	input_file = os.path.join("./.github/deploy_files/workflows/deploy.yaml")
+	input_file = os.path.join("./.github/deploy.yaml")
 	output_file = "./.github/workflows/deploy_files/{0}-deploy.yaml".format(namespace)
 	with open(input_file, "r") as f_in:
 		with open(output_file, "w") as f_out:
