@@ -84,7 +84,7 @@ const QRCodeImage = () => {
               Scan me!
             </h1>
             <div
-              className="w-full h-full lg:w-[80%] p-4 border-2 border-black rounded-md"
+              className="w-full h-full lg:w-[80%] 2xl:w-[100%] p-4 border-2 border-black rounded-md"
             >
               <QRCode
                 size={256}
