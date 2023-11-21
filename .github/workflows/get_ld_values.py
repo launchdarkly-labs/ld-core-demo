@@ -7,8 +7,6 @@ import yaml
 import base64
 import time
 
-dotenv()
-
 
 def main():
 
@@ -32,11 +30,11 @@ def getLDEnvs():
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
-		print('error: ' + str(resp.status_code))
-		exit()
-    
+        print('error: ' + str(response.status_code))
+        exit()
+
     else:
-		data = response.json()
+        data = response.json()
         for env in data:
 
             #For Reference
