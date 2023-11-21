@@ -57,19 +57,19 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ld-core-demo
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo-${{ matrix.environment }}-${{ github.run_number }} .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo-${{ matrix.environment }}-${{ github.run_number }}
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
     - name: Update K8s Deploy File
       run: python ./.github/workflows/update_k8s_deploy.py
       env:
-        NAMESPACE: demo-${{ matrix.environment }}-test
-        IMAGE_TAG: ld-demo-${{ matrix.environment }}-${{ github.run_number }}
+        NAMESPACE: demo${{ matrix.environment }}
+        IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
     
     - name: Applying deploy file to Kubernetes
       uses: kodermax/kubectl-aws-eks@master
       with:
-        args: apply -f ./.github/workflows/deploy_files/demo-${{ matrix.environment }}-test-deploy.yaml -n demo-${{ matrix.environment }}-test
+        args: apply -f ./.github/workflows/deploy_files/demo${{ matrix.environment }}-deploy.yaml -n demo${{ matrix.environment }}
 
     - name: Delete the deploy file
       run: rm -rf ./.github/workflows/deploy_files
