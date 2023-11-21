@@ -1,7 +1,7 @@
 name: 'Image Deployment on EKS' 
 
 on:
-  pull_request:
+  push:
     branches:
       - deploy_images_to_k8s
 
