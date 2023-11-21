@@ -36,7 +36,8 @@ if (typeof window !== "undefined") {
         country: "US",
       },
       experience: {
-        key: uniqueKey
+        key: uniqueKey,
+        airplane: "a380"
       }
     },
   });
