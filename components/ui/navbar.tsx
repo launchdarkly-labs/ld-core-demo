@@ -24,7 +24,9 @@ import {
   DropdownMenuPortal,
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
-import LDLogoWhite from '@/assets/img/LDLogoWhite.svg'
+import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
+import QRCodeImage from "./QRCodeImage";
+
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
@@ -39,8 +41,13 @@ const NavBar = React.forwardRef<any>(
             <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
               {enrolledInLaunchClub && <LaunchClubStatus />}
               <Search className="cursor-pointer hidden sm:block" />
-              <div className="block lg:hidden"><BookedFlights /></div>
-              <QrCode className=" cursor-pointer hidden sm:block" />
+              <div className="block lg:hidden">
+                <BookedFlights />
+              </div>
+              <div className="cursor-pointer hidden sm:block">
+                <QRCodeImage className="" />
+              </div>
+
               <LoginScreen />
             </div>
           </>
@@ -73,7 +80,7 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <QrCode className=" cursor-pointer " />
+                <QRCodeImage className=" cursor-pointer " />
               </DropdownMenuItem>
             </div>
           </>
@@ -105,7 +112,10 @@ const NavBar = React.forwardRef<any>(
             {!isLoggedIn ? null : (
               <div className="flex space-x-6 ml-auto mr-4 items-center">
                 <Search color={"white"} className="hidden sm:block" />
-                <QrCode color={"white"} className="hidden sm:block" />
+                <div className="text-white hidden sm:block">
+                  <QRCodeImage />
+                </div>
+
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -166,7 +176,9 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <QrCode className=" cursor-pointer " />
+                <div className="cursor-pointer">
+                  <QRCodeImage />
+                </div>
               </DropdownMenuItem>
             </div>
           </>
@@ -214,7 +226,9 @@ const NavBar = React.forwardRef<any>(
             <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
               <StoreCart cart={cart} setCart={setCart} />
               <Search color={"white"} className="hidden sm:block cursor-pointer" />
-              <QrCode color={"white"} className="hidden sm:block cursor-pointer" />
+              <div className="hidden sm:block cursor-pointer text-white">
+                <QRCodeImage />
+              </div>
               <MarketLoginScreen />
             </div>
           </>
@@ -248,7 +262,9 @@ const NavBar = React.forwardRef<any>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <QrCode className=" cursor-pointer " />
+                <div className="cursor-pointer">
+                  <QRCodeImage />
+                </div>
               </DropdownMenuItem>
             </div>
           </>
@@ -291,11 +307,17 @@ const NavBar = React.forwardRef<any>(
 
         break;
       default:
-        navLogo = (
-          <img src={LDLogoWhite.src} alt="" className="" />
+        navLogo = <img src={LDLogoWhite.src} alt="" className="" />;
+        navChild = (
+          <div className="ml-auto cursor-pointer">
+            <QRCodeImage />
+          </div>
         );
-        navChild = <QrCode className="hidden lg:flex self-center ml-auto" />;
-        navLinkMobileDropdown = <QrCode className="flex self-center h-full w-full border-2 border-black rounded-md" />;
+        navLinkMobileDropdown = (
+          <div className="h-full w-full border-2 border-black rounded-md cursor-pointer">
+            <QRCodeImage />
+          </div>
+        );
     }
 
     return (
