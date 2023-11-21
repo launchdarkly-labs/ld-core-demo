@@ -14,6 +14,8 @@ def main():
 
 def getLDEnvs():
 
+    print(' API KEY TEST: ' + os.getenv('LD_API_KEY'))
+    print(' ENV KEY TEST: ' + os.getenv('LD_ENV_KEY'))
     LD_API_KEY = os.getenv('LD_API_KEY')
     LD_ENV_KEY = os.getenv('LD_ENV_KEY')
     
