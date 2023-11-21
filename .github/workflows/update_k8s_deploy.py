@@ -34,7 +34,7 @@ def update_deploy_files():
 	replacements = {
     "SERVICE_NAME": '  name: {0} \n'.format(namespace),
     "HOST_URL": '    - host: {0} \n'.format(url),
-    "SERVICE_NAME_FOR_INGRESS": '                name: {0}\n'.format(namespace),
+    "SERVICE_NAME_FOR_INGRESS": '        name: {0}\n'.format(namespace),
     "IMAGE_URL": '          image: {0} \n'.format(image_url)
 	}
         
