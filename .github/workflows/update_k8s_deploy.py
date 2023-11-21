@@ -17,8 +17,8 @@ def update_deploy_files():
 	url = "{0}.launchdarklydemos.com".format(namespace)
 	image_url = "955116512041.dkr.ecr.us-east-1.amazonaws.com/ld-core-demo:{0}".format(os.getenv('IMAGE_TAG'))
 
-	input_file = os.path.join("./.github/workflows/deploy.yaml")
-	output_file = "./.github/workflows/{0}-deploy.yaml".format(namespace)
+	input_file = os.path.join("./.github/deploy_files/workflows/deploy.yaml")
+	output_file = "./.github/workflows/deploy_files/{0}-deploy.yaml".format(namespace)
 	with open(input_file, "r") as f_in:
 		with open(output_file, "w") as f_out:
 			#Replace placeholders with values
