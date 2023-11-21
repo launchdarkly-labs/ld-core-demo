@@ -29,5 +29,11 @@ phases:
       - docker tag $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:latest
       - printf '[{"name":"interactions-service","imageUri":"%s"}]' $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
+      - echo Logging in to EKS...
+      - aws eks --region us-west-1 update-kubeconfig --name unique-creature-1637339004
+      - echo Checking Config 
+      - kubectl config view
+      - checking access
+      - kubectl get deployment -A 
 artifacts:
   files: imagedefinitions.json

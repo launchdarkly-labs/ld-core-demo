@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-demo-7
+  namespace: core-demo-7
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-demo-7
+  namespace: core-demo-7
+  labels:
+    app: core-demo-7
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: core-demo-7
+  template:
+    metadata:
+      labels:
+        app: core-demo-7
+    spec:
+      serviceAccountName: coredemosa
+      containers:
+        - name: core-demo-7
+          image: 955116512041.dkr.ecr.us-east-2.amazonaws.com/demo-7:latest
+          imagePullPolicy: Always
+          env:
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: core-7
+                  key: AWS_DEFAULT_REGION
+            - name: ENABLE_IRP
+              value: "true"
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: core-7
+                  key: DB_URL
+          ports:
+            - name: web
+              containerPort: 3000
+                # protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: core-demo-7
+  name: core-demo-7
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-west-1:955116512041:certificate/426ddddf-bdad-4da9-8c10-5d32e213b050
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+  - name: https
+    port: 443
+    targetPort: 3000
+  selector:
+    app: core-demo-7
+  type: LoadBalancer
