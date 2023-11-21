@@ -32,10 +32,10 @@ def update_deploy_files():
 	input_file = "./.github/workflows/deploy.yaml"
 	output_file = "./.github/workflows/deploy_files/{0}-deploy.yaml".format(namespace)
 	replacements = {
-    "SERVICE_NAME": '  name: {0} \n'.format(namespace),
-    "HOST_URL": '    - host: {0} \n'.format(url),
-    "SERVICE_NAME_FOR_INGRESS": '        name: {0}\n'.format(namespace),
-    "IMAGE_URL": '          image: {0} \n'.format(image_url)
+    "SERVICE_NAME": 'name: {0} \n'.format(namespace),
+    "HOST_URL": '- host: {0} \n'.format(url),
+    "SERVICE_NAME_FOR_INGRESS": 'name: {0}\n'.format(namespace),
+    "IMAGE_URL": 'image: {0} \n'.format(image_url)
 	}
         
 	replace_placeholders(input_file, output_file, replacements)
