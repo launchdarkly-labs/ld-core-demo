@@ -49,40 +49,40 @@ jobs:
         echo LD_SDK_KEY=${{ steps.get-envs.outputs.output1 }} >> ./.env
         echo DB_URL=postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432 >> ./.env
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+    # - name: Login to Amazon ECR
+    #   id: login-ecr
+    #   uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ld-core-demo
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
+    # - name: Build, tag, and push image to Amazon ECR
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     ECR_REPOSITORY: ld-core-demo
+    #   run: |
+    #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
+    #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
-    - name: Update K8s Deploy File
-      run: python ./.github/workflows/update_k8s_deploy.py
-      env:
-        NAMESPACE: demo${{ matrix.environment }}
-        IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
+    # - name: Update K8s Deploy File
+    #   run: python ./.github/workflows/update_k8s_deploy.py
+    #   env:
+    #     NAMESPACE: demo${{ matrix.environment }}
+    #     IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
-    - name: Check Deploy file
-      run: cat ./.github/workflows/deploy_files/deploy.yaml
+    # - name: Check Deploy file
+    #   run: cat ./.github/workflows/deploy_files/deploy.yaml
     
-    - name: Applying deploy file to Kubernetes
-      uses: kodermax/kubectl-aws-eks@master
-      with:
-        args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n demo${{ matrix.environment }}
+    # - name: Applying deploy file to Kubernetes
+    #   uses: kodermax/kubectl-aws-eks@master
+    #   with:
+    #     args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n demo${{ matrix.environment }}
 
-    - name: Restart pods
-      uses: kodermax/kubectl-aws-eks@master
-      with:
-        args: rollout restart deployment/ld-core-demo-deployment -n demo${{ matrix.environment }}
+    # - name: Restart pods
+    #   uses: kodermax/kubectl-aws-eks@master
+    #   with:
+    #     args: rollout restart deployment/ld-core-demo-deployment -n demo${{ matrix.environment }}
 
    
-    - name: Delete the deploy file
-      run: rm -rf ./.github/workflows/deploy_files
+    # - name: Delete the deploy file
+    #   run: rm -rf ./.github/workflows/deploy_files
 
-    - name: Remove .env file
-      run: rm ./.env
+    # - name: Remove .env file
+    #   run: rm ./.env
