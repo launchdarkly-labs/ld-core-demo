@@ -13,4 +13,4 @@ Throughout this demo, you'll explore `Toggle Bank`, `Launch Airways`, and `Galax
 
 ## Required Environment Variables 
 
-To be provided... 
+To be provided as setup completes
