@@ -21,11 +21,10 @@ def getLDEnvs():
         print("LD_API_KEY not set")
         exit(1)
 
-    project_key = os.getenv('LD_ENV_KEY')
-    environment_key = os.getenv('LD_API_KEY')
-    url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments/" + environment_key
+   
+    url = "https://app.launchdarkly.com/api/v2/projects/ld-core-demo/environments/" + LD_ENV_KEY
 
-    headers = {"Authorization": os.getenv('LD_API_KEY')}
+    headers = {"Authorization": LD_API_KEY}
 
     response = requests.get(url, headers=headers)
 
@@ -34,14 +33,11 @@ def getLDEnvs():
         exit()
 
     else:
-        data = response.json()
-        for env in data:
-
-            #For Reference
-            sdk_key = env["apiKey"]
-            client_key = env["_id"]
-            
-            return sdk_key, client_key
+        sdk_key = response.json().get('apiKey')
+        client_key = response.json().get('_id')
+        print(sdk_key)
+        print(client_key)
+        return sdk_key, client_key
 
 
 if __name__ == "__main__":
