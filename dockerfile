@@ -1,12 +1,14 @@
 
-FROM node:18-alpine AS deps
+# FROM node:18-alpine AS deps
+FROM public.ecr.aws/docker/library/node:18-alpine3.18 AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN  npm install --production
 
-FROM node:18-alpine AS builder
+# FROM node:18-alpine AS builder
+FROM public.ecr.aws/docker/library/node:18-alpine3.18 as builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -15,7 +17,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npm run build
 
-FROM node:18-alpine AS runner
+# FROM node:18-alpine AS runner
+FROM public.ecr.aws/docker/library/node:18-alpine3.18 as runner
 WORKDIR /app
 
 ENV NODE_ENV production
