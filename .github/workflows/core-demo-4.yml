@@ -1,9 +1,6 @@
 name: Sync to AWS CodeCommit
 
-on:
-  push:
-    branches:
-      - main # or your specific branch
+on: push
 
 jobs:
   sync:
