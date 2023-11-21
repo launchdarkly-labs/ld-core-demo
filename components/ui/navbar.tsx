@@ -21,20 +21,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuCheckboxItem,
-  DropdownMenuRadioItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuGroup,
   DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup,
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
-
+import LDLogoWhite from '@/assets/img/LDLogoWhite.svg'
 const NavBar = React.forwardRef<any>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
@@ -301,18 +291,11 @@ const NavBar = React.forwardRef<any>(
 
         break;
       default:
-        // navLogo = (
-        //   <>
-        //     <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-        //       <image href="/marketplace.svg" height="40" width="40" alt="Marketplace" />
-        //     </svg>
-        //     <p className="text-base flex text-white font-sohnelight">
-        //       <strong className="font-sohne">Market</strong>place
-        //     </p>
-        //   </>
-        // );
-        navChild = <QrCode className="flex self-center" />;
-        navLinkMobileDropdown = null;
+        navLogo = (
+          <img src={LDLogoWhite.src} alt="" className="" />
+        );
+        navChild = <QrCode className="hidden lg:flex self-center ml-auto" />;
+        navLinkMobileDropdown = <QrCode className="flex self-center h-full w-full border-2 border-black rounded-md" />;
     }
 
     return (
