@@ -37,8 +37,7 @@ export default function Bank() {
   const [aiPrompt, setAIPrompt] = useState("");
   const router = useRouter();
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
-    useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
 
   function goAirways() {
     router.push("/airways");
@@ -64,9 +63,7 @@ export default function Bank() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
@@ -156,8 +153,7 @@ export default function Bank() {
                   Welcome to ToggleBank{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
-                  Serving more than 100,000 customers, and 10 trillion in
-                  capital every day
+                  Serving more than 100,000 customers, and 10 trillion in capital every day
                 </p>
               </div>
 
@@ -176,9 +172,9 @@ export default function Bank() {
             sm:gap-y-0 gap-x-8
           sm:gap-x-12 lg:gap-x-24"
           >
-            {bankingServicesArr.map((ele) => {
+            {bankingServicesArr.map((ele, i) => {
               return (
-                <div className="grid items-center justify-items-center">
+                <div className="grid items-center justify-items-center" key={i}>
                   <img src={ele?.imgSrc} width={96} className="pb-2" />
                   {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
                   <p className="text-xl lg:text-2xl ">{ele?.title} </p>
@@ -201,13 +197,13 @@ export default function Bank() {
               imgSrc="Smoochy.png"
               headerTitleText="Wealth Management"
               subtitleText="Use next generation tooling to ensure your future is safe."
-              key={1}
+              key={2}
             />
             <BankInfoCard
               imgSrc="Cards.png"
               headerTitleText="Sign Up For Toggle Card"
               subtitleText="Special offers for our most qualified members. Terms apply."
-              key={1}
+              key={3}
             />
           </section>
         </motion.main>
@@ -232,9 +228,7 @@ export default function Bank() {
                 <div className="p-6 shadow-xl bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <div>
-                      <p className="text-white font-sohne mb-6 text-[24px]">
-                        Account Summary
-                      </p>
+                      <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
                       <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
@@ -272,10 +266,7 @@ export default function Bank() {
                             onClick={() => setFederatedAccountOne(true)}
                             className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
                           >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
+                            <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
                         ) : (
                           <motion.div
@@ -294,10 +285,7 @@ export default function Bank() {
                             onClick={() => setFederatedAccountTwo(true)}
                             className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
                           >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
+                            <PlusSquare size={96} className="text-gray-400 mx-auto" />
                           </div>
                         ) : (
                           <motion.div
@@ -318,16 +306,15 @@ export default function Bank() {
             </section>
 
             {wealthManagement ? (
-              <motion.section 
-              initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    variants={variants}
-              className="p-6 bg-gradient-blue h-full lg:h-[425px] shadow-2xl mb-6">
+              <motion.section
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={variants}
+                className="p-6 bg-gradient-blue h-full lg:h-[425px] shadow-2xl mb-6"
+              >
                 <div>
-                  <h3 className=" font-sohne py-6 text-[24px] text-white">
-                    Wealth Management
-                  </h3>
+                  <h3 className=" font-sohne py-6 text-[24px] text-white">Wealth Management</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-y-4 sm:gap-x-4 w-full h-full sm:h-[300px]">
                   <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full h-full lg:h-[300px] bg-white ">
@@ -336,9 +323,7 @@ export default function Bank() {
                         <div>
                           <p className="aiinsightstext">
                             Wealth Insights AI{" "}
-                            <span className="accountsecondary">
-                              Powered By AWS Bedrock
-                            </span>
+                            <span className="accountsecondary">Powered By AWS Bedrock</span>
                           </p>
                         </div>
 
@@ -376,9 +361,7 @@ export default function Bank() {
                       {loading ? (
                         <BounceLoader color="#1D4ED8" size={100} />
                       ) : (
-                        <p className="my-4 font-sohnelight pt-4">
-                          {aiResponse}
-                        </p>
+                        <p className="my-4 font-sohnelight pt-4">{aiResponse}</p>
                       )}
                     </div>
                   </div>
@@ -389,23 +372,15 @@ export default function Bank() {
                         <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
                       </div>
                       <div className="">
-                        <p className="accounttext">
-                          Brokerage Account (***6552)
-                        </p>
+                        <p className="accounttext">Brokerage Account (***6552)</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col">
                       <div className="pt-16">
-                        <p className="cardaccounttext">
-                          Total Investment Balance:{" "}
-                        </p>
-                        <p className="moneytext text-base sm:text-3xl">
-                          $184,278
-                        </p>
-                        <p className="accountsecondary">
-                          Over Lifetime of Account
-                        </p>
+                        <p className="cardaccounttext">Total Investment Balance: </p>
+                        <p className="moneytext text-base sm:text-3xl">$184,278</p>
+                        <p className="accountsecondary">Over Lifetime of Account</p>
                       </div>
                       <div></div>
                     </div>
@@ -413,9 +388,7 @@ export default function Bank() {
                   <div
                     className={`flex flex-col p-4 w-full h-full xl:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2`}
                   >
-                    <p className="aiinsightstext pt-4">
-                      6-Month Account Trend
-                    </p>
+                    <p className="aiinsightstext pt-4">6-Month Account Trend</p>
                     <ResponsiveContainer className={"h-full"}>
                       <AreaChart
                         data={data}
@@ -438,23 +411,9 @@ export default function Bank() {
                         />
 
                         <defs>
-                          <linearGradient
-                            id="colorUv"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#00c0e7"
-                              stopOpacity={1}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#a34fde"
-                              stopOpacity={1}
-                            />
+                          <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00c0e7" stopOpacity={1} />
+                            <stop offset="95%" stopColor="#a34fde" stopOpacity={1} />
                           </linearGradient>
                         </defs>
                       </AreaChart>
@@ -464,14 +423,14 @@ export default function Bank() {
               </motion.section>
             ) : null}
 
-<div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
-  <div className="w-full lg:w-1/2">
-    <img src="CC.png" className="" />
-  </div>
-  <div className="w-full lg:w-1/2 flex justify-end">
-    <img src="Loan.png" className="" />
-  </div>
-</div>
+            <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
+              <div className="w-full lg:w-1/2">
+                <img src="CC.png" className="" />
+              </div>
+              <div className="w-full lg:w-1/2 flex justify-end">
+                <img src="Loan.png" className="" />
+              </div>
+            </div>
           </div>
         </motion.main>
       )}
