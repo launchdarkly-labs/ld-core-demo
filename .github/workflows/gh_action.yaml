@@ -19,6 +19,7 @@ env:
 jobs:
   deploy-to-pods:
     runs-on: ubuntu-latest
+    
     strategy:
       matrix:
         environment: [1]
@@ -38,23 +39,18 @@ jobs:
 
     - name: Get LD ENVs
       id: get-envs
-      run: python  ./.github/workflows/get_ld_values.py
+      run: |
+        echo "var1=$(python ./.github/workflows/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
+        echo "var2=$(python ./.github/workflows/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
       env:
         LD_ENV_KEY: demo-${{ matrix.environment }}
         LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
-    - name: print vars
-      run: |
-        echo ${{ steps.get-envs.outputs }}
-        echo ${{ steps.get-envs.outputs.sdk_key }}
-        echo ${{ steps.get-envs.outputs.outputs1 }}
-        echo ${{ steps.get-envs.outputs.outputs2 }}
-
     - name: Create .env file
       run: |
         touch ./.env
-        echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ steps.get-envs.outputs.client_key }} >> ./.env
-        echo LD_SDK_KEY=${{ steps.get-envs.outputs.sdk_key }} >> ./.env
+        echo NEXT_PUBLIC_LD_CLIENT_KEY=$${{ env.var1 }} >> ./.env
+        echo LD_SDK_KEY=${{ env.var2 }} >> ./.env
         echo DB_URL=postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432 >> ./.env
 
     # - name: Login to Amazon ECR

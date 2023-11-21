@@ -35,7 +35,8 @@ def getLDEnvs():
     else:
         sdk_key = response.json().get('apiKey')
         client_key = response.json().get('_id')
-        return sdk_key, client_key
+        print(f"::set-output name=sdk_key::{sdk_key}")
+        print(f"::set-output name=client_key::{client_key}")
 
 
 if __name__ == "__main__":
