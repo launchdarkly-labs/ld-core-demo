@@ -58,6 +58,7 @@ const QRCodeImage = () => {
   //   }
 
   //   return () => {
+
   //     window.removeEventListener(
   //       "resize",
   //       () => {
@@ -75,15 +76,22 @@ const QRCodeImage = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <QrCode className="w-full h-full"/>
+          <QrCode className="w-full h-full" />
         </DialogTrigger>
         <DialogContent>
-          <div className="">
+          <div className="flex flex-col gap-y-4 items-center">
             <h1 className="text-slate-900 text-center text-3xl sm:text-4xl 2xl:text-5xl font-semibold">
               Scan me!
             </h1>
-            <div className="flex justify-center w-full h-full mt-5">
-              <QRCode value={QRURL} ref={qrCodeRef} data-testid="qr-app-qr-code-image-test-id" />
+            <div
+              className="w-full h-full lg:w-[80%] p-4 border-2 border-black rounded-md"
+            >
+              <QRCode
+                size={256}
+                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                value={QRURL}
+                viewBox={`0 0 256 256`}
+              />
             </div>
           </div>
         </DialogContent>
