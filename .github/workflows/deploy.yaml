@@ -18,9 +18,9 @@ spec:
         - name: ld-core-demo
           image: "{{IMAGE_URL}}"
           ports:
-            - name: web
-              containerPort: 3000
-              protocol: TCP
+          - name: web
+            containerPort: 3000
+            protocol: TCP
           imagePullPolicy: Always
 ---
 apiVersion: v1
