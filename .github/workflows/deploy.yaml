@@ -18,27 +18,10 @@ spec:
         - name: ld-core-demo
           image: "{{IMAGE_URL}}"
           ports:
-          - name: web
-            containerPort: 3000
-            protocol: TCP
+            - name: web
+              containerPort: 3000
+              protocol: TCP
           imagePullPolicy: Always
-          env:
-            - name: NEXT_PUBLIC_LD_CLIENT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ld-core-demo-secret
-                  key: NEXT_PUBLIC_LD_CLIENT_KEY
-            - name: LD_SDK_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ld-core-demo-secret
-                  key: LD_SDK_KEY
-            - name: DB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: ld-core-demo-secret
-                  key: DB_URL
-
 ---
 apiVersion: v1
 kind: Service
