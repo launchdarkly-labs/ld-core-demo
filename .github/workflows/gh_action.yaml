@@ -44,9 +44,9 @@ jobs:
     - name: Create .env file
       run: |
         touch ./.env
-        echo "NEXT_PUBLIC_LD_CLIENT_KEY=${{ steps.get-envs.outputs.output2 }}" >> ./.env
-        echo "LD_SDK_KEY=${{ steps.get-envs.outputs.output1 }}" >> ./.env
-        echo "DB_URL=postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432" >> ./.env
+        echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ steps.get-envs.outputs.output2 }} >> ./.env
+        echo LD_SDK_KEY=${{ steps.get-envs.outputs.output1 }} >> ./.env
+        echo DB_URL=postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432 >> ./.env
 
     - name: Login to Amazon ECR
       id: login-ecr
