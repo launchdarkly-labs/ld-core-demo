@@ -132,11 +132,11 @@ export default function BookedFlights() {
     <Sheet>
       <SheetTrigger asChild>
         <button
-          className="sm:mx-6 lg:pb-12 text-sm font-sohnelight sm:pt-1.5 bg-transparent sm:mr-4 sm:flex sm:items-start sm:text-airlineinactive
+          className="mx-0 sm:mx-1 xl:mx-6 lg:pb-12 mr-2 sm:mr-0 xl:mr-4 pt-0 xl:pt-1.5 text-sm font-sohnelight bg-transparent sm:flex sm:items-start sm:text-airlineinactive
     sm:hover:text-white sm:hover:bg-gradient-to-r sm:from-airlinepurple sm:to-airlinepink sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom relative"
         >
           <span className="hidden lg:block">My Bookings</span>
-          <Plane className = "block lg:hidden text-white" title="My Bookings"/>
+          <Plane className="block lg:hidden text-white" title="My Bookings" />
           {bookedTrips.length > 0 && (
             <span className="absolute bottom-[20px] right-[-20px] lg:bottom-[35px] lg:right-[-25px] bg-pink-700 rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
               {bookedTrips.length}
@@ -150,7 +150,6 @@ export default function BookedFlights() {
             <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose ">
               Your booked flights
             </div>
-            
           </SheetTitle>
         </SheetHeader>
 
