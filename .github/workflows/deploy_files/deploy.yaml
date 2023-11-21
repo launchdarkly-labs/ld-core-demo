@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ld-core-demo
-          image: "{{IMAGE_URL}}"
+          image: placeholder4
           ports:
             - name: web
               containerPort: 3000
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{SERVICE_NAME}}"
+  name: placeholder1
 spec:
   selector:
     app: ld-core-demo
@@ -49,13 +49,13 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: "{{HOST_URL}}"
+    - host: placeholder2
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: "{{SERVICE_NAME_FOR_INGRESS}}"
+                name: placeholder3
                 port:
                   number: 443
