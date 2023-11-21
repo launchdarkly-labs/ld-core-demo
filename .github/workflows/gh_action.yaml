@@ -81,8 +81,10 @@ jobs:
 
     - name: Restart pods
       uses: kodermax/kubectl-aws-eks@master
+      env:                                                                                                          
+        RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
       with:
-        args: rollout restart deployment/ld-core-demo-deployment -n demo${{ matrix.environment }}
+        args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n demo${{ matrix.environment }}
 
    
     - name: Delete the deploy file
