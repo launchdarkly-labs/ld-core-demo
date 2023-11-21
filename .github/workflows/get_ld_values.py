@@ -35,8 +35,6 @@ def getLDEnvs():
     else:
         sdk_key = response.json().get('apiKey')
         client_key = response.json().get('_id')
-        print(sdk_key)
-        print(client_key)
         return sdk_key, client_key
 
 
