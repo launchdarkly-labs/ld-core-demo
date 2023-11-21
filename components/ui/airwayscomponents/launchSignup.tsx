@@ -105,7 +105,7 @@ export default function LaunchSignUp() {
   return (
     <Sheet>
       <SheetTrigger className="text-white z-50" asChild>
-        <Button className="bg-pink-600 rounded-none h-full sm:h-2/3 w-1/2 mx-auto text-3xl px-2">
+        <Button className="bg-pink-600 rounded-none h-full w-full  mx-auto text-3xl px-6 py-4 lg:px-4">
           Join Launch Club
         </Button>
       </SheetTrigger>
