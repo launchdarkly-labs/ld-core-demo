@@ -31,7 +31,7 @@ phases:
       - printf '[{"name":"interactions-service","imageUri":"%s"}]' $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
       - echo Logging in to EKS...
       - aws eks --region us-west-1 update-kubeconfig --name unique-creature-1637339004
-      - echo Checking Config 
+      - echo Reloading Pods 
       - kubectl get pods -n $DEMO_NAMESPACE -o custom-columns=:metadata.name | xargs -I {} kubectl delete pod -n $DEMO_NAMESPACE {}
 artifacts:
   files: imagedefinitions.json
