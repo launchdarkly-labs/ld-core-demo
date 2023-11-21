@@ -61,7 +61,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo-${{ matrix.environment }}-${{ github.run_number }}
 
     - name: Update K8s Deploy File
-      run: python update_k8s_deploy.py
+      run: python ./.github/workflows/update_k8s_deploy.py
       env:
         NAMESPACE: demo-${{ matrix.environment }}-test
         IMAGE_TAG: ld-demo-${{ matrix.environment }}-${{ github.run_number }}
