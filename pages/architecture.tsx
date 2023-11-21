@@ -132,6 +132,7 @@ export default function ArchitecturePage() {
                 Architect and build platforms that operate globally. Build at
                 internet scale.
               </p>
+              <img src="/img/speed.png" className="my-4 w-full" />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
