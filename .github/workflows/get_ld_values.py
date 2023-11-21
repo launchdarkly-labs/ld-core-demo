@@ -7,6 +7,8 @@ import yaml
 import base64
 import time
 
+dotenv()
+
 
 def main():
 
@@ -21,23 +23,27 @@ def getLDEnvs():
         print("LD_API_KEY not set")
         exit(1)
 
-    url = 'https://app.launchdarkly.com/api/v2/projects/' + LD_ENV_KEY + '/environments'
-    headers = {
-        'Authorization': LD_API_KEY,
-        'Content-Type': "application/json",
-        'cache-control': "no-cache"
-    }
-    response = requests.request("GET", url, headers=headers)
-    envs = json.loads(response.text)
+    project_key = os.getenv('LD_ENV_KEY')
+    environment_key = os.getenv('LD_API_KEY')
+    url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments/" + environment_key
 
+    headers = {"Authorization": os.getenv('LD_API_KEY')}
 
-    for env in envs:
+    response = requests.get(url, headers=headers)
 
-		#For Reference
-        sdk_key = env["apiKey"]
-        client_key = env["_id"]
-        
-        return sdk_key, client_key
+    if response.status_code != 200:
+		print('error: ' + str(resp.status_code))
+		exit()
+    
+    else:
+		data = response.json()
+        for env in data:
+
+            #For Reference
+            sdk_key = env["apiKey"]
+            client_key = env["_id"]
+            
+            return sdk_key, client_key
 
 
 if __name__ == "__main__":
