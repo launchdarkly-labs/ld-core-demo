@@ -43,6 +43,13 @@ jobs:
         LD_ENV_KEY: demo-${{ matrix.environment }}
         LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
+    - name: print vars
+      run: |
+        echo ${{ steps.get-envs.outputs.client_key }}
+        echo ${{ steps.get-envs.outputs.sdk_key }}
+        echo ${{ steps.get-envs.outputs.outputs1 }}
+        echo ${{ steps.get-envs.outputs.outputs2 }}
+        
     - name: Create .env file
       run: |
         touch ./.env
