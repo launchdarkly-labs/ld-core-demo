@@ -30,7 +30,7 @@ def update_deploy_files():
 				if "HOST_URL" in line: 
 					line = '    - host: {0} \n'.format(url)
 				if "SERVICE_NAME_FOR_INGRESS" in line:
-					line = '                name: {0} \n'.format(namespace)
+					line = '                name: {0}\n'.format(namespace)
 				if "IMAGE_URL" in line:
 					line = '          image: {0} \n'.format(image_url)
 			    
