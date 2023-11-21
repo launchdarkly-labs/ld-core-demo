@@ -18,9 +18,9 @@ spec:
         - name: ld-core-demo
           image: "{{IMAGE_URL}}"
           ports:
-          - name: web
-            containerPort: 3000
-            protocol: TCP
+            - name: web
+              containerPort: 3000
+              protocol: TCP
           imagePullPolicy: Always
 ---
 apiVersion: v1
@@ -41,7 +41,7 @@ kind: Ingress
 metadata:
   name: ld-core-demo-ingress
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
+  alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/group.name: ld-core-demo-lb
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
