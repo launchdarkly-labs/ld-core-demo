@@ -105,10 +105,10 @@ export default function LaunchSignUp() {
   return (
     <Sheet>
       <SheetTrigger className="text-white z-50" asChild>
-          <Button className="bg-pink-600 rounded-none h-2/3 w-1/2 mx-auto text-3xl px-2">Join Launch Club</Button>
+          <Button className="bg-pink-600 rounded-none h-full sm:h-2/3 w-1/2 mx-auto text-3xl px-2">Join Launch Club</Button>
       </SheetTrigger>
       {!enrolledInLaunchClub ? (
-        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
+        <SheetContent className="w-full lg:w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center">
               <div className="flex items-center text-3xl flex-col">
@@ -137,11 +137,11 @@ export default function LaunchSignUp() {
                 Introducing our the new Launch Airways loyalty program. Join now
                 for exclusive member perks that increase the more you fly!
               </div>
-              <div className="flex flex-row gap-4 place-content-between w-full my-10">
+              <div className="flex flex-col sm:flex-row gap-4 place-content-between w-full my-10">
                 {perks.map((perks, index) => (
                   <Card
                     key={index}
-                    className="h-1/3 w-1/3 align-items-center drop-shadow-2xl flex flex-col items-center justify-center"
+                    className="flex flex-col items-center justify-center h-1/3 w-full sm:w-1/3 align-items-center drop-shadow-2xl "
                   >
                     <CardHeader>
                       <Image
