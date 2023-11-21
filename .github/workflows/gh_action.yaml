@@ -45,11 +45,11 @@ jobs:
 
     - name: print vars
       run: |
-        echo ${{ steps.get-envs.outputs.client_key }}
+        echo ${{ steps.get-envs.outputs }}
         echo ${{ steps.get-envs.outputs.sdk_key }}
         echo ${{ steps.get-envs.outputs.outputs1 }}
         echo ${{ steps.get-envs.outputs.outputs2 }}
-        
+
     - name: Create .env file
       run: |
         touch ./.env
