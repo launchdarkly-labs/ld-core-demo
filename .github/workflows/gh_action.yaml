@@ -37,7 +37,7 @@ jobs:
         pip install -r ./.github/workflows/requirements.txt
 
     - name: Get LD ENVs
-      run: python get_ld_values.py
+      run: python  ./.github/workflows/get_ld_values.py
       env:
         LD_ENV_KEY: ld-demo-${{ matrix.environment }}
 
