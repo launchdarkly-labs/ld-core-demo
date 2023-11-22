@@ -79,9 +79,9 @@ const NavBar = React.forwardRef<any>(
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <QRCodeImage className=" cursor-pointer " />
-              </DropdownMenuItem>
+              <div className="cursor-pointer">
+                <QRCodeImage />
+              </div>
             </div>
           </>
         );
@@ -175,11 +175,9 @@ const NavBar = React.forwardRef<any>(
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="cursor-pointer">
-                  <QRCodeImage />
-                </div>
-              </DropdownMenuItem>
+              <div className="cursor-pointer">
+                <QRCodeImage />
+              </div>
             </div>
           </>
         );
@@ -261,11 +259,9 @@ const NavBar = React.forwardRef<any>(
               <DropdownMenuItem>
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="cursor-pointer">
-                  <QRCodeImage />
-                </div>
-              </DropdownMenuItem>
+              <div className="cursor-pointer">
+                <QRCodeImage />
+              </div>
             </div>
           </>
         );
@@ -309,7 +305,7 @@ const NavBar = React.forwardRef<any>(
       default:
         navLogo = <img src={LDLogoWhite.src} alt="" className="" />;
         navChild = (
-          <div className="ml-auto cursor-pointer">
+          <div className="ml-auto cursor-pointer flex self-center">
             <QRCodeImage />
           </div>
         );
