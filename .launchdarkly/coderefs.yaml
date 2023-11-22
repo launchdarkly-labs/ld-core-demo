@@ -1,7 +1,2 @@
 aliases:
   - type: camelcase
-  - type: filepattern
-    paths:
-      - '*[!_test].js'
-    patterns:
-      - '/export function (\w+)\(.*\n.*"FLAG_KEY".*/gm'
