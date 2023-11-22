@@ -22,6 +22,20 @@ spec:
               containerPort: 3000
               protocol: TCP
           imagePullPolicy: Always
+          env:
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: placeholder2
+                  key: AWS_DEFAULT_REGION
+            - name: ENABLE_IRP
+              value: "true"
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: placeholder2
+                  key: DB_URL
+
 ---
 apiVersion: v1
 kind: Service
@@ -63,8 +77,8 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: placeholder2
-  namespace: placeholder2
+  name: placeholder3
+  namespace: placeholder3
 type: Opaque
 data:
   DB_URL: cG9zdGdyZXNxbDovL3Bvc3RncmVzOkxERDN2M3hwQGZpZWxkZGVtb2RiLmNpaTN2aWU3bmFvZS51cy13ZXN0LTIucmRzLmFtYXpvbmF3cy5jb206NTQzMg==
