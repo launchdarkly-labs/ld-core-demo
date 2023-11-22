@@ -11,7 +11,7 @@ jobs:
         uses: launchdarkly/find-code-references-in-pull-request@v1.1.0
         id: find-flags
         with:
-          project-key: default
+          project-key: ${{ secrets.LD_PROJECT }}
           environment-key: production
           access-token: ${{ secrets.LD_ACCESS_TOKEN_CR }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
