@@ -7,6 +7,7 @@ import { asyncWithLDProvider } from "launchdarkly-react-client-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { TripsProvider } from "@/utils/contexts/TripContext";
 import { LoginProvider } from "@/utils/contexts/login";
+import KeyboardNavigation from "@/components/KeyboardNavigation";
 
 let c;
 
@@ -48,6 +49,7 @@ if (typeof window !== "undefined") {
         <LDProvider>
           <LoginProvider>
             <TripsProvider>
+              <KeyboardNavigation />
               <Component {...pageProps} />
             </TripsProvider>
           </LoginProvider>
