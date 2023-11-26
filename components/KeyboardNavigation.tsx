@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "./ui/use-toast";
 import { ResetToaster } from "./ui/resetToaster";
+import { useRouter } from "next/navigation";
 
 export default function KeyboardNavigation({}: {}) {
-  // const location = useRouter();
+
+  const location = useRouter();
 
   const handleKeyPress = useCallback((event: any) => {
     // Ignore if the target is an input field or if cmd and shift keys are pressed
@@ -17,6 +19,7 @@ export default function KeyboardNavigation({}: {}) {
     switch (event.key) {
       case "r":
         fetch("/api/ldreset");
+        location.push('/')
         toast({
           title: "Resetting",
           description:
