@@ -9,7 +9,7 @@ on:
 
 jobs:
   sync:
-    environment: core-demo-1
+    environment: core-demo-4
     runs-on: ubuntu-latest
 
     steps:
