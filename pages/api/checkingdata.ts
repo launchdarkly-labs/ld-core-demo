@@ -46,7 +46,7 @@ export default async function handler(
       async function getMyData() {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
         console.log("random failure number: " + randomNumber)
-        if (randomNumber <= 30) {
+        if (randomNumber <= 20) {
           console.log("Error caught -")
           throw new Error('Simulated failure');
         }
