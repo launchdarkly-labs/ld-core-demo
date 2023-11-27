@@ -33,20 +33,20 @@ const AirlineDestination = ({
       transition={{ duration: 0.25 }}
       className={``}
     >
-      <div className={`flex items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
-        <div className=" text-center">
+      <div className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
+        <div className=" text-center grid col-start-1">
           <button
             onClick={() => {
               setActiveField("from");
               setShowSearch(true);
             }}
           >
-            <p className="text-3xl md:text-4xl xl:text-6xl font-audimat py-2 ">{fromLocation}</p>
+            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{fromLocation}</p>
           </button>
           <p className="text-center text-xs font-audimat uppercase">Origin</p>
         </div>
-        <MoveHorizontalIcon className="h-10 w-10 text-marketblue" />
-        <div className="relative text-center">
+        <MoveHorizontalIcon className="h-14 w-14 text-marketblue grid col-start-2 mx-auto" />
+        <div className="relative text-center grid col-start-3">
           <button
             onClick={() => {
               setActiveField("to");
@@ -54,7 +54,7 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="text-3xl md:text-4xl xl:text-6xl font-audimat py-2 ">{toLocation}</p>
+            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{toLocation}</p>
           </button>
           <p className="text-center text-xs font-audimat uppercase">Destination</p>
         </div>

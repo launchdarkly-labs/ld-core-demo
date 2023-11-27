@@ -201,13 +201,13 @@ export default function Bank() {
               imgSrc="Smoochy.png"
               headerTitleText="Wealth Management"
               subtitleText="Use next generation tooling to ensure your future is safe."
-              key={1}
+              key={2}
             />
             <BankInfoCard
               imgSrc="Cards.png"
               headerTitleText="Sign Up For Toggle Card"
               subtitleText="Special offers for our most qualified members. Terms apply."
-              key={1}
+              key={3}
             />
           </section>
         </motion.main>
@@ -283,7 +283,7 @@ export default function Bank() {
                             animate="visible"
                             variants={variants}
                             transition={{ duration: 0.5 }}
-                            className="p-4 h-[300px] w-[250px] bg-white "
+                            className="p-4 h-[300px] w-full sm:w-[250px] bg-white "
                           >
                             <FederatedCheckingAccount />
                           </motion.div>
@@ -305,7 +305,7 @@ export default function Bank() {
                             animate="visible"
                             variants={variants}
                             transition={{ duration: 0.5 }}
-                            className="p-4 h-[300px] w-[250px] bg-white"
+                            className="p-4 h-[300px] w-full sm:w-[250px] bg-white"
                           >
                             <FederatedCreditAccount />
                           </motion.div>

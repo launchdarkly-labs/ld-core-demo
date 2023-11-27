@@ -39,10 +39,10 @@ export function FlightCalendar({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-full text-5xl justify-start text-left font-audimat border-0 border-b-2 bg-transparent hover:bg-transparent hover:text-white border-white/40 rounded-none"
+              "w-full font-audimat border-0 bg-transparent hover:bg-transparent hover:text-white  rounded-none"
             )}
           >
-            <div className="mb-6 text-xl sm:text-4xl xl:text-[3rem]">
+            <div className="text-4xl md:text-3xl lg:text-4xl">
               {" "}
               {/* Add margin-bottom here */}
               {!date?.from && !date?.to ? (
@@ -51,7 +51,7 @@ export function FlightCalendar({
                   <CalendarIcon size={28} className="ml-20" />
                 </div>
               ) : (
-                <div className="calendar-date">
+                <div className="calendar-date text-4xl md:text-3xl lg:text-2xl xl:text-4xl">
                   {date?.from && format(date.from, "MM/dd/yy")} -{" "}
                   {date?.to && format(date.to, "MM/dd/yy")}
                 </div>

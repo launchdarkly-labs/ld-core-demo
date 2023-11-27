@@ -238,7 +238,7 @@ const NavBar = React.forwardRef<any>(
               <image href="/market.png" height="40" width="40" alt="Marketplace" />
             </svg>
             <p className="text-sm sm:text-base flex text-white font-sohnelight">
-              <strong className="font-sohne">Galaxy</strong> Marketplace
+              <strong className="font-sohne">Galaxy </strong>&nbsp;Marketplace
             </p>
           </>
         );

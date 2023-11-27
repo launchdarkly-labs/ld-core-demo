@@ -16,7 +16,13 @@ import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
 import { addDays } from "date-fns";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { SelectTrigger } from "@radix-ui/react-select";
 
 export default function Airways() {
   const flags = useFlags();
@@ -25,13 +31,13 @@ export default function Airways() {
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
   const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("")
+  const [toCity, setToCity] = useState("");
   const [toLocation, setToLocation] = useState("To");
   const [showSearch, setShowSearch] = useState(false);
   const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
   const { bookedTrips, setBookedTrips } = useContext(TripsContext);
-  const { setPlaneContext } = useContext(LoginContext)
-  const [date, setDate] = useState<{from: Date, to: Date} | undefined>({
+  const { setPlaneContext } = useContext(LoginContext);
+  const [date, setDate] = useState<{ from: Date; to: Date } | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
   });
@@ -78,7 +84,7 @@ export default function Airways() {
 
     setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
 
-    setPlaneContext('a380')
+    setPlaneContext("a380");
 
     toast({
       title: "Flight booked",
@@ -98,8 +104,8 @@ export default function Airways() {
         <NavBar launchClubLoyalty={launchClubLoyalty} variant={"airlines"} />
 
         <header className={`py-20 bg-gradient-airways`}>
-          <div className="lg:mx-auto max-w-7xl px-[1.7rem] lg:px-[2rem]">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-y-6 lg:gap-y-0">
+          <div className="lg:mx-auto max-w-7xl px-2">
+            <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-between gap-y-6 lg:gap-y-0 lg:space-x-4">
               <AirlineDestination
                 setActiveField={setActiveField}
                 setShowSearch={setShowSearch}
@@ -113,8 +119,19 @@ export default function Airways() {
                 setFromLocation={setFromLocation}
               />
 
+              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 itemds-center text-center justify-center">
+                <Select defaultValue="Round Trip">
+                  <SelectTrigger className="text-white">
+                    <SelectValue placeholder="Select trip type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Round Trip">Round Trip</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div
-                className={`flex items-center text-xl font-audimat ${
+                className={`items-center text-xl font-audimat border-b-2 border-white/40 ${
                   showSearch ? "" : ""
                 }`}
               >
@@ -123,21 +140,34 @@ export default function Airways() {
                   setDate={setDate}
                   className="font-audimat"
                 />
-                <div className="ml-20">
-                  <motion.button
-                    whileTap={{ scale: 0.5 }}
-                    onClick={() => bookTrip()}
-                    className={` items-center `}
-                  >
-                    <img src="ArrowButton.png" width={75} className="" />
-                  </motion.button>
+              </div>
+              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
+                <Select defaultValue="1 Passenger">
+                  <SelectTrigger className="text-white">
+                    <SelectValue placeholder="Select Passengers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1 Passenger">1 Passenger</SelectItem>
+                  </SelectContent>
+                </Select>
                 </div>
+              <div className="flex mx-auto">
+                <motion.button
+                  whileTap={{ scale: 0.5 }}
+                  onClick={() => bookTrip()}
+                  className={` items-center `}
+                >
+                  <img src="ArrowButton.png" width={60} className="" />
+                </motion.button>
               </div>
             </div>
           </div>
         </header>
 
-        <AirlineHero launchClubLoyalty={launchClubLoyalty} showSearch={showSearch} />
+        <AirlineHero
+          launchClubLoyalty={launchClubLoyalty}
+          showSearch={showSearch}
+        />
 
         <section
           className={`relative flex flex-col sm:flex-row justify-center 
