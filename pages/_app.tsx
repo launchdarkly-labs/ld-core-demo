@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { TripsProvider } from "@/utils/contexts/TripContext";
 import { LoginProvider } from "@/utils/contexts/login";
 import KeyboardNavigation from "@/components/KeyboardNavigation";
+import Head from "next/head";
 
 let c;
 
@@ -38,8 +39,8 @@ if (typeof window !== "undefined") {
       },
       experience: {
         key: uniqueKey,
-        airplane: "a380"
-      }
+        airplane: "a380",
+      },
     },
   });
 
@@ -50,6 +51,12 @@ if (typeof window !== "undefined") {
           <LoginProvider>
             <TripsProvider>
               <KeyboardNavigation />
+              <Head>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+                />
+              </Head>
               <Component {...pageProps} />
             </TripsProvider>
           </LoginProvider>
@@ -62,5 +69,3 @@ if (typeof window !== "undefined") {
 }
 
 export default c;
-
-
