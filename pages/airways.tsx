@@ -119,16 +119,16 @@ export default function Airways() {
                 setFromLocation={setFromLocation}
               />
 
-<div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
-  <Select defaultValue="Round Trip">
-    <SelectTrigger className="text-white">
-      <SelectValue placeholder="Select trip type" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="Round Trip">Round Trip</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
+                <Select defaultValue="Round Trip">
+                  <SelectTrigger className="text-white">
+                    <SelectValue placeholder="Select trip type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Round Trip">Round Trip</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
               <div
                 className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
@@ -150,8 +150,9 @@ export default function Airways() {
                     <SelectItem value="1 Passenger">1 Passenger</SelectItem>
                   </SelectContent>
                 </Select>
-                </div>
+              </div>
               <div className="flex mx-auto">
+                {fromLocation !== "From" && toLocation !== "To" && (
                 <motion.button
                   whileTap={{ scale: 0.5 }}
                   onClick={() => bookTrip()}
@@ -159,6 +160,7 @@ export default function Airways() {
                 >
                   <img src="ArrowButton.png" width={60} className="" />
                 </motion.button>
+                )}
               </div>
             </div>
           </div>
