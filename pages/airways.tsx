@@ -119,19 +119,19 @@ export default function Airways() {
                 setFromLocation={setFromLocation}
               />
 
-              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 itemds-center text-center justify-center">
-                <Select defaultValue="Round Trip">
-                  <SelectTrigger className="text-white">
-                    <SelectValue placeholder="Select trip type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Round Trip">Round Trip</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+<div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
+  <Select defaultValue="Round Trip">
+    <SelectTrigger className="text-white">
+      <SelectValue placeholder="Select trip type" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="Round Trip">Round Trip</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
 
               <div
-                className={`items-center text-xl font-audimat border-b-2 border-white/40 ${
+                className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
                   showSearch ? "" : ""
                 }`}
               >
@@ -141,7 +141,7 @@ export default function Airways() {
                   className="font-audimat"
                 />
               </div>
-              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
+              <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
                 <Select defaultValue="1 Passenger">
                   <SelectTrigger className="text-white">
                     <SelectValue placeholder="Select Passengers" />
