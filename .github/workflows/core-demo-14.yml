@@ -2,10 +2,10 @@ name: Sync to AWS CodeCommit
 
 on:
   push:
-    branches:
-      - 'release-*'
-    tags: 
-      - release
+    # branches:
+    #   - 'release-*'
+    # tags: 
+    #   - release
 
 jobs:
   sync:
