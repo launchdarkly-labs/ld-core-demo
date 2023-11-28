@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "./ui/use-toast";
 import { ResetToaster } from "./ui/resetToaster";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function KeyboardNavigation({}: {}) {
 
@@ -19,6 +19,7 @@ export default function KeyboardNavigation({}: {}) {
     switch (event.key) {
       case "r":
         fetch("/api/ldreset");
+        location.reload()
         location.push('/')
         toast({
           title: "Resetting",
