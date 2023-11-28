@@ -7,7 +7,7 @@ export default function KeyboardNavigation({}: {}) {
 
   const location = useRouter();
 
-  const handleKeyPress = useCallback((event: any) => {
+  const handleKeyPress = useCallback(async (event: any) => {
     // Ignore if the target is an input field or if cmd and shift keys are pressed
     if (
       event.target instanceof HTMLInputElement ||
@@ -18,14 +18,14 @@ export default function KeyboardNavigation({}: {}) {
 
     switch (event.key) {
       case "r":
-        fetch("/api/ldreset");
-        location.reload()
-        location.push('/')
         toast({
           title: "Resetting",
           description:
             "Currently resetting all LaunchDarkly flags for this environment. Give us 30 seconds.",
         });
+        await fetch("/api/ldreset");
+        location.reload();
+        location.push('/');
         break;
       default:
         break;
