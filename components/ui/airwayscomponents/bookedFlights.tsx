@@ -19,7 +19,7 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip, enrolledInLaunchClub } =
     useContext(TripsContext);
-  const { launchClubLoyalty, priorityBoarding, aiTravelInsights, mealPromoExperience } = useFlags();
+  const { launchClubLoyalty, priorityBoarding, mealPromoExperience } = useFlags();
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -186,7 +186,6 @@ export default function BookedFlights() {
                             <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">
                               {trip.type} flight
                             </div>
-                            {aiTravelInsights ? (
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <p
@@ -212,11 +211,7 @@ export default function BookedFlights() {
                                   )}
                                 </PopoverContent>
                               </Popover>
-                            ) : (
-                              <p className="mt-2 uppercase  text-lg flex font-bold text-black ">
-                                {trip.fromCity} <ArrowRight /> {trip.toCity}
-                              </p>
-                            )}
+                            )
                           </div>
                           <div className="font-sohne px-2">
                             <div className="flex justify-between font-sohne">
@@ -288,7 +283,6 @@ export default function BookedFlights() {
                               Upgrade
                             </button>
                           )}
-                          {aiTravelInsights && (
                             <Popover>
                               <PopoverTrigger className="hover:bg-purple-500 text-white font-bold py-2 px-4 bg-gradient-to-r from-purple-500 to-rose-500 w-full">
                                 AI Travel Insights
@@ -322,7 +316,7 @@ export default function BookedFlights() {
                                 )}
                               </PopoverContent>
                             </Popover>
-                          )}
+                          )
                           <div className="mt-4 text-right items-center justify-center">
                             {" "}
                             {/* Modified */}
