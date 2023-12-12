@@ -337,7 +337,7 @@ export default function Bank() {
                           <p className="aiinsightstext">
                             Wealth Insights AI{" "}
                             <span className="accountsecondary">
-                              Powered By AWS Bedrock
+                              Powered By Amazon Bedrock
                             </span>
                           </p>
                         </div>
