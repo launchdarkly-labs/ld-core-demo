@@ -1,6 +1,6 @@
 //@ts-nocheck
 import * as React from "react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CSNav } from "./csnav";
 import { Search, MessageCircle, Menu, PanelTopOpen, QrCode } from "lucide-react";
 import { RegistrationForm } from "./airwayscomponents/stepregistration";
@@ -27,29 +27,83 @@ import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 
-const NavBar = React.forwardRef<any>(
-  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
+interface NavBarProps {
+  cart: InventoryItem[];
+  setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
+  variant: string;
+}
+
+const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
+
+
+    const { isLoggedIn, enrolledInLaunchClub, user } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
+
+    const getUserImageSrc = (username) => {
+      switch (username) {
+        case 'Jenn':
+          return 'woman.png';
+        case 'Alysha':
+          return 'beta.png';
+        case 'Cody':
+          return 'standard.jpg';
+        default:
+          return 'default-avatar.png'; // Fallback for any other user
+      }
+    };
 
     switch (variant) {
       case "airlines":
         navChild = (
           <>
-            <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-              {enrolledInLaunchClub && <LaunchClubStatus />}
-              <Search className="cursor-pointer hidden sm:block" />
-              <div className="block lg:hidden">
-                <BookedFlights />
-              </div>
-              <div className="cursor-pointer hidden sm:block">
-                <QRCodeImage className="" />
+            {!isLoggedIn ? null : (
+              <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+                {enrolledInLaunchClub && <LaunchClubStatus />}
+                <Search className="cursor-pointer hidden sm:block" />
+                <div className="block lg:hidden">
+                  <BookedFlights />
+                </div>
+                <div className="cursor-pointer hidden sm:block">
+                  <QRCodeImage className="" />
+                </div>
+
+                <LoginScreen />
+
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage src={getUserImageSrc(user)} className="" />
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] h-[400px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img src={getUserImageSrc(user)} className="rounded-full h-48" />
+                      </div>
+                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                        <p className="pt-4">
+                          Thank you for flying Launch Airways at {"  "}
+                          <p></p>
+                          <span className="text-2xl">Platinum Tier</span>
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <Button
+                          onClick={handleLogout}
+                          className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-r from-airlinepurple to-airlinepink text-lg rounded-none"
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
               </div>
 
-              <LoginScreen />
-            </div>
+
+            )}
           </>
         );
 
@@ -58,7 +112,7 @@ const NavBar = React.forwardRef<any>(
             <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
               <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
             </svg>
-            <p className="text-base flex font-sohnelight">
+            <p className="text-base flex font-sohnelight text-white">
               <strong className="font-semibold font-sohne">Launch</strong>
               {"\u00A0"}
               {"\u00A0"}Airways
@@ -119,13 +173,13 @@ const NavBar = React.forwardRef<any>(
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
-                      <AvatarImage src="woman.png" className="" />
+                      <AvatarImage src={getUserImageSrc(user)} className="" />
                     </Avatar>
                   </PopoverTrigger>
                   <PopoverContent className="w-[300px] h-[400px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
-                        <img src="woman.png" className="rounded-full h-48" />
+                        <img src={getUserImageSrc(user)} className="rounded-full h-48" />
                       </div>
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                         <p className="pt-4">
@@ -221,14 +275,49 @@ const NavBar = React.forwardRef<any>(
       case "market":
         navChild = (
           <>
-            <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
-              <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} className="hidden sm:block cursor-pointer" />
-              <div className="hidden sm:block cursor-pointer text-white">
-                <QRCodeImage />
-              </div>
-              <MarketLoginScreen />
-            </div>
+            {!isLoggedIn ? null : (
+              <>
+                <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
+                  <StoreCart cart={cart} setCart={setCart} />
+                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
+                  <div className="hidden sm:block cursor-pointer text-white">
+                    <QRCodeImage />
+                  </div>
+                  <MarketLoginScreen />
+
+                  <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage src={getUserImageSrc(user)} className="" />
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] h-[400px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img src={getUserImageSrc(user)} className="rounded-full h-48" />
+                      </div>
+                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                        <p className="pt-4">
+                          Thank you for shopping with us as {"  "}
+                          <p></p>
+                          <span className="text-2xl">Premium Member</span>
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <Button
+                          onClick={handleLogout}
+                          className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-lg rounded-none"
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
+                </div>
+                
+              </>
+            )}
           </>
         );
 
@@ -317,7 +406,7 @@ const NavBar = React.forwardRef<any>(
     }
 
     return (
-      <nav className="sticky w-full flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
+      <nav className="sticky w-full flex top-0 bg-black z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
         <div className="items-center flex gap-x-6 text-white">
           <CSNav />
         </div>

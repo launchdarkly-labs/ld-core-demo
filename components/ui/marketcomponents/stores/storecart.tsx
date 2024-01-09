@@ -40,8 +40,8 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
 
   const LDClient = useLDClient()
 
-  const totalCost = cart.reduce((total: any, item: InventoryItem) => total + Number(item.cost), 0);
-  
+  const totalCost = (cart || []).reduce((total: number, item: InventoryItem) => total + Number(item.cost), 0);  
+
   const cartClick = () => {
     console.log("Tracking Cart View")
     LDClient?.track('cart-accessed', LDClient.getContext(), 1) 
@@ -82,7 +82,7 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cart.map((item: InventoryItem) => (
+            {cart?.map((item: InventoryItem) => (
               <TableRow key={item.id}>
                 <TableCell className="font-sohnelight">{item.item}</TableCell>
                 <TableCell className="font-sohnelight">{item.cost}</TableCell>

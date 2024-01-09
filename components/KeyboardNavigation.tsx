@@ -17,7 +17,7 @@ export default function KeyboardNavigation({}: {}) {
     }
 
     switch (event.key) {
-      case "r":
+      case "p":
         toast({
           title: "Resetting",
           description:

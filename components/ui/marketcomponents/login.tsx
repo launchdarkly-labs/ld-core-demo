@@ -48,17 +48,11 @@ export default function MarketLoginScreen() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        {isLoggedIn ? (
-          <Avatar>
-            <AvatarImage src="/woman.png" alt="woman" />
-            <AvatarFallback>LD</AvatarFallback>
-          </Avatar>
-        ) : (
+        {isLoggedIn ? null : (
           <Button
             variant={"ghost"}
             className="text-white bg-gradient-to-r from-marketblue text-black to-marketgreen
-             font-audimat text-sm uppercase px-4 sm:px-8 rounded-none "
-          >
+             font-audimat text-sm uppercase px-4 sm:px-8 rounded-none ">
             Login
           </Button>
         )}
@@ -80,11 +74,7 @@ export default function MarketLoginScreen() {
                 />
               </svg>
             </div>
-          ) : (
-            <div className="mx-auto flex place-content-center w-full">
-              <img src="woman.png" className="rounded-full h-48" />
-            </div>
-          )}
+          ) : null}
           {isLoggedIn && (
             <p className="outfitters text-2xl text-black font-sohne text-center py-4">
               Welcome Back!
