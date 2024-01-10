@@ -1,13 +1,9 @@
 //@ts-nocheck
 import * as React from "react";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle, Menu, PanelTopOpen, QrCode } from "lucide-react";
-import { RegistrationForm } from "./airwayscomponents/stepregistration";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Search, PanelTopOpen } from "lucide-react";
+import { Avatar, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
@@ -15,7 +11,6 @@ import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
-import LaunchClub from "./airwayscomponents/launchClub";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
