@@ -93,11 +93,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   const handleSetActive = (personaName, personaEmail) => {
     setActiveElement(personaName);
     setDefaultEmail(personaEmail);
-
-    const activePersona = personas.find(p => p.personaName === activeElement);
-    if (activePersona) {
-      setDefaultEmail(activePersona.personaEmail);
-    }
   };
 
   const variantToImageMap = {
