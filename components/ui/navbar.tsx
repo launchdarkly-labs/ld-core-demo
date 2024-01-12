@@ -1,6 +1,6 @@
 //@ts-nocheck
 import * as React from "react";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CSNav } from "./csnav";
 import { Search, PanelTopOpen } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
@@ -28,6 +28,14 @@ interface NavBarProps {
   variant: string;
 }
 
+interface Persona {
+  id: string | number;
+  personaName: string;
+  personaType: string;
+  personaImage: string;
+  personaEmail: string;
+}
+
 const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
 
 
@@ -36,21 +44,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
   const navLinkStyling =
     "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
 
+  const [personas, setPersonas] = useState([]);
+  useEffect(() => {
+    fetch("/api/personas?personaToQuery=all")
+      .then((response) => response.json())
+      .then((data) => setPersonas(data));
+  }, []);
 
-  const allUsers = ['Jenn', 'Alysha', 'Cody'];
-
-  const getUserImageSrc = (username) => {
-    switch (username) {
-      case 'Jenn':
-        return 'woman.png';
-      case 'Alysha':
-        return 'beta.png';
-      case 'Cody':
-        return 'standard.jpg';
-      default:
-        return 'default-avatar.png';
-    }
-  };
 
   switch (variant) {
     case "airlines":
@@ -72,14 +72,14 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
               <Popover>
                 <PopoverTrigger>
                   <Avatar>
-                    <AvatarImage src={getUserImageSrc(user)} className="" />
+                    <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
                   </Avatar>
                 </PopoverTrigger>
 
                 <PopoverContent className="w-[300px] h-[475px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
-                      <img src={getUserImageSrc(user)} className="rounded-full h-48" />
+                      <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
                     </div>
                     <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                       <p className="pt-4">
@@ -96,13 +96,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                         Logout
                       </Button>
                       <div className="flex">
-                        {allUsers.filter(username => username !== user).map(otherUser => (
+                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
                           <img
-                            key={otherUser}
-                            src={getUserImageSrc(otherUser)}
+                            key={persona.id}
+                            src={persona.personaImage}
                             className="w-12 h-12 rounded-full mr-2 cursor-pointer"
-                            onClick={() => loginUser(otherUser, `${otherUser.toLowerCase()}@launchmail.io`)}
-                            alt={otherUser}
+                            onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                            alt={persona.personaName}
                           />
                         ))}
                       </div>
@@ -183,13 +183,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
               <Popover>
                 <PopoverTrigger>
                   <Avatar>
-                    <AvatarImage src={getUserImageSrc(user)} className="" />
+                    <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] h-[450px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
-                      <img src={getUserImageSrc(user)} className="rounded-full h-48" />
+                      <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
                     </div>
                     <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                       <p className="pt-4">
@@ -205,13 +205,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                         Logout
                       </Button>
                       <div className="flex">
-                        {allUsers.filter(username => username !== user).map(otherUser => (
+                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
                           <img
-                            key={otherUser}
-                            src={getUserImageSrc(otherUser)}
+                            key={persona.id}
+                            src={persona.personaImage}
                             className="w-12 h-12 rounded-full mr-2 cursor-pointer"
-                            onClick={() => loginUser(otherUser, `${otherUser.toLowerCase()}@launchmail.io`)}
-                            alt={otherUser}
+                            onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                            alt={persona.personaName}
                           />
                         ))}
                       </div>
@@ -307,13 +307,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
-                      <AvatarImage src={getUserImageSrc(user)} className="" />
+                      <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
                     </Avatar>
                   </PopoverTrigger>
                   <PopoverContent className="w-[300px] h-[480px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
-                        <img src={getUserImageSrc(user)} className="rounded-full h-48" />
+                        <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
                       </div>
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                         <p className="pt-4">
@@ -331,13 +331,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                           Logout
                         </Button>
                         <div className="flex">
-                          {allUsers.filter(username => username !== user).map(otherUser => (
+                          {personas.filter(persona => persona.personaName !== user).map((persona) => (
                             <img
-                              key={otherUser}
-                              src={getUserImageSrc(otherUser)}
+                              key={persona.id}
+                              src={persona.personaImage}
                               className="w-12 h-12 rounded-full mr-2 cursor-pointer"
-                              onClick={() => loginUser(otherUser, `${otherUser.toLowerCase()}@launchmail.io`)}
-                              alt={otherUser}
+                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                              alt={persona.personaName}
                             />
                           ))}
                         </div>
