@@ -94,6 +94,12 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setActiveElement(personaName);
     setDefaultEmail(personaEmail);
   };
+  
+  useEffect(() => {
+    if (activeElement) {
+      handleLogin();
+    }
+  }, [activeElement]);
 
   const variantToImageMap = {
     bank: "ToggleBankBlue.png",
@@ -134,11 +140,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
         <Dialog onDismiss={() => { setIsAddUserDialogOpen(false)}} className="z-10">
           <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl ${variantClass} hover:bg-gray-800`}>
-            Switch Personas
+            Switch SSO User
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Switch Personas</DialogTitle>
+              <DialogTitle>Switch SSO User</DialogTitle>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center mb-4 pt-6">
 
