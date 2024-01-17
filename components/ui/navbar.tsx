@@ -76,7 +76,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                   </Avatar>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-[300px] h-[475px]">
+                <PopoverContent className="w-[300px] h-[500px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
                       <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
@@ -95,15 +95,17 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       >
                         Logout
                       </Button>
-                      <div className="flex">
+                      <div className="flex overflow-x-auto">
                         {personas.filter(persona => persona.personaName !== user).map((persona) => (
-                          <img
-                            key={persona.id}
-                            src={persona.personaImage}
-                            className="w-12 h-12 rounded-full mr-2 cursor-pointer"
-                            onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                            alt={persona.personaName}
-                          />
+                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
+                            <img
+                              src={persona.personaImage}
+                              className="w-12 h-12 rounded-full"
+                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                              alt={persona.personaName}
+                            />
+                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -186,7 +188,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                     <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] h-[450px]">
+                <PopoverContent className="w-[300px] h-[470px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
                       <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
@@ -204,15 +206,17 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       >
                         Logout
                       </Button>
-                      <div className="flex">
+                      <div className="flex overflow-x-auto">
                         {personas.filter(persona => persona.personaName !== user).map((persona) => (
-                          <img
-                            key={persona.id}
-                            src={persona.personaImage}
-                            className="w-12 h-12 rounded-full mr-2 cursor-pointer"
-                            onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                            alt={persona.personaName}
-                          />
+                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
+                            <img
+                              src={persona.personaImage}
+                              className="w-12 h-12 rounded-full"
+                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                              alt={persona.personaName}
+                            />
+                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -310,7 +314,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
                     </Avatar>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[300px] h-[480px]">
+                  <PopoverContent className="w-[300px] h-[500px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
@@ -330,17 +334,19 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                         >
                           Logout
                         </Button>
-                        <div className="flex">
-                          {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                        <div className="flex overflow-x-auto">
+                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
                             <img
-                              key={persona.id}
                               src={persona.personaImage}
-                              className="w-12 h-12 rounded-full mr-2 cursor-pointer"
+                              className="w-12 h-12 rounded-full"
                               onClick={() => loginUser(persona.personaName, persona.personaEmail)}
                               alt={persona.personaName}
                             />
-                          ))}
-                        </div>
+                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                          </div>
+                        ))}
+                      </div>
                       </div>
                     </>
                   </PopoverContent>

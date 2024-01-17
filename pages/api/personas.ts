@@ -37,6 +37,9 @@ export default async function handler(
     case 'POST':
       await handlePost(req, res, db);
       break;
+    case 'DELETE':
+      await handleDelete(res, db);
+      break;
     default:
       res.setHeader('Allow', ['GET', 'POST']);
       res.status(405).json({ error: `Method ${req.method} Not Allowed` });
@@ -79,7 +82,8 @@ async function handleGet(
         return;
       }
     }
-  }    // @ts-ignore
+  }  
+    // @ts-ignore
   res.status(200).json(persona);
 }
 
@@ -104,3 +108,17 @@ async function handlePost(
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+async function handleDelete(
+  res: NextApiResponse<Data[] | { error: string }>,
+  db: ReturnType<typeof drizzle>
+) {
+  try {
+    await db.delete(personaschema).execute();
+    res.status(201)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete personas" });
+  }
+}
+
