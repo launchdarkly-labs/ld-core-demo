@@ -31,17 +31,17 @@ export default async function handler(
   const db = drizzle(client);
 
   switch (req.method) {
-    case 'GET':
+    case "GET":
       await handleGet(req, res, db);
       break;
-    case 'POST':
+    case "POST":
       await handlePost(req, res, db);
       break;
-    case 'DELETE':
+    case "DELETE":
       await handleDelete(res, db);
       break;
     default:
-      res.setHeader('Allow', ['GET', 'POST']);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 }
@@ -60,20 +60,32 @@ async function handleGet(
   let persona;
   if (personaToQuery === "all") {
     persona = await db.select().from(personaschema);
-    
+
     if (persona.length === 0) {
       const usersToAdd = [
-        { personaName: 'Cody', personaType: 'Standard User', personaImage: 'standard.jpg', personaEmail: 'cody@launchmail.io' },
-        { personaName: 'Alysha', personaType: 'Beta User', personaImage: 'beta.png', personaEmail: 'alysha@launchmail.io' },
-        { personaName: 'Jenn', personaType: 'Developer', personaImage: 'woman.png', personaEmail: 'jenn@launchmail.io' }
+        {
+          personaName: "Cody",
+          personaType: "Standard User",
+          personaImage: "standard.jpg",
+          personaEmail: "cody@launchmail.io",
+        },
+        {
+          personaName: "Alysha",
+          personaType: "Beta User",
+          personaImage: "beta.png",
+          personaEmail: "alysha@launchmail.io",
+        },
+        {
+          personaName: "Jenn",
+          personaType: "Developer",
+          personaImage: "woman.png",
+          personaEmail: "jenn@launchmail.io",
+        },
       ];
 
       try {
         for (const user of usersToAdd) {
-          await db
-            .insert(personaschema)
-            .values(user)
-            .execute();
+          await db.insert(personaschema).values(user).execute();
         }
         persona = await db.select().from(personaschema);
       } catch (error) {
@@ -82,8 +94,8 @@ async function handleGet(
         return;
       }
     }
-  }  
-    // @ts-ignore
+  }
+  // @ts-ignore
   res.status(200).json(persona);
 }
 
@@ -101,7 +113,12 @@ async function handlePost(
   try {
     const newPersona = await db
       .insert(personaschema)
-      .values({ personaName: name, personaType: type, personaImage: image, personaEmail: email })
+      .values({
+        personaName: name,
+        personaType: type,
+        personaImage: image,
+        personaEmail: email,
+      })
       .execute();
     res.status(201).json(newPersona);
   } catch (error) {
@@ -115,10 +132,9 @@ async function handleDelete(
 ) {
   try {
     await db.delete(personaschema).execute();
-    res.status(201)
+    res.status(201);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to delete personas" });
   }
 }
-

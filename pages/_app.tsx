@@ -9,7 +9,7 @@ import { TripsProvider } from "@/utils/contexts/TripContext";
 import { LoginProvider } from "@/utils/contexts/login";
 import KeyboardNavigation from "@/components/KeyboardNavigation";
 import Head from "next/head";
-
+import { PersonaProvider } from "@/components/personacontext";
 let c;
 
 if (typeof window !== "undefined") {
@@ -48,6 +48,7 @@ if (typeof window !== "undefined") {
     return (
       <NoSSRWrapper>
         <LDProvider>
+          <PersonaProvider>
           <LoginProvider>
             <TripsProvider>
               <KeyboardNavigation />
@@ -60,6 +61,7 @@ if (typeof window !== "undefined") {
               <Component {...pageProps} />
             </TripsProvider>
           </LoginProvider>
+          </PersonaProvider>
         </LDProvider>
       </NoSSRWrapper>
     );

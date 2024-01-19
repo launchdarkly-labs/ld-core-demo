@@ -21,6 +21,7 @@ import {
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
+import { PersonaContext } from "../personacontext";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -44,13 +45,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
   const navLinkStyling =
     "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
 
-  const [personas, setPersonas] = useState([]);
-  useEffect(() => {
-    fetch("/api/personas?personaToQuery=all")
-      .then((response) => response.json())
-      .then((data) => setPersonas(data));
-  }, []);
-
+  const { personas } = useContext(PersonaContext);
 
   switch (variant) {
     case "airlines":
@@ -335,18 +330,18 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                           Logout
                         </Button>
                         <div className="flex overflow-x-auto">
-                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
-                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
-                            <img
-                              src={persona.personaImage}
-                              className="w-12 h-12 rounded-full"
-                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                              alt={persona.personaName}
-                            />
-                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
-                          </div>
-                        ))}
-                      </div>
+                          {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                            <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
+                              <img
+                                src={persona.personaImage}
+                                className="w-12 h-12 rounded-full"
+                                onClick={() => loginUser(persona.personaName, persona.personaEmail)}
+                                alt={persona.personaName}
+                              />
+                              <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </>
                   </PopoverContent>
