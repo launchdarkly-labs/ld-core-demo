@@ -31,10 +31,10 @@ interface NavBarProps {
 
 interface Persona {
   id: string | number;
-  personaName: string;
-  personaType: string;
-  personaImage: string;
-  personaEmail: string;
+  personaname: string;
+  personatype: string;
+  personaimage: string;
+  personaemail: string;
 }
 
 const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
@@ -67,20 +67,20 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
               <Popover>
                 <PopoverTrigger>
                   <Avatar>
-                    <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
+                    <AvatarImage src={personas.find(persona => persona.personaname === user)?.personaimage} className="" />
                   </Avatar>
                 </PopoverTrigger>
 
                 <PopoverContent className="w-[300px] h-[500px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
-                      <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
+                      <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
                     </div>
                     <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
                       <p className="pt-4">
-                        Thank you for flying Launch Airways at {"  "}
+                        Thank you {personas.find(persona => persona.personaname === user)?.personaname} for flying Launch Airways with{"  "}
                         <p></p>
-                        <span className="text-2xl">Platinum Tier</span>
+                        <span className="text-2xl">Platinum Tier</span>!
                       </p>
                     </div>
                     <div className="mx-auto text-center">
@@ -91,15 +91,15 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                         Logout
                       </Button>
                       <div className="flex overflow-x-auto">
-                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                        {personas.filter(persona => persona.personaname !== user).map((persona) => (
                           <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
                             <img
-                              src={persona.personaImage}
+                              src={persona.personaimage}
                               className="w-12 h-12 rounded-full"
-                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                              alt={persona.personaName}
+                              onClick={() => loginUser(persona.personaname, persona.personaemail)}
+                              alt={persona.personaname}
                             />
-                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                            <p className="text-xs text-center mt-2">{persona.personaname}</p>
                           </div>
                         ))}
                       </div>
@@ -180,37 +180,38 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
               <Popover>
                 <PopoverTrigger>
                   <Avatar>
-                    <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
+                    <AvatarImage src={personas.find(persona => persona.personaname === user)?.personaimage} className="" />
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] h-[470px]">
+                <PopoverContent className="w-[300px] h-[500px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
-                      <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
+                      <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
                     </div>
-                    <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                    <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                       <p className="pt-4">
-                        Thank you for banking with us{"  "}
+                        Thank you {personas.find(persona => persona.personaname === user)?.personaname} for banking with us as{"  "}
+                        <p></p>
                         <span className="text-2xl">Platinum Member</span>!
                       </p>
                     </div>
                     <div className="mx-auto text-center">
                       <Button
                         onClick={handleLogout}
-                        className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-lg rounded-none"
+                        className=" bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-lg rounded-none"
                       >
                         Logout
                       </Button>
                       <div className="flex overflow-x-auto">
-                        {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                        {personas.filter(persona => persona.personaname !== user).map((persona) => (
                           <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
                             <img
-                              src={persona.personaImage}
+                              src={persona.personaimage}
                               className="w-12 h-12 rounded-full"
-                              onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                              alt={persona.personaName}
+                              onClick={() => loginUser(persona.personaname, persona.personaemail)}
+                              alt={persona.personaname}
                             />
-                            <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                            <p className="text-xs text-center mt-2">{persona.personaname}</p>
                           </div>
                         ))}
                       </div>
@@ -306,39 +307,39 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
-                      <AvatarImage src={personas.find(persona => persona.personaName === user)?.personaImage} className="" />
+                      <AvatarImage src={personas.find(persona => persona.personaname === user)?.personaimage} className="" />
                     </Avatar>
                   </PopoverTrigger>
                   <PopoverContent className="w-[300px] h-[500px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
-                        <img src={personas.find(persona => persona.personaName === user)?.personaImage} className="rounded-full h-48" />
+                        <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
                       </div>
-                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                      <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                         <p className="pt-4">
-                          Thank you for shopping with us as {"  "}
-                          <p></p>
-                          <span className="text-2xl">Premium Member</span>
+                          Thank you {personas.find(persona => persona.personaname === user)?.personaname} for shopping with us as{"  "}
+                        <p></p>
+                        <span className="text-2xl">Premium Member</span>!
                         </p>
                       </div>
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-lg rounded-none"
+                          className=" bg-red-700 items-center my-6 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-lg rounded-none"
 
                         >
                           Logout
                         </Button>
                         <div className="flex overflow-x-auto">
-                          {personas.filter(persona => persona.personaName !== user).map((persona) => (
+                          {personas.filter(persona => persona.personaname !== user).map((persona) => (
                             <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
                               <img
-                                src={persona.personaImage}
+                                src={persona.personaimage}
                                 className="w-12 h-12 rounded-full"
-                                onClick={() => loginUser(persona.personaName, persona.personaEmail)}
-                                alt={persona.personaName}
+                                onClick={() => loginUser(persona.personaname, persona.personaemail)}
+                                alt={persona.personaname}
                               />
-                              <p className="text-xs text-center mt-2">{persona.personaName}</p>
+                              <p className="text-xs text-center mt-2">{persona.personaname}</p>
                             </div>
                           ))}
                         </div>

@@ -1,7 +1,7 @@
 // PersonaContext.js
 import React, { createContext, useState, useEffect } from 'react';
 
-export const PersonaContext = createContext();
+export const PersonaContext = createContext(null);
 
 export const PersonaProvider = ({ children }) => {
   const [personas, setPersonas] = useState([]);

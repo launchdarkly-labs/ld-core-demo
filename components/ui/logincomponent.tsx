@@ -18,10 +18,10 @@ import { PersonaContext } from "../personacontext";
 
 interface Persona {
   id: string | number;
-  personaName: string;
-  personaType: string;
-  personaImage: string;
-  personaEmail: string;
+  personamame: string;
+  personayype: string;
+  personaimage: string;
+  personaemail: string;
 }
 
 interface LoginComponentProps {
@@ -80,10 +80,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setIsLoggedIn(true);
     let email;
     let name;
-    const activePersona = personas.find(p => p.personaName === activeElement);
+    const activePersona = personas.find(p => p.personaname === activeElement);
     if (activePersona) {
-      email = activePersona.personaEmail;
-      name = activePersona.personaName;
+      email = activePersona.personaemail;
+      name = activePersona.personaname;
     }
     else {
       email = 'jenn@launchmail.io';
@@ -101,9 +101,9 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       })
   }
 
-  const handleSetActive = (personaName, personaEmail) => {
-    setActiveElement(personaName);
-    setDefaultEmail(personaEmail);
+  const handleSetActive = (personaname, personaemail) => {
+    setActiveElement(personaname);
+    setDefaultEmail(personaemail);
   };
 
   useEffect(() => {
@@ -160,7 +160,8 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Switch SSO User</DialogTitle>
-              
+
+
 
               {isLoading ? (
                 <div className="flex justify-center items-center h-64">
@@ -172,16 +173,16 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                     {personas.map((item: Persona) => (
                       <div className="flex flex-col items-center" key={item.id}>
                         <img
-                          src={item.personaImage}
-                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaName ? 'border-4 border-black' : ''}`}
-                          onClick={() => handleSetActive(item.personaName, item.personaEmail)}
-                          alt={item.personaName}
+                          src={item.personaimage}
+                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaname ? 'border-4 border-black' : ''}`}
+                          onClick={() => handleSetActive(item.personaname, item.personaemail)}
+                          alt={item.personaname}
                         />
                         <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
-                          {item.personaName}
+                          {item.personaname}
                         </p>
                         <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
-                          {item.personaType}
+                          {item.personatype}
                         </p>
                       </div>
                     ))}
@@ -255,18 +256,18 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
             </DialogHeader>
 
             <DialogFooter>
-              <Button onClick={toggleAddUserDropdown} className={` w-full h-full  font-audimat rounded-none text-xl ${variantClass}`}>
-                Add New User
-              </Button>
-              
+            <div className="flex w-full">
+  <Button onClick={toggleAddUserDropdown} className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}>
+    Add New User
+  </Button>
+
+  <Button onClick={handleDeleteAllPersonas} className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}>
+    &#x21bb;
+  </Button>
+</div>
+
 
             </DialogFooter>
-            <div className="flex justify-center">
-
-              <Button onClick={handleDeleteAllPersonas} className={`w-6 h-6 font-audimat rounded-full text-lg ${variantClass}`}>
-                &#x21bb;
-              </Button>
-              </div>
           </DialogContent>
         </Dialog>
 

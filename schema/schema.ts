@@ -26,13 +26,7 @@ export const airports = pgTable('airports', {
     country: text('country'),
 });
 
-export const personaschema = pgTable('personas', {
-    id: serial('id').primaryKey(),
-    personaName: text('personaName'),
-    personaType: text('personaType'),
-    personaImage: text('personaImage'),
-    personaEmail: text('personaEmail'),
-});
+
 
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
