@@ -153,7 +153,7 @@ export default function Bank() {
               >
                 {/* <img src="ToggleBankHeader.png" width={52} className="pb-0" /> */}
                 <p className="text-2xl lg:text-6xl xl:text-[74px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0">
-                  Welcome to ToggleBank{" "}
+                  Welcome to Barclays{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
                   Serving more than 100,000 customers, and 10 trillion in

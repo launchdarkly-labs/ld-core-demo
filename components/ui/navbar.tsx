@@ -153,9 +153,7 @@ const NavBar = React.forwardRef<any>(
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
-              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
-            </svg>
+            <img src="/test-barclays.png" className="h-16 items-center" />
           </>
         );
 
