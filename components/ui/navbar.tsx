@@ -318,8 +318,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                         <p className="pt-4">
                           Thank you {personas.find(persona => persona.personaname === user)?.personaname} for shopping with us as{"  "}
-                        <p></p>
-                        <span className="text-2xl">Premium Member</span>!
+                          <p></p>
+                          <span className="text-2xl">Premium Member</span>!
                         </p>
                       </div>
                       <div className="mx-auto text-center">

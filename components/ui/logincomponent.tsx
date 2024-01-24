@@ -208,7 +208,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                             <input
                               type="text"
                               name="type"
-                              placeholder="Type"
+                              placeholder="Role"
                               value={newPersona.type}
                               required
                               onChange={handleNewPersonaChange}
@@ -239,7 +239,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                               ))}
                             </div>
                           </div>
-                          <Button onClick={handleSubmitNewPersona} className={`mb-2 w-full h-full mx-auto font-audimat mt-4 rounded-none text-xl ${variantClass}`}>
+                          <Button onClick={handleSubmitNewPersona} className={`mb-2 w-full h-full mx-auto font-audimat mt-2 rounded-none text-xl ${variantClass}`}>
                             Submit
                           </Button>
 
@@ -256,15 +256,15 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
             </DialogHeader>
 
             <DialogFooter>
-            <div className="flex w-full">
-  <Button onClick={toggleAddUserDropdown} className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}>
-    Add New User
-  </Button>
+              <div className="flex w-full">
+                <Button onClick={toggleAddUserDropdown} className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}>
+                  Add New User
+                </Button>
 
-  <Button onClick={handleDeleteAllPersonas} className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}>
-    &#x21bb;
-  </Button>
-</div>
+                <Button onClick={handleDeleteAllPersonas} className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}>
+                  &#x21bb;
+                </Button>
+              </div>
 
 
             </DialogFooter>

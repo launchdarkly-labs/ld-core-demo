@@ -108,7 +108,7 @@ async function handleGet(
   res: NextApiResponse<Data[] | { error: string }>,
   db: ReturnType<typeof drizzle>,
   personaschema: ReturnType<typeof pgTable>
-  ) {
+) {
   const { personaToQuery } = req.query;
   if (typeof personaToQuery !== "string") {
     res.status(400).json({ error: "Invalid persona" });
@@ -118,10 +118,7 @@ async function handleGet(
   let persona;
 
   if (personaToQuery === "all") {
-    persona = await db
-      .select()
-      .from(personaschema)
-      .execute();
+    persona = await db.select().from(personaschema).execute();
     if (persona.length === 0) {
       const usersToAdd = [
         {
