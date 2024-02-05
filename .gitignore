@@ -9,6 +9,15 @@
 # testing
 /coverage
 
+#terraform files
+terraform.tfvars
+.tfvars
+**/.terraform
+terraform.tfstate.backup
+terraform.tfstate
+terraform.tfstate.d
+.terraform.lock.hcl
+
 # next.js
 /.next/
 /out/

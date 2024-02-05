@@ -12,6 +12,7 @@ export const LoginProvider = ({ children }) => {
     const client = useLDClient();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const [email, setEmail] = useState({});
     const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
     const [launchClubStatus, setLaunchClubStatus] = useState("economy")
 
@@ -23,8 +24,10 @@ export const LoginProvider = ({ children }) => {
         const context = await client?.getContext();
         context.user.name = user;
         context.user.email = email;
+        context.user.key = email;
         setIsLoggedIn(true)
         setUser(user)
+        setEmail(email)
         console.log("updated context - "+ JSON.stringify(context))
         client.identify(context);
       };
@@ -56,7 +59,7 @@ export const LoginProvider = ({ children }) => {
     
   
     return (
-      <LoginContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn, enrolledInLaunchClub, upgradeLaunchClub, setPlaneContext, setEnrolledInLaunchClub, launchClubStatus, setLaunchClubStatus, loginUser, logoutUser }}>
+      <LoginContext.Provider value={{ user, email, setUser, isLoggedIn, setIsLoggedIn, enrolledInLaunchClub, upgradeLaunchClub, setPlaneContext, setEnrolledInLaunchClub, launchClubStatus, setLaunchClubStatus, loginUser, logoutUser }}>
         {children}
       </LoginContext.Provider>
     );

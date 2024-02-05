@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Area } from "recharts";
 import { AiOutlineAreaChart } from "react-icons/ai";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -51,7 +50,7 @@ const WealthManagementSheet = ({
             animate="visible"
             exit="exit"
             variants={variants}
-            className="p-6 bg-gradient-blue sm:w-full shadow-2xl mb-6 overflow-auto"
+            className="p-24 bg-gradient-blue sm:w-full shadow-2xl overflow-auto max-h-full"
         >
             <div className="text-white font-sohne mb-6 text-[24px]">
                 Wealth Management
@@ -74,7 +73,7 @@ const WealthManagementSheet = ({
                             Wealth Management
                         </h3>
                     </div>
-                    <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-8 w-full ">
+                    <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-4 w-full ">
                         <div className={`relative p-4 flex-1 sm:flex-none sm:basis-1/3 lg:basis-2/5 w-full h-full  text-white bg-gradient-to-r from-indigo-700 to-blue-500 overflow-auto shadow-lg`}>
                             <div>
                                 <div className="flex justify-between pb-2">
@@ -85,7 +84,6 @@ const WealthManagementSheet = ({
                                             <span className=" text-white  font-sohne">
                                                 Powered By Amazon Bedrock
                                             </span>
-
                                         </p>
 
                                     </div>
@@ -134,7 +132,7 @@ const WealthManagementSheet = ({
                             </div>
                         </div>
 
-                        <div className="p-6 bg-gradient-to-r from-blue-500 to-bankdarkblue flex-1 sm:flex-none sm:basis-1/3 lg:basis-1/5 h-100 overflow-auto min-w-fit shadow-lg">
+                        <div className="p-6 bg-gradient-to-r from-blue-500 to-bankdarkblue flex-1 sm:flex-none sm:basis-1/3 lg:basis-1/5 w-full h-full h-100 overflow-auto min-w-fit shadow-lg">
                             <div className="space-y-2">
                                 <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                                     <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
@@ -146,7 +144,7 @@ const WealthManagementSheet = ({
                                     <p className="text-white font-bold font-sohne text-lg">(***6552)</p>
                                 </div>
                             </div>
-                            
+
 
                             <div className="">
                                 <div className="pt-40">
@@ -165,54 +163,7 @@ const WealthManagementSheet = ({
                         <StocksComponent>
 
                         </StocksComponent>
-                        <div className={`flex flex-col p-4 w-full h-full xl:h-[300px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}>
-                            <p className="aiinsightstext pt-4">
-                                6-Month Account Trend
-                            </p>
-                            <ResponsiveContainer className={"h-full"}>
-                                <AreaChart
-                                    data={data}
-                                    margin={{
-                                        top: 20,
-                                        right: 30,
-                                        left: 0,
-                                        bottom: 10,
-                                    }}
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="month" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="balance"
-                                        stroke="#8884d8"
-                                        fill="url(#colorUv)"
-                                    />
 
-                                    <defs>
-                                        <linearGradient
-                                            id="colorUv"
-                                            x1="0"
-                                            y1="0"
-                                            x2="0"
-                                            y2="1"
-                                        >
-                                            <stop
-                                                offset="5%"
-                                                stopColor="#00c0e7"
-                                                stopOpacity={1}
-                                            />
-                                            <stop
-                                                offset="95%"
-                                                stopColor="#a34fde"
-                                                stopOpacity={1}
-                                            />
-                                        </linearGradient>
-                                    </defs>
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
                     </div>
                     <SheetFooter>
                         <SheetClose asChild>

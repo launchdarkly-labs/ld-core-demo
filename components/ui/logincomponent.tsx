@@ -15,15 +15,6 @@ import {
 } from "@/components/ui/dialog"
 import { PersonaContext } from "../personacontext";
 
-
-interface Persona {
-  id: string | number;
-  personamame: string;
-  personayype: string;
-  personaimage: string;
-  personaemail: string;
-}
-
 interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;

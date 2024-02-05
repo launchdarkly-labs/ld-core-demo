@@ -22,6 +22,7 @@ import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 import { PersonaContext } from "../personacontext";
+import { QuickLoginDialog } from "../quicklogindialog";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -71,12 +72,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                   </Avatar>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-[300px] h-[500px]">
+                <PopoverContent className="w-[300px] h-[440px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
                       <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
                     </div>
-                    <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                    <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
                       <p className="pt-4">
                         Thank you {personas.find(persona => persona.personaname === user)?.personaname} for flying Launch Airways with{"  "}
                         <p></p>
@@ -86,23 +87,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                     <div className="mx-auto text-center">
                       <Button
                         onClick={handleLogout}
-                        className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-r from-airlinepurple to-airlinepink text-lg rounded-none"
+                        className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-to-r from-airlinepurple to-airlinepink  rounded-none"
                       >
                         Logout
                       </Button>
-                      <div className="flex overflow-x-auto">
-                        {personas.filter(persona => persona.personaname !== user).map((persona) => (
-                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
-                            <img
-                              src={persona.personaimage}
-                              className="w-12 h-12 rounded-full"
-                              onClick={() => loginUser(persona.personaname, persona.personaemail)}
-                              alt={persona.personaname}
-                            />
-                            <p className="text-xs text-center mt-2">{persona.personaname}</p>
-                          </div>
-                        ))}
-                      </div>
+                      <QuickLoginDialog personas={personas} variant={variant}/>
+
                     </div>
                   </>
                 </PopoverContent>
@@ -183,7 +173,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                     <AvatarImage src={personas.find(persona => persona.personaname === user)?.personaimage} className="" />
                   </Avatar>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] h-[500px]">
+                <PopoverContent className="w-[300px] h-[440px]">
                   <>
                     <div className="mx-auto flex place-content-center w-full">
                       <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
@@ -198,23 +188,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                     <div className="mx-auto text-center">
                       <Button
                         onClick={handleLogout}
-                        className=" bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-lg rounded-none"
+                        className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-xl rounded-none"
                       >
                         Logout
                       </Button>
-                      <div className="flex overflow-x-auto">
-                        {personas.filter(persona => persona.personaname !== user).map((persona) => (
-                          <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
-                            <img
-                              src={persona.personaimage}
-                              className="w-12 h-12 rounded-full"
-                              onClick={() => loginUser(persona.personaname, persona.personaemail)}
-                              alt={persona.personaname}
-                            />
-                            <p className="text-xs text-center mt-2">{persona.personaname}</p>
-                          </div>
-                        ))}
-                      </div>
+                      <QuickLoginDialog personas={personas} variant={variant}/>
                     </div>
                   </>
                 </PopoverContent>
@@ -310,7 +288,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       <AvatarImage src={personas.find(persona => persona.personaname === user)?.personaimage} className="" />
                     </Avatar>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[300px] h-[500px]">
+                  <PopoverContent className="w-[300px] h-[440px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img src={personas.find(persona => persona.personaname === user)?.personaimage} className="rounded-full h-48" />
@@ -325,24 +303,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(({ launchClubLoyalty, cart, se
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className=" bg-red-700 items-center my-6 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-lg rounded-none"
+                          className=" bg-red-700 items-center font-audimat my-2 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-xl rounded-none"
 
                         >
                           Logout
                         </Button>
-                        <div className="flex overflow-x-auto">
-                          {personas.filter(persona => persona.personaname !== user).map((persona) => (
-                            <div key={persona.id} className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0">
-                              <img
-                                src={persona.personaimage}
-                                className="w-12 h-12 rounded-full"
-                                onClick={() => loginUser(persona.personaname, persona.personaemail)}
-                                alt={persona.personaname}
-                              />
-                              <p className="text-xs text-center mt-2">{persona.personaname}</p>
-                            </div>
-                          ))}
-                        </div>
+                        <QuickLoginDialog personas={personas} variant={variant}/>
                       </div>
                     </>
                   </PopoverContent>

@@ -13,6 +13,7 @@ import NavBar from "@/components/ui/navbar";
 import LoginHomePage from "@/components/LoginHomePage";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
 import { motion } from "framer-motion";
+import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 
 
 export default function Bank() {
@@ -153,7 +154,7 @@ export default function Bank() {
                     animate="visible"
                     exit="exit"
                     variants={accountvariant}
-                    className="h-full w-full sm:w-auto"
+                    className="h-full w-full sm:w-auto shadow-xl "
                   >
                     <div className="p-6 gap-4 w-full bg-gradient-mobile h-full sm:h-[425px]">
                       <div>
@@ -212,23 +213,35 @@ export default function Bank() {
               </section>
             </section>
 
-            {wealthManagement && (
-              <WealthManagementSheet
-                data={data}
-                aiPrompt={aiPrompt}
-                submitQuery={submitQuery}
-                prompt={prompt}
-                loading={loading}
-                aiResponse={aiResponse}
-              />
+            {wealthManagement ? (
+              <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
+
+                <div className="w-full sm:w-1/2 max-h-screen items-center">
+                  <WealthManagementSheet
+                    data={data}
+                    aiPrompt={aiPrompt}
+                    submitQuery={submitQuery}
+                    prompt={prompt}
+                    loading={loading}
+                    aiResponse={aiResponse}
+                  />
+                </div>
+                <div className="w-full sm:w-1/2 ">
+                  <AccountTrends data={data} />
+                </div>
+              </div>
+            ) : (
+              <div className="w-full">
+                <AccountTrends data={data} />
+              </div>
             )}
 
             <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
               <div className="w-full lg:w-1/2">
-                <img src="CC.png" className="" />
+                <img src="CC.png" className="shadow-xl" />
               </div>
               <div className="w-full lg:w-1/2 flex justify-end">
-                <img src="Loan.png" className="" />
+                <img src="Loan.png" className="shadow-xl" />
               </div>
             </div>
           </div>
