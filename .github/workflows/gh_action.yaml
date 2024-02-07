@@ -49,7 +49,7 @@ jobs:
     - name: Create .env file
       run: |
         touch .env.local
-        ls
+        ls -la
         echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> .env.local
         echo LD_SDK_KEY=${{ env.var1 }} >> .env.local
         echo DB_URL="postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432" >> .env.local
