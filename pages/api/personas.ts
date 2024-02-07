@@ -55,6 +55,7 @@ async function createTableForSubdomain(
     personaemail TEXT
   );
 `;
+    await db.execute(createTableSQL);
   }
 
   const personaschema = pgTable(tableName, {
@@ -64,6 +65,7 @@ async function createTableForSubdomain(
     personaimage: text("personaimage"),
     personaemail: text("personaemail"),
   });
+
   return personaschema;
 }
 
