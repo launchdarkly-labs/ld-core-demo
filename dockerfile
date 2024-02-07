@@ -11,6 +11,7 @@ RUN  npm install --production
 FROM public.ecr.aws/docker/library/node:18-alpine3.18 as builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY ./.env ./.env
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -32,6 +33,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.env ./.env 
 
 USER nextjs
 
