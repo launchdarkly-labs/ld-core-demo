@@ -178,13 +178,28 @@ export default function Airways() {
                     )}
                   </div>
                 </div>
+              <div className="flex mx-auto">
+                <motion.button
+                  whileTap={{ scale: 0.5 }}
+                  onClick={() => bookTrip()}
+                  className={` items-center `}
+                >
+                  <img src="ArrowButton.png" width={60} className="" />
+                </motion.button>
               </div>
             </header>
 
+<<<<<<< HEAD
             <AirlineHero
               launchClubLoyalty={launchClubLoyalty}
               showSearch={showSearch}
             />
+=======
+        <AirlineHero
+          launchClubLoyalty={launchClubLoyalty}
+          showSearch={showSearch}
+        />
+>>>>>>> 7ad08a5 (misc style fixes)
 
             <section
               className={`relative flex flex-col sm:flex-row justify-center 
