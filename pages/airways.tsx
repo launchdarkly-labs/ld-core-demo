@@ -191,17 +191,10 @@ export default function Airways() {
               </div>
             </header>
 
-<<<<<<< HEAD
             <AirlineHero
               launchClubLoyalty={launchClubLoyalty}
               showSearch={showSearch}
             />
-=======
-        <AirlineHero
-          launchClubLoyalty={launchClubLoyalty}
-          showSearch={showSearch}
-        />
->>>>>>> 7ad08a5 (misc style fixes)
 
             <section
               className={`relative flex flex-col sm:flex-row justify-center 
