@@ -273,7 +273,6 @@ export const StocksComponent: React.FC = () => {
 
                         )
                     )}
-
                 </div>
             </div>
 
