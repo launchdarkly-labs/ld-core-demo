@@ -52,7 +52,10 @@ jobs:
         sed -i 's|process.env.DESTINATIONENV|'"\"$LD_ENV\""'|g' ./pages/api/ldreset.ts
         sed -i 's|EKSCLUSTER|'"\"$EKSCLUSTER\""'|g' ./buildspec_prod.yml
         sed -i 's|AWSREGION|'"\"$AWSREGION\""'|g' ./buildspec_prod.yml 
+        git config receive.denyCurrentBranch ignore
         git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        git add *
         git commit -m "Updating environment variables"
         git push codecommit main:main -f
       

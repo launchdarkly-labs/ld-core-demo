@@ -59,4 +59,3 @@ jobs:
         git commit -m "Updating environment variables"
         git push codecommit main:main -f
       
-      
