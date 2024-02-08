@@ -8,8 +8,12 @@ import { v4 as uuidv4 } from "uuid";
 import { TripsProvider } from "@/utils/contexts/TripContext";
 import { LoginProvider } from "@/utils/contexts/login";
 import KeyboardNavigation from "@/components/KeyboardNavigation";
+<<<<<<< HEAD
 import Head from "next/head";
 import { PersonaProvider } from "@/components/personacontext";
+=======
+
+>>>>>>> fd6e068 (implementing flag reset logic to template + keyboard shortcut and toast)
 let c;
 
 if (typeof window !== "undefined") {
@@ -52,12 +56,15 @@ if (typeof window !== "undefined") {
           <LoginProvider>
             <TripsProvider>
               <KeyboardNavigation />
+<<<<<<< HEAD
               <Head>
                 <meta
                   name="viewport"
                   content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
                 />
               </Head>
+=======
+>>>>>>> fd6e068 (implementing flag reset logic to template + keyboard shortcut and toast)
               <Component {...pageProps} />
             </TripsProvider>
           </LoginProvider>
