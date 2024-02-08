@@ -210,59 +210,68 @@ export const StocksComponent: React.FC = () => {
                     <div className=" font-bold font-sohne text-lg pt-2" style={{ color: runDemo ? 'lightgreen' : 'white' }}>
                         Stocks
                     </div>
-
-                    {stocksAPI ? (
-                        <div className="space-y-4 ">
-                            {stocks.map((stock, index) => (
-                                <div key={index} className="mt-4 rounded-lg">
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center space-x-3">
-                                            <img src={`${stock.image}`} alt={`${stock.ticker} logo`} className="w-10 h-10 rounded-full" />
-                                            <span className="font-bold text-white font-sohne">{stock.name}</span>
-                                        </div>
-                                        <div className="w-10 h-10 mx-auto hidden sm:block">
-                                            <Line
-                                                data={generateChartData(stock.data)}
-                                                options={{
-                                                    responsive: true,
-                                                    maintainAspectRatio: false,
-                                                    scales: {
-                                                        x: { display: false },
-                                                        y: { display: false }
-                                                    },
-                                                    plugins: {
-                                                        legend: { display: false },
-                                                        tooltip: { enabled: false }
-                                                    },
-                                                    elements: {
-                                                        line: {
-                                                            tension: 0.6
-                                                        }
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="flex items-center space-x-1">
-                                            <span className="font-bold text-right block text-white">{stock.data[stock.data.length - 1].value}</span>
-                                            {stock.data[stock.data.length - 1].direction === 'up' ? (
-                                                <IoIosArrowDropupCircle className="text-green-500" />
-                                            ) : stock.data[stock.data.length - 1].direction === 'down' ? (
-                                                <IoIosArrowDropdownCircle className="text-red-500" />
-                                            ) : stock.data[stock.data.length - 1].direction === null ? (
-                                                <IoMdRemoveCircleOutline className="text-white" />
-                                            ) : null}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
+                    {runDemo ? (
                         <div className="flex items-center justify-center h-52">
                             <div className="text-white font-bold font-sohne text-xl">
-                                COMING SOON
+                                Generating Data
                             </div>
                         </div>
+                    ) : (
+                        stocksAPI ? (
+                            <div className="space-y-4 " >
+                                {
+                                    stocks.map((stock, index) => (
+                                        <div key={index} className="mt-4 rounded-lg">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center space-x-3">
+                                                    <img src={`${stock.image}`} alt={`${stock.ticker} logo`} className="w-10 h-10 rounded-full" />
+                                                    <span className="font-bold text-white font-sohne">{stock.name}</span>
+                                                </div>
+                                                <div className="w-10 h-10 mx-auto hidden sm:block">
+                                                    <Line
+                                                        data={generateChartData(stock.data)}
+                                                        options={{
+                                                            responsive: true,
+                                                            maintainAspectRatio: false,
+                                                            scales: {
+                                                                x: { display: false },
+                                                                y: { display: false }
+                                                            },
+                                                            plugins: {
+                                                                legend: { display: false },
+                                                                tooltip: { enabled: false }
+                                                            },
+                                                            elements: {
+                                                                line: {
+                                                                    tension: 0.6
+                                                                }
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="flex items-center space-x-1">
+                                                    <span className="font-bold text-right block text-white">{stock.data[stock.data.length - 1].value}</span>
+                                                    {stock.data[stock.data.length - 1].direction === 'up' ? (
+                                                        <IoIosArrowDropupCircle className="text-green-500" />
+                                                    ) : stock.data[stock.data.length - 1].direction === 'down' ? (
+                                                        <IoIosArrowDropdownCircle className="text-red-500" />
+                                                    ) : stock.data[stock.data.length - 1].direction === null ? (
+                                                        <IoMdRemoveCircleOutline className="text-white" />
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-52">
+                                <div className="text-white font-bold font-sohne text-xl">
+                                    COMING SOON
+                                </div>
+                            </div>
 
+                        )
                     )}
 
                 </div>
@@ -271,7 +280,7 @@ export const StocksComponent: React.FC = () => {
             <div className="flex flex-col">
 
             </div>
-        </div>
+        </div >
 
 
     );
