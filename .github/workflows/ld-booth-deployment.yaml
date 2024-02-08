@@ -1,9 +1,8 @@
 name: 'Image Deployment on EKS' 
 
 on:
-  push:
-    branches:
-      - deploy_images_to_k8s
+  pull_request:
+    types: [synchronize, opened, reopened]
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -19,13 +18,13 @@ env:
 jobs:
   deploy-to-pods:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        environment: [2]
+        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -36,7 +35,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r ./.github/workflows/requirements.txt
-
     - name: Get LD ENVs
       id: get-envs
       run: |
@@ -51,10 +49,9 @@ jobs:
         touch ./.env.production
         echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
         echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
-        echo DB_URL="postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432" >> ./.env.production
-        ls -la
-        cat ./.env.production
-
+        echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
+        echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
+        echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -67,15 +64,26 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
-    - name: Update K8s Deploy File
-      run: python ./.github/workflows/update_k8s_deploy.py
+    - name: Update Deploy File for Kubernetes
       env:
-        NAMESPACE: demo${{ matrix.environment }}
-        IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
+          NAMESPACE: demo${{ matrix.environment }}
+          URL: demo${{ matrix.environment }}.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
+      run: |
+        sed -i 's|placeholder1|$NAMESPACE|g' ./.github/workflows/deploy_files/deploy.yaml
+        sed -i 's|placeholder2|$URL|g' ./.github/workflows/deploy_files/deploy.yaml
+        sed -i 's|placeholder3|$NAMESPACE|g' ./.github/workflows/deploy_files/deploy.yaml
+        sed -i 's|placeholder4|$IMAGE|g' ./.github/workflows/deploy_files/deploy.yaml
+        
+    # - name: Update K8s Deploy File
+    #   run: python ./.github/workflows/update_k8s_deploy.py
+    #   env:
+    #     NAMESPACE: demo${{ matrix.environment }}
+    #     IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
     - name: Check Deploy file
       run: cat ./.github/workflows/deploy_files/deploy.yaml
-    
+
     - name: Applying deploy file to Kubernetes
       uses: kodermax/kubectl-aws-eks@master
       with:
