@@ -1,12 +1,8 @@
 name: 'Image Deployment on EKS' 
 
 on:
-  push:
-    branches:
-      - deploy_images_to_k8s
   pull_request:
-    branches:
-      - deploy_images_to_k8s
+    types: [synchronize, opened, reopened]
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -28,7 +24,7 @@ jobs:
         environment: [2]
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
