@@ -64,7 +64,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }}
 
       - name: Update K8s Deploy File
-        run: python ./.github/workflows/update_deploy_file.py
+        run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
           NAMESPACE: test
           URL: test.launchdarklydemos.com
