@@ -21,12 +21,10 @@ jobs:
     
     strategy:
       matrix:
-        environment: [2]
+        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -52,15 +50,9 @@ jobs:
         touch ./.env.production
         echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
         echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
-    
-    # - name: Update ENV Vars (Testing)
-    #   run: |
-    #     sed -i 's|process.env.NEXT_PUBLIC_LD_CLIENT_KEY|'"\"${{ env.var2 }}\""'|g' ./pages/_app.tsx
-    #     sed -i 's|process.env.LD_SDK_KEY|'"\"${{ env.var1 }}\""'|g' ./pages/api/checkingdata.ts
-    #     sed -i 's|process.env.LD_SDK_KEY|'"\"${{ env.var1 }}\""'|g' ./pages/api/creditdata.ts
-    #     sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/checkingdata.ts
-    #     sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/creditdata.ts
-    #     sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/storeInventory.ts
+        echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
+        echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
+        echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
 
     - name: Login to Amazon ECR
       id: login-ecr
