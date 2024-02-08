@@ -9,7 +9,7 @@ on:
 
 jobs:
   sync:
-    environment: core-demo-15
+    environment: core-demo-1
     runs-on: ubuntu-latest
 
     steps:
@@ -42,30 +42,17 @@ jobs:
         LD_SERVER_KEY: ${{ secrets.LD_SERVER_KEY }} # LD Server Key
         LD_API_KEY: ${{ secrets.LD_API_KEY }}
         LD_ENV: ${{ secrets.LD_ENV }}
-<<<<<<< HEAD
         EKSCLUSTER: ${{ secrets.EKSCLUSTER }}
         AWSREGION: ${{ secrets.AWSREGION }}
-=======
->>>>>>> fd6e068 (implementing flag reset logic to template + keyboard shortcut and toast)
       run: |
         sed -i 's|process.env.NEXT_PUBLIC_LD_CLIENT_KEY|'"\"$LD_CLIENT_KEY\""'|g' ./pages/_app.tsx
         sed -i 's|process.env.LD_SDK_KEY|'"\"$LD_SERVER_KEY\""'|g' ./pages/api/checkingdata.ts
         sed -i 's|process.env.LD_SDK_KEY|'"\"$LD_SERVER_KEY\""'|g' ./pages/api/creditdata.ts
         sed -i 's|process.env.LD_API_KEY|'"\"$LD_API_KEY\""'|g' ./pages/api/ldreset.ts
         sed -i 's|process.env.DESTINATIONENV|'"\"$LD_ENV\""'|g' ./pages/api/ldreset.ts
-<<<<<<< HEAD
-<<<<<<< HEAD
         sed -i 's|EKSCLUSTER|'"\"$EKSCLUSTER\""'|g' ./buildspec_prod.yml
         sed -i 's|AWSREGION|'"\"$AWSREGION\""'|g' ./buildspec_prod.yml 
-        git config receive.denyCurrentBranch ignore
-=======
->>>>>>> fd6e068 (implementing flag reset logic to template + keyboard shortcut and toast)
-=======
-        git config receive.denyCurrentBranch ignore
->>>>>>> 8ed8cff (adjusting build config across github actions)
         git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "actions@github.com"
-        git add *
         git commit -m "Updating environment variables"
         git push codecommit main:main -f
       

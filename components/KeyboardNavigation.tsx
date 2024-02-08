@@ -1,9 +1,17 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "./ui/use-toast";
 import { ResetToaster } from "./ui/resetToaster";
+<<<<<<< HEAD
 import { useRouter } from "next/router";
 
 export default function KeyboardNavigation({}: {}) {
+=======
+import { useRouter } from "next/navigation";
+
+export default function KeyboardNavigation({}: {}) {
+
+  const location = useRouter();
+>>>>>>> 4888e40 (adding updated kube content and router push for app)
 
   const location = useRouter();
 
@@ -17,7 +25,13 @@ export default function KeyboardNavigation({}: {}) {
     }
 
     switch (event.key) {
+<<<<<<< HEAD
       case "p":
+=======
+      case "r":
+        fetch("/api/ldreset");
+        location.push('/')
+>>>>>>> 4888e40 (adding updated kube content and router push for app)
         toast({
           title: "Resetting",
           description:
