@@ -35,7 +35,8 @@ export default async function handler(
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
   const clientContext: any = getCookie('ldcontext', { req, res })
   const connectionString = process.env.DB_URL
-  
+  console.log('connection string for DB_URL: ' + connectionString);
+
   if (!connectionString) {
     throw new Error('DATABASE_URL is not set')
   }
