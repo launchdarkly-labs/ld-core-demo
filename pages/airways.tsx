@@ -178,6 +178,16 @@ export default function Airways() {
                     )}
                   </div>
                 </div>
+              <div className="flex mx-auto">
+                {fromLocation !== "From" && toLocation !== "To" && (
+                <motion.button
+                  whileTap={{ scale: 0.5 }}
+                  onClick={() => bookTrip()}
+                  className={` items-center `}
+                >
+                  <img src="ArrowButton.png" width={60} className="" />
+                </motion.button>
+                )}
               </div>
             </header>
 
