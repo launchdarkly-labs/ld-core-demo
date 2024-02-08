@@ -66,7 +66,7 @@ jobs:
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/checkingdata.ts
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/creditdata.ts
         
-        sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/storyInventory.ts
+        sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/storeInventory.ts
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./drizzle.config.ts
 
     - name: Login to Amazon ECR
