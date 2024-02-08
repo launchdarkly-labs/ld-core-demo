@@ -132,7 +132,7 @@ async function handleGet(
         {
           personaname: "Alysha",
           personatype: "Beta User",
-          personaimage: "/img/beta.png",
+          personaimage: "beta.png",
           personaemail: "alysha@launchmail.io",
         },
         {
