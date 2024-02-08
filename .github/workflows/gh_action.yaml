@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - deploy_images_to_k8s
+  pull_request:
+    branches:
+      - deploy_images_to_k8s
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -23,11 +26,11 @@ jobs:
     strategy:
       matrix:
         environment: [2]
-    steps:
+        steps:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: ${{github.head_ref}}
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -66,6 +69,8 @@ jobs:
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/creditdata.ts
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./pages/api/storeInventory.ts
         sed -i 's|process.env.DB_URL|'"\"postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432\""'|g' ./drizzle.config.ts
+        cat ./drizzle.config.ts
+        cat ./pages/api/creditdata.ts
 
     - name: Login to Amazon ECR
       id: login-ecr
