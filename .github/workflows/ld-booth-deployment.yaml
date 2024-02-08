@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        environment: [1]
+        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -75,12 +75,6 @@ jobs:
         sed -i 's|placeholder3|'"\"$NAMESPACE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
         sed -i 's|placeholder4|'"\"$IMAGE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
         
-    # - name: Update K8s Deploy File
-    #   run: python ./.github/workflows/update_k8s_deploy.py
-    #   env:
-    #     NAMESPACE: demo${{ matrix.environment }}
-    #     IMAGE_TAG: ld-demo${{ matrix.environment }}-${{ github.run_number }}
-
     - name: Check Deploy file
       run: cat ./.github/workflows/deploy_files/deploy.yaml
 
