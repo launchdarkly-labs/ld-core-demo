@@ -48,12 +48,12 @@ jobs:
 
     - name: Create .env file
       run: |
-        touch ./.env
-        echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env
-        echo LD_SDK_KEY=${{ env.var1 }} >> ./.env
-        echo DB_URL="postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432" >> ./.env
+        touch ./.env.production
+        echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
+        echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
+        echo DB_URL="postgresql://postgres:LDD3v3xp@fielddemodb.cii3vie7naoe.us-west-2.rds.amazonaws.com:5432" >> ./.env.production
         ls -la
-        cat ./.env
+        cat ./.env.production
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -93,4 +93,4 @@ jobs:
       run: rm -rf ./.github/workflows/deploy_files
 
     - name: Remove .env file
-      run: rm ./.env
+      run: rm ./.env.production
