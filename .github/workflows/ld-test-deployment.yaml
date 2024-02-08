@@ -63,16 +63,12 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }} .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }}
 
-      - name: Update Deploy File for Kubernetes
+      - name: Update K8s Deploy File
+        run: python ./.github/workflows/update_deploy_file.py
         env:
           NAMESPACE: test
           URL: test.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
-        run: |
-          sed -i 's|placeholder1|'"\"$NAMESPACE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
-          sed -i 's|placeholder2|'"\"$URL\""'|g' ./.github/workflows/deploy_files/deploy.yaml
-          sed -i 's|placeholder3|'"\"$NAMESPACE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
-          sed -i 's|placeholder4|'"\"$IMAGE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
 
       - name: Check Deploy file
         run: cat ./.github/workflows/deploy_files/deploy.yaml
