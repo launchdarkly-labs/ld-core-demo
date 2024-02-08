@@ -1,8 +1,9 @@
-name: "Build and Deploy Images to LD Booth Demos"
+name: 'Build and Deploy Images to Test Environment' 
 
 on:
-  branches:
-    - main
+  pull_request:
+    types: [synchronize, opened, reopened]
+
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -12,16 +13,14 @@ env:
   KUBE_NAMESPACE: $!
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  LD_API_KEY: ${{ secrets.LD_API_KEY }}
+  LD_API_KEY: ${{ secrets.LD_API_KEY }}  
+
 
 jobs:
   deploy-to-pods:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    steps:
+steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -40,7 +39,7 @@ jobs:
           echo "var1=$(python ./.github/workflows/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
           echo "var2=$(python ./.github/workflows/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
         env:
-          LD_ENV_KEY: demo-${{ matrix.environment }}
+          LD_ENV_KEY: test
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
       - name: Create .env file
@@ -50,25 +49,25 @@ jobs:
           echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
-          echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
+          echo DESTINATIONENV=test >> ./.env.production
           
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
+      
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ld-core-demo
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }}
 
       - name: Update Deploy File for Kubernetes
         env:
-          NAMESPACE: demo${{ matrix.environment }}
-          URL: demo${{ matrix.environment }}.launchdarklydemos.com
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
+          NAMESPACE: test
+          URL: test.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
         run: |
           sed -i 's|placeholder1|'"\"$NAMESPACE\""'|g' ./.github/workflows/deploy_files/deploy.yaml
           sed -i 's|placeholder2|'"\"$URL\""'|g' ./.github/workflows/deploy_files/deploy.yaml
@@ -81,14 +80,14 @@ jobs:
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n demo${{ matrix.environment }}
+          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n test
 
       - name: Restart Pods
         uses: kodermax/kubectl-aws-eks@master
         env:
-          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
+          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
         with:
-          args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n demo${{ matrix.environment }}
+          args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n test
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
