@@ -1,4 +1,4 @@
-name: 'Build and Deploy Images to Test Environment' 
+name: "Build and Deploy Images to Test Environment"
 
 on:
   pull_request:
