@@ -17,10 +17,10 @@ env:
 
 
 jobs:
-  deploy-to-pods:
+  deploy-to-test:
     runs-on: ubuntu-latest
 
-steps:
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
