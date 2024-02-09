@@ -1,10 +1,9 @@
 name: "Build and Deploy Images to Test Environment"
 
 on:
-  push:
+  create:
     branches:
-      - '*demoenv*' # This workflow will run on any branch that contains the word "demoenv"
-    types: [created] # This workflow will run when a new branch is created
+      - '*demoenv*' # This workflow will run when a new branch is created
 
 env: # Environment variables
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -15,9 +14,11 @@ env: # Environment variables
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
-jobs: # Jobs to be executed
+jobs:
   deploy-to-demoenv: 
+    if: contains(github.ref, 'demoenv')
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
