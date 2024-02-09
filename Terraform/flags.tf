@@ -28,37 +28,6 @@ resource "launchdarkly_feature_flag" "federatedAccounts" {
   ]
 }
 
-resource "launchdarkly_feature_flag" "stocksAPI" {
-  project_key = var.project_key
-  key         = "stocksAPI"
-  name        = 11 - Release Stocks API"
-  description = "Release New Stocks API"
-
-  variation_type = "boolean"
-  variations {
-    value = "true"
-    name  = "Available"
-  }
-  variations {
-    value = "false"
-    name  = "Unavailable"
-  }
-
-  defaults {
-    on_variation  = 0
-    off_variation = 1
-  }
-
-  client_side_availability {
-    using_environment_id = true
-  }
-
-  tags = [
-    "release"
-  ]
-}
-
-
 resource "launchdarkly_feature_flag" "wealthManagement" {
   project_key = var.project_key
   key         = "wealthManagement"
