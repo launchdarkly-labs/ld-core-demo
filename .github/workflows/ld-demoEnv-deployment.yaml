@@ -49,6 +49,19 @@ jobs:
         run: |
           echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
           python ./.github/workflows/create_ld_project.py
+
+      - name: Apply Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.0.0"
+
+      - name: Terraform Apply
+        run: |
+          cd ./Terraform/
+          terraform apply -auto-approve
+        env:
+          access_token: ${{ secrets.LD_API_KEY }}
+          project_key: ${{ env.DEMO_NAMESPACE }}
         
       - name: Create .env file
         run: |
