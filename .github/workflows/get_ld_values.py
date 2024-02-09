@@ -1,11 +1,6 @@
 import os
 import requests
-import json
-import shutil
 from ruamel.yaml import YAML
-import yaml
-import base64
-import time
 
 
 def main():
@@ -35,8 +30,6 @@ def getLDEnvs():
     else:
         sdk_key = response.json().get('apiKey')
         client_key = response.json().get('_id')
-        print(f"{sdk_key}")
-        print(f"{client_key}")
 
 
 if __name__ == "__main__":

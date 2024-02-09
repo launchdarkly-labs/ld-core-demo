@@ -1,27 +1,33 @@
 name: "Build and Deploy Images to Test Environment"
 
 on:
-  pull_request:
-    types: [synchronize, opened, reopened]
+  branches:
+    - '*demoenv*' # This workflow will run on any branch that contains the word "demoenv"
+  types: [created] # This workflow will run when a new branch is created
 
-
-env:
+env: # Environment variables
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  LD_API_KEY: ${{ secrets.LD_API_KEY }}  
+  LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
-
-jobs:
-  deploy-to-test:
+jobs: # Jobs to be executed
+  deploy-to-demoenv: 
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Set namespace for deployment
+        id: set_namespace
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          NAMESPACE=${BRANCH_NAME#demoenv-}
+          echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV 
+          echo "::set-output name=namespace::$NAMESPACE"
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -32,25 +38,25 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
-          
-      - name: Get LD ENVs
-        id: get-envs
-        run: |
-          echo "var1=$(python ./.github/workflows/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
-          echo "var2=$(python ./.github/workflows/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
-        env:
-          LD_ENV_KEY: test
-          LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
+      - name: Create LD Project for User
+        id: create_ld_project
+        run: |
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}
+          python ./.github/workflows/create_ld_project.py
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          
       - name: Create .env file
         run: |
           touch ./.env.production
-          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
-          echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
+          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
+          echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
           echo DESTINATIONENV=test >> ./.env.production
-          
+  
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -60,27 +66,25 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ld-core-demo
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }} .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Update K8s Deploy File
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
-          NAMESPACE: test
-          URL: test.launchdarklydemos.com
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:latest
+
+      - name: Create Namespace In Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: create namespace ${{ env.DEMO_NAMESPACE }}
 
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n test
-
-      - name: Restart Pods
-        uses: kodermax/kubectl-aws-eks@master
-        env:
-          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
-        with:
-          args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n test
+          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
