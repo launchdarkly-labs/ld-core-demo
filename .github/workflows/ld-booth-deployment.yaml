@@ -14,7 +14,6 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-  KUBE_NAMESPACE: $!
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}
@@ -70,10 +69,10 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
       - name: Update K8s Deploy File
-        run: python ./.github/workflows/update_deploy_file.py
+        run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
-          NAMESPACE: test
-          URL: test.launchdarklydemos.com
+          NAMESPACE: demo${{ matrix.environment }}
+          URL: demo${{ matrix.environment }}.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
       - name: Applying deploy file to Kubernetes
