@@ -61,8 +61,8 @@ def createLDProjectWithEnvironment():
 
             env_file = os.getenv('GITHUB_ENV')
             with open(env_file, "a") as f:
-                f.write(f"LD_SDK_KEY={sdk_key}\n")
-                f.write(f"LD_CLIENT_KEY={client_key}\n")
+                f.write(f"LD_SDK_KEY={sdk_key}{os.linesep}")
+                f.write(f"LD_CLIENT_KEY={client_key}{os.linesep}")
                 
             return True
 
