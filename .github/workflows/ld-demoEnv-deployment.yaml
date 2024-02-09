@@ -58,6 +58,7 @@ jobs:
       - name: Terraform Apply
         run: |
           cd ./Terraform/
+          terraform init
           terraform apply -auto-approve
         env:
           access_token: ${{ secrets.LD_API_KEY }}
