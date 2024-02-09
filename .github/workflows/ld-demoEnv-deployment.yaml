@@ -124,7 +124,7 @@ jobs:
               {
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
-                  "Name": ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com,
+                  "Name": "${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com",
                   "Type": "A",
                   "AliasTarget": {
                     "HostedZoneId": "Z35SXDOTRQ7X7K",
