@@ -1,13 +1,9 @@
 name: "Build and Deploy Images to LD Booth Demos"
 
-# on:
-#   push:
-#     branches:
-#       - main
-
 on:
-  pull_request:
-    types: [synchronize, opened, reopened]
+  push:
+    branches:
+      - main
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
