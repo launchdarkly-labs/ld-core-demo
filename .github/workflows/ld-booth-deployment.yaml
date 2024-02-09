@@ -75,6 +75,9 @@ jobs:
           URL: demo${{ matrix.environment }}.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
+      - name: Show Files
+        run: cat ./.github/workflows/deploy_files/deploy.yaml
+
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
