@@ -101,6 +101,37 @@ jobs:
         with:
           args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Add Route 53 Record
+        run: |
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+          RECORD_SET_JSON='{
+            "Comment": "Creating Alias record that points to ALB",
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com,
+                  "Type": "A",
+                  "AliasTarget": {
+                    "HostedZoneId": "Z35SXDOTRQ7X7K",
+                    "DNSName": "k8s-ldcoredemolb-93af62c3af-1176236694.us-east-1.elb.amazonaws.com",
+                    "EvaluateTargetHealth": false
+                  }
+                }
+              }
+            ]
+          }'
+          aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch "$RECORD_SET_JSON"
+        env:
+          AWS_REGION: 'us-east-1'
+
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
 
