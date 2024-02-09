@@ -43,13 +43,13 @@ jobs:
 
       - name: Create LD Project for User
         id: create_ld_project
-        run: |
-          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}
-          python ./.github/workflows/create_ld_project.py
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
-          
+        run: |
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}
+          python ./.github/workflows/create_ld_project.py
+        
       - name: Create .env file
         run: |
           touch ./.env.production
