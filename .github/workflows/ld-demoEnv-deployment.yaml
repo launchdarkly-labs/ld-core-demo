@@ -1,4 +1,4 @@
-name: "Build and Deploy Images to Test Environment"
+name: "Build and Deploy Images to Demo Environment"
 
 on:
   create:
@@ -43,13 +43,27 @@ jobs:
 
       - name: Create LD Project for User
         id: create_ld_project
-        run: |
-          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}
-          python ./.github/workflows/create_ld_project.py
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
-          
+        run: |
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/create_ld_project.py
+
+      - name: Apply Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "> 1.1.6"
+
+      - name: Terraform Apply
+        run: |
+          cd ./Terraform/
+          touch .tfvars
+          echo 'access_token = "${{ secrets.LD_API_KEY }}"' >> .tfvars
+          echo 'project_key = "${{ env.DEMO_NAMESPACE }}-ld-demo"' >> .tfvars
+          terraform init
+          terraform apply -var-file=".tfvars" -auto-approve
+        
       - name: Create .env file
         run: |
           touch ./.env.production
@@ -78,7 +92,13 @@ jobs:
           URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:latest
 
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
       - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: create namespace ${{ env.DEMO_NAMESPACE }}
@@ -87,6 +107,37 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Add Route 53 Record
+        run: |
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+          RECORD_SET_JSON='{
+            "Comment": "Creating Alias record that points to ALB",
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com,
+                  "Type": "A",
+                  "AliasTarget": {
+                    "HostedZoneId": "Z35SXDOTRQ7X7K",
+                    "DNSName": "k8s-ldcoredemolb-93af62c3af-1176236694.us-east-1.elb.amazonaws.com",
+                    "EvaluateTargetHealth": false
+                  }
+                }
+              }
+            ]
+          }'
+          aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch "$RECORD_SET_JSON"
+        env:
+          AWS_REGION: 'us-east-1'
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
