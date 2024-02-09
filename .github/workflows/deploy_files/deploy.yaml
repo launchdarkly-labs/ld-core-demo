@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ld-core-demo-deployment
+  labels:
+    app: ld-core-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ld-core-demo
+  template:
+    metadata:
+      labels:
+        app: ld-core-demo
+    spec:
+      containers:
+        - name: ld-core-demo
+          image: placeholder4
+          ports:
+            - name: web
+              containerPort: 3000
+              protocol: TCP
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: placeholder1
+spec:
+  selector:
+    app: ld-core-demo
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 3000
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ld-core-demo-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/group.name: ld-core-demo-lb
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:955116512041:certificate/fa29cb5d-f635-40df-89cc-70db82c93845
+spec:
+  ingressClassName: alb
+  rules:
+    - host: placeholder2
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: placeholder3
+                port:
+                  number: 443
