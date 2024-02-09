@@ -1,8 +1,9 @@
 name: "Build and Deploy Images to Test Environment"
 
 on:
-  branches:
-    - '*demoenv*' # This workflow will run on any branch that contains the word "demoenv"
+  push:
+    branches:
+      - '*demoenv*' # This workflow will run on any branch that contains the word "demoenv"
     types: [created] # This workflow will run when a new branch is created
 
 env: # Environment variables
