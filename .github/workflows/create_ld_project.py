@@ -4,7 +4,6 @@ from ruamel.yaml import YAML
 
 
 def main():
-
     return createLDProjectWithEnvironment()
 
 def createLDProjectWithEnvironment():
@@ -64,6 +63,8 @@ def createLDProjectWithEnvironment():
             with open(env_file, "a") as f:
                 f.write(f"LD_SDK_KEY={sdk_key}\n")
                 f.write(f"LD_CLIENT_KEY={client_key}\n")
+                
+            return True
 
 if __name__ == "__main__":
     main()
