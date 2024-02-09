@@ -71,7 +71,7 @@ jobs:
           echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
-          echo DESTINATIONENV=test >> ./.env.production
+          echo DESTINATIONENV=${{ env.DEMO_NAMESPACE }} >> ./.env.production
   
       - name: Login to Amazon ECR
         id: login-ecr
