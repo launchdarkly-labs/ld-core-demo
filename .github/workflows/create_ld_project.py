@@ -1,70 +1,67 @@
 import os
 import requests
-from ruamel.yaml import YAML
-
 
 def main():
-    return createLDProjectWithEnvironment()
+    
+    ld_api_key = os.getenv('LD_API_KEY')
+    namespace = os.getenv('NAMESPACE')
 
-def createLDProjectWithEnvironment():
-
-    LD_API_KEY = os.getenv('LD_API_KEY')
-    NAMESPACE = os.getenv('NAMESPACE')
-
-    if LD_API_KEY is None:
+    if not ld_api_key:
         print("LD_API_KEY not set")
         exit(1)
 
-    if NAMESPACE is None:
+    if not namespace:
         print("NAMESPACE not set")
         exit(1)
     
     url = "https://app.launchdarkly.com/api/v2/projects"
-
-    project_key = NAMESPACE + "-ld-demo"
+    project_key = f"{namespace}-ld-demo"
 
     payload = {
         "key": project_key,
-        "name": "LD Demo - " + NAMESPACE,
+        "name": f"LD Demo - {namespace}",
     }
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": LD_API_KEY
+        "Authorization": ld_api_key
     }
 
     response = requests.post(url, json=payload, headers=headers)
 
     if response.status_code == 201:
-
-        url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments"
-
-        payload = {
+        environment_url = f"{url}/{project_key}/environments"
+        environment_payload = {
             "color": "DADBEE",
-            "key": NAMESPACE,
-            "name": NAMESPACE
+            "key": namespace,
+            "name": namespace
         }
 
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": LD_API_KEY
-        }
-
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(environment_url, json=environment_payload, headers=headers)
 
         if response.status_code == 201:
-            print("Project and Environment Created for " + NAMESPACE)
+            print(f"Project and Environment Created for {namespace}")
             data = response.json()
 
             sdk_key = data['apiKey']
             client_key = data['_id']
 
             env_file = os.getenv('GITHUB_ENV')
-            with open(env_file, "a") as f:
-                f.write(f"LD_SDK_KEY={sdk_key}{os.linesep}")
-                f.write(f"LD_CLIENT_KEY={client_key}{os.linesep}")
-                
-            return True
+            if env_file:
+                try:
+                    with open(env_file, "a") as f:
+                        f.write(f"LD_SDK_KEY={sdk_key}\n")
+                        f.write(f"LD_CLIENT_KEY={client_key}\n")
+                except IOError as e:
+                    print(f"Unable to write to environment file: {e}")
+                    exit(1)
+            else:
+                print("GITHUB_ENV not set")
+                exit(1)
+    else:
+        print(f"Failed to create project: {response.status_code}")
+        print(response.text)
+        exit(1)
 
 if __name__ == "__main__":
     main()
