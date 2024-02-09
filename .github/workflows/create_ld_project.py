@@ -1,5 +1,12 @@
 import os
 import requests
+import json
+import shutil
+from ruamel.yaml import YAML
+import yaml
+import base64
+import time
+import subprocess
 
 def main():
     
@@ -16,33 +23,33 @@ def main():
         print("NAMESPACE not set")
         exit(1)
 
-    url = "https://app.launchdarkly.com/api/v2/projects/" + project_key
-    headers = {"Authorization": ld_api_key}
-    response = requests.get(url, headers=headers)    
+    # url = "https://app.launchdarkly.com/api/v2/projects/" + project_key
+    # headers = {"Authorization": ld_api_key}
+    # response = requests.get(url, headers=headers)    
 
-    if response.status_code == 200:
-        print(f"Project already exists for {namespace}")
-        url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments/" + namespace
-        headers = {"Authorization": ld_api_key}
-        response = requests.get(url, headers=headers)
-        data = response.json()
+    # if response.status_code == 200:
+        # print(f"Project already exists for {namespace}")
+        # url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments/" + namespace
+        # headers = {"Authorization": ld_api_key}
+        # response = requests.get(url, headers=headers)
+        # data = response.json()
         
-        sdk_key = data['apiKey']
-        client_key = data['_id']
+        # sdk_key = data['apiKey']
+        # client_key = data['_id']
         
-        env_file = os.getenv('GITHUB_ENV')
-        if env_file:
-            try:
-                with open(env_file, "a") as f:
-                    f.write(f"LD_SDK_KEY={sdk_key}\n")
-                    f.write(f"LD_CLIENT_KEY={client_key}\n")
-                    exit(1)
-            except IOError as e:
-                print(f"Unable to write to environment file: {e}")
-                exit(1)
-        else:
-            print("GITHUB_ENV not set")
-            exit(1)
+        # env_file = os.getenv('GITHUB_ENV')
+        # if env_file:
+        #     try:
+        #         with open(env_file, "a") as f:
+        #             f.write(f"LD_SDK_KEY={sdk_key}\n")
+        #             f.write(f"LD_CLIENT_KEY={client_key}\n")
+        #             exit(1)
+        #     except IOError as e:
+        #         print(f"Unable to write to environment file: {e}")
+        #         exit(1)
+        # else:
+        #     print("GITHUB_ENV not set")
+        #     exit(1)
 
 
 
