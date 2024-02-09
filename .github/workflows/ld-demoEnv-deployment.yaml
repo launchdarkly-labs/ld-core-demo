@@ -61,7 +61,7 @@ jobs:
           terraform apply -auto-approve
         env:
           access_token: ${{ secrets.LD_API_KEY }}
-          project_key: ${{ env.DEMO_NAMESPACE }}
+          project_key: ${{ env.DEMO_NAMESPACE }}-ld-demo
         
       - name: Create .env file
         run: |
