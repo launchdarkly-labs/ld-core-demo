@@ -92,7 +92,13 @@ jobs:
           URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:latest
 
+      - namn: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
       - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: create namespace ${{ env.DEMO_NAMESPACE }}
@@ -138,3 +144,4 @@ jobs:
 
       - name: Remove .env file
         run: rm ./.env.production
+
