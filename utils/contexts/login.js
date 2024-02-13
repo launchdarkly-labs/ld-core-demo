@@ -28,8 +28,8 @@ export const LoginProvider = ({ children }) => {
     setUser(user);
     setEmail(email);
     setEnrolledInLaunchClub(false);
-    console.log("updated context - " + JSON.stringify(context));
-    client.identify(context);
+    console.log("updated context", context);
+    await client.identify(context);
   };
 
   const logoutUser = async () => {
