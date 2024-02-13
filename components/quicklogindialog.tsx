@@ -40,7 +40,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
           >
             Quick Login
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] w-4/5 h-1/5 gap-10">
+          <DialogContent className="sm:max-w-[450px] w-4/5 flex flex-col justify-center items-center gap-10">
             <DialogHeader>
               <DialogTitle className="mb-4">Quick Login SSO User</DialogTitle>
 
