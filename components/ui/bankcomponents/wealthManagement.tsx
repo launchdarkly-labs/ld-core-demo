@@ -95,7 +95,7 @@ const WealthManagementSheet = ({
                                 <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full  text-white overflow-y-auto ">
                                     <div className="h-40 overflow-auto flex flex-col justify-start items-center border  border-white p-4">
                                         {loading ? (
-                                            <BounceLoader color="#1D4ED8" size={100} />
+                                            <BounceLoader color="#FFFFFF" size={50} className="mt-10" />
                                         ) : (
                                             <div className="font-sohnelight">
                                                 {aiResponse || 'No response generated yet.'}

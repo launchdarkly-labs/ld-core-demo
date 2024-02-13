@@ -215,7 +215,9 @@ export default function Bank() {
 
             {wealthManagement ? (
               <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-
+                <div className="w-full sm:w-1/2 ">
+                  <AccountTrends data={data} />
+                </div>
                 <div className="w-full sm:w-1/2 max-h-screen items-center">
                   <WealthManagementSheet
                     data={data}
@@ -226,12 +228,10 @@ export default function Bank() {
                     aiResponse={aiResponse}
                   />
                 </div>
-                <div className="w-full sm:w-1/2 ">
-                  <AccountTrends data={data} />
-                </div>
+
               </div>
             ) : (
-              <div className="w-full">
+              <div className="w-full mb-10">
                 <AccountTrends data={data} />
               </div>
             )}

@@ -37,6 +37,7 @@
     "framer-motion": "^10.16.4",
     "launchdarkly-node-server-sdk": "^7.0.3",
     "launchdarkly-react-client-sdk": "^3.0.9",
+    "ldrs": "^1.0.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.292.0",
