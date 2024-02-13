@@ -115,7 +115,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   };
 
   return (
-    <div className="w-full sm:w-[425px] 3xl:h-[500px] bg-white font-audimat shadow-xl">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto">
 
       <div className="flex flex-col justify-center mx-auto text-center">
         <img
