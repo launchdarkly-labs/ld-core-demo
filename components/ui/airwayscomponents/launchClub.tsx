@@ -43,7 +43,7 @@ export default function LaunchClub() {
     setEnrolledInLaunchClub(true);
     const context = await client?.getContext();
     context.user.launchclub = "platinum";
-    client.identify(context);
+    await client.identify(context);
   };
 
   const perks = [
