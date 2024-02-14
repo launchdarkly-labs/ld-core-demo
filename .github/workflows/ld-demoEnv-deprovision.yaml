@@ -1,4 +1,4 @@
-name: "Build and Deploy Images to Demo Environment"
+name: "Remove Demo Environment From K8s and LD"
 
 on:
   delete:
@@ -16,7 +16,7 @@ env:
 
 
 jobs:
-  deploy-to-demoenv: 
+  remove-demoenv: 
     if: contains(github.ref, 'demoenv')
     runs-on: ubuntu-latest
     
