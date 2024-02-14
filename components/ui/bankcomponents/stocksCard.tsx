@@ -5,7 +5,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
 import { v4 as uuidv4 } from 'uuid';
-
+import { infinity } from 'ldrs'
 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -33,6 +33,7 @@ export const StocksComponent: React.FC = () => {
     const [runDemo, setRunDemo] = useState(false);
     const [loggedUser, setInitialUser] = useState();
     const [loggedEmail, setInitialEmail] = useState();
+    infinity.register('l-infinity')
 
 
     const generateInitialData = (initialValue) => {
@@ -204,16 +205,27 @@ export const StocksComponent: React.FC = () => {
         <div className="p-6 bg-gradient-to-r from-bankdarkblue to-blue-500 flex-1 sm:flex-none sm:basis-1/3 lg:basis-1/3 w-full h-100  overflow-auto min-w-max shadow-lg">
             <div className="space-y-2">
                 <div className="">
-                    <div className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${runDemo ? 'border-white animate-spin' : 'border-current'}`}>
+                    <div className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${runDemo ? 'border-white' : 'border-current'}`}>
                         <img src="stocksicon.png" onClick={toggleRunDemo} />
                     </div>
-                    <div className=" font-bold font-sohne text-lg pt-2" style={{ color: runDemo ? 'lightgreen' : 'white' }}>
+                    <div className=" font-bold font-sohne text-lg pt-2 text-white">
                         Stocks
                     </div>
                     {runDemo ? (
-                        <div className="flex items-center justify-center h-52">
-                            <div className="text-white font-bold font-sohne text-xl">
+                        <div className="flex justify-center items-center h-52">
+                            <div className="text-white font-bold font-sohne justify-center items-center text-xl">
                                 Generating Data
+                                <br />
+                                <div className="flex items-center mt-2 justify-center">
+                                    <l-infinity
+                                        size="55"
+                                        stroke="4"
+                                        stroke-length="0.15"
+                                        bg-opacity="0.1"
+                                        speed="1.3"
+                                        color="white"
+                                    ></l-infinity>
+                                </div>
                             </div>
                         </div>
                     ) : (
