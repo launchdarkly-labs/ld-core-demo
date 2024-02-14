@@ -5,8 +5,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
 import { v4 as uuidv4 } from 'uuid';
-import { infinity } from 'ldrs'
-
+import InfinityLoader from '../infinityloader';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -33,7 +32,6 @@ export const StocksComponent: React.FC = () => {
     const [runDemo, setRunDemo] = useState(false);
     const [loggedUser, setInitialUser] = useState();
     const [loggedEmail, setInitialEmail] = useState();
-    infinity.register('l-infinity')
 
 
     const generateInitialData = (initialValue) => {
@@ -217,14 +215,7 @@ export const StocksComponent: React.FC = () => {
                                 Generating Data
                                 <br />
                                 <div className="flex items-center mt-2 justify-center">
-                                    <l-infinity
-                                        size="55"
-                                        stroke="4"
-                                        stroke-length="0.15"
-                                        bg-opacity="0.1"
-                                        speed="1.3"
-                                        color="white"
-                                    ></l-infinity>
+                                   <InfinityLoader />
                                 </div>
                             </div>
                         </div>
