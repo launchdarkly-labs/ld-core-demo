@@ -206,3 +206,18 @@ line-height: normal;
   padding: 20px;
   box-sizing: border-box;
 }
+
+.button-bank {
+  background-color: #007bff; 
+}
+
+.button-airlines {
+  background: linear-gradient(to right, #a855f7, #d946ef); 
+}
+
+.button-market {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(to right, #3b82f6, #10b981); 
+  color: black;
+}

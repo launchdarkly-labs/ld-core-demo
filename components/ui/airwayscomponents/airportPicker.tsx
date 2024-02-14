@@ -120,6 +120,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
                  leading-[66.65px] outline-none border-b-2 border-airlinePurple pb-4"
               placeholder="Airport"
               value={searchTerm}
+              autoFocus
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 background: "linear-gradient(to right, #F43F5E, #8B5CF6)",

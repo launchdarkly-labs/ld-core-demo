@@ -80,8 +80,6 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
     getTransactions();
   }, [financialDBMigration]);
 
-  console.log(wealthManagement);
-
   return (
     <Sheet>
       <SheetTrigger asChild>

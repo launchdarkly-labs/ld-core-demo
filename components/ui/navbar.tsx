@@ -1,13 +1,9 @@
 //@ts-nocheck
 import * as React from "react";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CSNav } from "./csnav";
-import { Search, MessageCircle, Menu, PanelTopOpen, QrCode } from "lucide-react";
-import { RegistrationForm } from "./airwayscomponents/stepregistration";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Search, PanelTopOpen } from "lucide-react";
+import { Avatar, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
 import LoginScreen from "@/components/ui/airwayscomponents/login";
@@ -15,7 +11,6 @@ import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
-import LaunchClub from "./airwayscomponents/launchClub";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,39 +21,138 @@ import {
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
+import { PersonaContext } from "../personacontext";
+import { QuickLoginDialog } from "../quicklogindialog";
 
-const NavBar = React.forwardRef<any>(
-  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
+interface NavBarProps {
+  cart: InventoryItem[];
+  setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
+  variant: string;
+}
+
+interface Persona {
+  id: string | number;
+  personaname: string;
+  personatype: string;
+  personaimage: string;
+  personaemail: string;
+}
+
+const NavBar = React.forwardRef<any, NavBarProps>(
+  (
+    {
+      launchClubLoyalty,
+      cart,
+      setCart,
+      className,
+      variant,
+      handleLogout,
+      ...props
+    },
+    ref
+  ) => {
+    const { isLoggedIn, enrolledInLaunchClub, user, loginUser } =
+      useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
+
+    const { personas } = useContext(PersonaContext);
 
     switch (variant) {
       case "airlines":
         navChild = (
           <>
-            <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-              {enrolledInLaunchClub && <LaunchClubStatus />}
-              <Search className="cursor-pointer hidden sm:block" />
-              <div className="block lg:hidden">
-                <BookedFlights />
-              </div>
-              <div className="cursor-pointer hidden sm:block">
-                <QRCodeImage className="" />
-              </div>
+            {!isLoggedIn ? null : (
+              <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+                {launchClubLoyalty && enrolledInLaunchClub && (
+                  <LaunchClubStatus />
+                )}
+                <Search className="cursor-pointer hidden sm:block" />
+                <div className="block lg:hidden">
+                  <BookedFlights />
+                </div>
+                <div className="cursor-pointer hidden sm:block">
+                  <QRCodeImage className="" />
+                </div>
 
-              <LoginScreen />
-            </div>
+                <LoginScreen />
+
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage
+                        src={
+                          personas.find(
+                            (persona) => persona.personaname === user
+                          )?.personaimage
+                        }
+                        className=""
+                      />
+                    </Avatar>
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-[300px] h-[440px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img
+                          src={
+                            personas.find(
+                              (persona) => persona.personaname === user
+                            )?.personaimage
+                          }
+                          className="rounded-full h-48"
+                        />
+                      </div>
+                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
+                        <p className="pt-4">
+                          Thank you{" "}
+                          {
+                            personas.find(
+                              (persona) => persona.personaname === user
+                            )?.personaname
+                          }{" "}
+                          for flying Launch Airways with{"  "}
+                          <p></p>
+                          <span className="text-2xl">Platinum Tier</span>!
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <Button
+                          onClick={handleLogout}
+                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-to-r from-airlinepurple to-airlinepink  rounded-none"
+                        >
+                          Logout
+                        </Button>
+                        <QuickLoginDialog
+                          personas={personas}
+                          variant={variant}
+                        />
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
           </>
         );
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="40"
+              width="50"
+              className="pr-2"
+            >
+              <image
+                href="/launch-airways.svg"
+                height="40"
+                width="40"
+                alt="Launch Airways"
+              />
             </svg>
-            <p className="text-base flex font-sohnelight">
+            <p className="text-base flex font-sohnelight text-white">
               <strong className="font-semibold font-sohne">Launch</strong>
               {"\u00A0"}
               {"\u00A0"}Airways
@@ -119,33 +213,56 @@ const NavBar = React.forwardRef<any>(
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
-                      <AvatarImage src="woman.png" className="" />
+                      <AvatarImage
+                        src={
+                          personas.find(
+                            (persona) => persona.personaname === user
+                          )?.personaimage
+                        }
+                        className=""
+                      />
                     </Avatar>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[300px] h-[400px]">
+                  <PopoverContent className="w-[300px] h-[440px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
-                        <img src="woman.png" className="rounded-full h-48" />
+                        <img
+                          src={
+                            personas.find(
+                              (persona) => persona.personaname === user
+                            )?.personaimage
+                          }
+                          className="rounded-full h-48"
+                        />
                       </div>
-                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4 font-robotobold text-xl items-center align-center">
+                      <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                         <p className="pt-4">
-                          Thank you banking with us{"  "}
+                          Thank you{" "}
+                          {
+                            personas.find(
+                              (persona) => persona.personaname === user
+                            )?.personaname
+                          }{" "}
+                          for banking with us as{"  "}
+                          <p></p>
                           <span className="text-2xl">Platinum Member</span>!
                         </p>
                       </div>
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white items-center my-6 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-lg rounded-none"
+                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-xl rounded-none"
                         >
                           Logout
                         </Button>
+                        <QuickLoginDialog
+                          personas={personas}
+                          variant={variant}
+                        />
                       </div>
                     </>
                   </PopoverContent>
                 </Popover>
-                {/* <RegistrationForm />
-            <LoginScreen /> */}
               </div>
             )}
           </>
@@ -153,8 +270,18 @@ const NavBar = React.forwardRef<any>(
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
-              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="28"
+              width="174"
+              className="pr-2"
+            >
+              <image
+                href="/toggle-bank.svg"
+                height="28"
+                width="174"
+                alt="Toggle Bank"
+              />
             </svg>
           </>
         );
@@ -166,7 +293,9 @@ const NavBar = React.forwardRef<any>(
                 <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
+                <DropdownMenuItem href="/bank">
+                  External Accounts
+                </DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
               </>
             ) : null}
@@ -221,21 +350,92 @@ const NavBar = React.forwardRef<any>(
       case "market":
         navChild = (
           <>
-            <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
-              <StoreCart cart={cart} setCart={setCart} />
-              <Search color={"white"} className="hidden sm:block cursor-pointer" />
-              <div className="hidden sm:block cursor-pointer text-white">
-                <QRCodeImage />
-              </div>
-              <MarketLoginScreen />
-            </div>
+            {!isLoggedIn ? null : (
+              <>
+                <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
+                  <StoreCart cart={cart} setCart={setCart} />
+                  <Search
+                    color={"white"}
+                    className="hidden sm:block cursor-pointer"
+                  />
+                  <div className="hidden sm:block cursor-pointer text-white">
+                    <QRCodeImage />
+                  </div>
+                  <MarketLoginScreen />
+
+                  <Popover>
+                    <PopoverTrigger>
+                      <Avatar>
+                        <AvatarImage
+                          src={
+                            personas.find(
+                              (persona) => persona.personaname === user
+                            )?.personaimage
+                          }
+                          className=""
+                        />
+                      </Avatar>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] h-[440px]">
+                      <>
+                        <div className="mx-auto flex place-content-center w-full">
+                          <img
+                            src={
+                              personas.find(
+                                (persona) => persona.personaname === user
+                              )?.personaimage
+                            }
+                            className="rounded-full h-48"
+                          />
+                        </div>
+                        <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
+                          <p className="pt-4">
+                            Thank you{" "}
+                            {
+                              personas.find(
+                                (persona) => persona.personaname === user
+                              )?.personaname
+                            }{" "}
+                            for shopping with us as{"  "}
+                            <p></p>
+                            <span className="text-2xl">Premium Member</span>!
+                          </p>
+                        </div>
+                        <div className="mx-auto text-center">
+                          <Button
+                            onClick={handleLogout}
+                            className=" bg-red-700 items-center font-audimat my-2 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-xl rounded-none"
+                          >
+                            Logout
+                          </Button>
+                          <QuickLoginDialog
+                            personas={personas}
+                            variant={variant}
+                          />
+                        </div>
+                      </>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </>
+            )}
           </>
         );
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-0 sm:pr-2">
-              <image href="/market.png" height="40" width="40" alt="Marketplace" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="40"
+              width="50"
+              className="pr-0 sm:pr-2"
+            >
+              <image
+                href="/market.png"
+                height="40"
+                width="40"
+                alt="Marketplace"
+              />
             </svg>
             <p className="text-sm sm:text-base flex text-white font-sohnelight">
               <strong className="font-sohne">Galaxy </strong>&nbsp;Marketplace
@@ -317,7 +517,7 @@ const NavBar = React.forwardRef<any>(
     }
 
     return (
-      <nav className="sticky w-full flex top-0 bg-navgray z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
+      <nav className="sticky w-full flex top-0 bg-black z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
         <div className="items-center flex gap-x-6 text-white">
           <CSNav />
         </div>
@@ -333,7 +533,9 @@ const NavBar = React.forwardRef<any>(
           </DropdownMenuPortal>
         </DropdownMenu>
         {isLoggedIn ? (
-          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">
+            {navLinksGroup}
+          </div>
         ) : null}
         {navChild}
       </nav>

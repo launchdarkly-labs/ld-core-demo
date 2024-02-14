@@ -19,17 +19,18 @@ import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 
 export default function LaunchClub() {
-
   const client = useLDClient();
 
-  const {
-    bookedTrips,
-    cancelTrip,
-    setBookedTrips,
-  } = useContext(TripsContext);
+  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, enrolledInLaunchClub,
-    setEnrolledInLaunchClub } = useContext(LoginContext)
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    loginUser,
+    logoutUser,
+    enrolledInLaunchClub,
+    setEnrolledInLaunchClub,
+  } = useContext(LoginContext);
   const [status, setStatus] = useState("Economy");
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,12 +40,11 @@ export default function LaunchClub() {
   };
 
   const updateLaunchClubStatus = async () => {
-    setEnrolledInLaunchClub(true)
+    setEnrolledInLaunchClub(true);
     const context = await client?.getContext();
-    context.user.launchclub = "platinum" 
-    client.identify(context);
+    context.user.launchclub = "platinum";
+    await client.identify(context);
   };
-
 
   const perks = [
     {
@@ -104,9 +104,7 @@ export default function LaunchClub() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button
-          className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom"
-        >
+        <button className="mx-6 pb-12 text-sm font-sohnelight pt-1.5 bg-transparent mr-4 flex items-start text-airlineinactive hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom">
           Launch Club
         </button>
       </SheetTrigger>
@@ -164,14 +162,14 @@ export default function LaunchClub() {
               </div>
               <div className="flex flex-col">
                 <SheetTrigger as child>
-                <Button
-                  onClick={() => {
-                    updateLaunchClubStatus()
-                  }}
-                  className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
-                >
-                  Enroll Today!
-                </Button>
+                  <Button
+                    onClick={() => {
+                      updateLaunchClubStatus();
+                    }}
+                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
+                  >
+                    Enroll Today!
+                  </Button>
                 </SheetTrigger>
               </div>
             </SheetDescription>
@@ -185,10 +183,7 @@ export default function LaunchClub() {
           ></motion.div>
         </SheetContent>
       ) : (
-        <SheetContent
-          className="w-1/2 overflow-y-scroll bg-white"
-          side="right"
-        >
+        <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohnelight text-3xl flex items-center justify-center">
               <div className="mx-auto flex place-content-center w-full">
