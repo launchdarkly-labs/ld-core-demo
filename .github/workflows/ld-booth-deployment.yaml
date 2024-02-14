@@ -64,6 +64,17 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }} .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:ld-demo${{ matrix.environment }}-${{ github.run_number }}
 
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace demo${{ matrix.environment }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: create namespace demo${{ matrix.environment }}
+
       - name: Update K8s Deploy File
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
