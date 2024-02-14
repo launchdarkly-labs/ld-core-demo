@@ -61,7 +61,7 @@ jobs:
           touch .tfvars
           echo 'access_token = "${{ secrets.LD_API_KEY }}"' >> .tfvars
           echo 'project_key = "${{ env.DEMO_NAMESPACE }}-ld-demo"' >> .tfvars
-          echo 'ld_env_key' = "${{ env.DEMO_NAMESPACE }}" >> .tfvars
+          echo 'ld_env_key = "${{ env.DEMO_NAMESPACE }}"' >> .tfvars
           terraform init
           terraform apply -var-file=".tfvars" -auto-approve
         
