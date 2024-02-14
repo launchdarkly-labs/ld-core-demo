@@ -14,7 +14,7 @@ env:
 
 jobs:
   remove-demoenv:
-    if: contains(github.ref, 'demoenv')
+    if: ${{ github.ref_type == 'branch' && contains(github.ref, 'demoenv') }}
     runs-on: ubuntu-latest
 
     steps:
