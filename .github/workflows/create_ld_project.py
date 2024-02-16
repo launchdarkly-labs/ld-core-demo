@@ -42,6 +42,7 @@ def main():
                 with open(env_file, "a") as f:
                     f.write(f"LD_SDK_KEY={sdk_key}\n")
                     f.write(f"LD_CLIENT_KEY={client_key}\n")
+                    f.write(f"RUN_TERRAFORM=false\n")
             except IOError as e:
                 print(f"Unable to write to environment file: {e}")
                 exit(1)
@@ -89,6 +90,7 @@ def main():
                         with open(env_file, "a") as f:
                             f.write(f"LD_SDK_KEY={sdk_key}\n")
                             f.write(f"LD_CLIENT_KEY={client_key}\n")
+                            f.write(f"RUN_TERRAFORM=true\n")
                     except IOError as e:
                         print(f"Unable to write to environment file: {e}")
                         exit(1)
