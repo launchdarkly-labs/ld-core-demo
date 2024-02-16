@@ -1,6 +1,9 @@
 name: "Build and Deploy Images to Demo Environment"
 
 on:
+  push:
+    branches:
+      - '*demoenv*' # This workflow will run when someone pushes to a branch matching the pattern
   create:
     branches:
       - '*demoenv*' # This workflow will run when a new branch is created
@@ -51,11 +54,13 @@ jobs:
           python ./.github/workflows/create_ld_project.py
 
       - name: Apply Terraform
+        if: env.RUN_TERRAFORM == 'true'
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: "> 1.1.6"
 
       - name: Terraform Apply
+        if: env.RUN_TERRAFORM == 'true'
         run: |
           cd ./Terraform/
           touch .tfvars
@@ -83,15 +88,15 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ld-core-demo
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-latest
 
       - name: Update K8s Deploy File
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
           URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:latest
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-latest
 
       - name: Check Namespace in Kubernetes
         uses: kodermax/kubectl-aws-eks@master
