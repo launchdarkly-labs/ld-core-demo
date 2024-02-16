@@ -1,11 +1,10 @@
 name: "Build and Deploy Images to LD Booth Demos"
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     - cron: "0 0 * * 6"
+      branches:
+        - main
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
