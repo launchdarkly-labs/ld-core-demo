@@ -23,6 +23,8 @@ export default function Marketplace() {
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
+    useContext(LoginContext);
 
   const LDClient = useLDClient();
   const flags = useFlags();
@@ -43,6 +45,12 @@ export default function Marketplace() {
     console.log("Adding");
     setCart([...cart, item]);
   };
+
+  const storeAccessed = () => {
+    LDClient?.track("item-accessed", LDClient.getContext(), 1);
+    console.log("Store Accessed");
+  };
+
 
   useEffect(() => {
     fetch("/api/storeInventory?storename=all")
@@ -86,8 +94,11 @@ export default function Marketplace() {
     setCookie("ldcontext", context);
   }
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
-    useContext(LoginContext);
+    useEffect(() => {
+      if (isLoggedIn) {
+        storeAccessed();
+      }
+    }, [isLoggedIn]);
 
 
   return (

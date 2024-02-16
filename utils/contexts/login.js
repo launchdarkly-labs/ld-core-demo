@@ -27,7 +27,6 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
-    setEnrolledInLaunchClub(false);
     console.log("updated context", context);
     await client.identify(context);
   };
