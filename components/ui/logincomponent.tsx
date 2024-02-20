@@ -67,7 +67,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setSubmitError(null);
   };
 
-  //TODO: what is this 
+
   function handleLogin(e) {
     setIsLoggedIn(true);
     let email;
