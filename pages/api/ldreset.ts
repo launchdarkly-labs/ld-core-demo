@@ -58,19 +58,17 @@ export default async function handler(
 
                 if (parseInt(rateLimitRemaining as string) <= CALL_THRESHOLD) {
                     let resetTime = parseInt(response.headers.get("X-Ratelimit-Reset") as string);
-                    console.log("getting reset timing");
+                    //console.log("getting reset timing");
                     delay = await timeToNextReset(resetTime);
                     delay = delay < 1 ? 0.5 : delay;
-                    console.log(
-                        `Rate limit is too low. It is currently ${rateLimitRemaining}. Retrying in ${delay} seconds.`
-                    );
+                    //console.log(`Rate limit is too low. It is currently ${rateLimitRemaining}. Retrying in ${delay} seconds.`);
                     await new Promise((resolve) => setTimeout(resolve, delay * 1000));
-                    console.log("current tries " + tries);
+                    //console.log("current tries " + tries);
                     tries -= 1;
                 } else {
                     tries = defaultTries;
                     if (response.status === 204) {
-                        await console.log("completed! Received " + response.status);
+                        //await console.log("completed! Received " + response.status);
                         return null;
                     } else {
                         return response;
@@ -90,7 +88,7 @@ export default async function handler(
     async function get_flag_list(url: string) {
         const response = await checkRateLimit("GET", url, API_KEY!, {});
         const responseData = await response!.json();
-        console.log(responseData); // Add this line
+        //console.log(responseData); // Add this line
         const items = responseData.items;
         const keys = items.map((item: any) => item.key);
         return keys;
@@ -98,7 +96,7 @@ export default async function handler(
 
     async function copy_all_flag_targets() {
         let flag_list = await get_flag_list(`/flags/${PROJECT_KEY}`);
-        console.log(flag_list)
+        //console.log(flag_list)
         const flag_copy_body = {
             "source": {
                 "key": SOURCE_ENVIRONMENT
@@ -118,9 +116,9 @@ export default async function handler(
 
         for (let i of flag_list) {
             let flag_copy_url = `/flags/${PROJECT_KEY}/${i}/copy`;
-            console.log(`Trying at url ${flag_copy_url}`);
+            //console.log(`Trying at url ${flag_copy_url}`);
             await checkRateLimit("POST", flag_copy_url, API_KEY!, flag_copy_body);
-            console.log(`Successfully copied settings for ${i}`);
+            //console.log(`Successfully copied settings for ${i}`);
         }
     }
 
@@ -149,9 +147,9 @@ export default async function handler(
 
         for (let i of flag_list) {
             let flag_copy_url = `/flags/${PROJECT_KEY}/${i}/copy`;
-            console.log(`Trying at url ${flag_copy_url}`);
+            //console.log(`Trying at url ${flag_copy_url}`);
             await checkRateLimit("POST", flag_copy_url, API_KEY!, flag_copy_body);
-            console.log(`Successfully copied settings for ${i}`);
+            //console.log(`Successfully copied settings for ${i}`);
         }
 
         res.status(200).json({ message: 'All flags reset' });

@@ -15,9 +15,9 @@ export const LoginProvider = ({ children }) => {
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState("economy");
 
-  useEffect(() => {
-    console.log("isLoggedIn from context - " + isLoggedIn);
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   console.log("isLoggedIn from context - " + isLoggedIn);
+  // }, [isLoggedIn]);
 
   const loginUser = async (user, email) => {
     console.log("user",user);

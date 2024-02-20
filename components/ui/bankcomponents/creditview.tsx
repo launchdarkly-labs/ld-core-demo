@@ -101,8 +101,8 @@ export function CreditAccount() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((invoice) => (
-              <TableRow key={invoice.id}>
+            {transactions.map((invoice,i) => (
+              <TableRow key={i}>
                 <TableCell className="font-medium">{invoice.date}</TableCell>
                 <TableCell>{invoice.merchant}</TableCell>
                 <TableCell>{invoice.status}</TableCell>

@@ -95,9 +95,9 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           sm:gap-x-12 lg:gap-x-24"
         >
 
-          {bankingServicesArr.map((ele) => {
+          {bankingServicesArr.map((ele,i) => {
             return (
-              <div className="grid items-center justify-items-center">
+              <div className="grid items-center justify-items-center" key={i}>
                 <img src={ele?.imgSrc} width={96} className="pb-2" />
                 {/* <Banknote size={96} strokeWidth={1} className="pb-2" /> */}
                 <p className="text-xl lg:text-2xl ">{ele?.title} </p>

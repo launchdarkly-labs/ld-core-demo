@@ -29,7 +29,7 @@ export default async function handler(
     const min = low * 1000;
     const max = high * 1000; 
     const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log("Delay is: "+randomDelay)
+    //console.log("Delay is: "+randomDelay)
     return new Promise(resolve => setTimeout(resolve, randomDelay));
   }
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
@@ -45,14 +45,14 @@ export default async function handler(
     readOld: async (key?: string) => {
       async function getMyData() {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
-        console.log("random failure number: " + randomNumber)
+        //console.log("random failure number: " + randomNumber)
         if (randomNumber <= 20) {
-          console.log("Error caught -")
+          //console.log("Error caught -")
           throw new Error('Simulated failure');
         }
-        console.log("Waiting delay")
+        // console.log("Waiting delay")
         await delay(1,3)
-        console.log("Delay complete")
+        // console.log("Delay complete")
         return checkData
       }
 
@@ -72,7 +72,7 @@ export default async function handler(
       checkingTransactions = await db.select().from(transactions).where(eq(transactions.accounttype, 'checking'))
 
       if (checkingTransactions) {
-        console.log(checkingTransactions)
+        //console.log(checkingTransactions)
         return ld.LDMigrationSuccess(checkingTransactions)
       } else {
         // @ts-ignore
@@ -113,10 +113,10 @@ export default async function handler(
     const checkingTransactions = await migration.read('financialDBMigration', jsonObject, 'off')
 
     if (checkingTransactions.success) {
-      console.log("the success is - " + JSON.stringify(checkingTransactions))
+      //console.log("the success is - " + JSON.stringify(checkingTransactions))
       res.status(200).json(checkingTransactions.result)
     } else {
-      console.log("the failure is - " + JSON.stringify(checkingTransactions))
+      //("the failure is - " + JSON.stringify(checkingTransactions))
       res.status(502).json({ error: 'Server encountered an error processing the request.' })
     }
   }
