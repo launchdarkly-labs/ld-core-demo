@@ -6,10 +6,8 @@ import { Search, PanelTopOpen } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
-// import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
-import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
 import {
   DropdownMenu,
@@ -76,8 +74,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <QRCodeImage className="" />
                 </div>
 
-                {/* <LoginScreen /> */}
-
+            
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -361,7 +358,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <div className="hidden sm:block cursor-pointer text-white">
                     <QRCodeImage />
                   </div>
-                  <MarketLoginScreen />
 
                   <Popover>
                     <PopoverTrigger>
