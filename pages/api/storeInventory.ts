@@ -16,7 +16,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data[] | { error: string }>
 ) {
-  console.log(req.query);
+
   const { storename } = req.query;
   if (typeof storename !== "string") {
     res.status(400).json({ error: "Invalid storename" });
@@ -41,7 +41,7 @@ export default async function handler(
       .where(eq(galaxymarketplace.vendor, storename));
   }
   // @ts-ignore
-  console.log(storeInventory);
+
 
   res.status(200).json(storeInventory);
 }

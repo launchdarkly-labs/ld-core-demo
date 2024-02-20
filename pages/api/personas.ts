@@ -182,7 +182,7 @@ async function handlePost(
       .execute();
     res.status(201).json(newPersona);
   } catch (error) {
-    console.log(error);
+  
     res.status(500).json({ error: "Internal Server Error" });
   }
 }

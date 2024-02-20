@@ -59,7 +59,7 @@ export default async function handler(
       const result = await getMyData()
 
       if (result) {
-        console.log(result)
+
         return ld.LDMigrationSuccess(result);
       } else {
         //@ts-ignore

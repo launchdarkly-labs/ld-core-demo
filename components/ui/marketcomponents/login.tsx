@@ -38,7 +38,6 @@ export default function MarketLoginScreen() {
   function handleLogin(e) {
     setIsLoggedIn(true);
     let email = inputRef.current?.value;
-    console.log(email);
     if (!email) {
       email = "jenn@launchmail.io";
     }

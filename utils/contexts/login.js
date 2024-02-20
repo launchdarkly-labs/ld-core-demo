@@ -20,6 +20,8 @@ export const LoginProvider = ({ children }) => {
   }, [isLoggedIn]);
 
   const loginUser = async (user, email) => {
+    console.log("user",user);
+    console.log("email",email);
     const context = await client?.getContext();
     context.user.name = user;
     context.user.email = email;
@@ -27,12 +29,12 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
-    console.log("updated context", context);
+
     await client.identify(context);
   };
 
   const logoutUser = async () => {
-    console.log("logged out of user");
+
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);

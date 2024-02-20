@@ -43,7 +43,6 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
   const totalCost = (cart || []).reduce((total: number, item: InventoryItem) => total + Number(item.cost), 0);  
 
   const cartClick = () => {
-    console.log("Tracking Cart View")
     LDClient?.track('cart-accessed', LDClient.getContext(), 1) 
   }
 
@@ -53,7 +52,6 @@ export function StoreCart({ cart, setCart }:{cart: any, setCart: any}) {
   };
 
   const checkOutTracking = () => {
-    console.log("Tracking Checkout")
     LDClient?.track('customer-checkout', LDClient.getContext(), 1)
   }
 

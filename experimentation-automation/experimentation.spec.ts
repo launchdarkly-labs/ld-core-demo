@@ -21,7 +21,7 @@ for (let iteration = 0; iteration < iterationCount; iteration++) {
     const gotoStore = shouldClickStore({ label });
 
     if (!labeledProduct) {
-      console.log(`Iteration: ${iteration}, No products with labels present. Exiting iteration.`);
+      //console.log(`Iteration: ${iteration}, No products with labels present. Exiting iteration.`);
       return; // Exit the current iteration of the test if no labeled products are found
     }
 
@@ -43,6 +43,6 @@ for (let iteration = 0; iteration < iterationCount; iteration++) {
     }
 
     // Logging to see the actions taken
-    console.log(`Iteration: ${iteration}, AddToCart: ${addToCart}, Checkout: ${checkout}`);
+    //console.log(`Iteration: ${iteration}, AddToCart: ${addToCart}, Checkout: ${checkout}`);
   })
 }

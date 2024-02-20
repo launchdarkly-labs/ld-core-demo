@@ -61,10 +61,7 @@ export default function Airways() {
     setCookie("ldcontext", context);
   }
 
-  useEffect(() => {
-    console.log(date);
-    console.log(bookedTrips);
-  }, [bookedTrips]);
+
 
   function bookTrip() {
     const startDate = `${date!.from.getMonth() + 1

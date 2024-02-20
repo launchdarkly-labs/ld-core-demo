@@ -129,7 +129,7 @@ export default async function handler(
         const responseData = await response!.json();
         const items = responseData.items;
         const flag_list = items.map((item: any) => item.key);
-        console.log(responseData)
+
         const flag_copy_body = {
             "source": {
                 "key": SOURCE_ENVIRONMENT

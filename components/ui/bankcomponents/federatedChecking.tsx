@@ -43,7 +43,7 @@ export function FederatedCheckingAccount() {
     let transactionsJson: Transaction[];
     if (response.status == 200) {
       const data = await response.json();
-      console.log("The data is... ", data);
+  
       transactionsJson = data;
     } else {
       transactionsJson = [
@@ -58,7 +58,6 @@ export function FederatedCheckingAccount() {
         },
       ];
     }
-    console.log(transactionsJson);
     setTransactions(transactionsJson);
     return transactionsJson;
   }

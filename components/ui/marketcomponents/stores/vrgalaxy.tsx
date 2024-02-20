@@ -54,7 +54,7 @@ export function VRgalaxy({
 
   const [inventory, setInventory] = useState([]);
 
-  console.log(headerLabel);
+ 
 
   useEffect(() => {
     fetch("/api/storeInventory?storename=vrgalaxy")
@@ -63,7 +63,6 @@ export function VRgalaxy({
   }, []);
 
   async function storeOpened() {
-    console.log("Tracking store access");
     LDClient?.track("store-accessed", LDClient.getContext(), 1);
   }
 

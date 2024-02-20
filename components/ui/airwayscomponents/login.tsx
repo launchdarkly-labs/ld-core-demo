@@ -39,7 +39,6 @@ export default function LoginScreen() {
   function handleLogin(e) {
     // setIsLoggedIn(true);
     let email = inputRef.current?.value;
-    console.log(inputRef.current.value);
     if (!email) {
       email = "jenn@launchmail.io";
     }
