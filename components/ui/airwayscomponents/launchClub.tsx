@@ -130,9 +130,9 @@ export default function LaunchClub() {
             </SheetTitle>
             <SheetDescription className="font-sohnelight flex flex-col items-center justify-center">
               <div className="flex">
-                <h1 className="text-black text-4xl">
+                <p className="text-black text-4xl">
                   Launch Club Loyalty Program
-                </h1>
+                </p>
               </div>
               <div className="flex text-xl my-4 text-black text-center">
                 Introducing our the new Launch Airways loyalty program. Join now

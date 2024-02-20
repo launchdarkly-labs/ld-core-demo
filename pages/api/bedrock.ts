@@ -9,7 +9,6 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     const client = new BedrockRuntimeClient({ region: "us-west-2" });
     const prompt = req.body;
 
-    console.log("Here comes your query: " + prompt)
 
 // Debug jurassic another time 
     const input2 = {
@@ -37,10 +36,10 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
         let decoder = new TextDecoder();
         let jsontext = JSON.parse(decoder.decode(response.body));
         // jurassic return structure
-        // console.log(jsontext.completions[0].data.text)
+
         res.status(200).json(jsontext);
     } catch (error: any) {
-        console.log(error);
+      
         throw new Error(error.message);
     }
 }

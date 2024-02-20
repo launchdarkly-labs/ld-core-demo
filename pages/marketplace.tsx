@@ -40,15 +40,15 @@ export default function Marketplace() {
 
 
   const addToCart = (item: any) => {
-    console.log("Adding Item to Store");
+
     LDClient?.track("item-added", LDClient.getContext(), 1);
-    console.log("Adding");
+
     setCart([...cart, item]);
   };
 
   const storeAccessed = () => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
-    console.log("Store Accessed");
+
   };
 
 
@@ -57,10 +57,6 @@ export default function Marketplace() {
       .then((response) => response.json())
       .then((data) => setProducts(data));
   }, []);
-
-  useEffect(() => {
-    console.log(cart);
-  }, [cart]);
 
   useEffect(() => {
     setHeaderLabel(storeAttentionCallout);

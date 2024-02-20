@@ -14,7 +14,7 @@ import { PersonaProvider } from "@/components/personacontext";
 let c;
 
 if (typeof window !== "undefined") {
-  const uniqueKey = uuidv4().slice(0, 4);
+  //const uniqueKey = uuidv4().slice(0, 4);
 
   const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
   const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
@@ -27,22 +27,26 @@ if (typeof window !== "undefined") {
     context: {
       kind: "multi",
       user: {
-        key: uniqueKey,
+        key: "jenn@launchmail.io",
         name: "Jenn",
-        appName: "DefaultDemo",
+        email: "jenn@launchmail.io",
+        appName: "LD Demo",
       },
       device: {
-        key: uniqueKey,
+        key: device,
+        name: device,
         operating_system: operatingSystem,
         platform: device,
       },
       location: {
-        key: uniqueKey,
+        key: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        name: Intl.DateTimeFormat().resolvedOptions().timeZone,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         country: "US",
       },
       experience: {
-        key: uniqueKey,
+        key: "a380",
+        name: "a380",
         airplane: "a380",
       },
     },

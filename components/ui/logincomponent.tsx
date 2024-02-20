@@ -67,6 +67,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setSubmitError(null);
   };
 
+
   function handleLogin(e) {
     setIsLoggedIn(true);
     let email;

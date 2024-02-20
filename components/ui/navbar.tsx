@@ -6,10 +6,8 @@ import { Search, PanelTopOpen } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
-import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
-import MarketLoginScreen from "./marketcomponents/login";
 import { StoreCart } from "./marketcomponents/stores/storecart";
 import {
   DropdownMenu,
@@ -76,8 +74,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <QRCodeImage className="" />
                 </div>
 
-                <LoginScreen />
-
+            
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -113,7 +110,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                             )?.personaname
                           }{" "}
                           for flying Launch Airways with{"  "}
-                          <p></p>
+                          <br></br>
                           <span className="text-2xl">Platinum Tier</span>!
                         </p>
                       </div>
@@ -243,9 +240,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                               (persona) => persona.personaname === user
                             )?.personaname
                           }{" "}
-                          for banking with us as{"  "}
-                          <p></p>
-                          <span className="text-2xl">Platinum Member</span>!
+                          for banking with us as a
+                          <br></br>
+                          <span className="text-2xl">Platinum Member!</span>
                         </p>
                       </div>
                       <div className="mx-auto text-center">
@@ -361,7 +358,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <div className="hidden sm:block cursor-pointer text-white">
                     <QRCodeImage />
                   </div>
-                  <MarketLoginScreen />
 
                   <Popover>
                     <PopoverTrigger>
@@ -397,7 +393,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                               )?.personaname
                             }{" "}
                             for shopping with us as{"  "}
-                            <p></p>
+                            <br></br>
                             <span className="text-2xl">Premium Member</span>!
                           </p>
                         </div>

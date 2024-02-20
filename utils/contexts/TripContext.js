@@ -28,17 +28,10 @@ export const TripsProvider = ({ children }) => {
   }]);
 
     
-    useEffect(() => {
-        console.log(bookedTrips)
-    }, [bookedTrips]);
-    
     const cancelTrip = (index) => {
-        setBookedTrips(prevTrips => {
-          console.log("Current Trips - "+prevTrips)
-          console.log("index -"+index)
+        setBookedTrips(prevTrips => {     
           const newTrips = [...prevTrips];
           newTrips.splice(index, 1);
-          console.log("Updated Trips - "+newTrips)
           return newTrips;
         });
       };

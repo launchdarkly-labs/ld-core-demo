@@ -15,24 +15,27 @@ export const LoginProvider = ({ children }) => {
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState("economy");
 
-  useEffect(() => {
-    console.log("isLoggedIn from context - " + isLoggedIn);
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   console.log("isLoggedIn from context - " + isLoggedIn);
+  // }, [isLoggedIn]);
 
   const loginUser = async (user, email) => {
+    console.log("user",user);
+    console.log("email",email);
     const context = await client?.getContext();
+    console.log("loginUser",context)
     context.user.name = user;
     context.user.email = email;
     context.user.key = email;
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
-    console.log("updated context", context);
+
     await client.identify(context);
   };
 
   const logoutUser = async () => {
-    console.log("logged out of user");
+
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
@@ -43,6 +46,7 @@ export const LoginProvider = ({ children }) => {
 
   const setPlaneContext = async (plane) => {
     const context = await client?.getContext();
+    console.log("setPlaneContext",context)
     context.experience.airplane = plane;
     console.log("Plane context registered for trip as - " + plane);
     client.identify(context);
@@ -50,6 +54,7 @@ export const LoginProvider = ({ children }) => {
 
   const upgradeLaunchClub = async (status) => {
     const context = await client?.getContext();
+    console.log("upgradeLaunchClub",context)
     setLaunchClubStatus(status);
     context.user.launchclub = status;
     console.log("User upgraded to " + status + " status");

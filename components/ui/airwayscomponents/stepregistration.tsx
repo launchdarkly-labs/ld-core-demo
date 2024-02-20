@@ -76,7 +76,7 @@ export function RegistrationForm() {
   });
 
   const onSubmit1 = async (values: FormData1) => {
-    console.log(values);
+
     setFormData((prevState) => ({ ...prevState, ...values }));
     const usercheck = await fetch("/api/checkuser", {
       method: "POST",
@@ -86,22 +86,19 @@ export function RegistrationForm() {
       body: JSON.stringify(values),
     });
     if (usercheck.status !== 200) {
-      console.log("Username or email is already registered");
+      alert("Username or email is already registered");
     } else {
       setStep(2);
     }
   };
 
   const onSubmit2 = (values: FormData2) => {
-    console.log(values);
     setFormData((prevState) => ({ ...prevState, ...values }));
     setStep(3);
   };
 
   const onSubmit3 = async (values: FormData3) => {
-    console.log(values);
     const finalFormData = { ...formData, ...values };
-    console.log(finalFormData);
     try {
       const response = await fetch("/api/signup", {
         method: "POST",
@@ -116,7 +113,6 @@ export function RegistrationForm() {
       }
 
       const data = await response.json();
-      console.log(data);
       setOpen(false);
       setStep(1);
       await setFormData({});

@@ -41,13 +41,10 @@ export default function BookedFlights() {
   const [toAirport, setToAirport] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(bookedTrips);
-
   async function travelLocationsInfo(start: any, end: any) {
     try {
       const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`;
 
-      console.log(prompt);
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -62,7 +59,6 @@ export default function BookedFlights() {
 
       const data = await response.json();
       setAIResponse(data.completion);
-      console.log(data.completion);
       return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);
@@ -75,7 +71,6 @@ export default function BookedFlights() {
     try {
       const prompt: string = `Provide me a 40 character informational description for the ${airplane} indicated at the end of this. The advertisement should make the customer excited to fly on it. Provide details on the manufacturer and size of the aircraft, and typical cruising altitude and speed. Do not show anything that would indicate a prompt response.`;
 
-      console.log(prompt);
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -90,7 +85,6 @@ export default function BookedFlights() {
 
       const data = await response.json();
       setAIResponse(data.completion);
-      console.log(data.completion);
       return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);
@@ -104,7 +98,6 @@ export default function BookedFlights() {
     try {
       const prompt: string = `Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${airport}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit.`;
 
-      console.log(prompt);
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -119,7 +112,6 @@ export default function BookedFlights() {
 
       const data = await response.json();
       setAIResponse(data.completion);
-      console.log(data.completion);
       return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);

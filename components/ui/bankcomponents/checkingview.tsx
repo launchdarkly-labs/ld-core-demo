@@ -56,7 +56,6 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
     let transactionsJson: Transaction[];
     if (response.status == 200) {
       const data = await response.json();
-      console.log("The data is... ", data);
       transactionsJson = data;
     } else {
       transactionsJson = [
@@ -71,7 +70,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         },
       ];
     }
-    console.log(transactionsJson);
+
     setTransactions(transactionsJson);
     return transactionsJson;
   }

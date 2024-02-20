@@ -38,7 +38,7 @@ export default function Bank() {
 
   async function submitQuery(query: any) {
     try {
-      console.log(prompt);
+
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -53,7 +53,7 @@ export default function Bank() {
 
       const data = await response.json();
       setAIResponse(data.completion);
-      console.log(data.completion);
+    
       return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);
