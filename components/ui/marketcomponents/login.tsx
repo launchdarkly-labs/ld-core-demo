@@ -35,7 +35,9 @@ export default function MarketLoginScreen() {
     setUsername("");
   };
 
+  //TODO: what is this 
   function handleLogin(e) {
+    console.log("this is being used in market");
     setIsLoggedIn(true);
     let email = inputRef.current?.value;
     if (!email) {

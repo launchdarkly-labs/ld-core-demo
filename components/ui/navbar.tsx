@@ -6,7 +6,7 @@ import { Search, PanelTopOpen } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import LoginContext from "@/utils/contexts/login";
-import LoginScreen from "@/components/ui/airwayscomponents/login";
+// import LoginScreen from "@/components/ui/airwayscomponents/login";
 import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
 import MarketLoginScreen from "./marketcomponents/login";
@@ -76,7 +76,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <QRCodeImage className="" />
                 </div>
 
-                <LoginScreen />
+                {/* <LoginScreen /> */}
 
                 <Popover>
                   <PopoverTrigger>
