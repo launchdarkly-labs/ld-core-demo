@@ -48,7 +48,7 @@ const WealthManagementSheet = ({
       animate="visible"
       exit="exit"
       variants={variants}
-      className="p-24 bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
+      className="p-24  bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
     >
       <p className="text-white font-sohne mb-6 text-[36px]">Wealth Management</p>
       <Sheet>
