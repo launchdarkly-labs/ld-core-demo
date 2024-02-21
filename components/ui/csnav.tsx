@@ -1,22 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Navigation } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import ReleaseIcon from "./public/Release-Icon.png";
 
 export function CSNav() {
   const router = useRouter();
