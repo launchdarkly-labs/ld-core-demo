@@ -201,13 +201,13 @@ export default function Bank() {
               ) : null}
             </section>
 
-            <section className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-              <div className={`w-full  ${wealthManagement ? "sm:w-[60%]" : "sm:w-full"}`}>
+            <section className="flex flex-col xl:flex-row w-full gap-y-8 sm:gap-x-8 mb-10 h-full">
+              <div className={`w-full  ${wealthManagement ? "xl:w-[60%]" : "sm:w-full"}`}>
                 <AccountTrends data={data} />
               </div>
 
               {wealthManagement ? (
-                <div className="w-full sm:w-[40%]">
+                <div className="w-full xl:w-[40%]">
                   <WealthManagementSheet
                     data={data}
                     aiPrompt={aiPrompt}
@@ -220,7 +220,7 @@ export default function Bank() {
               ) : null}
             </section>
 
-            <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
+            <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 sm:gap-x-8 justify-between">
               <div className="w-full lg:w-1/2">
                 <img src="CC.png" className="shadow-xl" />
               </div>
