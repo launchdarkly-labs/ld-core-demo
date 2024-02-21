@@ -2,6 +2,8 @@ name: "Remove Demo Environment From K8s and LD"
 
 on:
   delete:
+    branches:
+      - '*demoenv*'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -13,13 +15,26 @@ env:
   LD_API_KEY: ${{ secrets.LD_API_KEY }}
 
 jobs:
+
+  get-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get deleted branch name
+        run: echo "DELETED_BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
   remove-demoenv:
-    if: github.ref_type == 'branch' && contains(github.ref, 'demoenv')
+    if: contains(env.DELETED_BRANCH_NAME, 'demoenv')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Get deleted branch name
+        run: echo "DELETED_BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Set namespace for deployment
         id: set_namespace
