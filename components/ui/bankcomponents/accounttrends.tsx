@@ -10,7 +10,7 @@ import {
 
 export function AccountTrends({ data }) {
   return (
-    <section
+    <div
       className={`flex flex-col p-10 shadow-xl w-full h-[408px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}
     >
       <p className="aiinsightstext pt-4">6-Month Account Trend</p>
@@ -38,6 +38,6 @@ export function AccountTrends({ data }) {
           </defs>
         </AreaChart>
       </ResponsiveContainer>
-    </section>
+    </div>
   );
 }

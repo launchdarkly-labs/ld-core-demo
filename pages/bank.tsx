@@ -121,7 +121,7 @@ export default function Bank() {
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
               }`}
             >
-              <section className="w-full h-full xl:w-[65%] font-sohne shadow-xl">
+              <section className={`w-full h-full ${federatedAccounts ? "xl:w-[65%]": "xl:w-full" } font-sohne shadow-xl`}>
                 <div className="p-6  bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
@@ -199,10 +199,10 @@ export default function Bank() {
 
             {wealthManagement ? (
               <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-                <div className="w-full sm:w-1/2 ">
+                <section className="w-full sm:w-1/2 ">
                   <AccountTrends data={data} />
-                </div>
-                <div className="w-full sm:w-1/2 max-h-screen items-center">
+                </section>
+                <section className="w-full sm:w-1/2">
                   <WealthManagementSheet
                     data={data}
                     aiPrompt={aiPrompt}
@@ -211,7 +211,7 @@ export default function Bank() {
                     loading={loading}
                     aiResponse={aiResponse}
                   />
-                </div>
+                </section>
               </div>
             ) : (
               <div className="w-full mb-10">
