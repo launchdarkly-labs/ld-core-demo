@@ -121,12 +121,11 @@ export default function Bank() {
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
               }`}
             >
-              <section className="w-full h-full ">
-                <div className="p-6 shadow-xl bg-gradient-blue w-full">
+              <section className="w-full h-full xl:w-[65%] font-sohne shadow-xl">
+                <div className="p-6  bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
-                    <div>
-                      <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
-                    </div>
+                    <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
+
                     <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
                       <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
@@ -142,7 +141,7 @@ export default function Bank() {
                 </div>
               </section>
 
-              <section className=" font-sohne h-full w-full xl:w-auto shadow-xl">
+              <section className="h-full w-full xl:w-[35%]  font-sohne  shadow-xl">
                 {federatedAccounts && (
                   <motion.div
                     initial="hidden"
