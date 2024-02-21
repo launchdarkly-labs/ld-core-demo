@@ -115,7 +115,7 @@ export default function Bank() {
         <div className="mb-8">
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
-          <div className=" w-full px-8 ">
+          <main className="w-full px-8 mx-auto max-w-7xl ">
             <section
               className={`flex flex-col xl:flex-row py-8 ${
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
@@ -123,7 +123,7 @@ export default function Bank() {
             >
               <section
                 className={`w-full h-full ${
-                  federatedAccounts ? "xl:w-[65%]" : "xl:w-full"
+                  federatedAccounts ? "xl:w-[60%]" : "xl:w-full"
                 } font-sohne shadow-xl`}
               >
                 <div className="p-6  bg-gradient-blue w-full">
@@ -145,8 +145,8 @@ export default function Bank() {
                 </div>
               </section>
 
-              <section className="h-full w-full xl:w-[35%]  font-sohne  shadow-xl">
-                {federatedAccounts && (
+              {federatedAccounts ? (
+                <section className="h-full w-full xl:w-[40%]  font-sohne  shadow-xl">
                   <motion.div
                     initial="hidden"
                     animate="visible"
@@ -197,17 +197,17 @@ export default function Bank() {
                       )}
                     </div>
                   </motion.div>
-                )}
-              </section>
+                </section>
+              ) : null}
             </section>
 
-            <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-              <section className={`w-full  ${wealthManagement ? "sm:w-[65%]" :"sm:w-full"}`}>
+            <section className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
+              <div className={`w-full  ${wealthManagement ? "sm:w-[60%]" : "sm:w-full"}`}>
                 <AccountTrends data={data} />
-              </section>
+              </div>
 
               {wealthManagement ? (
-                <section className="w-full sm:w-[35%]">
+                <div className="w-full sm:w-[40%]">
                   <WealthManagementSheet
                     data={data}
                     aiPrompt={aiPrompt}
@@ -216,9 +216,9 @@ export default function Bank() {
                     loading={loading}
                     aiResponse={aiResponse}
                   />
-                </section>
+                </div>
               ) : null}
-            </div>
+            </section>
 
             <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
               <div className="w-full lg:w-1/2">
@@ -228,7 +228,8 @@ export default function Bank() {
                 <img src="Loan.png" className="shadow-xl" />
               </div>
             </div>
-          </div>
+          </main>
+
         </div>
       )}
     </>

@@ -40,7 +40,7 @@ const WealthManagementSheet = ({
     exit: { x: "100%" },
   };
 
-//   const bgBankBlue = getVariantClassName("bank");
+  //   const bgBankBlue = getVariantClassName("bank");
 
   return (
     <motion.div
@@ -60,16 +60,16 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto">
+        <SheetContent className="overflow-auto w-full sm:w-[80%]">
           <SheetHeader>
             <SheetTitle>Welcome to Wealth Management App</SheetTitle>
             <SheetDescription>
               Access to all new Wealth Management features available at your fingertips
             </SheetDescription>
           </SheetHeader>
-          <div>
-            <h3 className=" font-sohne py-6 text-[24px] text-white">Wealth Management</h3>
-          </div>
+
+          <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3>
+
           <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-4 w-full ">
             <div
               className={`relative p-4 flex-1 sm:flex-none sm:basis-1/3 lg:basis-2/5 w-full h-full  text-white bg-gradient-to-r from-indigo-700 to-blue-500 overflow-auto shadow-lg`}
@@ -78,7 +78,7 @@ const WealthManagementSheet = ({
                 <div className="flex justify-between pb-2">
                   <div>
                     <p className=" text-white  font-sohne font-bold text-lg">
-                      Wealth Insights AI <br/>
+                      Wealth Insights AI <br />
                       <span className=" text-white  font-sohne">Powered By Amazon Bedrock</span>
                     </p>
                   </div>
