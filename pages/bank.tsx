@@ -121,7 +121,11 @@ export default function Bank() {
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
               }`}
             >
-              <section className={`w-full h-full ${federatedAccounts ? "xl:w-[65%]": "xl:w-full" } font-sohne shadow-xl`}>
+              <section
+                className={`w-full h-full ${
+                  federatedAccounts ? "xl:w-[65%]" : "xl:w-full"
+                } font-sohne shadow-xl`}
+              >
                 <div className="p-6  bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
                     <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
@@ -197,12 +201,13 @@ export default function Bank() {
               </section>
             </section>
 
-            {wealthManagement ? (
-              <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-                <section className="w-full sm:w-1/2 ">
-                  <AccountTrends data={data} />
-                </section>
-                <section className="w-full sm:w-1/2">
+            <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
+              <section className={`w-full  ${wealthManagement ? "sm:w-[65%]" :"sm:w-full"}`}>
+                <AccountTrends data={data} />
+              </section>
+
+              {wealthManagement ? (
+                <section className="w-full sm:w-[35%]">
                   <WealthManagementSheet
                     data={data}
                     aiPrompt={aiPrompt}
@@ -212,12 +217,8 @@ export default function Bank() {
                     aiResponse={aiResponse}
                   />
                 </section>
-              </div>
-            ) : (
-              <div className="w-full mb-10">
-                <AccountTrends data={data} />
-              </div>
-            )}
+              ) : null}
+            </div>
 
             <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
               <div className="w-full lg:w-1/2">
