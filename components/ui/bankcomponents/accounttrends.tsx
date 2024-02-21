@@ -6,7 +6,7 @@ export function AccountTrends({data}) {
 
     return (
 
-        <div className={`flex flex-col p-10 shadow-xl w-full h-full xl:h-[292px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}>
+        <div className={`flex flex-col p-10 shadow-xl w-full h-[425px] lg:h-[425px] xl:h-[425px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}>
               <p className="aiinsightstext pt-4">
                 6-Month Account Trend
               </p>
