@@ -1,9 +1,6 @@
 name: "Build and Deploy Images to Demo Environment"
 
 on:
-  push:
-    branches:
-      - '*demoenv*' # This workflow will run when someone pushes to a branch matching the pattern
   create:
     branches:
       - '*demoenv*' # This workflow will run when a new branch is created 
