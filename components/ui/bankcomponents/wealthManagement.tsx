@@ -48,7 +48,7 @@ const WealthManagementSheet = ({
       animate="visible"
       exit="exit"
       variants={variants}
-      className="p-24  bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
+      className="p-24 bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
     >
       <p className="text-white font-sohne mb-6 text-[36px]">Wealth Management</p>
       <Sheet>
@@ -60,98 +60,94 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto w-full sm:w-[80%]">
-          <SheetHeader>
-            <SheetTitle>Welcome to Wealth Management App</SheetTitle>
-            <SheetDescription>
+        <SheetContent className="overflow-auto w-full sm:w-full xl:w-[80%] ">
+          <SheetHeader className="mb-10">
+            <SheetTitle className="text-4xl">Welcome to Wealth Management App</SheetTitle>
+            <SheetDescription className="text-xl">
               Access to all new Wealth Management features available at your fingertips
             </SheetDescription>
           </SheetHeader>
 
-          <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3>
+          <div className={`w-full h-full font-sohne`}>
+            <div className="p-6 bg-gradient-to-tr from-teal-400 to-green-600 w-full">
+              <div className="justify-center xl:justify-start">
+                <p className="text-white font-sohne mb-6 text-[24px]">Wealth Management</p>
 
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-4 w-full ">
-            <div
-              className={`relative p-4 flex-1 sm:flex-none sm:basis-1/3 lg:basis-2/5 w-full h-full  text-white bg-gradient-to-r from-indigo-700 to-blue-500 overflow-auto shadow-lg`}
-            >
-              <div>
-                <div className="flex justify-between pb-2">
-                  <div>
-                    <p className=" text-white  font-sohne font-bold text-lg">
-                      Wealth Insights AI <br />
-                      <span className=" text-white  font-sohne">Powered By Amazon Bedrock</span>
-                    </p>
-                  </div>
+                <div className="flex flex-col lg:flex-row gap-y-4 sm:gap-x-4 accounttext">
+                  <div className="p-4  w-full lg:w-1/3  bg-white ">
+                    <div className="flex justify-between pb-2">
+                      <p className="  font-sohne font-bold text-lg">
+                        Wealth Insights AI <br />
+                        <span className="font-sohne">Powered By Amazon Bedrock</span>
+                      </p>
 
-                  <div>
-                    <img src="aws.png" />
-                  </div>
-                </div>
-                <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full  text-white overflow-y-auto ">
-                  <div className="h-40 overflow-auto flex flex-col justify-start items-center border  border-white p-4">
-                    {loading ? (
-                      <BounceLoader color="#FFFFFF" size={50} className="mt-10" />
-                    ) : (
-                      <div className="font-sohnelight">
-                        {aiResponse || "No response generated yet."}
+                      <div>
+                        <img src="aws.png" />
                       </div>
-                    )}
-                  </div>
+                    </div>
+                    <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full   overflow-y-auto ">
+                      <div className="h-40 overflow-auto flex flex-col justify-start items-center border-2   border-black p-4">
+                        {loading ? (
+                          <BounceLoader color="rgb(59 130 246)" size={50} className="mt-10" />
+                        ) : (
+                          <div className="font-sohnelight">
+                            {aiResponse || "No response generated yet."}
+                          </div>
+                        )}
+                      </div>
 
-                  <div className="flex flex-col space-y-2 mt-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-white text-blue-500 rounded-none font-sohne w-full">
-                          View Prompt
+                      <div className="flex flex-col space-y-2 mt-4">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="bg-white border-2 border-black text-blue-500 rounded-none font-sohne w-full">
+                              View Prompt
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="">
+                            <div className="m-4 fontsohnelight">
+                              <p className="aiinsightstext text-xl pb-4">
+                                Current AWS Bedrock Configured Prompt -
+                              </p>
+                              {aiPrompt}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          onClick={() => {
+                            submitQuery(prompt);
+                          }}
+                          className="flex bg-white border-2 border-black text-blue-500 rounded-none font-sohne items-center w-full "
+                        >
+                          Generate <ArrowRight className="text-blue-700 ml-2" />
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="">
-                        <div className="m-4 fontsohnelight">
-                          <p className="aiinsightstext text-xl pb-4">
-                            Current AWS Bedrock Configured Prompt -
-                          </p>
-                          {aiPrompt}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    <Button
-                      onClick={() => {
-                        submitQuery(prompt);
-                      }}
-                      className="flex bg-white text-blue-500 rounded-none font-sohne items-center w-full"
-                    >
-                      Generate <ArrowRight className="text-blue-700 ml-2" />
-                    </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 w-full lg:w-1/3 bg-white">
+                    <div className="space-y-2">
+                      <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
+                        <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
+                      </div>
+                      <div className="">
+                        <p className=" font-bold font-sohne text-lg">Brokerage Account</p>
+                        <p className=" font-bold font-sohne text-lg">(***6552)</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-40">
+                      <div className="balancetext font-sohne">Total Investment Balance: </div>
+                      <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
+                      <div className=" text-sm font-sohnelight">Over Lifetime of Account</div>
+                    </div>
+                  </div>
+                  <div className="p-4  w-full lg:w-1/3 bg-white">
+                    <StocksComponent></StocksComponent>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="p-6 bg-gradient-to-r from-blue-500 to-bankdarkblue flex-1 sm:flex-none sm:basis-1/3 lg:basis-1/5 w-full h-full h-100 overflow-auto min-w-fit shadow-lg">
-              <div className="space-y-2">
-                <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-                  <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
-                </div>
-                <div className="">
-                  <p className="text-white font-bold font-sohne text-lg">Brokerage Account</p>
-                  <p className="text-white font-bold font-sohne text-lg">(***6552)</p>
-                </div>
-              </div>
-
-              <div className="">
-                <div className="pt-40">
-                  <div className="cardaccounttext font-sohne text-white">
-                    Total Investment Balance:{" "}
-                  </div>
-                  <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
-                  <div className=" text-white text-sm font-sohnelight">
-                    Over Lifetime of Account
-                  </div>
-                </div>
-              </div>
-            </div>
-            <StocksComponent></StocksComponent>
           </div>
+
           <SheetFooter>
             <SheetClose asChild>{/* Add a close button here */}</SheetClose>
           </SheetFooter>
