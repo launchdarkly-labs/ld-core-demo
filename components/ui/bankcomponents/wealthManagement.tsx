@@ -71,55 +71,54 @@ const WealthManagementSheet = ({
           <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3>
 
           <div className="flex flex-col gap-y-4 lg:flex-row lg:gap-x-4 ">
-            
-            <div
-              className={`p-6  w-full text-white bg-gradient-blue overflow-auto shadow-lg`}
-            >
-              <div className="flex justify-between pb-2">
-                <p className=" text-white  font-sohne font-bold text-lg">
-                  Wealth Insights AI <br />
-                  <span className=" text-white  font-sohne">Powered By Amazon Bedrock</span>
-                </p>
+            <div className={`p-4  w-full bg-gradient-blue overflow-auto shadow-lg`}>
+              <div className="p-4 bg-white text-black ">
+                <div className="flex justify-between pb-2">
+                  <p className="  font-sohne font-bold text-lg">
+                    Wealth Insights AI <br />
+                    <span className="font-sohne">Powered By Amazon Bedrock</span>
+                  </p>
 
-                <div>
-                  <img src="aws.png" />
+                  <div>
+                    <img src="aws.png" />
+                  </div>
                 </div>
-              </div>
-              <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full  text-white overflow-y-auto ">
-                <div className="h-40 overflow-auto flex flex-col justify-start items-center border  border-white p-4">
-                  {loading ? (
-                    <BounceLoader color="#FFFFFF" size={50} className="mt-10" />
-                  ) : (
-                    <div className="font-sohnelight">
-                      {aiResponse || "No response generated yet."}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-col space-y-2 mt-4">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="bg-white text-blue-500 rounded-none font-sohne w-full">
-                        View Prompt
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="">
-                      <div className="m-4 fontsohnelight">
-                        <p className="aiinsightstext text-xl pb-4">
-                          Current AWS Bedrock Configured Prompt -
-                        </p>
-                        {aiPrompt}
+                <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full   overflow-y-auto ">
+                  <div className="h-40 overflow-auto flex flex-col justify-start items-center border-2  border-black p-4">
+                    {loading ? (
+                      <BounceLoader color="rgb(59 130 246)" size={50} className="mt-10" />
+                    ) : (
+                      <div className="font-sohnelight">
+                        {aiResponse || "No response generated yet."}
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                  <Button
-                    onClick={() => {
-                      submitQuery(prompt);
-                    }}
-                    className="flex bg-white text-blue-500 rounded-none font-sohne items-center w-full"
-                  >
-                    Generate <ArrowRight className="text-blue-700 ml-2" />
-                  </Button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col space-y-2 mt-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="bg-white border-2 border-black text-blue-500 rounded-none font-sohne w-full">
+                          View Prompt
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="">
+                        <div className="m-4 fontsohnelight">
+                          <p className="aiinsightstext text-xl pb-4">
+                            Current AWS Bedrock Configured Prompt -
+                          </p>
+                          {aiPrompt}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button
+                      onClick={() => {
+                        submitQuery(prompt);
+                      }}
+                      className="flex bg-white border-2 border-black text-blue-500 rounded-none font-sohne items-center w-full "
+                    >
+                      Generate <ArrowRight className="text-blue-700 ml-2" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,7 +146,6 @@ const WealthManagementSheet = ({
             <div className="p-6 bg-gradient-blue  w-full overflow-auto min-w-max shadow-lg">
               <StocksComponent></StocksComponent>
             </div>
-
           </div>
           <SheetFooter>
             <SheetClose asChild>{/* Add a close button here */}</SheetClose>
