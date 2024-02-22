@@ -60,7 +60,7 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto w-full sm:w-[80%]">
+        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[60%]">
           <SheetHeader>
             <SheetTitle>Welcome to Wealth Management App</SheetTitle>
             <SheetDescription>
@@ -70,9 +70,10 @@ const WealthManagementSheet = ({
 
           <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3>
 
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-4 w-full ">
+          <div className="flex flex-col gap-y-4 lg:flex-row lg:gap-x-4 ">
+            
             <div
-              className={` p-6  w-full h-full  text-white bg-gradient-blue overflow-auto shadow-lg`}
+              className={`p-6  w-full text-white bg-gradient-blue overflow-auto shadow-lg`}
             >
               <div className="flex justify-between pb-2">
                 <p className=" text-white  font-sohne font-bold text-lg">
@@ -123,7 +124,7 @@ const WealthManagementSheet = ({
               </div>
             </div>
 
-            <div className="p-6  bg-gradient-blue w-full h-full  overflow-auto min-w-fit shadow-lg">
+            <div className="p-6  bg-gradient-blue w-full  overflow-auto min-w-fit shadow-lg">
               <div className="space-y-2">
                 <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                   <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
@@ -143,10 +144,10 @@ const WealthManagementSheet = ({
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-blue  w-full h-full  overflow-auto min-w-max shadow-lg">
-            <StocksComponent></StocksComponent>
-              </div>
-           
+            <div className="p-6 bg-gradient-blue  w-full overflow-auto min-w-max shadow-lg">
+              <StocksComponent></StocksComponent>
+            </div>
+
           </div>
           <SheetFooter>
             <SheetClose asChild>{/* Add a close button here */}</SheetClose>
