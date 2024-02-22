@@ -136,7 +136,7 @@ const WealthManagementSheet = ({
                 </div>
 
                 <div className="pt-40">
-                  <div className="cardaccounttext font-sohne">Total Investment Balance: </div>
+                  <div className="balancetext font-sohne">Total Investment Balance: </div>
                   <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
                   <div className=" text-sm font-sohnelight">Over Lifetime of Account</div>
                 </div>
