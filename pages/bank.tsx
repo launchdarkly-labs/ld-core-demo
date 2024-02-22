@@ -206,7 +206,7 @@ export default function Bank() {
                 <AccountTrends data={data} />
               </div>
 
-              {true ? (
+              {wealthManagement ? (
                 <div className="w-full xl:w-[40%]">
                   <WealthManagementSheet
                     data={data}

@@ -235,8 +235,8 @@ export const StocksComponent: React.FC = () => {
         <div className="space-y-4 ">
           {stocks.map((stock, index) => (
             <div key={index} className="mt-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-3">
+              <div className="flex justify-between items-center gap-x-3">
+                <div className="flex items-center gap-x-1">
                   <img
                     src={`${stock.image}`}
                     alt={`${stock.ticker} logo`}
@@ -244,7 +244,7 @@ export const StocksComponent: React.FC = () => {
                   />
                   <span className="font-bold  font-sohne">{stock.name}</span>
                 </div>
-                <div className="w-10 h-10 mx-auto hidden sm:block">
+                <div className="w-10 h-10 mx-auto block">
                   <Line
                     data={generateChartData(stock.data)}
                     options={{
