@@ -43,8 +43,8 @@ jobs:
       - name: Set namespace for deployment
         id: set_namespace
         run: |
-          BRANCH_NAME=${{ github.event.ref }}"
-          NAMESPACE=${BRANCH_NAME#demoenv-}
+          BRANCH_REF=${{ github.event.ref }}
+          NAMESPACE=${BRANCH_REF#demoenv-}
           echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV 
           echo "::set-output name=namespace::$NAMESPACE"
 
@@ -58,7 +58,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
 
-      - name: Delete LD Project for ${{ env.DEMO_NAMESPACE }}
+      - name: Delete LD Project for User
         id: delete_ld_project
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
