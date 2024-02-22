@@ -219,10 +219,11 @@ export const StocksComponent: React.FC = () => {
       >
         <img src="stocksicon.png" onClick={toggleRunDemo} />
       </div>
-      <div className=" font-bold font-sohne text-lg pt-2 text-white">Stocks</div>
+      <p className=" font-bold font-sohne text-lg pt-2">Stocks</p>
+
       {runDemo ? (
         <div className="flex justify-center items-center h-52">
-          <div className="text-white font-bold font-sohne justify-center items-center text-xl">
+          <div className=" font-bold font-sohne justify-center items-center text-xl">
             Generating Data
             <br />
             <div className="flex items-center mt-2 justify-center">
@@ -241,7 +242,7 @@ export const StocksComponent: React.FC = () => {
                     alt={`${stock.ticker} logo`}
                     className="w-10 h-10 rounded-full"
                   />
-                  <span className="font-bold text-white font-sohne">{stock.name}</span>
+                  <span className="font-bold  font-sohne">{stock.name}</span>
                 </div>
                 <div className="w-10 h-10 mx-auto hidden sm:block">
                   <Line
@@ -266,7 +267,7 @@ export const StocksComponent: React.FC = () => {
                   />
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className="font-bold text-right block text-white">
+                  <span className="font-bold text-right block ">
                     {stock.data[stock.data.length - 1].value}
                   </span>
                   {stock.data[stock.data.length - 1].direction === "up" ? (
@@ -274,7 +275,7 @@ export const StocksComponent: React.FC = () => {
                   ) : stock.data[stock.data.length - 1].direction === "down" ? (
                     <IoIosArrowDropdownCircle className="text-red-500" />
                   ) : stock.data[stock.data.length - 1].direction === null ? (
-                    <IoMdRemoveCircleOutline className="text-white" />
+                    <IoMdRemoveCircleOutline className="" />
                   ) : null}
                 </div>
               </div>
@@ -283,7 +284,7 @@ export const StocksComponent: React.FC = () => {
         </div>
       ) : (
         <div className="flex items-center justify-center h-52">
-          <div className="text-white font-bold font-sohne text-xl">COMING SOON</div>
+          <div className=" font-bold font-sohne text-xl">COMING SOON</div>
         </div>
       )}
     </div>

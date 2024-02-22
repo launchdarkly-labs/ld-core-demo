@@ -60,7 +60,7 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[60%]">
+        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[80%]">
           <SheetHeader>
             <SheetTitle>Welcome to Wealth Management App</SheetTitle>
             <SheetDescription>
@@ -71,8 +71,8 @@ const WealthManagementSheet = ({
           <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3>
 
           <div className="flex flex-col gap-y-4 lg:flex-row lg:gap-x-4 ">
-            <div className={`p-4  w-full bg-gradient-blue overflow-auto shadow-lg`}>
-              <div className="p-4 bg-white text-black ">
+            <div className={`p-4 w-full bg-gradient-blue overflow-auto shadow-lg`}>
+              <div className="p-4 bg-white text-black h-full">
                 <div className="flex justify-between pb-2">
                   <p className="  font-sohne font-bold text-lg">
                     Wealth Insights AI <br />
@@ -84,7 +84,7 @@ const WealthManagementSheet = ({
                   </div>
                 </div>
                 <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full   overflow-y-auto ">
-                  <div className="h-40 overflow-auto flex flex-col justify-start items-center border-2  border-black p-4">
+                  <div className="h-40 overflow-auto flex flex-col justify-start items-center border-2   border-black p-4">
                     {loading ? (
                       <BounceLoader color="rgb(59 130 246)" size={50} className="mt-10" />
                     ) : (
@@ -123,28 +123,30 @@ const WealthManagementSheet = ({
               </div>
             </div>
 
-            <div className="p-6  bg-gradient-blue w-full  overflow-auto min-w-fit shadow-lg">
-              <div className="space-y-2">
-                <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
-                  <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
+            <div className="p-4  bg-gradient-blue w-full  overflow-auto min-w-fit shadow-lg">
+              <div className="p-4 bg-white text-black h-full">
+                <div className="space-y-2">
+                  <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
+                    <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
+                  </div>
+                  <div className="">
+                    <p className=" font-bold font-sohne text-lg">Brokerage Account</p>
+                    <p className=" font-bold font-sohne text-lg">(***6552)</p>
+                  </div>
                 </div>
-                <div className="">
-                  <p className="text-white font-bold font-sohne text-lg">Brokerage Account</p>
-                  <p className="text-white font-bold font-sohne text-lg">(***6552)</p>
-                </div>
-              </div>
 
-              <div className="pt-40">
-                <div className="cardaccounttext font-sohne text-white">
-                  Total Investment Balance:{" "}
+                <div className="pt-40">
+                  <div className="cardaccounttext font-sohne">Total Investment Balance: </div>
+                  <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
+                  <div className=" text-sm font-sohnelight">Over Lifetime of Account</div>
                 </div>
-                <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
-                <div className=" text-white text-sm font-sohnelight">Over Lifetime of Account</div>
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-blue  w-full overflow-auto min-w-max shadow-lg">
-              <StocksComponent></StocksComponent>
+            <div className="p-4 bg-gradient-blue  w-full overflow-auto min-w-max shadow-lg">
+              <div className="p-4 bg-white text-black h-full">
+                <StocksComponent></StocksComponent>
+              </div>
             </div>
           </div>
           <SheetFooter>
