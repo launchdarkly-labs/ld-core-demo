@@ -72,62 +72,58 @@ const WealthManagementSheet = ({
 
           <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-start gap-4 w-full ">
             <div
-              className={`relative p-4 flex-1 sm:flex-none sm:basis-1/3 lg:basis-2/5 w-full h-full  text-white bg-gradient-to-r from-indigo-700 to-blue-500 overflow-auto shadow-lg`}
+              className={` p-6  w-full h-full  text-white bg-gradient-blue overflow-auto shadow-lg`}
             >
-              <div>
-                <div className="flex justify-between pb-2">
-                  <div>
-                    <p className=" text-white  font-sohne font-bold text-lg">
-                      Wealth Insights AI <br />
-                      <span className=" text-white  font-sohne">Powered By Amazon Bedrock</span>
-                    </p>
-                  </div>
+              <div className="flex justify-between pb-2">
+                <p className=" text-white  font-sohne font-bold text-lg">
+                  Wealth Insights AI <br />
+                  <span className=" text-white  font-sohne">Powered By Amazon Bedrock</span>
+                </p>
 
-                  <div>
-                    <img src="aws.png" />
-                  </div>
+                <div>
+                  <img src="aws.png" />
                 </div>
-                <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full  text-white overflow-y-auto ">
-                  <div className="h-40 overflow-auto flex flex-col justify-start items-center border  border-white p-4">
-                    {loading ? (
-                      <BounceLoader color="#FFFFFF" size={50} className="mt-10" />
-                    ) : (
-                      <div className="font-sohnelight">
-                        {aiResponse || "No response generated yet."}
-                      </div>
-                    )}
-                  </div>
+              </div>
+              <div className="relative p-4 sm:col-span-1 lg:col-span-2 w-full  text-white overflow-y-auto ">
+                <div className="h-40 overflow-auto flex flex-col justify-start items-center border  border-white p-4">
+                  {loading ? (
+                    <BounceLoader color="#FFFFFF" size={50} className="mt-10" />
+                  ) : (
+                    <div className="font-sohnelight">
+                      {aiResponse || "No response generated yet."}
+                    </div>
+                  )}
+                </div>
 
-                  <div className="flex flex-col space-y-2 mt-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-white text-blue-500 rounded-none font-sohne w-full">
-                          View Prompt
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="">
-                        <div className="m-4 fontsohnelight">
-                          <p className="aiinsightstext text-xl pb-4">
-                            Current AWS Bedrock Configured Prompt -
-                          </p>
-                          {aiPrompt}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    <Button
-                      onClick={() => {
-                        submitQuery(prompt);
-                      }}
-                      className="flex bg-white text-blue-500 rounded-none font-sohne items-center w-full"
-                    >
-                      Generate <ArrowRight className="text-blue-700 ml-2" />
-                    </Button>
-                  </div>
+                <div className="flex flex-col space-y-2 mt-4">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="bg-white text-blue-500 rounded-none font-sohne w-full">
+                        View Prompt
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="">
+                      <div className="m-4 fontsohnelight">
+                        <p className="aiinsightstext text-xl pb-4">
+                          Current AWS Bedrock Configured Prompt -
+                        </p>
+                        {aiPrompt}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    onClick={() => {
+                      submitQuery(prompt);
+                    }}
+                    className="flex bg-white text-blue-500 rounded-none font-sohne items-center w-full"
+                  >
+                    Generate <ArrowRight className="text-blue-700 ml-2" />
+                  </Button>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-to-r from-blue-500 to-bankdarkblue flex-1 sm:flex-none sm:basis-1/3 lg:basis-1/5 w-full h-full h-100 overflow-auto min-w-fit shadow-lg">
+            <div className="p-6  bg-gradient-blue w-full h-full  overflow-auto min-w-fit shadow-lg">
               <div className="space-y-2">
                 <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                   <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
@@ -138,19 +134,19 @@ const WealthManagementSheet = ({
                 </div>
               </div>
 
-              <div className="">
-                <div className="pt-40">
-                  <div className="cardaccounttext font-sohne text-white">
-                    Total Investment Balance:{" "}
-                  </div>
-                  <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
-                  <div className=" text-white text-sm font-sohnelight">
-                    Over Lifetime of Account
-                  </div>
+              <div className="pt-40">
+                <div className="cardaccounttext font-sohne text-white">
+                  Total Investment Balance:{" "}
                 </div>
+                <div className="moneytext text-base sm:text-3xl font-audimat">$184,278</div>
+                <div className=" text-white text-sm font-sohnelight">Over Lifetime of Account</div>
               </div>
             </div>
+
+            <div className="p-6 bg-gradient-blue  w-full h-full  overflow-auto min-w-max shadow-lg">
             <StocksComponent></StocksComponent>
+              </div>
+           
           </div>
           <SheetFooter>
             <SheetClose asChild>{/* Add a close button here */}</SheetClose>
