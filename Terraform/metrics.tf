@@ -66,12 +66,12 @@ resource "launchdarkly_metric" "stock-api-latency" {
 
 resource "launchdarkly_metric" "stocks-api-error-rates" {
   project_key    = var.project_key
-  key            = "Stock API Error Rates"
+  key            = "stocks-api-error-rates"
   name           = "Stock API Error Rates"
   description    = "Error Rates for the Stocks API"
   kind           = "custom"
   is_numeric     = false
-  event_key      = "Stock API Error Rates"
+  event_key      = "stocks-api-error-rates"
   success_criteria = "LowerThanBaseline"
   randomization_units = ["user"]
   tags           = ["release", "stocks", "api", "error", "rates"]
