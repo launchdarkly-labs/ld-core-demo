@@ -156,7 +156,7 @@ export const StocksComponent: React.FC = () => {
           } else {
             //25% chance of hitting errors
             if (Math.random() < 0.25) {
-              client.track("Stock API Error Rates");
+              client.track("stocks-api-error-rates");
             }
             dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
             client.track("stock-api-latency", undefined, dynamicValue);
