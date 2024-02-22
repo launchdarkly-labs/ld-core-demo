@@ -6,9 +6,7 @@ on:
       - '*demoenv*' # This workflow will run when someone pushes to a branch matching the pattern
   create:
     branches:
-      - '*demoenv*' # This workflow will run when a new branch is created
-  schedule:
-    - cron: "0 12 * * 6" # This workflow will run every Saturday at 12:00 PM UTC
+      - '*demoenv*' # This workflow will run when a new branch is created 
     
 env: # Environment variables
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -72,6 +70,16 @@ jobs:
           terraform init
           terraform apply -var-file=".tfvars" -auto-approve
         
+      - name: Create metric group in LD Project/Environment
+        id: create_metric_group_in_LD
+        if: env.RUN_TERRAFORM == 'true'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating metrics in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/create_metric_group.py
+
       - name: Create .env file
         run: |
           touch ./.env.production

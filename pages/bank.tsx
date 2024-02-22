@@ -15,7 +15,6 @@ import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManageme
 import { motion } from "framer-motion";
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 
-
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
@@ -23,8 +22,7 @@ export default function Bank() {
   const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
   const [aiPrompt, setAIPrompt] = useState("");
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
-    useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
 
   const { wealthManagement, federatedAccounts, aiPromptText } = useFlags();
 
@@ -38,7 +36,6 @@ export default function Bank() {
 
   async function submitQuery(query: any) {
     try {
-
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -46,14 +43,12 @@ export default function Bank() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status}. Check API Server Logs.`
-        );
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
 
       const data = await response.json();
       setAIResponse(data.completion);
-    
+
       return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);
@@ -115,23 +110,26 @@ export default function Bank() {
   return (
     <>
       {!isLoggedIn ? (
-        <LoginHomePage variant="bank" name="ToggleBank" />) : (
+        <LoginHomePage variant="bank" name="ToggleBank" />
+      ) : (
         <div className="mb-8">
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
-          <div className=" w-full px-8 ">
+          <main className="w-full px-8 mx-auto max-w-7xl ">
             <section
-              className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
-                }`}
+              className={`flex flex-col xl:flex-row py-8 ${
+                federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
+              }`}
             >
-              <section className="flex w-full h-full sm:h-[425px] ">
-                <div className="p-6 shadow-xl bg-gradient-blue w-full">
+              <section
+                className={`w-full h-full ${
+                  federatedAccounts ? "xl:w-[60%]" : "xl:w-full"
+                } font-sohne shadow-xl`}
+              >
+                <div className="p-6  bg-gradient-blue w-full">
                   <div className="justify-center xl:justify-start">
-                    <div>
-                      <p className="text-white font-sohne mb-6 text-[24px]">
-                        Account Summary
-                      </p>
-                    </div>
+                    <p className="text-white font-sohne mb-6 text-[24px]">Account Summary</p>
+
                     <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
                       <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
                         <CheckingAccount wealthManagement={wealthManagement} />
@@ -139,7 +137,7 @@ export default function Bank() {
                       <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white">
                         <CreditAccount />
                       </div>
-                      <div className="p-4 h-[300px]w-full sm:w-1/3 bg-white">
+                      <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white">
                         <MorgtgageAccount />
                       </div>
                     </div>
@@ -147,78 +145,69 @@ export default function Bank() {
                 </div>
               </section>
 
-              <section className="flex flex-grow font-sohne h-full">
-                {federatedAccounts && (
+              {federatedAccounts ? (
+                <section className="h-full w-full xl:w-[40%]  font-sohne  shadow-xl">
                   <motion.div
                     initial="hidden"
                     animate="visible"
                     exit="exit"
                     variants={accountvariant}
-                    className="h-full w-full sm:w-auto shadow-xl "
+                    className=" p-6 gap-4 w-full bg-gradient-mobile h-full"
                   >
-                    <div className="p-6 gap-4 w-full bg-gradient-mobile h-full sm:h-[425px]">
-                      <div>
-                        <p className="text-white font-sohne mb-6 text-[24px]">
-                          Federated Account Access
-                        </p>
-                      </div>
-                      <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 justify-start">
-                        {!federatedAccountOne ? (
-                          <div
-                            onClick={() => setFederatedAccountOne(true)}
-                            className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
-                          >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
-                          </div>
-                        ) : (
-                          <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={variants}
-                            transition={{ duration: 0.5 }}
-                            className="p-4 h-[300px] w-full sm:w-[250px] bg-white "
-                          >
-                            <FederatedCheckingAccount />
-                          </motion.div>
-                        )}
+                    <p className="text-white font-sohne mb-6 text-[24px]">
+                      Federated Account Access
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 justify-start">
+                      {!federatedAccountOne ? (
+                        <div
+                          onClick={() => setFederatedAccountOne(true)}
+                          className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
+                        >
+                          <PlusSquare size={96} className="text-gray-400 mx-auto" />
+                        </div>
+                      ) : (
+                        <motion.div
+                          initial="hidden"
+                          animate="visible"
+                          variants={variants}
+                          transition={{ duration: 0.5 }}
+                          className="p-4 h-[300px] w-full sm:w-1/2 bg-white "
+                        >
+                          <FederatedCheckingAccount />
+                        </motion.div>
+                      )}
 
-                        {!federatedAccountTwo ? (
-                          <div
-                            onClick={() => setFederatedAccountTwo(true)}
-                            className="flex p-4 h-[300px] w-full sm:w-[250px] bg-white items-center "
-                          >
-                            <PlusSquare
-                              size={96}
-                              className="text-gray-400 mx-auto"
-                            />
-                          </div>
-                        ) : (
-                          <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={variants}
-                            transition={{ duration: 0.5 }}
-                            className="p-4 h-[300px] w-full sm:w-[250px] bg-white"
-                          >
-                            <FederatedCreditAccount />
-                          </motion.div>
-                        )}
-                      </div>
+                      {!federatedAccountTwo ? (
+                        <div
+                          onClick={() => setFederatedAccountTwo(true)}
+                          className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
+                        >
+                          <PlusSquare size={96} className="text-gray-400 mx-auto" />
+                        </div>
+                      ) : (
+                        <motion.div
+                          initial="hidden"
+                          animate="visible"
+                          variants={variants}
+                          transition={{ duration: 0.5 }}
+                          className="p-4 h-[300px] w-full sm:w-1/2 bg-white"
+                        >
+                          <FederatedCreditAccount />
+                        </motion.div>
+                      )}
                     </div>
                   </motion.div>
-                )}
-              </section>
+                </section>
+              ) : null}
             </section>
 
-            {wealthManagement ? (
-              <div className="flex flex-col sm:flex-row w-full space-y-8 sm:space-y-0 sm:space-x-8 mb-10 h-full">
-                <div className="w-full sm:w-1/2 ">
-                  <AccountTrends data={data} />
-                </div>
-                <div className="w-full sm:w-1/2 max-h-screen items-center">
+            <section className="flex flex-col xl:flex-row w-full gap-y-8 sm:gap-x-8 mb-10 h-full">
+              <div className={`w-full  ${wealthManagement ? "xl:w-[60%]" : "sm:w-full"}`}>
+                <AccountTrends data={data} />
+              </div>
+
+              {wealthManagement ? (
+                <div className="w-full xl:w-[40%]">
                   <WealthManagementSheet
                     data={data}
                     aiPrompt={aiPrompt}
@@ -228,15 +217,10 @@ export default function Bank() {
                     aiResponse={aiResponse}
                   />
                 </div>
+              ) : null}
+            </section>
 
-              </div>
-            ) : (
-              <div className="w-full mb-10">
-                <AccountTrends data={data} />
-              </div>
-            )}
-
-            <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 lg:gap-x-8 justify-between">
+            <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 sm:gap-x-8 justify-between">
               <div className="w-full lg:w-1/2">
                 <img src="CC.png" className="shadow-xl" />
               </div>
@@ -244,7 +228,8 @@ export default function Bank() {
                 <img src="Loan.png" className="shadow-xl" />
               </div>
             </div>
-          </div>
+          </main>
+
         </div>
       )}
     </>

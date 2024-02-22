@@ -2,7 +2,7 @@ name: "Build and Deploy Images to Test Environment"
 
 on:
   pull_request:
-    types: [synchronize, opened, reopened]
+    branches: [main]
 
 
 env:
