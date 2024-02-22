@@ -18,17 +18,24 @@ jobs:
 
   get-branch-name:
     runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.set_branch_name.outputs.branch_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Get deleted branch name
-        run: echo "DELETED_BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        id: set_branch_name
+        run: |
+          echo "DELETED_BRANCH_NAME=${GITHUB_REF#refs/heads/}"
+          echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/}"
 
   remove-demoenv:
-    if: contains(env.DELETED_BRANCH_NAME, 'demoenv')
+    needs: get-branch-name
+    if: contains(needs.get-branch-name.outputs.branch_name, 'demoenv')
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
