@@ -40,13 +40,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get deleted branch name
-        run: echo "DELETED_BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
       - name: Set namespace for deployment
         id: set_namespace
         run: |
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${{ github.event.ref }}"
           NAMESPACE=${BRANCH_NAME#demoenv-}
           echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV 
           echo "::set-output name=namespace::$NAMESPACE"
