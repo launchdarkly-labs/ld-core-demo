@@ -48,7 +48,7 @@ const WealthManagementSheet = ({
       animate="visible"
       exit="exit"
       variants={variants}
-      className="p-24  bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
+      className="p-24 bg-gradient-blue shadow-xl overflow-auto h-full flex flex-col content-center justify-center flex-wrap"
     >
       <p className="text-white font-sohne mb-6 text-[36px]">Wealth Management</p>
       <Sheet>
@@ -72,7 +72,7 @@ const WealthManagementSheet = ({
 
           <div className="flex flex-col gap-y-4 lg:flex-row lg:gap-x-4 ">
             <div className={`p-4 w-full bg-gradient-blue overflow-auto shadow-lg`}>
-              <div className="p-4 bg-white text-black h-full">
+              <div className="p-4 bg-white accounttext h-full">
                 <div className="flex justify-between pb-2">
                   <p className="  font-sohne font-bold text-lg">
                     Wealth Insights AI <br />
@@ -123,8 +123,8 @@ const WealthManagementSheet = ({
               </div>
             </div>
 
-            <div className="p-4  bg-gradient-blue w-full  overflow-auto min-w-fit shadow-lg">
-              <div className="p-4 bg-white text-black h-full">
+            <div className="p-4  bg-gradient-blue w-full accounttext overflow-auto min-w-fit shadow-lg">
+              <div className="p-4 bg-white  h-full">
                 <div className="space-y-2">
                   <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                     <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
@@ -144,7 +144,7 @@ const WealthManagementSheet = ({
             </div>
 
             <div className="p-4 bg-gradient-blue  w-full overflow-auto min-w-max shadow-lg">
-              <div className="p-4 bg-white text-black h-full">
+              <div className="p-4 bg-white accounttext h-full">
                 <StocksComponent></StocksComponent>
               </div>
             </div>
