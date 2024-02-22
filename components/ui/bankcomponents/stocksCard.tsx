@@ -245,7 +245,7 @@ export const StocksComponent: React.FC = () => {
                   />
                   <span className="font-bold  font-sohne">{stock.name}</span>
                 </div>
-                <div className="w-[25%] h-[20%] xl:w-[25%] xl:h-[20%] mx-auto hidden sm:block">
+                <div className="w-[25%] h-[20%] xl:w-10 xl:h-10 mx-auto hidden sm:block">
                   <Line
                     data={generateChartData(stock.data)}
                     options={{
