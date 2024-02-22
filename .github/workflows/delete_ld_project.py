@@ -32,10 +32,11 @@ def deleteLDProject():
 
     response = requests.delete(url, headers=headers)
 
-    if (response.status == 204) {
+    if response.status_code == 204:
         print(namespace + " project deleted successfully")
-    } else {
+    else:
         data = response.json()
         print(data)
-    }
 
+if __name__ == "__main__":
+    main()
