@@ -77,6 +77,16 @@ jobs:
           echo "Creating metrics in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
           python ./.github/workflows/create_metric_group.py
 
+      - name: Create Migration FF in LD Project/Environment
+        id: create_migration_FF_in_LD
+        if: env.RUN_TERRAFORM == 'true'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating migration feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/create_migration_flag.py
+
       - name: Create .env file
         run: |
           touch ./.env.production
