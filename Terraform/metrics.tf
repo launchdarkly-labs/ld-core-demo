@@ -49,3 +49,31 @@ resource "launchdarkly_metric" "customer-checkout" {
   randomization_units = ["user"]
   tags           = ["checkout"]
 }
+
+resource "launchdarkly_metric" "stock-api-latency" {
+  project_key    = var.project_key
+  key            = "stock-api-latency"
+  name           = "Stocks API Latency"
+  description    = "Checking API Latency for Stocks"
+  kind           = "custom"
+  is_numeric     = true
+  event_key      = "stock-api-latency"
+  success_criteria = "LowerThanBaseline"
+  randomization_units = ["user"]
+  unit           = "ms"
+  tags           = ["release", "stocks", "api", "latency"]
+}
+
+resource "launchdarkly_metric" "stocks-api-error-rates" {
+  project_key    = var.project_key
+  key            = "Stock API Error Rates"
+  name           = "Stock API Error Rates"
+  description    = "Error Rates for the Stocks API"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "Stock API Error Rates"
+  success_criteria = "LowerThanBaseline"
+  randomization_units = ["user"]
+  tags           = ["release", "stocks", "api", "error", "rates"]
+}
+
