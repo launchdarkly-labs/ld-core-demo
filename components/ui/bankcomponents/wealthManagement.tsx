@@ -60,15 +60,13 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[80%] ">
+        <SheetContent className="overflow-auto w-full sm:w-full xl:w-[80%] ">
           <SheetHeader className="mb-10">
             <SheetTitle className="text-4xl">Welcome to Wealth Management App</SheetTitle>
             <SheetDescription className="text-xl">
               Access to all new Wealth Management features available at your fingertips
             </SheetDescription>
           </SheetHeader>
-
-         
 
           <div className={`w-full h-full font-sohne`}>
             <div className="p-6 bg-gradient-to-tr from-teal-400 to-green-600 w-full">
