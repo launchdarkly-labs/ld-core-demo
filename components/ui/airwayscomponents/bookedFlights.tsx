@@ -297,27 +297,30 @@ export default function BookedFlights() {
                               )}
                             </div>
                           </div>
+                          <div className="grid lg:flex mx-auto items-center justify-center space-x-4 mt-4">
+                            {enrolledInLaunchClub && launchClubLoyalty && (
+                              <>
+                                {priorityBoarding && (
+                                  <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
+                                    <PersonStanding className="text-blue-700 mr-2" />{" "}
+                                    Launch Priority
+                                  </p>
+                                )}
 
-                          {enrolledInLaunchClub && launchClubLoyalty && (
-                            <div className="grid lg:flex mx-auto items-center justify-center space-x-4 mt-4">
-                              {priorityBoarding && (
-                                <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
-                                  <PersonStanding className="text-blue-700 mr-2" />{" "}
-                                  Launch Priority
+                                <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
+                                  <Wifi className="text-green-700 mr-2" /> Free
+                                  WiFi
                                 </p>
-                              )}
-                              {mealPromoExperience && (
-                                <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
-                                  <PlaneIcon className="text-green-700 mr-2" />{" "}
-                                  A380 Meal Promo
-                                </p>
-                              )}
-                              <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
-                                <Wifi className="text-green-700 mr-2" /> Free
-                                WiFi
+                              </>
+                            )}
+                            {mealPromoExperience && (
+                              <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
+                                <PlaneIcon className="text-green-700 mr-2" />{" "}
+                                A380 Meal Promo
                               </p>
-                            </div>
-                          )}
+                            )}
+                          </div>
+
                         </div>
                       </div>
                       <div className="p-8 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100 md:flex-shrink-0">
