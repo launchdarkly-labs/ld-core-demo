@@ -60,7 +60,7 @@ const WealthManagementSheet = ({
             </Button>
           </div>
         </SheetTrigger>
-        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[80%]">
+        <SheetContent className="overflow-auto w-full sm:w-[80%] xl:w-[80%] ">
           <SheetHeader className="mb-10">
             <SheetTitle className="text-4xl">Welcome to Wealth Management App</SheetTitle>
             <SheetDescription className="text-xl">
@@ -68,9 +68,9 @@ const WealthManagementSheet = ({
             </SheetDescription>
           </SheetHeader>
 
-          {/* <h3 className=" font-sohne py-6 text-[24px] ">Wealth Management</h3> */}
+         
 
-          <div className={`w-full h-full font-sohne shadow-xl`}>
+          <div className={`w-full h-full font-sohne`}>
             <div className="p-6 bg-gradient-to-tr from-teal-400 to-green-600 w-full">
               <div className="justify-center xl:justify-start">
                 <p className="text-white font-sohne mb-6 text-[24px]">Wealth Management</p>
