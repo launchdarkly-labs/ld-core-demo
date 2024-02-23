@@ -33,7 +33,7 @@ def deleteLDProject():
     while True:
         response = requests.delete(url, headers=headers)
         
-        if response.status_code == 201:
+        if response.status_code == 204:
             print("LD project deleted successfully")
             break
         elif response.status_code == 429:
