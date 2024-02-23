@@ -50,6 +50,7 @@ def createMigrationFlag():
     "LD-API-Version": "beta"
     }
     
+    time.sleep(10)
     response = requests.post(url, json=payload, headers=headers)
 
     if response.status_code == 201:

@@ -58,7 +58,8 @@ def createMetricGroup():
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": ld_api_key
+        "Authorization": ld_api_key,
+        "LD-API-Version": "beta"
     }
     
     response = requests.post(url, json=payload, headers=headers)
