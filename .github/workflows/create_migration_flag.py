@@ -50,14 +50,19 @@ def createMigrationFlag():
     "LD-API-Version": "beta"
     }
     
-    time.sleep(10)
-    response = requests.post(url, json=payload, headers=headers)
-
-    if response.status_code == 201:
-        print("Financial DB migration flag created successfully")
-    else:
-        data = response.json()
-        print(data)
+    while True:
+        response = requests.post(url, json=payload, headers=headers)
+        
+        if response.status_code == 201:
+            print("Financial DB migration flag created successfully")
+            break
+        elif response.status_code == 429:
+            print("Rate limit exceeded, waiting 10 seconds to retry...")
+            time.sleep(10)
+        else:
+            data = response.json()
+            print(data)
+            break
         
 if __name__ == "__main__":
     main()
