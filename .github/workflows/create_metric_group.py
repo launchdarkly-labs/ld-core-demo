@@ -62,15 +62,23 @@ def createMetricGroup():
         "LD-API-Version": "beta"
     }
     
-    response = requests.post(url, json=payload, headers=headers)
-
-    data = response.json()
     
-    if (response.status_code == 201):
-        print("Metric Group created successfully")
-    else:
-        print(response.status_code)
-        print(response.text)
-
+    
+    while True:
+        response = requests.post(url, json=payload, headers=headers)
+        
+        if response.status_code == 201:
+            print("Metric Group created successfully")
+            break
+        elif response.status_code == 429:
+            print("Rate limit exceeded, waiting 10 seconds to retry...")
+            time.sleep(10)
+        else:
+            data = response.json()
+            print(response.status_code)
+            print(response.text)
+            print(data)
+            break
+       
 if __name__ == "__main__":
     main()
