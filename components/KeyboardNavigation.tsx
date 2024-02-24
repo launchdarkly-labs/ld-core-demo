@@ -17,18 +17,18 @@ export default function KeyboardNavigation({}: {}) {
     }
 
     switch (event.key) {
-      case "p":
-        toast({
-          title: "Resetting",
-          description:
-            "Currently resetting all LaunchDarkly flags for this environment. Give us 30 seconds.",
-        });
-        await fetch("/api/ldreset");
-        location.reload();
-        location.push('/');
-        break;
-      default:
-        break;
+      // case "p":
+      //   toast({
+      //     title: "Resetting",
+      //     description:
+      //       "Currently resetting all LaunchDarkly flags for this environment. Give us 30 seconds.",
+      //   });
+      //   await fetch("/api/ldreset");
+      //   location.reload();
+      //   location.push('/');
+      //   break;
+      // default:
+      //   break;
     }
   }, []);
 

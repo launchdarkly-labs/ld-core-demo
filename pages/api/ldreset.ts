@@ -7,10 +7,9 @@ export default async function handler(
     const BASE_URL = "https://app.launchdarkly.com/api/v2";
     const CALL_THRESHOLD = 1;
     const API_KEY = process.env.LD_API_KEY;
-    // PROJECT_KEY = "toggle-tunes-team-1";
     const SOURCE_ENVIRONMENT = "template-env";
     const DESTINATION_ENVIRONMENT = process.env.DESTINATIONENV;
-    const PROJECT_KEY = "ld-core-demo"
+    const PROJECT_KEY = process.env.PROJECT_KEY;
 
     class RateLimitError extends Error {
         constructor(message: any) {
@@ -124,7 +123,13 @@ export default async function handler(
 
     try {
         const response = await checkRateLimit("GET", `/flags/${PROJECT_KEY}`, API_KEY!, {});
-        const responseData = await response!.json();
+        if (!response) {
+            throw new Error('No response received from checkRateLimit');
+        }
+        const responseData = await response.json();
+        if (!responseData || !responseData.items) {
+            throw new Error('Invalid or empty JSON response');
+        }
         const items = responseData.items;
         const flag_list = items.map((item: any) => item.key);
 
