@@ -11,6 +11,8 @@ import { LoginProvider } from "@/utils/contexts/login";
 import KeyboardNavigation from "@/components/KeyboardNavigation";
 import Head from "next/head";
 import { PersonaProvider } from "@/components/personacontext";
+import { QuickCommandDialog } from "@/components/quickcommand";
+
 let c;
 
 if (typeof window !== "undefined") {
@@ -57,19 +59,21 @@ if (typeof window !== "undefined") {
       <NoSSRWrapper>
         <LDProvider>
           <PersonaProvider>
-            <LoginProvider>
-              <TripsProvider>
-                <KeyboardNavigation />
-                <Head>
-                  <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
-                  />
-                  <link rel="apple-touch-icon" href="/apple-icon.png" />
-                </Head>
-                <Component {...pageProps} />
-              </TripsProvider>
-            </LoginProvider>
+            <QuickCommandDialog>
+              <LoginProvider>
+                <TripsProvider>
+                  <KeyboardNavigation />
+                  <Head>
+                    <meta
+                      name="viewport"
+                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+                    />
+                    <link rel="apple-touch-icon" href="/apple-icon.png" />
+                  </Head>
+                  <Component {...pageProps} />
+                </TripsProvider>
+              </LoginProvider>
+            </QuickCommandDialog>
           </PersonaProvider>
         </LDProvider>
       </NoSSRWrapper>
