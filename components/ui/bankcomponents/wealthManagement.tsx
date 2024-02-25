@@ -54,9 +54,8 @@ const WealthManagementSheet = ({
       <Sheet>
         <SheetTrigger asChild>
           <div className="flex justify-end">
-            <Button variant="outline" className="w-full rounded-none text-[20px] py-8">
-              {" "}
-              Open App &rarr;{" "}
+            <Button variant="outline" className="w-full px-6 py-8 rounded-none text-[20px] mx-auto">
+              Open App
             </Button>
           </div>
         </SheetTrigger>
@@ -141,7 +140,7 @@ const WealthManagementSheet = ({
                     </div>
                   </div>
                   <div className="p-4  w-full lg:w-1/3 bg-white">
-                    <StocksComponent></StocksComponent>
+                    <StocksComponent />
                   </div>
                 </div>
               </div>

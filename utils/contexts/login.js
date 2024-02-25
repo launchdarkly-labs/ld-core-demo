@@ -1,6 +1,7 @@
 // TripsContext.js
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { createContext, useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const LoginContext = createContext();
 
@@ -21,6 +22,7 @@ export const LoginProvider = ({ children }) => {
     context.user.name = user;
     context.user.email = email;
     context.user.key = email;
+    context.audience.key = uuidv4().slice(0, 4)
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
