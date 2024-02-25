@@ -13,6 +13,7 @@ import Head from "next/head";
 import { PersonaProvider } from "@/components/personacontext";
 import { QuickCommandDialog } from "@/components/quickcommand";
 
+
 let c;
 
 if (typeof window !== "undefined") {
@@ -51,6 +52,9 @@ if (typeof window !== "undefined") {
         name: "a380",
         airplane: "a380",
       },
+      audience: {
+        key: uuidv4().slice(0, 6),
+      }
     },
   });
 
