@@ -30,14 +30,14 @@ jobs:
         id: list_branches
         run: |
           echo "BRANCHES<<EOF" >> $GITHUB_ENV
-          git branch -r | grep 'origin/demoenv-' | sed 's/origin\///' >> $GITHUB_ENV
+          git branch -r | grep 'demoenv' | sed 's/origin\///' >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       
       - name: Create JSON matrix for the branches
         id: set-matrix
         run: |
           BRANCHES=$(echo $BRANCHES | xargs | sed 's/ /", "/g')
-          echo "::set-output name=matrix::{\"include\": [{\"branch\": \"$BRANCHES\"}]}"
+          echo "matrix=${BRANCHES}" >> $GITHUB_ENV
 
   process_branches:
     needs: prepare
@@ -54,7 +54,7 @@ jobs:
       - name: Merge main branch into current branch with conflict resolution
         run: |
           git fetch origin main
-          git merge -X theirs origin/main --no-edit
+          git merge --allow-unrelated-histories -X theirs origin/main --no-edit
 
       - name: Set namespace for deployment
         id: set_namespace
