@@ -122,6 +122,8 @@ def main():
                                 f.write(f"LD_CLIENT_KEY={client_key}\n")
                                 f.write(f"RUN_TERRAFORM=true\n")
                                 createContextKind(ld_api_key, project_key)
+                                break
+                                
                         except IOError as e:
                             print(f"Unable to write to environment file: {e}")
                             exit(1)
