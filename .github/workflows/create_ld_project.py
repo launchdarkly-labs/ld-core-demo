@@ -36,6 +36,11 @@ def createContextKind(ld_api_key, project_key):
         payload = {
         "randomizationUnits": [
             {
+            "randomizationUnit": "user",
+            "default": True,
+            "standardRandomizationUnit": "user"
+            },
+            {
             "randomizationUnit": "audience",
             "default": False,
             "standardRandomizationUnit": "user"
