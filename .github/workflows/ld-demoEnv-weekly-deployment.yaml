@@ -18,14 +18,24 @@ env: # Environment variables
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(git branch -r | grep 'origin/.*demoenv.*' | sed 's/origin\///' | jq -R -s -c 'split("\n")[:-1]')"
+
   update-envs:
+    needs: generate-matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        branch:
-          - $(git branch -r | grep 'origin/.*demoenv.*' | sed 's/origin\///')
-      
+        branch: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
