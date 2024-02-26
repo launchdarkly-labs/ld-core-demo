@@ -18,43 +18,22 @@ env: # Environment variables
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: List branches
-        id: list_branches
-        run: |
-          echo "BRANCHES<<EOF" >> $GITHUB_ENV
-          git branch -r | grep 'demoenv' | sed 's/origin\///' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      
-      - name: Create JSON matrix for the branches
-        id: set-matrix
-        run: |
-          BRANCHES=$(echo $BRANCHES | xargs | sed 's/ /", "/g')
-          echo "::set-output name=matrix::{\"include\": [{\"branch\": \"$BRANCHES\"}]}"
-
-  process_branches:
-    needs: prepare
+  update-envs:.
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.prepare.outputs.matrix)}}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ matrix.branch }}
+      fail-fast: false
+      matrix:
+        branch:
+          - $(git branch -r | grep 'origin/.*demoenv.*' | sed 's/origin\///')
       
-      # Add steps you want to run for each matching branch
-      - name: Merge main branch into current branch with conflict resolution
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get latest changes from main
         run: |
           git fetch origin main
-          git merge --allow-unrelated-histories -X theirs origin/main --no-edit
+          git merge origin/main
 
       - name: Set namespace for deployment
         id: set_namespace
