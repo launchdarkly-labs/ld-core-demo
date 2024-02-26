@@ -82,7 +82,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         src={
                           personas.find(
                             (persona) => persona.personaname === user
-                          )?.personaimage
+                          )?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -96,7 +96,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           src={
                             personas.find(
                               (persona) => persona.personaname === user
-                            )?.personaimage
+                            )?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -107,7 +107,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           {
                             personas.find(
                               (persona) => persona.personaname === user
-                            )?.personaname
+                            )?.personaname || user
                           }{" "}
                           for flying Launch Airways with{"  "}
                           <br></br>
@@ -214,7 +214,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         src={
                           personas.find(
                             (persona) => persona.personaname === user
-                          )?.personaimage
+                          )?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -227,7 +227,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           src={
                             personas.find(
                               (persona) => persona.personaname === user
-                            )?.personaimage
+                            )?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -238,7 +238,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           {
                             personas.find(
                               (persona) => persona.personaname === user
-                            )?.personaname
+                            )?.personaname || user
                           }{" "}
                           for banking with us as a
                           <br></br>
@@ -366,7 +366,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           src={
                             personas.find(
                               (persona) => persona.personaname === user
-                            )?.personaimage
+                            )?.personaimage || 'ToggleAvatar.png'
                           }
                           className=""
                         />
@@ -379,7 +379,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                             src={
                               personas.find(
                                 (persona) => persona.personaname === user
-                              )?.personaimage
+                              )?.personaimage || 'ToggleAvatar.png'
                             }
                             className="rounded-full h-48"
                           />
@@ -390,7 +390,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                             {
                               personas.find(
                                 (persona) => persona.personaname === user
-                              )?.personaname
+                              )?.personaname || user
                             }{" "}
                             for shopping with us as{"  "}
                             <br></br>

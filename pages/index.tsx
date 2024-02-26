@@ -70,7 +70,7 @@ export default function Home() {
 
         <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
           <div className="absolute z-50">
-            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Connecting code to customers</h1>
+            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Innovation Velocioty Without Risk</h1>
             <p className="w-3/5 text-center mx-auto">
               Maximize the value of every software feature through safer releases, targeted
               experiences, experimentation, and more.
@@ -161,8 +161,8 @@ export default function Home() {
                     </defs>
                   </svg>
 
-                  <h2>De-Risk Deploys</h2>
-                  <p>Deploy more often and release without risk.</p>
+                  <h2>Release Confidently and Consistently</h2>
+                  <p>Help every develolper release features confidently and consistently</p>
                 </a>
               </div>
 
@@ -209,8 +209,8 @@ export default function Home() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  <h2>Targeted Experiences</h2>
-                  <p>Deliver targeted product experiences to any customer segment.</p>
+                  <h2>Automatically Remediate Software Issues</h2>
+                  <p>Uncover and remediate software errors and performance problems before they become customer issues</p>
                 </a>
               </div>
             </div>
@@ -300,9 +300,9 @@ export default function Home() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  <h2>Measure & Experiment</h2>
+                  <h2>Delivery Personalized and Targeted Experiences</h2>
                   <p>
-                    Customize the business impact of every product feature through experimentation.
+                  Deliver targeted and personalized experiences based on device, entitlement, or user behavior.
                   </p>
                 </a>
               </div>
@@ -355,8 +355,9 @@ export default function Home() {
                     </defs>
                   </svg>
 
-                  <h2>Mobile App Control</h2>
-                  <p>Release mobile features and fixes on your schedule, not theirs</p>
+                  <h2>Optimize and Experiment Within Your Features</h2>
+                  <p>Optimize business impact and avoid costly mistakes with feature and configuration experimentation
+</p>
                 </a>
               </div>
             </div>

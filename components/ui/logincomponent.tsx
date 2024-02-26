@@ -26,7 +26,7 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] = useState(null);
+  const [defaultEmail, setDefaultEmail] = useState('jenn@launchmail.io');
   const variantClass = getVariantClassName(variant);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
@@ -78,8 +78,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       name = activePersona.personaname;
     }
     else {
-      email = 'jenn@launchmail.io';
-      name = 'Jenn';
+      // email = 'jenn@launchmail.io';
+      // name = 'Jenn';
+    email = defaultEmail;
+    name = email.split('@')[0];
+    name = name.charAt(0).toUpperCase() + name.slice(1);
     }
     loginUser(name, email);
   };
@@ -265,8 +268,8 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
 
       </div>
-      <div className="flex flex-col  sm:flex-row  justify-between px-8 pb-8">
-        <div>
+      <div className="grid  sm:flex-row  justify-between px-8 pb-8">
+        <div className="pb-3">
           <p>Forgot Password?</p>
         </div>
         <div>

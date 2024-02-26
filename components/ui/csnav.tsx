@@ -71,7 +71,7 @@ export function CSNav() {
               <div onClick={goRelease}>
                 <CSCard
                   className="bg-gradient-releases cursor-pointer"
-                  herotext="Navigate to De-Risked Releases"
+                  herotext="Navigate to Release Confidently and Consistently"
                   
                 />
               </div>
@@ -85,7 +85,7 @@ export function CSNav() {
               <div onClick={goTargeting}>
                 <CSCard
                   className="bg-gradient-targeting cursor-pointer"
-                  herotext="Navigate to Targeted Experiences"
+                  herotext="Navigate to Tageted and Personalized Experiences"
                 />
               </div>
             </motion.div>
@@ -111,7 +111,7 @@ export function CSNav() {
               <div onClick={goMobile}>
                 <CSCard
                   className="bg-gradient-mobile cursor-pointer"
-                  herotext="Navigate to Mobile Optimization"
+                  herotext="Navigate to Automatically Remediate"
                 />
               </div>
             </motion.div>
