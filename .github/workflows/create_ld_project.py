@@ -7,6 +7,58 @@ import yaml
 import base64
 import time
 
+def createContextKind(ld_api_key, project_key):
+
+    project_key = project_key
+    key = "audience"
+    url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/context-kinds/" + key
+
+    payload = {
+        "name": "audience",
+        "description": "For creating experimentation results in the app",
+        "hideInTargeting": False,
+        "archived": False,
+        "version": 1
+    }
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": ld_api_key
+    }
+
+    response = requests.put(url, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        print("Context kind 'audience' updated successfully.")
+        project_key = project_key
+        url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/experimentation-settings"
+        
+        payload = {
+        "randomizationUnits": [
+            {
+            "randomizationUnit": "audience",
+            "default": False,
+            "standardRandomizationUnit": "user"
+            }
+        ]
+        }
+        while True:
+            response = requests.put(url, json=payload, headers=headers)
+
+            if response.status_code == 200:
+                print("Experimentation settings updated successfully.")
+                break
+            elif response.status_code == 429:
+                print("Rate limited. Waiting 5 seconds.")
+                time.sleep(5)
+            else:
+                print(f"Failed to update experimentation settings: {response.status_code}")
+                print(response.text)
+                exit(1)
+    else:
+        print(f"Failed to update context kind 'audience': {response.status_code}")
+        print(response.text)
+        exit(1)
         
 def main():
     
@@ -44,6 +96,8 @@ def main():
                     f.write(f"LD_SDK_KEY={sdk_key}\n")
                     f.write(f"LD_CLIENT_KEY={client_key}\n")
                     f.write(f"RUN_TERRAFORM=false\n")
+                    createContextKind(ld_api_key, project_key)
+                    
             except IOError as e:
                 print(f"Unable to write to environment file: {e}")
                 exit(1)
