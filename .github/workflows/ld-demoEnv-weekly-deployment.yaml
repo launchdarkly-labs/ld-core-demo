@@ -37,14 +37,13 @@ jobs:
         id: set-matrix
         run: |
           BRANCHES=$(echo $BRANCHES | xargs | sed 's/ /", "/g')
-          JSON_MATRIX="{\"branch\": [\"$BRANCHES\"]}"
-          echo "MATRIX_JSON=$JSON_MATRIX" >> $GITHUB_ENV
+          echo "::set-output name=matrix::{\"include\": [{\"branch\": \"$BRANCHES\"}]}"
 
   process_branches:
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(env.MATRIX_JSON) }}
+      matrix: ${{fromJson(needs.prepare.outputs.matrix)}}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
