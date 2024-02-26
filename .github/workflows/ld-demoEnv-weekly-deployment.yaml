@@ -1,8 +1,8 @@
 name: "Weekly Updates of User Demo Environments"
 
 on:
-  # schedule:
-  #   - cron: '0 7 * * SUN'
+  schedule:
+    - cron: '0 7 * * SUN'
   push:
     branches:
       - update_envs_weekly
@@ -17,26 +17,42 @@ env: # Environment variables
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
+
 jobs:
-  generate-matrix:
+  prepare_matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.prepare_matrix_step.outputs.matrix }}
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
-      - id: set-matrix
-        run: |
-          echo "::set-output name=matrix::$(git branch -r | grep 'origin/.*demoenv.*' | sed 's/origin\///' | jq -R -s -c 'split("\n")[:-1]')"
 
-  update-envs:
-    needs: generate-matrix
+      - name: Prepare matrix
+        id: prepare_matrix_step
+        run: |
+          echo "BRANCHES=$(git branch -r | grep 'demoenv' | sed 's/origin\///' | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
+
+      - name: Set matrix for the workflow
+        run: |
+          echo "MATRIX_JSON={\"include\": $(echo $BRANCHES | jq '.[] | select(. != null) | {branch: .}')}" >> $GITHUB_ENV
+          echo "matrix=${MATRIX_JSON}" >> $GITHUB_ENV
+
+  process_branches:
+    needs: prepare_matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        branch: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+      matrix: ${{fromJson(env.matrix)}}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ matrix.branch }}
+      
+      - name: Run specific steps for the branch
+        run: |
+          echo "Processing branch: ${{ matrix.branch }}"
+
       - name: Checkout code
         uses: actions/checkout@v2
 
