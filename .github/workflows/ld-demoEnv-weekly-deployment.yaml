@@ -3,7 +3,7 @@ name: "Weekly Updates of User Demo Environments"
 on:
   # schedule:
   #   - cron: '0 7 * * SUN'
-  pull_request:
+  push:
     branches:
       - update_envs_weekly
   
