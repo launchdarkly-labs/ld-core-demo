@@ -22,27 +22,24 @@ jobs:
   prepare_matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.prepare_matrix_step.outputs.matrix }}
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      
       - name: Prepare matrix
-        id: prepare_matrix_step
+        id: set_matrix
         run: |
-          echo "BRANCHES=$(git branch -r | grep 'demoenv' | sed 's/origin\///' | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
-
-      - name: Set matrix for the workflow
-        run: |
-          echo "MATRIX_JSON={\"include\": $(echo $BRANCHES | jq '.[] | select(. != null) | {branch: .}')}" >> $GITHUB_ENV
-          echo "matrix=${MATRIX_JSON}" >> $GITHUB_ENV
+          BRANCHES=$(git branch -r | grep 'demoenv' | sed 's/origin\///' | jq -R -s -c 'split("\n")[:-1]')
+          MATRIX_JSON="{\"include\": $(echo $BRANCHES | jq '.[] | select(. != null) | {branch: .}')}"
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
   process_branches:
     needs: prepare_matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(env.matrix)}}
+      matrix: ${{fromJson(needs.prepare_matrix.outputs.matrix)}}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
