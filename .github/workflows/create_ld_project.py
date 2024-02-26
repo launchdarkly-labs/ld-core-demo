@@ -104,29 +104,41 @@ def main():
                 "name": namespace
             }
 
-            response = requests.post(environment_url, json=environment_payload, headers=headers)
+            while True:
+                response = requests.post(environment_url, json=environment_payload, headers=headers)  
+    
+                if response.status_code == 201:
+                    print(f"Project and Environment Created for {namespace}")
+                    data = response.json()
 
-            if response.status_code == 201:
-                print(f"Project and Environment Created for {namespace}")
-                data = response.json()
+                    sdk_key = data['apiKey']
+                    client_key = data['_id']
 
-                sdk_key = data['apiKey']
-                client_key = data['_id']
-
-                env_file = os.getenv('GITHUB_ENV')
-                if env_file:
-                    try:
-                        with open(env_file, "a") as f:
-                            f.write(f"LD_SDK_KEY={sdk_key}\n")
-                            f.write(f"LD_CLIENT_KEY={client_key}\n")
-                            f.write(f"RUN_TERRAFORM=true\n")
-                            createContextKind(ld_api_key, project_key)
-                    except IOError as e:
-                        print(f"Unable to write to environment file: {e}")
+                    env_file = os.getenv('GITHUB_ENV')
+                    if env_file:
+                        try:
+                            with open(env_file, "a") as f:
+                                f.write(f"LD_SDK_KEY={sdk_key}\n")
+                                f.write(f"LD_CLIENT_KEY={client_key}\n")
+                                f.write(f"RUN_TERRAFORM=true\n")
+                                createContextKind(ld_api_key, project_key)
+                        except IOError as e:
+                            print(f"Unable to write to environment file: {e}")
+                            exit(1)
+                    else:
+                        print("GITHUB_ENV not set")
                         exit(1)
+                
+                elif response.status_code == 429:
+                    print("Rate limited. Waiting 5 seconds.")
+                    time.sleep(10)
+                
                 else:
-                    print("GITHUB_ENV not set")
-                    exit(1)
+                    data = response.json()
+                    print(response.status_code)
+                    print(response.text)
+                    print(data)
+                    break
         else:
             print(f"Failed to create project: {response.status_code}")
             print(response.text)
