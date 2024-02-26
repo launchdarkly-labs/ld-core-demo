@@ -34,8 +34,8 @@ def deleteLDProject():
     if response.status_code == 204:
         print("LD project deleted successfully")
     else:
-        data = response.json()
         print(response.status_code)
+        data = response.json()
         print(data)
 
 if __name__ == "__main__":
