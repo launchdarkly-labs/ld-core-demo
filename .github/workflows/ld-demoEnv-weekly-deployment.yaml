@@ -18,7 +18,7 @@ env: # Environment variables
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
 
 jobs:
-  update-envs:.
+  update-envs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
