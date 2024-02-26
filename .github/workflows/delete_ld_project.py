@@ -31,10 +31,11 @@ def deleteLDProject():
     headers = {"Authorization": ld_api_key}
     response = requests.delete(url, headers=headers)
         
-    if response.status_code == 204:
+    if response.status == 204:
         print("LD project deleted successfully")
     else:
         data = response.json()
+        print(response.status_code)
         print(data)
 
 if __name__ == "__main__":
