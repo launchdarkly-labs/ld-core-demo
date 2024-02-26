@@ -42,6 +42,13 @@ def createContextKind(ld_api_key, project_key):
             }
         ]
         }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": ld_api_key,
+            "LD-API-Version": "beta"
+
+        }
         while True:
             response = requests.put(url, json=payload, headers=headers)
 
