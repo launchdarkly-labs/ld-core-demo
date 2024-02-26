@@ -29,14 +29,20 @@ def deleteLDProject():
     
     url = "https://app.launchdarkly.com/api/v2/projects/" + project_key
     headers = {"Authorization": ld_api_key}
-    response = requests.delete(url, headers=headers)
+
+    while True:
+        response = requests.delete(url, headers=headers)
         
-    if response.status_code == 204:
-        print("LD project deleted successfully")
-    else:
-        print(response.status_code)
-        data = response.json()
-        print(data)
+        if response.status_code == 204 or response.status_code == 504: # temporary fix for 504 error but it deletes the project)
+            print("LD project deleted successfully")
+            break
+        elif response.status_code == 429:
+            print("Rate limit exceeded, waiting 10 seconds to retry...")
+            time.sleep(10)
+        else:
+            data = response.json()
+            print(data)
+            break
 
 if __name__ == "__main__":
     main()
