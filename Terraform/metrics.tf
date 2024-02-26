@@ -7,7 +7,7 @@ resource "launchdarkly_metric" "store-accessed" {
   is_numeric     = false
   event_key      = "store-accessed"
   success_criteria = "HigherThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   tags           = ["store", "accessed"]
 }
 
@@ -20,7 +20,7 @@ resource "launchdarkly_metric" "item-added" {
   is_numeric     = false
   event_key      = "item-added"
   success_criteria = "HigherThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   tags           = ["item", "added", "cart"]
 }
 
@@ -33,7 +33,7 @@ resource "launchdarkly_metric" "cart-accessed" {
   is_numeric     = false
   event_key      = "cart-accessed"
   success_criteria = "HigherThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   tags           = ["cart", "accessed"]
 }
 
@@ -46,7 +46,7 @@ resource "launchdarkly_metric" "customer-checkout" {
   is_numeric     = false
   event_key      = "customer-checkout"
   success_criteria = "HigherThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   tags           = ["checkout"]
 }
 
@@ -59,7 +59,7 @@ resource "launchdarkly_metric" "stock-api-latency" {
   is_numeric     = true
   event_key      = "stock-api-latency"
   success_criteria = "LowerThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   unit           = "ms"
   tags           = ["release", "stocks", "api", "latency"]
 }
@@ -73,7 +73,7 @@ resource "launchdarkly_metric" "stocks-api-error-rates" {
   is_numeric     = false
   event_key      = "stocks-api-error-rates"
   success_criteria = "LowerThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["user"]
   tags           = ["release", "stocks", "api", "error", "rates"]
 }
 
