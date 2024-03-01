@@ -82,12 +82,13 @@ export function CSNav() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <div onClick={goTargeting}>
+              <div onClick={goRelease}>
                 <CSCard
-                  className="bg-gradient-targeting cursor-pointer"
-                  herotext="Navigate to Tageted and Personalized Experiences"
+                  className="bg-gradient-mobile cursor-pointer"
+                  herotext="Navigate to Automatically Remediate"
                 />
               </div>
+              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -95,12 +96,13 @@ export function CSNav() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
             >
-              <div onClick={goExp}>
+              <div onClick={goTargeting}>
                 <CSCard
-                  className="bg-gradient-experimentation cursor-pointer"
-                  herotext="Navigate to Product Experimentation"
+                  className="bg-gradient-targeting cursor-pointer"
+                  herotext="Navigate to Targeted and Personalized Experiences"
                 />
               </div>
+              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -108,10 +110,10 @@ export function CSNav() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.5 }}
             >
-              <div onClick={goMobile}>
+              <div onClick={goExp}>
                 <CSCard
-                  className="bg-gradient-mobile cursor-pointer"
-                  herotext="Navigate to Automatically Remediate"
+                  className="bg-gradient-experimentation cursor-pointer"
+                  herotext="Navigate to Product Experimentation"
                 />
               </div>
             </motion.div>
