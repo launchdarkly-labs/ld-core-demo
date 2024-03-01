@@ -119,7 +119,7 @@ def createExperiment():
             "flags": {
             "storeAttentionCallout": {
                 "ruleId": "fallthrough",
-                "flagConfigVersion": 4
+                "flagConfigVersion": 1
             },
             },
             "randomizationUnit": "audience"
