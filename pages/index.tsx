@@ -70,7 +70,7 @@ export default function Home() {
 
         <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
           <div className="absolute z-50">
-            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Innovation Velocioty Without Risk</h1>
+            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Innovation Velocity Without Risk</h1>
             <p className="w-3/5 text-center mx-auto">
               Maximize the value of every software feature through safer releases, targeted
               experiences, experimentation, and more.
@@ -167,7 +167,18 @@ export default function Home() {
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
-                <a href="airways">
+                <a href="bank">
+                  <img width="44" height="44" src="remediate.png" />
+
+                  <h2>Automatically Remediate Software Issues</h2>
+                  <p>Uncover and remediate software errors and performance problems before they become customer issues</p>
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
+              <div className="w-full sm:w-1/2 home-card">
+                <a href="/airways">
                   <svg
                     width="44"
                     height="44"
@@ -209,13 +220,13 @@ export default function Home() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  <h2>Automatically Remediate Software Issues</h2>
-                  <p>Uncover and remediate software errors and performance problems before they become customer issues</p>
+                  <h2>Delivery Personalized and Targeted Experiences</h2>
+                  <p>
+                    Deliver targeted and personalized experiences based on device, entitlement, or user behavior.
+                  </p>
                 </a>
               </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/marketplace">
                   <svg
@@ -300,67 +311,15 @@ export default function Home() {
                       </linearGradient>
                     </defs>
                   </svg>
-                  <h2>Delivery Personalized and Targeted Experiences</h2>
-                  <p>
-                  Deliver targeted and personalized experiences based on device, entitlement, or user behavior.
+
+                  <h2>Optimize and Experiment Within Your Features</h2>
+                  <p>Optimize business impact and avoid costly mistakes with feature and configuration experimentation
                   </p>
                 </a>
               </div>
 
-              <div className="w-full sm:w-1/2 home-card">
-                <a href="/mobile">
-                  <svg
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_129)" />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M18.1176 12.9412H26.3529C26.7898 12.9412 27.2087 13.1147 27.5176 13.4236C27.8265 13.7325 28 14.1514 28 14.5882V29.4118C28 29.8486 27.8265 30.2675 27.5176 30.5764C27.2087 30.8853 26.7898 31.0588 26.3529 31.0588H18.1176C17.6808 31.0588 17.2619 30.8853 16.953 30.5764C16.6441 30.2675 16.4706 29.8486 16.4706 29.4118V26.9412H18.1176V29.4118H26.3529V14.5882H18.1176V17.0588H16.4706V14.5882C16.4706 14.1514 16.6441 13.7325 16.953 13.4236C17.2619 13.1147 17.6808 12.9412 18.1176 12.9412ZM16 17.8823C14.8954 17.8823 14 18.7778 14 19.8823V24.1176C14 25.2222 14.8954 26.1176 16 26.1176H20.2353C21.3399 26.1176 22.2353 25.2222 22.2353 24.1176V19.8823C22.2353 18.7778 21.3399 17.8823 20.2353 17.8823H16Z"
-                      fill="white"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M18.1176 12.9412H26.3529C26.7898 12.9412 27.2087 13.1147 27.5176 13.4236C27.8265 13.7325 28 14.1514 28 14.5882V29.4118C28 29.8486 27.8265 30.2675 27.5176 30.5764C27.2087 30.8853 26.7898 31.0588 26.3529 31.0588H18.1176C17.6808 31.0588 17.2619 30.8853 16.953 30.5764C16.6441 30.2675 16.4706 29.8486 16.4706 29.4118V26.9412H18.1176V29.4118H26.3529V14.5882H18.1176V17.0588H16.4706V14.5882C16.4706 14.1514 16.6441 13.7325 16.953 13.4236C17.2619 13.1147 17.6808 12.9412 18.1176 12.9412ZM16 17.8823C14.8954 17.8823 14 18.7778 14 19.8823V24.1176C14 25.2222 14.8954 26.1176 16 26.1176H20.2353C21.3399 26.1176 22.2353 25.2222 22.2353 24.1176V19.8823C22.2353 18.7778 21.3399 17.8823 20.2353 17.8823H16Z"
-                      fill="url(#paint1_linear_2085_129)"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_2085_129"
-                        x1="4.5"
-                        y1="-3.5"
-                        x2="48.1935"
-                        y2="43.6107"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0.123144" stop-color="#FF386B" />
-                        <stop offset="1" stop-color="#EBFF38" />
-                      </linearGradient>
-                      <linearGradient
-                        id="paint1_linear_2085_129"
-                        x1="21"
-                        y1="12.9412"
-                        x2="21"
-                        y2="31.0588"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="white" stop-opacity="0" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-
-                  <h2>Optimize and Experiment Within Your Features</h2>
-                  <p>Optimize business impact and avoid costly mistakes with feature and configuration experimentation
-</p>
-                </a>
-              </div>
             </div>
+
           </div>
         </section>
       </main>
