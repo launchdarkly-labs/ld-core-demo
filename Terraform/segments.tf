@@ -127,7 +127,7 @@ resource "launchdarkly_segment" "dev-team-template-env" {
   }
 }
 
-resource "launchdarkly_segment" "launch-club-platinum-template-env" {
+resource "launchdarkly_segment" "platinum-template-env" {
   key         = "launch-club-platinum"
   project_key = var.project_key
   env_key     = "template-env"
@@ -145,7 +145,7 @@ resource "launchdarkly_segment" "launch-club-platinum-template-env" {
   }
 }
 
-resource "launchdarkly_segment" "airline-a-390-passengers-template-env" {
+resource "launchdarkly_segment" "a380-template-env" {
   key         = "airline-a-390-passengers"
   project_key = var.project_key
   env_key     = "template-env"
