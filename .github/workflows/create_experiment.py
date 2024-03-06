@@ -122,7 +122,7 @@ def createExperiment():
                 "flagConfigVersion": 1
             },
             },
-            "randomizationUnit": "audience"
+            "randomizationUnit": "user"
         }
     }
     

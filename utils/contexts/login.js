@@ -22,7 +22,7 @@ export const LoginProvider = ({ children }) => {
     context.user.name = user;
     context.user.email = email;
     context.user.key = email;
-    context.audience.key = uuidv4().slice(0, 4)
+    context.audience.key = uuidv4().slice(0, 10)
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
