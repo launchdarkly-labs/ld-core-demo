@@ -30,10 +30,7 @@ export default function ExperimentGenerator() {
 
 
     const updateContext = async () => {
-
-        const uniqueId = uuidv4();
-        loginUser("test-exp" + uniqueId, "test-exp" + uniqueId + "@launchmail.io");
-
+        updateAudienceContext();
     }
 
     const generateResults = async () => {
@@ -51,7 +48,6 @@ export default function ExperimentGenerator() {
                         const stage4metric = Math.random();
                         if(stage4metric < metric4) {
                             client?.track("customer-checkout")
-                            console.log("Customer checked out")
                         }
                     }
                 }
