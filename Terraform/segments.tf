@@ -91,7 +91,7 @@ resource "launchdarkly_segment" "launch-club-entitlement" {
 
 // --------------------- FOR TEMPLATE ENV ---------------------
 
-resource "launchdarkly_segment" "beta-users" {
+resource "launchdarkly_segment" "beta-users-template-env" {
   key         = "beta-users"
   project_key = var.project_key
   env_key     = "template-env"
@@ -109,7 +109,7 @@ resource "launchdarkly_segment" "beta-users" {
   }
 }
 
-resource "launchdarkly_segment" "dev-team" {
+resource "launchdarkly_segment" "dev-team-template-env" {
   key         = "dev-team"
   project_key = var.project_key
   env_key     = "template-env"
@@ -127,7 +127,7 @@ resource "launchdarkly_segment" "dev-team" {
   }
 }
 
-resource "launchdarkly_segment" "launch-club-platinum" {
+resource "launchdarkly_segment" "launch-club-platinum-template-env" {
   key         = "launch-club-platinum"
   project_key = var.project_key
   env_key     = "template-env"
@@ -145,7 +145,7 @@ resource "launchdarkly_segment" "launch-club-platinum" {
   }
 }
 
-resource "launchdarkly_segment" "airline-a-390-passengers" {
+resource "launchdarkly_segment" "airline-a-390-passengers-template-env" {
   key         = "airline-a-390-passengers"
   project_key = var.project_key
   env_key     = "template-env"
@@ -163,7 +163,7 @@ resource "launchdarkly_segment" "airline-a-390-passengers" {
   }
 }
 
-resource "launchdarkly_segment" "launch-club-entitlement" {
+resource "launchdarkly_segment" "launch-club-entitlement-template-env" {
   key         = "launch-club-entitlement"
   project_key = var.project_key
   env_key     = "template-env"
