@@ -14,7 +14,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getVariantClassName } from "@/utils/getVariantClassName";
 import { StocksComponent } from "@/components/ui/bankcomponents/stocksCard";
 
 interface WealthManagementSheetProps {

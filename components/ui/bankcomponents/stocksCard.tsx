@@ -73,8 +73,8 @@ export const StocksComponent: React.FC = () => {
       lastValue > secondLastValue
         ? "lightgreen"
         : lastValue < secondLastValue
-        ? "red"
-        : "rgba(255, 255, 255, 0.5)";
+          ? "red"
+          : "rgba(255, 255, 255, 0.5)";
 
     return {
       labels: lastTenDataPoints.map((dataPoint) => dataPoint.time),
@@ -213,9 +213,8 @@ export const StocksComponent: React.FC = () => {
   return (
     <div className="space-y-2">
       <div
-        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${
-          runDemo ? "border-white" : "border-current"
-        }`}
+        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${runDemo ? "border-white" : "border-current"
+          }`}
       >
         <img src="stocksicon.png" onClick={toggleRunDemo} />
       </div>

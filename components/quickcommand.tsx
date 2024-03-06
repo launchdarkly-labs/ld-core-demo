@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
     RotateCcw,
+    FlaskConical,
 } from "lucide-react"
 import { useRouter } from "next/router";
 
@@ -17,6 +18,7 @@ import {
     CommandShortcut,
 } from "@/components/ui/command"
 import { toast } from "./ui/use-toast";
+import ExperimentGenerator from "@/components/ui/marketcomponents/experimentgenerator";
 
 export function QuickCommandDialog({ children }) {
     const [open, setOpen] = React.useState(false)
@@ -63,7 +65,6 @@ export function QuickCommandDialog({ children }) {
         <>
             {children}
             <CommandDialog open={open} onOpenChange={setOpen}>
-
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
@@ -75,6 +76,10 @@ export function QuickCommandDialog({ children }) {
                             ) : (
                                 <div onClick={resetFeatureFlags}>Reset Feature Flags</div>
                             )}
+                        </CommandItem>
+                        <CommandItem>
+                            <FlaskConical className="mr-2 h-4 w-4" />
+                            <ExperimentGenerator />
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>

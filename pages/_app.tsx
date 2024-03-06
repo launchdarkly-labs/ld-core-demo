@@ -63,8 +63,9 @@ if (typeof window !== "undefined") {
       <NoSSRWrapper>
         <LDProvider>
           <PersonaProvider>
-            <QuickCommandDialog>
+            
               <LoginProvider>
+              <QuickCommandDialog>
                 <TripsProvider>
                   <KeyboardNavigation />
                   <Head>
@@ -76,8 +77,8 @@ if (typeof window !== "undefined") {
                   </Head>
                   <Component {...pageProps} />
                 </TripsProvider>
+                </QuickCommandDialog>
               </LoginProvider>
-            </QuickCommandDialog>
           </PersonaProvider>
         </LDProvider>
       </NoSSRWrapper>
