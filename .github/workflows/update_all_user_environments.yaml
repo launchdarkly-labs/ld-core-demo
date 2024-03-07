@@ -2,7 +2,7 @@ name: "Update All User Environments"
 
 on:
   pull_request:
-    branches: [update_all_envs]
+    branches: [main]
     
 jobs:
   update-demo-environments:
