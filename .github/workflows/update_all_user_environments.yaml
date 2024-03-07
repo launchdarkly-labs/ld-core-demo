@@ -2,8 +2,7 @@ name: Update All User Environments
 
 on:
   pull_request:
-    branches:
-      - update_all_envs
+    branches: [update_all_envs]
     
 
 jobs:
