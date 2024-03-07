@@ -59,7 +59,7 @@ resource "launchdarkly_metric" "stock-api-latency" {
   is_numeric     = true
   event_key      = "stock-api-latency"
   success_criteria = "LowerThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["audience"]
   unit           = "ms"
   tags           = ["release", "stocks", "api", "latency"]
 }
@@ -73,6 +73,6 @@ resource "launchdarkly_metric" "stocks-api-error-rates" {
   is_numeric     = false
   event_key      = "stocks-api-error-rates"
   success_criteria = "LowerThanBaseline"
-  randomization_units = ["user", "audience"]
+  randomization_units = ["audience"]
   tags           = ["release", "stocks", "api", "error", "rates"]
 }

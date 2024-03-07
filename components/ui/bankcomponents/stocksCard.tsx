@@ -39,7 +39,7 @@ export const StocksComponent: React.FC = () => {
   let { stocksAPI } = useFlags();
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { loginUser, user, email } = useContext(LoginContext);
+  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
@@ -136,8 +136,7 @@ export const StocksComponent: React.FC = () => {
         setElapsedTime((prevTime) => {
           const newTime = prevTime + 1;
           if (newTime % 1 === 0) {
-            const uniqueId = uuidv4();
-            loginUser("test-" + uniqueId, "test-" + uniqueId + "@launchmail.io");
+            updateAudienceContext();
           }
           return newTime;
         });
