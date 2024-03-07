@@ -1,0 +1,25 @@
+name: Update All User Environments
+
+on:
+  schedule:
+    - cron: '0 7 * * 0'
+  pull_request:
+    branches:
+      - update_all_envs
+    
+
+jobs:
+  update-demo-environments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get all branches and loop through them
+        run: |
+          git fetch --all
+          for branch in $(git branch -r | grep -v '\->'); do
+            branch=${branch#origin/}
+            echo "Processing branch: $branch"
+            # Add commands to process each branch as needed
+          done
