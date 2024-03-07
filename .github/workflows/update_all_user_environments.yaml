@@ -17,6 +17,8 @@ jobs:
           git fetch --all
           for branch in $(git branch -r | grep -v '\->'); do
             branch=${branch#origin/}
-            echo "Processing branch: $branch"
-            # Add commands to process each branch as needed
+            if [[ $branch == *demoenv* ]]; then
+              echo "Branch $branch is a demo environment"
+              echo "Updating environment for branch $branch"
+            fi
           done
