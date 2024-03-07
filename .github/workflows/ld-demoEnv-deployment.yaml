@@ -3,9 +3,9 @@ name: "Build and Deploy Images to Demo Environment"
 on:
   push:
     branches:
-      - '*demoenv*' # This workflow will run when a new branch is created 
+      - '*demoenv*'
     
-env: # Environment variables
+env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
@@ -116,15 +116,15 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ld-core-demo
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-latest .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
 
       - name: Update K8s Deploy File
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
           URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-latest
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
 
       - name: Check Namespace in Kubernetes
         uses: kodermax/kubectl-aws-eks@master
