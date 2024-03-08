@@ -17,6 +17,8 @@ env:
 jobs:
   get-all-demo-environments:
     runs-on: ubuntu-latest
+    outputs:
+      branches: ${{ steps.set_env.outputs.branches }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -24,38 +26,43 @@ jobs:
       - name: Get all branches and loop through them
         run: |
           git fetch --all
-          for branch in $(git branch -r | grep -v '\->'); do
+          branches_to_update=()
+          for branch in $(git branch -r | grep -v '\->' | grep 'demoenv'); do
             branch=${branch#origin/}
-            if [[ $branch == *demoenv* ]]; then
-              echo "Branch $branch is a demo environment"
-              branches_to_update+=($branch)
-            fi
+            echo "Branch $branch is a demo environment"
+            branches_to_update+=("$branch")
           done
-          echo "BRANCHES=${branches_to_update[@]}" >> $GITHUB_ENV
+          echo "BRANCHES=${branches_to_update[*]}" >> $GITHUB_ENV
+
+      - name: Set branches as output for job
+        id: set_env
+        run: |
+          echo "branches=$(echo '${{ join(fromJson(env.BRANCHES), ',') }}')" >> $GITHUB_ENV
 
   update-all-demo-environments:
     needs: get-all-demo-environments
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJson(needs.get-all-demo-environments.outputs.branches) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Update all demo environments
+      - name: Setup branch environment
         run: |
-          for branch in "${branches_to_update[@]}"; do
-            echo "Updating branch $branch"
-            git checkout $branch
-            git pull origin $branch
-            get merge origin/main --no-edit
+          echo "Updating branch ${{ matrix.branch }}"
+          git fetch
+          git checkout ${{ matrix.branch }}
+          git merge origin/main --no-edit
           done
   
-      - name: Get Namespaces
-        id: get-namespaces
+      - name: Get Namespace
+        id: get-namespace
         run: |
-          for branch in "${branches_to_update[@]}"; do
-            NAMESPACE=${branch#demoenv-}
-            echo "NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
-          done
+          NAMESPACE=${{ matrix.branch }}#demoenv-
+          echo "NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v2
