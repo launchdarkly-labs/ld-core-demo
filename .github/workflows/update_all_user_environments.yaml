@@ -18,12 +18,13 @@ jobs:
   get-all-demo-environments:
     runs-on: ubuntu-latest
     outputs:
-      branches: ${{ steps.set_env.outputs.branches }}
+      branches: ${{ steps.set_branches.outputs.branches }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Get all branches and loop through them
+        id: set_branches
         run: |
           git fetch --all
           branches_to_update=""
