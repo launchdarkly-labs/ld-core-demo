@@ -39,7 +39,7 @@ jobs:
   update-all-demo-environments:
     needs: get-all-demo-environments
     runs-on: ubuntu-latest
-
+    if: "!contains(matrix.branch, 'noupdate')"
     env:
       BRANCHES: ${{ needs.get-all-demo-environments.outputs.branches }}
 
