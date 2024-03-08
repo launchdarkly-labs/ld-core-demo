@@ -34,10 +34,10 @@ jobs:
           done
           echo "BRANCHES=${branches_to_update[*]}" >> $GITHUB_ENV
 
-      - name: Set branches as output for job
-        id: set_env
-        run: |
-          echo "branches=$(echo '${{ join(fromJson(env.BRANCHES), ',') }}')" >> $GITHUB_ENV
+     - name: Set branches as output for job
+  id: set_env
+  run: |
+    echo "branches=$(echo '${branches_to_update[@]}' | jq -R -s -c 'split(" ")')" >> $GITHUB_ENV
 
   update-all-demo-environments:
     needs: get-all-demo-environments
