@@ -27,12 +27,13 @@ jobs:
         id: set_branches
         run: |
           git fetch --all
-          branches_to_update=""
+          branches_to_update="["
           for branch in $(git branch -r | grep -v '\->' | grep 'demoenv'); do
             branch=${branch#origin/}
             echo "Branch $branch is a demo environment"
-            branches_to_update="$branches_to_update $branch"
+            branches_to_update="$branches_to_update\"$branch\","
           done
+          branches_to_update="${branches_to_update%,}]" # Remove trailing comma and close the array
           echo "BRANCHES=$branches_to_update" >> $GITHUB_OUTPUT
           echo "BRANCHES=$branches_to_update"
           
@@ -47,7 +48,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branch: ${{ fromJson('["' + replace(needs.get-all-demo-environments.outputs.branches, ' ', '","') + '"]') }}
+        branch: ${{ fromJson(needs.get-all-demo-environments.outputs.branches) }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
