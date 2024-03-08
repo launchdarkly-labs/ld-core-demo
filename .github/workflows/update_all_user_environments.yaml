@@ -34,9 +34,7 @@ jobs:
             branches_to_update="$branches_to_update\"$branch\","
           done
           branches_to_update="${branches_to_update%,}]" # Remove trailing comma and close the array
-          echo "BRANCHES=$branches_to_update" >> $GITHUB_OUTPUT
-          echo "BRANCHES=$branches_to_update"
-          
+          echo "BRANCHES=$branches_to_update" >> $GITHUB_OUTPUT          
 
   update-all-demo-environments:
     needs: get-all-demo-environments
@@ -65,7 +63,7 @@ jobs:
         id: get-namespace
         run: |
           NAMESPACE="${{ matrix.branch }}#demoenv-"
-          echo "NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
+          echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v2
