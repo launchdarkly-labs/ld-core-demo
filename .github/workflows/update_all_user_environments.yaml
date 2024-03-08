@@ -37,8 +37,12 @@ jobs:
       - name: Set branches as output for job
         id: set_env
         run: |
-          branches=$(echo "${BRANCHES[@]}")
-          echo "::set-output name=branches::[$branches]"
+          branches_json=$(printf '%s\n' "${branches_to_update[@]}" | jq -R . | jq -s .)
+          echo "branches=$branches_json" >> $GITHUB_ENV
+          echo "::set-output name=branches::$branches_json"
+      
+     
+
 
   update-all-demo-environments:
     needs: get-all-demo-environments
@@ -50,6 +54,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Print branches output
+        run: echo "${{ needs.get-all-demo-environments.outputs.branches }}"
+
 
       - name: Setup branch environment
         run: |
