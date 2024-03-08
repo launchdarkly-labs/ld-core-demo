@@ -58,6 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Updating branch ${{ matrix.branch }}"
+          git config --global user.name "Automation Script"
           git fetch
           git checkout ${{ matrix.branch }}
           git merge origin/main --no-edit
