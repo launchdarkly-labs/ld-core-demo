@@ -65,7 +65,8 @@ jobs:
       - name: Get Namespace
         id: get-namespace
         run: |
-          NAMESPACE="${{ matrix.branch }}#demoenv-"
+          NAMESPACE="${{ matrix.branch }}"
+          NAMESPACE="${NAMESPACE#demoenv-}"
           echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
 
       - name: Set up Python
