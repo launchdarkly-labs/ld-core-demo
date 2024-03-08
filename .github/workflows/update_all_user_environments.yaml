@@ -30,14 +30,15 @@ jobs:
           for branch in $(git branch -r | grep -v '\->' | grep 'demoenv'); do
             branch=${branch#origin/}
             echo "Branch $branch is a demo environment"
-            branches_to_update+=("$branch")
+            branches_to_update+=("\"$branch\"")
           done
           echo "BRANCHES=${branches_to_update[*]}" >> $GITHUB_ENV
 
       - name: Set branches as output for job
         id: set_env
         run: |
-          echo "branches=$(echo '${branches_to_update[@]}' | jq -R -s -c 'split(" ")')" >> $GITHUB_ENV
+          branches=$(echo "${BRANCHES[@]}")
+          echo "::set-output name=branches::[$branches]"
 
   update-all-demo-environments:
     needs: get-all-demo-environments
@@ -56,12 +57,11 @@ jobs:
           git fetch
           git checkout ${{ matrix.branch }}
           git merge origin/main --no-edit
-          done
-  
+
       - name: Get Namespace
         id: get-namespace
         run: |
-          NAMESPACE=${{ matrix.branch }}#demoenv-
+          NAMESPACE="${{ matrix.branch }}#demoenv-"
           echo "NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV
 
       - name: Set up Python
