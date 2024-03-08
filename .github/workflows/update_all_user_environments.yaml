@@ -1,8 +1,8 @@
 name: "Update All User Environments"
 
 on:
-  pull_request:
-    branches: [main]
+  schedule:
+    - cron: '0 6 * * 0'
     
 
 env:
