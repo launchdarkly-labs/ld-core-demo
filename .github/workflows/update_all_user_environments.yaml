@@ -26,23 +26,13 @@ jobs:
       - name: Get all branches and loop through them
         run: |
           git fetch --all
-          branches_to_update=()
+          branches_to_update=""
           for branch in $(git branch -r | grep -v '\->' | grep 'demoenv'); do
             branch=${branch#origin/}
             echo "Branch $branch is a demo environment"
-            branches_to_update+=("\"$branch\"")
+            branches_to_update="$branches_to_update $branch"
           done
-          echo "BRANCHES=${branches_to_update[*]}" >> $GITHUB_ENV
-
-      - name: Set branches as output for job
-        id: set_env
-        run: |
-          branches_json=$(printf '%s\n' "${branches_to_update[@]}" | jq -R . | jq -s .)
-          echo "branches=$branches_json" >> $GITHUB_ENV
-          echo "branches=$branches_json" >> $GITHUB_ENVIRONMENT_PATH
-      
-     
-
+          echo "BRANCHES=${branches_to_update:1}" >> $GITHUB_ENV
 
   update-all-demo-environments:
     needs: get-all-demo-environments
@@ -50,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branch: ${{ fromJson(needs.get-all-demo-environments.outputs.branches) }}
+        branch: ${{ needs.get-all-demo-environments.outputs.branches }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
