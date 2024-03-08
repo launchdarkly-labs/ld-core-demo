@@ -39,9 +39,9 @@ jobs:
     needs: get-all-demo-environments
     runs-on: ubuntu-latest
 
-      steps:
-        - name: Print ENV output
-          run: echo "BRANCHES=${{ env.BRANCHES }}"
+    steps:
+      - name: Print ENV output
+        run: echo "BRANCHES=${{ env.BRANCHES }}"
     # strategy:
     #   fail-fast: false
     #   matrix:
