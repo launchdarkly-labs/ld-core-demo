@@ -39,7 +39,7 @@ jobs:
         run: |
           branches_json=$(printf '%s\n' "${branches_to_update[@]}" | jq -R . | jq -s .)
           echo "branches=$branches_json" >> $GITHUB_ENV
-          echo "::set-output name=branches::$branches_json"
+          echo "branches=$branches_json" >> $GITHUB_ENVIRONMENT_PATH
       
      
 
