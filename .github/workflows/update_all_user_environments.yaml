@@ -42,7 +42,6 @@ jobs:
 
     env:
       BRANCHES: ${{ needs.get-all-demo-environments.outputs.branches }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     strategy:
       fail-fast: false
@@ -55,8 +54,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup branch environment
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Updating branch ${{ matrix.branch }}"
           git fetch
