@@ -39,6 +39,9 @@ jobs:
     needs: get-all-demo-environments
     runs-on: ubuntu-latest
 
+    env:
+      BRANCHES: ${{ needs.get-all-demo-environments.outputs.branches }}
+
     steps:
       - name: Print ENV output
         run: echo "BRANCHES=${{ env.BRANCHES }}"
