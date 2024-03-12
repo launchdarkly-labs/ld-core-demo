@@ -21,7 +21,7 @@ spec:
             - name: web
               containerPort: 3000
               protocol: TCP
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
 
 ---
 apiVersion: v1
