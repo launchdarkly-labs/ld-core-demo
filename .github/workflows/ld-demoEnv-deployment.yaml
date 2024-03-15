@@ -41,15 +41,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
 
-      - name: Create LD Project for User
-        id: create_ld_project
-        env:
-          LD_API_KEY: ${{ secrets.LD_API_KEY }}
-          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
-        run: |
-          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/ld_api/create_ld_project.py
-
       - name: Create LD Project, New LD Environment and Audience Context for Demo Environment
         id: create_ld_project
         env:
