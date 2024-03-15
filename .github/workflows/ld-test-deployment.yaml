@@ -36,8 +36,8 @@ jobs:
       - name: Get LD ENVs
         id: get-envs
         run: |
-          echo "var1=$(python ./.github/workflows/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
-          echo "var2=$(python ./.github/workflows/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
+          echo "var1=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
+          echo "var2=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
         env:
           LD_ENV_KEY: test
           LD_API_KEY: ${{ secrets.LD_API_KEY }}

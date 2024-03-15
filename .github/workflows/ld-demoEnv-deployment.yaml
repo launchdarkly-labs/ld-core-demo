@@ -48,54 +48,55 @@ jobs:
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/create_ld_project.py
+          python ./.github/workflows/ld_api/create_ld_project.py
 
-      - name: Apply Terraform
-        if: env.RUN_TERRAFORM == 'true'
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: "> 1.1.6"
-
-      - name: Terraform Apply
-        if: env.RUN_TERRAFORM == 'true'
+      - name: Create LD Project, New LD Environment and Audience Context for Demo Environment
+        id: create_ld_project
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
-          cd ./Terraform/
-          touch .tfvars
-          echo 'access_token = "${{ secrets.LD_API_KEY }}"' >> .tfvars
-          echo 'project_key = "${{ env.DEMO_NAMESPACE }}-ld-demo"' >> .tfvars
-          echo 'ld_env_key = "${{ env.DEMO_NAMESPACE }}"' >> .tfvars
-          terraform init
-          terraform apply -var-file=".tfvars" -auto-approve
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_ld_project.py
+
+      - name: Create Feature Flags in LD Project/Environment
+        id: create_feature_flag_in_LD
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_ld_featureflags.py
         
       - name: Create metric group in LD Project/Environment
         id: create_metric_group_in_LD
-        if: env.RUN_TERRAFORM == 'true'
+        if: env.PROJECT_EXISTS == 'false'
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Creating metrics in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/create_metric_group.py
+          python ./.github/workflows/ld_api/create_metric_group.py
 
       - name: Create experiment in LD Project/Environment
         id: create_experiment_in_LD
-        if: env.RUN_TERRAFORM == 'true'
+        if: env.PROJECT_EXISTS == 'false'
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Creating experiment in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/create_experiment.py
+          python ./.github/workflows/ld_api/create_experiment.py
           
       - name: Create Migration FF in LD Project/Environment
         id: create_migration_FF_in_LD
-        if: env.RUN_TERRAFORM == 'true'
+        if: env.PROJECT_EXISTS == 'false'
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Creating migration feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/create_migration_flag.py
+          python ./.github/workflows/ld_api/create_migration_flag.py
 
       - name: Create .env file
         run: |
