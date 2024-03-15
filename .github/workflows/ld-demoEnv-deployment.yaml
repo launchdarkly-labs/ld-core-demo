@@ -52,6 +52,7 @@ jobs:
 
       - name: Create Feature Flags in LD Project/Environment
         id: create_feature_flag_in_LD
+        if: env.PROJECT_EXISTS == 'false'
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
