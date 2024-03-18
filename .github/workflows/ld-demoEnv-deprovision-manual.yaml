@@ -1,0 +1,58 @@
+name: (De-Provisioning App - Manual Workflow) Remove Demo Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'User alias or LD env key'
+        required: true
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  ECR_REPOSITORY: ld-core-demo
+  KUBECTL_VERSION: "v1.23.0"
+  LD_API_KEY: ${{ secrets.LD_API_KEY }} 
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+
+
+
+jobs:
+  deploy-to-demoenv: 
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./.github/workflows/requirements.txt
+
+      - name: Delete LD Project for User
+        id: delete_ld_project
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}-ld-demo
+        run: |
+          echo "Deleting LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/delete_ld_project.py
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Delete Kubernetes Namespace
+        if: env.namespace_exists == 'true'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: delete namespace ${{ env.DEMO_NAMESPACE }}
