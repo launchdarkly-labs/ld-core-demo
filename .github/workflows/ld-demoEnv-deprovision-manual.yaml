@@ -41,7 +41,7 @@ jobs:
         id: delete_ld_project
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
-          NAMESPACE: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Deleting LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
           python ./.github/workflows/ld_api/delete_ld_project.py
