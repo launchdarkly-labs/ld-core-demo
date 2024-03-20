@@ -303,7 +303,7 @@ def createStoreHeadersFeatureFlag():
     },
     "key": "storeHeaders",
     "name": "09 - Featured Store Headers",
-    "description": "Amazon Bedrock Powered Travel Insights",
+    "description": "Headers to drive engagement on specific stores",
      "variations": [
         {
             "value": True,
