@@ -65,19 +65,23 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
       <SheetTrigger onClick={() => cartClick()} asChild>
         <div className="relative">
           <ShoppingCart className="cart" color={"white"} className="cursor-pointer" />
-          <div className="bg-[#05b0d2] w-3 h-3 sm:w-[.85rem] sm:h-[.85rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[0px] right-[0px]">
-            <span className="text-white mt-[.15rem] sm:mt-1 absolute text-xs sm:text-sm ">{cartNumOfItems}</span>
+          <div className="bg-marketblue w-3 h-3 sm:w-[.85rem] sm:h-[.85rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[0px] right-[0px]">
+            <span className="text-white mt-[.15rem] sm:mt-1 absolute text-xs sm:text-sm ">
+              {cartNumOfItems}
+            </span>
           </div>
         </div>
       </SheetTrigger>
 
       <SheetContent className="w-full sm:w-1/2 lg:w-1/3" side="right">
         <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl">Your Cart</SheetTitle>
+          <SheetTitle className="font-sohne text-2xl bg-gradient-experimentation text-transparent bg-clip-text">
+            Your Cart
+          </SheetTitle>
 
           <SheetDescription className="font-sohne">Ready for Checkout?</SheetDescription>
         </SheetHeader>
-        <Table>
+        <Table className="font-sohnelight">
           {/* <TableCaption>Your Items</TableCaption> */}
           <TableHeader>
             <TableRow>
@@ -86,19 +90,30 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cart?.map((item: InventoryItem) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-sohnelight">{item.item}</TableCell>
-                <TableCell className="font-sohnelight">{item.cost}</TableCell>
+            {cart.length > 0 ? (
+              cart?.map((item: InventoryItem) => {
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell className="">{item.item}</TableCell>
+                    <TableCell className="">${item.cost}</TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow key={1}>
+                <p className="p-4">Add an Item!</p>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
         <SheetFooter>
           <div className="mr-16 mt-10">
             <p className="pb-4 font-sohne ml-auto">Transaction Total: ${totalCost}</p>
             <SheetTrigger onClick={checkOut} asChild>
-              <Button onClick={checkOutTracking} className="checkout w-full">
+              <Button
+                onClick={checkOutTracking}
+                className="checkout w-full bg-gradient-experimentation hover:brightness-[120%]"
+              >
                 Checkout
               </Button>
             </SheetTrigger>
