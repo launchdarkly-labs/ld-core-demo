@@ -14,12 +14,9 @@ export function VRGalaxy({
 }) {
   const { storeAttentionCallout, storeHeaders } = useFlags();
   const [inventory, setInventory] = useState([]);
-  const [headerLabel, setHeaderLabel] = useState<string>("");
 
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
-
+  const isVisibleStoreHeaders=storeHeaders;
+  const headerLabel = storeAttentionCallout;
 
   useEffect(() => {
     fetch("/api/storeInventory?storename=vrgalaxy")
@@ -44,7 +41,7 @@ export function VRGalaxy({
       inventory={inventory}
       mainImg={mainImg}
       headerLabel={headerLabel}
-      storeHeaders={storeHeaders}
+      isVisibleStoreHeaders={isVisibleStoreHeaders}
     />
   );
 }

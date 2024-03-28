@@ -39,7 +39,7 @@ const ProductInventoryComponent = ({
   tableCaption,
   inventory,
   mainImg,
-  storeHeaders,
+  isVisibleStoreHeaders,
   headerLabel,
 }: {
   setOpen: any;
@@ -50,7 +50,7 @@ const ProductInventoryComponent = ({
   tableCaption?: string;
   inventory: object;
   mainImg: any;
-  storeHeaders?: boolean;
+  isVisibleStoreHeaders?: boolean;
   headerLabel?: string;
 }) => {
   const LDClient = useLDClient();
@@ -65,11 +65,11 @@ const ProductInventoryComponent = ({
       <SheetTrigger
         asChild
         onClick={() => {
-          storeHeaders ? storeOpened() : null;
+          isVisibleStoreHeaders ? storeOpened() : null;
         }}
       >
-        <div className="relative flex items-center justify-center cursor-pointer hover:brightness-[120%]">
-          {storeHeaders && (
+        <div className="relative flex items-center justify-center ">
+          {isVisibleStoreHeaders && (
             <motion.div
               initial={{ scale: 0, x: "-100%" }}
               animate={{ scale: 1.15, x: "0%" }}
@@ -82,11 +82,11 @@ const ProductInventoryComponent = ({
               className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
             >
               <p className="flex items-center font-sohne mx-auto uppercase text-white text-xl text-center">
-                {headerLabel}
+             {headerLabel}
               </p>
             </motion.div>
           )}
-          <img src={mainImg?.imgSrc} alt={mainImg?.alt} className="h-[300px] sm:h-[350px]" />
+          <img src={mainImg?.imgSrc} alt={mainImg?.alt} className="h-[300px] sm:h-[350px] cursor-pointer hover:brightness-[120%]" />
         </div>
       </SheetTrigger>
 
