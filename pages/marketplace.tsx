@@ -36,6 +36,8 @@ export default function Marketplace() {
     cost: number;
     vendor: string;
   }
+  
+  //TODO: change this into a hook in order to avoid passing cart down from marketplace to nav to storecart
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
 
