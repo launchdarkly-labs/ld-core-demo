@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -12,12 +10,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { Home, HomeIcon, Menu, Navigation } from "lucide-react";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CSCard } from "../../ldcscard";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "../../card";
 import {
   Table,
   TableBody,
@@ -41,7 +33,8 @@ const ProductInventoryComponent = ({
   sheetTitle,
   sheetDescription,
   tableCaption,
-  inventory
+  inventory,
+  mainImg
 }: {
   setOpen: any;
   open: boolean;
@@ -49,13 +42,14 @@ const ProductInventoryComponent = ({
   sheetTitle: string,
   sheetDescription: string;
   tableCaption: string,
-  inventory: object
+  inventory: object,
+  mainImg: any
 }) => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div>
-          <img src="electronics.png" alt="The Boomin' Box" className="h-[300px] sm:h-[350px]" />
+        <div className="cursor-pointer hover:brightness-[120%]">
+          <img src={mainImg?.imgSrc} alt={mainImg?.alt} className="h-[300px] sm:h-[350px]" />
         </div>
       </SheetTrigger>
 

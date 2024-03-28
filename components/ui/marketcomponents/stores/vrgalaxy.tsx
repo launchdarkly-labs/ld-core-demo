@@ -36,7 +36,7 @@ interface InventoryItem {
 }
 
 // @ts-nocheck
-export function VRgalaxy({
+export function VRGalaxy({
   headerLabel,
   storeHeaders,
   addToCart,

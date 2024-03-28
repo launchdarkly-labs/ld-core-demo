@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import NavBar from "@/components/ui/navbar";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
-import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
+import { VRGalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
@@ -36,7 +36,7 @@ export default function Marketplace() {
     cost: number;
     vendor: string;
   }
-  
+
   //TODO: change this into a hook in order to avoid passing cart down from marketplace to nav to storecart
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
@@ -174,7 +174,7 @@ export default function Marketplace() {
                     {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                     <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
                       <div className="prodcard">
-                        <VRgalaxy
+                        <VRGalaxy
                           storeHeaders={storeHeaders}
                           headerLabel={headerLabel}
                           addToCart={addToCart}
