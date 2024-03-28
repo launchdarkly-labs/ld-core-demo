@@ -101,7 +101,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               })
             ) : (
               <TableRow key={1}>
-                <p className="p-4">Add an Item!</p>
+                <TableCell className="">Add an Item!</TableCell>
               </TableRow>
             )}
           </TableBody>

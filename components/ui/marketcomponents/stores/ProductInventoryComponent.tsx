@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
-  SheetClose,
+  // SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -58,7 +58,6 @@ const ProductInventoryComponent = ({
   async function storeOpened() {
     LDClient?.track("store-accessed", LDClient.getContext(), 1);
   }
-  console.log(headerLabel)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -82,11 +81,15 @@ const ProductInventoryComponent = ({
               className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
             >
               <p className="flex items-center font-sohne mx-auto uppercase text-white text-xl text-center">
-             {headerLabel}
+                {headerLabel}
               </p>
             </motion.div>
           )}
-          <img src={mainImg?.imgSrc} alt={mainImg?.alt} className="h-[300px] sm:h-[350px] cursor-pointer hover:brightness-[120%]" />
+          <img
+            src={mainImg?.imgSrc}
+            alt={mainImg?.alt}
+            className="h-[300px] sm:h-[350px] cursor-pointer hover:brightness-[120%]"
+          />
         </div>
       </SheetTrigger>
 

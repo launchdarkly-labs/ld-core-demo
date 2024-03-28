@@ -35,9 +35,9 @@ export function VRGalaxy({
       setOpen={setOpen}
       open={open}
       addToCart={addToCart}
-      sheetDescription="Beats for the audiophiles in the crowd!"
-      sheetTitle="The Boomin' Box"
-      tableCaption="The Boomin' Box Inventory"
+      sheetDescription="Your home for today's VR equipment!"
+      sheetTitle="Welcome to VR Galaxy"
+      tableCaption="VR Galaxy Inventory"
       inventory={inventory}
       mainImg={mainImg}
       headerLabel={headerLabel}

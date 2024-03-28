@@ -400,7 +400,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <div className="mx-auto text-center">
                           <Button
                             onClick={handleLogout}
-                            className=" bg-red-700 items-center font-audimat my-2 w-full bg-gradient-to-r from-marketblue text-black to-marketgreen text-xl rounded-none"
+                            className=" bg-red-700 items-center font-audimat my-2 w-full  bg-gradient-experimentation  text-xl rounded-none"
                           >
                             Logout
                           </Button>
@@ -466,31 +466,31 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             <button
               href="/marketplace"
-              className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+              className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-experimentation bg-[length:100%_3px]`}
             >
               All
             </button>
             <button
               href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
             >
               Account
             </button>
             <button
               href="/marketplace"
-              className={`${navLinkStyling}  text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+              className={`${navLinkStyling}  text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
             >
               Buy Again
             </button>
             <button
               href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
             >
               Today's Deals
             </button>
             <button
               href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-marketblue to-marketgreen bg-[length:100%_3px]`}
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
             >
               Sale
             </button>

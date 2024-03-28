@@ -15,8 +15,6 @@ import LoginContext from "@/utils/contexts/login";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
 
-
-
 export default function Marketplace() {
 
   const [products, setProducts] = useState([]);
