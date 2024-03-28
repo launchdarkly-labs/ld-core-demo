@@ -28,12 +28,16 @@ import {
   TableRow,
 } from "../../table";
 
+import inventorySlidingPage from "./ProductInventoryComponent";
+import ProductInventoryComponent from "./ProductInventoryComponent";
+
 interface InventoryItem {
   id: string | number;
   item: string;
   cost: number;
 }
 
+//TODO: open, setopen, addtocart needs to be a wrapper function or hook
 export function TheBoominBox({
   addToCart,
   open,
@@ -54,62 +58,14 @@ export function TheBoominBox({
   }, []);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <div>
-          <img
-            src="electronics.png"
-            alt="The Boomin' Box"
-            className="h-[300px] sm:h-[350px]"
-          />
-        </div>
-      </SheetTrigger>
-
-      <SheetContent className="w-3/4 lg:w-1/2" side="right">
-        <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl">
-            The Boomin' Box
-          </SheetTitle>
-
-          <SheetDescription className="font-sohne">
-            Beats for the audiophiles in the crowd!
-          </SheetDescription>
-        </SheetHeader>
-        <Table>
-          <TableCaption>The Boomin' Box Inventory</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Item</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {inventory.map((item: InventoryItem) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.item}</TableCell>
-                <TableCell>{item.cost}</TableCell>
-                <TableCell>
-                  <div>
-                    <Button
-                      className="rounded-none bg-blue-600 font-sohne"
-                      onClick={() => addToCart(item)}
-                    >
-                      Buy Now
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <SheetFooter>
-          {/* <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose> */}
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+    <ProductInventoryComponent
+      setOpen={setOpen}
+      open={open}
+      addToCart={addToCart}
+      sheetDescription = "Beats for the audiophiles in the crowd!"
+      sheetTitle="The Boomin' Box"
+      tableCaption="The Boomin' Box Inventory"
+      inventory={inventory}
+    />
   );
 }
