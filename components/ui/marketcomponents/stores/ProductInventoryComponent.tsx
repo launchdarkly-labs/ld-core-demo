@@ -20,6 +20,10 @@ import {
   TableRow,
 } from "../../table";
 
+import { motion } from "framer-motion";
+
+import { useLDClient } from "launchdarkly-react-client-sdk";
+
 interface InventoryItem {
   id: string | number;
   item: string;
@@ -34,28 +38,63 @@ const ProductInventoryComponent = ({
   sheetDescription,
   tableCaption,
   inventory,
-  mainImg
+  mainImg,
+  storeHeaders,
+  headerLabel,
 }: {
   setOpen: any;
   open: boolean;
   addToCart: any;
-  sheetTitle: string,
-  sheetDescription: string;
-  tableCaption: string,
-  inventory: object,
-  mainImg: any
+  sheetTitle?: string;
+  sheetDescription?: string;
+  tableCaption?: string;
+  inventory: object;
+  mainImg: any;
+  storeHeaders?: boolean;
+  headerLabel?: string;
 }) => {
+  const LDClient = useLDClient();
+
+  async function storeOpened() {
+    LDClient?.track("store-accessed", LDClient.getContext(), 1);
+  }
+  console.log(headerLabel)
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <div className="cursor-pointer hover:brightness-[120%]">
+      <SheetTrigger
+        asChild
+        onClick={() => {
+          storeHeaders ? storeOpened() : null;
+        }}
+      >
+        <div className="relative flex items-center justify-center cursor-pointer hover:brightness-[120%]">
+          {storeHeaders && (
+            <motion.div
+              initial={{ scale: 0, x: "-100%" }}
+              animate={{ scale: 1.15, x: "0%" }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                duration: 1.5,
+              }}
+              className="flex justify-center absolute top-[-30px] z-10 bg-gradient-experimentation px-2 py-2 w-2/3 shadow-xl "
+            >
+              <p className="flex items-center font-sohne mx-auto uppercase text-white text-xl text-center">
+                {headerLabel}
+              </p>
+            </motion.div>
+          )}
           <img src={mainImg?.imgSrc} alt={mainImg?.alt} className="h-[300px] sm:h-[350px]" />
         </div>
       </SheetTrigger>
 
       <SheetContent className="w-3/4 lg:w-1/2" side="right">
         <SheetHeader>
-          <SheetTitle className="font-sohne text-2xl  bg-gradient-experimentation text-transparent bg-clip-text">{sheetTitle}</SheetTitle>
+          <SheetTitle className="font-sohne text-2xl  bg-gradient-experimentation text-transparent bg-clip-text">
+            {sheetTitle}
+          </SheetTitle>
 
           <SheetDescription className="font-sohne">{sheetDescription}</SheetDescription>
         </SheetHeader>

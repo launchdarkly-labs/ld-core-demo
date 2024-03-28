@@ -1,7 +1,7 @@
 
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { motion } from "framer-motion";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import NavBar from "@/components/ui/navbar";
@@ -18,7 +18,7 @@ import { setCookie } from "cookies-next";
 
 
 export default function Marketplace() {
-  const [headerLabel, setHeaderLabel] = useState<string>("");
+
   const [products, setProducts] = useState([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
@@ -27,9 +27,6 @@ export default function Marketplace() {
     useContext(LoginContext);
 
   const LDClient = useLDClient();
-  const flags = useFlags();
-  const { storeAttentionCallout, storeHeaders } = useFlags();
-
   interface InventoryItem {
     id: string | number;
     item: string;
@@ -39,7 +36,6 @@ export default function Marketplace() {
 
   //TODO: change this into a hook in order to avoid passing cart down from marketplace to nav to storecart
   const [cart, setCart] = useState<InventoryItem[]>([]);
-
 
   const addToCart = (item: any) => {
 
@@ -60,9 +56,7 @@ export default function Marketplace() {
       .then((data) => setProducts(data));
   }, []);
 
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
+
 
   const handleOnSelect = (item: InventoryItem) => {
     if (item.vendor === "vrgalaxy") {
@@ -175,7 +169,6 @@ export default function Marketplace() {
                     <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
                       <div className="prodcard">
                         <VRGalaxy
-                          storeHeaders={storeHeaders}
                           headerLabel={headerLabel}
                           addToCart={addToCart}
                           open={openVRGalaxy}
