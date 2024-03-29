@@ -104,7 +104,7 @@ const ProductInventoryComponent = ({
           <SheetDescription className="font-sohne">{sheetDescription}</SheetDescription>
         </SheetHeader>
         <Table className="">
-          <TableCaption>{tableCaption}</TableCaption>
+          <TableCaption className="bg-gradient-experimentation text-transparent bg-clip-text font-bold text-base">{tableCaption}</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Item</TableHead>
@@ -129,7 +129,7 @@ const ProductInventoryComponent = ({
                         addToCart(item);
                       }}
                     >
-                      Buy Now
+                      Add To Cart
                     </Button>
                   </div>
                 </TableCell>

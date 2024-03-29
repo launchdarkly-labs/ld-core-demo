@@ -109,7 +109,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
         </Table>
         <SheetFooter>
           <div className="mr-16 mt-10">
-            <p className="pb-4 font-sohne ml-auto">Transaction Total: ${totalCost}</p>
+            <p className="pb-4 font-sohne ml-auto">Transaction Total: ${totalCost.toFixed(2)}</p>
             <SheetTrigger onClick={checkOut} asChild>
               <Button
                 onClick={checkOutTracking}
