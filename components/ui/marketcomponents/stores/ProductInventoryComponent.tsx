@@ -113,8 +113,8 @@ const ProductInventoryComponent = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {inventory.map((item: InventoryItem) => (
-              <TableRow key={item.id}>
+            {inventory.map((item: InventoryItem, index:number) => (
+              <TableRow key={`${item.id}-${index}`}>
                 <TableCell>{item.item}</TableCell>
                 <TableCell>${item.cost}</TableCell>
                 <TableCell>
