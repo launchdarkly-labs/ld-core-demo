@@ -23,6 +23,7 @@ import {
 import { motion } from "framer-motion";
 
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useToast } from "@/components/ui/use-toast";
 
 interface InventoryItem {
   id: string | number;
@@ -54,6 +55,7 @@ const ProductInventoryComponent = ({
   headerLabel?: string;
 }) => {
   const LDClient = useLDClient();
+  const { toast } = useToast();
 
   async function storeOpened() {
     LDClient?.track("store-accessed", LDClient.getContext(), 1);
@@ -118,8 +120,13 @@ const ProductInventoryComponent = ({
                 <TableCell>
                   <div>
                     <Button
-                      className="rounded-none bg-gradient-experimentation font-sohne"
-                      onClick={() => addToCart(item)}
+                      className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%]"
+                      onClick={() => {
+                        toast({
+                          title: `${item.item} has been added to your cart!`,
+                        });
+                        addToCart(item);
+                      }}
                     >
                       Buy Now
                     </Button>

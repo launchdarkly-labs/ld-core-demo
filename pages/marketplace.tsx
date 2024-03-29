@@ -1,7 +1,6 @@
-
 import { useEffect, useState, useContext } from "react";
 import { motion } from "framer-motion";
-import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import NavBar from "@/components/ui/navbar";
@@ -16,14 +15,11 @@ import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
 
 export default function Marketplace() {
-
   const [products, setProducts] = useState([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
-    useContext(LoginContext);
-
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
   const LDClient = useLDClient();
   interface InventoryItem {
     id: string | number;
@@ -36,7 +32,6 @@ export default function Marketplace() {
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
   const addToCart = (item: any) => {
-
     LDClient?.track("item-added", LDClient.getContext(), 1);
 
     setCart([...cart, item]);
@@ -44,17 +39,13 @@ export default function Marketplace() {
 
   const storeAccessed = () => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
-
   };
-
 
   useEffect(() => {
     fetch("/api/storeInventory?storename=all")
       .then((response) => response.json())
       .then((data) => setProducts(data));
   }, []);
-
-
 
   const handleOnSelect = (item: InventoryItem) => {
     if (item.vendor === "vrgalaxy") {
@@ -84,20 +75,20 @@ export default function Marketplace() {
     setCookie("ldcontext", context);
   }
 
-    useEffect(() => {
-      if (isLoggedIn) {
-        storeAccessed();
-      }
-    }, [isLoggedIn]);
-
+  useEffect(() => {
+    if (isLoggedIn) {
+      storeAccessed();
+    }
+  }, [isLoggedIn]);
 
   return (
     <>
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="market" name="Galaxy Marketplace" />) : (
-            <motion.div
+          <LoginHomePage variant="market" name="Galaxy Marketplace" />
+        ) : (
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -121,6 +112,8 @@ export default function Marketplace() {
                       fuseOptions={{ keys: ["item"] }}
                       resultStringKeyName="item"
                       placeholder="Browse a Galaxy of Storefronts"
+                      className="cursor-point"
+                      styling={{ hoverBackgroundColor: "#0000" }}
                     />
                   </div>
                   <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
