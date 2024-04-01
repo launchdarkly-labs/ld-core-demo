@@ -119,7 +119,7 @@ export default function LaunchSignUp() {
                 </svg>
               </div>
             </SheetTitle>
-            <SheetDescription className="font-sohnelight flex flex-col items-center justify-center text-center">
+            <div className="font-sohnelight flex flex-col items-center justify-center text-center">
               <div className="flex">
                 <h1 className="text-black text-4xl">Launch Club Loyalty Program</h1>
               </div>
@@ -132,10 +132,10 @@ export default function LaunchSignUp() {
                   <Card
                     key={index}
                     className="flex flex-col items-center justify-center h-auto w-full
-                    align-items-center drop-shadow-2xl p-4 gap-y-2"
+                    align-items-center drop-shadow-xl p-4 gap-y-2"
                   >
                     <CardHeader className="!p-0">
-                      <Image src={perks.img} height={200} width={200} alt="image"  />
+                      <Image src={perks.img} height={200} width={200} alt="image" />
                     </CardHeader>
                     <CardTitle className="text-lg ">{perks.name}</CardTitle>
                     <CardContent className="text-sm text-center !p-0">
@@ -156,7 +156,7 @@ export default function LaunchSignUp() {
                   </Button>
                 </SheetTrigger>
               </div>
-            </SheetDescription>
+            </div>
           </SheetHeader>
 
           <motion.div
@@ -174,7 +174,7 @@ export default function LaunchSignUp() {
                 <img src="woman.png" className="rounded-full h-48" />
               </div>
             </SheetTitle>
-            <SheetDescription className="font-sohne flex flex-col items-center justify-center">
+            <div className="font-sohne flex flex-col items-center justify-center">
               <div className="flex">
                 <h1 className="text-black text-4xl">Welcome Launch Club Member</h1>
               </div>
@@ -186,7 +186,7 @@ export default function LaunchSignUp() {
                 {rewards.map((rewards, index) => (
                   <Card
                     key={index}
-                    className="h-1/3 w-1/3 align-items-center bg-zinc-300 drop-shadow-2xl flex flex-col items-center justify-center"
+                    className="h-1/3 w-1/3 align-items-center bg-zinc-300 drop-shadow-xl flex flex-col items-center justify-center"
                   >
                     <CardHeader className="bg-gradient-airways text-transparent bg-clip-text text-6xl">
                       {rewards.value}
@@ -198,7 +198,7 @@ export default function LaunchSignUp() {
                   </Card>
                 ))}
               </div>
-            </SheetDescription>
+            </div>
           </SheetHeader>
 
           <motion.div

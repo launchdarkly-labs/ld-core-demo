@@ -5,7 +5,7 @@ export const getVariantClassName = (variant) => {
       case 'airlines':
         return 'bg-gradient-to-r from-airlinepurple to-airlinepink text-white';
       case 'market':
-        return 'bg-gradient-to-r from-marketblue text-black to-marketgreen text-black';
+        return 'bg-gradient-experimentation text-white ';
       default:
         return '';
     }

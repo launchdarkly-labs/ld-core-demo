@@ -82,7 +82,7 @@ module.exports = {
         airlineinactive: "#939598",
         banklightblue: "#3DD6F5",
         bankdarkblue: "#405BFF",
-        marketblue: "#3DD6F5",
+        marketblue: "#05b0d2",
         marketgreen: "#EBFF38",
         airlinePurple: "#7084FF",
         airlineBlack: "#2C2C2C",

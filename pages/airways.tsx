@@ -14,7 +14,6 @@ import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
 
-
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";

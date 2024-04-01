@@ -1,12 +1,11 @@
-
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { motion } from "framer-motion";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import NavBar from "@/components/ui/navbar";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
-import { VRgalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
+import { VRGalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
@@ -15,32 +14,24 @@ import LoginContext from "@/utils/contexts/login";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
 
-
-
 export default function Marketplace() {
-  const [headerLabel, setHeaderLabel] = useState<string>("");
   const [products, setProducts] = useState([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
-    useContext(LoginContext);
-
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
   const LDClient = useLDClient();
-  const flags = useFlags();
-  const { storeAttentionCallout, storeHeaders } = useFlags();
-
   interface InventoryItem {
     id: string | number;
     item: string;
     cost: number;
     vendor: string;
   }
+
+  //TODO: change this into a hook in order to avoid passing cart down from marketplace to nav to storecart
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
-
   const addToCart = (item: any) => {
-
     LDClient?.track("item-added", LDClient.getContext(), 1);
 
     setCart([...cart, item]);
@@ -48,19 +39,13 @@ export default function Marketplace() {
 
   const storeAccessed = () => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
-
   };
-
 
   useEffect(() => {
     fetch("/api/storeInventory?storename=all")
       .then((response) => response.json())
       .then((data) => setProducts(data));
   }, []);
-
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
 
   const handleOnSelect = (item: InventoryItem) => {
     if (item.vendor === "vrgalaxy") {
@@ -90,20 +75,20 @@ export default function Marketplace() {
     setCookie("ldcontext", context);
   }
 
-    useEffect(() => {
-      if (isLoggedIn) {
-        storeAccessed();
-      }
-    }, [isLoggedIn]);
-
+  useEffect(() => {
+    if (isLoggedIn) {
+      storeAccessed();
+    }
+  }, [isLoggedIn]);
 
   return (
     <>
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="market" name="Galaxy Marketplace" />) : (
-            <motion.div
+          <LoginHomePage variant="market" name="Galaxy Marketplace" />
+        ) : (
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -127,6 +112,8 @@ export default function Marketplace() {
                       fuseOptions={{ keys: ["item"] }}
                       resultStringKeyName="item"
                       placeholder="Browse a Galaxy of Storefronts"
+                      className="cursor-point"
+                      styling={{ hoverBackgroundColor: "#0000" }}
                     />
                   </div>
                   <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
@@ -172,9 +159,7 @@ export default function Marketplace() {
                     {/* Individual callouts can be found components/ui/marketcomponents/stores */}
                     <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
                       <div className="prodcard">
-                        <VRgalaxy
-                          storeHeaders={storeHeaders}
-                          headerLabel={headerLabel}
+                        <VRGalaxy
                           addToCart={addToCart}
                           open={openVRGalaxy}
                           setOpen={setOpenVRGalaxy}

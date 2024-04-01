@@ -239,7 +239,7 @@ export default function BookedFlights() {
                                       <p className="text-lg mb-4 font-sohne">
                                         AI Travel Insights{" "}
                                         <span className="text-sm">
-                                          powereed by AWS Bedrock
+                                          powered by AWS Bedrock
                                         </span>{" "}
                                       </p>
                                       <p>{aiResponse}</p>
@@ -347,7 +347,7 @@ export default function BookedFlights() {
                                 <p className="text-lg mb-4 font-sohne">
                                   AI Travel Insights{" "}
                                   <span className="text-sm">
-                                    powereed by Amazon Bedrock
+                                    powered by Amazon Bedrock
                                   </span>{" "}
                                 </p>
                                 <div className=" overflow-y-auto flex justify-center items-center">
