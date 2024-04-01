@@ -49,7 +49,7 @@ const ProductInventoryComponent = ({
   sheetTitle?: string;
   sheetDescription?: string;
   tableCaption?: string;
-  inventory: object;
+  inventory: any;
   mainImg: any;
   isVisibleStoreHeaders?: boolean;
   headerLabel?: string;
