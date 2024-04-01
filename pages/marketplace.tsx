@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import NavBar from "@/components/ui/navbar";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
-import { VRGalaxy } from "@/components/ui/marketcomponents/stores/VRGalaxy";
+import { VRGalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";

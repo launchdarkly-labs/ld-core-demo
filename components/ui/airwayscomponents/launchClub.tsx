@@ -132,7 +132,7 @@ export default function LaunchClub() {
             <div className="font-sohnelight flex flex-col items-center justify-center">
               <div className="flex">
                 <p className="text-black text-4xl">
-                  Launch Club Loyalty Program
+                  Launch Club Loyalty Programwfwe
                 </p>
               </div>
               <div className="flex text-xl my-4 text-black text-center">
@@ -143,7 +143,7 @@ export default function LaunchClub() {
                 {perks.map((perks, index) => (
                   <Card
                     key={index}
-                    className="h-1/3 w-1/3 align-items-center shadow-lg flex flex-col items-center justify-center"
+                    className="h-1/3 w-1/3 align-items-center drop-shadow-2xl flex flex-col items-center justify-center"
                   >
                     <CardHeader>
                       <Image
