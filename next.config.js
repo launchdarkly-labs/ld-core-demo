@@ -7,10 +7,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
-  publicRuntimeConfig: {
+  env: {
+    appVersion: version,
     lastAccessedDate: new Date().toISOString(),
-    appVersion: version
-  },
+  }
 }
 
 module.exports = nextConfig

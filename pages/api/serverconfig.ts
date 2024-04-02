@@ -1,16 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import getConfig from "next/config";
 
 type ResponseData = {
   lastAccessedDate: any;
-  appVersion: string;
+  appVersion: any;
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
-  const { publicRuntimeConfig } = getConfig();
   const data = {
-    lastAccessedDate: publicRuntimeConfig.lastAccessedDate,
-    appVersion: publicRuntimeConfig.appVersion,
+    lastAccessedDate: process.env.lastAccessedDate,
+    appVersion: process.env.appVersion,
   };
+
   res.status(200).json(data);
 }
