@@ -4,7 +4,11 @@ const nextConfig = {
   output: 'standalone',
   typescript: {
     ignoreBuildErrors: true
-  }
+  },
+  publicRuntimeConfig: {
+    lastAccessedDate: new Date().toISOString(),
+    appVersion: "1.1"
+  },
 }
 
 module.exports = nextConfig
