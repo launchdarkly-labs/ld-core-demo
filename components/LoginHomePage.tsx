@@ -50,7 +50,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       </div>
 
       <header className={`w-full ${variant === 'bank' ? 'bg-bankblue' :
-        variant === 'airlines' ? 'bg-gradient-airways' :
+        variant === 'airlines' ? 'bg-gradient-airline' :
           variant === 'market' ? ' bg-market-header grid items-center justify-center' : ''
         } mb-[4rem]`}>
         {variant === 'market' && (

@@ -181,7 +181,7 @@ export default function BookedFlights() {
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
 
-                          <div className="ticket-type-flight uppercase tracking-wide text-md text-indigo-700 font-semibold">
+                          <div className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airline font-semibold">
                             {trip.type} flight
                           </div>
                           
@@ -190,7 +190,7 @@ export default function BookedFlights() {
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
-                                  className="uppercase flex font-bold animate-pulse hover:animate-none hover:text-indigo-700 gap-x-1 hover:underline cursor-pointer"
+                                  className="uppercase flex font-bold animate-pulse hover:animate-none hover:text-airlinepink gap-x-1 hover:underline cursor-pointer"
                                 >
                                   <span>{trip.fromCity}</span> <ArrowRight />
                                   <span>{trip.toCity}</span>
@@ -200,7 +200,7 @@ export default function BookedFlights() {
                               <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                 {loading ? (
                                   <div className="flex justify-center">
-                                    <BounceLoader color="#4338ca" />
+                                    <BounceLoader color="#FF386B" />
                                   </div>
                                 ) : (
                                   <div>
@@ -234,7 +234,7 @@ export default function BookedFlights() {
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => planeDetails(trip.airplane)}
-                                  className="cursor-pointer animate-pulse hover:animate-none hover:text-indigo-700 uppercase hover:underline"
+                                  className="cursor-pointer animate-pulse hover:animate-none hover:text-airlinepink uppercase hover:underline"
                                 >
                                   {trip.airplane}
                                 </p>
@@ -242,7 +242,7 @@ export default function BookedFlights() {
                               <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                 {loading ? (
                                   <div className="flex justify-center">
-                                    <BounceLoader color="#4338ca" />
+                                    <BounceLoader color="#FF386B" />
                                   </div>
                                 ) : (
                                   <div>
@@ -262,23 +262,23 @@ export default function BookedFlights() {
                       </div>
 
 
-                      <div className="ticket-benefits-list flex justify-between align-center">
+                      <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
                         {mealPromoExperience && (
-                          <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
-                            <PlaneIcon className="text-green-700 mr-2" /> A380 Meal Promo
+                          <p className="flex text-black   bg-clip-text text-transparent bg-gradient-airline">
+                            <PlaneIcon className="text-airlinepurple mr-2" /> A380 Meal Promo
                           </p>
                         )}
 
                         {enrolledInLaunchClub && launchClubLoyalty && (
                           <>
                             {priorityBoarding && (
-                              <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
-                                <PersonStanding className="text-blue-700 mr-2" /> Launch Priority
+                              <p className="flex text-black bg-clip-text text-transparent bg-gradient-airline   ">
+                                <PersonStanding className="text-airlinepurple mr-2" /> Launch Priority
                               </p>
                             )}
 
-                            <p className="flex text-black  py-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
-                              <Wifi className="text-green-700 mr-2" /> Free WiFi
+                            <p className="flex text-black bg-clip-text text-transparent bg-gradient-airline  ">
+                              <Wifi className="text-airlinepurple mr-2" /> Free WiFi
                             </p>
                           </>
                         )}
@@ -293,7 +293,7 @@ export default function BookedFlights() {
                           Launch Priority Upgrade
                         </button>
                       ) : (
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-4 w-full">
+                        <button className="bg-gradient-airline-buttons hover:brightness-[120%] text-white font-bold p-4 w-full">
                           Upgrade
                         </button>
                       )}

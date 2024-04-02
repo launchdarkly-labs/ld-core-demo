@@ -115,7 +115,7 @@ export default function Airways() {
           >
             <NavBar launchClubLoyalty={launchClubLoyalty} variant={"airlines"} handleLogout={handleLogout} />
 
-            <header className={`py-20 bg-gradient-airways`}>
+            <header className={`py-20 bg-gradient-airline`}>
               <div className="lg:mx-auto max-w-7xl px-2">
                 <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-between gap-y-6 lg:gap-y-0 lg:space-x-4">
                   <AirlineDestination
