@@ -45,7 +45,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex h-20 shadow-2xl bg-ldgrey ">
+      <div className="flex h-20 shadow-2xl ">
         <NavBar variant={variant} />
       </div>
 

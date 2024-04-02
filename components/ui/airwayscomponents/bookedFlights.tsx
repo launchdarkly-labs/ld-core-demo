@@ -180,25 +180,27 @@ export default function BookedFlights() {
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
-                          <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">
+
+                          <div className="ticket-type-flight uppercase tracking-wide text-md text-indigo-700 font-semibold">
                             {trip.type} flight
                           </div>
+                          
                           {aiTravelInsights ? (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <div
+                                <p
                                   onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
-                                  className="uppercase flex font-bold text-blue-500 gap-x-1"
+                                  className="uppercase flex font-bold animate-pulse hover:animate-none hover:text-indigo-700 gap-x-1 hover:underline cursor-pointer"
                                 >
                                   <span>{trip.fromCity}</span> <ArrowRight />
                                   <span>{trip.toCity}</span>
-                                </div>
+                                </p>
                               </PopoverTrigger>
 
                               <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                 {loading ? (
                                   <div className="flex justify-center">
-                                    <BounceLoader color="#2b6cb0" />
+                                    <BounceLoader color="#4338ca" />
                                   </div>
                                 ) : (
                                   <div>
@@ -212,24 +214,27 @@ export default function BookedFlights() {
                               </PopoverContent>
                             </Popover>
                           ) : (
-                            <p className="uppercase  text-lg flex font-bold text-black ">
+                            <p className="uppercase text-lg flex font-bold text-black ">
                               {trip.fromCity} <ArrowRight /> {trip.toCity}
                             </p>
                           )}
+                          
                         </div>
 
                         <div className="flex justify-between">
                           <p className="text-black">Travel Date</p>
                           <p className=" text-black">{trip.depart}</p>
                         </div>
+
                         <div className="flex justify-between">
                           <p className="text-black">Aircraft</p>
+
                           {aiTravelInsights ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => planeDetails(trip.airplane)}
-                                  className="cursor-pointer  text-blue-500 uppercase"
+                                  className="cursor-pointer animate-pulse hover:animate-none hover:text-indigo-700 uppercase hover:underline"
                                 >
                                   {trip.airplane}
                                 </p>
@@ -237,7 +242,7 @@ export default function BookedFlights() {
                               <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                 {loading ? (
                                   <div className="flex justify-center">
-                                    <BounceLoader color="#2b6cb0" />
+                                    <BounceLoader color="#4338ca" />
                                   </div>
                                 ) : (
                                   <div>
@@ -255,6 +260,7 @@ export default function BookedFlights() {
                           )}
                         </div>
                       </div>
+
 
                       <div className="ticket-benefits-list flex justify-between align-center">
                         {mealPromoExperience && (
@@ -283,7 +289,7 @@ export default function BookedFlights() {
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100">
                     <div className="flex flex-col items-center justify-center space-y-4">
                       {enrolledInLaunchClub && priorityBoarding ? (
-                        <button className="bg-gradient-to-r from-pink-700 to-purple-700 text-white font-bold py-2 px-4 w-full">
+                        <button className="bg-gradient-to-r from-pink-700 to-indigo-700 text-white font-bold py-2 px-4 w-full">
                           Launch Priority Upgrade
                         </button>
                       ) : (
@@ -293,7 +299,7 @@ export default function BookedFlights() {
                       )}
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="hover:bg-purple-500 text-white font-bold py-2 px-4 bg-gradient-to-r from-purple-500 to-rose-500 w-full">
+                          <PopoverTrigger className="hover:bg-indigo-500 text-white font-bold py-2 px-4 bg-gradient-to-r from-indigo-500 to-rose-500 w-full animate-pulse hover:animate-none">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
