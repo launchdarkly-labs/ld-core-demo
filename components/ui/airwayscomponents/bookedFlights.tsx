@@ -137,7 +137,7 @@ export default function BookedFlights() {
           )}
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full lg:w-3/4 xl:w-1/2 overflow-y-scroll light" side="right">
+      <SheetContent className="p-4 sm:p-8 w-full lg:w-3/4 xl:w-1/2 overflow-y-scroll light" side="right">
         <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl ">
             <div className=" text-zinc-800 text-4xl font-medium leading-loose ">
@@ -169,13 +169,13 @@ export default function BookedFlights() {
               ) => (
                 <motion.div
                   key={trip.id}
-                  className=" bg-white shadow-md w-full overflow-hidden flex "
+                  className=" bg-white shadow-xl sm:shadow-md w-full overflow-hidden flex flex-col sm:flex-row"
                   variants={childVariants}
                   initial="hidden"
                   animate="show"
                   exit="exit" // Add this line
                 >
-                  <div className="p-4 relative w-2/3 font-sohne">
+                  <div className="p-4 relative w-full sm:w-2/3 font-sohne">
                     <p className="text-black text-sm">Ticket {trip.id}</p>
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
