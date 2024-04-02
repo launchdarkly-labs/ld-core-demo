@@ -137,16 +137,16 @@ export default function BookedFlights() {
           )}
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:w-3/4 lg:w-1/2 overflow-y-scroll light" side="right">
-        <SheetHeader className="!text-center">
+      <SheetContent className="w-full lg:w-3/4 xl:w-1/2 overflow-y-scroll light" side="right">
+        <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl ">
-            <div className="w-96 h-11 text-zinc-800 text-4xl font-medium leading-loose ">
+            <div className=" text-zinc-800 text-4xl font-medium leading-loose ">
               Your booked flights
             </div>
           </SheetTitle>
         </SheetHeader>
 
-        <motion.div className="w-full" variants={containerVariants} initial="hidden" animate="show">
+        <motion.div className="w-full flex flex-col gap-y-4" variants={containerVariants} initial="hidden" animate="show">
           <AnimatePresence>
             {bookedTrips.map(
               (
@@ -164,111 +164,115 @@ export default function BookedFlights() {
               ) => (
                 <motion.div
                   key={trip.id}
-                  className=" mb-4 mt-8 text-white items-stretch w-full flex justify-center"
+                  className=" text-white items-stretch w-full "
                   variants={childVariants}
                   initial="hidden"
                   animate="show"
                   exit="exit" // Add this line
                 >
                   <div className="bg-white shadow-md w-full overflow-hidden items-stretch flex">
+                    
                     <div className="p-4 relative w-2/3 font-sohne">
-                      <p className=" text-black text-sm">Ticket {trip.id}</p>
+                      <p className="text-black text-sm">Ticket {trip.id}</p>
+                      <div className="ticket-main-wrapper ">
+                        <div className="ticket-main-information mt-2 flex flex-col gap-y-[.05rem]">
+                          <div className="flex justify-between items-center">
+                            <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">
+                              {trip.type} flight
+                            </div>
+                            {aiTravelInsights ? (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <div
+                                    onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
+                                    className="uppercase flex font-bold text-blue-500 gap-x-1"
+                                  >
+                                    <span>{trip.fromCity}</span> <ArrowRight />
+                                    <span>{trip.toCity}</span>
+                                  </div>
+                                </PopoverTrigger>
 
-                      <div className="flex justify-between items-center">
-                        <div className="uppercase tracking-wide text-md text-indigo-700 font-semibold">
-                          {trip.type} flight
-                        </div>
-
-                        {aiTravelInsights ? (
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <p
-                                onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
-                                className="mt-2 uppercase  text-lg flex font-bold underline text-blue-500"
-                              >
+                                <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
+                                  {loading ? (
+                                    <div className="flex justify-center">
+                                      <BounceLoader color="#2b6cb0" />
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <p className="text-lg mb-4 font-sohne">
+                                        AI Travel Insights{" "}
+                                        <span className="text-sm">powered by AWS Bedrock</span>{" "}
+                                      </p>
+                                      <p>{aiResponse}</p>
+                                    </div>
+                                  )}
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <p className="uppercase  text-lg flex font-bold text-black ">
                                 {trip.fromCity} <ArrowRight /> {trip.toCity}
                               </p>
-                            </PopoverTrigger>
-
-                            <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
-                              {loading ? (
-                                <div className="flex justify-center">
-                                  <BounceLoader color="#2b6cb0" />
-                                </div>
-                              ) : (
-                                <div>
-                                  <p className="text-lg mb-4 font-sohne">
-                                    AI Travel Insights{" "}
-                                    <span className="text-sm">powered by AWS Bedrock</span>{" "}
-                                  </p>
-                                  <p>{aiResponse}</p>
-                                </div>
-                              )}
-                            </PopoverContent>
-                          </Popover>
-                        ) : (
-                          <p className="mt-2 uppercase  text-lg flex font-bold text-black ">
-                            {trip.fromCity} <ArrowRight /> {trip.toCity}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex justify-between">
-                        <p className="mt-2 text-black">Travel Date</p>
-                        <p className="mt-2 text-black">{trip.depart}</p>
-                      </div>
-                      <div className="flex justify-between">
-                        <p className="text-black">Aircraft</p>
-                        {aiTravelInsights ? (
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <p
-                                onClick={() => planeDetails(trip.airplane)}
-                                className="cursor-pointer underline text-blue-500 uppercase"
-                              >
-                                {trip.airplane}
-                              </p>
-                            </PopoverTrigger>
-                            <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
-                              {loading ? (
-                                <div className="flex justify-center">
-                                  <BounceLoader color="#2b6cb0" />
-                                </div>
-                              ) : (
-                                <div>
-                                  <p className="text-lg mb-4 font-sohne">
-                                    AI Travel Insights{" "}
-                                    <span className="text-sm">powered by Amazon Bedrock</span>{" "}
-                                  </p>
-                                  <p>{aiResponse}</p>
-                                </div>
-                              )}
-                            </PopoverContent>
-                          </Popover>
-                        ) : (
-                          <p className="text-black">{trip.airplane}</p>
-                        )}
-                      </div>
-
-                      <div className="ticket-benefits-list grid lg:flex mx-auto items-center justify-center space-x-4 mt-4 font-sohne">
-                        {enrolledInLaunchClub && launchClubLoyalty && (
-                          <>
-                            {priorityBoarding && (
-                              <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
-                                <PersonStanding className="text-blue-700 mr-2" /> Launch Priority
-                              </p>
                             )}
+                          </div>
 
-                            <p className="flex text-black  py-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
-                              <Wifi className="text-green-700 mr-2" /> Free WiFi
+                          <div className="flex justify-between">
+                            <p className="text-black">Travel Date</p>
+                            <p className=" text-black">{trip.depart}</p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p className="text-black">Aircraft</p>
+                            {aiTravelInsights ? (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <p
+                                    onClick={() => planeDetails(trip.airplane)}
+                                    className="cursor-pointer  text-blue-500 uppercase"
+                                  >
+                                    {trip.airplane}
+                                  </p>
+                                </PopoverTrigger>
+                                <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
+                                  {loading ? (
+                                    <div className="flex justify-center">
+                                      <BounceLoader color="#2b6cb0" />
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <p className="text-lg mb-4 font-sohne">
+                                        AI Travel Insights{" "}
+                                        <span className="text-sm">powered by Amazon Bedrock</span>{" "}
+                                      </p>
+                                      <p>{aiResponse}</p>
+                                    </div>
+                                  )}
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <p className="text-black">{trip.airplane}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="ticket-benefits-list flex justify-between align-center mt-4">
+                          {enrolledInLaunchClub && launchClubLoyalty && (
+                            <>
+                              {priorityBoarding && (
+                                <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">
+                                  <PersonStanding className="text-blue-700 mr-2" /> Launch Priority
+                                </p>
+                              )}
+
+                              <p className="flex text-black  py-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-red-600  ">
+                                <Wifi className="text-green-700 mr-2" /> Free WiFi
+                              </p>
+                            </>
+                          )}
+                          {mealPromoExperience && (
+                            <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
+                              <PlaneIcon className="text-green-700 mr-2" /> A380 Meal Promo
                             </p>
-                          </>
-                        )}
-                        {mealPromoExperience && (
-                          <p className="flex text-black  py-2  bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-yellow-600  ">
-                            <PlaneIcon className="text-green-700 mr-2" /> A380 Meal Promo
-                          </p>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
 
