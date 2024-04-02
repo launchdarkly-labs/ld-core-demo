@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const { version } = require('./package.json');
+
 const nextConfig = {
   reactStrictMode: false,
   output: 'standalone',
@@ -7,7 +9,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     lastAccessedDate: new Date().toISOString(),
-    appVersion: "1.1"
+    appVersion: version
   },
 }
 
