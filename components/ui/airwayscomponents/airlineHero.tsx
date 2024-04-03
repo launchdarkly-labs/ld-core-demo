@@ -38,14 +38,14 @@ const AirlineHero = ({
               </div>
             </div>
           </div>
-          <div className=" w-full lg:absolute lg:top-0 lg:right-0 h-full lg:w-1/2 flex justify-center">
+          <div className="mb-[5rem] lg:mb-0  w-full lg:absolute lg:top-0 lg:right-0 h-full lg:w-1/2 flex justify-center items-center">
             {launchClubLoyalty && isLoggedIn && !enrolledInLaunchClub && (
               <motion.div
                 initial={{ x: 300 }}
                 animate={{ x: 0 }}
                 transition={{ type: "spring", stiffness: 50 }}
-                className="flex flex-col justify-center p-10 gap-y-8 z-30 w-full lg:w-2/3
-                bg-gradient-airline shadow-2xl mb-[5rem] lg:my-32  rounded-lg text-white mx-[2.5rem] lg:mx-0"
+                className="flex flex-col justify-center p-10 gap-y-8 z-30 w-full lg:w-4/5 xl:w-2/3 
+                bg-gradient-airline shadow-2xl  rounded-lg text-white mx-[2.5rem] lg:mx-0"
               >
                 <div className="text-center">
                   <h3 className="text-4xl text-center mb-4">Are you ready to Launch?!</h3>
