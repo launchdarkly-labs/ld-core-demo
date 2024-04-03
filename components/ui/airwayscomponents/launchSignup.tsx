@@ -169,15 +169,14 @@ export default function LaunchSignUp() {
 
             {!enrolledInLaunchClub ? (
               <div className="flex flex-col">
-                <SheetTrigger as child>
-                  <Button
-                    onClick={() => {
-                      enrollLaunchClub();
-                    }}
-                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-airline-buttons text-lg"
-                  >
-                    Enroll Today!
-                  </Button>
+                <SheetTrigger
+                  onClick={() => {
+                    enrollLaunchClub();
+                  }}
+                  className="w-full mx-auto font-sohnelight 
+                  text-white rounded-none bg-gradient-airline-buttons text-xl p-6 hover:brightness-[120%]"
+                >
+                  Enroll Today!
                 </SheetTrigger>
               </div>
             ) : null}
