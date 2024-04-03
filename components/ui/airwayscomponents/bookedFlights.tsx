@@ -197,7 +197,7 @@ export default function BookedFlights() {
                                 </p>
                               </PopoverTrigger>
 
-                              <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
+                              <PopoverContent onCloseAutoFocus={() => setAIResponse("")} >
                                 {loading ? (
                                   <div className="flex justify-center">
                                     <BounceLoader color="#FF386B" />
@@ -286,8 +286,9 @@ export default function BookedFlights() {
                     </div>
                   </div>
 
-                  <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100">
+                  <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100 ticket-content-right-side">
                     <div className="flex flex-col items-center justify-center space-y-4">
+
                       {enrolledInLaunchClub && priorityBoarding ? (
                         <button className="bg-airlinepink text-white font-bold py-2 px-4 w-full cursor-default">
                           Launch Priority Upgrade
@@ -297,14 +298,15 @@ export default function BookedFlights() {
                           Upgrade
                         </button>
                       )}
+
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="hover:bg-indigo-500 text-white font-bold py-2 px-4 bg-gradient-airline-buttons w-full animate-pulse hover:animate-none">
+                          <PopoverTrigger className="relative  text-white font-bold py-2 px-4 bg-gradient-airline-buttons w-full animate-pulse hover:animate-none">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
                             onCloseAutoFocus={() => setAIResponse("")}
-                            className="relative w-[400px] h-[400px] mt-2"
+                            className="w-full sm:w-[400px] h-[300px] sm:h-[400px] mt-2 sm:absolute sm:right-[0%]"
                           >
                             <p className="text-lg mb-4 font-sohne">
                               AI Travel Insights{" "}
