@@ -117,7 +117,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-to-r from-airlinepurple to-airlinepink  rounded-none"
+                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-airline-buttons rounded-none"
                         >
                           Logout
                         </Button>
@@ -182,14 +182,14 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             {" "}
             <button
               href="/airways"
-              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons bg-[length:100%_3px] outline-none`}
             >
               Book
             </button>
             <BookedFlights />
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
             >
               Check-In
             </button>

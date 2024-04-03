@@ -35,7 +35,7 @@ const LaunchClubStatus = () => {
         </div>
         <div className="p-4">
           <div className="flex flex-row">
-            <div className="bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none w-full">
+            <div className="bg-no-repeat bg-bottom bg-gradient-airline-buttons bg-[length:100%_3px] outline-none w-full">
               <div className="flex justify-between">
                 <p className="text-xl font-audimat font-bold">
                   My Launch Status
@@ -66,7 +66,7 @@ const LaunchClubStatus = () => {
               <p>248</p>
             </div>
             <div>
-              <p className="text-xl font-audimat font-bold bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none pb-2 pt-2">
+              <p className="text-xl font-audimat font-bold bg-no-repeat bg-bottom bg-gradient-airline-buttons bg-[length:100%_3px] outline-none pb-2 pt-2">
                 Flight Perks
               </p>
               {launchClubStatus !== "platinum" ? (
