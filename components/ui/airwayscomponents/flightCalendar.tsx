@@ -46,7 +46,7 @@ export function FlightCalendar({
               {" "}
               {/* Add margin-bottom here */}
               {!date?.from && !date?.to ? (
-                <div className="flex items-center ">
+                <div className="flex items-center">
                   Depart - Return
                   <CalendarIcon size={28} className="ml-20" />
                 </div>
@@ -68,6 +68,7 @@ export function FlightCalendar({
             onSelect={setDate}
             numberOfMonths={2}
             disabled={(date) => isBefore(date, endOfDay(new Date()))}
+            classNames={{day_selected:"bg-airlinepink text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-airlinepink focus:text-primary-foreground"}}
           />
         </PopoverContent>
       </Popover>
