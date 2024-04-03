@@ -175,25 +175,25 @@ export default function BookedFlights() {
                   animate="show"
                   exit="exit" // Add this line
                 >
-                  <div className="p-4 relative w-full sm:w-2/3 font-sohne">
+                  <div className="ticket-content-left-side py-4 px-6 relative w-full sm:w-2/3 font-sohne">
                     <p className="text-black text-sm">Ticket {trip.id}</p>
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
 
-                          <div className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airline font-semibold">
+                          <p className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airline font-semibold">
                             {trip.type} flight
-                          </div>
+                          </p>
                           
                           {aiTravelInsights ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
-                                  className="uppercase flex font-bold animate-pulse hover:animate-none text-airlinepink gap-x-1 hover:underline cursor-pointer"
+                                  className=" uppercase flex font-bold animate-pulse hover:animate-none text-airlinepink gap-x-1 hover:underline cursor-pointer"
                                 >
                                   <span>{trip.fromCity}</span> <ArrowRight />
-                                  <span>{trip.toCity}</span>
+                                  <span className="text-end">{trip.toCity}</span>
                                 </p>
                               </PopoverTrigger>
 
