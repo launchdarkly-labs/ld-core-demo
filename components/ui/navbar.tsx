@@ -66,7 +66,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 {launchClubLoyalty && enrolledInLaunchClub && (
                   <LaunchClubStatus />
                 )}
-                <Search className="cursor-pointer hidden sm:block" />
+                <Search className="cursor-default hidden sm:block" />
                 <div className="block lg:hidden">
                   <BookedFlights />
                 </div>
