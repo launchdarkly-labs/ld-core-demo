@@ -51,7 +51,7 @@ export function FlightCalendar({
                   <CalendarIcon size={28} className="ml-20" />
                 </div>
               ) : (
-                <div className="calendar-date text-4xl md:text-3xl lg:text-2xl xl:text-4xl">
+                <div className="calendar-date text-4xl lg:text-3xl xl:text-4xl">
                   {date?.from && format(date.from, "MM/dd/yy")} -{" "}
                   {date?.to && format(date.to, "MM/dd/yy")}
                 </div>
