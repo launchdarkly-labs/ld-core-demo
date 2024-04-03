@@ -126,7 +126,7 @@ export default function BookedFlights() {
       <SheetTrigger asChild>
         <button
           className="mx-0 sm:mx-1 xl:mx-6 lg:pb-12 mr-2 sm:mr-0 xl:mr-4 pt-0 xl:pt-1.5 text-sm font-sohnelight bg-transparent sm:flex sm:items-start sm:text-airlineinactive
-    sm:hover:text-white sm:hover:bg-gradient-airline-buttons sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom relative"
+    sm:hover:text-white sm:hover:bg-gradient-airline-buttons sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom relative  animate-pulse hover:animate-none"
         >
           <span className="hidden lg:block">My Bookings</span>
           <Plane className="block lg:hidden text-white" title="My Bookings" />

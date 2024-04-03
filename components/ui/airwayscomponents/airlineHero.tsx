@@ -30,7 +30,7 @@ const AirlineHero = ({
                     without risk, and ship your travel dreams faster than ever before.
                   </p>
                   <div className="mt-10">
-                    <Button className="bg-gradient-airline-buttons rounded-none h-full w-full text-3xl p-6">
+                    <Button className="bg-gradient-airline-buttons rounded-none h-full w-full text-3xl p-6 cursor-default">
                       Book Now
                     </Button>
                   </div>

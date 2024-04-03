@@ -13,7 +13,7 @@ import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
-
+import { ArrowRight } from "lucide-react";
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
@@ -164,7 +164,7 @@ export default function Airways() {
                         onClick={() => bookTrip()}
                         className={` items-center `}
                       >
-                        <img src="ArrowButton.png" width={60} className="" />
+                        <ArrowRight className="animate-pulse hover:animate-none h-14 w-14 font-bold bg-white text-airlinepink rounded-full p-2" />
                       </motion.button>
                     </div>
                   )}
