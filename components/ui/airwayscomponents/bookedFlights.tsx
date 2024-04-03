@@ -190,7 +190,7 @@ export default function BookedFlights() {
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
-                                  className="uppercase flex font-bold animate-pulse hover:animate-none hover:text-airlinepink gap-x-1 hover:underline cursor-pointer"
+                                  className="uppercase flex font-bold animate-pulse hover:animate-none text-airlinepink gap-x-1 hover:underline cursor-pointer"
                                 >
                                   <span>{trip.fromCity}</span> <ArrowRight />
                                   <span>{trip.toCity}</span>
@@ -234,7 +234,7 @@ export default function BookedFlights() {
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => planeDetails(trip.airplane)}
-                                  className="cursor-pointer animate-pulse hover:animate-none hover:text-airlinepink uppercase hover:underline"
+                                  className="cursor-pointer animate-pulse hover:animate-none text-airlinepink uppercase hover:underline"
                                 >
                                   {trip.airplane}
                                 </p>
@@ -289,17 +289,17 @@ export default function BookedFlights() {
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100">
                     <div className="flex flex-col items-center justify-center space-y-4">
                       {enrolledInLaunchClub && priorityBoarding ? (
-                        <button className="bg-gradient-to-r from-pink-700 to-indigo-700 text-white font-bold py-2 px-4 w-full">
+                        <button className="bg-airlinepink text-white font-bold py-2 px-4 w-full cursor-default">
                           Launch Priority Upgrade
                         </button>
                       ) : (
-                        <button className="bg-gradient-airline-buttons hover:brightness-[120%] text-white font-bold p-4 w-full">
+                        <button className="bg-airlineblue hover:brightness-[120%] text-white font-bold p-4 w-full">
                           Upgrade
                         </button>
                       )}
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="hover:bg-indigo-500 text-white font-bold py-2 px-4 bg-gradient-to-r from-indigo-500 to-rose-500 w-full animate-pulse hover:animate-none">
+                          <PopoverTrigger className="hover:bg-indigo-500 text-white font-bold py-2 px-4 bg-gradient-airline-buttons w-full animate-pulse hover:animate-none">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
@@ -313,7 +313,7 @@ export default function BookedFlights() {
                             <div className=" overflow-y-auto flex justify-center items-center">
                               {loading ? (
                                 <div className="flex justify-center items-center h-full">
-                                  <BounceLoader />
+                                  <BounceLoader color="#FF386B"/>
                                 </div>
                               ) : (
                                 <div className="">

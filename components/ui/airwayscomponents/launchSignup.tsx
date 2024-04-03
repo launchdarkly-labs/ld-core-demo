@@ -174,7 +174,7 @@ export default function LaunchSignUp() {
                     onClick={() => {
                       enrollLaunchClub();
                     }}
-                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-to-tr from-airlinepurple to-airlinepink text-lg"
+                    className="w-full mx-auto font-sohnelight text-white rounded-none bg-gradient-airline-buttons text-lg"
                   >
                     Enroll Today!
                   </Button>
