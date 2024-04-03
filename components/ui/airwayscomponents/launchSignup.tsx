@@ -110,7 +110,7 @@ export default function LaunchSignUp() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="w-full lg:w-1/2 overflow-y-scroll bg-white" side="right">
+      <SheetContent className="w-full lg:w-2/3 xl:w-1/2 overflow-y-scroll bg-white" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-3xl flex items-center justify-center">
             {!enrolledInLaunchClub ? (
