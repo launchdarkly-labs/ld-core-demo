@@ -56,7 +56,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
 
     const { personas } = useContext(PersonaContext);
-
+    const chosenPersona = personas.find(
+      (persona) => persona.personaname === user
+    );
+console.log(personas)
     switch (variant) {
       case "airlines":
         navChild = (
@@ -80,9 +83,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <Avatar>
                       <AvatarImage
                         src={
-                          personas.find(
-                            (persona) => persona.personaname === user
-                          )?.personaimage || 'ToggleAvatar.png'
+                          chosenPersona?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -94,9 +95,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto flex place-content-center w-full">
                         <img
                           src={
-                            personas.find(
-                              (persona) => persona.personaname === user
-                            )?.personaimage || 'ToggleAvatar.png'
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -105,9 +104,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <p className="pt-4">
                           Thank you{" "}
                           {
-                            personas.find(
-                              (persona) => persona.personaname === user
-                            )?.personaname || user
+                            chosenPersona?.personaname || user
                           }{" "}
                           for flying Launch Airways with{"  "}
                           <br></br>
@@ -212,9 +209,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <Avatar>
                       <AvatarImage
                         src={
-                          personas.find(
-                            (persona) => persona.personaname === user
-                          )?.personaimage || 'ToggleAvatar.png'
+                          chosenPersona?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -225,9 +220,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto flex place-content-center w-full">
                         <img
                           src={
-                            personas.find(
-                              (persona) => persona.personaname === user
-                            )?.personaimage || 'ToggleAvatar.png'
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -236,9 +229,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <p className="pt-4">
                           Thank you{" "}
                           {
-                            personas.find(
-                              (persona) => persona.personaname === user
-                            )?.personaname || user
+                            chosenPersona?.personaname || user
                           }{" "}
                           for banking with us as a
                           <br></br>
@@ -364,9 +355,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <Avatar>
                         <AvatarImage
                           src={
-                            personas.find(
-                              (persona) => persona.personaname === user
-                            )?.personaimage || 'ToggleAvatar.png'
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className=""
                         />
@@ -377,9 +366,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <div className="mx-auto flex place-content-center w-full">
                           <img
                             src={
-                              personas.find(
-                                (persona) => persona.personaname === user
-                              )?.personaimage || 'ToggleAvatar.png'
+                              chosenPersona?.personaimage || 'ToggleAvatar.png'
                             }
                             className="rounded-full h-48"
                           />
@@ -388,9 +375,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           <p className="pt-4">
                             Thank you{" "}
                             {
-                              personas.find(
-                                (persona) => persona.personaname === user
-                              )?.personaname || user
+                              chosenPersona?.personaname || user
                             }{" "}
                             for shopping with us as{"  "}
                             <br></br>
