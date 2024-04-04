@@ -21,6 +21,7 @@ import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -59,7 +60,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const chosenPersona = personas.find(
       (persona) => persona.personaname === user
     );
-console.log(personas)
+    const { launchClubStatus } = useContext(LoginContext);
+    
     switch (variant) {
       case "airlines":
         navChild = (
@@ -108,7 +110,7 @@ console.log(personas)
                           }{" "}
                           for flying Launch Airways with{"  "}
                           <br></br>
-                          <span className="text-2xl">Platinum Tier</span>!
+                          <span className="text-2xl">{capitalizeFirstLetter(launchClubStatus)} Tier</span>!
                         </p>
                       </div>
                       <div className="mx-auto text-center">

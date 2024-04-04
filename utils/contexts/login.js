@@ -14,7 +14,7 @@ export const LoginProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [email, setEmail] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
-  const [launchClubStatus, setLaunchClubStatus] = useState("economy");
+  const [launchClubStatus, setLaunchClubStatus] = useState("standard");
 
   const loginUser = async (user, email) => {
     const context = await client?.getContext();
@@ -23,10 +23,10 @@ export const LoginProvider = ({ children }) => {
     context.user.email = email;
     context.user.key = email;
     context.audience.key = uuidv4().slice(0, 10)
+    context.user.launchclub = launchClubStatus;
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
-
     await client.identify(context);
   };
 
