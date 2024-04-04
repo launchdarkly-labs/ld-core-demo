@@ -85,7 +85,7 @@ const LaunchClubStatus = () => {
                   </div>
                   <div className="flex justify-between">
                     <p>Priority Boarding</p>
-                    <p>Locked</p>
+                    <p className="text-pink-700">Unlocked</p>
                   </div>
                 </div>
               ) : (
