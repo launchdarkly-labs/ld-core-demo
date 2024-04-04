@@ -179,7 +179,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            {" "}
             <button
               href="/airways"
               className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons outline-none cursor-auto`}
