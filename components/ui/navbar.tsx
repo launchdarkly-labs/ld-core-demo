@@ -171,6 +171,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <Search className="cursor-pointer" />
               </DropdownMenuItem>
               <div className="cursor-pointer">
+                <BookedFlights/>
+              </div>
+              <div className="cursor-pointer">
                 <QRCodeImage />
               </div>
             </div>

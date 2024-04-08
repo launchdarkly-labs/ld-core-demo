@@ -120,24 +120,37 @@ export default function BookedFlights() {
     show: { x: 0, opacity: 1 },
     exit: { x: 300, opacity: 0 },
   };
+  const navLinkStyling =
+    "hidden sm:block pb-2 lg:pb-12 pt-1.5 mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <button
-          className="mx-0 sm:mx-1 xl:mx-6 lg:pb-12 mr-2 sm:mr-0 xl:mr-4 pt-0 xl:pt-1.5 text-sm font-sohnelight bg-transparent sm:text-airlineinactive
-    sm:hover:text-white sm:hover:bg-gradient-airline-buttons sm:bg-[length:100%_3px] sm:bg-no-repeat sm:bg-bottom relative animate-pulse hover:animate-none"
+          className={`${navLinkStyling} relative mx-6 text-airlineinactive focus:text-airlinetext  hover:text-white lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
         >
           <span className="hidden lg:block">My Bookings</span>
-          <Plane className="block lg:hidden text-white" title="My Bookings" />
           {bookedTrips.length > 0 && (
-            <span className="absolute bottom-[20px] right-[-20px] lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
+            <span className="hidden lg:block absolute lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 pt-[.08rem] pr-[0.08rem] ">
               {bookedTrips.length}
             </span>
           )}
+
+          <div className="hidden">
+            <Plane className="block lg:hidden text-white" title="My Bookings" />
+
+            {bookedTrips.length > 0 && (
+              <span className="absolute top-[10px] right-[400px] lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
+                {bookedTrips.length}
+              </span>
+            )}
+          </div>
         </button>
       </SheetTrigger>
-      <SheetContent className="p-4 sm:p-8 w-full lg:w-3/4 xl:w-1/2 overflow-y-scroll light" side="right">
+      <SheetContent
+        className="p-4 sm:p-8 w-full lg:w-3/4 xl:w-1/2 overflow-y-scroll light"
+        side="right"
+      >
         <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl ">
             <div className=" text-zinc-800 text-4xl font-medium leading-loose ">
@@ -180,11 +193,10 @@ export default function BookedFlights() {
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
-
                           <p className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airline font-semibold">
                             {trip.type} flight
                           </p>
-                          
+
                           {aiTravelInsights ? (
                             <Popover>
                               <PopoverTrigger asChild>
@@ -197,7 +209,7 @@ export default function BookedFlights() {
                                 </p>
                               </PopoverTrigger>
 
-                              <PopoverContent onCloseAutoFocus={() => setAIResponse("")} >
+                              <PopoverContent onCloseAutoFocus={() => setAIResponse("")}>
                                 {loading ? (
                                   <div className="flex justify-center">
                                     <BounceLoader color="#FF386B" />
@@ -218,7 +230,6 @@ export default function BookedFlights() {
                               {trip.fromCity} <ArrowRight /> {trip.toCity}
                             </p>
                           )}
-                          
                         </div>
 
                         <div className="flex justify-between">
@@ -261,7 +272,6 @@ export default function BookedFlights() {
                         </div>
                       </div>
 
-
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
                         {mealPromoExperience && (
                           <p className="flex text-black   bg-clip-text text-transparent bg-gradient-airline">
@@ -273,7 +283,8 @@ export default function BookedFlights() {
                           <>
                             {priorityBoarding && (
                               <p className="flex text-black bg-clip-text text-transparent bg-gradient-airline   ">
-                                <PersonStanding className="text-airlinepurple mr-2" /> Launch Priority
+                                <PersonStanding className="text-airlinepurple mr-2" /> Launch
+                                Priority
                               </p>
                             )}
 
@@ -288,7 +299,6 @@ export default function BookedFlights() {
 
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-gradient-to-r from-purple-100 to-rose-100 ticket-content-right-side">
                     <div className="flex flex-col items-center justify-center space-y-4">
-
                       {enrolledInLaunchClub && priorityBoarding ? (
                         <button className="bg-airlinepink text-white font-bold py-2 px-4 w-full cursor-default">
                           Launch Priority Upgrade
@@ -315,7 +325,7 @@ export default function BookedFlights() {
                             <div className=" overflow-y-auto flex justify-center items-center">
                               {loading ? (
                                 <div className="flex justify-center items-center h-full">
-                                  <BounceLoader color="#FF386B"/>
+                                  <BounceLoader color="#FF386B" />
                                 </div>
                               ) : (
                                 <div className="">
