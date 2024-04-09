@@ -121,26 +121,28 @@ export default function BookedFlights() {
     exit: { x: 300, opacity: 0 },
   };
   const navLinkStyling =
-    "hidden sm:block pb-2 lg:pb-12 pt-1.5 mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
+    "lg:pb-12 lg:pt-1.5 lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <button
-          className={`${navLinkStyling} relative mx-6 text-airlineinactive focus:text-airlinetext  hover:text-white lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
+          className={`${navLinkStyling} relative lg:mx-6 lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
         >
-          <span className="hidden lg:block">My Bookings</span>
-          {bookedTrips.length > 0 && (
-            <span className="hidden lg:block absolute lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 pt-[.08rem] pr-[0.08rem] ">
-              {bookedTrips.length}
-            </span>
-          )}
+          <div className="block sm:hidden lg:block cursor-pointer sm:text-airlineinactive sm:focus:text-airlinetext  sm:hover:text-white ">
+            <span className="">My Bookings</span>
+            {bookedTrips.length > 0 && (
+              <span className="absolute lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 pt-[.08rem] pr-[0.08rem] ">
+                {bookedTrips.length}
+              </span>
+            )}
+          </div>
 
-          <div className="hidden">
-            <Plane className="block lg:hidden text-white" title="My Bookings" />
+          <div className="hidden sm:block lg:hidden relative">
+            <Plane className="text-block sm:text-white" title="My Bookings" />
 
             {bookedTrips.length > 0 && (
-              <span className="absolute top-[10px] right-[400px] lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
+              <span className="absolute top-[-13px] right-[-20px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
                 {bookedTrips.length}
               </span>
             )}
@@ -304,7 +306,7 @@ export default function BookedFlights() {
                           Launch Priority Upgrade
                         </button>
                       ) : (
-                        <button className="bg-airlineblue hover:brightness-[120%] text-white font-bold p-4 w-full">
+                        <button className="bg-airlineblue text-white font-bold p-4 w-full cursor-default">
                           Upgrade
                         </button>
                       )}

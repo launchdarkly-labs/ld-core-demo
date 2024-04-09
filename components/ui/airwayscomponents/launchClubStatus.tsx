@@ -13,7 +13,7 @@ const LaunchClubStatus = () => {
 
   return (
     <Popover>
-      <PopoverTrigger className="flex text-xl items-center animate-pulse hover:animate-none">
+      <PopoverTrigger className="flex text-sm sm:text-xl items-center animate-pulse hover:animate-none">
         <PlaneIcon className="mr-2 " />
         Launch Club
       </PopoverTrigger>
@@ -40,7 +40,7 @@ const LaunchClubStatus = () => {
               <div className="my-2">
                 <Button
                   onClick={() => upgradeLaunchClub("platinum")}
-                  className="flex mx-auto text-xl rounded-none bg-gradient-airline-buttons hover:brightness-[120%] "
+                  className="flex mx-auto text-xl rounded-none bg-gradient-airline-buttons hover:brightness-[120%] animate-pulse hover:animate-none"
                 >
                   Unlock Platinum Status
                 </Button>

@@ -174,7 +174,7 @@ export default function LaunchSignUp() {
                     enrollLaunchClub();
                   }}
                   className="w-full mx-auto font-sohnelight 
-                  text-white rounded-none bg-gradient-airline-buttons text-xl p-6 hover:brightness-[120%]"
+                  text-white rounded-none bg-gradient-airline-buttons text-xl p-6 hover:brightness-[120%] animate-pulse hover:animate-none"
                 >
                   Enroll Today!
                 </SheetTrigger>
