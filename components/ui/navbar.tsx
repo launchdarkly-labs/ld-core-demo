@@ -21,6 +21,7 @@ import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -44,7 +45,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
 
     const { personas } = useContext(PersonaContext);
-
+    const chosenPersona = personas.find(
+      (persona) => persona.personaname === user
+    );
+    const { launchClubStatus } = useContext(LoginContext);
+    
     switch (variant) {
       case "airlines":
         navChild = (
@@ -68,8 +73,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <Avatar>
                       <AvatarImage
                         src={
-                          personas.find((persona) => persona.personaname === user)?.personaimage ||
-                          "ToggleAvatar.png"
+                          chosenPersona?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -81,8 +85,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto flex place-content-center w-full">
                         <img
                           src={
-                            personas.find((persona) => persona.personaname === user)
-                              ?.personaimage || "ToggleAvatar.png"
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -90,11 +93,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
                         <p className="pt-4">
                           Thank you{" "}
-                          {personas.find((persona) => persona.personaname === user)?.personaname ||
-                            user}{" "}
+                          {
+                            chosenPersona?.personaname || user
+                          }{" "}
                           for flying Launch Airways with{"  "}
                           <br></br>
-                          <span className="text-2xl">Platinum Tier</span>!
+                          <span className="text-2xl">{capitalizeFirstLetter(launchClubStatus)} Tier</span>!
                         </p>
                       </div>
                       <div className="mx-auto text-center">
@@ -194,8 +198,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <Avatar>
                       <AvatarImage
                         src={
-                          personas.find((persona) => persona.personaname === user)?.personaimage ||
-                          "ToggleAvatar.png"
+                          chosenPersona?.personaimage || 'ToggleAvatar.png'
                         }
                         className=""
                       />
@@ -206,8 +209,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto flex place-content-center w-full">
                         <img
                           src={
-                            personas.find((persona) => persona.personaname === user)
-                              ?.personaimage || "ToggleAvatar.png"
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className="rounded-full h-48"
                         />
@@ -215,9 +217,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                         <p className="pt-4">
                           Thank you{" "}
-                          {personas.find((persona) => persona.personaname === user)?.personaname ||
-                            user}{" "}
-                          for banking with us as a<br></br>
+                          {
+                            chosenPersona?.personaname || user
+                          }{" "}
+                          for banking with us as a
+                          <br></br>
                           <span className="text-2xl">Platinum Member!</span>
                         </p>
                       </div>
@@ -322,8 +326,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <Avatar>
                         <AvatarImage
                           src={
-                            personas.find((persona) => persona.personaname === user)
-                              ?.personaimage || "ToggleAvatar.png"
+                            chosenPersona?.personaimage || 'ToggleAvatar.png'
                           }
                           className=""
                         />
@@ -334,8 +337,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <div className="mx-auto flex place-content-center w-full">
                           <img
                             src={
-                              personas.find((persona) => persona.personaname === user)
-                                ?.personaimage || "ToggleAvatar.png"
+                              chosenPersona?.personaimage || 'ToggleAvatar.png'
                             }
                             className="rounded-full h-48"
                           />
@@ -343,8 +345,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                           <p className="pt-4">
                             Thank you{" "}
-                            {personas.find((persona) => persona.personaname === user)
-                              ?.personaname || user}{" "}
+                            {
+                              chosenPersona?.personaname || user
+                            }{" "}
                             for shopping with us as{"  "}
                             <br></br>
                             <span className="text-2xl">Premium Member</span>!
