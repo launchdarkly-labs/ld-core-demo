@@ -42,12 +42,12 @@ module.exports = {
         "gradient-mobile": "linear-gradient(65deg,#ff386b 3.6%,#ffaf38 98.81%)",
         "market-header":
           "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
-        "gradient-airways":
+        "gradient-airline":
           "linear-gradient(131deg, #A34FDE -15.82%, #405BFF 118.85%)",
         card1: "linear-gradient(210deg, #06F -22.78%, #3DD6F5 110.31%)",
         card2: "linear-gradient(193.42deg, #A34FDE -4.63%, #3DD6F5 138.52%)",
         card3: "linear-gradient(187.72deg, #FF386B -57.74%, #EBFF38 222.08%)",
-        card4bottom:
+        "gradient-airline-buttons":
           "linear-gradient(39.47deg, #A34FDE -17.19%, #FF386B 148.9%)",
         bankblue: "linear-gradient(225deg, #3DD6F5 -5.3%, #405BFF 112.86%)",
       }),
@@ -79,13 +79,12 @@ module.exports = {
         airlinetext: "#D1D3D4",
         airlinepurple: "#A34FDE",
         airlinepink: "#FF386B",
+        airlineblue: "#405BFF",
         airlineinactive: "#939598",
         banklightblue: "#3DD6F5",
         bankdarkblue: "#405BFF",
         marketblue: "#05b0d2",
         marketgreen: "#EBFF38",
-        airlinePurple: "#7084FF",
-        airlineBlack: "#2C2C2C",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

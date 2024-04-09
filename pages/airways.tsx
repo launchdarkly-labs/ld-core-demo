@@ -13,17 +13,12 @@ import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
-
+import { ArrowRight } from "lucide-react";
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
 import { addDays } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
 
 export default function Airways() {
@@ -43,8 +38,7 @@ export default function Airways() {
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
-    useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
 
   function setAirport() {
     setShowSearch(true);
@@ -60,13 +54,11 @@ export default function Airways() {
     setCookie("ldcontext", context);
   }
 
-
-
   function bookTrip() {
-    const startDate = `${date!.from.getMonth() + 1
-      }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-    const returnDate = `${date!.to.getMonth() + 1
-      }/${date!.to.getDate()}/${date!.to.getFullYear()}`;
+    const startDate = `${
+      date!.from.getMonth() + 1
+    }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
+    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
     const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
     const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
 
@@ -106,18 +98,23 @@ export default function Airways() {
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="airlines" name="Launch Airways" />) : (
+          <LoginHomePage variant="airlines" name="Launch Airways" />
+        ) : (
           <motion.main
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             className={`flex h-screen text-white flex-col font-audimat`}
           >
-            <NavBar launchClubLoyalty={launchClubLoyalty} variant={"airlines"} handleLogout={handleLogout} />
+            <NavBar
+              launchClubLoyalty={launchClubLoyalty}
+              variant={"airlines"}
+              handleLogout={handleLogout}
+            />
 
-            <header className={`py-20 bg-gradient-airways`}>
-              <div className="lg:mx-auto max-w-7xl px-2">
-                <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-between gap-y-6 lg:gap-y-0 lg:space-x-4">
+            <header className={` py-10 lg:py-20 bg-gradient-airline`}>
+              <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
+                <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
                   <AirlineDestination
                     setActiveField={setActiveField}
                     setShowSearch={setShowSearch}
@@ -131,7 +128,7 @@ export default function Airways() {
                     setFromLocation={setFromLocation}
                   />
 
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl lg:text-2xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
+                  <div className="grid h-10 border-b-2 border-white/40 text-4xl lg:text-3xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
                     <Select defaultValue="Round Trip">
                       <SelectTrigger className="text-white">
                         <SelectValue placeholder="Select trip type" />
@@ -143,16 +140,13 @@ export default function Airways() {
                   </div>
 
                   <div
-                    className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${showSearch ? "" : ""
-                      }`}
+                    className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
+                      showSearch ? "" : ""
+                    }`}
                   >
-                    <FlightCalendar
-                      date={date}
-                      setDate={setDate}
-                      className="font-audimat"
-                    />
+                    <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
                   </div>
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
+                  <div className="grid h-10 border-b-2 border-white/40 text-4xl pb-12 lg:text-3xl xl:text-4xl px-4 items-center text-center justify-center">
                     <Select defaultValue="1 Passenger">
                       <SelectTrigger className="text-white">
                         <SelectValue placeholder="Select Passengers" />
@@ -162,30 +156,29 @@ export default function Airways() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex mx-auto">
-                    {fromLocation !== "From" && toLocation !== "To" && (
+
+                  {fromLocation !== "From" && toLocation !== "To" && (
+                    <div className="flex mx-auto">
                       <motion.button
                         whileTap={{ scale: 0.5 }}
                         onClick={() => bookTrip()}
                         className={` items-center `}
                       >
-                        <img src="ArrowButton.png" width={60} className="" />
+                        <ArrowRight className="animate-pulse hover:animate-none h-14 w-14 font-bold bg-white text-airlinepink rounded-full p-2" />
                       </motion.button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </header>
 
-            <AirlineHero
-              launchClubLoyalty={launchClubLoyalty}
-              showSearch={showSearch}
-            />
+            <AirlineHero launchClubLoyalty={launchClubLoyalty} showSearch={showSearch} />
 
             <section
               className={`relative flex flex-col sm:flex-row justify-center 
-              gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 ${showSearch ? "blur-lg" : ""
-                }`}
+              gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6 ${
+                showSearch ? "blur-lg" : ""
+              }`}
             >
               <AirlineInfoCard
                 headerTitleText="Wheels up"
