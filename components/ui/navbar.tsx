@@ -135,9 +135,16 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
                 <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
 
-                {launchClubLoyalty && enrolledInLaunchClub && <LaunchClubStatus />}
+                {launchClubLoyalty && enrolledInLaunchClub && (
+                  <DropdownMenuItem>
+                    <LaunchClubStatus />
+                  </DropdownMenuItem>
+                )}
+
                 <div className="cursor-pointer block sm:hidden">
-                  <BookedFlights />
+                  <DropdownMenuItem>
+                    <BookedFlights />
+                  </DropdownMenuItem>
                 </div>
               </>
             ) : null}
@@ -145,7 +152,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
               <DropdownMenuItem>
                 <Search className="" />
               </DropdownMenuItem>
-         
 
               <div className="cursor-pointer">
                 <QRCodeImage />

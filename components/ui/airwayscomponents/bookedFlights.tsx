@@ -132,7 +132,7 @@ export default function BookedFlights() {
           <div className="block sm:hidden lg:block cursor-pointer sm:text-airlineinactive sm:focus:text-airlinetext  sm:hover:text-white ">
             <span className="">My Bookings</span>
             {bookedTrips.length > 0 && (
-              <span className="absolute lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 pt-[.08rem] pr-[0.08rem] ">
+              <span className="absolute ml-2 lg:ml-0 lg:bottom-[35px] lg:right-[-25px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 pt-[.12rem] pr-[0.05rem] ">
                 {bookedTrips.length}
               </span>
             )}
