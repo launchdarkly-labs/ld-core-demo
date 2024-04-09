@@ -22,7 +22,7 @@ export const LoginProvider = ({ children }) => {
     context.user.name = user;
     context.user.email = email;
     context.user.key = email;
-    context.audience.key = uuidv4().slice(0, 10)
+    context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     setIsLoggedIn(true);
     setUser(user);
@@ -42,8 +42,13 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
+    setLaunchClubStatus("standard")
     const context = client?.getContext();
     context.user.name = "anonymous";
+    context.user.email = "anonymous";
+    context.audience.key = uuidv4().slice(0, 10);
+    context.user.key = "anonymous";
+    context.user.launchclub = launchClubStatus;
     client.identify(context);
   };
 

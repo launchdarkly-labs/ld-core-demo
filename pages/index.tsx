@@ -124,14 +124,14 @@ export default function Home() {
                   >
                     <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_52)" />
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M17.0093 15.9556C13.671 15.9556 10.9648 18.6617 10.9648 22C10.9648 25.3382 13.671 28.0444 17.0093 28.0444H26.9917C30.33 28.0444 33.0362 25.3382 33.0362 22C33.0362 18.6617 30.33 15.9556 26.9917 15.9556H17.0093ZM26.8194 26.5812C29.3495 26.5812 31.4005 24.5302 31.4005 22.0001C31.4005 19.47 29.3495 17.4189 26.8194 17.4189C24.2893 17.4189 22.2383 19.47 22.2383 22.0001C22.2383 24.5302 24.2893 26.5812 26.8194 26.5812Z"
                       fill="white"
                     />
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M17.0093 15.9556C13.671 15.9556 10.9648 18.6617 10.9648 22C10.9648 25.3382 13.671 28.0444 17.0093 28.0444H26.9917C30.33 28.0444 33.0362 25.3382 33.0362 22C33.0362 18.6617 30.33 15.9556 26.9917 15.9556H17.0093ZM26.8194 26.5812C29.3495 26.5812 31.4005 24.5302 31.4005 22.0001C31.4005 19.47 29.3495 17.4189 26.8194 17.4189C24.2893 17.4189 22.2383 19.47 22.2383 22.0001C22.2383 24.5302 24.2893 26.5812 26.8194 26.5812Z"
                       fill="url(#paint1_linear_2085_52)"
                     />
@@ -144,8 +144,8 @@ export default function Home() {
                         y2="44"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop offset="0.123144" stop-color="#3DD6F5" />
-                        <stop offset="1" stop-color="#A34FDE" />
+                        <stop offset="0.123144" stopColor="#3DD6F5" />
+                        <stop offset="1" stopColor="#A34FDE" />
                       </linearGradient>
                       <linearGradient
                         id="paint1_linear_2085_52"
@@ -155,8 +155,8 @@ export default function Home() {
                         y2="28.0444"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="white" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="1" stopColor="white" stopOpacity="0" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -204,8 +204,8 @@ export default function Home() {
                         y2="37.678"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop offset="0.123144" stop-color="#405BFF" />
-                        <stop offset="1" stop-color="#3DD6F5" />
+                        <stop offset="0.123144" stopColor="#405BFF" />
+                        <stop offset="1" stopColor="#3DD6F5" />
                       </linearGradient>
                       <linearGradient
                         id="paint1_linear_2085_26"
@@ -215,8 +215,8 @@ export default function Home() {
                         y2="29.5625"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="white" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="1" stopColor="white" stopOpacity="0" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -239,14 +239,14 @@ export default function Home() {
                     <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_38)" />
                     <g filter="url(#filter0_d_2085_38)">
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M21.4121 22.9989C20.8789 22.3654 20.3308 21.714 19.404 21.714C18.1385 21.714 17.5366 22.9865 16.7785 24.5892C16.4558 25.2713 16.1049 26.0132 15.6625 26.7423C15.3702 27.224 15.0936 27.623 14.8379 27.9533L14.8379 14.497L12.9998 14.497V29.5032H14.8379V29.503H31.0004V15.4892C31.0004 15.4892 29.0487 12.8973 27.3247 16.0908C26.6795 17.2859 26.1649 18.7198 25.6889 20.0463C24.893 22.2643 24.2048 24.1821 23.1935 24.1821C22.4077 24.1821 21.9166 23.5985 21.4121 22.9989Z"
                         fill="white"
                       />
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M21.4121 22.9989C20.8789 22.3654 20.3308 21.714 19.404 21.714C18.1385 21.714 17.5366 22.9865 16.7785 24.5892C16.4558 25.2713 16.1049 26.0132 15.6625 26.7423C15.3702 27.224 15.0936 27.623 14.8379 27.9533L14.8379 14.497L12.9998 14.497V29.5032H14.8379V29.503H31.0004V15.4892C31.0004 15.4892 29.0487 12.8973 27.3247 16.0908C26.6795 17.2859 26.1649 18.7198 25.6889 20.0463C24.893 22.2643 24.2048 24.1821 23.1935 24.1821C22.4077 24.1821 21.9166 23.5985 21.4121 22.9989Z"
                         fill="url(#paint1_linear_2085_38)"
                       />
@@ -259,9 +259,9 @@ export default function Home() {
                         width="30"
                         height="30"
                         filterUnits="userSpaceOnUse"
-                        color-interpolation-filters="sRGB"
+                        colorInterpolationFilters="sRGB"
                       >
-                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
                         <feColorMatrix
                           in="SourceAlpha"
                           type="matrix"
@@ -295,8 +295,8 @@ export default function Home() {
                         y2="42.5"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop offset="0.123144" stop-color="#DDF21E" />
-                        <stop offset="1" stop-color="#18D3F9" />
+                        <stop offset="0.123144" stopColor="#DDF21E" />
+                        <stop offset="1" stopColor="#18D3F9" />
                       </linearGradient>
                       <linearGradient
                         id="paint1_linear_2085_38"
@@ -306,8 +306,8 @@ export default function Home() {
                         y2="29.5032"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop stop-color="white" />
-                        <stop offset="1" stop-color="white" stop-opacity="0" />
+                        <stop stopColor="white" />
+                        <stop offset="1" stopColor="white" stopOpacity="0" />
                       </linearGradient>
                     </defs>
                   </svg>

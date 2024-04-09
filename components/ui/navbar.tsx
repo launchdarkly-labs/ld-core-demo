@@ -38,20 +38,8 @@ interface Persona {
 }
 
 const NavBar = React.forwardRef<any, NavBarProps>(
-  (
-    {
-      launchClubLoyalty,
-      cart,
-      setCart,
-      className,
-      variant,
-      handleLogout,
-      ...props
-    },
-    ref
-  ) => {
-    const { isLoggedIn, enrolledInLaunchClub, user, loginUser } =
-      useContext(LoginContext);
+  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
+    const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
@@ -67,19 +55,19 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         navChild = (
           <>
             {!isLoggedIn ? null : (
-              <div className="flex space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                {launchClubLoyalty && enrolledInLaunchClub && (
-                  <LaunchClubStatus />
-                )}
-                <Search className="cursor-pointer hidden sm:block" />
-                <div className="block lg:hidden">
+              <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+                <div className="hidden sm:block">
+                  {launchClubLoyalty && enrolledInLaunchClub && <LaunchClubStatus />}
+                </div>
+
+                <Search className="cursor-default hidden sm:block" />
+                <div className="hidden sm:block lg:hidden">
                   <BookedFlights />
                 </div>
                 <div className="cursor-pointer hidden sm:block">
                   <QRCodeImage className="" />
                 </div>
 
-            
                 <Popover>
                   <PopoverTrigger>
                     <Avatar>
@@ -116,14 +104,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-to-r from-airlinepurple to-airlinepink  rounded-none"
+                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-airline-buttons rounded-none"
                         >
                           Logout
                         </Button>
-                        <QuickLoginDialog
-                          personas={personas}
-                          variant={variant}
-                        />
+                        <QuickLoginDialog personas={personas} variant={variant} />
                       </div>
                     </>
                   </PopoverContent>
@@ -135,18 +120,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLogo = (
           <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="40"
-              width="50"
-              className="pr-2"
-            >
-              <image
-                href="/launch-airways.svg"
-                height="40"
-                width="40"
-                alt="Launch Airways"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
             </svg>
             <p className="text-base flex font-sohnelight text-white">
               <strong className="font-semibold font-sohne">Launch</strong>
@@ -163,12 +138,23 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
 
                 <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+
+                {launchClubLoyalty && enrolledInLaunchClub && (
+                  <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                    <LaunchClubStatus />
+                  </div>
+                )}
+
+                <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                  <BookedFlights />
+                </div>
               </>
             ) : null}
             <div className="flex justify-between">
               <DropdownMenuItem>
-                <Search className="cursor-pointer" />
+                <Search className="" />
               </DropdownMenuItem>
+
               <div className="cursor-pointer">
                 <QRCodeImage />
               </div>
@@ -178,17 +164,18 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            {" "}
             <button
               href="/airways"
-              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px] outline-none`}
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons outline-none cursor-auto`}
             >
               Book
             </button>
-            <BookedFlights />
+            <div className="hidden lg:flex">
+              <BookedFlights />
+            </div>
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-to-r from-airlinepurple to-airlinepink bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-auto`}
             >
               Check-In
             </button>
@@ -245,10 +232,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         >
                           Logout
                         </Button>
-                        <QuickLoginDialog
-                          personas={personas}
-                          variant={variant}
-                        />
+                        <QuickLoginDialog personas={personas} variant={variant} />
                       </div>
                     </>
                   </PopoverContent>
@@ -260,18 +244,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLogo = (
           <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="28"
-              width="174"
-              className="pr-2"
-            >
-              <image
-                href="/toggle-bank.svg"
-                height="28"
-                width="174"
-                alt="Toggle Bank"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
+              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
             </svg>
           </>
         );
@@ -283,9 +257,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">
-                  External Accounts
-                </DropdownMenuItem>
+                <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
                 <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
               </>
             ) : null}
@@ -344,10 +316,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
               <>
                 <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
                   <StoreCart cart={cart} setCart={setCart} />
-                  <Search
-                    color={"white"}
-                    className="hidden sm:block cursor-pointer"
-                  />
+                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
                   <div className="hidden sm:block cursor-pointer text-white">
                     <QRCodeImage />
                   </div>
@@ -391,10 +360,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           >
                             Logout
                           </Button>
-                          <QuickLoginDialog
-                            personas={personas}
-                            variant={variant}
-                          />
+                          <QuickLoginDialog personas={personas} variant={variant} />
                         </div>
                       </>
                     </PopoverContent>
@@ -407,18 +373,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLogo = (
           <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="40"
-              width="50"
-              className="pr-0 sm:pr-2"
-            >
-              <image
-                href="/market.png"
-                height="40"
-                width="40"
-                alt="Marketplace"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-0 sm:pr-2">
+              <image href="/market.png" height="40" width="40" alt="Marketplace" />
             </svg>
             <p className="text-sm sm:text-base flex text-white font-sohnelight">
               <strong className="font-sohne">Galaxy </strong>&nbsp;Marketplace
@@ -507,7 +463,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="ml-2 cursor-pointer block lg:hidden text-white">
+            <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
               <PanelTopOpen size={24} />
             </button>
           </DropdownMenuTrigger>
@@ -515,10 +471,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
           </DropdownMenuPortal>
         </DropdownMenu>
+
         {isLoggedIn ? (
-          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">
-            {navLinksGroup}
-          </div>
+          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
         ) : null}
         {navChild}
       </nav>
