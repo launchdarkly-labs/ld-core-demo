@@ -136,15 +136,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
 
                 {launchClubLoyalty && enrolledInLaunchClub && (
-                  <DropdownMenuItem>
+                  <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
                     <LaunchClubStatus />
-                  </DropdownMenuItem>
+                  </div>
                 )}
 
-                <div className="cursor-pointer block sm:hidden">
-                  <DropdownMenuItem>
-                    <BookedFlights />
-                  </DropdownMenuItem>
+                <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                  <BookedFlights />
                 </div>
               </>
             ) : null}
