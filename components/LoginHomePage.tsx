@@ -56,7 +56,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             : variant === "airlines"
             ? "bg-gradient-airline"
             : variant === "investment"
-            ? "bg-gradient-airline"
+            ? "bg-gradient-investment"
             : variant === "market"
             ? " bg-market-header grid items-center justify-center"
             : ""
@@ -145,20 +145,20 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         <HomePageCardWrapper>
           <HomePageInfoCard
             imgSrc="House.png"
-            headerTitleText="Home Mortgages"
-            subtitleText="Toggle the light on and come home. Were here to help."
+            headerTitleText="Are returns worth the risk in investing in the market?"
+            subtitleText="Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. "
             key={1}
           />
           <HomePageInfoCard
             imgSrc="Smoochy.png"
-            headerTitleText="Wealth Management"
-            subtitleText="Use next generation tooling to ensure your future is safe."
+            headerTitleText="Fed to consumers: Inflation trending lower daily."
+            subtitleText="Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected."
             key={2}
           />
           <HomePageInfoCard
             imgSrc="Cards.png"
-            headerTitleText="Sign Up For Toggle Card"
-            subtitleText="Special offers for our most qualified members. Terms apply."
+            headerTitleText="Here’s how markets are moving this week."
+            subtitleText="With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks."
             key={3}
           />
         </HomePageCardWrapper>
