@@ -9,24 +9,24 @@ import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import MarketInfoCard from "@/components/ui/marketcomponents/marketInfoCard";
+import HomePageInfoCard from "./ui/HomePageInfoCard";
+import HomePageCardWrapper from "./ui/HomePageCardWrapper";
 
 interface LoginHomePageProps {
-  variant: 'bank' | 'airlines' | 'market';
+  variant: "bank" | "airlines" | "market" | "investment";
   name: string;
 }
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
-
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } =
-    useContext(LoginContext);
-
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
 
   const industryMessages = {
-    "bank": "Serving more than 100,000 customers, and 10 trillion in capital every day",
-    "airlines": "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    "market": "Shop for the latest tech gadgets and more."
+    bank: "Serving more than 100,000 customers, and 10 trillion in capital every day",
+    investment: "Serving more than 100,000 customers, and 10 trillion in capital every day",
+    airlines:
+      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
+    market: "Shop for the latest tech gadgets and more.",
   };
-
 
   const bankingServicesArr = [
     { imgSrc: "Checking.png", title: "Checking" },
@@ -49,11 +49,20 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         <NavBar variant={variant} />
       </div>
 
-      <header className={`w-full ${variant === 'bank' ? 'bg-bankblue' :
-        variant === 'airlines' ? 'bg-gradient-airline' :
-          variant === 'market' ? ' bg-market-header grid items-center justify-center' : ''
-        } mb-[4rem]`}>
-        {variant === 'market' && (
+      <header
+        className={`w-full ${
+          variant === "bank"
+            ? "bg-bankblue"
+            : variant === "airlines"
+            ? "bg-gradient-airline"
+            : variant === "investment"
+            ? "bg-gradient-airline"
+            : variant === "market"
+            ? " bg-market-header grid items-center justify-center"
+            : ""
+        } mb-[4rem]`}
+      >
+        {variant === "market" && (
           <div>
             <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
             <img src="union.png" className="absolute left-0 bottom-0" />
@@ -88,14 +97,13 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </div>
       </header>
 
-      {variant === 'bank' && (
+      {variant === "bank" && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
             sm:gap-y-0 gap-x-8
           sm:gap-x-12 lg:gap-x-24"
         >
-
-          {bankingServicesArr.map((ele,i) => {
+          {bankingServicesArr.map((ele, i) => {
             return (
               <div className="grid items-center justify-items-center" key={i}>
                 <img src={ele?.imgSrc} width={96} className="pb-2" />
@@ -106,7 +114,8 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </section>
       )}
-      {variant === 'bank' && (
+
+      {variant === "bank" && (
         <section
           className="flex flex-col gap-y-8 sm:gap-y-8 sm:flex-row sm:gap-x-6 lg:gap-x-14
            mx-auto py-12 justify-center px-4 lg:px-8"
@@ -132,12 +141,34 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {variant === 'airlines' && (
+      {variant === "investment" && (
+        <HomePageCardWrapper>
+          <HomePageInfoCard
+            imgSrc="House.png"
+            headerTitleText="Home Mortgages"
+            subtitleText="Toggle the light on and come home. Were here to help."
+            key={1}
+          />
+          <HomePageInfoCard
+            imgSrc="Smoochy.png"
+            headerTitleText="Wealth Management"
+            subtitleText="Use next generation tooling to ensure your future is safe."
+            key={2}
+          />
+          <HomePageInfoCard
+            imgSrc="Cards.png"
+            headerTitleText="Sign Up For Toggle Card"
+            subtitleText="Special offers for our most qualified members. Terms apply."
+            key={3}
+          />
+        </HomePageCardWrapper>
+      )}
+
+      {variant === "airlines" && (
         <section
           className="flex flex-col gap-y-8 sm:gap-y-8 sm:flex-row sm:gap-x-6 lg:gap-x-14
            mx-auto py-12 justify-center px-4 lg:px-8"
         >
-
           <AirlineInfoCard
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
@@ -153,31 +184,31 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             subtitleText="Choose Launch Platinum. Select on longer flights."
             imgSrc={airplaneDining}
           />
-
         </section>
       )}
 
-      {variant === 'market' && (
+      {variant === "market" && (
         <section
-        className="relative flex flex-col sm:flex-row justify-center 
+          className="relative flex flex-col sm:flex-row justify-center 
         gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6"
-      >
-        <MarketInfoCard
-          headerTitleText="Shop Latest Gadgets"
-          subtitleText="Shop the latest gadgets and accessories."
-          imgSrc="marketinfo1.png"
-        />
-        <MarketInfoCard
-          headerTitleText="Exclusive Offers"
-          subtitleText="Get exclusive offers and deals on the latest gadgets."
-          imgSrc="marketinfo2.png"
-        />
-        <MarketInfoCard
-          headerTitleText="Shop Popular Brands"
-          subtitleText="Shop popular brands like Apple, Samsung, and more."
-          imgSrc="marketinfo3.png"
-        />
-      </section>)}
+        >
+          <MarketInfoCard
+            headerTitleText="Shop Latest Gadgets"
+            subtitleText="Shop the latest gadgets and accessories."
+            imgSrc="marketinfo1.png"
+          />
+          <MarketInfoCard
+            headerTitleText="Exclusive Offers"
+            subtitleText="Get exclusive offers and deals on the latest gadgets."
+            imgSrc="marketinfo2.png"
+          />
+          <MarketInfoCard
+            headerTitleText="Shop Popular Brands"
+            subtitleText="Shop popular brands like Apple, Samsung, and more."
+            imgSrc="marketinfo3.png"
+          />
+        </section>
+      )}
     </motion.main>
-  )
+  );
 }

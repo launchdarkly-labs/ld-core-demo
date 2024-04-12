@@ -98,7 +98,7 @@ export default function Airways() {
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="airlines" name="Launch Airways" />
+          <LoginHomePage variant="investment" name="Frontier Capital" />
         ) : (
           <motion.main
             initial={{ opacity: 0 }}
