@@ -23,6 +23,11 @@ export function CSNav() {
     router.push("/bank");
   }
 
+  function goRemediate() {
+    router.push("/investment");
+  }
+
+
   function goTargeting() {
     router.push("/airways");
   }
@@ -82,7 +87,7 @@ export function CSNav() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <div onClick={goRelease}>
+              <div onClick={goRemediate}>
                 <CSCard
                   className="bg-gradient-mobile cursor-pointer"
                   herotext="Navigate to Automatically Remediate"
