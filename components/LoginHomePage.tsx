@@ -60,7 +60,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             : variant === "market"
             ? " bg-market-header grid items-center justify-center"
             : ""
-        } mb-[4rem]`}
+        }`}
       >
         {variant === "market" && (
           <div>
@@ -140,7 +140,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           />
         </section>
       )}
-
+{/* TODO: need to apply this to all other home pages */}
       {variant === "investment" && (
         <HomePageCardWrapper>
           <HomePageInfoCard

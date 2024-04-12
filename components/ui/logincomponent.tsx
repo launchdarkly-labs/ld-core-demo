@@ -19,7 +19,7 @@ interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loginUser: any
-  variant: 'bank' | 'airlines' | 'market';
+  variant: 'bank' | 'airlines' | 'market' | 'investment';
   name: string;
 }
 
@@ -119,7 +119,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   };
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black">
 
       <div className="flex flex-col justify-center mx-auto text-center">
         <img
@@ -127,20 +127,20 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
           width={64}
           className="pt-10 mx-auto pb-4"
         />
-        <p className="text-3xl sm:text-4xl font-sohnelight pb-12 3xl:pb-24 !font-thin">
+        <p className="text-3xl sm:text-4xl font-sohnelight pb-12  !font-thin">
           <span className="!font-extrabold">{name}</span>
         </p>
       </div>
       <div className="w-full px-8">
-        <div>
+        
           <Input
             placeholder="Email"
             value={defaultEmail || "jenn@launchmail.io"}
             ref={inputRef}
-            className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 text-xl"
+            className="mb-8 outline-none border-0 border-b-2 text-xl"
             onChange={(e) => setDefaultEmail(e.target.value)}
           />
-        </div>
+       
 
         <Button
           onClick={handleLogin}
