@@ -1,5 +1,5 @@
 import RetirementChart from "./RetirementChart";
-import Button from "Components/Button";
+import { Button } from "@/components/ui/button";
 
 const RetirementCard = () => {
   const retireDate = "36";

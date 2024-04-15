@@ -1,19 +1,15 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import {
-  checkInvestmentTradeButtonLDFlag,
-  checkCloudMigrationTwoStagesLDFlag,
-  checkShowInvestmentCardPromoLDFlag,
-} from "Utils/flagsUtils.js";
-import { BanknotesIcon, AcademicCapIcon, ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
-import Button from "Components/Button";
-import Modal from "Components/Modal";
-import { useParams, useNavigate } from "react-router-dom";
+
+
+import { BanknoteIcon, AcademicCapIcon, ArrowTrendingUpIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/ui/investmentcomponents/Modal";
+
+import { useParams,useNavigate } from "next/router";
 import StockCard from "./StockCard";
-import { ALERT_TYPES } from "Constants/constants.js";
-import { handleAlert } from "Utils/utils.js";
-import { withAlert } from "react-alert";
-import { formatMoneyTrailingZero } from "Utils/utils";
+import { ALERT_TYPES } from "@/utils/constants.js";
+import { handleAlert } from "@/utils/utils";
+import { formatMoneyTrailingZero } from "@/utils/utils";
 
 const dummyStocks = [
   {
@@ -73,11 +69,11 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
       title: "Start Trading Here",
       subtitle: "Start your investment journey with us through our advance trading platform.",
       buttonText: "Trade Now",
-      icon: <BanknotesIcon className="rounded-full bg-primary p-3 h-20 w-20 text-primary-text" />,
+      icon: <BanknoteIcon className="rounded-full bg-primary p-3 h-20 w-20 text-primary-text" />,
     };
   }, []);
 
-  const { flags, ldClient } = useContext(LDContext);
+
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -91,11 +87,9 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
     ...initialStocks,
   });
 
-  const showInvestmentTradeButtonLDFlag = checkInvestmentTradeButtonLDFlag({ flags }).includes(
-    "trade-learn"
-  );
-  const showCloudMigrationTwoStagesLDFlag = checkCloudMigrationTwoStagesLDFlag({ flags })?.includes("complete");
-  const showInvestmentCardPromoLDFlag = checkShowInvestmentCardPromoLDFlag({ flags });
+  const showInvestmentTradeButtonLDFlag = true;
+  const showCloudMigrationTwoStagesLDFlag = true;
+  const showInvestmentCardPromoLDFlag = true;
 
   useEffect(() => {
     if (showInvestmentTradeButtonLDFlag && !showInvestmentCardPromoLDFlag) {
@@ -308,5 +302,5 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
     </div>
   );
 };
-
-export default withAlert()(TradingTrainingCard);
+//TODO: repalce withalert with toast
+export default TradingTrainingCard;

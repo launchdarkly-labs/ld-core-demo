@@ -1,5 +1,5 @@
-import { investmentColors } from "Utils/styleUtils";
-import CircleLoader from "Components/CircleLoader";
+import { investmentColors } from "@/utils/styleUtils";
+import { BounceLoader } from "react-spinners";
 
 const dummyData = [
   {
@@ -33,7 +33,7 @@ const MarketCard = ({ isLoadingStocks }) => {
       <h3 className="font-bold text-lg mb-5">Market</h3>
       <div className="flex justify-between mb-5 gap-x-4">
         {isLoadingStocks ? (
-          <CircleLoader />
+          <BounceLoader />
         ) : (
           renderedData.map((datum) => {
             return (

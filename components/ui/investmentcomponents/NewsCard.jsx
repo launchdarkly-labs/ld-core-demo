@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import CircleLoader from "Components/CircleLoader";
-import { truncateString } from "Utils/utils";
+import { BounceLoader } from "react-spinners";
+import { truncateString } from  "@/utils/utils"
 const time = new Date().getTime();
 const date = format(new Date(time), "MMM d, yyyy");
 
@@ -51,7 +51,7 @@ const NewsCard = ({ news, isLoadingNews }) => {
       <h3 className="font-bold text-lg mb-5">News about your investment</h3>
       <div className="flex flex-col gap-y-3">
         {isLoadingNews ? (
-          <CircleLoader marginY={"!my-[9rem]"} />
+          <BounceLoader marginY={"!my-[9rem]"} />
         ) : (
           <>
             {news.map((datum, index) => {

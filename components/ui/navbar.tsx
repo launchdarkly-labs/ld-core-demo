@@ -21,7 +21,7 @@ import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 interface NavBarProps {
   cart: InventoryItem[];

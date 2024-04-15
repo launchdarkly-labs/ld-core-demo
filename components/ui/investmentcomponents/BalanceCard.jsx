@@ -1,23 +1,22 @@
 import React, { useContext } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkCloudMigrationTwoStagesLDFlag, checkPatchCloudMigrationLDFlag } from "Utils/flagsUtils.js";
 import BalanceChart from "./BalanceChart";
-import Button from "Components/Button";
-import { investmentColors } from "Utils/styleUtils";
+import { Button } from "@/components/ui/button";
+import { investmentColors } from "@/utils/styleUtils";
 import { balanceCardTierStatusData } from "./BalanceChartData";
-import CircleLoader from "Components/CircleLoader";
-import AuthContext from "Components/Auth/AuthContext";
-import silver from "img/graphs/silver.png";
-import gold from "img/graphs/gold.png";
-import diamond from "img/graphs/diamond.png";
+import { BounceLoader } from "react-spinners";
+import silver from "@/public/investment/graphs/silver.png";
+import gold from "@/public/investment/graphs/gold.png";
+import diamond from "@/public/investment/graphs/diamond.png";
 
 const BalanceCard = ({ isLoadingStocks }) => {
-  const { flags } = useContext(LDContext);
-  const auth = useContext(AuthContext);
-  const showCloudMigrationTwoStagesLDFlag = checkCloudMigrationTwoStagesLDFlag({ flags })?.includes("complete");
-  const showPatchCloudMigrationLDFlag = checkPatchCloudMigrationLDFlag({ flags });
-  const isDeveloper = auth?.userObject?.usertype?.includes("developer");
-  const userTierStatus = auth.userObject?.tierStatus;
+
+  
+  
+
+  const showCloudMigrationTwoStagesLDFlag = true;
+  const showPatchCloudMigrationLDFlag = true;
+  const isDeveloper = true;
+  const userTierStatus = "gold";
 
   const imgGraph = {
     silver: silver,
@@ -42,7 +41,7 @@ const BalanceCard = ({ isLoadingStocks }) => {
     <>
       <h3 className={`font-bold text-lg mb-5 ${errorUI}`}>Your Balance</h3>
       {isLoadingStocks ? (
-        <CircleLoader marginY={"!my-[30vh]"} />
+        <BounceLoader marginY={"!my-[30vh]"} />
       ) : (
         <>
           <h4

@@ -1,6 +1,6 @@
 import React from "react";
-import Button from "Components/Button";
-import Input from "Components/Input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const InvestmentSearchBar = () => {
   const onSubmit = (e) => {

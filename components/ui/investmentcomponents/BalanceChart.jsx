@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkCloudMigrationTwoStagesLDFlag, checkPatchCloudMigrationLDFlag } from "Utils/flagsUtils.js";
+
 import {
   LineChart,
   Line,
@@ -12,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { balanceChartTierStatusData } from "./BalanceChartData";
-import AuthContext from "Components/Auth/AuthContext";
+
 
 const BalanceChart = () => {
   const { flags } = useContext(LDContext);

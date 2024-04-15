@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import Modal from "Components/Modal";
-import Button from "Components/Button";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkShowInvestmentPromoPopUpLDFlag } from "Utils/flagsUtils";
+import Modal from "@/components/ui/investmentcomponents/Modal";
+import { Button } from "@/components/ui/button";
+
 import * as amplitude from "@amplitude/analytics-browser";
-import { ALERT_TYPES } from "Constants/constants.js";
-import { handleAlert } from "Utils/utils.js";
-import { withAlert } from "react-alert";
+import { ALERT_TYPES } from "@/utils/constants.js";
+import { handleAlert } from "@/utils/utils";
+
 
 const InvestmentPromoPopup = ({ alert }) => {
-  const { flags } = useContext(LDContext);
-  const showInvestmentPromoPopUpLDFlag = checkShowInvestmentPromoPopUpLDFlag({ flags });
+  
+  const showInvestmentPromoPopUpLDFlag = true;
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => {
     setIsOpen(false);
@@ -76,5 +75,5 @@ const InvestmentPromoPopup = ({ alert }) => {
     </Modal>
   );
 };
-
-export default withAlert()(InvestmentPromoPopup);
+//todo: repalce withalert with toast
+export default InvestmentPromoPopup;

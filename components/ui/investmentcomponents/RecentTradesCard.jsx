@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkInvestmentDatabaseMigrationSixStagesLDFlag } from "Utils/flagsUtils.js";
+
 import StockCard from "./StockCard";
-import { formatMoneyTrailingZero } from "Utils/utils";
+import { formatMoneyTrailingZero } from "@/utils/utils"
 
 const dummyStocks = [
   {
@@ -56,12 +55,16 @@ const dummyStocks = [
 ];
 
 const RecentTradesCard = ({ recentTrades, isLoadingRecentTrades }) => {
-  const { flags } = useContext(LDContext);
+
+  // const showInvestmentDatabaseMigrationSixStages =
+  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
+  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("rampdown") ||
+  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("live") ||
+  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("shadow");
+
   const showInvestmentDatabaseMigrationSixStages =
-    checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
-    checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("rampdown") ||
-    checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("live") ||
-    checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("shadow");
+  true;
+
 
   if (recentTrades?.length === 0 || recentTrades === undefined) recentTrades = dummyStocks; //to deal with rate limit
 

@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkCloudMigrationTwoStagesLDFlag } from "Utils/flagsUtils.js";
-import { investmentColors } from "Utils/styleUtils";
-import { STOCK_LOGO_IMAGE } from "Constants/constants";
-import CircleLoader from "Components/CircleLoader";
-import StatusBubble from "Components/SalientComponents/StatusBubble";
+
+
+import { investmentColors } from "@/utils/styleUtils";
+import { STOCK_LOGO_IMAGE } from "@/utils/constants.js";
+import { BounceLoader } from "react-spinners";
+import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import ColumnComponent from "./ColumnComponent";
-import { formatMoneyTrailingZero } from "Utils/utils";
-import Modal from "Components/Modal";
-import { truncateString } from "Utils/utils";
-import { AnimatePresence } from "framer-motion/dist/framer-motion";
+import { formatMoneyTrailingZero } from "@/utils/utils";
+import Modal from "@/components/ui/investmentcomponents/Modal";
+import { truncateString } from  "@/utils/utils"
+import { AnimatePresence } from "framer-motion";
 
 const StockCard = ({
   title,
@@ -39,7 +39,7 @@ const StockCard = ({
           extraHeaderColumns={extraHeaderColumns}
         />
         {isLoadingStocks ? (
-          <CircleLoader marginY={"!my-[4rem]"} />
+          <BounceLoader marginY={"!my-[4rem]"} />
         ) : (
           <RowComponent
             stocks={stocks}
@@ -86,8 +86,8 @@ const RowComponent = ({
   handleClick,
   stockChosen,
 }) => {
-  const { flags } = useContext(LDContext);
-  const showCloudMigrationTwoStagesLDFlag = checkCloudMigrationTwoStagesLDFlag({ flags })?.includes("complete");
+
+  const showCloudMigrationTwoStagesLDFlag = true;
 
   return (
     <div className={`flex flex-col gap-y-6 overflow-y-auto ${renderInModal || (!renderInModal && stocks.length < 6) ? "" : "sm:h-[22.5rem]"}`}>
@@ -307,7 +307,7 @@ const StockCardModal = ({
           renderInModal={isOpen}
         />
         {isLoadingStocks ? (
-          <CircleLoader marginY={"!my-[4rem]"} />
+          <BounceLoader marginY={"!my-[4rem]"} />
         ) : (
           <RowComponent stocks={stocks} renderInModal={isOpen} />
         )}

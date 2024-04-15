@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Modal from "Components/Modal";
+import Modal from "@/components/ui/investmentcomponents/Modal";
 // import ChatMessageLoader from "Components/Chatbot/ChatMessageLoader";
 
 const InvestmentDevLog = ({ isOpen, onClose, logs  }) => {

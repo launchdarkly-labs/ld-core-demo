@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { LDContext } from "Providers/LaunchDarkly/context.js";
-import { checkCloudMigrationTwoStagesLDFlag } from "Utils/flagsUtils.js";
+
 import StockCard from "./StockCard";
 
 const dummyStocks = [
@@ -43,8 +42,8 @@ const dummyStocks = [
 // ];
 
 const StockRecommendationCard = ({ stocks, isLoadingStocks }) => {
-  const { flags } = useContext(LDContext);
-  const showCloudMigrationTwoStagesLDFlag = checkCloudMigrationTwoStagesLDFlag({ flags })?.includes("complete");
+  
+  const showCloudMigrationTwoStagesLDFlag = true;
 
   if (stocks.length > 0) {
     const recommendedStocks = [];
