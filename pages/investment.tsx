@@ -75,6 +75,125 @@ export default function Airways() {
 
   let patchCardUI;
 
+  // useEffect(() => {
+  //   let isFetched = true;
+
+  //   const stockAPI = async () => {
+  //     return await resolve(
+  //       axios({
+  //         method: "get",
+  //         url: `http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks`,
+  //       })
+  //     );
+  //   };
+
+  //   const getStocks = async () => {
+  //     const apiResponse = await stockAPI();
+  //     const stockData = apiResponse?.data;
+  //     setIsLoadingStocks(false);
+
+  //     if (stockData?.status === 429) return;
+  //     const filteredStock = [];
+  //     stockData?.forEach((element) => {
+  //       if (
+  //         element.T.includes("NVDA") ||
+  //         element.T.includes("TSLA") ||
+  //         element.T.includes("AMZN") ||
+  //         element.T.includes("SHOP") ||
+  //         element.T.includes("MSFT") ||
+  //         element.T.includes("WMT")
+  //       ) {
+  //         filteredStock.push(element);
+  //       }
+  //     });
+  //     setStocks(filteredStock);
+  //   };
+
+  //   // if (isLocalAPIMigration) return setIsLoadingStocks(false);
+
+  //   if (isFetched) {
+  //     getStocks();
+  //   }
+
+  //   return () => {
+  //     isFetched = false;
+  //     setStocks([]);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   let isFetched = true;
+  //   const newsAPI = async () => {
+  //     return await resolve(
+  //       axios({
+  //         method: "get",
+  //         url: `http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews`,
+  //       })
+  //     );
+  //   };
+
+  //   const getNews = async () => {
+  //     const apiResponse = await newsAPI();
+  //     const newsData = apiResponse?.data;
+  //     setIsLoadingNews(false);
+
+  //     if (newsData?.status === 429) return;
+  //     setNews(newsData?.splice(0, 5));
+  //   };
+
+  //   // if (isLocalAPIMigration) return setIsLoadingNews(false);
+
+  //   if (isFetched) {
+  //     getNews();
+  //   }
+
+  //   return () => {
+  //     isFetched = false;
+  //     setNews([]);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    let isFetched = true;
+
+
+    const recentTradeAPI = async () => {
+
+      const response = await fetch("http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments", {
+        method: "get",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+      }
+  
+     
+      return response.json();
+    };
+
+    const getRecentTrade = async () => {
+      const recentTradesData = await recentTradeAPI();
+      console.log(recentTradesData);
+     
+      setIsLoadingRecentTrades(false);
+      if (recentTradesData?.status === 429) return;
+     
+      setRecentTrades(recentTradesData);
+    };
+
+    // if (isLocalDatabaseMigration) return setIsLoadingRecentTrades(false);
+
+    if (isFetched) {
+      getRecentTrade();
+    }
+
+    return () => {
+      isFetched = false;
+      setRecentTrades([]);
+    };
+  }, []);
+
+
   if (isCloudMigrationAWS && showPatchCloudMigrationLDFlag && isDeveloper) {
     patchCardUI = "border-4 border-green-500";
   } else if (isCloudMigrationAWS && !showPatchCloudMigrationLDFlag && isDeveloper) {

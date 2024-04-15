@@ -5,7 +5,7 @@ import { BanknoteIcon, AcademicCapIcon, ArrowTrendingUpIcon } from "lucide-react
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/investmentcomponents/Modal";
 
-import { useParams,useNavigate } from "next/router";
+import { useParams, useNavigate, useRouter } from "next/router";
 import StockCard from "./StockCard";
 import { ALERT_TYPES } from "@/utils/constants.js";
 import { handleAlert } from "@/utils/utils";
@@ -53,6 +53,14 @@ const dummyStocks = [
 ];
 
 const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) => {
+
+console.log(recentTrades)
+
+  // const params = useParams();
+  // const navigate = useNavigate();
+  const router = useRouter();
+
+
   const initialAccounts = { RothIRA: false, RolloverIRA: false, Brokerage: false };
 
   const initialStocks = {
@@ -127,6 +135,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
 
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
 
+  
   const onClose = () => {
     setIsOpen(false);
 
@@ -134,7 +143,9 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
 
     setStockChosen({ ...initialStocks });
 
-    navigate("/investment");
+    // navigate("/investment");
+
+    router.push("/investment");
   };
 
   const handleAccountChosen = (e) => {
@@ -195,8 +206,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
     });
   };
 
-  const params = useParams();
-  const navigate = useNavigate();
+
 
   const accountTypeArr = ["Roth IRA", "Rollover IRA", "Brokerage"];
 
@@ -225,7 +235,8 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
         onClose={onClose}
         modalClassOverride={`w-full h-full lg:w-auto lg:h-auto`}
       >
-        {params["*"]?.includes("trade/1") ? (
+        {/* {params["*"]?.includes("trade/1") ? ( */}
+          {false ? (
           <div
             className={`flex-col  my-[2rem] mx-[2rem]
           lg:flex text-gray-900 `}
@@ -267,7 +278,8 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
           </div>
         ) : null}
 
-        {params["*"]?.includes("trade/2") ? (
+        {/* {params["*"]?.includes("trade/2") ? ( */}
+                  {false ? (
           <div
             className={`flex-col  my-[2rem] mx-[2rem]
           lg:flex text-gray-900`}
