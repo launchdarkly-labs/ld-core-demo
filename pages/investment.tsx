@@ -23,13 +23,25 @@ import { SelectTrigger } from "@radix-ui/react-select";
 import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
 import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
 
-export default function Airways() {
+import { XIcon, ComputerIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
+import NewsCard from "@/components/ui/investmentcomponents/NewsCard";
+import StockMoversCard from "@/components/ui/investmentcomponents/StockMoversCard";
+import BalanceCard from "@/components/ui/investmentcomponents/BalanceCard";
+import RetirementCard from "@/components/ui/investmentcomponents/RetirementCard";
+import TradingTrainingCard from "@/components/ui/investmentcomponents/TradingTrainingCard";
+import MarketCard from "@/components/ui/investmentcomponents/MarketCard";
+import InvestmentSearchBar from "@/components/ui/investmentcomponents/InvestmentSearchBar";
+import StockRecommendationCard from "@/components/ui/investmentcomponents/StockRecommendationCard";
+import InvestmentDevLog from "@/components/ui/investmentcomponents/InvestmentDevLog";
+import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
+
+export default function Airways() {
   const { toast } = useToast();
 
-
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
-
 
   const ldclient = useLDClient();
 
@@ -42,7 +54,46 @@ export default function Airways() {
     setCookie("ldcontext", context);
   }
 
-  
+  const [stocks, setStocks] = useState([]);
+  const [news, setNews] = useState([]);
+  const [recentTrades, setRecentTrades] = useState([]);
+  const [isLoadingStocks, setIsLoadingStocks] = useState(true);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
+  const [isLoadingRecentTrades, setIsLoadingRecentTrades] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const userObject = {};
+  const isDeveloper = true;
+  const showCloudMigrationTwoStagesLDFlag = true;
+  const isCloudMigrationAWS = true;
+  const isLocalAPIMigration = true;
+  const showInvestmentDatabaseMigrationSixStagesLDFlag = true;
+  const isCloudDatabaseMigrationATLAS = true;
+  const isLocalDatabaseMigration = true;
+  const showPatchCloudMigrationLDFlag = true;
+  const showChatbotWidgetLDFlag = true;
+
+  let patchCardUI;
+
+  if (isCloudMigrationAWS && showPatchCloudMigrationLDFlag && isDeveloper) {
+    patchCardUI = "border-4 border-green-500";
+  } else if (isCloudMigrationAWS && !showPatchCloudMigrationLDFlag && isDeveloper) {
+    patchCardUI = "border-4 border-red-500";
+  } else {
+    patchCardUI = "";
+  }
+
+  const cloudMigrationCardUI =
+    isCloudMigrationAWS && isDeveloper ? "border-4 border-green-500" : "";
+
+  const databaseMigrationCardUI =
+    isCloudDatabaseMigrationATLAS && isDeveloper ? "border-4 border-green-500" : "";
+
+  const cardStyle = "rounded-lg shadow-lg p-5 sm:p-5 bg-white";
+
+  const onClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -57,17 +108,162 @@ export default function Airways() {
             transition={{ duration: 0.5 }}
             className={`flex h-full flex-col font-audimat`}
           >
-            <NavBar
-        
-              variant={"airlines"}
-              handleLogout={handleLogout}
-            />
+            <NavBar variant={"airlines"} handleLogout={handleLogout} />
+            <div className="mt-8" data-testid="salient-accounts-test-id">
+              <InvestmentSearchBar />
+              <main
+                className="main-investment-card-wrapper grid gap-3 grid-cols-1 
+          lg:grid-cols-[repeat(4,minmax(175px,1fr))] 
+          investmentXL:grid-cols-[repeat(6,minmax(180px,1fr))] 
+          lg:grid-rows-[repeat(12,10rem)]
+          investmentXL:grid-rows-[repeat(9,10rem)]
+         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl"
+              >
+                <div
+                  className={`card-1 ${cardStyle} ${patchCardUI} 
+            lg:col-start-1 lg:col-end-3 
+            investmentXL:col-start-1 investmentXL:col-end-3 
+            lg:row-start-1 lg:row-end-5`}
+                  data-testid="stock-balance-card-test-id"
+                >
+                  <BalanceCard isLoadingStocks={isLoadingStocks} />
+                </div>
+                <div
+                  className={`card-2 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-3 lg:col-end-5 
+            investmentXL:col-start-5 investmentXL:col-end-7 
+            lg:row-start-1 lg:row-end-3 
+            investmentXL:row-start-1 investmentXL:row-end-3 
+            lg:h-[19rem]`}
+                  data-testid="stock-trading-training-card-test-id"
+                >
+                  <TradingTrainingCard
+                    stocks={stocks}
+                    setRecentTrades={setRecentTrades}
+                    recentTrades={recentTrades}
+                  />
+                </div>
+                <div
+                  className={`card-3 ${cardStyle} ${databaseMigrationCardUI} 
+            lg:col-start-3 lg:col-end-5 
+            investmentXL:col-start-3 investmentXL:col-end-5 
+            lg:row-start-3 lg:row-end-5
+            investmentXL:row-start-1 investmentXL:row-end-3 
+            lg:mt-[-2rem] 
+            investmentXL:mt-[0rem] 
+             lg:h-[35.5rem]`}
+                  data-testid="recent-trades-card-test-id"
+                >
+                  <RecentTradesCard
+                    recentTrades={recentTrades}
+                    isLoadingRecentTrades={isLoadingRecentTrades}
+                  />
+                </div>
 
+                <div
+                  className={`card-4 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-1 lg:col-end-3 
            
+            investmentXL:col-start-5 investmentXL:col-end-7 
+            
+            lg:row-start-5 lg:row-end-7
+            investmentXL:row-start-2 investmentXL:row-end-4 
+            lg:mt-[-.25rem] 
+            investmentXL:mt-[9rem] 
+            lg:h-[23rem]`}
+                  data-testid="stock-recommendation-card-test-id"
+                >
+                  <StockRecommendationCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
+                </div>
 
-
-
-          
+                <div
+                  className={`card-5 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-3 lg:col-end-5 
+            investmentXL:col-start-1 investmentXL:col-end-3  
+            lg:row-start-6 lg:row-end-8 
+            investmentXL:row-start-5 investmentXL:row-end-7 
+            lg:mt-[2rem] 
+            investmentXL:mt-[0rem] 
+            lg:h-[35rem]`}
+                  data-testid="stock-movers-card-test-id"
+                >
+                  <StockMoversCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
+                </div>
+                <div
+                  className={`card-6 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-1 lg:col-end-3 
+            investmentXL:col-start-3 investmentXL:col-end-5 
+            lg:row-start-7 lg:row-end-9
+            investmentXL:row-start-4 investmentXL:row-end-7  
+            lg:mt-[2rem] 
+            investmentXL:mt-[4rem] 
+            lg:h-[31rem]
+            investmentXL:h-[100%]
+            `}
+                  data-testid="stock-news-card-test-id"
+                >
+                  <NewsCard news={news} isLoadingNews={isLoadingNews} />
+                </div>
+                <div
+                  className={`card-7 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-1 lg:col-end-3 
+            investmentXL:col-start-5 investmentXL:col-end-7 
+            lg:row-start-7 lg:row-end-9
+            investmentXL:row-start-4 investmentXL:row-end-5  
+            lg:mt-[33.5rem] 
+            investmentXL:mt-[11.25rem] 
+            lg:h-[25rem]`}
+                  data-testid="stock-retirement-card-test-id"
+                >
+                  <RetirementCard />
+                </div>
+                <div
+                  className={`card-8 ${cardStyle} ${cloudMigrationCardUI} 
+            lg:col-start-3 lg:col-end-5 
+            investmentXL:col-start-3 investmentXL:col-end-5 
+            lg:row-start-7 lg:row-end-9 
+            investmentXL:row-start-7 investmentXL:row-end-8  
+            lg:mt-[27rem] 
+            investmentXL:mt-[4rem] 
+            lg:h-[15rem]`}
+                  data-testid="stock-market-card-test-id"
+                >
+                  <MarketCard isLoadingStocks={isLoadingStocks} />
+                </div>
+              </main>
+              {isOpen ? (
+                <InvestmentDevLog
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  logs={logs}
+                  isLoadingStocks={isLoadingStocks}
+                  isLoadingRecentTrades={isLoadingRecentTrades}
+                />
+              ) : null}
+              {isDeveloper ? (
+                <Button
+                  className={`p-3 ${
+                    showChatbotWidgetLDFlag
+                      ? "right-[6rem] sm:right-[8rem] bottom-[1rem] sm:bottom-[2rem] "
+                      : "right-[1rem] sm:right-[3rem] bottom-[1rem] sm:bottom-[2rem] "
+                  } w-[4rem] h-[4rem]
+        z-[20]
+          bg-primary border-0 fixed rounded-full shadow-xl`}
+                  id="investment-dev-log-button"
+                  onClick={() => {
+                    setIsOpen((prev) => !prev);
+                  }}
+                  title="Investment Dev Log"
+                  data-testid="investment-page-dev-log-button"
+                >
+                  {isOpen ? (
+                    <XIcon className="text-primary-text" />
+                  ) : (
+                    <ComputerIcon className="text-primary-text" />
+                  )}
+                </Button>
+              ) : null}
+            </div>
           </motion.main>
         )}
       </AnimatePresence>
