@@ -14,10 +14,10 @@ import { balanceChartTierStatusData } from "./BalanceChartData";
 
 
 const BalanceChart = () => {
-  const { flags } = useContext(LDContext);
-  const showCloudMigrationTwoStagesLDFlag = checkCloudMigrationTwoStagesLDFlag({ flags })?.includes("complete");
-  const showPatchCloudMigrationLDFlag = checkPatchCloudMigrationLDFlag({ flags });
-  const userTierStatus = useContext(AuthContext)?.userObject?.tierStatus;
+
+  const showCloudMigrationTwoStagesLDFlag = true;
+  const showPatchCloudMigrationLDFlag = true;
+  const userTierStatus = "gold"
   let renderedData, renderTickFormatter; 
 
   if (showCloudMigrationTwoStagesLDFlag && showPatchCloudMigrationLDFlag){
@@ -32,7 +32,7 @@ const BalanceChart = () => {
   }
 
   const renderedHorizontalPoints = showCloudMigrationTwoStagesLDFlag ? [5, 127, 250, 373] : [];
-
+  console.log(renderedData)
   return (
     <ResponsiveContainer width="100%" height="100%" minHeight={"200px"} minWidth={"100%"}>
       <LineChart

@@ -54,8 +54,6 @@ const dummyStocks = [
 
 const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) => {
 
-console.log(recentTrades)
-
   // const params = useParams();
   // const navigate = useNavigate();
   const router = useRouter();

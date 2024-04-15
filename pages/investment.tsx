@@ -75,109 +75,121 @@ export default function Airways() {
 
   let patchCardUI;
 
-  // useEffect(() => {
-  //   let isFetched = true;
+  useEffect(() => {
+    let isFetched = true;
 
-  //   const stockAPI = async () => {
-  //     return await resolve(
-  //       axios({
-  //         method: "get",
-  //         url: `http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks`,
-  //       })
-  //     );
-  //   };
+    const stockAPI = async () => {
+      const response = await fetch(
+        "http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks",
+        {
+          method: "get",
+        }
+      );
 
-  //   const getStocks = async () => {
-  //     const apiResponse = await stockAPI();
-  //     const stockData = apiResponse?.data;
-  //     setIsLoadingStocks(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+      }
 
-  //     if (stockData?.status === 429) return;
-  //     const filteredStock = [];
-  //     stockData?.forEach((element) => {
-  //       if (
-  //         element.T.includes("NVDA") ||
-  //         element.T.includes("TSLA") ||
-  //         element.T.includes("AMZN") ||
-  //         element.T.includes("SHOP") ||
-  //         element.T.includes("MSFT") ||
-  //         element.T.includes("WMT")
-  //       ) {
-  //         filteredStock.push(element);
-  //       }
-  //     });
-  //     setStocks(filteredStock);
-  //   };
+      return response.json();
+    };
 
-  //   // if (isLocalAPIMigration) return setIsLoadingStocks(false);
+    const getStocks = async () => {
+      const apiResponse = await stockAPI();
+      const stockData = apiResponse?.data;
+      setIsLoadingStocks(false);
 
-  //   if (isFetched) {
-  //     getStocks();
-  //   }
+      if (stockData?.status === 429) return;
+      const filteredStock = [];
+      stockData?.forEach((element) => {
+        if (
+          element.T.includes("NVDA") ||
+          element.T.includes("TSLA") ||
+          element.T.includes("AMZN") ||
+          element.T.includes("SHOP") ||
+          element.T.includes("MSFT") ||
+          element.T.includes("WMT")
+        ) {
+          filteredStock.push(element);
+        }
+      });
+      setStocks(filteredStock);
+    };
 
-  //   return () => {
-  //     isFetched = false;
-  //     setStocks([]);
-  //   };
-  // }, []);
+    // if (isLocalAPIMigration) return setIsLoadingStocks(false);
 
-  // useEffect(() => {
-  //   let isFetched = true;
-  //   const newsAPI = async () => {
-  //     return await resolve(
-  //       axios({
-  //         method: "get",
-  //         url: `http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews`,
-  //       })
-  //     );
-  //   };
+    if (isFetched) {
+      getStocks();
+    }
 
-  //   const getNews = async () => {
-  //     const apiResponse = await newsAPI();
-  //     const newsData = apiResponse?.data;
-  //     setIsLoadingNews(false);
+    return () => {
+      isFetched = false;
+      setStocks([]);
+    };
+  }, []);
 
-  //     if (newsData?.status === 429) return;
-  //     setNews(newsData?.splice(0, 5));
-  //   };
+  useEffect(() => {
+    let isFetched = true;
+    const newsAPI = async () => {
+      const response = await fetch(
+        "http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews",
+        {
+          method: "get",
+        }
+      );
 
-  //   // if (isLocalAPIMigration) return setIsLoadingNews(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+      }
 
-  //   if (isFetched) {
-  //     getNews();
-  //   }
+      return response.json();
+    };
 
-  //   return () => {
-  //     isFetched = false;
-  //     setNews([]);
-  //   };
-  // }, []);
+    const getNews = async () => {
+      const apiResponse = await newsAPI();
+      const newsData = apiResponse?.data;
+      setIsLoadingNews(false);
+
+      if (newsData?.status === 429) return;
+      setNews(newsData?.splice(0, 5));
+    };
+
+    // if (isLocalAPIMigration) return setIsLoadingNews(false);
+
+    if (isFetched) {
+      getNews();
+    }
+
+    return () => {
+      isFetched = false;
+      setNews([]);
+    };
+  }, []);
 
   useEffect(() => {
     let isFetched = true;
 
-
     const recentTradeAPI = async () => {
+      const response = await fetch(
+        "http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments",
+        {
+          method: "get",
+        }
+      );
 
-      const response = await fetch("http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments", {
-        method: "get",
-      });
-  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
       }
-  
-     
+
       return response.json();
     };
 
     const getRecentTrade = async () => {
       const recentTradesData = await recentTradeAPI();
       console.log(recentTradesData);
-     
+
       setIsLoadingRecentTrades(false);
       if (recentTradesData?.status === 429) return;
-     
+
       setRecentTrades(recentTradesData);
     };
 
@@ -192,7 +204,6 @@ export default function Airways() {
       setRecentTrades([]);
     };
   }, []);
-
 
   if (isCloudMigrationAWS && showPatchCloudMigrationLDFlag && isDeveloper) {
     patchCardUI = "border-4 border-green-500";
