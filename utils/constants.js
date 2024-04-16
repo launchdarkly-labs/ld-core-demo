@@ -7,6 +7,7 @@ import teslaLogo from "@/public/investment/stocks_logo/teslaLogo.svg";
 import shopifyLogo from "@/public/investment/stocks_logo/shopify.svg";
 import walmartLogo from "@/public/investment/stocks_logo/walmart_logo_icon.svg";
 import avgoLogo from "@/public/investment/stocks_logo/AVGO.webp";
+import awef from "@/public/Bedrock.png"
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,

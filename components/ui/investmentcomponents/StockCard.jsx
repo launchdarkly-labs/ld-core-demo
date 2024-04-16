@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 
 
 import { investmentColors } from "@/utils/styleUtils";
-import { STOCK_LOGO_IMAGE } from "@/utils/constants.js";
+import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import { BounceLoader } from "react-spinners";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import ColumnComponent from "./ColumnComponent";
@@ -124,7 +124,7 @@ const RowComponent = ({
                     onClick={handleClick}
                   >
                     <img
-                      src={STOCK_LOGO_IMAGE[stock?.T]}
+                      src={STOCK_LOGO_IMAGE[stock?.T].src}
                       alt={stock?.T}
                       className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
                     />
