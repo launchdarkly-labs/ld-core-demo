@@ -30,10 +30,10 @@ const StockCard = ({
   };
 
   return (
-    <>
-      <h3 className="font-bold text-lg mb-4">{title}</h3>
+    <div className="flex flex-col gap-y-4">
+      <h3 className="font-bold text-lg">{title}</h3>
 
-      <div className="flex flex-col gap-y-6 mb-4" {...props}>
+      <div className="flex flex-col gap-y-6 " {...props}>
         <ColumnHeaderComponent
           columnHeaders={columnHeaders}
           extraHeaderColumns={extraHeaderColumns}
@@ -75,7 +75,7 @@ const StockCard = ({
           />
         </Modal>
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 
