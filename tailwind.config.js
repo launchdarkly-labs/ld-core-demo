@@ -25,6 +25,7 @@ module.exports = {
       },
       screens: {
         "3xl": "2500px",
+        "investmentXL" : "1440px"
       },
       height: {
         "screen-20": "calc(100vh - 5rem)", // 5rem is equivalent to 20 in Tailwind's spacing scale

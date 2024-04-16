@@ -185,7 +185,7 @@ export default function Airways() {
 
     const getRecentTrade = async () => {
       const recentTradesData = await recentTradeAPI();
-      console.log(recentTradesData);
+
 
       setIsLoadingRecentTrades(false);
       if (recentTradesData?.status === 429) return;
@@ -240,7 +240,7 @@ export default function Airways() {
           >
             <NavBar variant={"airlines"} handleLogout={handleLogout} />
             <div className="mt-8" data-testid="salient-accounts-test-id">
-              <InvestmentSearchBar />
+  
               <main
                 className="main-investment-card-wrapper grid gap-3 grid-cols-1 
           lg:grid-cols-[repeat(4,minmax(175px,1fr))] 
