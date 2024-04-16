@@ -6,7 +6,7 @@ const statusStyles = {
   failed: "bg-gray-100 text-gray-800",
 };
 
-const StatusBubble = ({ status }) => {
+const StatusBubble = ({ status }: { status: string }) => {
   return (
     <span
       className={` ${statusStyles[status]} inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize`}

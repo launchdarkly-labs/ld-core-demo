@@ -25,7 +25,7 @@ const dummyData = [
   },
 ];
 
-const MarketCard = ({ isLoadingStocks }) => {
+const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   const renderedData = dummyData;
 
   return (
@@ -52,7 +52,9 @@ const MarketCard = ({ isLoadingStocks }) => {
           })
         )}
       </div>
-      {isLoadingStocks ? null : <p className="text-primary hover:underline cursor-pointer">View More</p>}
+      {isLoadingStocks ? null : (
+        <p className="text-primary hover:underline cursor-pointer">View More</p>
+      )}
     </>
   );
 };

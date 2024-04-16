@@ -41,7 +41,7 @@ const dummyStocks = [
 //   },
 // ];
 
-const StockRecommendationCard = ({ stocks, isLoadingStocks }) => {
+const StockRecommendationCard = ({ stocks, isLoadingStocks } : { stocks: any, isLoadingStocks: boolean }) => {
   
   const showCloudMigrationTwoStagesLDFlag = true;
 

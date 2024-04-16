@@ -8,7 +8,7 @@ import silver from "@/public/investment/graphs/silver.png";
 import gold from "@/public/investment/graphs/gold.png";
 import diamond from "@/public/investment/graphs/diamond.png";
 
-const BalanceCard = ({ isLoadingStocks }) => {
+const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   
 
   const showCloudMigrationTwoStagesLDFlag = true;

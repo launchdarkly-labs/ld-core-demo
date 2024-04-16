@@ -54,7 +54,7 @@ const dummyStocks = [
   },
 ];
 
-const RecentTradesCard = ({ recentTrades, isLoadingRecentTrades }) => {
+const RecentTradesCard = ({ recentTrades, isLoadingRecentTrades } : { recentTrades: any, isLoadingRecentTrades: boolean }) => {
 
   // const showInvestmentDatabaseMigrationSixStages =
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
