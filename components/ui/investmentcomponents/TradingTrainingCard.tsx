@@ -4,7 +4,7 @@ import React, { useContext, useState, useEffect, useMemo } from "react";
 import { BanknoteIcon, AcademicCapIcon, ArrowTrendingUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/investmentcomponents/Modal";
-
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { useParams, useNavigate, useRouter } from "next/router";
 import StockCard from "./StockCard";
 import { ALERT_TYPES } from "@/utils/constants.js";
@@ -52,13 +52,13 @@ const dummyStocks = [
   },
 ];
 
-const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) => {
+const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stocks :any, setRecentTrades :any, recentTrades:any }) => {
 
   // const params = useParams();
   // const navigate = useNavigate();
   const router = useRouter();
 
-
+  const client = useLDClient();
   const initialAccounts = { RothIRA: false, RolloverIRA: false, Brokerage: false };
 
   const initialStocks = {
@@ -152,7 +152,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
       ...!prevState,
       [dataAccountId]: true,
     }));
-    //ldClient?.track("Investment Account Selected");
+    //client?.track("Investment Account Selected");
   };
 
   const handleStockChosen = (e) => {
@@ -161,7 +161,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
       ...!prevState,
       [dataStockId]: true,
     }));
-    ldClient?.track("Investment Stock Selected");
+    client?.track("Investment Stock Selected");
   };
 
   const handleTradeSubmit = () => {
@@ -194,14 +194,14 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
 
     setStockChosen({ ...initialStocks });
 
-    ldClient?.track("Trade Completed");
-
-    handleAlert({
-      alert: alert,
-      type: ALERT_TYPES.SUCCESS,
-      message: `Trade is successful!`,
-      timeout: 5000,
-    });
+    client?.track("Trade Completed");
+//TODO: replace with toast
+    // handleAlert({
+    //   alert: alert,
+    //   type: ALERT_TYPES.SUCCESS,
+    //   message: `Trade is successful!`,
+    //   timeout: 5000,
+    // });
   };
 
 
@@ -221,8 +221,8 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
           setIsOpen(true);
           (showInvestmentCardPromoLDFlag && !showInvestmentTradeButtonLDFlag) ||
           showInvestmentCardPromoLDFlag
-            ? ldClient?.track("CTA Investment Component Button")
-            : ldClient?.track("Start Trade Button Click");
+            ? client?.track("CTA Investment Component Button")
+            : client?.track("Start Trade Button Click");
         }}
         href="/investment/trade/1"
       >

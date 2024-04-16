@@ -23,7 +23,7 @@ const StockCard = ({
   rowWrapperOverride,
   stockChosen,
   ...props
-}) => {
+} ) => {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => {
     setIsOpen(false);

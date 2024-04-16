@@ -46,7 +46,7 @@ const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
                   ({datum.position.includes("positive") ? "+" : "-"}
                   {datum.percentageChange}%)
                 </p>
-                <p className="text-slate-500">${datum.price}</p>
+                <p className="text-investmentgrey">${datum.price}</p>
               </div>
             );
           })

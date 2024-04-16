@@ -1,7 +1,7 @@
 import React from "react";
 
 const statusStyles = {
-  success: "bg-[#D9F9EB] text-[#00B969]",
+  success: "bg-[#D9F9EB] text-investmentgreen",
   processing: "bg-[#FCF6E2] text-[#EEC340]",
   failed: "bg-gray-100 text-gray-800",
 };

@@ -22,13 +22,13 @@ const BalanceChart = () => {
 
   if (showCloudMigrationTwoStagesLDFlag && showPatchCloudMigrationLDFlag){
     renderedData = balanceChartTierStatusData[userTierStatus]?.dummyData;
-    renderTickFormatter = (value) => `$${value / 1000}.0K`
+    renderTickFormatter = (value:number) => `$${value / 1000}.0K`
   } else if(showCloudMigrationTwoStagesLDFlag && !showPatchCloudMigrationLDFlag){
     renderedData =  balanceChartTierStatusData[userTierStatus]?.noData;
     renderTickFormatter = () => `$${0 / 1000}`
   } else {
     renderedData = balanceChartTierStatusData[userTierStatus]?.dummyData;
-    renderTickFormatter = (value) => `$${value / 1000}.0K`
+    renderTickFormatter = (value:number) => `$${value / 1000}.0K`
   }
 
   const renderedHorizontalPoints = showCloudMigrationTwoStagesLDFlag ? [5, 127, 250, 373] : [];

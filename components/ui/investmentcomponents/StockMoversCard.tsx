@@ -43,7 +43,7 @@ const dummyStocks = [
   },
 ];
 
-const StockMoversCard = ({ stocks, isLoadingStocks }) => {
+const StockMoversCard = ({ stocks, isLoadingStocks } : { stocks:any, isLoadingStocks: boolean }) => {
 
   const showCloudMigrationTwoStagesLDFlag =true;
 
