@@ -1,23 +1,19 @@
-import React from 'react'
-import clsx from "clsx";
+import React from "react";
 
 const statusStyles = {
-    success: "bg-green-100 text-green-800",
-    processing: "bg-yellow-100 text-yellow-800",
-    failed: "bg-gray-100 text-gray-800",
-  };
+  success: "bg-[#D9F9EB] text-[#00B969]",
+  processing: "bg-[#FCF6E2] text-[#EEC340]",
+  failed: "bg-gray-100 text-gray-800",
+};
 
-const StatusBubble = ({status}) => {
+const StatusBubble = ({ status }) => {
   return (
     <span
-    className={clsx(
-      statusStyles[status],
-      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
-    )}
-  >
-    {status}
-  </span>
-  )
-}
+      className={` ${statusStyles[status]} inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize`}
+    >
+      {status}
+    </span>
+  );
+};
 
-export default StatusBubble
+export default StatusBubble;

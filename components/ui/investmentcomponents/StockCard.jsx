@@ -30,7 +30,7 @@ const StockCard = ({
   };
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex flex-col gap-y-6">
       <h3 className="font-bold text-lg">{title}</h3>
 
       <div className="flex flex-col gap-y-6 " {...props}>
@@ -51,7 +51,7 @@ const StockCard = ({
       </div>
       {isLoadingStocks || !showViewMore ? null : (
         <p
-          className="text-primary hover:underline cursor-pointer"
+          className="text-investmentblue hover:underline cursor-pointer text-center"
           data-testid="stock-card-modal-open-link-test-id"
           onClick={() => setIsOpen(true)}
         >
@@ -249,7 +249,7 @@ const ColumnHeaderComponent = ({
   columnHeaderWrapperOverride = "",
 }) => {
   return (
-    <div className={`flex text-sm text-slate-400 ${columnHeaderWrapperOverride}`}>
+    <div className={`flex text-sm text-investmentgrey ${columnHeaderWrapperOverride}`}>
       <div
         className={`flex justify-between items-center ${
           renderInModal ? "gap-x-1 sm:gap-x-4" : " w-full"

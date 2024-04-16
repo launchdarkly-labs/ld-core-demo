@@ -63,7 +63,7 @@ export default function Airways() {
   const [isOpen, setIsOpen] = useState(false);
   const [logs, setLogs] = useState([]);
   const userObject = {};
-  const isDeveloper = true;
+  const isDeveloper = false;
   const showCloudMigrationTwoStagesLDFlag = true;
   const isCloudMigrationAWS = true;
   const isLocalAPIMigration = true;
@@ -235,7 +235,7 @@ export default function Airways() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col  bg-investmentgrey`}
+            className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
           >
             <NavBar variant={"airlines"} handleLogout={handleLogout} />
             <div className="mt-8 " data-testid="salient-accounts-test-id">
@@ -290,15 +290,13 @@ export default function Airways() {
 
                 <div
                   className={`card-4 ${cardStyle} ${cloudMigrationCardUI} 
-            lg:col-start-1 lg:col-end-3 
-           
-            investmentXL:col-start-5 investmentXL:col-end-7 
-            
-            lg:row-start-5 lg:row-end-7
-            investmentXL:row-start-2 investmentXL:row-end-4 
-            lg:mt-[-.25rem] 
-            investmentXL:mt-[9rem] 
-            lg:h-[23rem]`}
+                              lg:col-start-1 lg:col-end-3 
+                              investmentXL:col-start-5 investmentXL:col-end-7 
+                              lg:row-start-5 lg:row-end-7
+                              investmentXL:row-start-2 investmentXL:row-end-4 
+                              lg:mt-[-.25rem] 
+                              investmentXL:mt-[9rem] 
+                              lg:h-[23rem]`}
                   data-testid="stock-recommendation-card-test-id"
                 >
                   <StockRecommendationCard stocks={stocks} isLoadingStocks={isLoadingStocks} />

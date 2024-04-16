@@ -1,5 +1,5 @@
 export const investmentColors = {
-  positive: "text-green-600",
-  negative: "text-red-600",
+  positive: "text-investmentgreen",
+  negative: "text-investmentred",
   neutral: "text-black",
 };
