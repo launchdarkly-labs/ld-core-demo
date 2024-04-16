@@ -186,7 +186,6 @@ export default function Airways() {
     const getRecentTrade = async () => {
       const recentTradesData = await recentTradeAPI();
 
-
       setIsLoadingRecentTrades(false);
       if (recentTradesData?.status === 429) return;
 
@@ -236,18 +235,17 @@ export default function Airways() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col font-audimat`}
+            className={`flex h-full flex-col  bg-investmentgrey`}
           >
             <NavBar variant={"airlines"} handleLogout={handleLogout} />
-            <div className="mt-8" data-testid="salient-accounts-test-id">
-  
+            <div className="mt-8 " data-testid="salient-accounts-test-id">
               <main
                 className="main-investment-card-wrapper grid gap-3 grid-cols-1 
           lg:grid-cols-[repeat(4,minmax(175px,1fr))] 
           investmentXL:grid-cols-[repeat(6,minmax(180px,1fr))] 
           lg:grid-rows-[repeat(12,10rem)]
           investmentXL:grid-rows-[repeat(9,10rem)]
-         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl"
+         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl "
               >
                 <div
                   className={`card-1 ${cardStyle} ${patchCardUI} 

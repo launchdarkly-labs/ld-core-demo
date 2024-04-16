@@ -30,8 +30,8 @@ const MarketCard = ({ isLoadingStocks }) => {
 
   return (
     <>
-      <h3 className="font-bold text-lg mb-5">Market</h3>
-      <div className="flex justify-between mb-5 gap-x-4">
+      <h3 className="font-bold text-lg mb-4">Market</h3>
+      <div className="flex justify-between mb-4 gap-x-4">
         {isLoadingStocks ? (
           <BounceLoader />
         ) : (

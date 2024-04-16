@@ -48,8 +48,8 @@ const NewsCard = ({ news, isLoadingNews }) => {
 
   return (
     <>
-      <h3 className="font-bold text-lg mb-5">News about your investment</h3>
-      <div className="flex flex-col gap-y-3">
+      <h3 className="font-bold text-lg mb-4">News about your investment</h3>
+      <div className="flex flex-col gap-y-2 mb-4">
         {isLoadingNews ? (
           <BounceLoader marginY={"!my-[9rem]"} />
         ) : (
@@ -74,10 +74,11 @@ const NewsCard = ({ news, isLoadingNews }) => {
               );
             })}
 
-            <p className="text-primary hover:underline cursor-pointer">View More</p>
+          
           </>
         )}
       </div>
+      <p className="text-primary hover:underline cursor-pointer">View More</p>
     </>
   );
 };

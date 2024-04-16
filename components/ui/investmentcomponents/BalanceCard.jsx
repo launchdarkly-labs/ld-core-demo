@@ -37,7 +37,7 @@ const BalanceCard = ({ isLoadingStocks }) => {
 
   return (
     <>
-      <h3 className={`font-bold text-lg mb-5 ${errorUI}`}>Your Balance</h3>
+      <h3 className={`font-bold text-lg mb-4 ${errorUI}`}>Your Balance</h3>
       {isLoadingStocks ? (
         <BounceLoader marginY={"!my-[30vh]"} />
       ) : (
@@ -48,11 +48,11 @@ const BalanceCard = ({ isLoadingStocks }) => {
           >
             ${renderedData?.balance}
           </h4>
-          <p className={`text-sm mb-5 ${investmentColors[renderedData?.position]} ${errorUI}`}>
+          <p className={`text-sm mb-4 ${investmentColors[renderedData?.position]} ${errorUI}`}>
             {renderedData?.position.includes("positive") ? "+" : "-"}$
             {renderedData?.dailyPriceChange} ({renderedData?.dailyPercentageChange}%) today
           </p>
-          <div className="w-[100%] h-[350px] lg:h-[350px] mb-5">
+          <div className="w-[100%] h-[350px] lg:h-[350px] mb-4">
             {window?.location?.ancestorOrigins?.item(0)?.includes("reprise") || window?.location?.hostname?.includes("reprise")   ? (
               <img src={imgGraph[userTierStatus]} alt={userTierStatus} className="w-full h-full object-contain"/>
             ) : (
@@ -60,7 +60,7 @@ const BalanceCard = ({ isLoadingStocks }) => {
             )}
           </div>
           <p
-            className={`text-sm mb-5 text-center ${
+            className={`text-sm mb-4 text-center ${
               investmentColors[renderedData?.position]
             } ${errorUI}`}
           >
@@ -68,7 +68,7 @@ const BalanceCard = ({ isLoadingStocks }) => {
             {renderedData?.yearlyPriceChange} ({renderedData?.yearlyPercentageChange}%) in the past
             year
           </p>
-          <div className="flex justify-between w-[300px] mx-auto mb-5">
+          <div className="flex justify-between w-[300px] mx-auto mb-4">
             <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">1M</Button>
             <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">1Y</Button>
             <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">2Y</Button>

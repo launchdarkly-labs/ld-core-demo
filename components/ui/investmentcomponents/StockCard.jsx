@@ -31,9 +31,9 @@ const StockCard = ({
 
   return (
     <>
-      <h3 className="font-bold text-lg mb-5">{title}</h3>
+      <h3 className="font-bold text-lg mb-4">{title}</h3>
 
-      <div className="flex flex-col gap-y-6 mb-5" {...props}>
+      <div className="flex flex-col gap-y-6 mb-4" {...props}>
         <ColumnHeaderComponent
           columnHeaders={columnHeaders}
           extraHeaderColumns={extraHeaderColumns}
@@ -300,7 +300,7 @@ const StockCardModal = ({
         id="stock-card-modal-desktop"
         data-testid="stock-card-modal-test-id"
       >
-        <h3 className="font-bold text-lg mb-5 text-left">{title}</h3>
+        <h3 className="font-bold text-lg mb-4 text-left">{title}</h3>
         <ColumnHeaderComponent
           columnHeaders={columnHeaders}
           extraHeaderColumns={extraHeaderColumns}

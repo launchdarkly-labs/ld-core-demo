@@ -209,7 +209,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
   const accountTypeArr = ["Roth IRA", "Rollover IRA", "Brokerage"];
 
   return (
-    <div className="flex flex-col items-center gap-y-5">
+    <div className="flex flex-col items-center gap-y-4">
       {tradeCardContent.icon}
       <h3 className="text-2xl text-center" data-testid="trading-training-card-header-test-id">
         {tradeCardContent.title}
@@ -239,7 +239,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
             className={`flex-col  my-[2rem] mx-[2rem]
           lg:flex text-gray-900 `}
           >
-            <h3 className="font-bold text-lg mb-5 text-left">
+            <h3 className="font-bold text-lg mb-4 text-left">
               Which Account Do you Want to Invest In?
             </h3>
 
@@ -282,7 +282,7 @@ const TradingTrainingCard = ({ stocks, alert, setRecentTrades, recentTrades }) =
             className={`flex-col  my-[2rem] mx-[2rem]
           lg:flex text-gray-900`}
           >
-            <h3 className="font-bold text-lg mb-5 text-left">
+            <h3 className="font-bold text-lg mb-4 text-left">
               Which Stocks Do you Want to Invest In?
             </h3>
             <StockCard
