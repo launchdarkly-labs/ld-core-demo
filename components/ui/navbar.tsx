@@ -42,14 +42,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
-      "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom";
+      "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom  cursor-auto";
 
     const { personas } = useContext(PersonaContext);
-    const chosenPersona = personas.find(
-      (persona) => persona.personaname === user
-    );
+    const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
-    
+    // TODO: popover should be a modular component
     switch (variant) {
       case "airlines":
         navChild = (
@@ -72,9 +70,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <PopoverTrigger>
                     <Avatar>
                       <AvatarImage
-                        src={
-                          chosenPersona?.personaimage || 'ToggleAvatar.png'
-                        }
+                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                         className=""
                       />
                     </Avatar>
@@ -84,21 +80,19 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img
-                          src={
-                            chosenPersona?.personaimage || 'ToggleAvatar.png'
-                          }
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                           className="rounded-full h-48"
                         />
                       </div>
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
                         <p className="pt-4">
-                          Thank you{" "}
-                          {
-                            chosenPersona?.personaname || user
-                          }{" "}
-                          for flying Launch Airways with{"  "}
+                          Thank you {chosenPersona?.personaname || user} for flying Launch Airways
+                          with{"  "}
                           <br></br>
-                          <span className="text-2xl">{capitalizeFirstLetter(launchClubStatus)} Tier</span>!
+                          <span className="text-2xl">
+                            {capitalizeFirstLetter(launchClubStatus)} Tier
+                          </span>
+                          !
                         </p>
                       </div>
                       <div className="mx-auto text-center">
@@ -197,9 +191,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   <PopoverTrigger>
                     <Avatar>
                       <AvatarImage
-                        src={
-                          chosenPersona?.personaimage || 'ToggleAvatar.png'
-                        }
+                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                         className=""
                       />
                     </Avatar>
@@ -208,19 +200,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img
-                          src={
-                            chosenPersona?.personaimage || 'ToggleAvatar.png'
-                          }
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                           className="rounded-full h-48"
                         />
                       </div>
                       <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                         <p className="pt-4">
-                          Thank you{" "}
-                          {
-                            chosenPersona?.personaname || user
-                          }{" "}
-                          for banking with us as a
+                          Thank you {chosenPersona?.personaname || user} for banking with us as a
                           <br></br>
                           <span className="text-2xl">Platinum Member!</span>
                         </p>
@@ -325,9 +311,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <PopoverTrigger>
                       <Avatar>
                         <AvatarImage
-                          src={
-                            chosenPersona?.personaimage || 'ToggleAvatar.png'
-                          }
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                           className=""
                         />
                       </Avatar>
@@ -336,19 +320,14 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <>
                         <div className="mx-auto flex place-content-center w-full">
                           <img
-                            src={
-                              chosenPersona?.personaimage || 'ToggleAvatar.png'
-                            }
+                            src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                             className="rounded-full h-48"
                           />
                         </div>
                         <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
                           <p className="pt-4">
-                            Thank you{" "}
-                            {
-                              chosenPersona?.personaname || user
-                            }{" "}
-                            for shopping with us as{"  "}
+                            Thank you {chosenPersona?.personaname || user} for shopping with us as
+                            {"  "}
                             <br></br>
                             <span className="text-2xl">Premium Member</span>!
                           </p>
@@ -440,6 +419,145 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
+        break;
+      case "investment":
+        navChild = (
+          <>
+            {!isLoggedIn ? null : (
+              <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+                <Search className="cursor-default hidden sm:block" />
+                <div className="hidden sm:block lg:hidden">
+                  <BookedFlights />
+                </div>
+                <div className="cursor-pointer hidden sm:block">
+                  <QRCodeImage className="" />
+                </div>
+
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage
+                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                        className=""
+                      />
+                    </Avatar>
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-[300px] h-[440px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                          className="rounded-full h-48"
+                        />
+                      </div>
+
+                      <p className="pt-4 text-center  text-black font-sohnelight text-xl">
+                        Thank you {chosenPersona?.personaname || user} for
+                        <br></br>investing with us as a<br></br>
+                        <span className="text-2xl">
+                          {capitalizeFirstLetter(launchClubStatus)} Tier
+                        </span>
+                        !
+                      </p>
+
+                      <div className="mx-auto text-center">
+                        <Button
+                          onClick={handleLogout}
+                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-airline-buttons rounded-none"
+                        >
+                          Logout
+                        </Button>
+                        <QuickLoginDialog personas={personas} variant={variant} />
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </>
+        );
+
+        navLogo = (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
+              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
+            </svg>
+            <p className="text-base flex font-sohnelight text-white">
+              <strong className="font-semibold font-sohne">Launch</strong>
+              {"\u00A0"}
+              {"\u00A0"}Airways
+            </p>
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            {isLoggedIn ? (
+              <>
+                <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
+
+                <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
+
+                {launchClubLoyalty && enrolledInLaunchClub && (
+                  <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                    <LaunchClubStatus />
+                  </div>
+                )}
+
+                <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                  <BookedFlights />
+                </div>
+              </>
+            ) : null}
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="" />
+              </DropdownMenuItem>
+
+              <div className="cursor-pointer">
+                <QRCodeImage />
+              </div>
+            </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            <button
+              href="/airways"
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons outline-none`}
+            >
+              Accounts & Trade
+            </button>
+
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+            >
+              Planning
+            </button>
+
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+            >
+              News
+            </button>
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+            >
+              Investment Products
+            </button>
+            <button
+              href="/airways"
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+            >
+              About Us
+            </button>
+          </>
+        );
         break;
       default:
         navLogo = <img src={LDLogoWhite.src} alt="" className="" />;

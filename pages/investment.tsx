@@ -237,7 +237,7 @@ export default function Airways() {
             transition={{ duration: 0.5 }}
             className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
           >
-            <NavBar variant={"airlines"} handleLogout={handleLogout} />
+            <NavBar variant={"investment"} handleLogout={handleLogout} />
             <div className="mt-8 " data-testid="salient-accounts-test-id">
               <main
                 className="main-investment-card-wrapper grid gap-3 grid-cols-1 
