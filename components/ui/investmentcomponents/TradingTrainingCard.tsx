@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
 
 
-import { BanknoteIcon, AcademicCapIcon, ArrowTrendingUpIcon } from "lucide-react";
+import { BanknoteIcon, BarChart2Icon, ArrowTrendingUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/investmentcomponents/Modal";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
@@ -75,7 +75,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
       title: "Start Trading Here",
       subtitle: "Start your investment journey with us through our advance trading platform.",
       buttonText: "Trade Now",
-      icon: <BanknoteIcon className="rounded-full bg-primary p-3 h-20 w-20 text-primary-text" />,
+      icon: <BarChart2Icon className="rounded-md bg-gradient-investment p-3 h-14 w-14 text-white" />,
     };
   }, []);
 
@@ -104,7 +104,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
         subtitle: "Let us help you with our Investment 101 training course.",
         buttonText: "Learn Trading 101 Here",
         icon: (
-          <AcademicCapIcon className="rounded-full bg-green-500 p-3 h-20 w-20 text-primary-text" />
+          <BanknoteIcon className="rounded-full bg-green-500 p-3 h-20 w-20 text-primary-text" />
         ),
       });
     }
@@ -216,7 +216,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
       </h3>
       <p className="text-center">{tradeCardContent.subtitle}</p>
       <Button
-        classButtonOverride="!bg-button !text-button-text"
+      className="bg-investmentblue rounded-none"
         handleClick={() => {
           setIsOpen(true);
           (showInvestmentCardPromoLDFlag && !showInvestmentTradeButtonLDFlag) ||

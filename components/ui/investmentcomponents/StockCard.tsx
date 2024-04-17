@@ -30,7 +30,7 @@ const StockCard = ({
   };
 
   return (
-    <div className="flex flex-col gap-y-6">
+    <>
       <h3 className="font-bold text-lg">{title}</h3>
 
       <div className="flex flex-col gap-y-6 " {...props}>
@@ -75,7 +75,7 @@ const StockCard = ({
           />
         </Modal>
       </AnimatePresence>
-    </div>
+    </>
   );
 };
 

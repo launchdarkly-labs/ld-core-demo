@@ -245,13 +245,13 @@ export default function Airways() {
           investmentXL:grid-cols-[repeat(6,minmax(180px,1fr))] 
           lg:grid-rows-[repeat(12,10rem)]
           investmentXL:grid-rows-[repeat(9,10rem)]
-         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl "
+         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl flex flex-col justify-center"
               >
                 <div
                   className={`card-1 ${cardStyle} ${patchCardUI} 
             lg:col-start-1 lg:col-end-3 
             investmentXL:col-start-1 investmentXL:col-end-3 
-            lg:row-start-1 lg:row-end-5`}
+            lg:row-start-1 lg:row-end-5 flex flex-col justify-between`}
                   data-testid="stock-balance-card-test-id"
                 >
                   <BalanceCard isLoadingStocks={isLoadingStocks} />
@@ -262,7 +262,7 @@ export default function Airways() {
             investmentXL:col-start-5 investmentXL:col-end-7 
             lg:row-start-1 lg:row-end-3 
             investmentXL:row-start-1 investmentXL:row-end-3 
-            lg:h-[19rem]`}
+            lg:h-[19rem] flex flex-col justify-center`}
                   data-testid="stock-trading-training-card-test-id"
                 >
                   <TradingTrainingCard
@@ -279,7 +279,7 @@ export default function Airways() {
             investmentXL:row-start-1 investmentXL:row-end-3 
             lg:mt-[-2rem] 
             investmentXL:mt-[0rem] 
-             lg:h-[35.5rem]`}
+             lg:h-[35.5rem] flex flex-col justify-between`}
                   data-testid="recent-trades-card-test-id"
                 >
                   <RecentTradesCard
@@ -296,7 +296,7 @@ export default function Airways() {
                               investmentXL:row-start-2 investmentXL:row-end-4 
                               lg:mt-[-.25rem] 
                               investmentXL:mt-[9rem] 
-                              lg:h-[23rem]`}
+                              lg:h-[23rem] flex flex-col justify-between`}
                   data-testid="stock-recommendation-card-test-id"
                 >
                   <StockRecommendationCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
@@ -310,7 +310,7 @@ export default function Airways() {
             investmentXL:row-start-5 investmentXL:row-end-7 
             lg:mt-[2rem] 
             investmentXL:mt-[0rem] 
-            lg:h-[35rem]`}
+            lg:h-[35rem] flex flex-col justify-between`}
                   data-testid="stock-movers-card-test-id"
                 >
                   <StockMoversCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
@@ -324,7 +324,7 @@ export default function Airways() {
             lg:mt-[2rem] 
             investmentXL:mt-[4rem] 
             lg:h-[31rem]
-            investmentXL:h-[100%]
+            investmentXL:h-[100%] flex flex-col justify-between
             `}
                   data-testid="stock-news-card-test-id"
                 >
@@ -338,7 +338,7 @@ export default function Airways() {
             investmentXL:row-start-4 investmentXL:row-end-5  
             lg:mt-[33.5rem] 
             investmentXL:mt-[11.25rem] 
-            lg:h-[25rem]`}
+            lg:h-[25rem] flex flex-col justify-between `}
                   data-testid="stock-retirement-card-test-id"
                 >
                   <RetirementCard />
@@ -351,7 +351,7 @@ export default function Airways() {
             investmentXL:row-start-7 investmentXL:row-end-8  
             lg:mt-[27rem] 
             investmentXL:mt-[4rem] 
-            lg:h-[15rem]`}
+            lg:h-[15rem] flex flex-col justify-between`}
                   data-testid="stock-market-card-test-id"
                 >
                   <MarketCard isLoadingStocks={isLoadingStocks} />

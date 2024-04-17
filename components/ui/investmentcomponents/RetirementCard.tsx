@@ -10,11 +10,11 @@ const RetirementCard = () => {
       <div className="h-[25rem] w-[100%] mb-4 mt-[-5rem]">
         <RetirementChart />
       </div>
-      <div className="mt-[-10rem]">
+      <div className="mt-[-10rem] flex flex-col items-center">
         <h3 className="font-bold text-xl mb-4 text-center">
           You could retire in {retireDate} years. Are you on target?{" "}
         </h3>
-        <Button classButtonOverride="!mx-auto !bg-button !text-button-text !flex !align-center">
+        <Button className="bg-investmentblue rounded-none">
           Get Retirement Score
         </Button>
       </div>
