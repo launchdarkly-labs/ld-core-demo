@@ -154,7 +154,7 @@ const RowComponent = ({
               {stock?.o && showCloudMigrationTwoStagesLDFlag ? (
                 <ColumnComponent>
                   <div
-                    className={`text-right font-bold ${investmentColors[position]} ${
+                    className={`text-right  ${investmentColors[position]} ${
                       stock?.dummyPositions ? `!${investmentColors[stock?.dummyPositions]}` : ""
                     }`}
                     data-testid={`${
@@ -319,7 +319,7 @@ const StockCardModal = ({
         id="stock-card-modal-mobile"
       >
         <h3 className="font-bold text-lg mb-2 text-center">{title}</h3>
-        {stocks.map((stock, index) => {
+        {stocks.map((stock:any, index:number) => {
           const percentageChange = formatMoneyTrailingZero(
             Math.round((stock.c - stock.o) * 100) / 100
           );
