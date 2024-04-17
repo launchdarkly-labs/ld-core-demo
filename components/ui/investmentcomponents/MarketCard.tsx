@@ -53,7 +53,7 @@ const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
         )}
       </div>
       {isLoadingStocks ? null : (
-        <p className="text-primary hover:underline cursor-pointer">View More</p>
+        <p className="text-investmentblue hover:underline cursor-pointer text-center">View More</p>
       )}
     </>
   );

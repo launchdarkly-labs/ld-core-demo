@@ -69,12 +69,12 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
             year
           </p>
           <div className="flex justify-between w-[300px] mx-auto mb-4">
-            <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">1M</Button>
-            <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">1Y</Button>
-            <Button classButtonOverride="!rounded-[100%] h-10 w-10 !bg-slate-500">2Y</Button>
-            <Button classButtonOverride="!rounded-[100%] h-10 w-10  !bg-primary">YTD</Button>
+            <Button className="rounded-full bg-black h-10 w-10">1M</Button>
+            <Button className="rounded-full bg-black h-10 w-10">1Y</Button>
+            <Button className="rounded-full bg-black h-10 w-10">2Y</Button>
+            <Button className="rounded-full bg-gradient-investment h-10 w-10">YTD</Button>
           </div>
-          <p className="text-primary hover:underline cursor-pointer">Balance Details</p>
+          <p className="text-investmentblue hover:underline cursor-pointer text-center">Balance Details</p>
         </>
       )}
     </>
