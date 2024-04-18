@@ -42,7 +42,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
-      "hidden sm:block bg-transparent pb-6 flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
+      "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
 
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
@@ -492,13 +492,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
-
-                <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
-
-                <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                  awefew
-                </div>
+                <DropdownMenuItem href="/investment">Accounts & Trade</DropdownMenuItem>
+                <DropdownMenuItem href="/investment">Planning</DropdownMenuItem>
+                <DropdownMenuItem href="/investment">News</DropdownMenuItem>
+                <DropdownMenuItem href="/investment">Investment Products</DropdownMenuItem>
+                <DropdownMenuItem href="/investment">About Us</DropdownMenuItem>
+               
               </>
             ) : null}
             <div className="flex justify-between">
@@ -583,8 +582,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </DropdownMenu>
 
           {isLoggedIn ? (
-            <div className="hidden lg:block relative ml-8 w-[55%] mt-2">
-              <div className="flex sm:gap-x-2 lg:gap-x-8  absolute">
+            <div className="hidden lg:block relative ml-8 w-[55%]   mt-2">
+              <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">
                 {navLinksGroup}
               </div>
             </div>
