@@ -574,26 +574,28 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     }
 
     return (
-      <nav className="sticky w-full flex top-0 bg-black z-40 font-audimat transition-all duration-150 h-full sm:h-20 p-4 sm:p-6">
-        <div className="items-center flex gap-x-6 text-white">
-          <CSNav />
-        </div>
-        <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
-              <PanelTopOpen size={24} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
-          </DropdownMenuPortal>
-        </DropdownMenu>
+      <nav className=" w-full  bg-black z-40 font-audimat transition-all duration-150 ">
+        <div className="mx-auto max-w-7xl flex">
+          <div className="items-center flex gap-x-6 text-white">
+            <CSNav />
+          </div>
+          <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
+                <PanelTopOpen size={24} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
+            </DropdownMenuPortal>
+          </DropdownMenu>
 
-        {isLoggedIn ? (
-          <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
-        ) : null}
-        {navChild}
+          {isLoggedIn ? (
+            <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+          ) : null}
+          {navChild}
+        </div>
       </nav>
     );
   }

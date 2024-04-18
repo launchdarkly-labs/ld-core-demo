@@ -248,7 +248,7 @@ export default function Airways() {
           investmentXL:grid-cols-[repeat(6,minmax(180px,1fr))] 
           lg:grid-rows-[repeat(12,10rem)]
           investmentXL:grid-rows-[repeat(9,10rem)]
-         px-4 sm:px-0"
+         px-4 xl:px-0"
                 >
                   <div
                     className={`card-1 ${cardStyle} ${patchCardUI} 
