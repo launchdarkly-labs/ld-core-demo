@@ -42,7 +42,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
     let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
-      "hidden sm:block pb-12 pt-1.5 bg-transparent mr-4 flex items-start text-sm font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom  cursor-auto";
+      "hidden sm:block bg-transparent pb-6 flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
 
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
@@ -424,11 +424,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         navChild = (
           <>
             {!isLoggedIn ? null : (
-              <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+              <div className="flex space-x-3 sm:space-x-6 ml-auto items-center text-white">
                 <Search className="cursor-default hidden sm:block" />
-                <div className="hidden sm:block lg:hidden">
-                  <BookedFlights />
-                </div>
                 <div className="cursor-pointer hidden sm:block">
                   <QRCodeImage className="" />
                 </div>
@@ -486,7 +483,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <p className="text-base flex font-sohnelight text-white">
               <strong className="font-semibold font-sohne">Launch</strong>
               {"\u00A0"}
-              {"\u00A0"}Airways
+              {"\u00A0"}Frontier Capitals
             </p>
           </>
         );
@@ -499,14 +496,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
                 <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
 
-                {launchClubLoyalty && enrolledInLaunchClub && (
-                  <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                    <LaunchClubStatus />
-                  </div>
-                )}
-
                 <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                  <BookedFlights />
+                  awefew
                 </div>
               </>
             ) : null}
@@ -525,34 +516,34 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         navLinksGroup = (
           <>
             <button
-              href="/airways"
-              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-investment bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-investment outline-none`}
+              href="/investment"
+              className={`${navLinkStyling}  text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-investment  bg-gradient-investment outline-none`}
             >
               Accounts & Trade
             </button>
 
             <button
-              href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
+              href="/investment"
+              className={`"${navLinkStyling}  text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-investment`}
             >
               Planning
             </button>
 
             <button
-              href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
+              href="/investment"
+              className={`"${navLinkStyling}  text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
             >
               News
             </button>
             <button
-              href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
+              href="/investment"
+              className={`"${navLinkStyling} text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
             >
               Investment Products
             </button>
             <button
-              href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
+              href="/investment"
+              className={`"${navLinkStyling} text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
             >
               About Us
             </button>
@@ -574,8 +565,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     }
 
     return (
-      <nav className=" w-full  bg-black z-40 font-audimat transition-all duration-150 ">
-        <div className="mx-auto max-w-7xl flex">
+      <nav className="w-full bg-black z-40 font-audimat transition-all duration-150 py-6">
+        <div className="mx-4 xl:mx-auto max-w-7xl flex">
           <div className="items-center flex gap-x-6 text-white">
             <CSNav />
           </div>
@@ -592,7 +583,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </DropdownMenu>
 
           {isLoggedIn ? (
-            <div className="hidden lg:flex sm:gap-x-2 lg:gap-x-6">{navLinksGroup}</div>
+            <div className="hidden lg:block relative ml-8 w-[55%] mt-2">
+              <div className="flex sm:gap-x-2 lg:gap-x-8  absolute">
+                {navLinksGroup}
+              </div>
+            </div>
           ) : null}
           {navChild}
         </div>

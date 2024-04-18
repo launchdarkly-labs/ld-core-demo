@@ -85,6 +85,8 @@ module.exports = {
         investmentgrey: "#939598",
         investmentred: "#E83B3B",
         investmentgreen: "#00B969",
+        navbargrey: "#939598",
+        navbarlightgrey: "#D1D3D4",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
