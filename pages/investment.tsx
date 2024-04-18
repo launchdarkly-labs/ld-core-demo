@@ -238,6 +238,34 @@ export default function Airways() {
             className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
           >
             <NavBar variant={"investment"} handleLogout={handleLogout} />
+            <div className="bg-white pt-[4rem]  ">
+              <div className="mx-auto max-w-7xl h-[8rem] flex flex-col justify-between">
+                <div className="flex justify-between">
+                  <h1 className="text-4xl">All accounts</h1>
+                  <div className="flex gap-x-4">
+                    <button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white">
+                      Trade
+                    </button>
+                    <button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white">
+                      Transfer
+                    </button>
+                    <button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white">
+                      Buy
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between w-[50%] text-investmentgrey gap-x-8">
+                  <p className={`block pb-4 px-4 bg-transparent transition-colors cursor-auto hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-investment outline-none`}>Home</p>
+                  <p >Investments</p>
+                  <p>Balance</p>
+                  <p>Activity & Orders</p>
+                  <p>Documents</p>
+                  <p>More</p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-8 " data-testid="salient-accounts-test-id">
               <main
                 className="main-investment-card-wrapper grid gap-3 grid-cols-1 
