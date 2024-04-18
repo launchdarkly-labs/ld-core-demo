@@ -241,40 +241,41 @@ export default function Airways() {
             <NavBar variant={"investment"} handleLogout={handleLogout} />
             <InvestmentAccountHeader />
             <div className="mt-8 " data-testid="salient-accounts-test-id">
-              <main
-                className="main-investment-card-wrapper grid gap-3 grid-cols-1 
+              <div className="mx-auto max-w-7xl">
+                <div
+                  className="main-investment-card-wrapper grid gap-3 grid-cols-1 
           lg:grid-cols-[repeat(4,minmax(175px,1fr))] 
           investmentXL:grid-cols-[repeat(6,minmax(180px,1fr))] 
           lg:grid-rows-[repeat(12,10rem)]
           investmentXL:grid-rows-[repeat(9,10rem)]
-         px-4 sm:px-6 lg:px-8 mx-auto max-w-8xl flex flex-col justify-center"
-              >
-                <div
-                  className={`card-1 ${cardStyle} ${patchCardUI} 
+         px-4 sm:px-0"
+                >
+                  <div
+                    className={`card-1 ${cardStyle} ${patchCardUI} 
             lg:col-start-1 lg:col-end-3 
             investmentXL:col-start-1 investmentXL:col-end-3 
             lg:row-start-1 lg:row-end-5 flex flex-col justify-between`}
-                  data-testid="stock-balance-card-test-id"
-                >
-                  <BalanceCard isLoadingStocks={isLoadingStocks} />
-                </div>
-                <div
-                  className={`card-2 ${cardStyle} ${cloudMigrationCardUI} 
+                    data-testid="stock-balance-card-test-id"
+                  >
+                    <BalanceCard isLoadingStocks={isLoadingStocks} />
+                  </div>
+                  <div
+                    className={`card-2 ${cardStyle} ${cloudMigrationCardUI} 
             lg:col-start-3 lg:col-end-5 
             investmentXL:col-start-5 investmentXL:col-end-7 
             lg:row-start-1 lg:row-end-3 
             investmentXL:row-start-1 investmentXL:row-end-3 
             lg:h-[19rem] flex flex-col justify-center`}
-                  data-testid="stock-trading-training-card-test-id"
-                >
-                  <TradingTrainingCard
-                    stocks={stocks}
-                    setRecentTrades={setRecentTrades}
-                    recentTrades={recentTrades}
-                  />
-                </div>
-                <div
-                  className={`card-3 ${cardStyle} ${databaseMigrationCardUI} 
+                    data-testid="stock-trading-training-card-test-id"
+                  >
+                    <TradingTrainingCard
+                      stocks={stocks}
+                      setRecentTrades={setRecentTrades}
+                      recentTrades={recentTrades}
+                    />
+                  </div>
+                  <div
+                    className={`card-3 ${cardStyle} ${databaseMigrationCardUI} 
             lg:col-start-3 lg:col-end-5 
             investmentXL:col-start-3 investmentXL:col-end-5 
             lg:row-start-3 lg:row-end-5
@@ -282,16 +283,16 @@ export default function Airways() {
             lg:mt-[-2rem] 
             investmentXL:mt-[0rem] 
              lg:h-[35.5rem] flex flex-col justify-between`}
-                  data-testid="recent-trades-card-test-id"
-                >
-                  <RecentTradesCard
-                    recentTrades={recentTrades}
-                    isLoadingRecentTrades={isLoadingRecentTrades}
-                  />
-                </div>
+                    data-testid="recent-trades-card-test-id"
+                  >
+                    <RecentTradesCard
+                      recentTrades={recentTrades}
+                      isLoadingRecentTrades={isLoadingRecentTrades}
+                    />
+                  </div>
 
-                <div
-                  className={`card-4 ${cardStyle} ${cloudMigrationCardUI} 
+                  <div
+                    className={`card-4 ${cardStyle} ${cloudMigrationCardUI} 
                               lg:col-start-1 lg:col-end-3 
                               investmentXL:col-start-5 investmentXL:col-end-7 
                               lg:row-start-5 lg:row-end-7
@@ -299,13 +300,13 @@ export default function Airways() {
                               lg:mt-[-.25rem] 
                               investmentXL:mt-[9rem] 
                               lg:h-[23rem] flex flex-col justify-between`}
-                  data-testid="stock-recommendation-card-test-id"
-                >
-                  <StockRecommendationCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
-                </div>
+                    data-testid="stock-recommendation-card-test-id"
+                  >
+                    <StockRecommendationCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
+                  </div>
 
-                <div
-                  className={`card-5 ${cardStyle} ${cloudMigrationCardUI} 
+                  <div
+                    className={`card-5 ${cardStyle} ${cloudMigrationCardUI} 
             lg:col-start-3 lg:col-end-5 
             investmentXL:col-start-1 investmentXL:col-end-3  
             lg:row-start-6 lg:row-end-8 
@@ -313,12 +314,12 @@ export default function Airways() {
             lg:mt-[2rem] 
             investmentXL:mt-[0rem] 
             lg:h-[35rem] flex flex-col justify-between`}
-                  data-testid="stock-movers-card-test-id"
-                >
-                  <StockMoversCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
-                </div>
-                <div
-                  className={`card-6 ${cardStyle} ${cloudMigrationCardUI} 
+                    data-testid="stock-movers-card-test-id"
+                  >
+                    <StockMoversCard stocks={stocks} isLoadingStocks={isLoadingStocks} />
+                  </div>
+                  <div
+                    className={`card-6 ${cardStyle} ${cloudMigrationCardUI} 
             lg:col-start-1 lg:col-end-3 
             investmentXL:col-start-3 investmentXL:col-end-5 
             lg:row-start-7 lg:row-end-9
@@ -328,12 +329,12 @@ export default function Airways() {
             lg:h-[31rem]
             investmentXL:h-[100%] flex flex-col justify-between
             `}
-                  data-testid="stock-news-card-test-id"
-                >
-                  <NewsCard news={news} isLoadingNews={isLoadingNews} />
-                </div>
-                <div
-                  className={`card-7 ${cardStyle} ${cloudMigrationCardUI} 
+                    data-testid="stock-news-card-test-id"
+                  >
+                    <NewsCard news={news} isLoadingNews={isLoadingNews} />
+                  </div>
+                  <div
+                    className={`card-7 ${cardStyle} ${cloudMigrationCardUI} 
             lg:col-start-1 lg:col-end-3 
             investmentXL:col-start-5 investmentXL:col-end-7 
             lg:row-start-7 lg:row-end-9
@@ -341,12 +342,12 @@ export default function Airways() {
             lg:mt-[33.5rem] 
             investmentXL:mt-[11.25rem] 
             lg:h-[25rem] flex flex-col justify-between `}
-                  data-testid="stock-retirement-card-test-id"
-                >
-                  <RetirementCard />
-                </div>
-                <div
-                  className={`card-8 ${cardStyle} ${cloudMigrationCardUI} 
+                    data-testid="stock-retirement-card-test-id"
+                  >
+                    <RetirementCard />
+                  </div>
+                  <div
+                    className={`card-8 ${cardStyle} ${cloudMigrationCardUI} 
             lg:col-start-3 lg:col-end-5 
             investmentXL:col-start-3 investmentXL:col-end-5 
             lg:row-start-7 lg:row-end-9 
@@ -354,11 +355,13 @@ export default function Airways() {
             lg:mt-[27rem] 
             investmentXL:mt-[4rem] 
             lg:h-[15rem] flex flex-col justify-between`}
-                  data-testid="stock-market-card-test-id"
-                >
-                  <MarketCard isLoadingStocks={isLoadingStocks} />
+                    data-testid="stock-market-card-test-id"
+                  >
+                    <MarketCard isLoadingStocks={isLoadingStocks} />
+                  </div>
                 </div>
-              </main>
+              </div>
+
               {isOpen ? (
                 <InvestmentDevLog
                   isOpen={isOpen}
