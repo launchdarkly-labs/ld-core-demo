@@ -464,7 +464,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-airline-buttons rounded-none"
+                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-investment rounded-none"
                         >
                           Logout
                         </Button>
@@ -526,33 +526,33 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             <button
               href="/airways"
-              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons outline-none`}
+              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-investment bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-investment outline-none`}
             >
               Accounts & Trade
             </button>
 
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
             >
               Planning
             </button>
 
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
             >
               News
             </button>
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
             >
               Investment Products
             </button>
             <button
               href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px]`}
+              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-investment bg-[length:100%_3px]`}
             >
               About Us
             </button>
