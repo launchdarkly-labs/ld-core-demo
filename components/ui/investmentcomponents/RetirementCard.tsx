@@ -1,16 +1,19 @@
-import RetirementChart from "./RetirementChart";
+// import RetirementChart from "./RetirementChart";
 import { Button } from "@/components/ui/button";
+import retirementGraph from '@/public/investment/graphs/retirement_graph.png'
 
 const RetirementCard = () => {
   const retireDate = "36";
 
   return (
     <>
-      <h3 className="font-bold text-lg mb-4 text-left">Goals</h3>
-      <div className="h-[25rem] w-[100%] mb-4 mt-[-5rem]">
+      <h3 className="font-bold text-lg text-left">Goals</h3>
+      {/* <div className="h-[25rem] w-[100%] mb-4 mt-[-5rem]">
         <RetirementChart />
-      </div>
-      <div className="mt-[-10rem] flex flex-col items-center">
+       
+      </div> */}
+      <img src={retirementGraph.src} alt="retirement-graph" />
+      <div className="flex flex-col items-center">
         <h3 className="font-bold text-xl mb-4 text-center">
           You could retire in {retireDate} years. Are you on target?{" "}
         </h3>
