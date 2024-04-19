@@ -55,7 +55,7 @@ const NewsCard = ({ news, isLoadingNews }: { news: any; isLoadingNews: boolean }
       <h3 className="font-bold text-lg mb-4">News about your investment</h3>
       <div className="flex flex-col gap-y-2 mb-4">
         {isLoadingNews ? (
-          <BounceLoader marginY={"!my-[9rem]"} />
+          <BounceLoader marginy={"!my-[9rem]"} />
         ) : (
           <>
             {news.map((datum: any, index: number) => {

@@ -39,7 +39,7 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
     <>
       <h3 className={`font-bold text-lg mb-4 ${errorUI}`}>Your Balance</h3>
       {isLoadingStocks ? (
-        <BounceLoader marginY={"!my-[30vh]"} />
+        <BounceLoader marginy={"!my-[30vh]"} />
       ) : (
         <>
           <h4

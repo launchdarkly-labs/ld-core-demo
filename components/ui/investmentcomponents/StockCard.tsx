@@ -39,7 +39,7 @@ const StockCard = ({
           extraHeaderColumns={extraHeaderColumns}
         />
         {isLoadingStocks ? (
-          <BounceLoader marginY={"!my-[4rem]"} />
+          <BounceLoader marginy={"!my-[4rem]"} />
         ) : (
           <RowComponent
             stocks={stocks}
@@ -307,7 +307,7 @@ const StockCardModal = ({
           renderInModal={isOpen}
         />
         {isLoadingStocks ? (
-          <BounceLoader marginY={"!my-[4rem]"} />
+          <BounceLoader marginy={"!my-[4rem]"} />
         ) : (
           <RowComponent stocks={stocks} renderInModal={isOpen} />
         )}
