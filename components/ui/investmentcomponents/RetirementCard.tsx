@@ -12,7 +12,7 @@ const RetirementCard = () => {
         <RetirementChart />
        
       </div> */}
-      <img src={retirementGraph.src} alt="retirement-graph" />
+      <img src={retirementGraph.src} alt="retirement-graph" className="w-full sm:w-[50%] lg:w-[80%] investmentXL:w-full "/>
       <div className="flex flex-col items-center">
         <h3 className="font-bold text-xl mb-4 text-center">
           You could retire in {retireDate} years. Are you on target?{" "}

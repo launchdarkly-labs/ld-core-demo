@@ -240,7 +240,7 @@ export default function Airways() {
           >
             <NavBar variant={"investment"} handleLogout={handleLogout} />
             <InvestmentAccountHeader />
-            <div className="mt-8 " data-testid="salient-accounts-test-id">
+            <div className="my-8 " data-testid="salient-accounts-test-id">
               <div className="mx-auto max-w-7xl">
                 <div
                   className="main-investment-card-wrapper grid gap-3 grid-cols-1 
@@ -341,7 +341,7 @@ export default function Airways() {
             investmentXL:row-start-4 investmentXL:row-end-5  
             lg:mt-[33.5rem] 
             investmentXL:mt-[11.25rem] 
-            lg:h-[25rem] flex flex-col justify-between `}
+            lg:h-[25rem] flex flex-col justify-between items-center`}
                     data-testid="stock-retirement-card-test-id"
                   >
                     <RetirementCard />
