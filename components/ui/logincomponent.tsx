@@ -19,6 +19,12 @@ import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_lo
 import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
 import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
 
+const variantToImageMap = {
+  bank: toggleBankVerticalLogo.src,
+  airlines: launchAirwaysVerticalLogo.src,
+  market: galaxyMarketplaceVerticalLogo.src,
+  investment: frontierCapitalVerticalLogo.src,
+};
 interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -111,12 +117,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     }
   }, [activeElement]);
 
-  const variantToImageMap = {
-    bank: toggleBankVerticalLogo.src,
-    airlines: launchAirwaysVerticalLogo.src,
-    market: galaxyMarketplaceVerticalLogo.src,
-    investment: frontierCapitalVerticalLogo.src,
-  };
   const imageSrc = variantToImageMap[variant];
 
   const toggleAddUserDropdown = () => {
@@ -131,9 +131,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
           src={imageSrc}
           className="pt-10 mx-auto pb-4"
         />
-        {/* <p className="text-3xl sm:text-4xl font-sohnelight pb-12  !font-thin">
-          <span className="!font-extrabold">{name}</span>
-        </p> */}
       </div>
       <div className="w-full px-8">
         

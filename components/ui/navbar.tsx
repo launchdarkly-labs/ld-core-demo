@@ -23,6 +23,18 @@ import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
 
+import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
+import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
+import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
+import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
+
+const variantToImageMap = {
+  bank: toggleBankHorizontalLogo.src,
+  airlines: launchAirwaysHorizontalLogo.src,
+  market: galaxyMarketplaceHorizontalLogo.src,
+  investment: frontierCapitalHorizontalLogo.src,
+};
+
 interface NavBarProps {
   cart: InventoryItem[];
   setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
@@ -40,13 +52,16 @@ interface Persona {
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
-    let navChild, navLogo, navLinkMobileDropdown, navLinksGroup;
+    let navChild, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
 
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
+
+    const imageSrc = variantToImageMap[variant];
+
     // TODO: popover should be a modular component
     switch (variant) {
       case "airlines":
@@ -109,19 +124,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 </Popover>
               </div>
             )}
-          </>
-        );
-
-        navLogo = (
-          <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
-            </svg>
-            <p className="text-base flex font-sohnelight text-white">
-              <strong className="font-semibold font-sohne">Launch</strong>
-              {"\u00A0"}
-              {"\u00A0"}Airways
-            </p>
           </>
         );
 
@@ -225,14 +227,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 </Popover>
               </div>
             )}
-          </>
-        );
-
-        navLogo = (
-          <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="28" width="174" className="pr-2">
-              <image href="/toggle-bank.svg" height="28" width="174" alt="Toggle Bank" />
-            </svg>
           </>
         );
 
@@ -350,17 +344,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLogo = (
-          <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-0 sm:pr-2">
-              <image href="/market.png" height="40" width="40" alt="Marketplace" />
-            </svg>
-            <p className="text-sm sm:text-base flex text-white font-sohnelight">
-              <strong className="font-sohne">Galaxy </strong>&nbsp;Marketplace
-            </p>
-          </>
-        );
-
         navLinkMobileDropdown = (
           <>
             {isLoggedIn ? (
@@ -475,19 +458,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLogo = (
-          <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-2">
-              <image href="/launch-airways.svg" height="40" width="40" alt="Launch Airways" />
-            </svg>
-            <p className="text-base flex font-sohnelight text-white">
-              <strong className="font-semibold font-sohne">Launch</strong>
-              {"\u00A0"}
-              {"\u00A0"}Frontier Capitals
-            </p>
-          </>
-        );
-
         navLinkMobileDropdown = (
           <>
             {isLoggedIn ? (
@@ -497,7 +467,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <DropdownMenuItem href="/investment">News</DropdownMenuItem>
                 <DropdownMenuItem href="/investment">Investment Products</DropdownMenuItem>
                 <DropdownMenuItem href="/investment">About Us</DropdownMenuItem>
-               
               </>
             ) : null}
             <div className="flex justify-between">
@@ -569,7 +538,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <div className="items-center flex gap-x-6 text-white">
             <CSNav />
           </div>
-          <div className="ml-2 sm:ml-8 flex items-center">{navLogo}</div>
+          <div className="ml-2 sm:ml-8 flex items-center">
+            <img src={imageSrc} className="pr-2 h-10" />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
@@ -583,9 +554,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
           {isLoggedIn ? (
             <div className="hidden lg:block relative ml-8 w-[55%]   mt-2">
-              <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">
-                {navLinksGroup}
-              </div>
+              <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">{navLinksGroup}</div>
             </div>
           ) : null}
           {navChild}
