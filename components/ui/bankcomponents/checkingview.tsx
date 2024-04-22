@@ -82,21 +82,28 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="h-full grid p-2">
+        <div className="h-full grid p-2 text-base font-sohnelight">
           <div className="flex flex-col items-start space-y-4">
             <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
               <CiMoneyCheck1 className="text-blue-700 h-8 w-8" />
             </div>
             <div className="pb-1">
-              <p className="accounttext">Checking (***2982)</p>
-              <br />
+              <p className="text-base text-zinc-500">
+                <strong className="font-sohne">Platinum Checking</strong>{" "}
+                (***2982)
+              </p>
+              <p className="text-zinc-500 sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-base">
+                No Fee Checking
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-start">
             <div className="space-y-2">
-              <p className="balancetext">Total Checking Balance: </p>
-              <p className="balance">$83,758</p>
+              <p className="text-zinc-500 sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-base">
+                Total Checking Balance:{" "}
+              </p>
+              <p className="balance">$83,758.52</p>
             </div>
           </div>
 
@@ -106,7 +113,18 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
       <SheetContent className="w-full lg:w-1/2 overflow-auto" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
-            Checking Account
+            <div className="flex-col">
+              <div className="flex">Checking Account</div>
+              {financialDBMigration === "complete" ? (
+                <div className="flex text-center items-center justify-center my-6 bg-green-200 text-zinc-500 font-sohnebuch font-extralight text-base py-2">
+                  Retrieving data from DynamoDB
+                </div>
+              ) : (
+                <div className="flex text-center items-center justify-center my-6 bg-amber-200 font-sohnebuch font-extralight text-base py-2">
+                  Retrieving Data from RDS
+                </div>
+              )}
+            </div>
           </SheetTitle>
           <SheetDescription className="font-sohne">
             Understand the Balance of Your Checking Accounts
@@ -114,9 +132,14 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         </SheetHeader>
 
         <Table className="">
-          <TableCaption><Button className="flex rounded-none bg-blue-700 text-lg font-sohnelight" onClick={getTransactions}>
+          <TableCaption>
+            <Button
+              className="flex rounded-none bg-blue-700 text-lg font-sohnelight"
+              onClick={getTransactions}
+            >
               Refresh Data
-            </Button></TableCaption>
+            </Button>
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -131,7 +154,12 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
                 <TableCell className="font-medium">{item.date}</TableCell>
                 <TableCell>{item.merchant}</TableCell>
                 <TableCell>{item.status}</TableCell>
-                <TableCell className="text-right">{item.amount}</TableCell>
+                <TableCell className="text-right">
+                  {item.amount.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

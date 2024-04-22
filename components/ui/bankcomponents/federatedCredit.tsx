@@ -51,7 +51,7 @@ export function FederatedCreditAccount() {
     let transactionsJson: Transaction[];
     if (response.status == 200) {
       const data = await response.json();
-   
+
       transactionsJson = data;
     } else {
       transactionsJson = [
@@ -77,24 +77,22 @@ export function FederatedCreditAccount() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="h-full grid p-2">
+        <div className="h-full grid p-2 text-sm font-sohnelight text-zinc-500">
           <div className="flex flex-col items-start space-y-4">
             <div className="bg-gray-300/30 rounded-full flex items-center justify-center w-10 h-10">
               <CreditCard className="text-gray-700" />
             </div>
             <div className="">
-              <p className="accounttext">Platinum Credit (***3487)</p>
-              <p className="aprtext pt-2">APR $13.875</p>
+              <p className="font-sohne">External federated credit</p>
             </div>
           </div>
 
           <div className="flex flex-col justify-between">
             <div className="space-y-2">
-              <p className="balancetext">Total Credit Balance: </p>
-              <p className="balance">$1,203</p>
-            </div>
-            <div>
-              <p className="duetext">Next Due: 23rd</p>
+              <p className="text-zinc-400 text-sm font-sohnelight">
+                Total credit balance:{" "}
+              </p>
+              <p className="balance">$1,203.00</p>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@ import {
 export function AccountTrends({ data }) {
   return (
     <div
-      className={`flex flex-col p-10 shadow-xl w-full h-[408px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}
+      className={`flex flex-col p-10 shadow-xl w-full h-[408px] bg-white justify-center sm:col-span-1 lg:col-span-2 rounded-xl border border-zinc-200`}
     >
       <p className="aiinsightstext pt-4">6-Month Account Trend</p>
       <ResponsiveContainer className={"h-full"}>
@@ -28,7 +28,12 @@ export function AccountTrends({ data }) {
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Area type="monotone" dataKey="balance" stroke="#8884d8" fill="url(#colorUv)" />
+          <Area
+            type="monotone"
+            dataKey="balance"
+            stroke="#8884d8"
+            fill="url(#colorUv)"
+          />
 
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">

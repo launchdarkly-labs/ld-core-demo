@@ -70,6 +70,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        bglightblue: "#F5F7FF",
         ldblack: "#191919",
         ldgrey: "#282828",
         ldcardgrey: "#E6E6E6",
