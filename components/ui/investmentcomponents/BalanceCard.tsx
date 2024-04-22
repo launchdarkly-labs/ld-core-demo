@@ -74,7 +74,7 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
             <Button className="rounded-full bg-black h-10 w-10">2Y</Button>
             <Button className="rounded-full bg-gradient-investment h-10 w-10">YTD</Button>
           </div>
-          <p className="text-investmentblue hover:underline cursor-pointer text-center">Balance Details</p>
+          <p className="text-investmentblue hover:underline cursor-default text-center">Balance Details</p>
         </>
       )}
     </>

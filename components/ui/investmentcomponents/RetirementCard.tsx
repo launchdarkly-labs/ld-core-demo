@@ -17,7 +17,7 @@ const RetirementCard = () => {
         <h3 className="font-bold text-xl mb-4 text-center">
           You could retire in {retireDate} years. Are you on target?{" "}
         </h3>
-        <Button className="bg-investmentblue rounded-none">
+        <Button className="bg-investmentblue rounded-none cursor-default">
           Get Retirement Score
         </Button>
       </div>

@@ -241,7 +241,7 @@ export default function Airways() {
             <NavBar variant={"investment"} handleLogout={handleLogout} />
             <InvestmentAccountHeader />
             <div className="my-8 " data-testid="salient-accounts-test-id">
-              <div className="mx-auto max-w-7xl">
+              <div className="mx-auto max-w-7xl font-sohnelight ">
                 <div
                   className="main-investment-card-wrapper grid gap-3 grid-cols-1 
           lg:grid-cols-[repeat(4,minmax(175px,1fr))] 
@@ -254,7 +254,7 @@ export default function Airways() {
                     className={`card-1 ${cardStyle} ${patchCardUI} 
             lg:col-start-1 lg:col-end-3 
             investmentXL:col-start-1 investmentXL:col-end-3 
-            lg:row-start-1 lg:row-end-5 flex flex-col justify-between`}
+            lg:row-start-1 lg:row-end-5 flex flex-col justify-between `}
                     data-testid="stock-balance-card-test-id"
                   >
                     <BalanceCard isLoadingStocks={isLoadingStocks} />
@@ -265,7 +265,7 @@ export default function Airways() {
             investmentXL:col-start-5 investmentXL:col-end-7 
             lg:row-start-1 lg:row-end-3 
             investmentXL:row-start-1 investmentXL:row-end-3 
-            lg:h-[19rem] flex flex-col justify-center`}
+            lg:h-[19rem] flex flex-col justify-center `}
                     data-testid="stock-trading-training-card-test-id"
                   >
                     <TradingTrainingCard
