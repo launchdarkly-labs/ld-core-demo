@@ -539,7 +539,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <CSNav />
           </div>
           <div className="ml-2 sm:ml-8 flex items-center">
-            <img src={imageSrc} className="pr-2 h-10" />
+            <img src={imageSrc} className="pr-2 h-10 cursor-pointer" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

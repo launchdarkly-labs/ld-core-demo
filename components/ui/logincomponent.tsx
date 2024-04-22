@@ -157,8 +157,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
             <DialogHeader>
               <DialogTitle>Switch SSO User</DialogTitle>
 
-
-
               {isLoading ? (
                 <div className="flex justify-center items-center h-64">
                   <img src="loading-spinner.gif"></img>

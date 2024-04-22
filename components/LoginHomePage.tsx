@@ -12,6 +12,10 @@ import MarketInfoCard from "@/components/ui/marketcomponents/marketInfoCard";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
 
+import investmentCardImg1 from "@/public/investment/investment_image1.png";
+import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
+import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
+
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment";
   name: string;
@@ -144,19 +148,19 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       {variant === "investment" && (
         <HomePageCardWrapper>
           <HomePageInfoCard
-            imgSrc="House.png"
+            imgSrc={investmentCardImg1.src}
             headerTitleText="Are returns worth the risk in investing in the market?"
             subtitleText="Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. "
             key={1}
           />
           <HomePageInfoCard
-            imgSrc="Smoochy.png"
+            imgSrc={investmentCardImg2.src}
             headerTitleText="Fed to consumers: Inflation trending lower daily."
             subtitleText="Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected."
             key={2}
           />
           <HomePageInfoCard
-            imgSrc="Cards.png"
+            imgSrc={investmentCardImg3.src}
             headerTitleText="Here’s how markets are moving this week."
             subtitleText="With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks."
             key={3}
