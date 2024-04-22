@@ -32,7 +32,7 @@ const BalanceChart = () => {
   }
 
   const renderedHorizontalPoints = showCloudMigrationTwoStagesLDFlag ? [5, 127, 250, 373] : [];
-
+  console.log(renderedData)
   return (
     <ResponsiveContainer width="100%" height="100%" minHeight={"200px"} minWidth={"100%"}>
       <LineChart
@@ -51,11 +51,11 @@ const BalanceChart = () => {
           vertical={false}
           horizontalPoints={renderedHorizontalPoints}
         />
-        <XAxis dataKey="name" hide />
+        <XAxis dataKey="currentBalance" hide />
         <YAxis orientation="right" tickFormatter={renderTickFormatter } />
         {/* <Tooltip /> */}
         {/* <Legend /> */}
-        <Line type="monotone" dataKey="currentBalance" stroke="var(--theme-primary)" dot={false} />
+        <Line type="monotone" dataKey="currentBalance" stroke="#405BFF" dot={false} />
       </LineChart>
     </ResponsiveContainer>
   );

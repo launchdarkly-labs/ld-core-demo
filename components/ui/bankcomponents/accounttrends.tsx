@@ -9,6 +9,7 @@ import {
 } from "recharts";
 
 export function AccountTrends({ data }) {
+  console.log(data)
   return (
     <div
       className={`flex flex-col p-10 shadow-xl w-full h-[408px] bg-white justify-center sm:col-span-1 lg:col-span-2 `}

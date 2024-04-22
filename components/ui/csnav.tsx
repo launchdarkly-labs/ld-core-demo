@@ -89,7 +89,7 @@ export function CSNav() {
             >
               <div onClick={goRemediate}>
                 <CSCard
-                  className="bg-gradient-mobile cursor-pointer"
+                  className="bg-gradient-investment cursor-pointer"
                   herotext="Navigate to Automatically Remediate"
                 />
               </div>
