@@ -14,6 +14,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { PersonaContext } from "../personacontext";
+import toggleBankVerticalLogo from '@/public/banking/toggleBank_logo_vertical.svg'
+import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_logo_vertical.svg'
+import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
+import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
 
 interface LoginComponentProps {
   isLoggedIn: boolean;
@@ -108,9 +112,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   }, [activeElement]);
 
   const variantToImageMap = {
-    bank: "ToggleBankBlue.png",
-    airlines: "/launch-airways.svg",
-    market: "/market.png",
+    bank: toggleBankVerticalLogo.src,
+    airlines: launchAirwaysVerticalLogo.src,
+    market: galaxyMarketplaceVerticalLogo.src,
+    investment: frontierCapitalVerticalLogo.src,
   };
   const imageSrc = variantToImageMap[variant];
 
@@ -124,12 +129,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       <div className="flex flex-col justify-center mx-auto text-center">
         <img
           src={imageSrc}
-          width={64}
           className="pt-10 mx-auto pb-4"
         />
-        <p className="text-3xl sm:text-4xl font-sohnelight pb-12  !font-thin">
+        {/* <p className="text-3xl sm:text-4xl font-sohnelight pb-12  !font-thin">
           <span className="!font-extrabold">{name}</span>
-        </p>
+        </p> */}
       </div>
       <div className="w-full px-8">
         
