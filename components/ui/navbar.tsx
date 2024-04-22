@@ -33,6 +33,7 @@ const variantToImageMap = {
   airlines: launchAirwaysHorizontalLogo.src,
   market: galaxyMarketplaceHorizontalLogo.src,
   investment: frontierCapitalHorizontalLogo.src,
+  undefined: LDLogoWhite.src
 };
 
 interface NavBarProps {
@@ -61,6 +62,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { launchClubStatus } = useContext(LoginContext);
 
     const imageSrc = variantToImageMap[variant];
+    console.log(variant)
 
     // TODO: popover should be a modular component
     switch (variant) {
@@ -519,7 +521,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         );
         break;
       default:
-        navLogo = <img src={LDLogoWhite.src} alt="" className="" />;
         navChild = (
           <div className="ml-auto cursor-pointer flex self-center">
             <QRCodeImage />
