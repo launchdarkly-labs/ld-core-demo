@@ -22,9 +22,10 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 
 
   const industryMessages = {
-    "bank": "Serving more than 100,000 customers, and 10 trillion in capital every day",
-    "airlines": "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    "market": "Shop for the latest tech gadgets and more."
+    bank: "More than 100,000 customers worldwide",
+    airlines:
+      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
+    market: "Shop for the latest tech gadgets and more.",
   };
 
 
@@ -49,7 +50,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         <NavBar variant={variant} />
       </div>
 
-      <header className={`w-full ${variant === 'bank' ? 'bg-bankblue' :
+      <header className={`w-full ${variant === 'bank' ? 'bg-gradient-releases' :
         variant === 'airlines' ? 'bg-gradient-airways' :
           variant === 'market' ? ' bg-market-header grid items-center justify-center' : ''
         } mb-[4rem]`}>
@@ -61,7 +62,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         )}
         <div
           className="w-full py-14 sm:py-[8rem] px-12 xl:px-32 2xl:px-[300px] 3xl:px-[400px] flex flex-col sm:flex-row justify-between
-             items-center sm:items-start"
+             items-center sm:items-center"
         >
           <div
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
@@ -71,7 +72,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             <p className="text-2xl lg:text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
               Welcome to {name}{" "}
             </p>
-            <p className="col-span-2 sm:col-span-0 text-xl lg:text-2xl 3xl:text-4xl font-sohnelight w-full">
+            <p className="col-span-2 sm:col-span-0 text-base lg:text-2xl 3xl:text-4xl font-audimat w-full">
               {message}
             </p>
           </div>

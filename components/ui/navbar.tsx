@@ -427,7 +427,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
               className="pr-0 sm:pr-2"
             >
               <image
-                href="/market.png"
+                href="/galaxy-marketplace.svg"
                 height="40"
                 width="40"
                 alt="Marketplace"
