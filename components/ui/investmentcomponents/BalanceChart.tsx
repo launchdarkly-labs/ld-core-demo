@@ -32,7 +32,6 @@ const BalanceChart = () => {
   }
 
   const renderedHorizontalPoints = showCloudMigrationTwoStagesLDFlag ? [5, 127, 250, 373] : [];
-  console.log(renderedData)
   return (
     <ResponsiveContainer width="100%" height="100%" minHeight={"200px"} minWidth={"100%"}>
       <LineChart
