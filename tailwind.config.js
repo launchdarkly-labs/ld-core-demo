@@ -18,10 +18,10 @@ module.exports = {
     },
     extend: {
       width: {
-        '80': '80%', // Add this line
+        80: "80%", // Add this line
       },
       height: {
-        '80': '80%', // Add this line
+        80: "80%", // Add this line
       },
       screens: {
         "3xl": "2500px",
@@ -32,7 +32,8 @@ module.exports = {
       backgroundImage: (theme) => ({
         "gradient-radial":
           "radial-gradient(ellipse at center, #00c0e7 0%, #a34fde 100%)",
-        "gradient-releases": "linear-gradient(245deg, #00c0e7, #a34fde)",
+        "gradient-releases": "linear-gradient(170deg, #3DD6F5, #a34fde)",
+        "button-bank-gradient": "linear-gradient(195deg, #3DD6F5, #a34fde)",
         "gradient-blue":
           "linear-gradient(225deg, #405BFF -5.3%, #3DD6F5 112.86%)",
         "gradient-targeting":
@@ -69,6 +70,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        bglightblue: "#F5F7FF",
         ldblack: "#191919",
         ldgrey: "#282828",
         ldcardgrey: "#E6E6E6",

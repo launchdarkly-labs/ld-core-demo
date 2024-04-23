@@ -108,9 +108,9 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   }, [activeElement]);
 
   const variantToImageMap = {
-    bank: "ToggleBankBlue.png",
-    airlines: "/launch-airways.svg",
-    market: "/market.png",
+    bank: "/togglebank-login.svg",
+    airlines: "/launch-airways-login.svg",
+    market: "/galaxy-marketplace-login.svg",
   };
   const imageSrc = variantToImageMap[variant];
 
@@ -119,44 +119,40 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   };
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto">
-
+    <div className="w-full bg-white font-sohne shadow-xl mx-auto px-4">
       <div className="flex flex-col justify-center mx-auto text-center">
-        <img
-          src={imageSrc}
-          width={64}
-          className="pt-10 mx-auto pb-4"
-        />
-        <p className="text-3xl sm:text-4xl font-sohnelight pb-12 3xl:pb-24 !font-thin">
-          <span className="!font-extrabold">{name}</span>
-        </p>
+        <img src={imageSrc} width={230} className="py-12 mx-auto" />
       </div>
       <div className="w-full px-8">
         <div>
           <Input
             placeholder="Email"
-            value={defaultEmail || "jenn@launchmail.io"}
+            value={undefined}
             ref={inputRef}
-            className="mb-8 3xl:mb-24 outline-none border-0 border-b-2 text-xl"
+            className="mb-8 3xl:mb-24 text-base text-zinc-600 rounded-none border-b-1 border-t-0 border-x-0"
             onChange={(e) => setDefaultEmail(e.target.value)}
           />
         </div>
 
         <Button
           onClick={handleLogin}
-          className={`mb-4 w-full h-full mx-auto font-audimat rounded-none  text-xl ${variantClass}`}>
-          Login with SSO
+          className='mb-2 w-full h-full mx-auto font-sohnelight rounded-none text-base bg-bankdarkblue'
+        >
+          Sign in with SSO
         </Button>
 
-        <Dialog onDismiss={() => { setIsAddUserDropdownOpen(false) }} className="z-10">
-          <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl ${variantClass} hover:bg-gray-800`}>
+        <Dialog
+          onDismiss={() => {
+            setIsAddUserDropdownOpen(false);
+          }}
+          className="z-10"
+        >
+          <DialogTrigger className='mb-4 p-2 w-full h-full mx-auto font-sohnelight rounded-none border-2 border-bankdarkblue bg-transparent text-base'>
             Switch SSO User
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Switch SSO User</DialogTitle>
-
-
 
               {isLoading ? (
                 <div className="flex justify-center items-center h-64">
@@ -169,8 +165,14 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                       <div className="flex flex-col items-center" key={item.id}>
                         <img
                           src={item.personaimage}
-                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaname ? 'border-4 border-black' : ''}`}
-                          onClick={() => handleSetActive(item.personaname, item.personaemail)}
+                          className={`w-24 rounded-full mb-4 ${
+                            activeElement === item.personaname
+                              ? "border-4 border-black"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleSetActive(item.personaname, item.personaemail)
+                          }
                           alt={item.personaname}
                         />
                         <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
@@ -184,7 +186,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
                     {isAddUserDropdownOpen && (
                       <div className="absolute z-100 left-0 top-0 bottom-0 pt-8 w-full bg-white shadow-lg">
-                        <Button onClick={showBackButton} className={`absolute top-3 text-xs  mx-auto font-audimat left-4 h-5 rounded-full  ${variantClass}`}>
+                        <Button
+                          onClick={showBackButton}
+                          className={`absolute top-3 text-xs  mx-auto font-audimat left-4 h-5 rounded-full ${variantClass}`}
+                        >
                           &larr;
                         </Button>
                         <div className="p-4">
@@ -223,26 +228,46 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                           </div>
                           <div className="mb-0 overflow-x-auto rounded">
                             <div className="flex space-x-4 p-2">
-                              {['persona1.png', 'persona2.png', 'persona3.png', 'persona4.png', 'persona5.png'].map((imageName) => (
+                              {[
+                                "persona1.png",
+                                "persona2.png",
+                                "persona3.png",
+                                "persona4.png",
+                                "persona5.png",
+                              ].map((imageName) => (
                                 <img
                                   key={imageName}
                                   src={`/personas/${imageName}`}
                                   alt={imageName}
-                                  className={`w-24 h-24 rounded-full cursor-pointer ${newPersona.image === `/personas/${imageName}` ? 'border-4 border-blue-500' : ''}`}
-                                  onClick={() => setNewPersona({ ...newPersona, image: `/personas/${imageName}` })}
+                                  className={`w-24 h-24 rounded-full cursor-pointer ${
+                                    newPersona.image ===
+                                    `/personas/${imageName}`
+                                      ? "border-4 border-blue-500"
+                                      : ""
+                                  }`}
+                                  onClick={() =>
+                                    setNewPersona({
+                                      ...newPersona,
+                                      image: `/personas/${imageName}`,
+                                    })
+                                  }
                                 />
                               ))}
                             </div>
                           </div>
-                          <Button onClick={handleSubmitNewPersona} className={`mb-2 w-full h-full mx-auto font-audimat mt-2 rounded-none text-xl ${variantClass}`}>
+                          <Button
+                            onClick={handleSubmitNewPersona}
+                            className={`mb-2 w-full h-full mx-auto font-audimat mt-2 rounded-none text-xl ${variantClass}`}
+                          >
                             Submit
                           </Button>
 
                           {submitError && (
-                            <p className="text-red-500 text-sm z-100">{submitError}</p>
+                            <p className="text-red-500 text-sm z-100">
+                              {submitError}
+                            </p>
                           )}
                         </div>
-
                       </div>
                     )}
                   </div>
@@ -252,33 +277,38 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
             <DialogFooter>
               <div className="flex w-full">
-                <Button onClick={toggleAddUserDropdown} className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}>
+                <Button
+                  onClick={toggleAddUserDropdown}
+                  className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}
+                >
                   Add New User
                 </Button>
 
-                <Button onClick={handleDeleteAllPersonas} className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}>
+                <Button
+                  onClick={handleDeleteAllPersonas}
+                  className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}
+                >
                   &#x21bb;
                 </Button>
               </div>
-
-
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-
       </div>
-      <div className="grid  sm:flex-row  justify-between px-8 pb-8">
-        <div className="pb-3">
+      <div className="flex flex-row justify-between font-sohnelight font-extralight sm:flex-row px-4 pb-8 text-xs">
+        <div className="flex pb-3 text-blue-600">
           <p>Forgot Password?</p>
         </div>
         <div>
-          <p>
-            Don't have an account?{" "}
-            <a href={window.location.href} className="text-blue-600 ml-2">
-              Sign Up
-            </a>
-          </p>
+          <div className="flex">
+            <p>
+              Don't have an account?{" "}
+              <a href={window.location.href} className="text-blue-600 pl-1">
+                {" "}
+                Sign Up
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -228,7 +228,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-xl rounded-none"
+                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-releases text-xl rounded-none"
                         >
                           Logout
                         </Button>
@@ -373,8 +373,18 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLogo = (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" height="40" width="50" className="pr-0 sm:pr-2">
-              <image href="/market.png" height="40" width="40" alt="Marketplace" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="40"
+              width="50"
+              className="pr-0 sm:pr-2"
+            >
+              <image
+                href="/galaxy-marketplace.svg"
+                height="40"
+                width="40"
+                alt="Marketplace"
+              />
             </svg>
             <p className="text-sm sm:text-base flex text-white font-sohnelight">
               <strong className="font-sohne">Galaxy </strong>&nbsp;Marketplace
