@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
+const { version } = require('./package.json');
+
 const nextConfig = {
   reactStrictMode: false,
   output: 'standalone',
   typescript: {
     ignoreBuildErrors: true
+  },
+  env: {
+    NEXT_PUBLIC_APP_VERSION: version,
+    NEXT_PUBLIC_LAST_ACCESSED: new Date().toISOString(),
   }
 }
 

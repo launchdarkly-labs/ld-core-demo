@@ -58,7 +58,7 @@ def createMigrationFlag():
             break
         elif response.status_code == 429:
             print("Rate limit exceeded, waiting 10 seconds to retry...")
-            time.sleep(10)
+            time.sleep(5)
         else:
             data = response.json()
             print(data)

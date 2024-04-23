@@ -34,7 +34,7 @@ const AirlineDestination = ({
       className={``}
     >
       <div className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
-        <div className=" text-center grid col-start-1">
+        <div className=" text-center grid col-start-1 animate-pulse hover:animate-none">
           <button
             onClick={() => {
               setActiveField("from");
@@ -45,7 +45,7 @@ const AirlineDestination = ({
           </button>
           <p className="text-center text-xs font-audimat uppercase">Origin</p>
         </div>
-        <MoveHorizontalIcon className="h-14 w-14 text-marketblue grid col-start-2 mx-auto" />
+        <MoveHorizontalIcon className="h-14 w-14 text-white grid col-start-2 mx-auto" />
         <div className="relative text-center grid col-start-3">
           <button
             onClick={() => {

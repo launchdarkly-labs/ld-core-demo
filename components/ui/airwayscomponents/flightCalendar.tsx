@@ -46,12 +46,12 @@ export function FlightCalendar({
               {" "}
               {/* Add margin-bottom here */}
               {!date?.from && !date?.to ? (
-                <div className="flex items-center ">
+                <div className="flex items-center">
                   Depart - Return
                   <CalendarIcon size={28} className="ml-20" />
                 </div>
               ) : (
-                <div className="calendar-date text-4xl md:text-3xl lg:text-2xl xl:text-4xl">
+                <div className="calendar-date text-4xl lg:text-3xl xl:text-4xl">
                   {date?.from && format(date.from, "MM/dd/yy")} -{" "}
                   {date?.to && format(date.to, "MM/dd/yy")}
                 </div>
@@ -68,6 +68,7 @@ export function FlightCalendar({
             onSelect={setDate}
             numberOfMonths={2}
             disabled={(date) => isBefore(date, endOfDay(new Date()))}
+            classNames={{day_selected:"bg-airlinepink text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-airlinepink focus:text-primary-foreground"}}
           />
         </PopoverContent>
       </Popover>

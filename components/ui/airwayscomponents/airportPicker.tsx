@@ -104,7 +104,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
       </button>
       <div className="m-6 flex flex-col gap-y-6">
         <div className="">
-          <div className="text-airlineBlack text-sm font-medium uppercase tracking-widest w-[7rem] pb-2 border-pink-500 text-center ">
+          <div className="text-black text-sm font-medium uppercase tracking-widest w-[7rem] pb-2 border-pink-500 text-center ">
             Search
           </div>
           <div className="w-full h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
@@ -116,8 +116,8 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
               {activeField === "from" ? "Origin" : "Destination"}
             </div>
             <input
-              className="w-full text-airlineBlack text-[60px]  
-                 leading-[66.65px] outline-none border-b-2 border-airlinePurple pb-4"
+              className="w-full text-black text-[60px]  
+                 leading-[66.65px] outline-none border-b-2 border-airlinepurple pb-4"
               placeholder="Airport"
               value={searchTerm}
               autoFocus
@@ -130,7 +130,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
             />
           </div>
 
-          <div className="w-full h-full text-airlineBlack text-base  leading-[18px] tracking-widest">
+          <div className="w-full h-full text-black text-base  leading-[18px] tracking-widest">
             {searchTerm && filteredAirports.length === 0 ? (
               <p>No airports found</p>
             ) : (

@@ -1,10 +1,12 @@
-name: "Build and Deploy Images to Demo Environment"
+name: (Provisioning App - Manual Workflow) Deploy Demo Environment
 
 on:
-  push:
-    branches:
-      - '*demoenv*'
-    
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'User alias or LD env key'
+        required: true
+
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -13,23 +15,15 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 jobs:
   deploy-to-demoenv: 
-    if: contains(github.ref, 'demoenv')
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Set namespace for deployment
-        id: set_namespace
-        run: |
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          NAMESPACE=${BRANCH_NAME#demoenv-}
-          echo "DEMO_NAMESPACE=${NAMESPACE}" >> $GITHUB_ENV 
-          echo "::set-output name=namespace::$NAMESPACE"
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -41,7 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
 
-      - name: Create LD Project, New LD Environment and Audience Context for Demo Environment
+      - name: Create LD Project for User
         id: create_ld_project
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
@@ -59,7 +53,7 @@ jobs:
         run: |
           echo "Creating feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
           python ./.github/workflows/ld_api/create_ld_featureflags.py
-        
+
       - name: Create metric group in LD Project/Environment
         id: create_metric_group_in_LD
         if: env.PROJECT_EXISTS == 'false'
@@ -165,13 +159,6 @@ jobs:
           aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch "$RECORD_SET_JSON"
         env:
           AWS_REGION: 'us-east-1'
-
-      - name: LaunchDarkly Code References
-        uses: launchdarkly/find-code-references@v2.11.4
-        with:
-          accessToken: ${{ secrets.LD_API_KEY }} 
-          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
-      
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
