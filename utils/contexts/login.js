@@ -24,6 +24,25 @@ export const LoginProvider = ({ children }) => {
     context.user.key = email;
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
+
+    switch (user) {
+      case 'Cody':
+        context.user.segment = "Family";
+        context.user.country = "Sweden";
+        break;
+      case 'Jenn':
+        context.user.segment = "Young Adult";
+        context.user.country = "United Kingdom";
+        break;
+      case 'Alysha':
+        context.user.segment = "Affluent Adult";
+        context.user.country = "United States";
+        break;
+      default:
+        context.user.segment = "Student";
+        context.user.country = "United States";
+    }
+
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
