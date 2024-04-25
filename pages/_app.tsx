@@ -24,6 +24,9 @@ if (typeof window !== "undefined") {
 
   const LDProvider = await asyncWithLDProvider({
     clientSideID: process.env.NEXT_PUBLIC_LD_CLIENT_KEY || "",
+    options: {
+      privateAttributes: ['email']
+    },
     reactOptions: {
       useCamelCaseFlagKeys: false,
     },
