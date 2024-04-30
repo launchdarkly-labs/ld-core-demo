@@ -11,6 +11,10 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
+import graphIcon from "@/public/sidenav/graph_icon.svg";
+import personcheckIcon from "@/public/sidenav/person_check_icon.svg";
+import renewIcon from "@/public/sidenav/renew_icon.svg";
+import toggleIcon from "@/public/sidenav/toggle_icon.svg";
 
 export function CSNav() {
   const router = useRouter();
@@ -76,8 +80,9 @@ export function CSNav() {
               <div onClick={goRelease}>
                 <CSCard
                   className="bg-gradient-releases cursor-pointer"
-                  herotext="Navigate to Release Confidently and Consistently"
-                  
+                  cardTitle="De-risked Releases"
+                  cardSubtitle="Let developers move faster and more confidently with feature management."
+                  icon={toggleIcon}
                 />
               </div>
             </motion.div>
@@ -90,7 +95,9 @@ export function CSNav() {
               <div onClick={goRemediate}>
                 <CSCard
                   className="bg-gradient-investment cursor-pointer"
-                  herotext="Navigate to Automatically Remediate"
+                  cardTitle="Automatically Remediate"
+                  cardSubtitle="Uncover and remediate software errors before they become customer issues."
+                  icon={renewIcon}
                 />
               </div>
               
@@ -104,7 +111,9 @@ export function CSNav() {
               <div onClick={goTargeting}>
                 <CSCard
                   className="bg-gradient-targeting cursor-pointer"
-                  herotext="Navigate to Targeted and Personalized Experiences"
+                  cardTitle="Targeted Experiences"
+                  cardSubtitle="Serve features and experiences tailored to any audience."
+                  icon={personcheckIcon}
                 />
               </div>
               
@@ -118,7 +127,9 @@ export function CSNav() {
               <div onClick={goExp}>
                 <CSCard
                   className="bg-gradient-experimentation cursor-pointer"
-                  herotext="Navigate to Product Experimentation"
+                  cardTitle="Product Experimentation"
+                  cardSubtitle="Continuously measure and improve the business value of digital products."
+                  icon={graphIcon}
                 />
               </div>
             </motion.div>
