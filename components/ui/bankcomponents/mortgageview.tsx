@@ -39,9 +39,8 @@ const payments = [
   { month: "03/2023", amount: 4123, status: "cleared" },
   { month: "02/2023", amount: 4123, status: "cleared" },
   { month: "01/2023", amount: 4123, status: "cleared" },
-  { month: "12/2022", amount: 4123, status: "cleared" }
+  { month: "12/2022", amount: 4123, status: "cleared" },
 ];
-
 
 export function MorgtgageAccount() {
   const router = useRouter();
@@ -49,31 +48,34 @@ export function MorgtgageAccount() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-      <div className="h-full grid p-2">
-
+        <div className="h-full grid p-2 text-base font-sohnelight text-zinc-500">
           <div className="flex flex-col items-start space-y-4">
             <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
               <MdHome className="text-blue-700 h-6 w-6" />
             </div>
             <div className="">
-              <p className="accounttext">Mortgage (***6503)</p>
-              <p className="aprtext pt-2">APR $3.875</p>
+              <p className="text-zinc-500">
+                <strong className="font-sohne">Mortgage Account</strong>{" "}
+                (***6503)
+              </p>
+              <p className="text-zinc-500 pt-2 sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-base pb-4">
+                APR 3.875%
+              </p>
             </div>
           </div>
 
           <div className="flex flex-col justify-between">
             <div className="space-y-2">
-              <p className="balancetext">Remaining Balance: </p>
+              <p className="text-zinc-500 sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-base">
+                Remaining Balance:{" "}
+              </p>
               <p className="balance">$712,124</p>
-              
-              </div>
-              <div>
-              <p className="duetext">Next Due: 14th</p>
+            </div>
+            <div>
+              <p className="text-bankdarkblue pt-4 text-xs">Next Due: May 14th, 2024</p>
             </div>
           </div>
-
-       
-</div>
+        </div>
       </SheetTrigger>
       <SheetContent className="w-full lg:w-1/2 overflow-auto" side="right">
         <SheetHeader>
@@ -100,9 +102,7 @@ export function MorgtgageAccount() {
                 <TableCell className="font-medium">{invoice.month}</TableCell>
                 <TableCell>{invoice.status}</TableCell>
                 <TableCell>Checking</TableCell>
-                <TableCell className="text-right">
-                  ${invoice.amount}
-                </TableCell>
+                <TableCell className="text-right">${invoice.amount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

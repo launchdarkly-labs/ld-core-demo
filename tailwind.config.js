@@ -33,7 +33,9 @@ module.exports = {
       backgroundImage: (theme) => ({
         "gradient-radial": "radial-gradient(ellipse at center, #00c0e7 0%, #a34fde 100%)",
         "gradient-releases": "linear-gradient(245deg, #00c0e7, #a34fde)",
-        "gradient-blue": "linear-gradient(225deg, #405BFF -5.3%, #3DD6F5 112.86%)",
+        "button-bank-gradient": "linear-gradient(195deg, #3DD6F5, #a34fde)",
+        "gradient-blue":
+          "linear-gradient(225deg, #405BFF -5.3%, #3DD6F5 112.86%)",
         "gradient-targeting": "linear-gradient(222deg,#18bdde 1.56%,#405bff 96.51%)",
         "gradient-experimentation": "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
         "gradient-mobile": "linear-gradient(65deg,#ff386b 3.6%,#ffaf38 98.81%)",
@@ -64,6 +66,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        bglightblue: "#F5F7FF",
         ldblack: "#191919",
         ldgrey: "#282828",
         ldcardgrey: "#E6E6E6",

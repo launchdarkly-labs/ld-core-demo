@@ -1,7 +1,7 @@
 export const getVariantClassName = (variant) => {
   switch (variant) {
     case "bank":
-      return "bg-gradient-to-tr from-banklightblue to-bankdarkblue ";
+      return "bg-gradient-releases text-white";
     case "airlines":
       return "bg-gradient-airline-buttons ";
     case "investment":

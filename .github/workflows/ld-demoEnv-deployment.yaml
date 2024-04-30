@@ -166,6 +166,13 @@ jobs:
         env:
           AWS_REGION: 'us-east-1'
 
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2.11.4
+        with:
+          accessToken: ${{ secrets.LD_API_KEY }} 
+          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+      
+
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
 

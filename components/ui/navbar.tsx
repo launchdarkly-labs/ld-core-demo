@@ -218,7 +218,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-to-tr from-banklightblue to-bankdarkblue text-xl rounded-none"
+                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-releases text-xl rounded-none"
                         >
                           Logout
                         </Button>
