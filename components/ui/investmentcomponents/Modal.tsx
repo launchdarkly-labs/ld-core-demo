@@ -32,7 +32,7 @@ export default function Modal({
   return ReactDOM.createPortal(
     <>
       <div
-        className={`fixed top-0 right-0 bottom-0 left-[-20px] bg-black-original/75 z-[1000] cursor-pointer ${modalWrapperClassOverride}`}
+        className={`fixed top-0 right-0 bottom-0 left-[-20px] bg-black/75 z-[1000] cursor-pointer ${modalWrapperClassOverride}`}
         onClick={onClose}
       ></div>
       <motion.div
@@ -49,10 +49,10 @@ export default function Modal({
         <div className="flex justify-end">
           {additionButtonOnTop}
           <Button
-            classButtonOverride="!h-8 !w-8 !px-0 !py-0 !mr-1 !mt-[-5px] rounded-full !text-gray-500 !bg-transparent"
+            className="!h-8 !w-8 !px-0 !py-0 !mr-1 !mt-[-5px] rounded-full !text-gray-500 !bg-transparent"
             type="button"
             title="Close Modal"
-            handleClick={onClose}
+            onClick={onClose}
             dataTestId={"close-button-test-id"}
           >
             <XIcon aria-hidden="true" />
