@@ -38,9 +38,8 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   const [activeElement, setActiveElement] = useState(null);
   const [defaultEmail, setDefaultEmail] = useState('jenn@launchmail.io');
   const variantClass = getVariantClassName(variant);
-  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
-  const { personas, addPersona, deleteAllPersonas, getPersonas } = useContext(PersonaContext);
+  const { personas, getPersonas } = useContext(PersonaContext);
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,25 +52,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     getPersonas();
   }, [isLoading]);
 
-  const handleSubmitNewPersona = () => {
-    const emailExists = personas.some(persona => persona.personaEmail === newPersona.email);
-    if (emailExists) {
-      setSubmitError('A persona with this email already exists.');
-      return;
-    }
-    setIsLoading(true);
-    addPersona(newPersona)
-      .then(() => {
-        setIsAddUserDropdownOpen(false);
-        setIsLoading(false);
-        getPersonas();
-      })
-      .catch(error => {
-        setSubmitError('Failed to create new persona. Please try again.');
-        setIsLoading(false);
-      })
-  };
-
   const showBackButton = () => {
     setIsAddUserDropdownOpen(false);
     setSubmitError(null);
@@ -82,29 +62,20 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setIsLoggedIn(true);
     let email;
     let name;
+    let role;
     const activePersona = personas.find(p => p.personaname === activeElement);
     if (activePersona) {
       email = activePersona.personaemail;
       name = activePersona.personaname;
+      role = activePersona.personarole;
     }
     else {
-      // email = 'jenn@launchmail.io';
-      // name = 'Jenn';
     email = defaultEmail;
     name = email.split('@')[0];
     name = name.charAt(0).toUpperCase() + name.slice(1);
     }
-    loginUser(name, email);
+    loginUser(name, email, role);
   };
-
-  const handleDeleteAllPersonas = () => {
-    setIsLoading(true);
-    deleteAllPersonas()
-      .then(() => {
-        getPersonas();
-        setIsLoading(false);
-      })
-  }
 
   const handleSetActive = (personaname, personaemail) => {
     setActiveElement(personaname);
@@ -277,24 +248,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                 </div>
               )}
             </DialogHeader>
-
-            <DialogFooter>
-              <div className="flex w-full">
-                <Button
-                  onClick={toggleAddUserDropdown}
-                  className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}
-                >
-                  Add New User
-                </Button>
-
-                <Button
-                  onClick={handleDeleteAllPersonas}
-                  className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}
-                >
-                  &#x21bb;
-                </Button>
-              </div>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

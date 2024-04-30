@@ -16,6 +16,7 @@ interface Persona {
   personatype: string;
   personaimage: string;
   personaemail: string;
+  personarole: string;
 }
 
 interface QuickLoginDialogProps {
@@ -61,6 +62,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
                       <p className="text-xs text-center mt-2">
                         {persona.personaname}
                       </p>
+                      <p className="text-xs text-center mt-2"> {persona.personarole}</p>
                     </div>
                   ))}
               </div>

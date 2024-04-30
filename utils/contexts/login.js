@@ -2,6 +2,7 @@
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { createContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import CryptoJS from 'crypto-js';
 
 const LoginContext = createContext();
 
@@ -16,12 +17,18 @@ export const LoginProvider = ({ children }) => {
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState("standard");
 
-  const loginUser = async (user, email) => {
+  const hashEmail = async (email) => {
+    return CryptoJS.SHA256(email).toString();
+  };
+
+  const loginUser = async (user, email, role) => {
     const context = await client?.getContext();
     console.log("loginUser",context)
     context.user.name = user;
     context.user.email = email;
-    context.user.key = email;
+    let hashedEmail = await hashEmail(email);
+    context.user.key = hashedEmail;
+    context.user.role = role;
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     setIsLoggedIn(true);

@@ -27,12 +27,16 @@ if (typeof window !== "undefined") {
     reactOptions: {
       useCamelCaseFlagKeys: false,
     },
+    options: {
+      privateAttributes: ['email', 'name']
+    },
     context: {
       kind: "multi",
       user: {
         key: "jenn@launchmail.io",
         name: "Jenn",
         email: "jenn@launchmail.io",
+        role: "Developer",
         appName: "LD Demo",
       },
       device: {
@@ -63,7 +67,6 @@ if (typeof window !== "undefined") {
       <NoSSRWrapper>
         <LDProvider>
           <PersonaProvider>
-            
               <LoginProvider>
               <QuickCommandDialog>
                 <TripsProvider>
