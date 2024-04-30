@@ -62,7 +62,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { launchClubStatus } = useContext(LoginContext);
 
     const imageSrc = variantToImageMap[variant];
-    console.log(variant)
 
     // TODO: popover should be a modular component
     switch (variant) {
