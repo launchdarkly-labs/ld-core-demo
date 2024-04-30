@@ -69,7 +69,7 @@ const NewsCard = ({ news, isLoadingNews }: { news: any; isLoadingNews: boolean }
                     data-testid="stock-news-title-test-id"
                     title={datum.title}
                   >
-                    {truncateString(datum.title, 85)}
+                    {truncateString(datum.title, 60)}
                   </a>
                   <p className="text-investmentgrey text-xs">
                     {datum.publisher.name} &#183; <span>{dateCleaned}</span>

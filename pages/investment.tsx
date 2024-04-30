@@ -136,7 +136,7 @@ export default function Airways() {
       setIsLoadingNews(false);
 
       // if (newsData?.status === 429) return;
-      setNews(newsData?.splice(0, 6));
+      setNews(newsData?.splice(0, 7));
     };
 
     // if (isLocalAPIMigration) return setIsLoadingNews(false);

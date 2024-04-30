@@ -225,26 +225,7 @@ export const newsData = [
     description:
       "Nvidia Corporation has solidified its position in the AI industry with strong earnings and revenue growth. See why I rate NVDA stock a strong buy.",
   },
-  {
-    id: "QlK89XLC9PWSoqttlqWYUNg04ti8QUHhqGYpw5mwzZ8",
-    publisher: {
-      name: "Zacks Investment Research",
-      homepage_url: "https://www.zacks.com/",
-      logo_url: "https://s3.polygon.io/public/assets/news/logos/zacks.png",
-      favicon_url: "https://s3.polygon.io/public/assets/news/favicons/zacks.ico",
-    },
-    title: "Logitech's (LOGI) Q4 Earnings and Revenues Crush Estimates",
-    author: "Zacks Equity Research",
-    published_utc: "2024-04-30T13:00:00Z",
-    article_url:
-      "https://www.zacks.com/stock/news/2264816/logitechs-logi-q4-earnings-and-revenues-crush-estimates",
-    tickers: ["LOGI", "NVDA", "TWLO", "BSY"],
-    amp_url:
-      "https://www.zacks.com/amp/stock/news/2264816/logitechs-logi-q4-earnings-and-revenues-crush-estimates",
-    image_url: "https://staticx-tuner.zacks.com/images/articles/main/dd/52606.jpg",
-    description:
-      "Logitech's (LOGI) Q4 earnings jump 98% year over year, primarily driven by increased revenues, along with lower product and logistics costs.",
-  },
+  
   {
     id: "c_MdumgORc_FnwRmro1pA99e-68G4cma9V6aLDTU4pE",
     publisher: {
