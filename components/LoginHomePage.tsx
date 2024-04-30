@@ -105,7 +105,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
             sm:gap-y-0 gap-x-8
-          sm:gap-x-12 lg:gap-x-24 mt-[4rem]"
+          sm:gap-x-12 lg:gap-x-24 py-8"
         >
           {bankingServicesArr.map((ele, i) => {
             return (
@@ -170,8 +170,8 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 
       {variant === "airlines" && (
         <section
-          className="flex flex-col gap-y-8 sm:gap-y-8 sm:flex-row sm:gap-x-6 lg:gap-x-14
-           mx-auto py-12 justify-center px-4 lg:px-8"
+          className="flex flex-col gap-y-8 sm:gap-y-0 sm:flex-row sm:gap-x-6 lg:gap-x-14
+           xl:mx-auto w-full max-w-7xl py-12 justify-center px-4 xl:px-0"
         >
           <AirlineInfoCard
             headerTitleText="Wheels up"
