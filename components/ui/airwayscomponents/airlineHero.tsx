@@ -14,7 +14,7 @@ const AirlineHero = ({
   const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
 
   return (
-    <section className={`airline-hero-image ${showSearch ? "blur-lg" : ""}`}>
+    <section className={`airline-hero-image text-white  ${showSearch ? "blur-lg" : ""}`}>
       <div className="flex flex-col">
         <div className={`relative`}>
           <div aria-hidden="true" className="absolute hidden h-full w-1/2 lg:block" />

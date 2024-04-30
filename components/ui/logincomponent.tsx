@@ -14,12 +14,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { PersonaContext } from "../personacontext";
+import toggleBankVerticalLogo from '@/public/banking/toggleBank_logo_vertical.svg'
+import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_logo_vertical.svg'
+import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
+import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
 
+const variantToImageMap = {
+  bank: toggleBankVerticalLogo.src,
+  airlines: launchAirwaysVerticalLogo.src,
+  market: galaxyMarketplaceVerticalLogo.src,
+  investment: frontierCapitalVerticalLogo.src,
+};
 interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loginUser: any
-  variant: 'bank' | 'airlines' | 'market';
+  variant: 'bank' | 'airlines' | 'market' | 'investment';
   name: string;
 }
 
@@ -107,11 +117,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     }
   }, [activeElement]);
 
-  const variantToImageMap = {
-    bank: "/togglebank-login.svg",
-    airlines: "/launch-airways-login.svg",
-    market: "/galaxy-marketplace-login.svg",
-  };
   const imageSrc = variantToImageMap[variant];
 
   const toggleAddUserDropdown = () => {
@@ -119,35 +124,33 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   };
 
   return (
-    <div className="w-full bg-white font-sohne shadow-xl mx-auto px-4">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black">
+
       <div className="flex flex-col justify-center mx-auto text-center">
-        <img src={imageSrc} width={230} className="py-12 mx-auto" />
+        <img
+          src={imageSrc}
+          className="pt-10 mx-auto pb-4"
+        />
       </div>
       <div className="w-full px-8">
-        <div>
+        
           <Input
             placeholder="Email"
             value={undefined}
             ref={inputRef}
-            className="mb-8 3xl:mb-24 text-base text-zinc-600 rounded-none border-b-1 border-t-0 border-x-0"
+            className="mb-8 outline-none border-0 border-b-2 text-xl"
             onChange={(e) => setDefaultEmail(e.target.value)}
           />
-        </div>
+       
 
         <Button
           onClick={handleLogin}
-          className='mb-2 w-full h-full mx-auto font-sohnelight rounded-none text-base bg-bankdarkblue'
-        >
-          Sign in with SSO
+          className={`mb-4 w-full h-full mx-auto font-audimat rounded-none  text-xl ${variantClass} text-white`}>
+          Login with SSO
         </Button>
 
-        <Dialog
-          onDismiss={() => {
-            setIsAddUserDropdownOpen(false);
-          }}
-          className="z-10"
-        >
-          <DialogTrigger className='mb-4 p-2 w-full h-full mx-auto font-sohnelight rounded-none border-2 border-bankdarkblue bg-transparent text-base'>
+        <Dialog onDismiss={() => { setIsAddUserDropdownOpen(false) }} className="z-10">
+          <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl ${variantClass} text-white hover:bg-gray-800`}>
             Switch SSO User
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
