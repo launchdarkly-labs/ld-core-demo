@@ -216,9 +216,9 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
       </h3>
       <p className="text-center">{tradeCardContent.subtitle}</p>
       <Button
-      className="bg-investmentblue rounded-none"
-        handleClick={() => {
-          setIsOpen(true);
+      className="bg-investmentblue rounded-none cursor-default"
+        onClick={() => {
+          // setIsOpen(true);
           (showInvestmentCardPromoLDFlag && !showInvestmentTradeButtonLDFlag) ||
           showInvestmentCardPromoLDFlag
             ? client?.track("CTA Investment Component Button")
@@ -234,7 +234,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
         modalClassOverride={`w-full h-full lg:w-auto lg:h-auto`}
       >
         {/* {params["*"]?.includes("trade/1") ? ( */}
-          {false ? (
+          {true ? (
           <div
             className={`flex-col  my-[2rem] mx-[2rem]
           lg:flex text-gray-900 `}
@@ -249,7 +249,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
                   <li
                     className={`border-2 border-gray-900 rounded-md p-2 cursor-pointer hover:shadow-lg hover:border-primary ${
                       accountChosen[`${account.split(" ").join("")}`]
-                        ? "bg-primary text-primary-text border-primary"
+                        ? "bg-gradient-investment text-white border-investmentblue"
                         : "bg-white text-gray-900"
                     }`}
                     key={index}
@@ -265,7 +265,7 @@ const TradingTrainingCard = ({ stocks, setRecentTrades, recentTrades } : { stock
             </ul>
 
             <Button
-              classButtonOverride="!bg-button !text-button-text"
+              className="!bg-gradient-investment !text-white"
               href="/investment/trade/2"
               ldTrackMetricString="Investment Account Selected"
             >
