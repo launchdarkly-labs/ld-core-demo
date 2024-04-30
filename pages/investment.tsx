@@ -1,27 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import NavBar from "@/components/ui/navbar";
-import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
-import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
-import { ArrowRight } from "lucide-react";
-import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
-import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
-import { addDays } from "date-fns";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
-import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
-import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
 import InvestmentAccountHeader from "@/components/ui/investmentcomponents/InvestmentAccountHeader";
 
 import { XIcon, ComputerIcon } from "lucide-react";
@@ -34,13 +20,12 @@ import BalanceCard from "@/components/ui/investmentcomponents/BalanceCard";
 import RetirementCard from "@/components/ui/investmentcomponents/RetirementCard";
 import TradingTrainingCard from "@/components/ui/investmentcomponents/TradingTrainingCard";
 import MarketCard from "@/components/ui/investmentcomponents/MarketCard";
-import InvestmentSearchBar from "@/components/ui/investmentcomponents/InvestmentSearchBar";
 import StockRecommendationCard from "@/components/ui/investmentcomponents/StockRecommendationCard";
 import InvestmentDevLog from "@/components/ui/investmentcomponents/InvestmentDevLog";
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
+import {newsData, investmentData, stockData} from '@/components/ui/investmentcomponents/InvestmentData';
 
 export default function Airways() {
-  const { toast } = useToast();
 
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
 
@@ -79,27 +64,27 @@ export default function Airways() {
   useEffect(() => {
     let isFetched = true;
 
-    const stockAPI = async () => {
-      const response = await fetch(
-        "http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks",
-        {
-          method: "get",
-        }
-      );
+    // const stockAPI = async () => {
+    //   const response = await fetch(
+    //     "http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks",
+    //     {
+    //       method: "get",
+    //     }
+    //   );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+    //   }
 
-      return response.json();
-    };
+    //   return response.json();
+    // };
 
     const getStocks = async () => {
-      const apiResponse = await stockAPI();
-      const stockData = apiResponse?.data;
+      // const apiResponse = await stockAPI();
+      // const stockData = apiResponse?.data;
       setIsLoadingStocks(false);
 
-      if (stockData?.status === 429) return;
+      // if (stockData?.status === 429) return;
       const filteredStock = [];
       stockData?.forEach((element) => {
         if (
@@ -130,28 +115,28 @@ export default function Airways() {
 
   useEffect(() => {
     let isFetched = true;
-    const newsAPI = async () => {
-      const response = await fetch(
-        "http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews",
-        {
-          method: "get",
-        }
-      );
+    // const newsAPI = async () => {
+    //   const response = await fetch(
+    //     "http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews",
+    //     {
+    //       method: "get",
+    //     }
+    //   );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+    //   }
 
-      return response.json();
-    };
+    //   return response.json();
+    // };
 
     const getNews = async () => {
-      const apiResponse = await newsAPI();
-      const newsData = apiResponse?.data;
+      // const apiResponse = await newsAPI();
+      // const newsData = apiResponse?.data;
       setIsLoadingNews(false);
 
-      if (newsData?.status === 429) return;
-      setNews(newsData?.splice(0, 5));
+      // if (newsData?.status === 429) return;
+      setNews(newsData?.splice(0, 6));
     };
 
     // if (isLocalAPIMigration) return setIsLoadingNews(false);
@@ -169,26 +154,26 @@ export default function Airways() {
   useEffect(() => {
     let isFetched = true;
 
-    const recentTradeAPI = async () => {
-      const response = await fetch(
-        "http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments",
-        {
-          method: "get",
-        }
-      );
+    // const recentTradeAPI = async () => {
+    //   const response = await fetch(
+    //     "http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments",
+    //     {
+    //       method: "get",
+    //     }
+    //   );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-      }
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+    //   }
 
-      return response.json();
-    };
+    //   return response.json();
+    // };
 
     const getRecentTrade = async () => {
-      const recentTradesData = await recentTradeAPI();
-
+      // const recentTradesData = await recentTradeAPI();
+      const recentTradesData = investmentData;
       setIsLoadingRecentTrades(false);
-      if (recentTradesData?.status === 429) return;
+      // if (recentTradesData?.status === 429) return;
 
       setRecentTrades(recentTradesData);
     };
