@@ -116,7 +116,7 @@ export default function Bank() {
         <div className="mb-8">
           <NavBar variant={"bank"} handleLogout={handleLogout} />
 
-          <main className="w-full px-8 mx-auto max-w-7xl ">
+          <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl ">
             <section
               className={`flex flex-col xl:flex-row py-8 ${
                 federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
