@@ -48,7 +48,7 @@ export function CSNav() {
       <SheetContent className="overflow-y-scroll w-full" side="left">
         <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl">
-            <img src="logo.png" className="w-64" />
+            <img src="ldLogo_black.svg" className="w-64" />
           </SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
