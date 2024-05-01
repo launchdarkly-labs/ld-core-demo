@@ -74,6 +74,7 @@ module.exports = {
         ldstoreheader: "#D1D3D4",
         awsorange: "#FF9900",
         navgray: "#282828",
+        navblue:"#405BFF",
         airlinetext: "#D1D3D4",
         airlinepurple: "#A34FDE",
         airlinepink: "#FF386B",

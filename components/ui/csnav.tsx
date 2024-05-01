@@ -15,6 +15,7 @@ import graphIcon from "@/public/sidenav/graph_icon.svg";
 import personcheckIcon from "@/public/sidenav/person_check_icon.svg";
 import renewIcon from "@/public/sidenav/renew_icon.svg";
 import toggleIcon from "@/public/sidenav/toggle_icon.svg";
+import Link from "next/link";
 
 export function CSNav() {
   const router = useRouter();
@@ -137,13 +138,13 @@ export function CSNav() {
               <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
 
-            <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
+            <Link onClick={goCode} href='/' className="text-2xl text-navblue hover:underline">
               Code Examples
-            </Button>
+            </Link>
 
-            <Button onClick={goArchitecture} variant={"secondary"} className="w-full rounded-xl">
+            <Link onClick={goArchitecture} href='/' className="text-2xl text-navblue hover:underline" >
               Architecture
-            </Button>
+            </Link>
           </div>
         </div>
         <SheetFooter>
