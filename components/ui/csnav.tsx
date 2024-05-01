@@ -40,25 +40,13 @@ export function CSNav() {
     router.push("/marketplace");
   }
 
-  function goMobile() {
-    router.push("/mobile");
-  }
-
-  function goCode() {
-    router.push("/examples");
-  }
-
-  function goArchitecture() {
-    router.push("/architecture");
-  }
-
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Menu size={24} className="text-white cursor-pointer" />
       </SheetTrigger>
-      <SheetContent className="overflow-y-scroll" side="left">
-        <SheetHeader className="mx-4">
+      <SheetContent className="overflow-y-scroll w-full" side="left">
+        <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl">
             <img src="logo.png" className="w-64" />
           </SheetTitle>
@@ -138,11 +126,11 @@ export function CSNav() {
               <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
 
-            <Link onClick={goCode} href='/' className="text-2xl text-navblue hover:underline">
+            <Link href='/examples' className="text-2xl text-navblue hover:underline">
               Code Examples
             </Link>
 
-            <Link onClick={goArchitecture} href='/' className="text-2xl text-navblue hover:underline" >
+            <Link  href='/architecture' className="text-2xl text-navblue hover:underline" >
               Architecture
             </Link>
           </div>
