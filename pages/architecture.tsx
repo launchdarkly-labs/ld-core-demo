@@ -13,7 +13,7 @@ export default function ArchitecturePage() {
       <div className="w-full text-white flex h-20 shadow-2xl">
         <NavBar />
       </div>
-      <div className="text-white w-4/6 mx-auto space-y-2 pb-5">
+      <div className="text-white w-full max-w-7xl mx-auto space-y-2 py-5 px-8 xl:px-0">
         <h1 className="text-4xl font-bold my-3.5 font-['Audimat']">
           Architecture
         </h1>

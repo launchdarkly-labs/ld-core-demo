@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/sheet";
 import { Home, HomeIcon, Menu, Navigation } from "lucide-react";
 import { useRouter } from "next/router";
-import { CSCard } from "../ldcscard";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../card";
 import {

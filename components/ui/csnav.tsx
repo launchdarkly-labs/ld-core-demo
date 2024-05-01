@@ -11,6 +11,11 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
+import graphIcon from "@/public/sidenav/graph_icon.svg";
+import personcheckIcon from "@/public/sidenav/person_check_icon.svg";
+import renewIcon from "@/public/sidenav/renew_icon.svg";
+import toggleIcon from "@/public/sidenav/toggle_icon.svg";
+import Link from "next/link";
 
 export function CSNav() {
   const router = useRouter();
@@ -27,7 +32,6 @@ export function CSNav() {
     router.push("/investment");
   }
 
-
   function goTargeting() {
     router.push("/airways");
   }
@@ -36,37 +40,27 @@ export function CSNav() {
     router.push("/marketplace");
   }
 
-  function goMobile() {
-    router.push("/mobile");
-  }
-
-  function goCode() {
-    router.push("/examples");
-  }
-
-  function goArchitecture() {
-    router.push("/architecture");
-  }
-
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Menu size={24} className="text-white cursor-pointer" />
       </SheetTrigger>
-      <SheetContent className="overflow-y-scroll" side="left">
-        <SheetHeader className="mx-4">
+      <SheetContent className="overflow-y-scroll w-full" side="left">
+        <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl">
-            <img src='logo.png' className='w-64' />
+            <img src="ldLogo_black.svg" className="w-64" />
           </SheetTitle>
-          
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid items-center gap-4">
-            <div>
-              <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
-                Go Home
-              </Button>
+          <div className="my-2">
+              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Core Service Demos</h3>
+              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
+            <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
+              Go Home
+            </Button>
+
             <motion.div
               initial={{ x: -100, opacity: 0 }}
               whileHover={{ scale: 1.05 }}
@@ -76,8 +70,9 @@ export function CSNav() {
               <div onClick={goRelease}>
                 <CSCard
                   className="bg-gradient-releases cursor-pointer"
-                  herotext="Navigate to Release Confidently and Consistently"
-                  
+                  cardTitle="De-risked Releases"
+                  cardSubtitle="Let developers move faster and more confidently with feature management."
+                  icon={toggleIcon}
                 />
               </div>
             </motion.div>
@@ -90,10 +85,11 @@ export function CSNav() {
               <div onClick={goRemediate}>
                 <CSCard
                   className="bg-gradient-investment cursor-pointer"
-                  herotext="Navigate to Automatically Remediate"
+                  cardTitle="Automatically Remediate"
+                  cardSubtitle="Uncover and remediate software errors before they become customer issues."
+                  icon={renewIcon}
                 />
               </div>
-              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -104,10 +100,11 @@ export function CSNav() {
               <div onClick={goTargeting}>
                 <CSCard
                   className="bg-gradient-targeting cursor-pointer"
-                  herotext="Navigate to Targeted and Personalized Experiences"
+                  cardTitle="Targeted Experiences"
+                  cardSubtitle="Serve features and experiences tailored to any audience."
+                  icon={personcheckIcon}
                 />
               </div>
-              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -118,20 +115,24 @@ export function CSNav() {
               <div onClick={goExp}>
                 <CSCard
                   className="bg-gradient-experimentation cursor-pointer"
-                  herotext="Navigate to Product Experimentation"
+                  cardTitle="Product Experimentation"
+                  cardSubtitle="Continuously measure and improve the business value of digital products."
+                  icon={graphIcon}
                 />
               </div>
             </motion.div>
-            <div>
-              <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
-                Code Examples
-              </Button>
+            <div className="my-2">
+              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Explore More</h3>
+              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
-            <div>
-              <Button onClick={goArchitecture} variant={"secondary"} className="w-full rounded-xl">
-                Architecture
-              </Button>
-            </div>
+
+            <Link href='/examples' className="text-2xl text-navblue hover:underline">
+              Code Examples
+            </Link>
+
+            <Link  href='/architecture' className="text-2xl text-navblue hover:underline" >
+              Architecture
+            </Link>
           </div>
         </div>
         <SheetFooter>
