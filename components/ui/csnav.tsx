@@ -31,7 +31,6 @@ export function CSNav() {
     router.push("/investment");
   }
 
-
   function goTargeting() {
     router.push("/airways");
   }
@@ -60,17 +59,19 @@ export function CSNav() {
       <SheetContent className="overflow-y-scroll" side="left">
         <SheetHeader className="mx-4">
           <SheetTitle className="font-sohne text-2xl">
-            <img src='logo.png' className='w-64' />
+            <img src="logo.png" className="w-64" />
           </SheetTitle>
-          
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid items-center gap-4">
-            <div>
-              <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
-                Go Home
-              </Button>
+          <div className="my-2">
+              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Core Service Demos</h3>
+              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
+            <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
+              Go Home
+            </Button>
+
             <motion.div
               initial={{ x: -100, opacity: 0 }}
               whileHover={{ scale: 1.05 }}
@@ -100,7 +101,6 @@ export function CSNav() {
                   icon={renewIcon}
                 />
               </div>
-              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -116,7 +116,6 @@ export function CSNav() {
                   icon={personcheckIcon}
                 />
               </div>
-              
             </motion.div>
             <motion.div
               initial={{ x: -100, opacity: 0 }}
@@ -133,16 +132,18 @@ export function CSNav() {
                 />
               </div>
             </motion.div>
-            <div>
-              <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
-                Code Examples
-              </Button>
+            <div className="my-2">
+              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Explore More</h3>
+              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
             </div>
-            <div>
-              <Button onClick={goArchitecture} variant={"secondary"} className="w-full rounded-xl">
-                Architecture
-              </Button>
-            </div>
+
+            <Button onClick={goCode} variant={"secondary"} className="w-full rounded-xl">
+              Code Examples
+            </Button>
+
+            <Button onClick={goArchitecture} variant={"secondary"} className="w-full rounded-xl">
+              Architecture
+            </Button>
           </div>
         </div>
         <SheetFooter>
