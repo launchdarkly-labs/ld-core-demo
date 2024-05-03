@@ -24,9 +24,6 @@ export default function LaunchSignUp() {
   const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
 
   const {
-    isLoggedIn,
-    setIsLoggedIn,
-    loginUser,
     logoutUser,
     enrolledInLaunchClub,
     setEnrolledInLaunchClub,

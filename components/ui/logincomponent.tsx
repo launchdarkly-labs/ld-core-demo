@@ -8,7 +8,6 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -36,7 +35,7 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] = useState('jenn@launchmail.io');
+  const [defaultEmail, setDefaultEmail] = useState('user@launchmail.io');
   const variantClass = getVariantClassName(variant);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
   const { personas, getPersonas } = useContext(PersonaContext);
@@ -70,9 +69,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       role = activePersona.personarole;
     }
     else {
-    email = defaultEmail;
-    name = email.split('@')[0];
-    name = name.charAt(0).toUpperCase() + name.slice(1);
+      email = defaultEmail;
+      name = email.split('@')[0];
+      name = name.charAt(0).toUpperCase() + name.slice(1);
+      role = 'Standard'
     }
     loginUser(name, email, role);
   };
@@ -104,18 +104,18 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
         />
       </div>
       <div className="w-full px-8">
-        
-          <Input
-            placeholder="Email"
-            value={undefined}
-            ref={inputRef}
-            className="mb-8 outline-none border-0 border-b-2 text-xl"
-            onChange={(e) => setDefaultEmail(e.target.value)}
-          />
-       
+
+      <Input
+          placeholder="Email"
+          value={undefined}
+          ref={inputRef}
+          required
+          className="mb-8 outline-none border-0 border-b-2 text-xl"
+          onChange={(e) => setDefaultEmail(e.target.value)}
+        />
 
         <Button
-          onClick={handleLogin}
+          onClick={() => defaultEmail && handleLogin()}
           className={`mb-4 w-full h-full mx-auto font-audimat rounded-none  text-xl ${variantClass} text-white`}>
           Login with SSO
         </Button>
@@ -139,11 +139,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                       <div className="flex flex-col items-center" key={item.id}>
                         <img
                           src={item.personaimage}
-                          className={`w-24 rounded-full mb-4 ${
-                            activeElement === item.personaname
+                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaname
                               ? "border-4 border-black"
                               : ""
-                          }`}
+                            }`}
                           onClick={() =>
                             handleSetActive(item.personaname, item.personaemail)
                           }
@@ -213,12 +212,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                                   key={imageName}
                                   src={`/personas/${imageName}`}
                                   alt={imageName}
-                                  className={`w-24 h-24 rounded-full cursor-pointer ${
-                                    newPersona.image ===
-                                    `/personas/${imageName}`
+                                  className={`w-24 h-24 rounded-full cursor-pointer ${newPersona.image ===
+                                      `/personas/${imageName}`
                                       ? "border-4 border-blue-500"
                                       : ""
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     setNewPersona({
                                       ...newPersona,

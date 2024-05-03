@@ -38,7 +38,7 @@ export default function Airways() {
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn,logoutUser } = useContext(LoginContext);
 
   function setAirport() {
     setShowSearch(true);

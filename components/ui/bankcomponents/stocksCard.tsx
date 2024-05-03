@@ -39,7 +39,7 @@ export const StocksComponent: React.FC = () => {
   let { stocksAPI } = useFlags();
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
+  const { user, email, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
@@ -204,9 +204,6 @@ export const StocksComponent: React.FC = () => {
 
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
-    if (runDemo == true) {
-      loginUser(loggedUser, loggedEmail);
-    }
   };
 
   return (

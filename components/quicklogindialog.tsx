@@ -30,7 +30,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(true);
 
   const personaClicked = (persona: Persona) => {
-    loginUser(persona.personaname, persona.personaemail);
+    loginUser(persona.personaname, persona.personaemail, persona.personarole);
   };
   return (
     <>

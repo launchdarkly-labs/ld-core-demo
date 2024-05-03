@@ -29,22 +29,24 @@ export const PersonaProvider = ({ children }) => {
         personaname: "Cody",
         personatype: "Standard User",
         personaimage: "standard.jpg",
-        personarole: "Standard",
         personaemail: "cody@launchmail.io",
+        personarole: "Standard"
+
       },
       {
         personaname: "Alysha",
         personatype: "Beta User",
         personaimage: "beta.png",
-        personarole: "Beta",
         personaemail: "alysha@launchmail.io",
+        personarole: "Beta"
+
       },
       {
         personaname: "Jenn",
         personatype: "Developer",
         personaimage: "woman.png",
-        personarole: "Developer",
         personaemail: "jenn@launchmail.io",
+        personarole: "Developer"
       },
     ]; 
     setPersonas(starterPersonas);
