@@ -1,21 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CreditCard, Menu, Navigation } from "lucide-react";
+import { CreditCard} from "lucide-react";
 import { useRouter } from "next/router";
-import { CSCard } from "../ldcscard";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "../card";
 import {
   Table,
   TableBody,
@@ -25,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
 
 type Transaction = {

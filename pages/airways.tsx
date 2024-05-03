@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";

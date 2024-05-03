@@ -17,7 +17,6 @@ import {
 } from "chart.js";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
-import { v4 as uuidv4 } from "uuid";
 import InfinityLoader from "../infinityloader";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);

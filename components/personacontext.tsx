@@ -1,5 +1,5 @@
 // PersonaContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 
 export const PersonaContext = createContext<PersonaContextType | null>(null);
 
