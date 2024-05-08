@@ -95,7 +95,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   };
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8">
 
       <div className="flex flex-col justify-center mx-auto text-center">
         <img
@@ -103,16 +103,15 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
           className="pt-10 mx-auto pb-4"
         />
       </div>
-      <div className="w-full px-8">
-
-      <Input
-          placeholder="Email"
-          value={undefined}
-          ref={inputRef}
-          required
-          className="mb-8 outline-none border-0 border-b-2 text-xl"
-          onChange={(e) => setDefaultEmail(e.target.value)}
-        />
+      <div className="w-full">
+        
+          <Input
+            placeholder="Email"
+            value={undefined}
+            ref={inputRef}
+            className="mb-8 outline-none border-0 border-b-2 text-xl"
+            onChange={(e) => setDefaultEmail(e.target.value)}
+          />
 
         <Button
           onClick={() => defaultEmail && handleLogin()}
@@ -249,15 +248,15 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex flex-row justify-between font-sohnelight font-extralight sm:flex-row px-4 pb-8 text-xs">
+      <div className="flex flex-col justify-between font-sohnelight font-extralight sm:flex-row text-xs">
         <div className="flex pb-3 text-blue-600">
           <p>Forgot Password?</p>
         </div>
         <div>
           <div className="flex">
-            <p>
+          <p className="flex flex-col sm:flex-row justify-start">
               Don't have an account?{" "}
-              <a href={window.location.href} className="text-blue-600 pl-1">
+              <a href={window.location.href} className="text-blue-600 ml-0 sm:ml-1">
                 {" "}
                 Sign Up
               </a>

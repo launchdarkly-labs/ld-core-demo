@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/sheet";
 import { CreditCard} from "lucide-react";
 import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "../card";
+
 import {
   Table,
   TableBody,
