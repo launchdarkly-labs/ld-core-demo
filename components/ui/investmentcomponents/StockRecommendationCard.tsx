@@ -193,49 +193,54 @@ const StockRecommendationCard = ({
         //   showMigration={true}
         //   showViewMore={true}
         // />
-      
+
         <>
-        <h3 className=" text-lg font-sohnelight">Recommended Stocks to Buy</h3>
-        <Table className="font-sohnelight my-2">
-          {/* <TableCaption>Your Items</TableCaption> */}
-          <TableHeader>
-            <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Price ($)</TableHead>
-              <TableHead>Gain/Loss (%)</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {stocks.map((stock, index) => {
-              const percentageChange = formatMoneyTrailingZero(
-                Math.round((stock.c - stock.o) * 100) / 100
-              );
-              const position = percentageChange.toString().includes("-") ? "negative" : "positive";
-              return (
-                <TableRow key={index}>
-                  <TableCell className="">
-                    <div
-                      className="text-left stock-icon-group flex items-center gap-x-2"
-                      data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
-                    >
+          <h3 className=" text-lg font-sohnelight">Recommended Stocks to Buy</h3>
+          <Table className="font-sohnelight my-2">
+            {/* <TableCaption>Your Items</TableCaption> */}
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead>Price ($)</TableHead>
+                <TableHead>Gain/Loss (%)</TableHead>
+                <TableHead>Gain/Loss (%)</TableHead>
+                <TableHead>Gain/Loss (%)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {stocks.map((stock, index) => {
+                const percentageChange = formatMoneyTrailingZero(
+                  Math.round((stock.c - stock.o) * 100) / 100
+                );
+                const position = percentageChange.toString().includes("-")
+                  ? "negative"
+                  : "positive";
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="flex items-center gap-y-2">
                       <img
                         src={STOCK_LOGO_IMAGE[stock?.T].src}
                         alt={stock?.T}
-                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm object-fit"
                       />
 
                       <span>{stock?.T}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="">${stock.c}</TableCell>
-                  <TableCell className={`${investmentColors[position]}`}>
-                    {percentageChange}%
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                    </TableCell>
+                    <TableCell className="">${stock.c}</TableCell>
+                    <TableCell className={`${investmentColors[position]}`}>
+                      {percentageChange}%
+                    </TableCell>
+                    <TableCell className={`${investmentColors[position]}`}>
+                      {percentageChange}%
+                    </TableCell>
+                    <TableCell className={`${investmentColors[position]}`}>
+                      {percentageChange}%
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </>
       ) : (
         "Coming Soon"
