@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -24,14 +24,16 @@ import StockRecommendationCard from "@/components/ui/investmentcomponents/StockR
 import InvestmentDevLog from "@/components/ui/investmentcomponents/InvestmentDevLog";
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
 import {newsData, investmentData, stockData} from '@/components/ui/investmentcomponents/InvestmentData';
+import InfinityLoader from "@/components/ui/infinityloader";
 
 export default function Airways() {
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext , logoutUser } = useContext(LoginContext);
 
   const ldclient = useLDClient();
 
   //TODO: either use this or the one in login.js
+  //TODO: move this into navbar
   function handleLogout() {
     logoutUser();
     const context: any = ldclient?.getContext();
@@ -64,27 +66,9 @@ export default function Airways() {
   useEffect(() => {
     let isFetched = true;
 
-    // const stockAPI = async () => {
-    //   const response = await fetch(
-    //     "http://toggleapp-aws.launchdarklydemos.com/api/investment/getStocks",
-    //     {
-    //       method: "get",
-    //     }
-    //   );
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-    //   }
-
-    //   return response.json();
-    // };
-
     const getStocks = async () => {
-      // const apiResponse = await stockAPI();
-      // const stockData = apiResponse?.data;
       setIsLoadingStocks(false);
 
-      // if (stockData?.status === 429) return;
       const filteredStock = [];
       stockData?.forEach((element) => {
         if (
@@ -115,24 +99,8 @@ export default function Airways() {
 
   useEffect(() => {
     let isFetched = true;
-    // const newsAPI = async () => {
-    //   const response = await fetch(
-    //     "http://toggleapp-aws.launchdarklydemos.com/api/investment/getNews",
-    //     {
-    //       method: "get",
-    //     }
-    //   );
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-    //   }
-
-    //   return response.json();
-    // };
 
     const getNews = async () => {
-      // const apiResponse = await newsAPI();
-      // const newsData = apiResponse?.data;
       setIsLoadingNews(false);
 
       // if (newsData?.status === 429) return;
@@ -154,26 +122,9 @@ export default function Airways() {
   useEffect(() => {
     let isFetched = true;
 
-    // const recentTradeAPI = async () => {
-    //   const response = await fetch(
-    //     "http://toggleapp-aws.launchdarklydemos.com/api/database/getInvestments",
-    //     {
-    //       method: "get",
-    //     }
-    //   );
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
-    //   }
-
-    //   return response.json();
-    // };
-
     const getRecentTrade = async () => {
-      // const recentTradesData = await recentTradeAPI();
       const recentTradesData = investmentData;
       setIsLoadingRecentTrades(false);
-      // if (recentTradesData?.status === 429) return;
 
       setRecentTrades(recentTradesData);
     };
@@ -210,6 +161,193 @@ export default function Airways() {
     setIsOpen(false);
   };
 
+
+  const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
+
+  const client = useLDClient();
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const [runDemo, setRunDemo] = useState(false);
+  const [loggedUser, setInitialUser] = useState();
+  const [loggedEmail, setInitialEmail] = useState();
+
+  const generateInitialData = (initialValue) => {
+    const data = [];
+    const startTime = new Date();
+    startTime.setMinutes(startTime.getMinutes() - 10);
+
+    for (let i = 0; i < 10; i++) {
+      startTime.setMinutes(startTime.getMinutes() + 1);
+      const value = Math.round(initialValue + (Math.random() - 0.5) * 10);
+      data.push({
+        time: startTime.toLocaleTimeString(),
+        value: value,
+        direction: null,
+      });
+    }
+
+    return data;
+  };
+
+  const generateChartData = (stockData) => {
+    const lastTenDataPoints = stockData.slice(-10);
+    const secondLastValue =
+      lastTenDataPoints.length > 1
+        ? lastTenDataPoints[lastTenDataPoints.length - 2].value
+        : lastTenDataPoints[0].value;
+    const lastValue = lastTenDataPoints[lastTenDataPoints.length - 1].value;
+    const directionColor =
+      lastValue > secondLastValue
+        ? "lightgreen"
+        : lastValue < secondLastValue
+          ? "red"
+          : "rgba(255, 255, 255, 0.5)";
+
+    return {
+      labels: lastTenDataPoints.map((dataPoint) => dataPoint.time),
+      datasets: [
+        {
+          data: lastTenDataPoints.map((dataPoint) => dataPoint.value),
+          borderColor: directionColor,
+          backgroundColor: "rgba(255, 255, 255, 0)",
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.2,
+        },
+      ],
+    };
+  };
+
+  const [stocksz, setStocksz] = useState([
+    {
+      ticker: "LD",
+      name: "LaunchDarkly",
+      data: generateInitialData(1025),
+      image: "ld.png",
+    },
+    {
+      ticker: "AAPL",
+      name: "Apple Inc.",
+      data: generateInitialData(190),
+      image: "apple.png",
+    },
+    {
+      ticker: "TSLA",
+      name: "Tesla",
+      data: generateInitialData(205),
+      image: "tesla.png",
+    },
+    {
+      ticker: "NVDA",
+      name: "Nvidia",
+      data: generateInitialData(612),
+      image: "nvidia.png",
+    },
+  ]);
+
+  const elapsedTimeRef = useRef(elapsedTime);
+  useEffect(() => {
+    elapsedTimeRef.current = elapsedTime;
+  }, [elapsedTime]);
+
+  useEffect(() => {
+    if (!loggedUser) {
+      setInitialUser(user);
+      setInitialEmail(email);
+    }
+
+    let loginInterval: NodeJS.Timeout | null = null;
+    let errorInterval: NodeJS.Timeout | null = null;
+    if (runDemo) {
+      loginInterval = setInterval(() => {
+        setElapsedTime((prevTime) => {
+          const newTime = prevTime + 1;
+          if (newTime % 1 === 0) {
+            updateAudienceContext();
+          }
+          return newTime;
+        });
+      }, 100);
+
+      errorInterval = setInterval(async () => {
+        let dynamicValue;
+        if (client) {
+          if (releaseNewInvestmentStockApi) {
+            //75% chance of hitting errors
+            if (Math.random() < 0.75) {
+              client.track("stocks-api-error-rates");
+              await client.flush();
+              console.log("this hits here")
+            }
+            dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
+            console.log("dynamicValue 1", dynamicValue);
+            client.track("stock-api-latency", undefined, dynamicValue);
+            await client.flush();
+          } else {
+            //25% chance of hitting errors
+            if (Math.random() < 0.25) {
+              client.track("stocks-api-error-rates");
+              await client.flush();
+              console.log("this hits here 2")
+            }
+            dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
+            console.log("dynamicValue 2", dynamicValue);
+            client.track("stock-api-latency", undefined, dynamicValue);
+            await client.flush();
+          }
+        }
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 10);
+    }
+    const stocksinterval = setInterval(() => {
+      const updatedStocks = stocksz.map((stock) => {
+        let newValue = 0;
+        const lastValue = stock.data[stock.data.length - 1].value;
+        if (stock.ticker == "TSLA") {
+          newValue = Math.floor(Math.random() * (200 - 210 + 1)) + 205;
+        }
+        if (stock.ticker == "AAPL") {
+          newValue = Math.floor(Math.random() * (185 - 196 + 1)) + 190;
+        }
+        if (stock.ticker == "LD") {
+          newValue = Math.floor(Math.random() * (1000 - 1050 + 1)) + 1025;
+        }
+        if (stock.ticker == "NVDA") {
+          newValue = Math.floor(Math.random() * (600 - 620 + 1)) + 612;
+        }
+        const direction = newValue > lastValue ? "up" : newValue < lastValue ? "down" : null;
+        const newTime = new Date().toLocaleTimeString();
+        const newDataPoint = { time: newTime, value: newValue, direction };
+
+        return {
+          ...stock,
+          data: [...stock.data, newDataPoint],
+        };
+      });
+
+      setStocksz(updatedStocks);
+    }, 3000);
+
+    return () => {
+      clearInterval(stocksinterval);
+      if (runDemo) {
+        if (loginInterval !== null) clearInterval(loginInterval);
+        if (errorInterval !== null) clearInterval(errorInterval);
+      }
+    };
+  }, [client, releaseNewInvestmentStockApi, runDemo]);
+
+  const toggleRunDemo = () => {
+    setRunDemo((prev) => !prev);
+    if (runDemo == true) {
+      loginUser(loggedUser, loggedEmail);
+    }
+  };
+
+
+
+
+
   return (
     <>
       <Toaster />
@@ -225,6 +363,18 @@ export default function Airways() {
           >
             <NavBar variant={"investment"} handleLogout={handleLogout} />
             <InvestmentAccountHeader />
+            {runDemo ? (
+        <div className="flex justify-center items-center h-52">
+          <div className=" font-bold font-sohne justify-center items-center text-xl">
+            Generating Data
+            <br />
+            <div className="flex items-center mt-2 justify-center">
+              <InfinityLoader />
+            </div>
+          </div>
+        </div>
+      ) : releaseNewInvestmentStockApi ? <button onClick={()=>toggleRunDemo()}>fwefaew</button> : null}
+      
             <div className="my-8 " data-testid="salient-accounts-test-id">
               <div className="mx-auto max-w-7xl font-sohnelight ">
                 <div
