@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/table";
 import { formatMoneyTrailingZero } from "@/utils/utils";
 import { investmentColors } from "@/utils/styleUtils";
+import { InfoIcon, Brain } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 const dummyStocks = [
   {
     T: "AMZN",
@@ -178,7 +182,7 @@ const StockRecommendationCard = ({
             </div>
           </div>
         </div>
-      ) : releaseNewInvestmentStockApi ? (
+      ) : (
         // <StockCard
         //   title="Recommended Stocks to Buy"
         //   columnHeaders={[
@@ -203,8 +207,9 @@ const StockRecommendationCard = ({
                 <TableHead>Symbol</TableHead>
                 <TableHead>Price ($)</TableHead>
                 <TableHead>Gain/Loss (%)</TableHead>
-                <TableHead>Gain/Loss (%)</TableHead>
-                <TableHead>Gain/Loss (%)</TableHead>
+                {releaseNewInvestmentStockApi ? (
+                  <TableHead>AI Assisted Information</TableHead>
+                ) : null}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -230,20 +235,22 @@ const StockRecommendationCard = ({
                     <TableCell className={`${investmentColors[position]}`}>
                       {percentageChange}%
                     </TableCell>
-                    <TableCell className={`${investmentColors[position]}`}>
-                      {percentageChange}%
-                    </TableCell>
-                    <TableCell className={`${investmentColors[position]}`}>
-                      {percentageChange}%
-                    </TableCell>
+                    {releaseNewInvestmentStockApi ? (
+                      <TableCell className={`text-investmentgrey `}>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <InfoIcon className="cursor-pointer text-investmentblue animate-pulse hover:animate-none" />
+                          </PopoverTrigger>
+                          <PopoverContent>Some AI Gen Info</PopoverContent>
+                        </Popover>
+                      </TableCell>
+                    ) : null}
                   </TableRow>
                 );
               })}
             </TableBody>
           </Table>
         </>
-      ) : (
-        "Coming Soon"
       )}
     </>
   );
