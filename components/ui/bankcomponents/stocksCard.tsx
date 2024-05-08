@@ -172,37 +172,10 @@ export const StocksComponent: React.FC = () => {
         setElapsedTime((prevTime) => prevTime + 1);
       }, 10);
     }
-    const stocksinterval = setInterval(() => {
-      const updatedStocks = stocks.map((stock) => {
-        let newValue = 0;
-        const lastValue = stock.data[stock.data.length - 1].value;
-        if (stock.ticker == "TSLA") {
-          newValue = Math.floor(Math.random() * (200 - 210 + 1)) + 205;
-        }
-        if (stock.ticker == "AAPL") {
-          newValue = Math.floor(Math.random() * (185 - 196 + 1)) + 190;
-        }
-        if (stock.ticker == "LD") {
-          newValue = Math.floor(Math.random() * (1000 - 1050 + 1)) + 1025;
-        }
-        if (stock.ticker == "NVDA") {
-          newValue = Math.floor(Math.random() * (600 - 620 + 1)) + 612;
-        }
-        const direction = newValue > lastValue ? "up" : newValue < lastValue ? "down" : null;
-        const newTime = new Date().toLocaleTimeString();
-        const newDataPoint = { time: newTime, value: newValue, direction };
 
-        return {
-          ...stock,
-          data: [...stock.data, newDataPoint],
-        };
-      });
-
-      setStocks(updatedStocks);
-    }, 3000);
 
     return () => {
-      clearInterval(stocksinterval);
+      // clearInterval(stocksinterval);
       if (runDemo) {
         if (loginInterval !== null) clearInterval(loginInterval);
         if (errorInterval !== null) clearInterval(errorInterval);

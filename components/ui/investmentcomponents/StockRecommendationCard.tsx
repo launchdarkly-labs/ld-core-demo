@@ -3,7 +3,18 @@ import InfinityLoader from "@/components/ui/infinityloader";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import StockCard from "./StockCard";
 import LoginContext from "@/utils/contexts/login";
-
+import { STOCK_LOGO_IMAGE } from "@/utils/constants";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatMoneyTrailingZero } from "@/utils/utils";
+import { investmentColors } from "@/utils/styleUtils";
 const dummyStocks = [
   {
     T: "AMZN",
@@ -43,6 +54,8 @@ const dummyStocks = [
 //   },
 // ];
 
+//TODO: have values constantly change
+//TODO: have change in stocks per reload?
 const StockRecommendationCard = ({
   stocks,
   isLoadingStocks,
@@ -65,14 +78,12 @@ const StockRecommendationCard = ({
   }
 
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
-
+  stocks = dummyStocks;
+  console.log(stocks);
   const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
     useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
-
-
-  const {stocksAPI} = useFlags();
 
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -80,80 +91,6 @@ const StockRecommendationCard = ({
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
-
-  // const generateInitialData = (initialValue) => {
-  //   const data = [];
-  //   const startTime = new Date();
-  //   startTime.setMinutes(startTime.getMinutes() - 10);
-
-  //   for (let i = 0; i < 10; i++) {
-  //     startTime.setMinutes(startTime.getMinutes() + 1);
-  //     const value = Math.round(initialValue + (Math.random() - 0.5) * 10);
-  //     data.push({
-  //       time: startTime.toLocaleTimeString(),
-  //       value: value,
-  //       direction: null,
-  //     });
-  //   }
-
-  //   return data;
-  // };
-
-  // const generateChartData = (stockData) => {
-  //   const lastTenDataPoints = stockData.slice(-10);
-  //   const secondLastValue =
-  //     lastTenDataPoints.length > 1
-  //       ? lastTenDataPoints[lastTenDataPoints.length - 2].value
-  //       : lastTenDataPoints[0].value;
-  //   const lastValue = lastTenDataPoints[lastTenDataPoints.length - 1].value;
-  //   const directionColor =
-  //     lastValue > secondLastValue
-  //       ? "lightgreen"
-  //       : lastValue < secondLastValue
-  //         ? "red"
-  //         : "rgba(255, 255, 255, 0.5)";
-
-  //   return {
-  //     labels: lastTenDataPoints.map((dataPoint) => dataPoint.time),
-  //     datasets: [
-  //       {
-  //         data: lastTenDataPoints.map((dataPoint) => dataPoint.value),
-  //         borderColor: directionColor,
-  //         backgroundColor: "rgba(255, 255, 255, 0)",
-  //         borderWidth: 2,
-  //         pointRadius: 0,
-  //         tension: 0.2,
-  //       },
-  //     ],
-  //   };
-  // };
-
-  // const [stocksz, setStocksz] = useState([
-  //   {
-  //     ticker: "LD",
-  //     name: "LaunchDarkly",
-  //     data: generateInitialData(1025),
-  //     image: "ld.png",
-  //   },
-  //   {
-  //     ticker: "AAPL",
-  //     name: "Apple Inc.",
-  //     data: generateInitialData(190),
-  //     image: "apple.png",
-  //   },
-  //   {
-  //     ticker: "TSLA",
-  //     name: "Tesla",
-  //     data: generateInitialData(205),
-  //     image: "tesla.png",
-  //   },
-  //   {
-  //     ticker: "NVDA",
-  //     name: "Nvidia",
-  //     data: generateInitialData(612),
-  //     image: "nvidia.png",
-  //   },
-  // ]);
 
   const elapsedTimeRef = useRef(elapsedTime);
   useEffect(() => {
@@ -210,37 +147,8 @@ const StockRecommendationCard = ({
         setElapsedTime((prevTime) => prevTime + 1);
       }, 10);
     }
-    // const stocksinterval = setInterval(() => {
-    //   const updatedStocks = stocksz.map((stock) => {
-    //     let newValue = 0;
-    //     const lastValue = stock.data[stock.data.length - 1].value;
-    //     if (stock.ticker == "TSLA") {
-    //       newValue = Math.floor(Math.random() * (200 - 210 + 1)) + 205;
-    //     }
-    //     if (stock.ticker == "AAPL") {
-    //       newValue = Math.floor(Math.random() * (185 - 196 + 1)) + 190;
-    //     }
-    //     if (stock.ticker == "LD") {
-    //       newValue = Math.floor(Math.random() * (1000 - 1050 + 1)) + 1025;
-    //     }
-    //     if (stock.ticker == "NVDA") {
-    //       newValue = Math.floor(Math.random() * (600 - 620 + 1)) + 612;
-    //     }
-    //     const direction = newValue > lastValue ? "up" : newValue < lastValue ? "down" : null;
-    //     const newTime = new Date().toLocaleTimeString();
-    //     const newDataPoint = { time: newTime, value: newValue, direction };
-
-    //     return {
-    //       ...stock,
-    //       data: [...stock.data, newDataPoint],
-    //     };
-    //   });
-
-    //   setStocksz(updatedStocks);
-    // }, 3000);
 
     return () => {
-      // clearInterval(stocksinterval);
       if (runDemo) {
         if (loginInterval !== null) clearInterval(loginInterval);
         if (errorInterval !== null) clearInterval(errorInterval);
@@ -254,9 +162,9 @@ const StockRecommendationCard = ({
       loginUser(loggedUser, loggedEmail);
     }
   };
-console.log(releaseNewInvestmentStockApi)
-const context =  client?.getContext();
-console.log("loginUser",context)
+  console.log(releaseNewInvestmentStockApi);
+  const context = client?.getContext();
+  console.log("loginUser", context);
   return (
     <>
       <button onClick={() => toggleRunDemo()}>fwefaew</button>
@@ -271,20 +179,64 @@ console.log("loginUser",context)
           </div>
         </div>
       ) : releaseNewInvestmentStockApi ? (
-        <StockCard
-          title="Recommended Stocks to Buy"
-          columnHeaders={[
-            "Symbol",
-            "Price ($)",
-            showCloudMigrationTwoStagesLDFlag ? "Gain/Loss (%)" : null,
-            // showCloudMigrationTwoStagesLDFlag ? "Daily Trade Volume" : null,
-          ]}
-          stocks={stocks}
-          isLoadingStocks={isLoadingStocks}
-          data-testid={"recommended-stocks"}
-          showMigration={showCloudMigrationTwoStagesLDFlag}
-          showViewMore={true}
-        />
+        // <StockCard
+        //   title="Recommended Stocks to Buy"
+        //   columnHeaders={[
+        //     "Symbol",
+        //     "Price ($)",
+        //     showCloudMigrationTwoStagesLDFlag ? "Gain/Loss (%)" : null,
+        //     showCloudMigrationTwoStagesLDFlag ? "Daily Trade Volume" : null,
+        //   ]}
+        //   stocks={stocks}
+        //   isLoadingStocks={isLoadingStocks}
+        //   data-testid={"recommended-stocks"}
+        //   showMigration={true}
+        //   showViewMore={true}
+        // />
+      
+        <>
+        <h3 className=" text-lg font-sohnelight">Recommended Stocks to Buy</h3>
+        <Table className="font-sohnelight my-2">
+          {/* <TableCaption>Your Items</TableCaption> */}
+          <TableHeader>
+            <TableRow>
+              <TableHead>Symbol</TableHead>
+              <TableHead>Price ($)</TableHead>
+              <TableHead>Gain/Loss (%)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {stocks.map((stock, index) => {
+              const percentageChange = formatMoneyTrailingZero(
+                Math.round((stock.c - stock.o) * 100) / 100
+              );
+              const position = percentageChange.toString().includes("-") ? "negative" : "positive";
+              return (
+                <TableRow key={index}>
+                  <TableCell className="">
+                    <div
+                      className="text-left stock-icon-group flex items-center gap-x-2"
+                      data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
+                    >
+                      <img
+                        src={STOCK_LOGO_IMAGE[stock?.T].src}
+                        alt={stock?.T}
+                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                      />
+
+                      <span>{stock?.T}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="">${stock.c}</TableCell>
+                  <TableCell className={`${investmentColors[position]}`}>
+                    {percentageChange}%
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+        </>
       ) : (
         "Coming Soon"
       )}
