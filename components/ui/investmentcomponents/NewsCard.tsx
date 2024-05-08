@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { BounceLoader } from "react-spinners";
 import { truncateString } from "@/utils/utils";
+
 const time = new Date().getTime();
 const date = format(new Date(time), "MMM d, yyyy");
 

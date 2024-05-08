@@ -74,7 +74,7 @@ const StockRecommendationCard = ({
       }
     });
 
-    stocks = recommendedStocks;
+    // stocks = recommendedStocks;
   }
 
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit

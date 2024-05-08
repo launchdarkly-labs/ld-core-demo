@@ -1,7 +1,20 @@
 import React, { useContext } from "react";
 
 import StockCard from "./StockCard";
-import { formatMoneyTrailingZero } from "@/utils/utils"
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatMoneyTrailingZero } from "@/utils/utils";
+import { investmentColors } from "@/utils/styleUtils";
+import { STOCK_LOGO_IMAGE } from "@/utils/constants";
+import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 
 const dummyStocks = [
   {
@@ -54,17 +67,20 @@ const dummyStocks = [
   },
 ];
 
-const RecentTradesCard = ({ recentTrades, isLoadingRecentTrades } : { recentTrades: any, isLoadingRecentTrades: boolean }) => {
-
+const RecentTradesCard = ({
+  recentTrades,
+  isLoadingRecentTrades,
+}: {
+  recentTrades: any;
+  isLoadingRecentTrades: boolean;
+}) => {
   // const showInvestmentDatabaseMigrationSixStages =
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("rampdown") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("live") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("shadow");
 
-  const showInvestmentDatabaseMigrationSixStages =
-  true;
-
+  const showInvestmentDatabaseMigrationSixStages = true;
 
   if (recentTrades?.length === 0 || recentTrades === undefined) recentTrades = dummyStocks; //to deal with rate limit
 
@@ -99,20 +115,66 @@ const RecentTradesCard = ({ recentTrades, isLoadingRecentTrades } : { recentTrad
   }
 
   return (
-    <StockCard
-      title="Recent Trades"
-      columnHeaders={[
-        "Symbol",
-        "Trade Amount ($)",
-        showInvestmentDatabaseMigrationSixStages ? "Shares" : null,
-        showInvestmentDatabaseMigrationSixStages ? "Total Price ($)" : null,
-        showInvestmentDatabaseMigrationSixStages ? "Status" : null,
-        showInvestmentDatabaseMigrationSixStages ? "Ticker News" : null,
-      ]}
-      stocks={recentTrades}
-      isLoadingStocks={isLoadingRecentTrades}
-      showMigration={showInvestmentDatabaseMigrationSixStages}
-    />
+    // <StockCard
+    //   title="Recent Trades"
+    //   columnHeaders={[
+    //     "Symbol",
+    //     "Trade Amount ($)",
+    //     showInvestmentDatabaseMigrationSixStages ? "Shares" : null,
+    //     showInvestmentDatabaseMigrationSixStages ? "Total Price ($)" : null,
+    //     showInvestmentDatabaseMigrationSixStages ? "Status" : null,
+    //     showInvestmentDatabaseMigrationSixStages ? "Ticker News" : null,
+    //   ]}
+    //   stocks={recentTrades}
+    //   isLoadingStocks={isLoadingRecentTrades}
+    //   showMigration={showInvestmentDatabaseMigrationSixStages}
+    // />
+
+    <>
+      <h3 className=" text-lg font-sohnelight">Recent Trades</h3>
+      <Table className="font-sohnelight my-2">
+        {/* <TableCaption>Your Items</TableCaption> */}
+        <TableHeader>
+          <TableRow>
+            <TableHead>Symbol</TableHead>
+            <TableHead>Trade Amount ($)</TableHead>
+            <TableHead>Shares</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {recentTrades.map((stock, index) => {
+            const percentageChange = formatMoneyTrailingZero(
+              Math.round((stock.c - stock.o) * 100) / 100
+            );
+            const position = percentageChange.toString().includes("-") ? "negative" : "positive";
+            return (
+              <TableRow key={index}>
+                <TableCell className="">
+                  <div
+                    className="text-left stock-icon-group flex items-center gap-x-2"
+                    data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
+                  >
+                    <img
+                      src={STOCK_LOGO_IMAGE[stock?.T].src}
+                      alt={stock?.T}
+                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                    />
+
+                    <span>{stock?.T}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="">${stock.c}</TableCell>
+                <TableCell className={``}>{stock.shares}</TableCell>
+                <TableCell className={``}>
+                  <StatusBubble status={stock?.status} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </>
   );
 };
 
