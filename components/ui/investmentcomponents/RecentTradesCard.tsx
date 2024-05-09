@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatMoneyTrailingZero } from "@/utils/utils";
-import { investmentColors } from "@/utils/styleUtils";
 import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 

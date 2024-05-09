@@ -167,15 +167,18 @@ const StockRecommendationCard = ({
   console.log("loginUser", context);
   return (
     <>
-      <button onClick={() => toggleRunDemo()}>fwefaew</button>
+      <h3
+        className=" text-lg font-sohnelight animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
+        onClick={() => toggleRunDemo()}
+        title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
+      >
+        Recommended Stocks to Buy
+      </h3>
       {runDemo ? (
-        <div className="flex justify-center items-center h-52">
-          <div className=" font-bold font-sohne justify-center items-center text-xl">
-            Generating Data
-            <br />
-            <div className="flex items-center mt-2 justify-center">
-              <InfinityLoader />
-            </div>
+        <div className="flex justify-center items-center h-full  flex-col gap-y-2">
+          <h2 className=" font-bold font-sohne text-center text-xl">Generating Data</h2>
+          <div className="flex ">
+            <InfinityLoader />
           </div>
         </div>
       ) : (
@@ -195,7 +198,6 @@ const StockRecommendationCard = ({
         // />
 
         <>
-          <h3 className=" text-lg font-sohnelight">Recommended Stocks to Buy</h3>
           <Table className="font-sohnelight my-2">
             {/* <TableCaption>Your Items</TableCaption> */}
             <TableHeader>
