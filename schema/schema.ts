@@ -63,4 +63,5 @@ export const investmentRecentTrades = pgTable('investmentRecentTrades', {
     shares: text('shares'),
     status: text('status'),
     news: text('news'),
+    type: text('type'),
 });

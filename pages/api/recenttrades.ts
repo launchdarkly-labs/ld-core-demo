@@ -13,6 +13,7 @@ type Data = {
   shares: string | null;
   status: string | null;
   news: string | null;
+  type: string | null;
 }[];
 
 export default async function handler(
