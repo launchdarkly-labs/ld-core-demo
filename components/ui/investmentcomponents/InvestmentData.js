@@ -255,6 +255,7 @@ export const investmentData = [
     status: "success",
     type: "investment",
     shares: "7",
+    news: "Tesla Stock Put Options Are Still Highly Priced - Ideal for Shareholders to Sell Short for Income.",
     id: "64b6469656ab03a0ab01b6fd",
   },
   {
@@ -263,6 +264,7 @@ export const investmentData = [
     status: "success",
     type: "investment",
     shares: "12",
+    news: "Earnings Per Share (EPS) Beats Estimates: Apple Inc. exceeded analyst expectations at the conclusion of its fiscal second quarter, despite a modest decline in revenue. This has fueled a post-earnings stock surge.",
     id: "64b646a856ab03a0ab01b6fe",
   },
   {
@@ -271,6 +273,7 @@ export const investmentData = [
     status: "processing",
     type: "investment",
     shares: "9",
+    news: "Earnings and Guidance: Walmart has jumped 16% YTD to top the S&P 500 and it could break out if its Q1 results and guidance impresses Wall Street on May 16.",
     id: "64b646ed56ab03a0ab01b6ff",
   },
   {
@@ -279,6 +282,7 @@ export const investmentData = [
     status: "success",
     type: "investment",
     shares: "8",
+    news: "Stock Performance: Over the past year, Nvidia’s stock price has increased by a remarkable 209%, including a 72% gain so far this year.",
     id: "64b6fcc6b11ed4b5d1c1727c",
   },
   {
@@ -287,6 +291,7 @@ export const investmentData = [
     status: "success",
     type: "investment",
     shares: "30",
+    news: "Stock Plunge: Shopify’s stock plunged nearly 20% after the company announced it expects decreasing gross margins during the current quarter as it navigates the fallout from the sale of its logistics business to Flexport. The company also expects its revenue to take a hit.",
     id: "64b7044ab11ed4b5d1c1727e",
   },
   {
@@ -295,6 +300,7 @@ export const investmentData = [
     status: "success",
     type: "investment",
     shares: "9",
+    news: "Stock Drop This Month: Salesforce’s stock dropped 11% this month due to reports of a large acquisition.",
     id: "64b70485b11ed4b5d1c1727f",
   },
 ];
