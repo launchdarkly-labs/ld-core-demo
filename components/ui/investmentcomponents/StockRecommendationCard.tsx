@@ -16,7 +16,6 @@ import {
 import { formatMoneyTrailingZero } from "@/utils/utils";
 import { investmentColors } from "@/utils/styleUtils";
 import { InfoIcon, Brain } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const dummyStocks = [
@@ -82,8 +81,8 @@ const StockRecommendationCard = ({
   }
 
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
+
   stocks = dummyStocks;
-  console.log(stocks);
   const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
     useContext(LoginContext);
 
@@ -145,7 +144,7 @@ const StockRecommendationCard = ({
           }
         }
         setElapsedTime((prevTime) => prevTime + 1);
-      }, 10);
+      }, 50);
     }
 
     return () => {
@@ -164,12 +163,12 @@ const StockRecommendationCard = ({
   };
   console.log(releaseNewInvestmentStockApi);
   const context = client?.getContext();
-  console.log("loginUser", context);
+
   return (
     <>
       <h3
-        className=" text-lg font-sohnelight animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
-        onClick={() => toggleRunDemo()}
+        className={`text-lg font-sohnelight ${releaseNewInvestmentStockApi ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue" : "" }`}
+        onClick={() => releaseNewInvestmentStockApi?  toggleRunDemo() : null}
         title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
       >
         Recommended Stocks to Buy
@@ -206,7 +205,7 @@ const StockRecommendationCard = ({
                 <TableHead>Price ($)</TableHead>
                 <TableHead>Gain/Loss (%)</TableHead>
                 {releaseNewInvestmentStockApi ? (
-                  <TableHead>AI Assisted Information</TableHead>
+                  <TableHead className="bg-gradient-investment text-transparent bg-clip-text">AI Assisted Information</TableHead>
                 ) : null}
               </TableRow>
             </TableHeader>

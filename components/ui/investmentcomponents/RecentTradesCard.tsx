@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-
-import StockCard from "./StockCard";
+import { useContext, useEffect, useState, useRef } from "react";
+import InfinityLoader from "@/components/ui/infinityloader";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 
 import {
   Table,
@@ -113,21 +113,13 @@ const RecentTradesCard = ({
     recentTrades = standardizedTradeArr;
   }
 
+  //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
+
+const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
+
+
   return (
-    // <StockCard
-    //   title="Recent Trades"
-    //   columnHeaders={[
-    //     "Symbol",
-    //     "Trade Amount ($)",
-    //     showInvestmentDatabaseMigrationSixStages ? "Shares" : null,
-    //     showInvestmentDatabaseMigrationSixStages ? "Total Price ($)" : null,
-    //     showInvestmentDatabaseMigrationSixStages ? "Status" : null,
-    //     showInvestmentDatabaseMigrationSixStages ? "Ticker News" : null,
-    //   ]}
-    //   stocks={recentTrades}
-    //   isLoadingStocks={isLoadingRecentTrades}
-    //   showMigration={showInvestmentDatabaseMigrationSixStages}
-    // />
+
 
     <>
       <h3 className=" text-lg font-sohnelight">Recent Trades</h3>
@@ -143,10 +135,6 @@ const RecentTradesCard = ({
         </TableHeader>
         <TableBody>
           {recentTrades.map((stock, index) => {
-            const percentageChange = formatMoneyTrailingZero(
-              Math.round((stock.c - stock.o) * 100) / 100
-            );
-            const position = percentageChange.toString().includes("-") ? "negative" : "positive";
             return (
               <TableRow key={index}>
                 <TableCell className="">
