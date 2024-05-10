@@ -106,12 +106,17 @@ const RecentTradesCard = () => {
 
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();
-  const context = client?.getContext();
-  function wait(seconds) {
-    return new Promise(resolve => {
-       setTimeout(resolve, seconds * 1000);
+  // const context = client?.getContext();
+
+  function wait(seconds: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, seconds * 1000);
     });
- } 
+  }
+  const randomLatency = (min: number,max :number) => 
+    max === undefined ? Math.random()*min
+    : min + Math.random()*(max - min + 1)
+  
   useEffect(() => {
     // if (releasNewInvestmentRecentTradeDBFlag) {
     //   console.log("postgress");
@@ -121,7 +126,7 @@ const RecentTradesCard = () => {
     // } else {
     //   setTimeout(() => {
     //     setRecentTrades(investmentData); //TODO: set interface?
-    //   }, 5000); // TODO: have to generate random numbers to put in the delay second so it wouldn't be so perfect
+    //   }, 5000);
     // }
 
     const runSomething = async () => {
@@ -136,8 +141,9 @@ const RecentTradesCard = () => {
         // const client = postgres(connectionString)
         // const db = drizzle(client);
         // const allAirports = await db.select().from(airports)
+    
 
-        await wait(1);
+        await wait(randomLatency(0.5,1.5));
 
         setRecentTrades(investmentData); //TODO: set interface?
 
@@ -146,8 +152,8 @@ const RecentTradesCard = () => {
         console.log("t2", t2);
         console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
         const speed = t2 - t1;
-        client.track("recent-trades-db-latency", context, null, speed);
-        client.flush();
+        client.track("recent-trades-db-latency", undefined, speed);
+        await client.flush();
 
         // return Response.json({ allAirports })
         // } catch (error) {
@@ -164,16 +170,16 @@ const RecentTradesCard = () => {
         // const airportsRedisJson = await redis.get('allAirports');
         // const allAirports = JSON.parse(airportsRedisJson!);
 
-        await wait(5);
+        await wait(randomLatency(4,6));
 
-        setRecentTrades(investmentData); 
+        setRecentTrades(investmentData);
 
         const t2 = Date.now();
         console.log("local speed is: " + (t2 - t1) + "ms");
         const speed = t2 - t1;
         console.log(speed);
-        client.track("recent-trades-db-latency", context, null, speed);
-        client.flush();
+        client.track("recent-trades-db-latency", undefined, speed);
+        await client.flush();
         //   } catch (error) {
         //     client.track("recent-trades-db-errors");
         //     client.flush();

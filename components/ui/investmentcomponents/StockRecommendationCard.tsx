@@ -66,7 +66,7 @@ const StockRecommendationCard = ({
   stocks: any;
   isLoadingStocks: boolean;
 }) => {
-  const showCloudMigrationTwoStagesLDFlag = true;
+
 
   if (stocks.length > 0) {
     const recommendedStocks = [];
