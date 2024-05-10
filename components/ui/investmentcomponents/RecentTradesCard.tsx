@@ -105,20 +105,84 @@ const RecentTradesCard = () => {
   // }
 
   const [recentTrades, setRecentTrades] = useState([]);
-
+  const client = useLDClient();
+  const context = client?.getContext();
+  function wait(seconds) {
+    return new Promise(resolve => {
+       setTimeout(resolve, seconds * 1000);
+    });
+ } 
   useEffect(() => {
+    // if (releasNewInvestmentRecentTradeDBFlag) {
+    //   console.log("postgress");
+    //   setTimeout(() => {
+    //     setRecentTrades(investmentData); //TODO: set interface?
+    //   }, 500);
+    // } else {
+    //   setTimeout(() => {
+    //     setRecentTrades(investmentData); //TODO: set interface?
+    //   }, 5000); // TODO: have to generate random numbers to put in the delay second so it wouldn't be so perfect
+    // }
 
-    if (releasNewInvestmentRecentTradeDBFlag) {
-      console.log("postgress")
-      setTimeout(() => {
-        setRecentTrades(investmentData); //TODO: set interface?
-      }, 500);
-    } else {
-      setTimeout(() => {
-        setRecentTrades(investmentData); //TODO: set interface?
-      }, 5000); // TODO: have to generate random numbers to put in the delay second so it wouldn't be so perfect
-    }
+    const runSomething = async () => {
+      if (releasNewInvestmentRecentTradeDBFlag) {
+        const t1 = Date.now();
+        console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
+        console.log("t1", t1);
+        // try {
+        // if (!connectionString) {
+        //     throw new Error('DATABASE_URL is not set')
+        // }
+        // const client = postgres(connectionString)
+        // const db = drizzle(client);
+        // const allAirports = await db.select().from(airports)
 
+        await wait(1);
+
+        setRecentTrades(investmentData); //TODO: set interface?
+
+        console.log(recentTrades);
+        const t2 = Date.now();
+        console.log("t2", t2);
+        console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
+        const speed = t2 - t1;
+        client.track("recent-trades-db-latency", context, null, speed);
+        client.flush();
+
+        // return Response.json({ allAirports })
+        // } catch (error) {
+        //   client.track("recent-trades-db-errors");
+        //   client.flush();
+        //   console.log("error");
+
+        // }
+      } else {
+        const t1 = Date.now();
+        console.log("FlightDb is disabled");
+        // try {
+        // const redis = new Redis(process.env.REDIS_URL || '');
+        // const airportsRedisJson = await redis.get('allAirports');
+        // const allAirports = JSON.parse(airportsRedisJson!);
+
+        await wait(5);
+
+        setRecentTrades(investmentData); 
+
+        const t2 = Date.now();
+        console.log("local speed is: " + (t2 - t1) + "ms");
+        const speed = t2 - t1;
+        console.log(speed);
+        client.track("recent-trades-db-latency", context, null, speed);
+        client.flush();
+        //   } catch (error) {
+        //     client.track("recent-trades-db-errors");
+        //     client.flush();
+        //     console.log("error");
+        //   }
+      }
+    };
+
+    runSomething();
     // fetch("/api/recenttrades")
     // .then((response) => response.json())
     // .then((data) => console.log(data));
@@ -165,7 +229,7 @@ const RecentTradesCard = () => {
                         className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
                       />
 
-                      <span>{stock?.name}</span>
+                      <p>{stock?.name}</p>
                     </div>
                   </TableCell>
                   <TableCell className="">{stock.price}</TableCell>
