@@ -70,13 +70,7 @@ const dummyStocks = [
 ];
 
 const RecentTradesCard = () => {
-  // const showInvestmentDatabaseMigrationSixStages =
-  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
-  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("rampdown") ||
-  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("live") ||
-  //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("shadow");
-
-  // const showInvestmentDatabaseMigrationSixStages = true;
+  const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
 
   // if (recentTrades?.length === 0 || recentTrades === undefined) recentTrades = dummyStocks; //to deal with rate limit
 
@@ -113,19 +107,29 @@ const RecentTradesCard = () => {
   const [recentTrades, setRecentTrades] = useState([]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setRecentTrades(investmentData); //TODO: set interface?
-    }, 5000);
+
+    if (releasNewInvestmentRecentTradeDBFlag) {
+      console.log("postgress")
+      setTimeout(() => {
+        setRecentTrades(investmentData); //TODO: set interface?
+      }, 500);
+    } else {
+      setTimeout(() => {
+        setRecentTrades(investmentData); //TODO: set interface?
+      }, 5000); // TODO: have to generate random numbers to put in the delay second so it wouldn't be so perfect
+    }
+
+    // fetch("/api/recenttrades")
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
   }, []);
-  console.log(recentTrades);
 
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
-  const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
-
-  //TODO: create a fake load a really long one to get the stocks showing. if time is short, then have another local one with settimer be shorter than the first
+  //TODO: done - create a fake load a really long one to get the stocks showing. if time is short, then have another local one with settimer be shorter than the first
+  //TODO: fetch
   //TODO: create a dialog or sheet idk showing the log as you are fetching user data?
-  //TODO: so like in the useeffect you would have a flag between the local and the postegress db
+  //TODO: done - so like in the useeffect you would have a flag between the local and the postegress db
   //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
 
   return (
@@ -143,9 +147,9 @@ const RecentTradesCard = () => {
         </TableHeader>
         <TableBody>
           {recentTrades.length === 0 ? (
-            <div className="h-full   flex justify-center items-center">
+            <TableRow className="h-full   flex justify-center items-center">
               <BounceLoader color="#FF386B" />
-            </div>
+            </TableRow>
           ) : (
             recentTrades?.map((stock, index) => {
               return (
@@ -164,7 +168,7 @@ const RecentTradesCard = () => {
                       <span>{stock?.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="">${stock.price}</TableCell>
+                  <TableCell className="">{stock.price}</TableCell>
                   <TableCell className={``}>{stock.shares}</TableCell>
                   <TableCell className={``}>
                     <StatusBubble status={stock?.status} />

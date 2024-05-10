@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
-import { investmentRecentTrades } from "@/schema/schema";
+import { investmentRecentTradesSchema } from "@/schema/schema";
 // @ts-ignore
 
 type Data = {
@@ -35,7 +35,7 @@ export default async function handler(
   const db = drizzle(client);
   // @ts-ignore
 
-  const allRecentTrades = await db.select().from(investmentRecentTrades);
+  const allRecentTrades = await db.select().from(investmentRecentTradesSchema);
   // @ts-ignore
 
   res.status(200).json(allRecentTrades);

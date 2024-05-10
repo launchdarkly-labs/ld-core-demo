@@ -161,8 +161,8 @@ const StockRecommendationCard = ({
       loginUser(loggedUser, loggedEmail);
     }
   };
-  console.log(releaseNewInvestmentStockApi);
-  const context = client?.getContext();
+
+  // const context = client?.getContext();
 
   return (
     <>
