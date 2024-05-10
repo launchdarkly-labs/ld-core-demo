@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import InfinityLoader from "@/components/ui/infinityloader";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { investmentData } from "./InvestmentData";
+import { BounceLoader } from "react-spinners";
 
 import {
   Table,
@@ -14,6 +16,7 @@ import {
 import { formatMoneyTrailingZero } from "@/utils/utils";
 import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
+import { useSearchParams } from "next/navigation";
 
 const dummyStocks = [
   {
@@ -66,61 +69,66 @@ const dummyStocks = [
   },
 ];
 
-const RecentTradesCard = ({
-  recentTrades,
-  isLoadingRecentTrades,
-}: {
-  recentTrades: any;
-  isLoadingRecentTrades: boolean;
-}) => {
+const RecentTradesCard = () => {
   // const showInvestmentDatabaseMigrationSixStages =
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("complete") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("rampdown") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("live") ||
   //   checkInvestmentDatabaseMigrationSixStagesLDFlag({ flags })?.includes("shadow");
 
-  const showInvestmentDatabaseMigrationSixStages = true;
+  // const showInvestmentDatabaseMigrationSixStages = true;
 
-  if (recentTrades?.length === 0 || recentTrades === undefined) recentTrades = dummyStocks; //to deal with rate limit
+  // if (recentTrades?.length === 0 || recentTrades === undefined) recentTrades = dummyStocks; //to deal with rate limit
 
-  if (recentTrades?.length > 0) {
-    const standardizedTradeArr = [];
+  // if (recentTrades?.length > 0) {
+  //   const standardizedTradeArr = [];
 
-    recentTrades.forEach((trade) => {
-      const totalProfit = formatMoneyTrailingZero(
-        Math.round(
-          parseFloat(trade?.price?.split("$").splice(1, 2).join("")) *
-            parseFloat(trade?.shares) *
-            100
-        ) / 100
-      );
-      const newObj = showInvestmentDatabaseMigrationSixStages
-        ? {
-            T: trade?.name,
-            c: trade?.price?.split("$").splice(1, 2).join(""), //to remove the $
-            shares: trade?.shares,
-            total: `$${totalProfit}`,
-            status: trade?.status?.includes("completed") ? "success" : trade?.status,
-            news: "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-          }
-        : {
-            T: trade?.name,
-            c: trade?.price?.split("$").splice(1, 2).join(""), //to remove the $
-          };
-      return standardizedTradeArr.push(newObj);
-    });
+  //   recentTrades.forEach((trade) => {
+  //     const totalProfit = formatMoneyTrailingZero(
+  //       Math.round(
+  //         parseFloat(trade?.price?.split("$").splice(1, 2).join("")) *
+  //           parseFloat(trade?.shares) *
+  //           100
+  //       ) / 100
+  //     );
+  //     const newObj = showInvestmentDatabaseMigrationSixStages
+  //       ? {
+  //           T: trade?.name,
+  //           c: trade?.price?.split("$").splice(1, 2).join(""), //to remove the $
+  //           shares: trade?.shares,
+  //           total: `$${totalProfit}`,
+  //           status: trade?.status?.includes("completed") ? "success" : trade?.status,
+  //           news: "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
+  //         }
+  //       : {
+  //           T: trade?.name,
+  //           c: trade?.price?.split("$").splice(1, 2).join(""), //to remove the $
+  //         };
+  //     return standardizedTradeArr.push(newObj);
+  //   });
 
-    recentTrades = standardizedTradeArr;
-  }
+  //   recentTrades = standardizedTradeArr;
+  // }
+
+  const [recentTrades, setRecentTrades] = useState([]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setRecentTrades(investmentData); //TODO: set interface?
+    }, 5000);
+  }, []);
+  console.log(recentTrades);
 
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
-const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
+  const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
 
+  //TODO: create a fake load a really long one to get the stocks showing. if time is short, then have another local one with settimer be shorter than the first
+  //TODO: create a dialog or sheet idk showing the log as you are fetching user data?
+  //TODO: so like in the useeffect you would have a flag between the local and the postegress db
+  //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
 
   return (
-
-
     <>
       <h3 className=" text-lg font-sohnelight">Recent Trades</h3>
       <Table className="font-sohnelight my-2">
@@ -134,31 +142,37 @@ const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade
           </TableRow>
         </TableHeader>
         <TableBody>
-          {recentTrades.map((stock, index) => {
-            return (
-              <TableRow key={index}>
-                <TableCell className="">
-                  <div
-                    className="text-left stock-icon-group flex items-center gap-x-2"
-                    data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
-                  >
-                    <img
-                      src={STOCK_LOGO_IMAGE[stock?.T].src}
-                      alt={stock?.T}
-                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
-                    />
+          {recentTrades.length === 0 ? (
+            <div className="h-full   flex justify-center items-center">
+              <BounceLoader color="#FF386B" />
+            </div>
+          ) : (
+            recentTrades?.map((stock, index) => {
+              return (
+                <TableRow key={index}>
+                  <TableCell className="">
+                    <div
+                      className="text-left stock-icon-group flex items-center gap-x-2"
+                      data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
+                    >
+                      <img
+                        src={STOCK_LOGO_IMAGE[stock?.name].src}
+                        alt={stock?.name}
+                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                      />
 
-                    <span>{stock?.T}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="">${stock.c}</TableCell>
-                <TableCell className={``}>{stock.shares}</TableCell>
-                <TableCell className={``}>
-                  <StatusBubble status={stock?.status} />
-                </TableCell>
-              </TableRow>
-            );
-          })}
+                      <span>{stock?.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="">${stock.price}</TableCell>
+                  <TableCell className={``}>{stock.shares}</TableCell>
+                  <TableCell className={``}>
+                    <StatusBubble status={stock?.status} />
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
     </>

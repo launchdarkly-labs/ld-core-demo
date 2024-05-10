@@ -218,7 +218,7 @@ export default function Airways() {
             investmentXL:row-start-1 investmentXL:row-end-3 
             lg:mt-[-2rem] 
             investmentXL:mt-[0rem] 
-             lg:h-[35.5rem] flex flex-col justify-between`}
+             lg:h-[35.5rem] flex flex-col`}
                     data-testid="recent-trades-card-test-id"
                   >
                     <RecentTradesCard
