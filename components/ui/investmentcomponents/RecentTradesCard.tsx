@@ -17,6 +17,7 @@ import { formatMoneyTrailingZero } from "@/utils/utils";
 import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import { useSearchParams } from "next/navigation";
+import LoginContext from "@/utils/contexts/login";
 
 const dummyStocks = [
   {
@@ -104,95 +105,125 @@ const RecentTradesCard = () => {
   //   recentTrades = standardizedTradeArr;
   // }
 
+  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
+    useContext(LoginContext);
+
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();
-  // const context = client?.getContext();
+  const context = client?.getContext();
+
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const [runDemo, setRunDemo] = useState(false);
+  const [loggedUser, setInitialUser] = useState();
+  const [loggedEmail, setInitialEmail] = useState();
+
+  const elapsedTimeRef = useRef(elapsedTime);
+
+  useEffect(() => {
+    elapsedTimeRef.current = elapsedTime;
+  }, [elapsedTime]);
 
   function wait(seconds: number) {
     return new Promise((resolve) => {
       setTimeout(resolve, seconds * 1000);
     });
   }
-  const randomLatency = (min: number,max :number) => 
-    max === undefined ? Math.random()*min
-    : min + Math.random()*(max - min + 1)
-  
+  const randomLatency = (min: number, max: number) =>
+    max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
+
+  const runSomething = async () => {
+    if (releasNewInvestmentRecentTradeDBFlag) {
+      const t1 = Date.now();
+      console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
+      console.log("t1", t1);
+      // try {
+      // if (!connectionString) {
+      //     throw new Error('DATABASE_URL is not set')
+      // }
+
+      await wait(randomLatency(0.5, 1.5));
+
+      setRecentTrades(investmentData); //TODO: set interface?
+
+      console.log(recentTrades);
+      const t2 = Date.now();
+      console.log("t2", t2);
+      console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
+      const speed = t2 - t1;
+      client?.track("recent-trades-db-latency", context, speed);
+      await client?.flush();
+
+      // return Response.json({ allAirports })
+      // } catch (error) {
+      //   client.track("recent-trades-db-errors");
+      //   client.flush();
+      //   console.log("error");
+
+      // }
+    } else {
+      const t1 = Date.now();
+      console.log("FlightDb is disabled");
+      // try {
+
+      await wait(randomLatency(4, 6));
+
+      setRecentTrades(investmentData);
+
+      const t2 = Date.now();
+      console.log("local speed is: " + (t2 - t1) + "ms");
+      const speed = t2 - t1;
+      console.log(speed);
+      client?.track("recent-trades-db-latency", context, speed);
+      await client?.flush();
+      //   } catch (error) {
+      //     client.track("recent-trades-db-errors");
+      //     client.flush();
+      //     console.log("error");
+      //   }
+    }
+  };
+
   useEffect(() => {
-    // if (releasNewInvestmentRecentTradeDBFlag) {
-    //   console.log("postgress");
-    //   setTimeout(() => {
-    //     setRecentTrades(investmentData); //TODO: set interface?
-    //   }, 500);
-    // } else {
-    //   setTimeout(() => {
-    //     setRecentTrades(investmentData); //TODO: set interface?
-    //   }, 5000);
-    // }
+    runSomething();
+  }, []);
 
-    const runSomething = async () => {
-      if (releasNewInvestmentRecentTradeDBFlag) {
-        const t1 = Date.now();
-        console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
-        console.log("t1", t1);
-        // try {
-        // if (!connectionString) {
-        //     throw new Error('DATABASE_URL is not set')
-        // }
-        // const client = postgres(connectionString)
-        // const db = drizzle(client);
-        // const allAirports = await db.select().from(airports)
-    
+  useEffect(() => {
+    if (!loggedUser) {
+      setInitialUser(user);
+      setInitialEmail(email);
+    }
 
-        await wait(randomLatency(0.5,1.5));
+    let loginInterval: NodeJS.Timeout | null = null;
+    let errorInterval: NodeJS.Timeout | null = null;
 
-        setRecentTrades(investmentData); //TODO: set interface?
+    if (runDemo) {
+      loginInterval = setInterval(() => {
+        setElapsedTime((prevTime) => {
+          const newTime = prevTime + 1;
+          if (newTime % 1 === 0) {
+            updateAudienceContext();
+          }
+          return newTime;
+        });
+      }, 100);
+      errorInterval = setInterval(async () => {
+        if (client) {
+          if (releasNewInvestmentRecentTradeDBFlag) {
+            runSomething();
+          }
+        }
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 50);
+    }
 
-        console.log(recentTrades);
-        const t2 = Date.now();
-        console.log("t2", t2);
-        console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
-        const speed = t2 - t1;
-        client.track("recent-trades-db-latency", undefined, speed);
-        await client.flush();
-
-        // return Response.json({ allAirports })
-        // } catch (error) {
-        //   client.track("recent-trades-db-errors");
-        //   client.flush();
-        //   console.log("error");
-
-        // }
-      } else {
-        const t1 = Date.now();
-        console.log("FlightDb is disabled");
-        // try {
-        // const redis = new Redis(process.env.REDIS_URL || '');
-        // const airportsRedisJson = await redis.get('allAirports');
-        // const allAirports = JSON.parse(airportsRedisJson!);
-
-        await wait(randomLatency(4,6));
-
-        setRecentTrades(investmentData);
-
-        const t2 = Date.now();
-        console.log("local speed is: " + (t2 - t1) + "ms");
-        const speed = t2 - t1;
-        console.log(speed);
-        client.track("recent-trades-db-latency", undefined, speed);
-        await client.flush();
-        //   } catch (error) {
-        //     client.track("recent-trades-db-errors");
-        //     client.flush();
-        //     console.log("error");
-        //   }
+    return () => {
+      if (runDemo) {
+        if (loginInterval !== null) clearInterval(loginInterval);
+        if (errorInterval !== null) clearInterval(errorInterval);
       }
     };
-
-    runSomething();
-    // fetch("/api/recenttrades")
-    // .then((response) => response.json())
-    // .then((data) => console.log(data));
-  }, []);
+  }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
 
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
@@ -202,53 +233,79 @@ const RecentTradesCard = () => {
   //TODO: done - so like in the useeffect you would have a flag between the local and the postegress db
   //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
 
+  const toggleRunDemo = () => {
+    setRunDemo((prev) => !prev);
+    if (runDemo == true) {
+      loginUser(loggedUser, loggedEmail);
+    }
+  };
+
   return (
     <>
-      <h3 className=" text-lg font-sohnelight">Recent Trades</h3>
-      <Table className="font-sohnelight my-2">
-        {/* <TableCaption>Your Items</TableCaption> */}
-        <TableHeader>
-          <TableRow>
-            <TableHead>Symbol</TableHead>
-            <TableHead>Trade Amount ($)</TableHead>
-            <TableHead>Shares</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {recentTrades.length === 0 ? (
-            <TableRow className="h-full   flex justify-center items-center">
-              <BounceLoader color="#FF386B" />
+      <h3
+        className={`text-lg font-sohnelight ${
+          releasNewInvestmentRecentTradeDBFlag
+            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
+            : ""
+        }`}
+        onClick={() => (releasNewInvestmentRecentTradeDBFlag ? toggleRunDemo() : null)}
+        title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
+      >
+        Recent Trades
+      </h3>
+      {runDemo ? (
+        <div className="flex justify-center items-center h-full  flex-col gap-y-2">
+          <h2 className=" font-bold font-sohne text-center text-xl">Generating Data</h2>
+          <div className="flex ">
+            <InfinityLoader />
+          </div>
+        </div>
+      ) : (
+        <Table className="font-sohnelight my-2">
+          {/* <TableCaption>Your Items</TableCaption> */}
+          <TableHeader>
+            <TableRow>
+              <TableHead>Symbol</TableHead>
+              <TableHead>Trade Amount ($)</TableHead>
+              <TableHead>Shares</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
-          ) : (
-            recentTrades?.map((stock, index) => {
-              return (
-                <TableRow key={index}>
-                  <TableCell className="">
-                    <div
-                      className="text-left stock-icon-group flex items-center gap-x-2"
-                      data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
-                    >
-                      <img
-                        src={STOCK_LOGO_IMAGE[stock?.name].src}
-                        alt={stock?.name}
-                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
-                      />
+          </TableHeader>
+          <TableBody>
+            {recentTrades.length === 0 ? (
+              <TableRow className="h-full   flex justify-center items-center">
+                <BounceLoader color="#FF386B" />
+              </TableRow>
+            ) : (
+              recentTrades?.map((stock, index) => {
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="">
+                      <div
+                        className="text-left stock-icon-group flex items-center gap-x-2"
+                        data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
+                      >
+                        <img
+                          src={STOCK_LOGO_IMAGE[stock?.name].src}
+                          alt={stock?.name}
+                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                        />
 
-                      <p>{stock?.name}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="">{stock.price}</TableCell>
-                  <TableCell className={``}>{stock.shares}</TableCell>
-                  <TableCell className={``}>
-                    <StatusBubble status={stock?.status} />
-                  </TableCell>
-                </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
+                        <p>{stock?.name}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="">{stock.price}</TableCell>
+                    <TableCell className={``}>{stock.shares}</TableCell>
+                    <TableCell className={``}>
+                      <StatusBubble status={stock?.status} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      )}
     </>
   );
 };
