@@ -82,7 +82,7 @@ const StockMoversCard = ({
     // />
 
     <>
-      <h3 className=" text-lg font-sohnelight">Recent Trades</h3>
+      <h3 className=" text-lg font-sohnelight">Stock Movers</h3>
       <Table className="font-sohnelight my-2">
         {/* <TableCaption>Your Items</TableCaption> */}
         <TableHeader>

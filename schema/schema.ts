@@ -59,7 +59,6 @@ export const investmentRecentTrades = pgTable('investmentRecentTrades', {
     id: serial('id').primaryKey(),
     name: text('name'),
     price: numeric('price'),
-    date: text('date'),
     shares: text('shares'),
     status: text('status'),
     news: text('news'),

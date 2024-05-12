@@ -142,25 +142,22 @@ const RecentTradesCard = () => {
       //     throw new Error('DATABASE_URL is not set')
       // }
 
-      await wait(randomLatency(0.5, 1.5));
+      // await wait(randomLatency(0.5, 1.5));
 
-      setRecentTrades(investmentData); //TODO: set interface?
-
-      console.log(recentTrades);
-      const t2 = Date.now();
-      console.log("t2", t2);
-      console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
-      const speed = t2 - t1;
-      client?.track("recent-trades-db-latency", context, speed);
-      await client?.flush();
-
-      // return Response.json({ allAirports })
-      // } catch (error) {
-      //   client.track("recent-trades-db-errors");
-      //   client.flush();
-      //   console.log("error");
-
-      // }
+      try {
+        fetch("/api/recenttrades")
+          .then((response) => response.json())
+          .then((data) => setRecentTrades(data));
+        console.log(recentTrades);
+        const t2 = Date.now();
+        console.log("t2", t2);
+        console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
+        const speed = t2 - t1;
+        client?.track("recent-trades-db-latency", context, speed);
+        await client?.flush();
+      } catch (error) {
+        console.log("error", error);
+      }
     } else {
       const t1 = Date.now();
       console.log("FlightDb is disabled");

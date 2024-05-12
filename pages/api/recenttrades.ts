@@ -9,7 +9,6 @@ type Data = {
   id: number;
   name: string | null;
   price: number | null;
-  date: string | null;
   shares: string | null;
   status: string | null;
   news: string | null;
