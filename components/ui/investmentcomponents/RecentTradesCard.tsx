@@ -137,11 +137,6 @@ const RecentTradesCard = () => {
       const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
       console.log("t1", t1);
-      // try {
-      // if (!connectionString) {
-      //     throw new Error('DATABASE_URL is not set')
-      // }
-
       // await wait(randomLatency(0.5, 1.5));
 
       try {
@@ -154,6 +149,10 @@ const RecentTradesCard = () => {
         console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
         const speed = t2 - t1;
         client?.track("recent-trades-db-latency", context, speed);
+        //10% chance of hitting errors
+        if (Math.random() < 0.1) {
+          client?.track("stocks-api-error-rates");
+        }
         await client?.flush();
       } catch (error) {
         console.log("error", error);
@@ -161,10 +160,7 @@ const RecentTradesCard = () => {
     } else {
       const t1 = Date.now();
       console.log("FlightDb is disabled");
-      // try {
-
       await wait(randomLatency(4, 6));
-
       setRecentTrades(investmentData);
 
       const t2 = Date.now();
@@ -172,12 +168,11 @@ const RecentTradesCard = () => {
       const speed = t2 - t1;
       console.log(speed);
       client?.track("recent-trades-db-latency", context, speed);
+      //75% chance of hitting errors
+      if (Math.random() < 0.75) {
+        client?.track("stocks-api-error-rates");
+      }
       await client?.flush();
-      //   } catch (error) {
-      //     client.track("recent-trades-db-errors");
-      //     client.flush();
-      //     console.log("error");
-      //   }
     }
   };
 
@@ -206,9 +201,7 @@ const RecentTradesCard = () => {
       }, 100);
       errorInterval = setInterval(async () => {
         if (client) {
-          if (releasNewInvestmentRecentTradeDBFlag) {
-            runSomething();
-          }
+          runSomething();
         }
         setElapsedTime((prevTime) => prevTime + 1);
       }, 50);
