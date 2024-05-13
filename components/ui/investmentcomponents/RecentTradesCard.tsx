@@ -137,6 +137,7 @@ const RecentTradesCard = () => {
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
 
   const toggleRunDemo = () => {
+    if (!releasNewInvestmentRecentTradeDBFlag) return;
     if (runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
       setRunDemo((prev) => !prev); // cancel running test despite flag being off
       return;
