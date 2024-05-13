@@ -68,21 +68,6 @@ const StockRecommendationCard = ({
 }) => {
 
 
-  if (stocks.length > 0) {
-    const recommendedStocks = [];
-
-    stocks.forEach((stock) => {
-      if (stock?.T?.includes("AMZN") || stock?.T?.includes("MSFT") || stock?.T?.includes("NVDA")) {
-        return recommendedStocks.push(stock);
-      }
-    });
-
-    // stocks = recommendedStocks;
-  }
-
-  if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
-
-  stocks = dummyStocks;
   const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
     useContext(LoginContext);
 
@@ -96,9 +81,17 @@ const StockRecommendationCard = ({
   const [loggedEmail, setInitialEmail] = useState();
 
   const elapsedTimeRef = useRef(elapsedTime);
+  const tableRef = useRef(null);
   useEffect(() => {
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
+
+  useEffect(()=>{
+    if( tableRef.current){
+      tableRef.current.parentNode.style.overflow = "auto"
+    }
+  
+  },[]);
 
   useEffect(() => {
     if (!loggedUser) {
@@ -181,23 +174,8 @@ const StockRecommendationCard = ({
           </div>
         </div>
       ) : (
-        // <StockCard
-        //   title="Recommended Stocks to Buy"
-        //   columnHeaders={[
-        //     "Symbol",
-        //     "Price ($)",
-        //     showCloudMigrationTwoStagesLDFlag ? "Gain/Loss (%)" : null,
-        //     showCloudMigrationTwoStagesLDFlag ? "Daily Trade Volume" : null,
-        //   ]}
-        //   stocks={stocks}
-        //   isLoadingStocks={isLoadingStocks}
-        //   data-testid={"recommended-stocks"}
-        //   showMigration={true}
-        //   showViewMore={true}
-        // />
-
         <>
-          <Table className="font-sohnelight my-2">
+          <Table className="font-sohnelight my-2" ref={tableRef}>
             {/* <TableCaption>Your Items</TableCaption> */}
             <TableHeader>
               <TableRow>
@@ -210,7 +188,7 @@ const StockRecommendationCard = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {stocks.map((stock, index) => {
+              {stocks.slice(0,3).map((stock, index) => {
                 const percentageChange = formatMoneyTrailingZero(
                   Math.round((stock.c - stock.o) * 100) / 100
                 );

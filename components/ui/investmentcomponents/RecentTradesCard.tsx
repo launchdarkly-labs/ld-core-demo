@@ -119,10 +119,18 @@ const RecentTradesCard = () => {
   const [loggedEmail, setInitialEmail] = useState();
 
   const elapsedTimeRef = useRef(elapsedTime);
-
+  const tableRef = useRef(null);
+  
   useEffect(() => {
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
+
+  useEffect(()=>{
+    if( tableRef.current){
+      tableRef.current.parentNode.style.overflow = "hidden"
+    }
+    
+  },[]);
 
   function wait(seconds: number) {
     return new Promise((resolve) => {
@@ -132,7 +140,7 @@ const RecentTradesCard = () => {
   const randomLatency = (min: number, max: number) =>
     max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
 
-  const runSomething = async () => {
+  const runDBScript = async () => {
     if (releasNewInvestmentRecentTradeDBFlag) {
       const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
@@ -159,7 +167,7 @@ const RecentTradesCard = () => {
       }
     } else {
       const t1 = Date.now();
-      console.log("FlightDb is disabled");
+      console.log("releasNewInvestmentRecentTradeDBFlag is disabled");
       await wait(randomLatency(4, 6));
       setRecentTrades(investmentData);
 
@@ -177,7 +185,7 @@ const RecentTradesCard = () => {
   };
 
   useEffect(() => {
-    runSomething();
+    runDBScript();
   }, []);
 
   useEffect(() => {
@@ -201,7 +209,7 @@ const RecentTradesCard = () => {
       }, 100);
       errorInterval = setInterval(async () => {
         if (client) {
-          runSomething();
+          runDBScript();
         }
         setElapsedTime((prevTime) => prevTime + 1);
       }, 50);
@@ -218,7 +226,7 @@ const RecentTradesCard = () => {
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
   //TODO: done - create a fake load a really long one to get the stocks showing. if time is short, then have another local one with settimer be shorter than the first
-  //TODO: fetch
+  //TODO: done - fetch
   //TODO: create a dialog or sheet idk showing the log as you are fetching user data?
   //TODO: done - so like in the useeffect you would have a flag between the local and the postegress db
   //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
@@ -250,8 +258,12 @@ const RecentTradesCard = () => {
             <InfinityLoader />
           </div>
         </div>
+      ) : recentTrades.length === 0 ? (
+        <div className="flex justify-center items-center h-full">
+          <BounceLoader color="#FF386B" />
+        </div>
       ) : (
-        <Table className="font-sohnelight my-2">
+        <Table className="font-sohnelight my-2 !overflow-none" ref={tableRef}>
           {/* <TableCaption>Your Items</TableCaption> */}
           <TableHeader>
             <TableRow>
@@ -262,37 +274,31 @@ const RecentTradesCard = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentTrades.length === 0 ? (
-              <TableRow className="h-full   flex justify-center items-center">
-                <BounceLoader color="#FF386B" />
-              </TableRow>
-            ) : (
-              recentTrades?.map((stock, index) => {
-                return (
-                  <TableRow key={index}>
-                    <TableCell className="">
-                      <div
-                        className="text-left stock-icon-group flex items-center gap-x-2"
-                        data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
-                      >
-                        <img
-                          src={STOCK_LOGO_IMAGE[stock?.name].src}
-                          alt={stock?.name}
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
-                        />
+            {recentTrades?.map((stock, index) => {
+              return (
+                <TableRow key={index}>
+                  <TableCell className="">
+                    <div
+                      className="text-left stock-icon-group flex items-center gap-x-2"
+                      data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
+                    >
+                      <img
+                        src={STOCK_LOGO_IMAGE[stock?.name].src}
+                        alt={stock?.name}
+                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-red object-fit"
+                      />
 
-                        <p>{stock?.name}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="">{stock.price}</TableCell>
-                    <TableCell className={``}>{stock.shares}</TableCell>
-                    <TableCell className={``}>
-                      <StatusBubble status={stock?.status} />
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
+                      <p>{stock?.name}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="">{stock.price}</TableCell>
+                  <TableCell className={``}>{stock.shares}</TableCell>
+                  <TableCell className={``}>
+                    <StatusBubble status={stock?.status} />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}

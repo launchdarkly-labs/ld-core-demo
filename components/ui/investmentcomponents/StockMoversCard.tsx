@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect, useRef } from "react";
 
 import StockCard from "./StockCard";
 
@@ -14,6 +14,7 @@ import {
 import { formatMoneyTrailingZero } from "@/utils/utils";
 import { investmentColors } from "@/utils/styleUtils";
 import { STOCK_LOGO_IMAGE } from "@/utils/constants";
+import { table } from "console";
 
 const dummyStocks = [
   {
@@ -64,26 +65,20 @@ const StockMoversCard = ({
   isLoadingStocks: boolean;
 }) => {
   const showCloudMigrationTwoStagesLDFlag = true;
-
+  const tableRef = useRef(null);
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
 
-  return (
-    // <StockCard
-    //   title="Your biggest movers"
-    //   columnHeaders={[
-    //     "Symbol",
-    //     "Price ($)",
-    //     showCloudMigrationTwoStagesLDFlag ? "Gain/Loss (%)" : null,
-    //     // showCloudMigrationTwoStagesLDFlag ? "Daily Trade Volume" : null,
-    //   ]}
-    //   stocks={stocks}
-    //   isLoadingStocks={isLoadingStocks}
-    //   showMigration={showCloudMigrationTwoStagesLDFlag}
-    // />
+  useEffect(()=>{
+    if( tableRef.current){
+      tableRef.current.parentNode.style.overflow = "hidden"
+    }
+    
+  },[]);
 
+  return (
     <>
       <h3 className=" text-lg font-sohnelight">Stock Movers</h3>
-      <Table className="font-sohnelight my-2">
+      <Table className="font-sohnelight my-2 !overflow-hidden" ref={tableRef} id = "stock-movers-table">
         {/* <TableCaption>Your Items</TableCaption> */}
         <TableHeader>
           <TableRow>

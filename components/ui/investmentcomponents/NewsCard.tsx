@@ -49,7 +49,6 @@ const dummyData = [
 ];
 
 const NewsCard = ({ news, isLoadingNews }: { news: any; isLoadingNews: boolean }) => {
-  if (news?.length === 0 || news === undefined) news = dummyData; //to deal with rate limit
 
   return (
     <>

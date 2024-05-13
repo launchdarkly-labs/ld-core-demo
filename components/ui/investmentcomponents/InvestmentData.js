@@ -1,3 +1,7 @@
+import { format } from "date-fns";
+const time = new Date().getTime();
+const date = format(new Date(time), "MMM d, yyyy");
+
 export const stockData = [
   {
     T: "TSLA",
@@ -78,7 +82,7 @@ export const newsData = [
     },
     title: "BILL Holdings (BILL) to Report Q3 Earnings: What's in Store?",
     author: "Zacks Equity Research",
-    published_utc: "2024-04-30T16:24:00Z",
+    published_utc: date,
     article_url:
       "https://www.zacks.com/stock/news/2265385/bill-holdings-bill-to-report-q3-earnings-whats-in-store",
     tickers: ["NVDA", "ANET", "BILL", "ADYEY"],
@@ -98,7 +102,7 @@ export const newsData = [
     },
     title: "AXT (AXTI) to Announce Q1 Earnings: What's in the Cards?",
     author: "Zacks Equity Research",
-    published_utc: "2024-04-30T16:23:00Z",
+    published_utc: date,
     article_url:
       "https://www.zacks.com/stock/news/2265383/axt-axti-to-announce-q1-earnings-whats-in-the-cards",
     tickers: ["NVDA", "AXTI", "ANET", "DCBO"],
@@ -118,7 +122,7 @@ export const newsData = [
     },
     title: "IPG Photonics' (IPGP) Q1 Earnings Beat, Revenues Decrease Y/Y",
     author: "Zacks Equity Research",
-    published_utc: "2024-04-30T15:50:00Z",
+    published_utc: date,
     article_url:
       "https://www.zacks.com/stock/news/2265275/ipg-photonics-ipgp-q1-earnings-beat-revenues-decrease-yy",
     tickers: ["NVDA", "AME", "ANET", "IPGP"],
@@ -138,7 +142,7 @@ export const newsData = [
     },
     title: "3 AI Stocks You'll Wish You'd Bought on the Dip",
     author: "newsfeedback@fool.com (Will Healy, Justin Pope, and Jake Lerch)",
-    published_utc: "2024-04-30T15:30:00Z",
+    published_utc: date,
     article_url:
       "https://www.fool.com/investing/2024/04/30/3-ai-stocks-youll-wish-youd-bought-on-the-dip/",
     tickers: ["MSFT", "NVDA", "TSLA", "AMZN"],
@@ -156,7 +160,7 @@ export const newsData = [
     },
     title: "Why This Could Be a Massive Week for Nvidia Stock Investors",
     author: "newsfeedback@fool.com (Jose Najarro)",
-    published_utc: "2024-04-30T15:04:00Z",
+    published_utc: date,
     article_url:
       "https://www.fool.com/investing/2024/04/30/why-this-could-be-a-massive-week-for-nvidia-stock/",
     tickers: ["NVDA", "AAPL", "QCOM", "MSFT", "AMZN", "AMD"],
@@ -176,7 +180,7 @@ export const newsData = [
     },
     title: "Corning (GLW) Beats Q1 Earnings and Revenue Estimates",
     author: "Zacks Equity Research",
-    published_utc: "2024-04-30T14:59:00Z",
+    published_utc: date,
     article_url:
       "https://www.zacks.com/stock/news/2265200/corning-glw-beats-q1-earnings-and-revenue-estimates",
     tickers: ["NVDA", "GLW", "ANET", "PINS"],
@@ -197,7 +201,7 @@ export const newsData = [
     title:
       "Missed Out on Nvidia? Here Are 3 Other Artificial Intelligence (AI) Stocks to Buy Instead",
     author: "newsfeedback@fool.com (Adam Spatacco)",
-    published_utc: "2024-04-30T13:45:00Z",
+    published_utc: date,
     article_url:
       "https://www.fool.com/investing/2024/04/30/missed-out-on-nvidia-here-are-3-other-artificial/",
     tickers: ["AMD", "INTC", "NVDA", "META"],
@@ -216,7 +220,7 @@ export const newsData = [
     },
     title: "Nvidia Stock: Bull Flag Signals Another Major Breakout (Technical Analysis)",
     author: "Income Generator",
-    published_utc: "2024-04-30T13:13:27Z",
+    published_utc: date,
     article_url:
       "https://seekingalpha.com/article/4687462-nvidia-stock-bull-flag-signals-another-major-breakout-technical-analysis",
     tickers: ["NVDA"],
@@ -236,7 +240,7 @@ export const newsData = [
     },
     title: "Why Investors Need to Take Advantage of These 2 Computer and Technology Stocks Now",
     author: "Zacks Equity Research",
-    published_utc: "2024-04-30T12:50:10Z",
+    published_utc: date,
     article_url:
       "https://www.zacks.com/stock/news/2264749/why-investors-need-to-take-advantage-of-these-2-computer-and-technology-stocks-now",
     tickers: ["NVDA", "SNAP"],
