@@ -106,8 +106,7 @@ const RecentTradesCard = () => {
   //   recentTrades = standardizedTradeArr;
   // }
 
-  const {  loginUser, user, email, updateAudienceContext } =
-    useContext(LoginContext);
+  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
 
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();
@@ -122,82 +121,67 @@ const RecentTradesCard = () => {
   const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
 
-  // useEffect(() => {
-  //   elapsedTimeRef.current = elapsedTime;
-  //   console.log("elapsedTimeRef.current ",elapsedTimeRef.current )
-  //   console.log("elapsedTime ",elapsedTime )
-  // }, [elapsedTime]);
+  useEffect(() => {
+    elapsedTimeRef.current = elapsedTime;
+  }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
       tableRef.current.parentNode.style["overflow-y"] = "hidden";
     }
   }, []);
-  useEffect(() => {
-    console.log("releasNewInvestmentRecentTradeDBFlag",releasNewInvestmentRecentTradeDBFlag)
-  }, [releasNewInvestmentRecentTradeDBFlag]);
 
   const randomLatency = (min: number, max: number) =>
     max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
 
   const runDBScript = async () => {
     if (releasNewInvestmentRecentTradeDBFlag) {
-      // const t1 = Date.now();
-      // console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
-      // console.log("t1", t1);
-      // // await wait(randomLatency(0.5, 1.5));
-
-      // try {
-      //    fetch("/api/recenttrades")
-      //     .then((response) => response.json())
-      //     .then(async (data) => {
-      //       setRecentTrades(data);
-      //       const t2 = Date.now();
-      //       const speed = t2 - t1;
-      //       console.log("PostgreSQL speed is: " + speed + "ms");
-      //       client?.track("recent-trades-db-latency", context, speed);
-      //       await client?.flush();
-      //       //10% chance of hitting errors
-      //       // if (Math.random() < 0.1) {
-      //       //   client?.track("stocks-api-error-rates");
-      //       //   client?.flush();
-      //       // }
-      //     });
-      // } catch (error) {
-      //   console.log("error", error);
-      //   client?.track("stocks-api-error-rates");
-      //   await client?.flush();
-      // }
-
       const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
-      await wait(randomLatency(0.5, 1.5));
-      setRecentTrades(investmentData);
 
-      const t2 = Date.now();
-      const speed = t2 - t1;
-      console.log("postgres speed is: " + speed + "ms");
-      client?.track("recent-trades-db-latency", context, speed);
-      //10% chance of hitting errors
-      if (Math.random() < 0.1) {
-        client?.track("stocks-api-error-rates");
+      if (runDemo) {
+        client?.track("recent-trades-db-latency", undefined, randomLatency(0.5, 1.5));
+        await client?.flush();
+        if (Math.random() < 0.1) {
+          client?.track("recent-trades-db-errors");
+          await client?.flush();
+        }
+      } else {
+        try {
+          fetch("/api/recenttrades")
+            .then((response) => response.json())
+            .then(async (data) => {
+              setRecentTrades(data);
+              const t2 = Date.now()
+              const speed = (t2 - t1)
+              console.log("PostgreSQL speed is: " + speed+ "ms")
+            });
+ 
+        } catch (error) {
+          console.log("error", error);
+        }
       }
-      await client?.flush();
     } else {
-      const t1 = Date.now();
+      // const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is disabled");
-      await wait(randomLatency(4, 6));
-      setRecentTrades(investmentData);
-
-      const t2 = Date.now();
-      const speed = t2 - t1;
-      console.log("local speed is: " + speed + "ms");
-      client?.track("recent-trades-db-latency", context, speed);
-      //75% chance of hitting errors
-      if (Math.random() < 0.75) {
-        client?.track("stocks-api-error-rates");
+      if (runDemo) {
+        client?.track("recent-trades-db-latency", undefined, randomLatency(4, 6));
+        await client?.flush();
+        if (Math.random() < 0.75) {
+          client?.track("recent-trades-db-errors");
+          await client?.flush();
+        }
+      } else {
+        await wait(randomLatency(4, 6));
+        setRecentTrades(investmentData);
       }
-      await client?.flush();
+
+      // const t2 = Date.now();
+      // const speed = t2 - t1;
+      // console.log("local speed is: " + speed + "ms");
+      // if (runDemo) client?.track("recent-trades-db-latency", context, speed);
+
+      //75% chance of hitting errors
     }
   };
 
@@ -215,32 +199,49 @@ const RecentTradesCard = () => {
     let errorInterval: NodeJS.Timeout | null = null;
 
     if (runDemo) {
-      // loginInterval = setInterval(() => {
-      //   setElapsedTime((prevTime) => {
-      //     const newTime = prevTime + 1;
-      //     console.log("newTime", newTime)
-      //     if (newTime % 1 === 0) {
-      //       updateAudienceContext();
-      //     }
-      //     return newTime;
-      //   });
-
-      //   updateAudienceContext();
-      // }, 7100);
+      loginInterval = setInterval(() => {
+        setElapsedTime((prevTime) => {
+          const newTime = prevTime + 1;
+          if (newTime % 1 === 0) {
+            updateAudienceContext();
+          }
+          return newTime;
+        });
+      }, 100);
 
       errorInterval = setInterval(async () => {
+        let dynamicValue;
         if (client) {
-          runDBScript();
-          await wait(1)
-          updateAudienceContext();
+          if (releasNewInvestmentRecentTradeDBFlag) {
+            if (Math.random() < 0.10) {
+              client?.track("recent-trades-db-errors");
+              await client.flush();
+            }
+            dynamicValue = randomLatency(.5, 1.5);
+            console.log("dynamicValue 1", dynamicValue);
+            client.track("recent-trades-db-latency", undefined, dynamicValue);
+            await client.flush();
+          } else {
+            //25% chance of hitting errors
+            if (Math.random() < 0.75) {
+              client?.track("recent-trades-db-errors");
+              await client.flush();
+            }
+            dynamicValue =randomLatency(4, 6);
+            console.log("dynamicValue 2", dynamicValue);
+            client.track("recent-trades-db-latency", undefined, dynamicValue);
+            await client.flush();
+          }
         }
-        // setElapsedTime((prevTime) => prevTime + 1);
-      }, 7000);
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 10);
     }
 
     return () => {
-      //if (loginInterval !== null) clearInterval(loginInterval);
-      if (errorInterval !== null) clearInterval(errorInterval);
+      if (runDemo) {
+        if (loginInterval !== null) clearInterval(loginInterval);
+        if (errorInterval !== null) clearInterval(errorInterval);
+      }
     };
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
 

@@ -150,7 +150,6 @@ export const StocksComponent: React.FC = () => {
             if (Math.random() < 0.75) {
               client.track("stocks-api-error-rates");
               await client.flush();
-              console.log("this hits here")
             }
             dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
             console.log("dynamicValue 1", dynamicValue);
@@ -161,7 +160,6 @@ export const StocksComponent: React.FC = () => {
             if (Math.random() < 0.25) {
               client.track("stocks-api-error-rates");
               await client.flush();
-              console.log("this hits here 2")
             }
             dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
             console.log("dynamicValue 2", dynamicValue);
