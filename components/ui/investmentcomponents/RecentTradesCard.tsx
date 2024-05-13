@@ -106,7 +106,7 @@ const RecentTradesCard = () => {
   //   recentTrades = standardizedTradeArr;
   // }
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
+  const {  loginUser, user, email, updateAudienceContext } =
     useContext(LoginContext);
 
   const [recentTrades, setRecentTrades] = useState([]);
@@ -122,15 +122,20 @@ const RecentTradesCard = () => {
   const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
 
-  useEffect(() => {
-    elapsedTimeRef.current = elapsedTime;
-  }, [elapsedTime]);
+  // useEffect(() => {
+  //   elapsedTimeRef.current = elapsedTime;
+  //   console.log("elapsedTimeRef.current ",elapsedTimeRef.current )
+  //   console.log("elapsedTime ",elapsedTime )
+  // }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
       tableRef.current.parentNode.style["overflow-y"] = "hidden";
     }
   }, []);
+  useEffect(() => {
+    console.log("releasNewInvestmentRecentTradeDBFlag",releasNewInvestmentRecentTradeDBFlag)
+  }, [releasNewInvestmentRecentTradeDBFlag]);
 
   const randomLatency = (min: number, max: number) =>
     max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
@@ -210,26 +215,31 @@ const RecentTradesCard = () => {
     let errorInterval: NodeJS.Timeout | null = null;
 
     if (runDemo) {
-      loginInterval = setInterval(() => {
-        setElapsedTime((prevTime) => {
-          const newTime = prevTime + 1;
-          if (newTime % 1 === 0) {
-            updateAudienceContext();
-          }
-          return newTime;
-        });
-      }, 7100);
+      // loginInterval = setInterval(() => {
+      //   setElapsedTime((prevTime) => {
+      //     const newTime = prevTime + 1;
+      //     console.log("newTime", newTime)
+      //     if (newTime % 1 === 0) {
+      //       updateAudienceContext();
+      //     }
+      //     return newTime;
+      //   });
+
+      //   updateAudienceContext();
+      // }, 7100);
 
       errorInterval = setInterval(async () => {
         if (client) {
           runDBScript();
+          await wait(1)
+          updateAudienceContext();
         }
-        setElapsedTime((prevTime) => prevTime + 1);
+        // setElapsedTime((prevTime) => prevTime + 1);
       }, 7000);
     }
 
     return () => {
-      if (loginInterval !== null) clearInterval(loginInterval);
+      //if (loginInterval !== null) clearInterval(loginInterval);
       if (errorInterval !== null) clearInterval(errorInterval);
     };
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);

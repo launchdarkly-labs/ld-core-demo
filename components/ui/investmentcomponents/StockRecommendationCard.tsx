@@ -158,7 +158,7 @@ const StockRecommendationCard = ({
 
   const toggleRunDemo = () => {
     if(runDemo == true && !releaseNewInvestmentStockApi) {
-      setRunDemo((prev) => !prev); // cancel running test despite flag being off
+      setRunDemo(false); // cancel running test despite flag being off
       return;
     }
 
