@@ -1,5 +1,8 @@
 import { investmentColors } from "@/utils/styleUtils";
+import React, { useEffect, useState } from "react";
+
 import { BounceLoader } from "react-spinners";
+import { wait, randomLatency } from "@/utils/utils";
 
 const dummyData = [
   {
@@ -28,12 +31,25 @@ const dummyData = [
 const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   const renderedData = dummyData;
 
+  const [loadingStocksTable, setStocksTable] = useState(false);
+
+  useEffect(() => {
+    const waiting = async () => {
+      setStocksTable(true);
+      await wait(randomLatency(0.5, 1.5));
+      setStocksTable(false);
+    };
+    waiting();
+  }, []);
+
   return (
     <>
       <h3 className="font-bold text-lg mb-4">Market</h3>
       <div className="flex justify-between mb-4 gap-x-4">
-        {isLoadingStocks ? (
-          <BounceLoader />
+        {loadingStocksTable ? (
+          <div className="flex justify-center items-center h-full w-full">
+            <BounceLoader color="#FF386B" />
+          </div>
         ) : (
           renderedData.map((datum) => {
             return (
