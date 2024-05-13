@@ -9,7 +9,7 @@ import gold from "@/public/investment/graphs/gold.png";
 import diamond from "@/public/investment/graphs/diamond.png";
 import { wait, randomLatency } from "@/utils/utils";
 
-const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
+const BalanceCard = () => {
   const [loadingStocksTable, setStocksTable] = useState(false);
 
   useEffect(() => {

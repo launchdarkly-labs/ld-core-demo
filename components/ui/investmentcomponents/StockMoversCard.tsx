@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import StockCard from "./StockCard";
-
 import {
   Table,
   TableBody,
@@ -14,54 +12,12 @@ import {
 import { formatMoneyTrailingZero } from "@/utils/utils";
 import { investmentColors } from "@/utils/styleUtils";
 import { STOCK_LOGO_IMAGE } from "@/utils/constants";
-import { table } from "console";
 import { wait, randomLatency } from "@/utils/utils";
 import { BounceLoader } from "react-spinners";
+import { stockData } from "./InvestmentData";
 
-const dummyStocks = [
-  {
-    T: "AMZN",
-    c: "87.36",
-    o: "87.46",
-    v: 61166283,
-  },
-  {
-    T: "SHOP",
-    c: "37.19",
-    o: "37.70",
-    v: 22978271,
-  },
-  {
-    T: "MSFT",
-    c: "227.12",
-    o: "226.45",
-    v: 20567159,
-  },
-  {
-    T: "WMT",
-    c: "144.95",
-    o: "146.32",
-    v: 3953216,
-  },
-
-  {
-    T: "TSLA",
-    c: "119.77",
-    o: "118.96",
-    v: 112643377,
-  },
-
-  {
-    T: "NVDA",
-    c: "156.28",
-    o: "152.84",
-    v: 47788389,
-  },
-];
-
-const StockMoversCard = ({ stocks }: { stocks: any }) => {
+const StockMoversCard = () => {
   const tableRef = useRef(null);
-  if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
   const [loadingStocksTable, setStocksTable] = useState(false);
 
   useEffect(() => {
@@ -101,7 +57,7 @@ const StockMoversCard = ({ stocks }: { stocks: any }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {stocks.map((stock, index) => {
+            {stockData.map((stock, index) => {
               const percentageChange = formatMoneyTrailingZero(
                 Math.round((stock.c - stock.o) * 100) / 100
               );

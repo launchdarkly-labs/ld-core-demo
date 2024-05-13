@@ -28,7 +28,7 @@ const dummyData = [
   },
 ];
 
-const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
+const MarketCard = () => {
   const renderedData = dummyData;
 
   const [loadingStocksTable, setStocksTable] = useState(false);
@@ -45,31 +45,34 @@ const MarketCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   return (
     <>
       <h3 className="font-bold text-lg mb-4">Market</h3>
-      <div className="flex justify-between mb-4 gap-x-4">
-        {loadingStocksTable ? (
-          <div className="flex justify-center items-center h-full w-full">
-            <BounceLoader color="#FF386B" />
+      {loadingStocksTable ? (
+        <div className="flex justify-center items-center h-full w-full">
+          <BounceLoader color="#FF386B" />
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-between mb-4 gap-x-4">
+            {renderedData.map((datum) => {
+              return (
+                <div className="" key={datum.name}>
+                  <p className="mb-1">{datum.name}</p>
+                  <p className={` ${investmentColors[datum.position]}`}>
+                    {datum.position.includes("positive") ? "+" : "-"}${datum.priceChange}
+                  </p>
+                  <p className={`${investmentColors[datum.position]}`}>
+                    ({datum.position.includes("positive") ? "+" : "-"}
+                    {datum.percentageChange}%)
+                  </p>
+                  <p className="text-investmentgrey">${datum.price}</p>
+                </div>
+              );
+            })}
           </div>
-        ) : (
-          renderedData.map((datum) => {
-            return (
-              <div className="" key={datum.name}>
-                <p className="mb-1">{datum.name}</p>
-                <p className={` ${investmentColors[datum.position]}`}>
-                  {datum.position.includes("positive") ? "+" : "-"}${datum.priceChange}
-                </p>
-                <p className={`${investmentColors[datum.position]}`}>
-                  ({datum.position.includes("positive") ? "+" : "-"}
-                  {datum.percentageChange}%)
-                </p>
-                <p className="text-investmentgrey">${datum.price}</p>
-              </div>
-            );
-          })
-        )}
-      </div>
-      {isLoadingStocks ? null : (
-        <p className="text-investmentblue hover:underline cursor-default text-center">View More</p>
+
+          <p className="text-investmentblue hover:underline cursor-default text-center">
+            View More
+          </p>
+        </>
       )}
     </>
   );

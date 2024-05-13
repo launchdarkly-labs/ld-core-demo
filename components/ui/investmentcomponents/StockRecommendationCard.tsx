@@ -19,31 +19,11 @@ import { InfoIcon, Brain } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
 import { wait, randomLatency } from "@/utils/utils";
-
-const dummyStocks = [
-  {
-    T: "AMZN",
-    c: "87.36",
-    o: "87.46",
-    v: 61166283,
-  },
-  {
-    T: "MSFT",
-    c: "227.12",
-    o: "226.45",
-    v: 20567159,
-  },
-  {
-    T: "NVDA",
-    c: "156.28",
-    o: "152.84",
-    v: 47788389,
-  },
-];
+import { stockData } from "./InvestmentData";
 
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
-const StockRecommendationCard = ({ stocks }: { stocks: any }) => {
+const StockRecommendationCard = () => {
   const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
@@ -214,7 +194,7 @@ const StockRecommendationCard = ({ stocks }: { stocks: any }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {stocks.slice(0, 3).map((stock, index) => {
+              {stockData.slice(0, 3).map((stock, index) => {
                 const percentageChange = formatMoneyTrailingZero(
                   Math.round((stock.c - stock.o) * 100) / 100
                 );
