@@ -64,12 +64,12 @@ const StockRecommendationCard = ({
   const [aiResponse, setAIResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //const elapsedTimeRef = useRef(elapsedTime);
+  const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
 
-  // useEffect(() => {
-  //   elapsedTimeRef.current = elapsedTime;
-  // }, [elapsedTime]);
+  useEffect(() => {
+    elapsedTimeRef.current = elapsedTime;
+  }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
@@ -157,8 +157,13 @@ const StockRecommendationCard = ({
   }
 
   const toggleRunDemo = () => {
+    if(runDemo == true && !releaseNewInvestmentStockApi) {
+      setRunDemo((prev) => !prev); // cancel running test despite flag being off
+      return;
+    }
+
     setRunDemo((prev) => !prev);
-    if (runDemo == true && releaseNewInvestmentStockApi) {
+    if (runDemo == true) {
       loginUser(loggedUser, loggedEmail);
     }
   };

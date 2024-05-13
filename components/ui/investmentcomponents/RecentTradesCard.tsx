@@ -119,12 +119,12 @@ const RecentTradesCard = () => {
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
 
-  // const elapsedTimeRef = useRef(elapsedTime);
+  const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
 
-  // useEffect(() => {
-  //   elapsedTimeRef.current = elapsedTime;
-  // }, [elapsedTime]);
+  useEffect(() => {
+    elapsedTimeRef.current = elapsedTime;
+  }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
@@ -173,12 +173,11 @@ const RecentTradesCard = () => {
       const speed = t2 - t1;
       console.log("local speed is: " + speed + "ms");
       client?.track("recent-trades-db-latency", context, speed);
-      await client?.flush();
       //75% chance of hitting errors
       if (Math.random() < 0.75) {
         client?.track("stocks-api-error-rates");
-        await client?.flush();
       }
+      await client?.flush();
     }
   };
 
@@ -223,16 +222,16 @@ const RecentTradesCard = () => {
 
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
-  //TODO: done - create a fake load a really long one to get the stocks showing. if time is short, then have another local one with settimer be shorter than the first
-  //TODO: done - fetch
-  //TODO: create a dialog or sheet idk showing the log as you are fetching user data?
-  //TODO: done - so like in the useeffect you would have a flag between the local and the postegress db
-  //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
 
   const toggleRunDemo = () => {
-    //TODO: add something here to prevent you from not running 
+    if(runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
+      setRunDemo((prev) => !prev); // cancel running test despite flag being off
+      return;
+    }
+
     setRunDemo((prev) => !prev);
-    if (runDemo == true && releasNewInvestmentRecentTradeDBFlag) {
+
+    if (runDemo == true) {
       loginUser(loggedUser, loggedEmail);
     }
   };

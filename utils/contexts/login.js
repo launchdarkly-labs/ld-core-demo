@@ -27,14 +27,14 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
-    await client.identify(context);
+    await client?.identify(context);
   };
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();
     console.log("updateAudienceContext",context)
     context.audience.key = uuidv4().slice(0, 10);
-    await client.identify(context);
+    await client?.identify(context);
   }
 
   const logoutUser = async () => {
