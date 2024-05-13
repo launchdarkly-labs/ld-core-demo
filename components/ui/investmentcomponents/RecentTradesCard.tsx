@@ -119,12 +119,12 @@ const RecentTradesCard = () => {
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
 
-  const elapsedTimeRef = useRef(elapsedTime);
+  // const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
-  
-  useEffect(() => {
-    elapsedTimeRef.current = elapsedTime;
-  }, [elapsedTime]);
+
+  // useEffect(() => {
+  //   elapsedTimeRef.current = elapsedTime;
+  // }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
@@ -143,22 +143,25 @@ const RecentTradesCard = () => {
       // await wait(randomLatency(0.5, 1.5));
 
       try {
-        fetch("/api/recenttrades")
+        await fetch("/api/recenttrades")
           .then((response) => response.json())
-          .then((data) => setRecentTrades(data));
-        console.log(recentTrades);
-        const t2 = Date.now();
-        console.log("t2", t2);
-        console.log("PostgreSQL speed is: " + (t2 - t1) + "ms");
-        const speed = t2 - t1;
-        client?.track("recent-trades-db-latency", context, speed);
-        //10% chance of hitting errors
-        if (Math.random() < 0.1) {
-          client?.track("stocks-api-error-rates");
-        }
-        await client?.flush();
+          .then(async (data) => {
+            setRecentTrades(data);
+            const t2 = Date.now();
+            const speed = t2 - t1;
+            console.log("PostgreSQL speed is: " + speed + "ms");
+            client?.track("recent-trades-db-latency", context, speed);
+            await client?.flush();
+            //10% chance of hitting errors
+            // if (Math.random() < 0.1) {
+            //   client?.track("stocks-api-error-rates");
+            //   client?.flush();
+            // }
+          });
       } catch (error) {
         console.log("error", error);
+        client?.track("stocks-api-error-rates");
+        await client?.flush();
       }
     } else {
       const t1 = Date.now();
@@ -167,15 +170,15 @@ const RecentTradesCard = () => {
       setRecentTrades(investmentData);
 
       const t2 = Date.now();
-      console.log("local speed is: " + (t2 - t1) + "ms");
       const speed = t2 - t1;
-      console.log(speed);
+      console.log("local speed is: " + speed + "ms");
       client?.track("recent-trades-db-latency", context, speed);
+      await client?.flush();
       //75% chance of hitting errors
       if (Math.random() < 0.75) {
         client?.track("stocks-api-error-rates");
+        await client?.flush();
       }
-      await client?.flush();
     }
   };
 
@@ -227,8 +230,9 @@ const RecentTradesCard = () => {
   //TODO: then press that button to run the simulator, have an array to show all the logs, do the useeffect
 
   const toggleRunDemo = () => {
+    //TODO: add something here to prevent you from not running 
     setRunDemo((prev) => !prev);
-    if (runDemo == true) {
+    if (runDemo == true && releasNewInvestmentRecentTradeDBFlag) {
       loginUser(loggedUser, loggedEmail);
     }
   };
@@ -238,11 +242,11 @@ const RecentTradesCard = () => {
       <h3
         className={`text-lg font-sohnelight ${
           releasNewInvestmentRecentTradeDBFlag
-            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
+            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue  "
             : ""
         }`}
         onClick={() => (releasNewInvestmentRecentTradeDBFlag ? toggleRunDemo() : null)}
-        title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
+        title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate."
       >
         Recent Trades
       </h3>

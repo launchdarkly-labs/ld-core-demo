@@ -64,12 +64,12 @@ const StockRecommendationCard = ({
   const [aiResponse, setAIResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const elapsedTimeRef = useRef(elapsedTime);
+  //const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
 
-  useEffect(() => {
-    elapsedTimeRef.current = elapsedTime;
-  }, [elapsedTime]);
+  // useEffect(() => {
+  //   elapsedTimeRef.current = elapsedTime;
+  // }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
@@ -158,7 +158,7 @@ const StockRecommendationCard = ({
 
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
-    if (runDemo == true) {
+    if (runDemo == true && releaseNewInvestmentStockApi) {
       loginUser(loggedUser, loggedEmail);
     }
   };
@@ -168,12 +168,12 @@ const StockRecommendationCard = ({
   return (
     <>
       <h3
-        className={`text-lg font-sohnelight ${
+        className={`text-lg font-sohnelight  ${
           releaseNewInvestmentStockApi
-            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
+            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue "
             : ""
         }`}
-        onClick={() => (releaseNewInvestmentStockApi ? toggleRunDemo() : null)}
+        onClick={() => toggleRunDemo()}
         title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
       >
         Recommended Stocks to Buy
