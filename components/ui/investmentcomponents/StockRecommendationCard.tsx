@@ -17,6 +17,7 @@ import { formatMoneyTrailingZero } from "@/utils/utils";
 import { investmentColors } from "@/utils/styleUtils";
 import { InfoIcon, Brain } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BounceLoader } from "react-spinners";
 
 const dummyStocks = [
   {
@@ -39,23 +40,6 @@ const dummyStocks = [
   },
 ];
 
-// const noStocks = [
-//   {
-//     T: "AMZN",
-//     c: "0",
-//     o: "x",
-//   },
-//   {
-//     T: "MSFT",
-//     c: "0",
-//     o: "x",
-//   },
-//   {
-//     T: "STOCK",
-//     c: "0",
-//     o: "x",
-//   },
-// ];
 
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
@@ -66,8 +50,6 @@ const StockRecommendationCard = ({
   stocks: any;
   isLoadingStocks: boolean;
 }) => {
-
-
   const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
     useContext(LoginContext);
 
@@ -79,6 +61,8 @@ const StockRecommendationCard = ({
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
+  const [aiResponse, setAIResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
@@ -86,12 +70,11 @@ const StockRecommendationCard = ({
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
 
-  useEffect(()=>{
-    if( tableRef.current){
-      tableRef.current.parentNode.style.overflow = "auto"
+  useEffect(() => {
+    if (tableRef.current) {
+      tableRef.current.parentNode.style.overflow = "auto";
     }
-  
-  },[]);
+  }, []);
 
   useEffect(() => {
     if (!loggedUser) {
@@ -148,6 +131,30 @@ const StockRecommendationCard = ({
     };
   }, [client, releaseNewInvestmentStockApi, runDemo]);
 
+  async function fetchBedrockAIResponse(stockName: string) {
+    try {
+      const prompt: string = `As an investment advisor, advise whether to buy, hold, or sell ${stockName}. Limit your responses to an estimated 150 characters. Answer in a professional tone.`;
+
+      setLoading(true);
+      const response = await fetch("/api/bedrock", {
+        method: "POST",
+        body: JSON.stringify({ prompt: prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+      }
+
+      const data = await response.json();
+      setAIResponse(data.completion);
+      return data.completion;
+    } catch (error) {
+      console.error("An error occurred:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
@@ -160,8 +167,12 @@ const StockRecommendationCard = ({
   return (
     <>
       <h3
-        className={`text-lg font-sohnelight ${releaseNewInvestmentStockApi ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue" : "" }`}
-        onClick={() => releaseNewInvestmentStockApi?  toggleRunDemo() : null}
+        className={`text-lg font-sohnelight ${
+          releaseNewInvestmentStockApi
+            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue"
+            : ""
+        }`}
+        onClick={() => (releaseNewInvestmentStockApi ? toggleRunDemo() : null)}
         title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
       >
         Recommended Stocks to Buy
@@ -183,12 +194,14 @@ const StockRecommendationCard = ({
                 <TableHead>Price ($)</TableHead>
                 <TableHead>Gain/Loss (%)</TableHead>
                 {releaseNewInvestmentStockApi ? (
-                  <TableHead className="bg-gradient-investment text-transparent bg-clip-text">AI Assisted Information</TableHead>
+                  <TableHead className="bg-gradient-investment text-transparent bg-clip-text">
+                    AI Assisted Information
+                  </TableHead>
                 ) : null}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {stocks.slice(0,3).map((stock, index) => {
+              {stocks.slice(0, 3).map((stock, index) => {
                 const percentageChange = formatMoneyTrailingZero(
                   Math.round((stock.c - stock.o) * 100) / 100
                 );
@@ -213,10 +226,20 @@ const StockRecommendationCard = ({
                     {releaseNewInvestmentStockApi ? (
                       <TableCell className={`text-investmentgrey `}>
                         <Popover>
-                          <PopoverTrigger asChild>
+                          <PopoverTrigger asChild onClick={()=>fetchBedrockAIResponse(stock?.T)}>
                             <InfoIcon className="cursor-pointer text-investmentblue animate-pulse hover:animate-none" />
                           </PopoverTrigger>
-                          <PopoverContent>Some AI Gen Info</PopoverContent>
+
+                          <PopoverContent>
+                            <h3 className="text-center font-bold mb-2">Information on {stock?.T}</h3>
+                            {loading ? (
+                              <div className="flex justify-center items-center h-full">
+                                <BounceLoader color="#FF386B" />
+                              </div>
+                            ) : (
+                              <p>{aiResponse}</p>
+                            )}
+                          </PopoverContent>
                         </Popover>
                       </TableCell>
                     ) : null}
