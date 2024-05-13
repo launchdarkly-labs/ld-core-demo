@@ -73,8 +73,8 @@ export const StocksComponent: React.FC = () => {
       lastValue > secondLastValue
         ? "lightgreen"
         : lastValue < secondLastValue
-          ? "red"
-          : "rgba(255, 255, 255, 0.5)";
+        ? "red"
+        : "rgba(255, 255, 255, 0.5)";
 
     return {
       labels: lastTenDataPoints.map((dataPoint) => dataPoint.time),
@@ -148,8 +148,8 @@ export const StocksComponent: React.FC = () => {
           if (stocksAPI) {
             //75% chance of hitting errors
             if (Math.random() < 0.75) {
-              client.track("Stock API Error Rates");              client.track("stocks-api-error-rates");
-               client.flush();
+              client.track("stocks-api-error-rates");
+              client.flush();
             }
             dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
             client.track("stock-api-latency", undefined, dynamicValue);
@@ -216,8 +216,9 @@ export const StocksComponent: React.FC = () => {
   return (
     <div className="space-y-2">
       <div
-        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${runDemo ? "border-white" : "border-current"
-          }`}
+        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${
+          runDemo ? "border-white" : "border-current"
+        }`}
       >
         <img src="stocksicon.png" onClick={toggleRunDemo} />
       </div>
@@ -237,7 +238,6 @@ export const StocksComponent: React.FC = () => {
         <div className="space-y-4 ">
           {stocks.map((stock, index) => (
             <div key={index} className="mt-4 rounded-lg">
-
               <div className="flex flex-row sm:flex-row justify-between items-center gap-x-3">
                 <div className="flex items-center gap-x-1">
                   <img
