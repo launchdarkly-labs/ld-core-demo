@@ -405,6 +405,80 @@ def createStocksAPIFeatureFlag():
     if(response.status_code == 201):
         print("Stocks API feature flag created successfully.")
 
+def createReleaseNewInvestmentStockApiFeatureFlag():
+        
+    print("Creating release-new-investment-stock-api feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "release-new-investment-stock-api",
+    "name": "12 - Release New Investment Stock Api",
+    "description": "Release New Investment Stock Api",
+     "variations": [
+        {
+            "value": True,
+            "name": "Available"
+        },
+        {
+            "value": False,
+            "name": "Unavailable"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 1
+    },
+    "tags": [
+        "remediate"
+    ]
+    }
+    
+    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    if(response.status_code == 201):
+        print("Release New Investment Stock Api feature flag created successfully.")
+
+def createReleaseNewRecentTradesDBFeatureFlag():
+        
+    print("Creating investment-recent-trade-db feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "investment-recent-trade-db",
+    "name": "13 - Release New Recent Trades DB",
+    "description": "Release New Recent Trades DB",
+     "variations": [
+        {
+            "value": True,
+            "name": "Available"
+        },
+        {
+            "value": False,
+            "name": "Unavailable"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 1
+    },
+    "tags": [
+        "remediate"
+    ]
+    }
+    
+    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    if(response.status_code == 201):
+        print("Release New Recent Trades DB feature flag created successfully.")
+
         
 if __name__ == "__main__":
     main()
