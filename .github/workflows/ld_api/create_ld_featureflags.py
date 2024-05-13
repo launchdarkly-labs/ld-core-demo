@@ -24,7 +24,8 @@ def main():
     createAITravelInsightsFeatureFlag()
     createStoreHeadersFeatureFlag()
     createStoreAttentionCalloutFeatureFlag()
-    
+    createReleaseNewInvestmentStockApiFeatureFlag()
+    createReleaseNewRecentTradesDBFeatureFlag()
    
 def createFederatedFeatureFlag(): 
     
