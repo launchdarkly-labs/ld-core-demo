@@ -29,7 +29,7 @@ const StockMoversCard = () => {
   useEffect(() => {
     const waiting = async () => {
       setStocksTable(true);
-      await wait(randomLatency(0.5, 1.5));
+      await wait(1);
       setStocksTable(false);
     };
     waiting();

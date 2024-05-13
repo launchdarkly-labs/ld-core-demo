@@ -142,38 +142,63 @@ export const StocksComponent: React.FC = () => {
         });
       }, 100);
 
-      errorInterval = setInterval(async () => {
+      errorInterval = setInterval(() => {
         let dynamicValue;
         if (client) {
           if (stocksAPI) {
             //75% chance of hitting errors
             if (Math.random() < 0.75) {
-              client.track("stocks-api-error-rates");
-              await client.flush();
+              client.track("Stock API Error Rates");              client.track("stocks-api-error-rates");
+               client.flush();
             }
             dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
-            console.log("dynamicValue 1", dynamicValue);
             client.track("stock-api-latency", undefined, dynamicValue);
-            await client.flush();
+            client.flush();
           } else {
             //25% chance of hitting errors
             if (Math.random() < 0.25) {
               client.track("stocks-api-error-rates");
-              await client.flush();
+              client.flush();
             }
             dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
-            console.log("dynamicValue 2", dynamicValue);
             client.track("stock-api-latency", undefined, dynamicValue);
-            await client.flush();
+            client.flush();
           }
         }
         setElapsedTime((prevTime) => prevTime + 1);
       }, 10);
     }
+    const stocksinterval = setInterval(() => {
+      const updatedStocks = stocks.map((stock) => {
+        let newValue = 0;
+        const lastValue = stock.data[stock.data.length - 1].value;
+        if (stock.ticker == "TSLA") {
+          newValue = Math.floor(Math.random() * (200 - 210 + 1)) + 205;
+        }
+        if (stock.ticker == "AAPL") {
+          newValue = Math.floor(Math.random() * (185 - 196 + 1)) + 190;
+        }
+        if (stock.ticker == "LD") {
+          newValue = Math.floor(Math.random() * (1000 - 1050 + 1)) + 1025;
+        }
+        if (stock.ticker == "NVDA") {
+          newValue = Math.floor(Math.random() * (600 - 620 + 1)) + 612;
+        }
+        const direction = newValue > lastValue ? "up" : newValue < lastValue ? "down" : null;
+        const newTime = new Date().toLocaleTimeString();
+        const newDataPoint = { time: newTime, value: newValue, direction };
 
+        return {
+          ...stock,
+          data: [...stock.data, newDataPoint],
+        };
+      });
+
+      setStocks(updatedStocks);
+    }, 3000);
 
     return () => {
-      // clearInterval(stocksinterval);
+      clearInterval(stocksinterval);
       if (runDemo) {
         if (loginInterval !== null) clearInterval(loginInterval);
         if (errorInterval !== null) clearInterval(errorInterval);
@@ -194,7 +219,7 @@ export const StocksComponent: React.FC = () => {
         className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${runDemo ? "border-white" : "border-current"
           }`}
       >
-        <img src="stocksicon.png" onClick={toggleRunDemo} className="hover:brightness-125 cursor-pointer animate-pulse hover:animate-none" title = "Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"/>
+        <img src="stocksicon.png" onClick={toggleRunDemo} />
       </div>
       <p className=" font-bold font-sohne text-lg pt-2">Stocks</p>
 
