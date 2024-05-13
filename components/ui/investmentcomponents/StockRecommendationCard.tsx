@@ -18,6 +18,7 @@ import { investmentColors } from "@/utils/styleUtils";
 import { InfoIcon, Brain } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
+import { wait } from "@/utils/utils";
 
 const dummyStocks = [
   {
@@ -39,7 +40,6 @@ const dummyStocks = [
     v: 47788389,
   },
 ];
-
 
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
@@ -66,13 +66,14 @@ const StockRecommendationCard = ({
 
   const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
+
   useEffect(() => {
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
 
   useEffect(() => {
     if (tableRef.current) {
-      tableRef.current.parentNode.style.overflow = "auto";
+      tableRef.current.parentNode.style["overflow-y"] = "hidden";
     }
   }, []);
 
@@ -147,10 +148,10 @@ const StockRecommendationCard = ({
 
       const data = await response.json();
       setAIResponse(data.completion);
-      return data.completion;
     } catch (error) {
       console.error("An error occurred:", error);
     } finally {
+      wait(1);
       setLoading(false);
     }
   }
@@ -226,12 +227,14 @@ const StockRecommendationCard = ({
                     {releaseNewInvestmentStockApi ? (
                       <TableCell className={`text-investmentgrey `}>
                         <Popover>
-                          <PopoverTrigger asChild onClick={()=>fetchBedrockAIResponse(stock?.T)}>
+                          <PopoverTrigger asChild onClick={() => fetchBedrockAIResponse(stock?.T)}>
                             <InfoIcon className="cursor-pointer text-investmentblue animate-pulse hover:animate-none" />
                           </PopoverTrigger>
 
                           <PopoverContent>
-                            <h3 className="text-center font-bold mb-2">Information on {stock?.T}</h3>
+                            <h3 className="text-center font-bold mb-2">
+                              Information on {stock?.T}
+                            </h3>
                             {loading ? (
                               <div className="flex justify-center items-center h-full">
                                 <BounceLoader color="#FF386B" />

@@ -68,12 +68,11 @@ const StockMoversCard = ({
   const tableRef = useRef(null);
   if (stocks.length === 0 || stocks === undefined) stocks = dummyStocks; //to deal with rate limit
 
-  useEffect(()=>{
-    if( tableRef.current){
-      tableRef.current.parentNode.style.overflow = "hidden"
+  useEffect(() => {
+    if (tableRef.current) {
+      tableRef.current.parentNode.style["overflow-y"] = "hidden";
     }
-    
-  },[]);
+  }, []);
 
   return (
     <>

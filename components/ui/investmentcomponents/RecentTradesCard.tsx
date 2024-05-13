@@ -18,6 +18,7 @@ import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import { useSearchParams } from "next/navigation";
 import LoginContext from "@/utils/contexts/login";
+import { wait } from "@/utils/utils";
 
 const dummyStocks = [
   {
@@ -125,18 +126,12 @@ const RecentTradesCard = () => {
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
 
-  useEffect(()=>{
-    if( tableRef.current){
-      tableRef.current.parentNode.style.overflow = "hidden"
+  useEffect(() => {
+    if (tableRef.current) {
+      tableRef.current.parentNode.style["overflow-y"] = "hidden";
     }
-    
-  },[]);
+  }, []);
 
-  function wait(seconds: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, seconds * 1000);
-    });
-  }
   const randomLatency = (min: number, max: number) =>
     max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
 
