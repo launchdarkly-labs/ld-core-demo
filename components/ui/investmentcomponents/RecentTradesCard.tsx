@@ -18,7 +18,7 @@ import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import { useSearchParams } from "next/navigation";
 import LoginContext from "@/utils/contexts/login";
-import { wait } from "@/utils/utils";
+import { wait, randomLatency } from "@/utils/utils";
 
 const dummyStocks = [
   {
@@ -131,9 +131,6 @@ const RecentTradesCard = () => {
     }
   }, []);
 
-  const randomLatency = (min: number, max: number) =>
-    max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
-
   const runDBScript = async () => {
     if (releasNewInvestmentRecentTradeDBFlag) {
       const t1 = Date.now();
@@ -210,7 +207,6 @@ const RecentTradesCard = () => {
       }, 100);
 
       errorInterval = setInterval(async () => {
-        let dynamicValue;
         if (client) {
           runDBScript();
         }

@@ -18,7 +18,7 @@ import { investmentColors } from "@/utils/styleUtils";
 import { InfoIcon, Brain } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
-import { wait } from "@/utils/utils";
+import { wait, randomLatency } from "@/utils/utils";
 
 const dummyStocks = [
   {
@@ -43,15 +43,8 @@ const dummyStocks = [
 
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
-const StockRecommendationCard = ({
-  stocks,
-  isLoadingStocks,
-}: {
-  stocks: any;
-  isLoadingStocks: boolean;
-}) => {
-  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
-    useContext(LoginContext);
+const StockRecommendationCard = ({ stocks }: { stocks: any }) => {
+  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
 
@@ -62,7 +55,8 @@ const StockRecommendationCard = ({
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
   const [aiResponse, setAIResponse] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingBedrock, setLoadingBedrock] = useState(false);
+  const [loadingStocksTable, setStocksTable] = useState(false);
 
   const elapsedTimeRef = useRef(elapsedTime);
   const tableRef = useRef(null);
@@ -70,6 +64,15 @@ const StockRecommendationCard = ({
   useEffect(() => {
     elapsedTimeRef.current = elapsedTime;
   }, [elapsedTime]);
+
+  useEffect(() => {
+    const waiting = async () => {
+      setStocksTable(true);
+      await wait(randomLatency(0.5, 1.5));
+      setStocksTable(false);
+    };
+    waiting();
+  }, []);
 
   useEffect(() => {
     if (tableRef.current) {
@@ -136,7 +139,7 @@ const StockRecommendationCard = ({
     try {
       const prompt: string = `As an investment advisor, advise whether to buy, hold, or sell ${stockName}. Limit your responses to an estimated 150 characters. Answer in a professional tone.`;
 
-      setLoading(true);
+      setLoadingBedrock(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
         body: JSON.stringify({ prompt: prompt }),
@@ -152,12 +155,12 @@ const StockRecommendationCard = ({
       console.error("An error occurred:", error);
     } finally {
       wait(1);
-      setLoading(false);
+      setLoadingBedrock(false);
     }
   }
 
   const toggleRunDemo = () => {
-    if(runDemo == true && !releaseNewInvestmentStockApi) {
+    if (runDemo == true && !releaseNewInvestmentStockApi) {
       setRunDemo(false); // cancel running test despite flag being off
       return;
     }
@@ -189,6 +192,10 @@ const StockRecommendationCard = ({
           <div className="flex ">
             <InfinityLoader />
           </div>
+        </div>
+      ) : loadingStocksTable ? (
+        <div className="flex justify-center items-center h-full">
+          <BounceLoader color="#FF386B" />
         </div>
       ) : (
         <>
@@ -240,7 +247,7 @@ const StockRecommendationCard = ({
                             <h3 className="text-center font-bold mb-2">
                               Information on {stock?.T}
                             </h3>
-                            {loading ? (
+                            {loadingBedrock ? (
                               <div className="flex justify-center items-center h-full">
                                 <BounceLoader color="#FF386B" />
                               </div>

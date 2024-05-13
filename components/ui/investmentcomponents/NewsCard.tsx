@@ -1,66 +1,43 @@
 import { format } from "date-fns";
+import React, { useEffect, useState } from "react";
+
 import { BounceLoader } from "react-spinners";
 import { truncateString } from "@/utils/utils";
+import { wait, randomLatency } from "@/utils/utils";
+import {
+  newsData,
+  investmentData,
+  stockData,
+} from "@/components/ui/investmentcomponents/InvestmentData";
 
 const time = new Date().getTime();
 const date = format(new Date(time), "MMM d, yyyy");
 
-const dummyData = [
-  {
-    title:
-      "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-    publisher: {
-      name: "Reuters",
-    },
-    published_utc: date,
-  },
-  {
-    title:
-      "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-    publisher: {
-      name: "Reuters",
-    },
-    published_utc: date,
-  },
-  {
-    title:
-      "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-    publisher: {
-      name: "Reuters",
-    },
-    published_utc: date,
-  },
-  {
-    title:
-      "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-    publisher: {
-      name: "Reuters",
-    },
-    published_utc: date,
-  },
-  {
-    title:
-      "S&P 500 scales new high on upbeat corporate earning. Tech heavyweight Microsoft Corp edged 0.7% higher, while Advanced Micro Devices Inc dipped 0.2%. Both the companies are expected to report earnings after markets close.",
-    publisher: {
-      name: "Reuters",
-    },
-    published_utc: date,
-  },
-];
 
 const NewsCard = ({ news, isLoadingNews }: { news: any; isLoadingNews: boolean }) => {
+  const [loadingStocksTable, setStocksTable] = useState(false);
+
+  useEffect(() => {
+    const waiting = async () => {
+      setStocksTable(true);
+      await wait(randomLatency(0.5, 1.5));
+      setStocksTable(false);
+    };
+    waiting();
+  }, []);
 
   return (
     <>
       <h3 className="font-bold text-lg mb-4">News about your investment</h3>
       <div className="flex flex-col gap-y-2 mb-4">
-        {isLoadingNews ? (
-          <BounceLoader marginy={"!my-[9rem]"} />
-        ) : (
+      {loadingStocksTable ? (
+        <div className="flex justify-center items-center h-full">
+          <BounceLoader color="#FF386B" />
+        </div>
+      ) : (
           <>
             {news.map((datum: any, index: number) => {
               const dateCleaned = format(new Date(datum.published_utc), "MMM d, yyyy");
-
               return (
                 <div className="" key={`${datum.id}-${index}`}>
                   <a

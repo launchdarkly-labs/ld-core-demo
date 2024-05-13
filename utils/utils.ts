@@ -74,3 +74,6 @@ export function wait(seconds: number) {
   });
 }
 
+export   const randomLatency = (min: number, max: number) =>
+  max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
+

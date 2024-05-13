@@ -23,12 +23,15 @@ import MarketCard from "@/components/ui/investmentcomponents/MarketCard";
 import StockRecommendationCard from "@/components/ui/investmentcomponents/StockRecommendationCard";
 import InvestmentDevLog from "@/components/ui/investmentcomponents/InvestmentDevLog";
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
-import {newsData, investmentData, stockData} from '@/components/ui/investmentcomponents/InvestmentData';
-import InfinityLoader from "@/components/ui/infinityloader";
+import {
+  newsData,
+  investmentData,
+  stockData,
+} from "@/components/ui/investmentcomponents/InvestmentData";
 
-export default function Airways() {
-
-  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext , logoutUser } = useContext(LoginContext);
+export default function Investment() {
+  const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =
+    useContext(LoginContext);
 
   const ldclient = useLDClient();
 
@@ -160,7 +163,7 @@ export default function Airways() {
   const onClose = () => {
     setIsOpen(false);
   };
-  
+
   return (
     <>
       <Toaster />
