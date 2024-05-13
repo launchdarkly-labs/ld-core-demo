@@ -212,26 +212,7 @@ const RecentTradesCard = () => {
       errorInterval = setInterval(async () => {
         let dynamicValue;
         if (client) {
-          if (releasNewInvestmentRecentTradeDBFlag) {
-            if (Math.random() < 0.10) {
-              client?.track("recent-trades-db-errors");
-              await client.flush();
-            }
-            dynamicValue = randomLatency(.5, 1.5);
-            console.log("dynamicValue 1", dynamicValue);
-            client.track("recent-trades-db-latency", undefined, dynamicValue);
-            await client.flush();
-          } else {
-            //25% chance of hitting errors
-            if (Math.random() < 0.75) {
-              client?.track("recent-trades-db-errors");
-              await client.flush();
-            }
-            dynamicValue =randomLatency(4, 6);
-            console.log("dynamicValue 2", dynamicValue);
-            client.track("recent-trades-db-latency", undefined, dynamicValue);
-            await client.flush();
-          }
+          runDBScript();
         }
         setElapsedTime((prevTime) => prevTime + 1);
       }, 10);
@@ -244,8 +225,6 @@ const RecentTradesCard = () => {
       }
     };
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
-
-  //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
   const toggleRunDemo = () => {
     if (runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
