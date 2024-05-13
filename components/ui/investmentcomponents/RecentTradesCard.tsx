@@ -3,7 +3,7 @@ import InfinityLoader from "@/components/ui/infinityloader";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { investmentData } from "./InvestmentData";
 import { BounceLoader } from "react-spinners";
-
+import { debounce } from "lodash";
 import {
   Table,
   TableBody,
@@ -137,32 +137,47 @@ const RecentTradesCard = () => {
 
   const runDBScript = async () => {
     if (releasNewInvestmentRecentTradeDBFlag) {
+      // const t1 = Date.now();
+      // console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
+      // console.log("t1", t1);
+      // // await wait(randomLatency(0.5, 1.5));
+
+      // try {
+      //    fetch("/api/recenttrades")
+      //     .then((response) => response.json())
+      //     .then(async (data) => {
+      //       setRecentTrades(data);
+      //       const t2 = Date.now();
+      //       const speed = t2 - t1;
+      //       console.log("PostgreSQL speed is: " + speed + "ms");
+      //       client?.track("recent-trades-db-latency", context, speed);
+      //       await client?.flush();
+      //       //10% chance of hitting errors
+      //       // if (Math.random() < 0.1) {
+      //       //   client?.track("stocks-api-error-rates");
+      //       //   client?.flush();
+      //       // }
+      //     });
+      // } catch (error) {
+      //   console.log("error", error);
+      //   client?.track("stocks-api-error-rates");
+      //   await client?.flush();
+      // }
+
       const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
-      console.log("t1", t1);
-      // await wait(randomLatency(0.5, 1.5));
+      await wait(randomLatency(0.5, 1.5));
+      setRecentTrades(investmentData);
 
-      try {
-        await fetch("/api/recenttrades")
-          .then((response) => response.json())
-          .then(async (data) => {
-            setRecentTrades(data);
-            const t2 = Date.now();
-            const speed = t2 - t1;
-            console.log("PostgreSQL speed is: " + speed + "ms");
-            client?.track("recent-trades-db-latency", context, speed);
-            await client?.flush();
-            //10% chance of hitting errors
-            // if (Math.random() < 0.1) {
-            //   client?.track("stocks-api-error-rates");
-            //   client?.flush();
-            // }
-          });
-      } catch (error) {
-        console.log("error", error);
+      const t2 = Date.now();
+      const speed = t2 - t1;
+      console.log("postgres speed is: " + speed + "ms");
+      client?.track("recent-trades-db-latency", context, speed);
+      //10% chance of hitting errors
+      if (Math.random() < 0.1) {
         client?.track("stocks-api-error-rates");
-        await client?.flush();
       }
+      await client?.flush();
     } else {
       const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is disabled");
@@ -203,28 +218,26 @@ const RecentTradesCard = () => {
           }
           return newTime;
         });
-      }, 100);
+      }, 7100);
+
       errorInterval = setInterval(async () => {
         if (client) {
           runDBScript();
         }
         setElapsedTime((prevTime) => prevTime + 1);
-      }, 50);
+      }, 7000);
     }
 
     return () => {
-      if (runDemo) {
-        if (loginInterval !== null) clearInterval(loginInterval);
-        if (errorInterval !== null) clearInterval(errorInterval);
-      }
+      if (loginInterval !== null) clearInterval(loginInterval);
+      if (errorInterval !== null) clearInterval(errorInterval);
     };
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
 
   //const { isLoggedIn, setIsLoggedIn, loginUser, user, email, updateAudienceContext, logoutUser } =useContext(LoginContext);
 
-
   const toggleRunDemo = () => {
-    if(runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
+    if (runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
       setRunDemo((prev) => !prev); // cancel running test despite flag being off
       return;
     }
