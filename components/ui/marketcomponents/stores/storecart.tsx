@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -15,14 +14,15 @@ import { useRouter } from "next/router";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
+import galaxyMarketLogo from '@/public/market.png'
+import SuggestedItems from "../suggestedItems";
 
 interface InventoryItem {
   id: string | number;
@@ -34,6 +34,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const router = useRouter();
 
   const LDClient = useLDClient();
+  const { cartSuggestedItems } = useFlags();
 
   const totalCost = (cart || []).reduce(
     (total: number, item: InventoryItem) => total + Number(item.cost),
@@ -50,15 +51,22 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const checkOut = () => {
     toast({
       title: `Checkout is successful! Enjoy your purchase!`,
-      wrapperStyle: "bg-gradient-experimentation text-white font-sohne"
+      wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base"
     });
 
     setCart([]);
     router.push("/marketplace");
   };
 
+  const continueShopping = () => {
+    LDClient?.track("upsell-tracking", LDClient.getContext());
+    
+    router.push("/marketplace");
+  };
+
   const checkOutTracking = () => {
     LDClient?.track("customer-checkout", LDClient.getContext(), 1);
+    LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
   };
 
   return (
@@ -66,7 +74,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
       <SheetTrigger onClick={() => cartClick()} asChild>
         <div className="relative cursor-pointer">
           <ShoppingCart className="cart" color={"white"} />
-          <div className="bg-marketblue w-3 h-3 sm:w-[.85rem] sm:h-[.85rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[0px] right-[0px]">
+          <div className="bg-gradient-experimentation w-3 h-3 sm:w-[1rem] sm:h-[1rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[-5px] right-[-10px]">
             <span className="text-white mt-[.15rem] sm:mt-1 absolute text-xs sm:text-sm ">
               {cartNumOfItems}
             </span>
@@ -74,18 +82,18 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
         </div>
       </SheetTrigger>
 
-      <SheetContent className="w-full sm:w-2/3 lg:w-1/2 xl:w-1/3" side="right">
+      <SheetContent className="w-full sm:w-2/3 lg:w-1/2 xl:w-1/3 overflow-auto" side="right">
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl bg-gradient-experimentation text-transparent bg-clip-text">
-            Your Cart
+            Cart
           </SheetTitle>
 
-          <SheetDescription className="font-sohne">Ready for Checkout?</SheetDescription>
         </SheetHeader>
         <Table className="font-sohnelight">
           {/* <TableCaption>Your Items</TableCaption> */}
           <TableHeader>
             <TableRow>
+              <TableHead />
               <TableHead>Item</TableHead>
               <TableHead>Price</TableHead>
             </TableRow>
@@ -95,6 +103,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               cart?.map((item: InventoryItem, index: number) => {
                 return (
                   <TableRow key={`${item.id}-${index}`}>
+                    <TableCell> <img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
                     <TableCell className="">{item.item}</TableCell>
                     <TableCell className="">${item.cost}</TableCell>
                   </TableRow>
@@ -107,19 +116,43 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
             )}
           </TableBody>
         </Table>
+        <hr className="my-4 border-t border-gray-200" />
+
         <SheetFooter>
-          <div className="mr-16 mt-10">
-            <p className="pb-4 font-sohne ml-auto">Transaction Total: ${totalCost.toFixed(2)}</p>
+
+          <div className="w-full px-4 ">
+            <div className="w-full px-4 flex justify-between">
+              <p className="pb-4 font-sohne">Total:</p>
+              <p className="pb-4 font-sohne">${totalCost.toFixed(2)}</p>
+            </div>
             <SheetTrigger onClick={checkOut} asChild>
               <Button
                 onClick={checkOutTracking}
-                className="checkout w-full bg-gradient-experimentation hover:brightness-[120%]"
+                className="w-full bg-gradient-experimentation hover:brightness-[120%] rounded-none"
               >
                 Checkout
               </Button>
+
             </SheetTrigger>
+            {cartSuggestedItems ? (
+              <SuggestedItems
+                cart={cart}
+                setCart={setCart}
+              />
+            ) : (
+              <SheetTrigger onClick={continueShopping} asChild>
+                <div className="text-center mt-4">
+                  <Button
+                    className="text-md  bg-gradient-experimentation hover:brightness-[120%] text-transparent bg-clip-text rounded-none"
+                  >
+                    Continue Shopping →
+                  </Button>
+                </div>
+              </SheetTrigger>
+            )}
           </div>
         </SheetFooter>
+
       </SheetContent>
     </Sheet>
   );
