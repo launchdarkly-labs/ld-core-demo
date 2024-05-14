@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -38,11 +38,7 @@ export default function Airways() {
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
-
-  function setAirport() {
-    setShowSearch(true);
-  }
+  const { isLoggedIn, logoutUser } = useContext(LoginContext);
 
   const ldclient = useLDClient();
 
@@ -59,8 +55,8 @@ export default function Airways() {
       date!.from.getMonth() + 1
     }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
     const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
-    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
-    const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
+    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; 
+    const tripIdReturn = Math.floor(Math.random() * 900) + 100;
 
     const outboundTrip = {
       id: tripIdOutbound,

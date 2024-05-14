@@ -62,9 +62,9 @@ def patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key):
             "value": {
                 "clauses": [{ 
                     "contextKind": "user",
-                    "attribute": "email",
+                    "attribute": "role",
                     "op": "in",
-                    "values": ["jenn@launchmail.io"],
+                    "values": ["Developer"],
                     "negate": False
                 }]
             }
@@ -143,9 +143,9 @@ def patchBetaSegmentPayload(ld_api_key, environment_key, project_key):
                 "value": {
                     "clauses": [{ 
                         "contextKind": "user",
-                        "attribute": "email",
+                        "attribute": "role",
                         "op": "in",
-                        "values": ["alysha@launchmail.io"],
+                        "values": ["Beta"],
                         "negate": False
                     }]
                 }

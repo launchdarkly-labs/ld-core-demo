@@ -27,6 +27,9 @@ if (typeof window !== "undefined") {
     reactOptions: {
       useCamelCaseFlagKeys: false,
     },
+    options: {
+      privateAttributes: ['email', 'name']
+    },
     context: {
       kind: "multi",
       user: {

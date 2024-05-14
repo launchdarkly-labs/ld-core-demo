@@ -8,9 +8,9 @@ resource "launchdarkly_segment" "beta-users" {
 
   rules {
     clauses {
-      attribute    = "email"
+      attribute    = "role"
       op           = "in"
-      values       = ["alysha@launchmail.io"]
+      values       = ["Beta"]
       context_kind = "user"
     }
   }
@@ -26,9 +26,9 @@ resource "launchdarkly_segment" "dev-team" {
 
   rules {
     clauses {
-      attribute    = "email"
+      attribute    = "role"
       op           = "in"
-      values       = ["jenn@launchmail.io"]
+      values       = ["Developer"]
       context_kind = "user"
     }
   }
