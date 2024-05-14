@@ -25,7 +25,7 @@ const LaunchClubStatus = () => {
               <p className="text-sm">#8235232113</p>
             </div>
             <div className="flex items-center">
-              <img src="launch-airways.svg" className="h-24 w-24 items-center" />
+              <img src="/airline/launch-airways.svg" className="h-24 w-24 items-center" />
             </div>
           </div>
         </div>
