@@ -79,7 +79,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
 
   function handleLogin(e) {
-    setIsLoggedIn(true);
     let email;
     let name;
     const activePersona = personas.find(p => p.personaname === activeElement);
@@ -136,7 +135,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
         
           <Input
             placeholder="Email"
-            value={undefined}
+            value={defaultEmail || "jenn@launchmail.io"}
             ref={inputRef}
             className="mb-8 outline-none border-0 border-b-2 text-xl"
             onChange={(e) => setDefaultEmail(e.target.value)}

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import BalanceChart from "./BalanceChart";
 import { Button } from "@/components/ui/button";
 import { investmentColors } from "@/utils/styleUtils";
@@ -7,9 +7,19 @@ import { BounceLoader } from "react-spinners";
 import silver from "@/public/investment/graphs/silver.png";
 import gold from "@/public/investment/graphs/gold.png";
 import diamond from "@/public/investment/graphs/diamond.png";
+import { wait, randomLatency } from "@/utils/utils";
 
-const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
-  
+const BalanceCard = () => {
+  const [loadingStocksTable, setStocksTable] = useState(false);
+
+  useEffect(() => {
+    const waiting = async () => {
+      setStocksTable(true);
+      await wait(1);
+      setStocksTable(false);
+    };
+    waiting();
+  }, []);
 
   const showCloudMigrationTwoStagesLDFlag = true;
   const showPatchCloudMigrationLDFlag = true;
@@ -23,7 +33,9 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   };
 
   const errorUI =
-    showCloudMigrationTwoStagesLDFlag && !showPatchCloudMigrationLDFlag && isDeveloper ? "text-red-500" : "";
+    showCloudMigrationTwoStagesLDFlag && !showPatchCloudMigrationLDFlag && isDeveloper
+      ? "text-red-500"
+      : "";
 
   let renderedData;
 
@@ -38,8 +50,10 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
   return (
     <>
       <h3 className={`font-bold text-lg mb-4 ${errorUI}`}>Your Balance</h3>
-      {isLoadingStocks ? (
-        <BounceLoader marginy={"!my-[30vh]"} />
+      {loadingStocksTable ? (
+        <div className="flex justify-center items-center h-full w-full">
+          <BounceLoader color="#FF386B" />
+        </div>
       ) : (
         <>
           <h4
@@ -53,8 +67,13 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
             {renderedData?.dailyPriceChange} ({renderedData?.dailyPercentageChange}%) today
           </p>
           <div className="w-[100%] h-[350px] lg:h-[350px] mb-4">
-            {window?.location?.ancestorOrigins?.item(0)?.includes("reprise") || window?.location?.hostname?.includes("reprise")   ? (
-              <img src={imgGraph[userTierStatus]} alt={userTierStatus} className="w-full h-full object-contain"/>
+            {window?.location?.ancestorOrigins?.item(0)?.includes("reprise") ||
+            window?.location?.hostname?.includes("reprise") ? (
+              <img
+                src={imgGraph[userTierStatus]}
+                alt={userTierStatus}
+                className="w-full h-full object-contain"
+              />
             ) : (
               <BalanceChart />
             )}
@@ -74,7 +93,9 @@ const BalanceCard = ({ isLoadingStocks }: { isLoadingStocks: boolean }) => {
             <Button className="rounded-full bg-black h-10 w-10">2Y</Button>
             <Button className="rounded-full bg-gradient-investment h-10 w-10">YTD</Button>
           </div>
-          <p className="text-investmentblue hover:underline cursor-default text-center">Balance Details</p>
+          <p className="text-investmentblue hover:underline cursor-default text-center">
+            Balance Details
+          </p>
         </>
       )}
     </>
