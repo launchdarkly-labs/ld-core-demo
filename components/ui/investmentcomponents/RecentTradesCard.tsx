@@ -50,11 +50,9 @@ const RecentTradesCard = () => {
       console.log("releasNewInvestmentRecentTradeDBFlag is enabled");
 
       if (runDemo) {
-        client?.track("recent-trades-db-latency", undefined, randomLatency(0.5, 1.5));
-        await client?.flush();
-        if (Math.random() < 0.1) {
+        client?.track("recent-trades-db-latency", undefined, randomLatency(15, 25));
+        if (Math.random() < 0.05) {
           client?.track("recent-trades-db-errors");
-          await client?.flush();
         }
       } else {
         try {
@@ -64,9 +62,9 @@ const RecentTradesCard = () => {
               setRecentTrades(data);
               const t2 = Date.now()
               const speed = (t2 - t1)
-              console.log("PostgreSQL speed is: " + speed+ "ms")
+              console.log("PostgreSQL speed is: " + speed + "ms")
             });
- 
+
         } catch (error) {
           console.log("error", error);
         }
@@ -75,24 +73,16 @@ const RecentTradesCard = () => {
       // const t1 = Date.now();
       console.log("releasNewInvestmentRecentTradeDBFlag is disabled");
       if (runDemo) {
-        client?.track("recent-trades-db-latency", undefined, randomLatency(4, 6));
-        await client?.flush();
+        client?.track("recent-trades-db-latency", undefined, randomLatency(40, 60));
         if (Math.random() < 0.75) {
           client?.track("recent-trades-db-errors");
-          await client?.flush();
         }
       } else {
         await wait(randomLatency(4, 6));
         setRecentTrades(investmentData);
       }
-
-      // const t2 = Date.now();
-      // const speed = t2 - t1;
-      // console.log("local speed is: " + speed + "ms");
-      // if (runDemo) client?.track("recent-trades-db-latency", context, speed);
-
-      //75% chance of hitting errors
     }
+    await client?.flush();
   };
 
   useEffect(() => {
@@ -124,7 +114,7 @@ const RecentTradesCard = () => {
           runDBScript();
         }
         setElapsedTime((prevTime) => prevTime + 1);
-      }, 10);
+      }, 50);
     }
 
     return () => {
@@ -136,14 +126,7 @@ const RecentTradesCard = () => {
   }, [client, releasNewInvestmentRecentTradeDBFlag, runDemo]);
 
   const toggleRunDemo = () => {
-    if (!releasNewInvestmentRecentTradeDBFlag) return;
-    if (runDemo == true && !releasNewInvestmentRecentTradeDBFlag) {
-      setRunDemo((prev) => !prev); // cancel running test despite flag being off
-      return;
-    }
-
     setRunDemo((prev) => !prev);
-
     if (runDemo == true) {
       loginUser(loggedUser, loggedEmail);
     }
@@ -152,12 +135,8 @@ const RecentTradesCard = () => {
   return (
     <>
       <h3
-        className={`text-lg font-sohnelight ${
-          releasNewInvestmentRecentTradeDBFlag
-            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue  "
-            : ""
-        }`}
-        onClick={() => (releasNewInvestmentRecentTradeDBFlag ? toggleRunDemo() : null)}
+        className={`text-lg font-sohnelight ${" animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue  "}`}
+        onClick={() => (toggleRunDemo())}
         title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate."
       >
         Recent Trades

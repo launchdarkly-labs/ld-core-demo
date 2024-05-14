@@ -398,7 +398,7 @@ def createStocksAPIFeatureFlag():
         "offVariation": 1
     },
     "tags": [
-        "release"
+        "remediate"
     ]
     }
     

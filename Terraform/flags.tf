@@ -55,7 +55,7 @@ resource "launchdarkly_feature_flag" "stocksAPI" {
   }
 
   tags = [
-    "release"
+    "remediate"
   ]
 }
 

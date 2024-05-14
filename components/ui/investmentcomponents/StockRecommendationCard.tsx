@@ -81,25 +81,28 @@ const StockRecommendationCard = () => {
       }, 100);
 
       errorInterval = setInterval(async () => {
-        let dynamicValue;
+        let dynamicValue1;
+        let dynamicValue2;
         if (client) {
           if (releaseNewInvestmentStockApi) {
             //75% chance of hitting errors
             if (Math.random() < 0.75) {
-              client.track("stocks-api-error-rates");
+              await client.track("stocks-api-error-rates");
               await client.flush();
             }
-            dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
-            client.track("stock-api-latency", undefined, dynamicValue);
+            dynamicValue1 = Math.floor(Math.random() * (21)) + 600;
+            await client.track("stock-api-latency", undefined, dynamicValue1);
+            dynamicValue1 = 0;
             await client.flush();
           } else {
             //25% chance of hitting errors
             if (Math.random() < 0.25) {
-              client.track("stocks-api-error-rates");
+              await client.track("stocks-api-error-rates");
               await client.flush();
             }
-            dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
-            client.track("stock-api-latency", undefined, dynamicValue);
+            dynamicValue2 = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
+            await client.track("stock-api-latency", undefined, dynamicValue2);
+            dynamicValue2 = 0;
             await client.flush();
           }
         }
@@ -140,12 +143,6 @@ const StockRecommendationCard = () => {
   }
 
   const toggleRunDemo = () => {
-    if(!releaseNewInvestmentStockApi) return;
-    if (runDemo == true && !releaseNewInvestmentStockApi) {
-      setRunDemo(false); // cancel running test despite flag being off
-      return;
-    }
-
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
       loginUser(loggedUser, loggedEmail);
@@ -157,11 +154,7 @@ const StockRecommendationCard = () => {
   return (
     <>
       <h3
-        className={`text-lg font-sohnelight  ${
-          releaseNewInvestmentStockApi
-            ? " animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue "
-            : ""
-        }`}
+        className={`text-lg font-sohnelight  ${" animate-pulse hover:animate-none cursor-pointer hover:underline hover:text-investmentblue "}`}
         onClick={() => toggleRunDemo()}
         title="Click Here to Run Release Guardian Simulator, generating stocks over many user context to simulate latency and error rate"
       >
