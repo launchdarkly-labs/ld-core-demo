@@ -2,43 +2,29 @@
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AnimatePresence, motion } from "framer-motion";
-import { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
-import TripsContext from "@/utils/contexts/TripContext";
-import BookedFlights from "./bookedFlights";
+
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 
 export default function LaunchSignUp() {
   const client = useLDClient();
 
-  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
 
   const {
-    isLoggedIn,
-    setIsLoggedIn,
-    loginUser,
     logoutUser,
     enrolledInLaunchClub,
     setEnrolledInLaunchClub,
     setLaunchClubStatus,
   } = useContext(LoginContext);
-  const [status, setStatus] = useState("Economy");
-
-  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    logoutUser();
-    setUsername("");
-  };
 
   const enrollLaunchClub = async () => {
     setEnrolledInLaunchClub(true);

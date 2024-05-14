@@ -8,7 +8,6 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -36,11 +35,10 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] = useState('jenn@launchmail.io');
+  const [defaultEmail, setDefaultEmail] = useState('user@launchmail.io');
   const variantClass = getVariantClassName(variant);
-  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
-  const { personas, addPersona, deleteAllPersonas, getPersonas } = useContext(PersonaContext);
+  const { personas, getPersonas } = useContext(PersonaContext);
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,25 +51,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     getPersonas();
   }, [isLoading]);
 
-  const handleSubmitNewPersona = () => {
-    const emailExists = personas.some(persona => persona.personaEmail === newPersona.email);
-    if (emailExists) {
-      setSubmitError('A persona with this email already exists.');
-      return;
-    }
-    setIsLoading(true);
-    addPersona(newPersona)
-      .then(() => {
-        setIsAddUserDropdownOpen(false);
-        setIsLoading(false);
-        getPersonas();
-      })
-      .catch(error => {
-        setSubmitError('Failed to create new persona. Please try again.');
-        setIsLoading(false);
-      })
-  };
-
   const showBackButton = () => {
     setIsAddUserDropdownOpen(false);
     setSubmitError(null);
@@ -79,31 +58,24 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
 
   function handleLogin(e) {
+    setIsLoggedIn(true);
     let email;
     let name;
+    let role;
     const activePersona = personas.find(p => p.personaname === activeElement);
     if (activePersona) {
       email = activePersona.personaemail;
       name = activePersona.personaname;
+      role = activePersona.personarole;
     }
     else {
-      // email = 'jenn@launchmail.io';
-      // name = 'Jenn';
-    email = defaultEmail;
-    name = email.split('@')[0];
-    name = name.charAt(0).toUpperCase() + name.slice(1);
+      email = defaultEmail;
+      name = email.split('@')[0];
+      name = name.charAt(0).toUpperCase() + name.slice(1);
+      role = 'Standard'
     }
-    loginUser(name, email);
+    loginUser(name, email, role);
   };
-
-  const handleDeleteAllPersonas = () => {
-    setIsLoading(true);
-    deleteAllPersonas()
-      .then(() => {
-        getPersonas();
-        setIsLoading(false);
-      })
-  }
 
   const handleSetActive = (personaname, personaemail) => {
     setActiveElement(personaname);
@@ -132,18 +104,17 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
         />
       </div>
       <div className="w-full">
-        
-          <Input
-            placeholder="Email"
-            value={defaultEmail || "jenn@launchmail.io"}
-            ref={inputRef}
-            className="mb-8 outline-none border-0 border-b-2 text-xl"
-            onChange={(e) => setDefaultEmail(e.target.value)}
-          />
-       
+        <Input
+          placeholder="Email"
+          value={undefined}
+          ref={inputRef}
+          required
+          className="mb-8 outline-none border-0 border-b-2 text-xl"
+          onChange={(e) => setDefaultEmail(e.target.value)}
+        />
 
         <Button
-          onClick={handleLogin}
+          onClick={() => defaultEmail && handleLogin()}
           className={`mb-4 w-full h-full mx-auto font-audimat rounded-none  text-xl ${variantClass} text-white`}>
           Login with SSO
         </Button>
@@ -167,11 +138,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                       <div className="flex flex-col items-center" key={item.id}>
                         <img
                           src={item.personaimage}
-                          className={`w-24 rounded-full mb-4 ${
-                            activeElement === item.personaname
-                              ? "border-4 border-black"
-                              : ""
-                          }`}
+                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaname
+                            ? "border-4 border-black"
+                            : ""
+                            }`}
                           onClick={() =>
                             handleSetActive(item.personaname, item.personaemail)
                           }
@@ -241,12 +211,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                                   key={imageName}
                                   src={`/personas/${imageName}`}
                                   alt={imageName}
-                                  className={`w-24 h-24 rounded-full cursor-pointer ${
-                                    newPersona.image ===
+                                  className={`w-24 h-24 rounded-full cursor-pointer ${newPersona.image ===
                                     `/personas/${imageName}`
-                                      ? "border-4 border-blue-500"
-                                      : ""
-                                  }`}
+                                    ? "border-4 border-blue-500"
+                                    : ""
+                                    }`}
                                   onClick={() =>
                                     setNewPersona({
                                       ...newPersona,
@@ -276,24 +245,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                 </div>
               )}
             </DialogHeader>
-
-            <DialogFooter>
-              <div className="flex w-full">
-                <Button
-                  onClick={toggleAddUserDropdown}
-                  className={`flex-grow  w-11/12 h-full font-audimat rounded-none text-xl ${variantClass}`}
-                >
-                  Add New User
-                </Button>
-
-                <Button
-                  onClick={handleDeleteAllPersonas}
-                  className={`flex-grow  ml-1 w-1/8 font-audimat rounded-none text-lg h-full ${variantClass}`}
-                >
-                  &#x21bb;
-                </Button>
-              </div>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

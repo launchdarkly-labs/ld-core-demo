@@ -16,6 +16,7 @@ interface Persona {
   personatype: string;
   personaimage: string;
   personaemail: string;
+  personarole: string;
 }
 
 interface QuickLoginDialogProps {
@@ -29,7 +30,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(true);
 
   const personaClicked = (persona: Persona) => {
-    loginUser(persona.personaname, persona.personaemail);
+    loginUser(persona.personaname, persona.personaemail, persona.personarole);
   };
   return (
     <>
@@ -58,9 +59,10 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
                         onClick={() => personaClicked(persona)}
                         alt={persona.personaname}
                       />
-                      <p className="text-xs text-center mt-2">
+                      <p className="text-md font-sohnelight text-center mt-2">
                         {persona.personaname}
                       </p>
+                      <p className="text-md font-sohnelight text-center mt-2"> {persona.personarole}</p>
                     </div>
                   ))}
               </div>
