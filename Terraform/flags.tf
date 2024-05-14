@@ -32,7 +32,7 @@ resource "launchdarkly_feature_flag" "federatedAccounts" {
 resource "launchdarkly_feature_flag" "stocksAPI" {
   project_key = var.project_key
   key         = "stocksAPI"
-  name        = "11 - Release Stocks API"
+  name        = "12 - Release Stocks API"
   description = "Release New Stocks API"
 
   variation_type = "boolean"
@@ -310,7 +310,7 @@ resource "launchdarkly_feature_flag" "storeAttentionCallout" {
 resource "launchdarkly_feature_flag" "release-new-investment-stock-api" {
   project_key = var.project_key
   key         = "release-new-investment-stock-api"
-  name        = "12 - Release New Investment Stock Api"
+  name        = "13 - Release New Investment Stock Api"
   description = "Release New Investment Stock Api"
 
   variation_type = "boolean"
@@ -340,7 +340,7 @@ resource "launchdarkly_feature_flag" "release-new-investment-stock-api" {
 resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
   project_key = var.project_key
   key         = "investment-recent-trade-db"
-  name        = "13 - Release New Recent Trades DB"
+  name        = "14 - Release New Recent Trades DB"
   description = "Release New Recent Trades DB"
 
   variation_type = "boolean"
@@ -364,5 +364,35 @@ resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
 
   tags = [
     "remediate"
+  ]
+}
+
+resource "launchdarkly_feature_flag" "cartSuggestedItems" {
+  project_key = var.project_key
+  key         = "cartSuggestedItems"
+  name        = "11 - Cart Suggested items"
+  description = "Show suggested items in the cart"
+
+   variation_type = "boolean"
+  variations {
+    value = "true"
+    name  = "Available"
+  }
+  variations {
+    value = "false"
+    name  = "Unavailable"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 1
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "experiment"
   ]
 }

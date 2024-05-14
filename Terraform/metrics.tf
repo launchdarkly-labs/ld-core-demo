@@ -104,3 +104,30 @@ resource "launchdarkly_metric" "recent-trades-db-errors" {
   tags           = ["remediate", "investment", "trades", "db", "error", "rates"]
 }
 
+resource "launchdarkly_metric" "upsell-tracking" {
+  project_key    = var.project_key
+  key            = "upsell-tracking"
+  name           = "In-Cart Up-Sell"
+  description    = "Up-Sell Opportunities in Cart"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "upsell-tracking"
+  success_criteria = "HigherThanBaseline"
+  randomization_units = ["audience", "user"]
+  tags           = ["experiment"]
+}
+
+resource "launchdarkly_metric" "in-cart-total-price" {
+  project_key    = var.project_key
+  key            = "in-cart-total-price"
+  name           = "In-Cart Total Price"
+  description    = "Total Price of Items in Cart"
+  kind           = "custom"
+  is_numeric     = true
+  unit           = "$"
+  event_key      = "in-cart-total-price"
+  success_criteria = "HigherThanBaseline"
+  randomization_units = ["audience", "user"]
+  tags           = ["experiment"]
+}
+

@@ -26,6 +26,7 @@ def main():
     createStoreAttentionCalloutFeatureFlag()
     createReleaseNewInvestmentStockApiFeatureFlag()
     createReleaseNewRecentTradesDBFeatureFlag()
+    createCartSuggestedItemsFeatureFlag()
    
 def createFederatedFeatureFlag(): 
     
@@ -368,6 +369,43 @@ def createStoreAttentionCalloutFeatureFlag():
     response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
     if(response.status_code == 201):
         print("Store attention callout feature flag created successfully.")
+        
+def createCartSuggestedItemsFeatureFlag():
+    
+    print("Creating cartSuggestedItems feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "cartSuggestedItems",
+    "name": "11 - Cart Suggested items",
+    "description": "Show suggested items in the cart",
+     "variations": [
+        {
+            "value": True,
+            "name": "Available"
+        },
+        {
+            "value": False,
+            "name": "Unavailable"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 1
+    },
+    "tags": [
+        "experiment"
+    ]
+    }
+    
+    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    if(response.status_code == 201):
+        print("Cart Suggested items feature flag created successfully.")
     
 def createStocksAPIFeatureFlag():
         
@@ -381,7 +419,7 @@ def createStocksAPIFeatureFlag():
         "usingMobileKey": True
     },
     "key": "stocksAPI",
-    "name": "11 - Release Stocks API",
+    "name": "12 - Release Stocks API",
     "description": "Release New Stocks API",
      "variations": [
         {
@@ -418,7 +456,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
         "usingMobileKey": True
     },
     "key": "release-new-investment-stock-api",
-    "name": "12 - Release New Investment Stock Api",
+    "name": "13 - Release New Investment Stock Api",
     "description": "Release New Investment Stock Api",
      "variations": [
         {
@@ -455,7 +493,7 @@ def createReleaseNewRecentTradesDBFeatureFlag():
         "usingMobileKey": True
     },
     "key": "investment-recent-trade-db",
-    "name": "13 - Release New Recent Trades DB",
+    "name": "14 - Release New Recent Trades DB",
     "description": "Release New Recent Trades DB",
      "variations": [
         {
