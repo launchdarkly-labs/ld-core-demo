@@ -6,7 +6,6 @@ import { BounceLoader } from "react-spinners";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
