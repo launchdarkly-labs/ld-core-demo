@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sheet";
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
-import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import TripsContext from "@/utils/contexts/TripContext";
 import BookedFlights from "./bookedFlights";
@@ -114,12 +113,17 @@ export default function LaunchSignUp() {
         >
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center"></SheetTitle>
-            <SheetDescription className="font-sohnelight flex flex-col items-center justify-center text-center">
+            <div className="font-sohnelight flex flex-col items-center justify-center text-center">
               <div className="flex flex-row items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" height="100" width="175" className="pr-2">
-                  <image href="/airline/launch-airways.svg" height="100" width="150" alt="Launch Airways" />
+                  <image
+                    href="/airline/launch-airways.svg"
+                    height="100"
+                    width="150"
+                    alt="Launch Airways"
+                  />
                 </svg>
-                <h1 className="text-black text-4xl">Launch Club Loyalty Program</h1>
+                <p className="text-black text-4xl">Launch Club Loyalty Program</p>
               </div>
               <div className="flex text-xl my-4  text-black text-center lg:mx-40 sm:mx-auto">
                 Introducing our the new Launch Airways loyalty program. Join now for exclusive
@@ -133,7 +137,7 @@ export default function LaunchSignUp() {
                     align-items-center drop-shadow-2xl p-4 gap-y-2"
                   >
                     <CardHeader className="!p-0">
-                      <Image src={perks.img} height={100} width={100} alt="image" />
+                      <img src={perks.img} height={100} width={100} alt="image" className="h-20 w-20"/>
                     </CardHeader>
                     <CardTitle className="text-lg font-shone font-normal ">{perks.name}</CardTitle>
                     <CardContent className="text-normal font-shone text-center font-light !p-2 mx-10 sm:mx-2">
@@ -143,18 +147,17 @@ export default function LaunchSignUp() {
                 ))}
               </div>
               <div className="flex flex-col">
-                <SheetTrigger as child>
-                  <Button
-                    onClick={() => {
-                      enrollLaunchClub();
-                    }}
-                    className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
-                  >
-                    Enroll Today!
-                  </Button>
+                <SheetTrigger
+                  aschild = "true"
+                  onClick={() => {
+                    enrollLaunchClub();
+                  }}
+                  className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
+                >
+                  Enroll Today!
                 </SheetTrigger>
               </div>
-            </SheetDescription>
+            </div>
           </SheetHeader>
 
           <motion.div
