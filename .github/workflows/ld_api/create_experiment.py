@@ -102,7 +102,7 @@ def createFeatureExperiment():
                     "allocationPercent": "50",
                     "parameters": [
                     {
-                        "flagKey": "storeAttentionCallout",
+                        "flagKey": "cartSuggestedItems",
                         "variationId": variations[1]['_id']
                     }
                     ]
