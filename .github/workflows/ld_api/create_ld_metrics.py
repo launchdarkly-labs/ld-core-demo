@@ -27,6 +27,8 @@ def createMetricsForLDProject(ld_api_key):
     createCustomerCheckoutMetric(ld_api_key, createMetricURL)
     createStockAPILatencyMetric(ld_api_key, createMetricURL)
     createStocksAPIErrorRates(ld_api_key, createMetricURL)
+    createRecentTradesDBLatencyMetric(ld_api_key, createMetricURL)
+    createRecentTradesDBErrorRates(ld_api_key, createMetricURL)
     
     
 def createStoreAccessedMetric(ld_api_key, createMetricURL):
@@ -143,6 +145,45 @@ def createStocksAPIErrorRates(ld_api_key, createMetricURL):
     
     if response.status_code == 201:
         print("Metric 'Stocks API Error Rate' created successfully.")
+        
+def createRecentTradesDBLatencyMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "Recent Trades DB Latency",
+        "eventKey": "recent-trades-db-latency",
+        "Description": "Recent Trades DB Latency",
+        "isNumeric": True,
+        "key": "recent-trades-db-latency",
+        "kind": "custom",
+        "successCriteria": "LowerThanBaseline",
+        "randomizationUnits": ["audience"],
+        "tags": ["remediate", "investment", "trades", "db", "latency"],
+        "unit": "ms"
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'Recent Trades DB Latency' created successfully.")
+    
+def createRecentTradesDBErrorRates(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "Recent Trades DB Errors",
+        "eventKey": "recent-trades-db-errors",
+        "Description": "Recent Trades DB Errors",
+        "isNumeric": False,
+        "key": "recent-trades-db-errors",
+        "kind": "custom",
+        "successCriteria": "LowerThanBaseline",
+        "randomizationUnits": ["audience"],
+        "tags": ["remediate", "investment", "trades", "db", "error", "rates"]
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'Recent Trades DB Error Rates' created successfully.")
         
 if __name__ == "__main__":
     main()

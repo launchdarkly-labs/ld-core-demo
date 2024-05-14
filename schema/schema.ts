@@ -54,3 +54,13 @@ export const galaxymarketplace = pgTable('galaxymarketplace', {
     item: text('item'),
     cost: text('cost')
 })
+
+export const investmentRecentTrades = pgTable('investmentRecentTrades', {
+    id: serial('id').primaryKey(),
+    name: text('name'),
+    price: numeric('price'),
+    shares: text('shares'),
+    status: text('status'),
+    news: text('news'),
+    type: text('type'),
+});

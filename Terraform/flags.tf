@@ -55,7 +55,7 @@ resource "launchdarkly_feature_flag" "stocksAPI" {
   }
 
   tags = [
-    "release"
+    "remediate"
   ]
 }
 
@@ -304,5 +304,65 @@ resource "launchdarkly_feature_flag" "storeAttentionCallout" {
 
   tags = [
     "experiment"
+  ]
+}
+
+resource "launchdarkly_feature_flag" "release-new-investment-stock-api" {
+  project_key = var.project_key
+  key         = "release-new-investment-stock-api"
+  name        = "12 - Release New Investment Stock Api"
+  description = "Release New Investment Stock Api"
+
+  variation_type = "boolean"
+  variations {
+    value = "true"
+    name  = "Available"
+  }
+  variations {
+    value = "false"
+    name  = "Unavailable"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 1
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "remediate"
+  ]
+}
+
+resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
+  project_key = var.project_key
+  key         = "investment-recent-trade-db"
+  name        = "13 - Release New Recent Trades DB"
+  description = "Release New Recent Trades DB"
+
+  variation_type = "boolean"
+  variations {
+    value = "true"
+    name  = "Available"
+  }
+  variations {
+    value = "false"
+    name  = "Unavailable"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 1
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "remediate"
   ]
 }

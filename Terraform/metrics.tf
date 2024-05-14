@@ -76,3 +76,31 @@ resource "launchdarkly_metric" "stocks-api-error-rates" {
   randomization_units = ["audience"]
   tags           = ["release", "stocks", "api", "error", "rates"]
 }
+
+resource "launchdarkly_metric" "recent-trades-db-latency" {
+  project_key    = var.project_key
+  key            = "recent-trades-db-latency"
+  name           = "Recent Trades DB Latency"
+  description    = "Recent Trades DB Latency"
+  kind           = "custom"
+  is_numeric     = true
+  event_key      = "recent-trades-db-latency"
+  success_criteria = "LowerThanBaseline"
+  randomization_units = ["audience"]
+  unit           = "ms"
+  tags           = ["remediate", "investment", "trades", "db", "latency"]
+}
+
+resource "launchdarkly_metric" "recent-trades-db-errors" {
+  project_key    = var.project_key
+  key            = "recent-trades-db-errors"
+  name           = "Recent Trades DB Errors"
+  description    = "Recent Trades DB Errors"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "recent-trades-db-errors"
+  success_criteria = "LowerThanBaseline"
+  randomization_units = ["audience"]
+  tags           = ["remediate", "investment", "trades", "db", "error", "rates"]
+}
+
