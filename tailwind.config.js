@@ -37,8 +37,12 @@ module.exports = {
         "gradient-blue":
           "linear-gradient(225deg, #405BFF -5.3%, #3DD6F5 112.86%)",
         "gradient-targeting": "linear-gradient(222deg,#18bdde 1.56%,#405bff 96.51%)",
-        "gradient-experimentation": "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
+        "gradient-experimentation":
+          "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
         "gradient-mobile": "linear-gradient(65deg,#ff386b 3.6%,#ffaf38 98.81%)",
+        "gradient-experimentation-black":
+          "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
+        "gradient-experimentation-grey":"linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
         "market-header": "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
         "gradient-airline": "linear-gradient(131deg, #A34FDE -15.82%, #405BFF 118.85%)",
         "gradient-investment": "linear-gradient(223.42deg, #FF386B -1.29%, #A34FDE 110.16%)",
@@ -82,8 +86,11 @@ module.exports = {
         airlineinactive: "#939598",
         banklightblue: "#3DD6F5",
         bankdarkblue: "#405BFF",
-        marketblue: "#05b0d2",
+        markettext: "#D1D3D4",
+        marketinactive: "#939598",
+        marketblue: "#3DD6F5",
         marketgreen: "#EBFF38",
+        marketBaseBlue: "#405BFF",
         investmentblue: "#405BFF",
         investmentbackgroundgrey: "#E6E6E6",
         investmentgrey: "#939598",

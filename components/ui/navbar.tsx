@@ -27,13 +27,14 @@ import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizonta
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
+import { LoginComponent } from "./logincomponent";
 
 const variantToImageMap = {
   bank: toggleBankHorizontalLogo.src,
   airlines: launchAirwaysHorizontalLogo.src,
   market: galaxyMarketplaceHorizontalLogo.src,
   investment: frontierCapitalHorizontalLogo.src,
-  undefined: LDLogoWhite.src
+  undefined: LDLogoWhite.src,
 };
 
 interface NavBarProps {
@@ -52,7 +53,9 @@ interface Persona {
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub, user, loginUser } = useContext(LoginContext);
+    const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn } =
+      useContext(LoginContext);
+
     let navChild, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
       "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
@@ -60,7 +63,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
-
     const imageSrc = variantToImageMap[variant];
 
     // TODO: popover should be a modular component
@@ -292,70 +294,79 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         break;
       case "market":
         navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <>
-                <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
-                  <StoreCart cart={cart} setCart={setCart} />
-                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
-                  <div className="hidden sm:block cursor-pointer text-white">
-                    <QRCodeImage />
-                  </div>
+          <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
+            <StoreCart cart={cart} setCart={setCart} />
+            <Search color={"white"} className="hidden sm:block cursor-pointer" />
+            <div className="hidden sm:block cursor-pointer text-white">
+              <QRCodeImage />
+            </div>
 
-                  <Popover>
-                    <PopoverTrigger>
-                      <Avatar>
-                        <AvatarImage
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className=""
-                        />
-                      </Avatar>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] h-[440px]">
-                      <>
-                        <div className="mx-auto flex place-content-center w-full">
-                          <img
-                            src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                            className="rounded-full h-48"
-                          />
-                        </div>
-                        <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
-                          <p className="pt-4">
-                            Thank you {chosenPersona?.personaname || user} for shopping with us as
-                            {"  "}
-                            <br></br>
-                            <span className="text-2xl">Premium Member</span>!
-                          </p>
-                        </div>
-                        <div className="mx-auto text-center">
-                          <Button
-                            onClick={handleLogout}
-                            className=" bg-red-700 items-center font-audimat my-2 w-full  bg-gradient-experimentation  text-xl rounded-none"
-                          >
-                            Logout
-                          </Button>
-                          <QuickLoginDialog personas={personas} variant={variant} />
-                        </div>
-                      </>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </>
-            )}
-          </>
+            <Popover>
+              <PopoverTrigger>
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      personas.find((persona) => persona.personaname === user)?.personaimage ||
+                      "ToggleAvatar.png"
+                    }
+                    className=""
+                  />
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent className={`w-[300px] h-auto ${!isLoggedIn ? "p-0" : ""}`}>
+                {isLoggedIn ? (
+                  <>
+                    <div className="mx-auto flex place-content-center w-full">
+                      <img
+                        src={
+                          personas.find((persona) => persona.personaname === user)?.personaimage ||
+                          "ToggleAvatar.png"
+                        }
+                        className="rounded-full h-48"
+                      />
+                    </div>
+                    <div className="mx-auto text-center">
+                      <p className="text-2xl font-normal text-black font-shone mt-4">
+                        Hi {chosenPersona?.personaname}
+                      </p>
+                    </div>
+                    <div className="mx-auto text-center">
+                      <p className="text-md uppercase font-normal tracking-widest text-[#939598] font-shone mt-0">
+                        PLATINUM MEMBER
+                      </p>
+                    </div>
+                    <div className="mx-auto text-center mt-4">
+                      <Button
+                        onClick={handleLogout}
+                        className="items-center hover:bg-gradient-experimentation-grey 
+                       hover:text-white font-audimat my-2 w-full bg-gradient-experimentation text-white text-xl rounded-none"
+                      >
+                        Logout
+                      </Button>
+                      <QuickLoginDialog personas={personas} variant="market" />
+                    </div>
+                  </>
+                ) : (
+                  <LoginComponent
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                    loginUser={loginUser}
+                    name="Galaxy Marketplace"
+                    variant={"market"}
+                  />
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
         );
 
         navLinkMobileDropdown = (
           <>
-            {isLoggedIn ? (
-              <>
-                <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
-              </>
-            ) : null}
+            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
 
             <div className="flex justify-between">
               <DropdownMenuItem>
@@ -552,11 +563,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </DropdownMenuPortal>
           </DropdownMenu>
 
-          {isLoggedIn ? (
+          {(isLoggedIn && variant !== "market") || variant === "market" ? (
             <div className="hidden lg:block relative ml-8 w-[55%]   mt-2">
               <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">{navLinksGroup}</div>
             </div>
           ) : null}
+
           {navChild}
         </div>
       </nav>

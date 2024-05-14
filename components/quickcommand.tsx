@@ -4,7 +4,8 @@ import * as React from "react"
 import {
     RotateCcw,
     FlaskConical,
-} from "lucide-react"
+    Beaker,
+    } from "lucide-react"
 import { useRouter } from "next/router";
 
 import {
@@ -18,7 +19,8 @@ import {
     CommandShortcut,
 } from "@/components/ui/command"
 import { toast } from "./ui/use-toast";
-import ExperimentGenerator from "@/components/ui/marketcomponents/experimentgenerator";
+import FunnelExperimentGenerator from "@/components/ui/marketcomponents/funnelexperimentgenerator";
+import FeatureExperimentGenerator from "@/components/ui/marketcomponents/featureexperimentgenerator";
 
 export function QuickCommandDialog({ children }) {
     const [open, setOpen] = React.useState(false)
@@ -74,12 +76,16 @@ export function QuickCommandDialog({ children }) {
                             {timer > 0 ? (
                                 <p>Resetting in {timer}</p>
                             ) : (
-                                <div onClick={resetFeatureFlags}>Reset Feature Flags</div>
+                                <p onClick={resetFeatureFlags} className="font-bold font-sohnelight text-lg">Reset Feature Flags</p>
                             )}
                         </CommandItem>
                         <CommandItem>
                             <FlaskConical className="mr-2 h-4 w-4" />
-                            <ExperimentGenerator />
+                            <FunnelExperimentGenerator />
+                        </CommandItem>
+                        <CommandItem>
+                            <Beaker className="mr-2 h-4 w-4" />
+                            <FeatureExperimentGenerator />
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>
