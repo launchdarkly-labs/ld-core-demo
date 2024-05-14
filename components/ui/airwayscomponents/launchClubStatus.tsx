@@ -18,7 +18,7 @@ const LaunchClubStatus = () => {
         Launch Club
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[400px] bg-white border-0 text-black shadow-2xl mt-1 font-audimat">
-        <div className="h-1/4 px-4 bg-gradient-airline ">
+        <div className="h-1/4 px-4 bg-gradient-airways ">
           <div className="flex py-4 text-white justify-between items-center">
             <div>
               <p className="text-3xl">Good Day</p>

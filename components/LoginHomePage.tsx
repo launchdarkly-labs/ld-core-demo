@@ -58,7 +58,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           variant === "bank"
             ? "bg-gradient-releases"
             : variant === "airlines"
-            ? "bg-gradient-airline"
+            ? "bg-gradient-airways"
             : variant === "investment"
             ? "bg-gradient-investment"
             : variant === "market"

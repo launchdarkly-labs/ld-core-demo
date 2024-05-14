@@ -195,7 +195,7 @@ export default function BookedFlights() {
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
-                          <p className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airline font-semibold">
+                          <p className="ticket-type-flight uppercase tracking-wide text-md bg-clip-text text-transparent bg-gradient-airways font-semibold">
                             {trip.type} flight
                           </p>
 
@@ -276,7 +276,7 @@ export default function BookedFlights() {
 
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
                         {mealPromoExperience && (
-                          <p className="flex text-black   bg-clip-text text-transparent bg-gradient-airline">
+                          <p className="flex text-black   bg-clip-text text-transparent bg-gradient-airways">
                             <PlaneIcon className="text-airlinepurple mr-2" /> A380 Meal Promo
                           </p>
                         )}
@@ -284,13 +284,13 @@ export default function BookedFlights() {
                         {enrolledInLaunchClub && launchClubLoyalty && (
                           <>
                             {priorityBoarding && (
-                              <p className="flex text-black bg-clip-text text-transparent bg-gradient-airline   ">
+                              <p className="flex text-black bg-clip-text text-transparent bg-gradient-airways   ">
                                 <PersonStanding className="text-airlinepurple mr-2" /> Launch
                                 Priority
                               </p>
                             )}
 
-                            <p className="flex text-black bg-clip-text text-transparent bg-gradient-airline  ">
+                            <p className="flex text-black bg-clip-text text-transparent bg-gradient-airways  ">
                               <Wifi className="text-airlinepurple mr-2" /> Free WiFi
                             </p>
                           </>

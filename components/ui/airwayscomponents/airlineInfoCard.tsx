@@ -17,7 +17,7 @@ const AirlineInfoCard = ({
       <CardHeader className="!space-y-0 !p-0">
         <img src={imgSrc.src} className="w-full h-full object-fit" />
       </CardHeader>
-      <div className="pt-[2.5rem] px-[2.5rem] flex flex-col gap-y-2 bg-gradient-airline h-full">
+      <div className="pt-[2.5rem] px-[2.5rem] flex flex-col gap-y-2 bg-gradient-airways h-full">
         <CardTitle className="!font-normal !text-left">
           <p className=" text-2xl text-white ">{headerTitleText}</p>
         </CardTitle>

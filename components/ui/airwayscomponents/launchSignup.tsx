@@ -142,7 +142,7 @@ export default function LaunchSignUp() {
                       key={index}
                       className="h-1/3 w-1/3 align-items-center bg-zinc-300 drop-shadow-xl flex flex-col items-center justify-center"
                     >
-                      <CardHeader className="bg-gradient-airline text-transparent bg-clip-text text-6xl">
+                      <CardHeader className="bg-gradient-airways text-transparent bg-clip-text text-6xl">
                         {rewards.value}
                       </CardHeader>
                       <CardTitle className="text-lg">{rewards.name}</CardTitle>
