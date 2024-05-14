@@ -134,8 +134,8 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
               ) : (
                 <div className="overflow-y-auto h-64">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center mb-4 pt-6">
-                    {personas.map((item: Persona) => (
-                      <div className="flex flex-col items-center" key={item.id}>
+                    {personas.map((item: Persona, index: number) => (
+                      <div className="flex flex-col items-center" key={index}>
                         <img
                           src={item.personaimage}
                           className={`w-24 rounded-full mb-4 ${activeElement === item.personaname
