@@ -207,7 +207,7 @@ def createFunnelExperiment():
                 "isGroup": True,
             },
             {
-                "key": "upsell-tracking",
+                "key": "in-cart-total-price",
                 "isGroup": False,
             }
             ],
