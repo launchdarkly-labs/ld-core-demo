@@ -35,7 +35,7 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] =  useState("jenn@launchmail.io");
+  const [defaultEmail, setDefaultEmail] =  useState("user@launchmail.io");
   const variantClass = getVariantClassName(variant);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
   const { personas, getPersonas } = useContext(PersonaContext);
@@ -106,7 +106,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       <div className="w-full">
         <Input
           placeholder="Email"
-          value={defaultEmail || "jenn@launchmail.io"}
+          value={defaultEmail}
           ref={inputRef}
           required
           className="mb-8 outline-none border-0 border-b-2 text-xl"
