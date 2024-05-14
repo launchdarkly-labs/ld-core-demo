@@ -12,6 +12,8 @@ import KeyboardNavigation from "@/components/KeyboardNavigation";
 import Head from "next/head";
 import { PersonaProvider } from "@/components/personacontext";
 import { QuickCommandDialog } from "@/components/quickcommand";
+import CryptoJS from 'crypto-js';
+
 
 
 let c;
@@ -33,9 +35,9 @@ if (typeof window !== "undefined") {
     context: {
       kind: "multi",
       user: {
-        key: "jenn@launchmail.io",
-        name: "Jenn",
-        email: "jenn@launchmail.io",
+        key: CryptoJS.SHA256("user@launchmail.io").toString(),
+        name: "User",
+        email: CryptoJS.SHA256("user@launchmail.io").toString(),
         appName: "LD Demo",
       },
       device: {
