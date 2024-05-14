@@ -35,7 +35,7 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] = useState('user@launchmail.io');
+  const [defaultEmail, setDefaultEmail] =  useState("jenn@launchmail.io");
   const variantClass = getVariantClassName(variant);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
   const { personas, getPersonas } = useContext(PersonaContext);
@@ -89,7 +89,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   }, [activeElement]);
 
   const imageSrc = variantToImageMap[variant];
-console.log(variantToImageMap["market"])
+
   const toggleAddUserDropdown = () => {
     setIsAddUserDropdownOpen(!isAddUserDropdownOpen);
   };
@@ -106,7 +106,7 @@ console.log(variantToImageMap["market"])
       <div className="w-full">
         <Input
           placeholder="Email"
-          value={undefined}
+          value={defaultEmail || "jenn@launchmail.io"}
           ref={inputRef}
           required
           className="mb-8 outline-none border-0 border-b-2 text-xl"
@@ -134,8 +134,8 @@ console.log(variantToImageMap["market"])
               ) : (
                 <div className="overflow-y-auto h-64">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center mb-4 pt-6">
-                    {personas.map((item: Persona) => (
-                      <div className="flex flex-col items-center" key={item.id}>
+                    {personas.map((item: Persona, index: number) => (
+                      <div className="flex flex-col items-center" key={index}>
                         <img
                           src={item.personaimage}
                           className={`w-24 rounded-full mb-4 ${activeElement === item.personaname
@@ -248,20 +248,17 @@ console.log(variantToImageMap["market"])
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex flex-col justify-between font-sohnelight font-extralight sm:flex-row text-xs">
-        <div className="flex pb-3 text-blue-600">
+      <div className="flex flex-col items-start sm:items-baseline font-sohnelight font-extralight sm:flex-row text-xs justify-between">
+        <div className="pb-3">
           <p>Forgot Password?</p>
         </div>
         <div>
-          <div className="flex">
-          <p className="flex flex-col sm:flex-row justify-start">
-              Don't have an account?{" "}
-              <a href={window.location.href} className="text-blue-600 ml-0 sm:ml-1">
-                {" "}
-                Sign Up
-              </a>
-            </p>
-          </div>
+          <p className="text-right flex flex-col">
+            Don't have an account?{" "}
+            <a href="#" className="text-blue-600 ml-2">
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
     </div>

@@ -63,7 +63,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
-
     const imageSrc = variantToImageMap[variant];
 
     // TODO: popover should be a modular component
@@ -344,7 +343,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       >
                         Logout
                       </Button>
-                      <QuickLoginDialog personas={personas} />
+                      <QuickLoginDialog personas={personas} variant="market" />
                     </div>
                   </>
                 ) : (
@@ -352,7 +351,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     isLoggedIn={isLoggedIn}
                     setIsLoggedIn={setIsLoggedIn}
                     loginUser={loginUser}
-                    name={name}
+                    name="Galaxy Marketplace"
+                    variant={"market"}
                   />
                 )}
               </PopoverContent>
