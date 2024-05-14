@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import NavBar from "@/components/ui/navbar";
 import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
@@ -13,12 +12,18 @@ import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import { setCookie } from "cookies-next";
-import { ArrowRight } from "lucide-react";
+import { Toaster } from "@/components/ui/toaster";
+
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
 import { addDays } from "date-fns";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
 
 export default function Airways() {
@@ -32,13 +37,17 @@ export default function Airways() {
   const [showSearch, setShowSearch] = useState(false);
   const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
   const { bookedTrips, setBookedTrips } = useContext(TripsContext);
-  const { setPlaneContext } = useContext(LoginContext);
   const [date, setDate] = useState<{ from: Date; to: Date } | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } =
+    useContext(LoginContext);
+
+  function setAirport() {
+    setShowSearch(true);
+  }
 
   const ldclient = useLDClient();
 
@@ -54,9 +63,11 @@ export default function Airways() {
     const startDate = `${
       date!.from.getMonth() + 1
     }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
-    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; 
-    const tripIdReturn = Math.floor(Math.random() * 900) + 100;
+    const returnDate = `${
+      date!.to.getMonth() + 1
+    }/${date!.to.getDate()}/${date!.to.getFullYear()}`;
+    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
+    const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
 
     const outboundTrip = {
       id: tripIdOutbound,
@@ -75,13 +86,11 @@ export default function Airways() {
       to: fromLocation,
       toCity: fromCity,
       depart: returnDate,
-      airplane: "a380",
+      airplane: "a330",
       type: "Return",
     };
 
     setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
-
-    setPlaneContext("a380");
 
     toast({
       title: "Flight booked",
@@ -91,10 +100,10 @@ export default function Airways() {
 
   return (
     <>
-      <Toaster />
+    <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="airlines" name="Launch Airways" />
+          <LoginHomePage name="Launch Airways" variant="airlines" />
         ) : (
           <motion.main
             initial={{ opacity: 0 }}
@@ -104,7 +113,7 @@ export default function Airways() {
           >
             <NavBar
               launchClubLoyalty={launchClubLoyalty}
-              variant={"airlines"}
+              variant="airlines"
               handleLogout={handleLogout}
             />
 
@@ -140,9 +149,13 @@ export default function Airways() {
                       showSearch ? "" : ""
                     }`}
                   >
-                    <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+                    <FlightCalendar
+                      date={date}
+                      setDate={setDate}
+                      className="font-audimat"
+                    />
                   </div>
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl pb-12 lg:text-3xl xl:text-4xl px-4 items-center text-center justify-center">
+                  <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
                     <Select defaultValue="1 Passenger">
                       <SelectTrigger className="text-white">
                         <SelectValue placeholder="Select Passengers" />
@@ -152,23 +165,25 @@ export default function Airways() {
                       </SelectContent>
                     </Select>
                   </div>
-
-                  {fromLocation !== "From" && toLocation !== "To" && (
-                    <div className="flex mx-auto">
+                  <div className="flex mx-auto">
+                    {fromLocation !== "From" && toLocation !== "To" && (
                       <motion.button
                         whileTap={{ scale: 0.5 }}
                         onClick={() => bookTrip()}
                         className={` items-center `}
                       >
-                        <ArrowRight className="animate-pulse hover:animate-none h-14 w-14 font-bold bg-white text-airlinepink rounded-full p-2" />
+                        <img src="ArrowButton.png" width={60} className="" />
                       </motion.button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </header>
 
-            <AirlineHero launchClubLoyalty={launchClubLoyalty} showSearch={showSearch} />
+            <AirlineHero
+              launchClubLoyalty={launchClubLoyalty}
+              showSearch={showSearch}
+            />
 
             <section
               className={`relative flex flex-col sm:flex-row justify-center 
