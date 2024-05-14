@@ -221,3 +221,11 @@ line-height: normal;
   background: linear-gradient(to right, #3b82f6, #10b981); 
   color: black;
 }
+
+@layer utilities {
+
+  .marketplace-item-banner-cutout {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 90%, 0 100%);
+  }
+
+}
