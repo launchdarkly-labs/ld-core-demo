@@ -33,7 +33,7 @@ const variantToImageMap = {
   airlines: launchAirwaysHorizontalLogo.src,
   market: galaxyMarketplaceHorizontalLogo.src,
   investment: frontierCapitalHorizontalLogo.src,
-  undefined: LDLogoWhite.src
+  undefined: LDLogoWhite.src,
 };
 
 interface NavBarProps {
@@ -292,70 +292,60 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         break;
       case "market":
         navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <>
-                <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
-                  <StoreCart cart={cart} setCart={setCart} />
-                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
-                  <div className="hidden sm:block cursor-pointer text-white">
-                    <QRCodeImage />
-                  </div>
+          <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
+            <StoreCart cart={cart} setCart={setCart} />
+            <Search color={"white"} className="hidden sm:block cursor-pointer" />
+            <div className="hidden sm:block cursor-pointer text-white">
+              <QRCodeImage />
+            </div>
 
-                  <Popover>
-                    <PopoverTrigger>
-                      <Avatar>
-                        <AvatarImage
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className=""
-                        />
-                      </Avatar>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] h-[440px]">
-                      <>
-                        <div className="mx-auto flex place-content-center w-full">
-                          <img
-                            src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                            className="rounded-full h-48"
-                          />
-                        </div>
-                        <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
-                          <p className="pt-4">
-                            Thank you {chosenPersona?.personaname || user} for shopping with us as
-                            {"  "}
-                            <br></br>
-                            <span className="text-2xl">Premium Member</span>!
-                          </p>
-                        </div>
-                        <div className="mx-auto text-center">
-                          <Button
-                            onClick={handleLogout}
-                            className=" bg-red-700 items-center font-audimat my-2 w-full  bg-gradient-experimentation  text-xl rounded-none"
-                          >
-                            Logout
-                          </Button>
-                          <QuickLoginDialog personas={personas} variant={variant} />
-                        </div>
-                      </>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </>
-            )}
-          </>
+            <Popover>
+              <PopoverTrigger>
+                <Avatar>
+                  <AvatarImage
+                    src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                    className=""
+                  />
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent className="w-[300px] h-[440px]">
+                <>
+                  <div className="mx-auto flex place-content-center w-full">
+                    <img
+                      src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                      className="rounded-full h-48"
+                    />
+                  </div>
+                  <div className="mx-auto text-center  align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
+                    <p className="pt-4">
+                      Thank you {chosenPersona?.personaname || user} for shopping with us as
+                      {"  "}
+                      <br></br>
+                      <span className="text-2xl">Premium Member</span>!
+                    </p>
+                  </div>
+                  <div className="mx-auto text-center">
+                    <Button
+                      onClick={handleLogout}
+                      className=" bg-red-700 items-center font-audimat my-2 w-full  bg-gradient-experimentation  text-xl rounded-none"
+                    >
+                      Logout
+                    </Button>
+                    <QuickLoginDialog personas={personas} variant={variant} />
+                  </div>
+                </>
+              </PopoverContent>
+            </Popover>
+          </div>
         );
 
         navLinkMobileDropdown = (
           <>
-            {isLoggedIn ? (
-              <>
-                <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
-              </>
-            ) : null}
+            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
+            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
 
             <div className="flex justify-between">
               <DropdownMenuItem>
@@ -552,11 +542,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </DropdownMenuPortal>
           </DropdownMenu>
 
-          {isLoggedIn ? (
+          {(isLoggedIn && variant !== "market") || variant === "market" ? (
             <div className="hidden lg:block relative ml-8 w-[55%]   mt-2">
               <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">{navLinksGroup}</div>
             </div>
           ) : null}
+
           {navChild}
         </div>
       </nav>
