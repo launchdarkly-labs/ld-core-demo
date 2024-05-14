@@ -89,7 +89,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
   }, [activeElement]);
 
   const imageSrc = variantToImageMap[variant];
-
+console.log(variantToImageMap["market"])
   const toggleAddUserDropdown = () => {
     setIsAddUserDropdownOpen(!isAddUserDropdownOpen);
   };

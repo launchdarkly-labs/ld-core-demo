@@ -33,6 +33,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.1",
     "cookies-next": "^4.0.0",
+    "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
     "drizzle-orm": "^0.29.0",
     "framer-motion": "^10.16.4",
