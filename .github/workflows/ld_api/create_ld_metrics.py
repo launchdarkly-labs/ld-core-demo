@@ -29,7 +29,8 @@ def createMetricsForLDProject(ld_api_key):
     createStocksAPIErrorRates(ld_api_key, createMetricURL)
     createRecentTradesDBLatencyMetric(ld_api_key, createMetricURL)
     createRecentTradesDBErrorRates(ld_api_key, createMetricURL)
-    
+    createInCartUpSellMetric(ld_api_key, createMetricURL)
+    createInCartTotalPriceMetric(ld_api_key, createMetricURL)
     
 def createStoreAccessedMetric(ld_api_key, createMetricURL):
     
@@ -184,6 +185,45 @@ def createRecentTradesDBErrorRates(ld_api_key, createMetricURL):
     
     if response.status_code == 201:
         print("Metric 'Recent Trades DB Error Rates' created successfully.")
+        
+def createInCartUpSellMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "In-Cart Up-Sell",
+        "eventKey": "upsell-tracking",
+        "Description": "Up-Sell Opportunities in Cart",
+        "isNumeric": False,
+        "key": "upsell-tracking",
+        "kind": "custom",
+        "successCriteria": "HigherThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["experiment"]
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'In-Cart Up-Sell' created successfully.")
+        
+def createInCartTotalPriceMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "In-Cart Total Price",
+        "eventKey": "in-cart-total-price",
+        "Description": "Total Price of Items in Cart",
+        "isNumeric": True,
+        "key": "in-cart-total-price",
+        "unit": "$",
+        "kind": "custom",
+        "successCriteria": "HigherThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["experiment"]
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'In-Cart Total Price' created successfully.")
         
 if __name__ == "__main__":
     main()
