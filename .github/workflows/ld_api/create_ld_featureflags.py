@@ -232,7 +232,7 @@ def createMealPromoExperienceFeatureFlag():
     "key": "mealPromoExperience",
     "name": "10 - Targeted Plane Meal Promotion",
     "description": "Rolling our meal service on our A330 aircraft - free promotion for testing",
-     "variations": [
+    "variations": [
         {
             "value": True,
             "name": "Available"

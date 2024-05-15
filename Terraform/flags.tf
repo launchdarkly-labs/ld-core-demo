@@ -188,8 +188,7 @@ resource "launchdarkly_feature_flag" "mealPromoExperience" {
   key         = "mealPromoExperience"
   name        = "10 - Targeted Plane Meal Promotion"
   description = "Rolling our meal service on our A330 aircraft"
-
-   variation_type = "boolean"
+  variation_type = "boolean"
   variations {
     value = "true"
     name  = "Available"
