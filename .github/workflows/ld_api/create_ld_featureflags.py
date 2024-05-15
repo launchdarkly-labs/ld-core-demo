@@ -157,7 +157,7 @@ def createLaunchClubLoyaltyFeatureFlag():
         "usingMobileKey": True
     },
     "key": "launchClubLoyalty",
-    "name": "05 - Enable Launch Club Loyalty Program",
+    "name": "08 - Enable Launch Club Loyalty Program",
     "description": "Enable Launch Club Loyalty Program on ToggleAirlines",
      "variations": [
         {
@@ -194,7 +194,7 @@ def createPriorityBoardFeatureFlag():
         "usingMobileKey": True
     },
     "key": "priorityBoarding",
-    "name": "06 - Launch Club - Priority Boarding",
+    "name": "09 - Launch Club - Priority Boarding",
     "description": "Enable Launch Club Priority Program on ToggleAirlines",
      "variations": [
         {
@@ -230,7 +230,7 @@ def createMealPromoExperienceFeatureFlag():
         "usingMobileKey": True
     },
     "key": "mealPromoExperience",
-    "name": "07 - Targeted Plane Meal Promotion",
+    "name": "10 - Targeted Plane Meal Promotion",
     "description": "Rolling our meal service on our A380 aircraft - free promotion for testing",
      "variations": [
         {
@@ -267,7 +267,7 @@ def createAITravelInsightsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "aiTravelInsights",
-    "name": "08 - Release AI Travel Insights",
+    "name": "11 - Release AI Travel Insights",
     "description": "Amazon Bedrock Powered Travel Insights",
      "variations": [
         {
@@ -304,7 +304,7 @@ def createStoreHeadersFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeHeaders",
-    "name": "09 - Featured Store Headers",
+    "name": "12 - Featured Store Headers",
     "description": "Headers to drive engagement on specific stores",
      "variations": [
         {
@@ -341,7 +341,7 @@ def createStoreAttentionCalloutFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeAttentionCallout",
-    "name": "10 - Store Highlight Text",
+    "name": "13 - Store Highlight Text",
     "description": "Header Text for Marketplace Stores",
      "variations": [
         {
@@ -382,16 +382,16 @@ def createCartSuggestedItemsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "cartSuggestedItems",
-    "name": "11 - Cart Suggested items",
+    "name": "14 - Cart Suggested items",
     "description": "Show suggested items in the cart",
      "variations": [
         {
             "value": True,
-            "name": "Available"
+            "name": "Suggested Cart Component"
         },
         {
             "value": False,
-            "name": "Unavailable"
+            "name": "Continue Shopping Button"
         }
     ],
     "defaults":{
@@ -419,7 +419,7 @@ def createStocksAPIFeatureFlag():
         "usingMobileKey": True
     },
     "key": "stocksAPI",
-    "name": "12 - Release Stocks API",
+    "name": "05 - Release Stocks API",
     "description": "Release New Stocks API",
      "variations": [
         {
@@ -456,7 +456,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
         "usingMobileKey": True
     },
     "key": "release-new-investment-stock-api",
-    "name": "13 - Release New Investment Stock Api",
+    "name": "06 - Release New Investment Stock Api",
     "description": "Release New Investment Stock Api",
      "variations": [
         {
@@ -493,7 +493,7 @@ def createReleaseNewRecentTradesDBFeatureFlag():
         "usingMobileKey": True
     },
     "key": "investment-recent-trade-db",
-    "name": "14 - Release New Recent Trades DB",
+    "name": "07 - Release New Recent Trades DB",
     "description": "Release New Recent Trades DB",
      "variations": [
         {
