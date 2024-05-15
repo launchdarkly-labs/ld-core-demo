@@ -11,10 +11,11 @@ import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import MarketInfoCard from "@/components/ui/marketcomponents/marketInfoCard";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
-
+import Image from "next/image";
 import investmentCardImg1 from "@/public/investment/investment_image1.png";
 import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
+import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment";
@@ -49,16 +50,14 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-
       <NavBar variant={variant} />
- 
 
       <header
         className={` ${
           variant === "bank"
             ? "bg-gradient-releases"
             : variant === "airlines"
-            ? "bg-gradient-airline"
+            ? "bg-gradient-airways w-full mb-[4rem] relative"
             : variant === "investment"
             ? "bg-gradient-investment"
             : variant === "market"
@@ -72,15 +71,27 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             <img src="union.png" className="absolute left-0 bottom-0" />
           </div>
         )}
+
+        {variant === "airlines" ? (
+          <>
+            <Image
+              src={airlineLoginHeroBackground}
+              alt="Airline Login Hero Background"
+              layout="fill"
+              objectFit="cover"
+              quality={100}
+            />
+            <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
+          </>
+        ) : null}
         <div
           className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
              items-center"
         >
           <div
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10"
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-[1]"
           >
-            {/* <img src="ToggleBankHeader.png" width={52} className="pb-0" /> */}
             <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
               Welcome to {name}{" "}
             </p>
@@ -144,7 +155,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           />
         </section>
       )}
-{/* TODO: need to apply this to all other home pages */}
+      {/* TODO: need to apply this to all other home pages */}
       {variant === "investment" && (
         <HomePageCardWrapper>
           <HomePageInfoCard
@@ -171,7 +182,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       {variant === "airlines" && (
         <section
           className="flex flex-col gap-y-8 sm:gap-y-0 sm:flex-row sm:gap-x-6 lg:gap-x-14
-           xl:mx-auto w-full max-w-7xl py-12 justify-center px-4 xl:px-0"
+           xl:mx-auto w-full max-w-7xl py-12 justify-between px-4 xl:px-0"
         >
           <AirlineInfoCard
             headerTitleText="Wheels up"

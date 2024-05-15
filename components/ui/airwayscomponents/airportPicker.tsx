@@ -107,7 +107,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
           <div className="text-black text-sm font-medium uppercase tracking-widest w-[7rem] pb-2 border-pink-500 text-center ">
             Search
           </div>
-          <div className="w-full h-1 border-b-2 border-pink-500 justify-center mx-auto"></div>
+          <div className="w-full h-1 border-b-2 border-[#3DD6F5] justify-center mx-auto"></div>
         </div>
 
         <div className="flex-col justify-start items-start gap-[15px] flex">
@@ -117,13 +117,13 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
             </div>
             <input
               className="w-full text-black text-[60px]  
-                 leading-[66.65px] outline-none border-b-2 border-airlinepurple pb-4"
+                 leading-[66.65px] outline-none border-b-2 border-[#405BFF] pb-4"
               placeholder="Airport"
               value={searchTerm}
               autoFocus
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
-                background: "linear-gradient(to right, #F43F5E, #8B5CF6)",
+                background: "linear-gradient(224.68deg, #405BFF -5.3%, #3DD6F5 112.86%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -140,7 +140,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
                     <li
                       key={index}
                       onClick={() => handleSelect(airport)}
-                      className="cursor-pointer hover:text-purple-500 hover:font-bold hover:border-purple-500"
+                      className="cursor-pointer hover:bg-gradient-airways bg-clip-text hover:text-transparent  hover:font-bold"
                     >
                       {airport.cityName} ({airport.airportCode})
                     </li>
