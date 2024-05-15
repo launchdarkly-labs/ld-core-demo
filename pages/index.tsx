@@ -167,7 +167,7 @@ export default function Home() {
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
-                <a href="bank">
+                <a href="investment">
                   <img width="44" height="44" src="remediate.png" />
 
                   <h2>Automatically Remediate Software Issues</h2>
