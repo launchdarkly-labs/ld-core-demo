@@ -29,10 +29,10 @@ def createSegmentsForLDEnvs(ld_env_key):
     checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(betaSegmentPayload))
     patchBetaSegmentPayload(ld_api_key, environment_key, project_key)
     
-    print("Creating A380 Passengers segment for " + environment_key + " environment")
-    a380SegmentPayload = getA380SegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(a380SegmentPayload))
-    patchA380SegmentPayload(ld_api_key, environment_key, project_key)
+    print("Creating A330 Passengers segment for " + environment_key + " environment")
+    a330SegmentPayload = getA330SegmentPayload()
+    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(a330SegmentPayload))
+    patchA330SegmentPayload(ld_api_key, environment_key, project_key)
     
     print("Creating Launch Club - Platinum segment for " + environment_key + " environment")
     platinumSegmentPayload = getPlatinumSegmentPayload()
@@ -158,9 +158,9 @@ def patchBetaSegmentPayload(ld_api_key, environment_key, project_key):
     if response.status_code == 200:
         print("Patch for Beta Users segment successful")
 
-def patchA380SegmentPayload(ld_api_key, environment_key, project_key):
+def patchA330SegmentPayload(ld_api_key, environment_key, project_key):
     
-    segment_key = "airline-a-390-passengers"
+    segment_key = "airline-a-330-passengers"
     patchSegmentURL = "/segments/" + project_key + "/" + environment_key + "/" + segment_key
     
     patchPayload = {
@@ -173,7 +173,7 @@ def patchA380SegmentPayload(ld_api_key, environment_key, project_key):
                         "contextKind": "experience",
                         "attribute": "airplane",
                         "op": "in",
-                        "values": ["a380"],
+                        "values": ["a330"],
                         "negate": False
                     }]
                 }
@@ -184,7 +184,7 @@ def patchA380SegmentPayload(ld_api_key, environment_key, project_key):
     response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
     
     if response.status_code == 200:
-        print("Patch for A380 Passengers segment successful")
+        print("Patch for A330 Passengers segment successful")
     
     
 def getDevTeamSegmentPayload():
@@ -231,14 +231,14 @@ def getPlatinumSegmentPayload():
     
     return payload
     
-def getA380SegmentPayload():
+def getA330SegmentPayload():
     
     payload = {
-        "name": "A380 Passengers",
-        "key": "airline-a-390-passengers",
-        "description": "Any user who is flying on an A380 Airplane",
+        "name": "A330 Passengers",
+        "key": "airline-a-330-passengers",
+        "description": "Any user who is flying on an A330 Airplane",
         "tags": [
-            "A380-passengers"
+            "A330-passengers"
         ],
         "unbounded": False,
     }

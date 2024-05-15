@@ -187,7 +187,7 @@ resource "launchdarkly_feature_flag" "mealPromoExperience" {
   project_key = var.project_key
   key         = "mealPromoExperience"
   name        = "10 - Targeted Plane Meal Promotion"
-  description = "Rolling our meal service on our A380 aircraft - free promotion for testing"
+  description = "Rolling our meal service on our A330 aircraft"
 
    variation_type = "boolean"
   variations {

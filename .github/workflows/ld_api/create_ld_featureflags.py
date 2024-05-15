@@ -231,7 +231,7 @@ def createMealPromoExperienceFeatureFlag():
     },
     "key": "mealPromoExperience",
     "name": "10 - Targeted Plane Meal Promotion",
-    "description": "Rolling our meal service on our A380 aircraft - free promotion for testing",
+    "description": "Rolling our meal service on our A330 aircraft - free promotion for testing",
      "variations": [
         {
             "value": True,
