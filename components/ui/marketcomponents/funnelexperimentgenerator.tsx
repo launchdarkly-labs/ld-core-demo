@@ -47,18 +47,18 @@ export default function FunnelExperimentGenerator() {
             }
             if (flagvariation === "Sale") {
                 console.log('sale')
-                metric1 = 60;
-                metric2 = 50;
-                metric3 = 30;
-                metric4 = 15;
+                metric1 = 80;
+                metric2 = 70;
+                metric3 = 50;
+                metric4 = 25;
                 totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
             }
             if (flagvariation === "New Items") {
                 console.log('new items')
-                metric1 = 60;
-                metric2 = 30;
-                metric3 = 20;
-                metric4 = 10;
+                metric1 = 70;
+                metric2 = 50;
+                metric3 = 30;
+                metric4 = 20;
                 totalPrice = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
             }
 
