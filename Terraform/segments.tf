@@ -56,15 +56,15 @@ resource "launchdarkly_segment" "airline-a-390-passengers" {
   key         = "airline-a-390-passengers"
   project_key = var.project_key
   env_key     = var.ld_env_key
-  name        = "A380 Passengers"
-  description = "Any user who is flying on an A380 Airplane"
-  tags        = ["A380-passengers"]
+  name        = "A330 Passengers"
+  description = "Any user who is flying on an A330 Airplane"
+  tags        = ["A330-passengers"]
 
   rules {
     clauses {
       attribute    = "airplane"
       op           = "in"
-      values       = ["a380"]
+      values       = ["a330"]
       context_kind = "experience"
     }
   }

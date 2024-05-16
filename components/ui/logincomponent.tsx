@@ -35,7 +35,7 @@ interface LoginComponentProps {
 export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
-  const [defaultEmail, setDefaultEmail] =  useState("user@launchmail.io");
+  const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
   const variantClass = getVariantClassName(variant);
   const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
   const { personas, getPersonas } = useContext(PersonaContext);
@@ -90,10 +90,6 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
   const imageSrc = variantToImageMap[variant];
 
-  const toggleAddUserDropdown = () => {
-    setIsAddUserDropdownOpen(!isAddUserDropdownOpen);
-  };
-
   return (
     <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8">
 
@@ -115,7 +111,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
         <Button
           onClick={() => defaultEmail && handleLogin()}
-          className={`mb-4 w-full h-full mx-auto font-audimat rounded-none  text-xl ${variantClass} text-white`}>
+          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg ${variantClass} text-white`}>
           Login with SSO
         </Button>
 
