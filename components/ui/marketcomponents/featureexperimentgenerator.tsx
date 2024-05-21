@@ -35,7 +35,7 @@ export default function FeatureExperimentGenerator() {
             if (cartSuggestedItems) {
                 totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
                 let probablity = Math.random() * 100;
-                if( probablity < 80 ) {
+                if( probablity < 60 ) {
                     client?.track("upsell-tracking", client.getContext());
                 }
                 client?.track("in-cart-total-price", client.getContext(), totalPrice);
