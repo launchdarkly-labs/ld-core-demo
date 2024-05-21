@@ -32,7 +32,7 @@ resource "launchdarkly_feature_flag" "federatedAccounts" {
 resource "launchdarkly_feature_flag" "stocksAPI" {
   project_key = var.project_key
   key         = "stocksAPI"
-  name        = "12 - Release Stocks API"
+  name        = "11 - Release Stocks API"
   description = "Release New Stocks API"
 
   variation_type = "boolean"
@@ -126,7 +126,7 @@ resource "launchdarkly_feature_flag" "aiPromptText" {
 resource "launchdarkly_feature_flag" "launchClubLoyalty" {
   project_key = var.project_key
   key         = "launchClubLoyalty"
-  name        = "08 - Enable Launch Club Loyalty Program"
+  name        = "07 - Enable Launch Club Loyalty Program"
   description = "Enable Launch Club Loyalty Program on ToggleAirlines"
 
    variation_type = "boolean"
@@ -156,7 +156,7 @@ resource "launchdarkly_feature_flag" "launchClubLoyalty" {
 resource "launchdarkly_feature_flag" "priorityBoarding" {
   project_key = var.project_key
   key         = "priorityBoarding"
-  name        = "09 - Launch Club - Priority Boarding"
+  name        = "08 - Launch Club - Priority Boarding"
   description = "Enable Launch Club Priority Program on ToggleAirlines"
 
    variation_type = "boolean"
@@ -186,7 +186,7 @@ resource "launchdarkly_feature_flag" "priorityBoarding" {
 resource "launchdarkly_feature_flag" "mealPromoExperience" {
   project_key = var.project_key
   key         = "mealPromoExperience"
-  name        = "10 - Targeted Plane Meal Promotion"
+  name        = "09 - Targeted Plane Meal Promotion"
   description = "Rolling our meal service on our A330 aircraft"
   variation_type = "boolean"
   variations {
@@ -215,7 +215,7 @@ resource "launchdarkly_feature_flag" "mealPromoExperience" {
 resource "launchdarkly_feature_flag" "aiTravelInsights" {
   project_key = var.project_key
   key         = "aiTravelInsights"
-  name        = "11 - Release AI Travel Insights"
+  name        = "0 - Release AI Travel Insights"
   description = "Amazon Bedrock Powered Travel Insights"
 
    variation_type = "boolean"
@@ -245,7 +245,7 @@ resource "launchdarkly_feature_flag" "aiTravelInsights" {
 resource "launchdarkly_feature_flag" "storeHeaders" {
   project_key = var.project_key
   key         = "storeHeaders"
-  name        = "12 - Featured Store Headers"
+  name        = "11 - Featured Store Headers"
   description = "Headers to drive engagement on specific stores"
 
    variation_type = "boolean"
@@ -275,7 +275,7 @@ resource "launchdarkly_feature_flag" "storeHeaders" {
 resource "launchdarkly_feature_flag" "storeAttentionCallout" {
   project_key = var.project_key
   key         = "storeAttentionCallout"
-  name        = "13 - Store Highlight Text"
+  name        = "12 - Store Highlight Text"
   description = "Header Text for Marketplace Stores"
 
   variation_type = "string"
@@ -309,7 +309,7 @@ resource "launchdarkly_feature_flag" "storeAttentionCallout" {
 resource "launchdarkly_feature_flag" "release-new-investment-stock-api" {
   project_key = var.project_key
   key         = "release-new-investment-stock-api"
-  name        = "06 - Release New Investment Stock Api"
+  name        = "05 - Release New Investment Stock Api"
   description = "Release New Investment Stock Api"
 
   variation_type = "boolean"
@@ -339,7 +339,7 @@ resource "launchdarkly_feature_flag" "release-new-investment-stock-api" {
 resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
   project_key = var.project_key
   key         = "investment-recent-trade-db"
-  name        = "07 - Release New Recent Trades DB"
+  name        = "06 - Release New Recent Trades DB"
   description = "Release New Recent Trades DB"
 
   variation_type = "boolean"
@@ -369,7 +369,7 @@ resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
 resource "launchdarkly_feature_flag" "cartSuggestedItems" {
   project_key = var.project_key
   key         = "cartSuggestedItems"
-  name        = "14 - Cart Suggested items"
+  name        = "13 - Cart Suggested items"
   description = "Show suggested items in the cart"
 
    variation_type = "boolean"
@@ -383,7 +383,7 @@ resource "launchdarkly_feature_flag" "cartSuggestedItems" {
   }
 
   defaults {
-    on_variation  = 0
+    on_variation  = 1
     off_variation = 1
   }
 

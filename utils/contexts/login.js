@@ -3,6 +3,8 @@ import { useLDClient } from "launchdarkly-react-client-sdk";
 import { createContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
+import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
+
 
 const LoginContext = createContext();
 
@@ -16,6 +18,9 @@ export const LoginProvider = ({ children }) => {
   const [email, setEmail] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState("standard");
+  const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
+  const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
+
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
@@ -49,14 +54,45 @@ export const LoginProvider = ({ children }) => {
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
     setLaunchClubStatus("standard");
-    const context = client?.getContext();
-    context.user.name = "anonymous";
-    context.user.email = "anonymous";
-    context.audience.key = uuidv4().slice(0, 10);
-    context.user.key = "anonymous";
-    context.user.launchclub = launchClubStatus;
+    const context = await createAnonymousContext();
     client.identify(context);
+    console.log("Anonymous User", context);
   };
+
+  const createAnonymousContext = async () => {
+    let context = {
+      "kind": "multi",
+      "user": {
+        "key": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "anonymous",
+        "anonymous": true,
+        "launchclub": "standard",
+        "email": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "appName": "LD Demo"
+      },
+      "device": {
+        "key": "Desktop",
+        "name": "Desktop",
+        "operating_system": "Windows",
+        "platform": "Desktop"
+      },
+      "location": {
+        "key": "America/New_York",
+        "name": "America/New_York",
+        "timeZone": "America/New_York",
+        "country": "US"
+      },
+      "experience": {
+        "key": "a380",
+        "name": "a380",
+        "airplane": "a380"
+      },
+      "audience": {
+        "key": "123456"
+      }
+    }
+    return context;
+  }
 
   const setPlaneContext = async (plane) => {
     const context = await client?.getContext();

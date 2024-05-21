@@ -1,0 +1,9 @@
+{
+    "patch": [
+        {
+            "op": "replace",
+            "path": "/name",
+            "value": "05 - Release New Investment Stock Api"
+        }
+    ]
+}

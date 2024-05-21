@@ -15,7 +15,6 @@ project_key = f"{namespace}-ld-demo"
 def main():
     
     createFederatedFeatureFlag()
-    createStocksAPIFeatureFlag()
     createWealthManagementFeatureFlag()
     createAIPromptTextFeatureFlag()
     createLaunchClubLoyaltyFeatureFlag()
@@ -157,7 +156,7 @@ def createLaunchClubLoyaltyFeatureFlag():
         "usingMobileKey": True
     },
     "key": "launchClubLoyalty",
-    "name": "08 - Enable Launch Club Loyalty Program",
+    "name": "07 - Enable Launch Club Loyalty Program",
     "description": "Enable Launch Club Loyalty Program on ToggleAirlines",
      "variations": [
         {
@@ -194,7 +193,7 @@ def createPriorityBoardFeatureFlag():
         "usingMobileKey": True
     },
     "key": "priorityBoarding",
-    "name": "09 - Launch Club - Priority Boarding",
+    "name": "08 - Launch Club - Priority Boarding",
     "description": "Enable Launch Club Priority Program on ToggleAirlines",
      "variations": [
         {
@@ -230,7 +229,7 @@ def createMealPromoExperienceFeatureFlag():
         "usingMobileKey": True
     },
     "key": "mealPromoExperience",
-    "name": "10 - Targeted Plane Meal Promotion",
+    "name": "09 - Targeted Plane Meal Promotion",
     "description": "Rolling our meal service on our A330 aircraft - free promotion for testing",
     "variations": [
         {
@@ -267,7 +266,7 @@ def createAITravelInsightsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "aiTravelInsights",
-    "name": "11 - Release AI Travel Insights",
+    "name": "10 - Release AI Travel Insights",
     "description": "Amazon Bedrock Powered Travel Insights",
      "variations": [
         {
@@ -304,7 +303,7 @@ def createStoreHeadersFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeHeaders",
-    "name": "12 - Featured Store Headers",
+    "name": "11 - Featured Store Headers",
     "description": "Headers to drive engagement on specific stores",
      "variations": [
         {
@@ -341,7 +340,7 @@ def createStoreAttentionCalloutFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeAttentionCallout",
-    "name": "13 - Store Highlight Text",
+    "name": "12 - Store Highlight Text",
     "description": "Header Text for Marketplace Stores",
      "variations": [
         {
@@ -382,7 +381,7 @@ def createCartSuggestedItemsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "cartSuggestedItems",
-    "name": "14 - Cart Suggested items",
+    "name": "13 - Cart Suggested items",
     "description": "Show suggested items in the cart",
      "variations": [
         {
@@ -395,7 +394,7 @@ def createCartSuggestedItemsFeatureFlag():
         }
     ],
     "defaults":{
-        "onVariation": 0,
+        "onVariation": 1,
         "offVariation": 1
     },
     "tags": [
@@ -406,43 +405,6 @@ def createCartSuggestedItemsFeatureFlag():
     response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
     if(response.status_code == 201):
         print("Cart Suggested items feature flag created successfully.")
-    
-def createStocksAPIFeatureFlag():
-        
-    print("Creating stocks API feature flag...")
-    
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "stocksAPI",
-    "name": "05 - Release Stocks API",
-    "description": "Release New Stocks API",
-     "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "remediate"
-    ]
-    }
-    
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Stocks API feature flag created successfully.")
 
 def createReleaseNewInvestmentStockApiFeatureFlag():
         
@@ -456,7 +418,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
         "usingMobileKey": True
     },
     "key": "release-new-investment-stock-api",
-    "name": "06 - Release New Investment Stock Api",
+    "name": "05 - Release New Investment Stock Api",
     "description": "Release New Investment Stock Api",
      "variations": [
         {
@@ -493,7 +455,7 @@ def createReleaseNewRecentTradesDBFeatureFlag():
         "usingMobileKey": True
     },
     "key": "investment-recent-trade-db",
-    "name": "07 - Release New Recent Trades DB",
+    "name": "06 - Release New Recent Trades DB",
     "description": "Release New Recent Trades DB",
      "variations": [
         {
