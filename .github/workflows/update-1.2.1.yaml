@@ -19,7 +19,7 @@ env:
 
 
 jobs:
-  update-demoenv-to-v1.2.1: 
+  update-demo-env-1-2-1: 
     runs-on: ubuntu-latest
 
     steps:
@@ -74,3 +74,5 @@ jobs:
 
       - name: Cart Suggested Items
         run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}'
+
+      
