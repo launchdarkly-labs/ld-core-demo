@@ -32,6 +32,7 @@ export const LoginProvider = ({ children }) => {
     context.user.name = user;
     context.user.email = email;
     let hashedEmail = await hashEmail(email);
+    context.user.anonymous = false;
     context.user.key = hashedEmail;
     context.user.role = role;
     context.audience.key = uuidv4().slice(0, 10);
