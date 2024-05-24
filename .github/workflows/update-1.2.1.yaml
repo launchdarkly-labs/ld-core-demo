@@ -17,10 +17,8 @@ env:
   LD_API_KEY: ${{ secrets.LD_API_KEY }} 
   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
-
 jobs:
   update-demo-env-1-2-1:
-    needs: handle-rate-limit
     runs-on: ubuntu-latest
 
     steps:
