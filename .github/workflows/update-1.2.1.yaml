@@ -19,22 +19,13 @@ env:
 
 
 jobs:
-  update-demo-env-1-2-1: 
+  update-demo-env-1-2-1:
+    needs: handle-rate-limit
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ./.github/workflows/requirements.txt
 
       - name: Install LaunchDarkly CLI
         run: npm install -g @launchdarkly/ldcli
@@ -43,36 +34,75 @@ jobs:
         run: ldcli config --set access-token ${{ secrets.LD_API_KEY }}
       
       - name: Update Cart Suggested Items Feature Flag Config
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch  -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)"
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch  -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)"
 
       - name: Delete Stocks API 
-        run: ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI
 
       - name: Update new investment stock api
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)"
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)"
 
       - name: Update release new recent trades db
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}'
-      
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}'
+
       - name: Update launch club loyalty program flag
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}'
-      
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}'
+
       - name: Update launch priority boarding flag
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding}]}'
-      
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}]}'
+
       - name: Update targeted plane meal promotion
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion}]}'
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}]}'
 
       - name: Update release ai travel insights
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}'
-      
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}'
+
       - name: Update Feature Store Headers
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag featureStoreHeaders -d '{"patch":[{"op":"replace","path":"/name","value":"11 - Featured Store Headers"}]}'
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: echo "Feature Store Headers Updated"
 
       - name: Update Store Highlight Text
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}'
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}'
 
       - name: Cart Suggested Items
-        run: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}'
+        run: ${{ needs.handle-rate-limit.outputs.response }}
+        env:
+          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}'
 
-      
+jobs:
+  handle-rate-limit:
+    runs-on: ubuntu-latest
+    outputs:
+      response: ${{ steps.rate-limit-handler.outputs.response }}
+    steps:
+      - name: Rate Limit Handler
+        id: rate-limit-handler
+        env:
+          COMMAND: ${{ github.event.inputs.command }}
+        run: |
+          response=$(eval $COMMAND 2>&1)
+          if [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; then
+            echo "Rate limit exceeded, retrying in 5 seconds..."
+            sleep 5
+            response=$(eval $COMMAND)
+          fi
+          echo "::set-output name=response::$response"
