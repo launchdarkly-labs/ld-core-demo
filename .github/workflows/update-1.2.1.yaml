@@ -173,12 +173,12 @@ jobs:
       - name: Cart Suggested Items
         run: |
           echo "Updating Cart Suggested Items Feature Flag"
-          response=""
+          response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}')
           until [[ $response != *"API Limit Exceeded"* ]]; do
             if [[ $response == *"API Limit Exceeded"* ]]; then
               echo "API Limit Exceeded, waiting 5 seconds..."
               sleep 5
             fi
-            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}' 2>&1)
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}')
           done
           echo "$response"
