@@ -43,3 +43,48 @@ jobs:
       
       - name: Apply 1.2.1 Update
         run: python ./.github/workflows/v.1.2.1/update_1.2.1.py ${{ env.DEMO_NAMESPACE }}
+
+      - name: Create .env file
+        run: |
+          touch ./.env.production
+          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
+          echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
+          echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
+          echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
+          echo DESTINATIONENV=${{ env.DEMO_NAMESPACE }} >> ./.env.production
+          echo PROJECT_KEY=${{ env.DEMO_NAMESPACE }}-ld-demo >> ./.env.production
+  
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ld-core-demo
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
+
+      - name: Update K8s Deploy File
+        run: python ./.github/workflows/update_k8s_deploy_file.py
+        env:
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: create namespace ${{ env.DEMO_NAMESPACE }}
+
+      - name: Applying deploy file to Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
