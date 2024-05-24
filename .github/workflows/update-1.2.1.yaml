@@ -45,7 +45,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)")
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)")
@@ -56,7 +59,10 @@ jobs:
         run: |
           response=$(ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI)
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI)
@@ -68,7 +74,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)")
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)")
@@ -79,7 +88,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}')
@@ -90,7 +102,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}')
@@ -101,7 +116,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}]}')
@@ -112,7 +130,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}]}')
@@ -123,7 +144,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}')
@@ -134,7 +158,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag featureStoreHeaders -d '{"patch":[{"op":"replace","path":"/name","value":"11 - Featured Store Headers"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag featureStoreHeaders -d '{"patch":[{"op":"replace","path":"/name","value":"11 - Featured Store Headers"}]}')
@@ -145,7 +172,10 @@ jobs:
         run: |
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
             echo "You've exceeded the API rate limit, waiting 5 seconds..."
             sleep 5
             response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}')
@@ -157,9 +187,12 @@ jobs:
           echo "Updating Cart Suggested Items Feature Flag"
           response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}')
           echo "$response"
-          until [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-              echo "You've exceeded the API rate limit, waiting 5 seconds..."
-              sleep 5
-              response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}')
+          until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
+            if [[ $response == *"Successfully updated"* ]]; then
+              break
+            fi
+            echo "You've exceeded the API rate limit, waiting 5 seconds..."
+            sleep 5
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}')
           done
           echo "$response"
