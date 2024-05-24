@@ -47,7 +47,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -67,7 +67,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -84,7 +84,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -100,7 +100,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -116,7 +116,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -132,7 +132,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -148,7 +148,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -164,7 +164,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -180,7 +180,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -196,7 +196,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
@@ -212,7 +212,7 @@ jobs:
           echo "$response"
           count=0
           until [[ $response == *"Successfully updated"* ]] || [[ $response == *"You've exceeded the API rate limit. Try again later. (code: rate_limited)"* ]]; do
-            if [[ $response == *"Successfully updated"* ]] || [[ $response == *'unknown error occured'*]] || [[ $count -eq 3 ]]; then
+            if [[ $response == *"Successfully updated"* ]] || [[ $response == *"unknown error occured"* ]] || [[ $count -eq 3 ]]; then
               break
             fi
             echo "Attempt $((count+1)) failed, you've exceeded the API rate limit, waiting 5 seconds..."
