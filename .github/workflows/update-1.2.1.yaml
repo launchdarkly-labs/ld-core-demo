@@ -42,78 +42,143 @@ jobs:
         run: ldcli config --set access-token ${{ secrets.LD_API_KEY }}
       
       - name: Update Cart Suggested Items Feature Flag Config
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch  -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)"
         run: |
-          echo "Updating Cart Suggested Items Feature Flag Config"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems --semantic-patch -d "$(cat ./.github/workflows/v.1.2.1/cartSuggestedItems.json)" 2>&1)
+          done
+          echo "$response"
           
       - name: Delete Stocks API 
-        env:
-          COMMAND: ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI
         run: |
           echo "Deleting Stocks API Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag stocksAPI 2>&1)
+          done
+          echo "$response"
 
       - name: Update new investment stock api
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)"
         run: |
           echo "Updating New Investment Stock API Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag release-new-investment-stock-api  -d "$(cat ./.github/workflows/v.1.2.1/release-new-investment-stock-api.json)" 2>&1)
+          done
+          echo "$response"
 
       - name: Update release new recent trades db
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}'
         run: |
           echo "Updating Release New Recent Trades DB Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
-      
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag investment-recent-trade-db -d '{"patch":[{"op":"replace","path":"/name","value":"06 - Release New Recent Trades DB"}]}' 2>&1)
+          done
+          echo "$response"
+
       - name: Update launch club loyalty program flag
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}'
         run: |
           echo "Updating Launch Club Loyalty Program Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
-      
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag launchClubLoyalty -d '{"patch":[{"op":"replace","path":"/name","value":"07 - Enable Launch Club Loyalty Program"}]}' 2>&1)
+          done
+          echo "$response"
+
       - name: Update launch priority boarding flag
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}]}'
         run: |
           echo "Updating Launch Priority Boarding Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
-      
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag priorityBoarding -d '{"patch":[{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}]}' 2>&1)
+          done
+          echo "$response"
+
       - name: Update targeted plane meal promotion
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}]}'
         run: |
           echo "Updating Targeted Plane Meal Promotion Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag mealPromoExperience -d '{"patch":[{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}]}' 2>&1)
+          done
+          echo "$response"
 
       - name: Update release ai travel insights
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}'
         run: |
           echo "Updating AI Travel Insights Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
-      
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag aiTravelInsights -d '{"patch":[{"op":"replace","path":"/name","value":"10 - Release AI Travel Insights"}]}' 2>&1)
+          done
+          echo "$response"
+
       - name: Update Feature Store Headers
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag featureStoreHeaders -d '{"patch":[{"op":"replace","path":"/name","value":"11 - Featured Store Headers"}]}'
         run: |
           echo "Updating Feature Store Headers Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag featureStoreHeaders -d '{"patch":[{"op":"replace","path":"/name","value":"11 - Featured Store Headers"}]}' 2>&1)
+          done
+          echo "$response"
 
       - name: Update Store Highlight Text
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}'
         run: |
           echo "Updating Store Highlight Text Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag storeAttentionCallout -d '{"patch":[{"op":"replace","path":"/name","value":"12 - Store Highlight Text"}]}' 2>&1)
+          done
+          echo "$response"
 
       - name: Cart Suggested Items
-        env:
-          COMMAND: ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}'
         run: |
           echo "Updating Cart Suggested Items Feature Flag"
-          python ./.github/workflows/ld_api/ld_command_call.py
+          response=""
+          until [[ $response != *"API Limit Exceeded"* ]]; do
+            if [[ $response == *"API Limit Exceeded"* ]]; then
+              echo "API Limit Exceeded, waiting 5 seconds..."
+              sleep 5
+            fi
+            response=$(ldcli flags update --project ${{ env.DEMO_NAMESPACE }}-ld-demo --flag cartSuggestedItems -d '{"patch":[{"op":"replace","path":"/name","value":"13 - Cart Suggested items"}]}' 2>&1)
+          done
+          echo "$response"
