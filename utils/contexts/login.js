@@ -56,26 +56,21 @@ export const LoginProvider = ({ children }) => {
     setEnrolledInLaunchClub(false);
     setLaunchClubStatus("standard");
     const context = await createAnonymousContext();
-    client.identify(context);
+    await client?.identify(context);
     console.log("Anonymous User", context);
   };
-
+  
   const createAnonymousContext = async () => {
-    let context = {
+    return {
       "kind": "multi",
       "user": {
-        "key": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "name": "anonymous",
-        "anonymous": true,
-        "launchclub": "standard",
-        "email": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "appName": "LD Demo"
+        "anonymous": true
       },
       "device": {
-        "key": "Desktop",
-        "name": "Desktop",
-        "operating_system": "Windows",
-        "platform": "Desktop"
+        "key": device,
+        "name": device,
+        "operating_system": operatingSystem,
+        "platform": device,
       },
       "location": {
         "key": "America/New_York",
@@ -89,10 +84,9 @@ export const LoginProvider = ({ children }) => {
         "airplane": "a380"
       },
       "audience": {
-        "key": "123456"
+        "key": uuidv4().slice(0, 10)
       }
     }
-    return context;
   }
 
   const setPlaneContext = async (plane) => {
