@@ -124,7 +124,7 @@ export default function BookedFlights() {
     exit: { x: 300, opacity: 0 },
   };
   const navLinkStyling =
-    "lg:pb-12 lg:pt-1.5 lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
+    "lg:pb-[3rem] lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
 
   return (
     <Sheet>
