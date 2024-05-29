@@ -111,12 +111,12 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
         <Button
           onClick={() => defaultEmail && handleLogin()}
-          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg ${variantClass} text-white`}>
+          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}>
           Login with SSO
         </Button>
 
         <Dialog onDismiss={() => { setIsAddUserDropdownOpen(false) }} className="z-10">
-          <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl ${variantClass} text-white hover:bg-gray-800`}>
+          <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}>
             Switch SSO User
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">

@@ -81,6 +81,7 @@ module.exports = {
         awsorange: "#FF9900",
         navgray: "#282828",
         navblue:"#405BFF",
+        loginComponentBlue:"#405BFF",
         airlinepurple: "#A34FDE",
         airlinepink: "#FF386B",
         airlineblue: "#405BFF",
