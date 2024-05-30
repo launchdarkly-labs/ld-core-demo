@@ -65,6 +65,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { launchClubStatus } = useContext(LoginContext);
     const imageSrc = variantToImageMap[variant];
 
+    const logoutButtonClassname = "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none"; 
+
     // TODO: popover should be a modular component
     switch (variant) {
       case "airlines":
@@ -116,7 +118,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-airline-buttons rounded-none"
+                          className={` ${logoutButtonClassname}`}
                         >
                           Logout
                         </Button>
@@ -219,7 +221,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className=" bg-red-700 font-audimat text-white items-center my-2 w-full bg-gradient-releases text-xl rounded-none"
+                          className={` ${logoutButtonClassname}`}
                         >
                           Logout
                         </Button>
@@ -338,8 +340,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <div className="mx-auto text-center mt-4">
                       <Button
                         onClick={handleLogout}
-                        className="items-center hover:bg-gradient-experimentation-grey 
-                       hover:text-white font-audimat my-2 w-full bg-gradient-experimentation text-white text-xl rounded-none"
+                        className={` ${logoutButtonClassname}`}
                       >
                         Logout
                       </Button>
@@ -456,7 +457,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center">
                         <Button
                           onClick={handleLogout}
-                          className="text-xl bg-red-700 text-white font-audimat items-center my-2 w-full bg-gradient-investment rounded-none"
+                          className={` ${logoutButtonClassname}`}
                         >
                           Logout
                         </Button>
