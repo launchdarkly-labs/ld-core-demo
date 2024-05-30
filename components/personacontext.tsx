@@ -1,5 +1,6 @@
 // PersonaContext.js
 import React, { createContext, useState, useEffect } from 'react';
+import {STARTER_PERSONAS} from '@/utils/contexts/StarterUserPersonas'
 
 export const PersonaContext = createContext<PersonaContextType | null>(null);
 
@@ -23,33 +24,7 @@ export const PersonaProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const getPersonas =  () => {
-
-    const starterPersonas = [
-      {
-        personaname: "Cody",
-        personatype: "Standard User",
-        personaimage: "standard.jpg",
-        personaemail: "cody@launchmail.io",
-        personarole: "Standard"
-
-      },
-      {
-        personaname: "Alysha",
-        personatype: "Beta User",
-        personaimage: "beta.png",
-        personaemail: "alysha@launchmail.io",
-        personarole: "Beta"
-
-      },
-      {
-        personaname: "Jenn",
-        personatype: "Developer",
-        personaimage: "woman.png",
-        personaemail: "jenn@launchmail.io",
-        personarole: "Developer"
-      },
-    ]; 
-    setPersonas(starterPersonas);
+    setPersonas(STARTER_PERSONAS);
   }
 
   return (

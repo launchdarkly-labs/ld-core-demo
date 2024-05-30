@@ -251,7 +251,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
         <div>
           <p className="text-right flex flex-col">
             Don't have an account?{" "}
-            <a href="#" className="text-blue-600 ml-2">
+            <a href="#" className=" ml-2 cursor-auto">
               Sign Up
             </a>
           </p>
