@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import Chatbot from "@/components/chatbot/ChatBot";
 
 export default function Airways() {
   const { launchClubLoyalty } = useFlags();
@@ -210,6 +211,7 @@ export default function Airways() {
           </motion.main>
         )}
       </AnimatePresence>
+      <Chatbot/>
     </>
   );
 }

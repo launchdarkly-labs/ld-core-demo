@@ -13,9 +13,6 @@ import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
 import { setCookie } from "cookies-next";
-import ChatBot from "@/components/chatbot/ChatBot";
-
-
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -283,7 +280,6 @@ export default function Marketplace() {
   return (
     <>
       <Toaster />
-      <ChatBot/>
       <AnimatePresence mode="wait">
         (
             <motion.div
