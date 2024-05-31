@@ -90,6 +90,10 @@ export default function Bank() {
   };
 
   const ldclient = useLDClient();
+  function testContext () {
+    const context = ldclient?.getContext()
+  }
+    console.log(testContext());
 
   function handleLogout() {
     logoutUser();
