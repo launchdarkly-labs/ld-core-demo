@@ -1,16 +1,17 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChatList } from '@/components/chat-list'
-import { ChatPanel } from '@/components/chat-panel'
-import { EmptyScreen } from '@/components/empty-screen'
-import { useLocalStorage } from '@/lib/hooks/use-local-storage'
+import { ChatList } from '@/components/chatbot/chat-list'
+import { ChatPanel } from '@/components/chatbot/chat-panel'
+import { EmptyScreen } from '@/components/chatbot/empty-screen'
+import { useLocalStorage } from '@/components/chatbot/lib/hooks/use-local-storage'
 import { useEffect, useState } from 'react'
 import { useUIState, useAIState } from 'ai/rsc'
-import { Message, Session } from '@/lib/types'
+import { Message, Session } from '@/components/chatbot/lib/types'
 import { usePathname, useRouter } from 'next/navigation'
-import { useScrollAnchor } from '@/lib/hooks/use-scroll-anchor'
-import { toast } from 'sonner'
+import { useScrollAnchor } from '@/components/chatbot/lib/hooks/use-scroll-anchor'
+// import { toast } from 'sonner'
+// import { Toast } from '@radix-ui/react-toast'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
@@ -49,7 +50,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
 
   useEffect(() => {
     missingKeys.map(key => {
-      toast.error(`Missing ${key} environment variable!`)
+      alert(`Missing ${key} environment variable!`)
     })
   }, [missingKeys])
 
