@@ -55,8 +55,15 @@ const prompt =
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="bg-white text-black rounded-none h-full w-full text-3xl p-6 cursor-pointer hover:bg-zinc-200">
-            Pick My Destination
+          <Button className="bg-white text-black rounded-none h-full w-full text-3xl p-4 cursor-pointer hover:bg-zinc-200">
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex">
+                  Find My Next Trip
+                </div>
+                <div className="flex text-xs">
+                  powered by AI
+              </div>
+            </div>
           </Button>
         </AlertDialogTrigger>
         {recsGiven ? (
