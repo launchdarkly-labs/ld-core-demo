@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -26,7 +27,7 @@ export default function Chatbot() {
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
-                  <img src="/placeholder.svg" alt="Chatbot Avatar" />
+                  <img src="ToggleAvatar.png" alt="Chatbot Avatar" />
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
                 <div>
