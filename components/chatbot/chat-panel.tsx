@@ -1,14 +1,14 @@
 import * as React from 'react'
 
-import { shareChat } from '@/app/actions'
+import { shareChat } from '@/components/chatbot/actions'
 import { Button } from '@/components/ui/button'
-import { PromptForm } from '@/components/prompt-form'
-import { ButtonScrollToBottom } from '@/components/button-scroll-to-bottom'
-import { IconShare } from '@/components/ui/icons'
-import { FooterText } from '@/components/footer'
-import { ChatShareDialog } from '@/components/chat-share-dialog'
+import { PromptForm } from '@/components/chatbot/prompt-form'
+import { ButtonScrollToBottom } from '@/components/chatbot/button-scroll-to-bottom'
+import { IconShare } from '@/components/chatbot/ui/icons'
+// import { FooterText } from '@/components/chatbot/footer'
+import { ChatShareDialog } from '@/components/chatbot/chat-share-dialog'
 import { useAIState, useActions, useUIState } from 'ai/rsc'
-import type { AI } from '@/lib/chat/actions'
+import type { AI } from '@/components/chatbot/lib/chat/actions'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
 
@@ -131,7 +131,7 @@ export function ChatPanel({
 
         <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
           <PromptForm input={input} setInput={setInput} />
-          <FooterText className="hidden sm:block" />
+          {/* <FooterText className="hidden sm:block" /> */}
         </div>
       </div>
     </div>
