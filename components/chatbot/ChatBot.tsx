@@ -9,40 +9,9 @@ import { openai, createOpenAI } from "@ai-sdk/openai";
 import { BounceLoader } from "react-spinners";
 import { useChat } from "ai/react";
 
-const openaiR = createOpenAI({
-  // custom settings
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
-// Force the page to be dynamic and allow streaming responses up to 30 seconds
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
 
-export interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
 
-export async function continueConversation(history: Message[]) {
-  const { text } = await generateText({
-    model: openaiR("gpt-3.5-turbo"),
-    system: "You are a friendly assistant!",
-    messages: history,
-  });
-
-  return {
-    messages: [
-      ...history,
-      {
-        role: "assistant" as const,
-        content: text,
-      },
-    ],
-  };
-}
-
-import { generateText } from "ai";
-import { openai, createOpenAI } from "@ai-sdk/openai";
 
 const openaiR = createOpenAI({
   // custom settings
@@ -207,7 +176,7 @@ export default function Chatbot() {
     //   )}
     // </>
 
-    <div className="mx-auto w-full max-w-md py-24 flex flex-col stretch z-100 bg-red-200">
+    <div className=" h-[20rem] mx-auto w-full max-w-md py-24 flex flex-col stretch z-[100] bg-red-200">
       {messages.map((m) => {
         console.log(messages);
         return (
