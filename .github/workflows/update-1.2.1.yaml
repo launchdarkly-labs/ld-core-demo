@@ -40,6 +40,15 @@ jobs:
 
       - name: LD CLI Configure
         run: ldcli config --set access-token ${{ secrets.LD_API_KEY }}
+
+      - name: Get LD Project Client/SDK Keys
+        id: create_ld_project
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_ld_project.py
       
       - name: Apply 1.2.1 Update
         run: python ./.github/workflows/v.1.2.1/update_1.2.1.py ${{ env.DEMO_NAMESPACE }}
