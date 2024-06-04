@@ -27,7 +27,11 @@ import {
 import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
+<<<<<<< HEAD
 import Newchat from "@/components/chatbot/newchat";
+=======
+import Homer from "@/components/chatbot/newchat";
+>>>>>>> 2ef526f6b162095b2493d21f5653ba8bfc5ebc54
 
 export default function Airways() {
   const { launchClubLoyalty } = useFlags();
@@ -105,7 +109,11 @@ export default function Airways() {
     <>
     <Toaster />
       <AnimatePresence mode="wait">
+<<<<<<< HEAD
               <Newchat/>
+=======
+              <Homer/>
+>>>>>>> 2ef526f6b162095b2493d21f5653ba8bfc5ebc54
         {!isLoggedIn ? (
           <LoginHomePage name="Launch Airways" variant="airlines" />
         ) : (

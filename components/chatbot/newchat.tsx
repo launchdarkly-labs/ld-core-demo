@@ -20,7 +20,6 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
-
 export async function continueConversation(history: Message[]) {
 
   const { text } = await generateText({
