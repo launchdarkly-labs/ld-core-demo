@@ -41,6 +41,41 @@ export async function continueConversation(history: Message[]) {
   };
 }
 
+import { generateText } from "ai";
+import { openai, createOpenAI } from "@ai-sdk/openai";
+
+const openaiR = createOpenAI({
+  // custom settings
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Force the page to be dynamic and allow streaming responses up to 30 seconds
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
+export interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export async function continueConversation(history: Message[]) {
+  const { text } = await generateText({
+    model: openaiR("gpt-3.5-turbo"),
+    system: "You are a friendly assistant!",
+    messages: history,
+  });
+
+  return {
+    messages: [
+      ...history,
+      {
+        role: "assistant" as const,
+        content: text,
+      },
+    ],
+  };
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [conversation, setConversation] = useState<Message[]>([]);

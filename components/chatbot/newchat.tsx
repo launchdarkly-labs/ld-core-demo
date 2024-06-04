@@ -9,7 +9,7 @@ import { openai,createOpenAI } from '@ai-sdk/openai';
 
 const openaiR = createOpenAI({
   // custom settings
-  apiKey:process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
@@ -20,7 +20,6 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
-console.log(process.env.OPENAI_API_KEY)
 export async function continueConversation(history: Message[]) {
 
   const { text } = await generateText({
@@ -41,10 +40,10 @@ export async function continueConversation(history: Message[]) {
   };
 }
 
-export default function Homer() {
+export default function Newchat() {
   const [conversation, setConversation] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
-
+  console.log(process.env.OPENAI_API_KEY)
   return (
     <div>
       <div>

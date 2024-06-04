@@ -28,6 +28,7 @@ import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
 
+
 export default function Airways() {
   const { launchClubLoyalty } = useFlags();
 
