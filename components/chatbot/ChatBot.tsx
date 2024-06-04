@@ -4,9 +4,46 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 
+import { generateText } from "ai";
+import { openai, createOpenAI } from "@ai-sdk/openai";
+
+const openaiR = createOpenAI({
+  // custom settings
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Force the page to be dynamic and allow streaming responses up to 30 seconds
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
+export interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export async function continueConversation(history: Message[]) {
+  const { text } = await generateText({
+    model: openaiR("gpt-3.5-turbo"),
+    system: "You are a friendly assistant!",
+    messages: history,
+  });
+
+  return {
+    messages: [
+      ...history,
+      {
+        role: "assistant" as const,
+        content: text,
+      },
+    ],
+  };
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  
+  const [conversation, setConversation] = useState<Message[]>([]);
+  const [input, setInput] = useState<string>("");
+
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -23,7 +60,7 @@ export default function Chatbot() {
 
       {isOpen && (
         <div className="fixed top-[calc(50%-150px)] left-[calc(90%-100px)] transform -translate-x-1/2 z-50">
-          <Card className="max-w-md w-full">
+          <Card className="max-w-md w-[500px]">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -47,44 +84,57 @@ export default function Chatbot() {
             </CardHeader>
             <CardContent className="h-[400px] overflow-y-auto">
               <div className="space-y-4">
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
-                  <p>Hello! How can I assist you today?</p>
-                </div>
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gray-900 text-gray-50 dark:bg-gray-50 dark:text-gray-900">
-                  <p>Hi there! I'm having some trouble with my account. Can you help me?</p>
-                </div>
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
-                  <p>
-                    Of course, I'd be happy to help! What seems to be the issue with your account?
-                  </p>
-                </div>
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gray-900 text-gray-50 dark:bg-gray-50 dark:text-gray-900">
-                  <p>
-                    Well, I'm not able to log in and I'm not sure why. Can you please check on that
-                    for me?
-                  </p>
-                </div>
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
-                  <p>
-                    Okay, let me take a look. Can you please provide me with your account email
-                    address?
-                  </p>
-                </div>
+                {conversation.map((message, index) => {
+                  if (message.role === "assistant") {
+                    return (
+                      <div
+                        key={index}
+                        className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
+                      >
+                        {message.role}: {message.content}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gray-900 text-gray-50 dark:bg-gray-50 dark:text-gray-900"
+                    >
+                      {message.role}: {message.content}
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
             <CardFooter>
-              <form className="flex w-full items-center space-x-2">
+            
                 <Input
                   id="message"
                   placeholder="Type your message..."
                   className="flex-1"
                   autoComplete="off"
+                  value={input}
+                  onChange={(event) => {
+                    setInput(event.target.value);
+                  }}
                 />
-                <Button type="submit" size="icon">
+                <Button
+                  type="submit"
+                  size="icon"
+                  onClick={async () => {
+                    const { messages } = await continueConversation([
+                      ...conversation,
+                      { role: "user", content: input },
+                    ]);
+
+                    setConversation(messages);
+                  }}
+                >
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>
-              </form>
+             
             </CardFooter>
           </Card>
         </div>
