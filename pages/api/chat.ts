@@ -5,9 +5,9 @@ import {
 import { AWSBedrockAnthropicStream, StreamingTextResponse } from "ai";
 import { experimental_buildAnthropicPrompt } from "ai/prompts";
 import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from 'next/server'
 
-export const dynamic = 'force-dynamic';
+
+// export const dynamic = 'force-dynamic';
 export const runtime = 'edge' 
 const bedrockClient = new BedrockRuntimeClient({
   region: process.env.AWS_DEFAULT_REGION ?? "us-west-2",
@@ -18,14 +18,13 @@ const bedrockClient = new BedrockRuntimeClient({
 });
 
 // const bedrockClient = new BedrockRuntimeClient({ region: "us-west-2" });
-console.log("bedrockClient",bedrockClient)
 export default async function POST(req: Request) {
   // Extract the `prompt` from the body of the request
-  console.log("req",req.body);
 
-  const messages = await req.body;
-  //const { messages } = await req.body;
-  console.log(messages);
+//   console.log("req",req);
+  //const messages = await req.body;
+   const { messages } = await req.json();
+  console.log("messages",messages);
   // Ask Claude for a streaming chat completion given the prompt
   const bedrockResponse = await bedrockClient.send(
     new InvokeModelWithResponseStreamCommand({
@@ -33,7 +32,7 @@ export default async function POST(req: Request) {
       contentType: "application/json",
       accept: "application/json",
       body: JSON.stringify({
-        prompt: experimental_buildAnthropicPrompt([{ role: 'user', content: 'what is the weather in nyc?' },]),
+        prompt: experimental_buildAnthropicPrompt(messages),
         temperature: 0.9,
         max_tokens_to_sample: 500,
         top_p: 1,
@@ -43,9 +42,9 @@ export default async function POST(req: Request) {
 
   // Convert the response into a friendly text-stream
   const stream = AWSBedrockAnthropicStream(bedrockResponse);
-  console.log("bedrockResponse", bedrockResponse)
-  console.log("stream", stream)
-  console.log("StreamingTextResponse", new StreamingTextResponse(stream))
+//   console.log("bedrockResponse", bedrockResponse)
+//   console.log("stream", stream)
+//   console.log("StreamingTextResponse", new StreamingTextResponse(stream))
 
 
     // Respond with the stream
