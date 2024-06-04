@@ -9,7 +9,7 @@ import { openai,createOpenAI } from '@ai-sdk/openai';
 
 const openaiR = createOpenAI({
   // custom settings
-  apiKey:'sk-proj-FVBCGAXWjUkUfASWNepaT3BlbkFJ1wrvV1CnARZ0MH2XGyZU'
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
