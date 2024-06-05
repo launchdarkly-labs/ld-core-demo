@@ -18,6 +18,7 @@ export default function Chatbot() {
     api: "/api/chat",
     initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
   });
+  console.log(messages)
 
   return (
     <>
