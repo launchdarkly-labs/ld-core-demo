@@ -4,7 +4,6 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { wait } from "@/utils/utils";
-import { BounceLoader } from "react-spinners";
 import { useChat } from "ai/react";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
@@ -15,7 +14,10 @@ import { useChat } from "ai/react";
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: "/api/chat",
+    initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+  });
 
   return (
     <>
