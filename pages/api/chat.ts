@@ -4,8 +4,6 @@ import {
 } from "@aws-sdk/client-bedrock-runtime";
 import { AWSBedrockAnthropicStream, StreamingTextResponse } from "ai";
 import { experimental_buildAnthropicPrompt } from "ai/prompts";
-import { NextApiRequest, NextApiResponse } from "next";
-
 
 // export const dynamic = 'force-dynamic';
 export const runtime = 'edge' 
@@ -21,10 +19,8 @@ const bedrockClient = new BedrockRuntimeClient({
 export default async function POST(req: Request) {
   // Extract the `prompt` from the body of the request
 
-//   console.log("req",req);
-  //const messages = await req.body;
    const { messages } = await req.json();
-  console.log("messages",messages);
+
   // Ask Claude for a streaming chat completion given the prompt
   const bedrockResponse = await bedrockClient.send(
     new InvokeModelWithResponseStreamCommand({
@@ -42,17 +38,8 @@ export default async function POST(req: Request) {
 
   // Convert the response into a friendly text-stream
   const stream = AWSBedrockAnthropicStream(bedrockResponse);
-//   console.log("bedrockResponse", bedrockResponse)
-//   console.log("stream", stream)
-//   console.log("StreamingTextResponse", new StreamingTextResponse(stream))
-
 
     // Respond with the stream
    return new StreamingTextResponse(stream);
-//   try {
-//     // Respond with the stream
-//     res.status(200).json(new StreamingTextResponse(stream));
-//   } catch (error: any) {
-//     throw new Error(error.message);
-//   }
+
 }
