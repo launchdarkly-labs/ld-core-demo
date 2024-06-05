@@ -29,16 +29,15 @@ export default async function POST(req: Request) {
      const { messages } = await req.json();
   // console.log(messages)
   // Ask Claude for a streaming chat completion given the prompt
-  const claudeMessage = [
-    {
-      role: "user",
-      content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
-    },
-  ];
+  // const claudeMessage = [
+  //   {
+  //     role: "user",
+  //     content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+  //   },
+  // ];
 
   const claude = new InvokeModelWithResponseStreamCommand({
     modelId: "anthropic.claude-instant-v1",
-    //modelId: "amazon.titan-text-express-v1",
     contentType: "application/json",
     accept: "application/json",
     body: JSON.stringify({
@@ -49,12 +48,12 @@ export default async function POST(req: Request) {
     }),
   });
 
-  const llamaMessage = [
-    {
-      role: "user",
-      content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
-    },
-  ];
+  // const llamaMessage = [
+  //   {
+  //     role: "user",
+  //     content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+  //   },
+  // ];
 
   const llama = new InvokeModelWithResponseStreamCommand({
     modelId: "meta.llama2-13b-chat-v1",
@@ -65,6 +64,25 @@ export default async function POST(req: Request) {
       temperature: 0.9,
       max_gen_len: 500,
       top_p: 1,
+    }),
+  });
+
+  const cohereMessage = [
+    {
+      role: "user",
+      content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+    },
+  ];
+
+  const cohere = new InvokeModelWithResponseStreamCommand({
+    modelId: "cohere.command-text-v14",
+    contentType: "application/json",
+    accept: "application/json",
+    body: JSON.stringify({
+      prompt: experimental_buildLlama2Prompt(cohereMessage),
+      // temperature: 0.9,
+      // max_tokens: 500,
+      // p: 1,
     }),
   });
 
@@ -79,9 +97,17 @@ export default async function POST(req: Request) {
 
   const bedrockResponse = await bedrockClient.send(llama);
   const stream = AWSBedrockLlama2Stream(bedrockResponse); // Convert the response into a friendly text-stream
-  console.log("bedrockResponse", bedrockResponse)
-  console.log("stream",stream)
+  // console.log("bedrockResponse", bedrockResponse)
+  // console.log("stream",stream)
+  //console.log("new StreamingTextResponse(stream)",new StreamingTextResponse(stream))
   return new StreamingTextResponse(stream);   // Respond with the stream
+
+  // const bedrockResponse = await bedrockClient.send(cohere);
+  // const stream = AWSBedrockCohereStream(bedrockResponse); // Convert the response into a friendly text-stream
+  // console.log("bedrockResponse", bedrockResponse)
+  // console.log("stream",stream)
+  // console.log("new StreamingTextResponse(stream)",new StreamingTextResponse(stream))
+  // return new StreamingTextResponse(stream);   // Respond with the stream
 
 
 }
