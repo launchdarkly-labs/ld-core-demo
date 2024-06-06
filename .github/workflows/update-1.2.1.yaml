@@ -51,7 +51,7 @@ jobs:
           python ./.github/workflows/ld_api/create_ld_project.py
       
       - name: Apply 1.2.1 Update
-        run: python ./.github/workflows/v.1.2.1/update_1.2.1.py ${{ env.DEMO_NAMESPACE }}
+        run: python ./.github/workflows/v.1.2.1/update_ld_project.py ${{ env.DEMO_NAMESPACE }}
 
       - name: Create .env file
         run: |

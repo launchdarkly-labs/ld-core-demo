@@ -19,7 +19,6 @@ def main():
     createAIPromptTextFeatureFlag()
     createLaunchClubLoyaltyFeatureFlag()
     createPriorityBoardFeatureFlag()
-    createMealPromoExperienceFeatureFlag()
     createAITravelInsightsFeatureFlag()
     createStoreHeadersFeatureFlag()
     createStoreAttentionCalloutFeatureFlag()
@@ -115,11 +114,11 @@ def createAIPromptTextFeatureFlag():
         "usingMobileKey": True
     },
     "key": "aiPromptText",
-    "name": "03 - Adjust Prompts for Wealth Insights",
-    "description": "Tune and release new prompts for the AWS Bedrock powered Wealth Insights API",
+    "name": "03 - Adjust Prompts for Airline Insights",
+    "description": "Tune and release new prompts for the AWS Bedrock powered Airlines Insights API",
     "variations": [
         {
-            "value": "Playing the role of a financial analyst, using the data contained within the information set at the end of this prompt, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor. Hard constraint on a maximum of 50 words. Financial data is next - ",
+            "value": "Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.",
             "name": "Baseline"
         },
         {
@@ -217,42 +216,6 @@ def createPriorityBoardFeatureFlag():
     response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
     if(response.status_code == 201):
         print("Priority Boarding feature flag created successfully.")
-    
-def createMealPromoExperienceFeatureFlag():
-    
-    print("Creating meal promo experience feature flag...")
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "mealPromoExperience",
-    "name": "09 - Targeted Plane Meal Promotion",
-    "description": "Rolling our meal service on our A330 aircraft - free promotion for testing",
-    "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "target"
-    ]
-    }
-
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Meal promo experience feature flag created successfully.")
     
 def createAITravelInsightsFeatureFlag():
     

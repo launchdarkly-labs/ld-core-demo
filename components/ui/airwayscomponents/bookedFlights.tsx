@@ -12,7 +12,6 @@ import TripsContext from "@/utils/contexts/TripContext";
 import LoginContext from "@/utils/contexts/login";
 import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import CheckIn from "@/components/ui/airwayscomponents/checkin";
 import {
   Popover,
   PopoverContent,
@@ -23,7 +22,7 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { enrolledInLaunchClub } = useContext(LoginContext);
-  const { launchClubLoyalty, priorityBoarding, aiTravelInsights } = useFlags();
+  const { launchClubLoyalty, aiTravelInsights, aiPromptText } = useFlags();
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -31,7 +30,7 @@ export default function BookedFlights() {
 
   async function travelLocationsInfo(start: any, end: any) {
     try {
-      const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`;
+      const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`
 
       setLoading(true);
       const response = await fetch("/api/bedrock", {
@@ -80,8 +79,8 @@ export default function BookedFlights() {
 
   async function submitQuery(airport: any) {
     try {
-      const prompt: string = `Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${airport}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit.`;
-
+      const prompt: string = aiPromptText.replace('${destination}', airport);
+      
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -142,7 +141,7 @@ export default function BookedFlights() {
           </div>
 
           <div className="hidden sm:block lg:hidden relative">
-            <Plane className="text-block sm:text-white" title="My Bookings" />
+            <Plane className="text-block sm:text-white" />
 
             {bookedTrips.length > 0 && (
               <span className="absolute top-[-13px] right-[-20px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
@@ -208,7 +207,7 @@ export default function BookedFlights() {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
-                                  onClick={() => travelLocationsInfo(trip.toCity, trip.fromCity)}
+                                  onClick={() => travelLocationsInfo(trip.fromCity, trip.toCity)}
                                   className=" uppercase flex font-bold animate-pulse hover:animate-none text-airlinepink gap-x-1 hover:underline cursor-pointer"
                                 >
                                   <span className="text-air" style={{ color: "#405BFF" }}>{trip.fromCity}</span> <ArrowRight />
@@ -291,12 +290,12 @@ export default function BookedFlights() {
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
                         {enrolledInLaunchClub && launchClubLoyalty && (
                           <>
-                            {priorityBoarding && (
-                              <p className="flex text-black bg-clip-text text-transparent bg-black  ">
-                                <Star className="mr-2 " color="blue" /> Launch
-                                Priority
-                              </p>
-                            )}
+
+                            <p className="flex text-black bg-clip-text text-transparent bg-black  ">
+                              <Star className="mr-2 " color="blue" /> Launch
+                              Priority
+                            </p>
+
 
                             <p className="flex text-black bg-clip-text text-transparent bg-black ">
                               <Wifi className=" mr-2" color="blue" /> Free WiFi
@@ -309,7 +308,7 @@ export default function BookedFlights() {
 
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-[#F8F8F8] grid ticket-content-right-side ">
                     <div className="flex flex-col items-center justify-center space-y-4">
-                      {enrolledInLaunchClub && priorityBoarding ? (
+                      {enrolledInLaunchClub ? (
                         <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default">
                           Launch Priority Upgrade
                         </button>
@@ -318,10 +317,9 @@ export default function BookedFlights() {
                           Upgrade
                         </button>
                       )}
-                      <CheckIn trip={trip} />
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 bg-gradient-airline-buttons w-full   animate-pulse hover:animate-none">
+                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
