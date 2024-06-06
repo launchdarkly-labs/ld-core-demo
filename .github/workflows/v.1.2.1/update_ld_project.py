@@ -10,9 +10,9 @@ import subprocess
 
 def main():
     
-    update_1_2_1()
+    update_ld_project()
     
-def update_1_2_1():
+def update_ld_project():
     
     demo_namespace = os.getenv('DEMO_NAMESPACE')
 
@@ -40,8 +40,8 @@ def update_1_2_1():
     update_command = f'ldcli flags update --project {demo_namespace}-ld-demo --flag priorityBoarding -d \'{{"patch":[{{"op":"replace","path":"/name","value":"08 - Launch Club - Priority Boarding"}}]}}\''
     runCommand(update_command)
 
-    print('Update meal promo experience')
-    update_command = f'ldcli flags update --project {demo_namespace}-ld-demo --flag mealPromoExperience -d \'{{"patch":[{{"op":"replace","path":"/name","value":"09 - Targeted Plane Meal Promotion"}}]}}\''
+    print('delete meal promo experience')
+    update_command = f'ldcli flags delete --project {demo_namespace}-ld-demo --flag mealPromoExperience'
     runCommand(update_command)
 
     print('Update AI travel insights')

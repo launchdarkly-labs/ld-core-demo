@@ -183,35 +183,6 @@ resource "launchdarkly_feature_flag" "priorityBoarding" {
   ]
 }
 
-resource "launchdarkly_feature_flag" "mealPromoExperience" {
-  project_key = var.project_key
-  key         = "mealPromoExperience"
-  name        = "09 - Targeted Plane Meal Promotion"
-  description = "Rolling our meal service on our A330 aircraft"
-  variation_type = "boolean"
-  variations {
-    value = "true"
-    name  = "Available"
-  }
-  variations {
-    value = "false"
-    name  = "Unavailable"
-  }
-
-  defaults {
-    on_variation  = 0
-    off_variation = 1
-  }
-
-  client_side_availability {
-    using_environment_id = true
-  }
-
-  tags = [
-    "target"
-  ]
-}
-
 resource "launchdarkly_feature_flag" "aiTravelInsights" {
   project_key = var.project_key
   key         = "aiTravelInsights"
