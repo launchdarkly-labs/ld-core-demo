@@ -52,17 +52,18 @@ const prompt =
         setRecsGiven(false)
     }
 
+    useEffect(() => {
+      console.log("useEffect triggered")
+      setDestinations(destinations)
+    },[loading])
+
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button className="bg-white text-black rounded-none h-full w-full text-3xl p-4 cursor-pointer hover:bg-zinc-200">
             <div className="flex flex-col items-center justify-center">
-              <div className="flex">
-                  Find My Next Trip
-                </div>
-                <div className="flex text-xs">
-                  powered by AI
-              </div>
+              <div className="flex">Find My Next Trip</div>
+              <div className="flex text-xs">powered by AI</div>
             </div>
           </Button>
         </AlertDialogTrigger>
@@ -83,7 +84,7 @@ const prompt =
                 </div>
                 <div className="flex w-full justify-center pb-6 text-base text-zinc-600 font-sohnelight">
                   powered by
-                  {flagName.name === "cohere-text" ? (
+                  {flagName.modelId === "cohere.command-text-v14" ? (
                     <strong className="text-amber-500 pl-1">
                       Cohere Command
                     </strong>
