@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -11,7 +11,7 @@ import { useChat } from "ai/react";
 // export const maxDuration = 30;
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
-export default function Chatbot() {
+export default  function Chatbot () {
   const [isOpen, setIsOpen] = useState(false);
 
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -19,7 +19,19 @@ export default function Chatbot() {
     initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
   });
   console.log(messages)
+  async function submitQuery() {
+    
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ messages: messages }),
+    });
+    const data = await response.json();
+    console.log(data)
+    return data
+  }
 
+
+  
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -96,7 +108,7 @@ export default function Chatbot() {
                   value={input}
                   onChange={handleInputChange}
                 />
-                <Button type="submit" size="icon" type="submit">
+                <Button type="submit" size="icon" type="submit" onClick={()=>submitQuery()}>
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>
