@@ -4,9 +4,10 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { wait } from "@/utils/utils";
-import { useChat } from "ai/react";
+
 import { v4 as uuidv4 } from "uuid";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { BeatLoader } from "react-spinners";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -19,21 +20,24 @@ export default function Chatbot() {
   const handleInputChange2 = (e: any) => {
     setInput2(e.target.value);
   };
-  // const { messages, input, handleInputChange, handleSubmit } = useChat({
-  //   api: "/api/bedrock",
-  //   initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
-  // });
 
   async function submitQuery() {
     const userInput = input2;
     setInput2("");
+    setIsLoading(true);
     const userMessage = {
       role: "user",
       content: userInput,
       id: uuidv4().slice(0, 4),
     };
 
-    setMessages2([...messages2, userMessage]);
+    const loadingMessage = {
+      role: "loader",
+      content: "loading",
+      id: uuidv4().slice(0, 4),
+    };
+
+    setMessages2([...messages2, userMessage, loadingMessage]);
 
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -58,7 +62,7 @@ export default function Chatbot() {
     };
     setMessages2([...messages2, userMessage, assistantMessage]);
 
-    return data;
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -148,6 +152,17 @@ export default function Chatbot() {
                         className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
                       >
                         {m?.content}
+                      </div>
+                    );
+                  }
+
+                  if (m?.role === "loader" && isLoading) {
+                    return (
+                      <div
+                        key={m?.id}
+                        className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
+                      >
+                        <BeatLoader className="" />
                       </div>
                     );
                   }
