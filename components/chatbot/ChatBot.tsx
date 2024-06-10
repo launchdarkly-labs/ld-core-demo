@@ -5,34 +5,55 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { wait } from "@/utils/utils";
 import { useChat } from "ai/react";
-
+import { v4 as uuidv4 } from "uuid";
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 // export const dynamic = "force-dynamic";
 // export const maxDuration = 30;
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
-export default  function Chatbot () {
+export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [input2, setInput2] = useState("");
+  const startArray: object[] = [];
+  const [messages2, setMessages2] = useState(startArray);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "/api/bedrock",
-    initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
-  });
-  console.log(messages[0]?.content)
+  const handleInputChange2 = (e: any) => {
+    setInput2(e.target.value);
+  };
+  // const { messages, input, handleInputChange, handleSubmit } = useChat({
+  //   api: "/api/bedrock",
+  //   initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+  // });
+
   async function submitQuery() {
-    
+    const userMessage = {
+      role: "user",
+      content: input2,
+      id: uuidv4().slice(0, 4)
+    };
+    console.log(userMessage);
+    setMessages2([...messages2, userMessage]);
+
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify("what is the weather?"),
+      body: JSON.stringify(`${input2}. Limit response to 100 characters.`),
     });
-    console.log(await response.body)
     const data = await response.json();
-    console.log(data)
-    return data
+    console.log(data);
+    const assistantMessage = {
+      role: "assistant",
+      content: data?.completion,
+      id: uuidv4().slice(0, 4)
+    };
+    setMessages2([...messages2, assistantMessage]);
+    return data;
   }
 
+  useEffect(() => {
+    console.log(messages2);
+  }, [messages2]);
 
-  
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -76,7 +97,7 @@ export default  function Chatbot () {
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
                 </div>
-                {messages.map((m) => {
+                {/* {messages2.map((m) => {
                   if (m.role === "assistant") {
                     return (
                       <div
@@ -96,20 +117,23 @@ export default  function Chatbot () {
                       {m.content}
                     </div>
                   );
-                })}
+                })} */}
               </div>
             </CardContent>
             <CardFooter>
-              <form className="flex w-full items-center space-x-2" onSubmit={(e)=>e.preventDefault()}>
+              <form
+                className="flex w-full items-center space-x-2"
+                onSubmit={(e) => e.preventDefault()}
+              >
                 <Input
                   id="message"
                   placeholder="Type your message..."
                   className="flex-1"
                   autoComplete="off"
-                  value={input}
-                  onChange={handleInputChange}
+                  value={input2}
+                  onChange={handleInputChange2}
                 />
-                <Button type="submit" size="icon" type="submit" onClick={()=>submitQuery()}>
+                <Button type="submit" size="icon" onClick={() => submitQuery()}>
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>

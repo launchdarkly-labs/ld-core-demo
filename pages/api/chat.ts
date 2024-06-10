@@ -19,11 +19,12 @@ import { NextResponse } from "next/server";
 import { getServerClient } from "@/utils/ld-server";
 import * as ld from "launchdarkly-js-client-sdk";
 import { wait } from "@/utils/utils";
-
+import { ldClient } from "@/utils/ld-server/serverClient";
+import { getCookie } from "cookies-next";
 // export const dynamic = "force-dynamic";
 // export const runtime = "edge";
 
-export default async function something(req: NextApiRequest, res: NextApiResponse) {
+export default async function chatResponse(req: NextApiRequest, res: NextApiResponse) {
   const bedrockClient = new BedrockRuntimeClient({
     region: process.env.AWS_DEFAULT_REGION ?? "us-west-2",
     credentials: {
@@ -33,6 +34,18 @@ export default async function something(req: NextApiRequest, res: NextApiRespons
   });
   const messages =  req.body;
   console.log("awefawefmessages", messages);
+  const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
+  
+  const context: any = getCookie("ld-context") || { "kind": "user", "name": "anonymous", "key": "abc-123" };
+
+  const model = await ldClient.variation("ai-chatbot", context, {
+    modelId: 'anthropic.claude-instant-v1',
+    temperature: 0.9,
+    top_k: 250,
+    top_p: 1,
+    max_tokens_to_sample: 500
+  })
+  console.log("ldClient", model)
   // Ask Claude for a streaming chat completion given the prompt
   const claudeMessage = [
     {
@@ -41,16 +54,16 @@ export default async function something(req: NextApiRequest, res: NextApiRespons
     },
   ];
   let claude, jsontext;
-  wait(10)
+  
   claude = new InvokeModelCommand({
-    modelId: "anthropic.claude-instant-v1",
+    modelId: model.modelId,
     contentType: "application/json",
     accept: "application/json",
     body: JSON.stringify({
       prompt: `\n\nHuman:${messages}\n\nAssistant:`,
-      temperature: 0.9,
-      max_tokens_to_sample: 500,
-      top_p: 1,
+      temperature: model.temperature,
+      max_tokens_to_sample: model.max_tokens_to_sample,
+      top_p: model.top_p,
     }),
   });
 
