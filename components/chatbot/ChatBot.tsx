@@ -6,24 +6,25 @@ import { Input } from "@/components/ui/input";
 import { wait } from "@/utils/utils";
 
 import { v4 as uuidv4 } from "uuid";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import { BeatLoader } from "react-spinners";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [input2, setInput2] = useState("");
+  const [input, setInput] = useState("");
   const startArray: object[] = [];
-  const [messages2, setMessages2] = useState(startArray);
+  const [messages, setMessages] = useState(startArray);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
-  const handleInputChange2 = (e: any) => {
-    setInput2(e.target.value);
+
+  const handleInputChange = (e: any) => {
+    setInput(e.target.value);
   };
 
   async function submitQuery() {
-    const userInput = input2;
-    setInput2("");
+    const userInput = input;
+    setInput("");
     setIsLoading(true);
     const userMessage = {
       role: "user",
@@ -37,7 +38,7 @@ export default function Chatbot() {
       id: uuidv4().slice(0, 4),
     };
 
-    setMessages2([...messages2, userMessage, loadingMessage]);
+    setMessages([...messages, userMessage, loadingMessage]);
 
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -60,14 +61,14 @@ export default function Chatbot() {
       content: aiAnswer,
       id: uuidv4().slice(0, 4),
     };
-    setMessages2([...messages2, userMessage, assistantMessage]);
+    setMessages([...messages, userMessage, assistantMessage]);
 
     setIsLoading(false);
   }
 
   useEffect(() => {
-    console.log(messages2);
-  }, [messages2]);
+    console.log(messages);
+  }, [messages]);
 
   return (
     <>
@@ -144,7 +145,7 @@ export default function Chatbot() {
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
                 </div>
-                {messages2.map((m) => {
+                {messages.map((m) => {
                   if (m?.role === "assistant") {
                     return (
                       <div
@@ -188,8 +189,8 @@ export default function Chatbot() {
                   placeholder="Type your message..."
                   className="flex-1"
                   autoComplete="off"
-                  value={input2}
-                  onChange={handleInputChange2}
+                  value={input}
+                  onChange={handleInputChange}
                 />
                 <Button type="submit" size="icon" onClick={() => submitQuery()}>
                   <SendIcon className="h-4 w-4" />
