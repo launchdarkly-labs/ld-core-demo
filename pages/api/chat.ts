@@ -17,7 +17,7 @@ import { experimental_buildAnthropicPrompt, experimental_buildLlama2Prompt } fro
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { getServerClient } from "@/utils/ld-server";
-import * as ld from "launchdarkly-js-client-sdk";
+
 import { wait } from "@/utils/utils";
 // import { ldClient } from "@/utils/ld-server/serverClient";
 import { getCookie } from "cookies-next";
@@ -43,9 +43,9 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     temperature: 0.9,
     top_k: 250,
     top_p: 1,
-    // max_tokens_to_sample: 500
+    max_tokens_to_sample: 500
   })
-  console.log("ldClient", model)
+
   // Ask Claude for a streaming chat completion given the prompt
   const claudeMessage = [
     {
@@ -53,29 +53,27 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
       content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
     },
   ];
-  let claude, jsontext;
   
-  claude = new InvokeModelCommand({
+  const chatBotModelInput = new InvokeModelCommand({
     modelId: model.modelId,
     contentType: "application/json",
     accept: "application/json",
     body: JSON.stringify({
       prompt: `\n\nHuman:${messages}\n\nAssistant:`,
       temperature: model.temperature,
-      max_tokens_to_sample: model.max_tokens_to_sample,
+      max_tokens_to_sample: model?.max_tokens_to_sample,
+      max_gen_len: model?.max_gen_len,
       top_p: model.top_p,
     }),
   });
 
-  //const stream = AWSBedrockAnthropicStream(bedrockResponse); // Convert the response into a friendly text-stream
-  //return new StreamingTextResponse(stream);
+
 
   try {
- ;
-    const bedrockResponse = await bedrockClient.send(claude);
+    const bedrockResponse = await bedrockClient.send(chatBotModelInput);
     const decoder = new TextDecoder();
-    jsontext = JSON.parse(decoder.decode(bedrockResponse.body));
-    console.log(jsontext)
+    const jsontext = JSON.parse(decoder.decode(bedrockResponse.body));
+
     res.status(200).json(jsontext);
   } catch (error: any) {
     throw new Error(error.message);
