@@ -165,3 +165,13 @@ jobs:
 
       - name: Remove .env file
         run: rm ./.env.production
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
+
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2
+        with:
+          accessToken: ${{ secrets.LD_API_KEY }}
+          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
