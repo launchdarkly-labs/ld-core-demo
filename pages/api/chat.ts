@@ -31,7 +31,7 @@ export default async function something(req: NextApiRequest, res: NextApiRespons
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
     },
   });
-  const { messages } = await req.body;
+  const messages =  req.body;
   console.log("awefawefmessages", messages);
   // Ask Claude for a streaming chat completion given the prompt
   const claudeMessage = [
@@ -47,7 +47,7 @@ export default async function something(req: NextApiRequest, res: NextApiRespons
     contentType: "application/json",
     accept: "application/json",
     body: JSON.stringify({
-      prompt: experimental_buildAnthropicPrompt(messages),
+      prompt: `\n\nHuman:${messages}\n\nAssistant:`,
       temperature: 0.9,
       max_tokens_to_sample: 500,
       top_p: 1,

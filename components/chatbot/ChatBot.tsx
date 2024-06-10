@@ -15,15 +15,15 @@ export default  function Chatbot () {
   const [isOpen, setIsOpen] = useState(false);
 
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "/api/chat",
+    api: "/api/bedrock",
     initialInput: "Where is a good vacation place for under $1000? Limit to 100 characters.",
   });
-  console.log(messages)
+  console.log(messages[0]?.content)
   async function submitQuery() {
     
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ messages: messages }),
+      body: JSON.stringify("what is the weather?"),
     });
     console.log(await response.body)
     const data = await response.json();
@@ -100,7 +100,7 @@ export default  function Chatbot () {
               </div>
             </CardContent>
             <CardFooter>
-              <form className="flex w-full items-center space-x-2" onSubmit={handleSubmit}>
+              <form className="flex w-full items-center space-x-2" onSubmit={(e)=>e.preventDefault()}>
                 <Input
                   id="message"
                   placeholder="Type your message..."
