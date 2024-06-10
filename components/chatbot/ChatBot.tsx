@@ -6,9 +6,7 @@ import { Input } from "@/components/ui/input";
 import { wait } from "@/utils/utils";
 import { useChat } from "ai/react";
 import { v4 as uuidv4 } from "uuid";
-// Force the page to be dynamic and allow streaming responses up to 30 seconds
-// export const dynamic = "force-dynamic";
-// export const maxDuration = 30;
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -17,7 +15,7 @@ export default function Chatbot() {
   const startArray: object[] = [];
   const [messages2, setMessages2] = useState(startArray);
   const [isLoading, setIsLoading] = useState(false);
-
+  const client = useLDClient();
   const handleInputChange2 = (e: any) => {
     setInput2(e.target.value);
   };
@@ -88,17 +86,19 @@ export default function Chatbot() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  title = "How was our service today?"
+                  title="How was our service today?"
                   className="rounded-full bg-[#55efc4] text-gray-900 hover:bg-[#00b894] dark:bg-[#55efc4] dark:text-gray-900 dark:hover:bg-[#00b894]"
+                  onClick={() => client?.track("ai-chatbot-good-service", client.getContext())}
                 >
                   <SmileIcon className="h-6 w-6" />
-                  <span className="sr-only">Smile</span>
+                  <span className="sr-only">Good</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  title = "How was our service today?"
+                  title="How was our service today?"
                   className="rounded-full bg-[#ffeaa7] text-gray-900 hover:bg-[#fdcb6e] dark:bg-[#ffeaa7] dark:text-gray-900 dark:hover:bg-[#fdcb6e]"
+                  onClick={() => client?.track("ai-chatbot-neutral-service", client.getContext())}
                 >
                   <MehIcon className="h-6 w-6" />
                   <span className="sr-only">Neutral</span>
@@ -106,11 +106,12 @@ export default function Chatbot() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  title = "How was our service today?"
+                  title="How was our service today?"
                   className="rounded-full bg-[#ff7675] text-gray-50 hover:bg-[#d63031] dark:bg-[#ff7675] dark:text-gray-50 dark:hover:bg-[#d63031]"
+                  onClick={() => client?.track("ai-chatbot-bad-service", client.getContext())}
                 >
                   <FrownIcon className="h-6 w-6" />
-                  <span className="sr-only">Sad</span>
+                  <span className="sr-only">Bad</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -255,7 +256,7 @@ function SmileIcon(props) {
       <line x1="9" x2="9.01" y1="9" y2="9" />
       <line x1="15" x2="15.01" y1="9" y2="9" />
     </svg>
-  )
+  );
 }
 
 function FrownIcon(props) {
@@ -277,9 +278,8 @@ function FrownIcon(props) {
       <line x1="9" x2="9.01" y1="9" y2="9" />
       <line x1="15" x2="15.01" y1="9" y2="9" />
     </svg>
-  )
+  );
 }
-
 
 function MehIcon(props) {
   return (
@@ -300,5 +300,5 @@ function MehIcon(props) {
       <line x1="9" x2="9.01" y1="9" y2="9" />
       <line x1="15" x2="15.01" y1="9" y2="9" />
     </svg>
-  )
+  );
 }
