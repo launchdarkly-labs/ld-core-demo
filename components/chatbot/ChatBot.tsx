@@ -25,6 +25,7 @@ export default  function Chatbot () {
       method: "POST",
       body: JSON.stringify({ messages: messages }),
     });
+    console.log(await response.body)
     const data = await response.json();
     console.log(data)
     return data
