@@ -41,10 +41,10 @@ export default function Chatbot() {
       body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
     });
     const data = await response.json();
-
+    console.log(data)
     const assistantMessage = {
       role: "assistant",
-      content: data?.completion,
+      content: data?.completion === undefined ? data?.generation :data?.completion ,
       id: uuidv4().slice(0, 4),
     };
     setMessages2([...messages2, userMessage, assistantMessage]);

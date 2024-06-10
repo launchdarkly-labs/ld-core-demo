@@ -19,7 +19,7 @@ import { NextResponse } from "next/server";
 import { getServerClient } from "@/utils/ld-server";
 import * as ld from "launchdarkly-js-client-sdk";
 import { wait } from "@/utils/utils";
-import { ldClient } from "@/utils/ld-server/serverClient";
+// import { ldClient } from "@/utils/ld-server/serverClient";
 import { getCookie } from "cookies-next";
 // export const dynamic = "force-dynamic";
 // export const runtime = "edge";
@@ -43,7 +43,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     temperature: 0.9,
     top_k: 250,
     top_p: 1,
-    max_tokens_to_sample: 500
+    // max_tokens_to_sample: 500
   })
   console.log("ldClient", model)
   // Ask Claude for a streaming chat completion given the prompt
@@ -75,7 +75,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     const bedrockResponse = await bedrockClient.send(claude);
     const decoder = new TextDecoder();
     jsontext = JSON.parse(decoder.decode(bedrockResponse.body));
-
+    console.log(jsontext)
     res.status(200).json(jsontext);
   } catch (error: any) {
     throw new Error(error.message);
