@@ -27,26 +27,28 @@ export default function Chatbot() {
   // });
 
   async function submitQuery() {
+    const userInput = input2;
+    setInput2("");
     const userMessage = {
       role: "user",
-      content: input2,
-      id: uuidv4().slice(0, 4)
+      content: userInput,
+      id: uuidv4().slice(0, 4),
     };
-    console.log(userMessage);
-    setMessages2([...messages2, userMessage]);
 
+    setMessages2([...messages2, userMessage]);
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify(`${input2}. Limit response to 100 characters.`),
+      body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
     });
     const data = await response.json();
-    console.log(data);
+
     const assistantMessage = {
       role: "assistant",
       content: data?.completion,
-      id: uuidv4().slice(0, 4)
+      id: uuidv4().slice(0, 4),
     };
-    setMessages2([...messages2, assistantMessage]);
+    setMessages2([...messages2, userMessage, assistantMessage]);
+
     return data;
   }
 
@@ -97,27 +99,27 @@ export default function Chatbot() {
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
                 </div>
-                {/* {messages2.map((m) => {
-                  if (m.role === "assistant") {
+                {messages2.map((m) => {
+                  if (m?.role === "assistant") {
                     return (
                       <div
-                        key={m.id}
+                        key={m?.id}
                         className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
                       >
-                        {m.content}
+                        {m?.content}
                       </div>
                     );
                   }
 
                   return (
                     <div
-                      key={m.id}
+                      key={m?.id}
                       className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gray-900 text-gray-50 dark:bg-gray-50 dark:text-gray-900"
                     >
-                      {m.content}
+                      {m?.content}
                     </div>
                   );
-                })} */}
+                })}
               </div>
             </CardContent>
             <CardFooter>
