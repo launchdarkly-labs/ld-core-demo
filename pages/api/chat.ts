@@ -33,7 +33,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
   const messages =  req.body;
  
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-  console.log("ldClient",ldClient)
+  // console.log("ldClient",ldClient)
   const context: any = getCookie("ld-context") || { "kind": "user", "name": "anonymous", "key": "abc-123" };
 
   const model = await ldClient.variation("ai-chatbot", context, {
@@ -53,15 +53,17 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
   // ];
   
   const chatBotModelInput = new InvokeModelCommand({
-    modelId: model.modelId,
+    modelId: "cohere.command-text-v14",
     contentType: "application/json",
     accept: "application/json",
     body: JSON.stringify({
       prompt: `\n\nHuman:${messages}\n\nAssistant:`,
       temperature: model.temperature,
       max_tokens_to_sample: model?.max_tokens_to_sample,
-      max_gen_len: model?.max_gen_len,
-      top_p: model.top_p,
+      max_tokens: 500,
+      p: 1,
+      // max_gen_len: model?.max_gen_len,
+      // top_p: model?.top_p,
     }),
   });
 
@@ -69,7 +71,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     const bedrockResponse = await bedrockClient.send(chatBotModelInput);
     const decoder = new TextDecoder();
     const jsontext = JSON.parse(decoder.decode(bedrockResponse.body));
-
+    console.log(jsontext)
     res.status(200).json(jsontext);
   } catch (error: any) {
     throw new Error(error.message);

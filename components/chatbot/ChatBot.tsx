@@ -34,15 +34,26 @@ export default function Chatbot() {
     };
 
     setMessages2([...messages2, userMessage]);
+    
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
     });
     const data = await response.json();
-    console.log(data);
+
+    let aiAnswer;
+
+    if (data?.generation) {
+      aiAnswer = data?.generation; //llama
+    } else if (data?.generations.length > 0) {
+      aiAnswer = data?.generations[0]?.text; //cohere
+    } else {
+      aiAnswer = data?.completion; //claude
+    }
+
     const assistantMessage = {
       role: "assistant",
-      content: data?.completion === undefined ? data?.generation : data?.completion,
+      content: aiAnswer,
       id: uuidv4().slice(0, 4),
     };
     setMessages2([...messages2, userMessage, assistantMessage]);
