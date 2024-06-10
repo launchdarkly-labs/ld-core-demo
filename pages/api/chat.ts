@@ -1,7 +1,7 @@
 import {
   BedrockRuntimeClient,
-  InvokeModelWithResponseStreamCommand,
   InvokeModelCommand,
+  InvokeModelWithResponseStreamCommand,
   ConverseStreamCommand,
   ConverseCommand,
   ConversationRole,

@@ -41,10 +41,10 @@ export default function Chatbot() {
       body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
     });
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     const assistantMessage = {
       role: "assistant",
-      content: data?.completion === undefined ? data?.generation :data?.completion ,
+      content: data?.completion === undefined ? data?.generation : data?.completion,
       id: uuidv4().slice(0, 4),
     };
     setMessages2([...messages2, userMessage, assistantMessage]);
@@ -84,15 +84,44 @@ export default function Chatbot() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">Here to help!</p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="ml-auto rounded-full"
-                onClick={() => setIsOpen(false)}
-              >
-                <XIcon className="h-4 w-4" />
-                <span className="sr-only">Close Chatbot</span>
-              </Button>
+              <div className="ml-auto flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title = "How was our service today?"
+                  className="rounded-full bg-[#55efc4] text-gray-900 hover:bg-[#00b894] dark:bg-[#55efc4] dark:text-gray-900 dark:hover:bg-[#00b894]"
+                >
+                  <SmileIcon className="h-6 w-6" />
+                  <span className="sr-only">Smile</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title = "How was our service today?"
+                  className="rounded-full bg-[#ffeaa7] text-gray-900 hover:bg-[#fdcb6e] dark:bg-[#ffeaa7] dark:text-gray-900 dark:hover:bg-[#fdcb6e]"
+                >
+                  <MehIcon className="h-6 w-6" />
+                  <span className="sr-only">Neutral</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title = "How was our service today?"
+                  className="rounded-full bg-[#ff7675] text-gray-50 hover:bg-[#d63031] dark:bg-[#ff7675] dark:text-gray-50 dark:hover:bg-[#d63031]"
+                >
+                  <FrownIcon className="h-6 w-6" />
+                  <span className="sr-only">Sad</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="ml-auto rounded-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <XIcon className="h-4 w-4" />
+                  <span className="sr-only">Close Chatbot</span>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="h-[400px] overflow-y-auto">
               <div className="space-y-4">
@@ -205,4 +234,71 @@ function XIcon(props) {
       <path d="m6 6 12 12" />
     </svg>
   );
+}
+
+function SmileIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <line x1="9" x2="9.01" y1="9" y2="9" />
+      <line x1="15" x2="15.01" y1="9" y2="9" />
+    </svg>
+  )
+}
+
+function FrownIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+      <line x1="9" x2="9.01" y1="9" y2="9" />
+      <line x1="15" x2="15.01" y1="9" y2="9" />
+    </svg>
+  )
+}
+
+
+function MehIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="8" x2="16" y1="15" y2="15" />
+      <line x1="9" x2="9.01" y1="9" y2="9" />
+      <line x1="15" x2="15.01" y1="9" y2="9" />
+    </svg>
+  )
 }
