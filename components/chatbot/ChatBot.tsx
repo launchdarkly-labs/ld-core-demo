@@ -34,7 +34,7 @@ export default function Chatbot() {
     };
 
     setMessages2([...messages2, userMessage]);
-    
+
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
@@ -45,7 +45,7 @@ export default function Chatbot() {
 
     if (data?.generation) {
       aiAnswer = data?.generation; //llama
-    } else if (data?.generations.length > 0) {
+    } else if (data?.generations?.length > 0) {
       aiAnswer = data?.generations[0]?.text; //cohere
     } else {
       aiAnswer = data?.completion; //claude
