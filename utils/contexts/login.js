@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
 import { setCookie } from "cookies-next";
+import { STANDARD } from "../constants";
 
 const LoginContext = createContext();
 
@@ -17,7 +18,7 @@ export const LoginProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [email, setEmail] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
-  const [launchClubStatus, setLaunchClubStatus] = useState("standard");
+  const [launchClubStatus, setLaunchClubStatus] = useState(STANDARD);
   const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
   const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 
@@ -38,6 +39,7 @@ export const LoginProvider = ({ children }) => {
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     await client?.identify(context);
+    console.log
     setCookie("ld-context", context);
     setIsLoggedIn(true);
     setUser(user);
@@ -55,7 +57,7 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
-    setLaunchClubStatus("standard");
+    setLaunchClubStatus(STANDARD);
     const context = await createAnonymousContext();
     await client?.identify(context);
     setCookie("ld-context", context);

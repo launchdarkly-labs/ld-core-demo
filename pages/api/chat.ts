@@ -39,6 +39,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     name: "anonymous",
     key: "abc-123",
   };
+  console.log(getCookie("ld-context") )
 
   const model = await ldClient.variation("ai-chatbot", context, {
     modelId: "anthropic.claude-instant-v1",

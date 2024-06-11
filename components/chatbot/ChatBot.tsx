@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { wait } from "@/utils/utils";
 
 import { v4 as uuidv4 } from "uuid";
 import { useLDClient } from "launchdarkly-react-client-sdk";
