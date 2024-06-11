@@ -45,16 +45,15 @@ export default function Chatbot() {
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify(`
-   
+      As an AI bot for a travel airline, 
+      your purpose is to answer questions related to flights and traveling. 
+      Act as customer representative. 
+      Only answer queries related to traveling and airlines.
+      Remove quotation in response.  
       Limit response to 100 characters. 
       Here is the user prompt: ${userInput}.`),
     });
 
-    // As an AI bot for a travel airline, 
-    // your purpose is to answer questions related to flights and traveling. 
-    // Act as customer representative. 
-    // Only answer queries related to traveling and airlines.
-    // Remove quotation in response.
 
 
     const data = await response.json();
@@ -74,7 +73,6 @@ export default function Chatbot() {
       content: aiAnswer,
       id: uuidv4().slice(0, 4),
     };
-    //TODO: remove loader if you get don't aiAnswer
 
     if(aiAnswer === undefined){
       assistantMessage.content = "I'm sorry. Please try again."
@@ -90,10 +88,11 @@ export default function Chatbot() {
   useEffect(() => {
     console.log("aiChatBot",flags["ai-chatbot"])
     console.log(messages);
-    console.log("aiChaaweftBot",client?.getContext());
   }, [messages]);
 
-  const surveyResponseNotification = () => {
+  const surveyResponseNotification = (surveyResponse:string) => {
+    client?.track(surveyResponse, client.getContext());
+    client?.flush();
     toast({
       title: `Thank you for your response!`,
       wrapperStyle: "bg-green-600 text-white font-sohne text-base border-none",
@@ -135,34 +134,32 @@ export default function Chatbot() {
                   title="How was our service today?"
                   className="rounded-full bg-[#55efc4] text-gray-900 hover:bg-[#00b894] dark:bg-[#55efc4] dark:text-gray-900 dark:hover:bg-[#00b894]"
                   onClick={() => {
-                    surveyResponseNotification();
-                    client?.track("ai-chatbot-good-service", client.getContext());
+                    surveyResponseNotification("AI chatbot good service");
                   }}
                 >
                   <SmileIcon className="h-6 w-6" />
                   <span className="sr-only">Good</span>
                 </Button>
-                <Button
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   title="How was our service today?"
                   className="rounded-full bg-[#ffeaa7] text-gray-900 hover:bg-[#fdcb6e] dark:bg-[#ffeaa7] dark:text-gray-900 dark:hover:bg-[#fdcb6e]"
-                  onClick={() => {
-                    surveyResponseNotification();
-                    client?.track("ai-chatbot-neutral-service", client.getContext());
+                  onClick={(e) => {
+                    surveyResponseNotification("AI Chatbot Netural Service");
+                    // client?.track("ai-chatbot-neutral-service", client.getContext());
                   }}
                 >
                   <MehIcon className="h-6 w-6" />
                   <span className="sr-only">Neutral</span>
-                </Button>
+                </Button> */}
                 <Button
                   variant="ghost"
                   size="icon"
                   title="How was our service today?"
                   className="rounded-full bg-[#ff7675] text-gray-50 hover:bg-[#d63031] dark:bg-[#ff7675] dark:text-gray-50 dark:hover:bg-[#d63031]"
                   onClick={() => {
-                    surveyResponseNotification();
-                    client?.track("ai-chatbot-bad-service", client.getContext());
+                    surveyResponseNotification("AI Chatbot Bad Service");
                   }}
                 >
                   <FrownIcon className="h-6 w-6" />
@@ -347,24 +344,24 @@ function FrownIcon(props) {
   );
 }
 
-function MehIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="8" x2="16" y1="15" y2="15" />
-      <line x1="9" x2="9.01" y1="9" y2="9" />
-      <line x1="15" x2="15.01" y1="9" y2="9" />
-    </svg>
-  );
-}
+// function MehIcon(props) {
+//   return (
+//     <svg
+//       {...props}
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <circle cx="12" cy="12" r="10" />
+//       <line x1="8" x2="16" y1="15" y2="15" />
+//       <line x1="9" x2="9.01" y1="9" y2="9" />
+//       <line x1="15" x2="15.01" y1="9" y2="9" />
+//     </svg>
+//   );
+// }

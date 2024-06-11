@@ -22,7 +22,6 @@ import { getCookie } from "cookies-next";
 // export const runtime = "edge";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
-import { cookies } from "next/headers";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default async function chatResponse(req: NextApiRequest, res: NextApiResponse) {
