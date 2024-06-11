@@ -56,16 +56,6 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
   });
 
   console.log("model", model);
-  // const model = await ldClient.variation('ai-chatbot', context, {
-  //     modelId: "cohere.command-text-v14",
-  //     temperature: 0.4,
-  //     max_tokens: 400,
-  //     p: 1,
-  //   },
-  // (err, value) => {
-  //   // check value and proceed accordingly
-  //   console.log(value)
-  // });
 
   const modelWithoutModelId = Object.keys(model)
     .filter((objKey) => objKey !== "modelId")
