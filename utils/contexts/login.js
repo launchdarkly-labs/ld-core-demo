@@ -4,7 +4,7 @@ import { createContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
-
+import { setCookie } from "cookies-next";
 
 const LoginContext = createContext();
 

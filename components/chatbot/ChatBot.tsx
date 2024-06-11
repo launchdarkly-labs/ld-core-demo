@@ -7,7 +7,8 @@ import { wait } from "@/utils/utils";
 
 import { v4 as uuidv4 } from "uuid";
 import { useLDClient } from "launchdarkly-react-client-sdk";
-import { BeatLoader } from "react-spinners";
+import { PulseLoader } from "react-spinners";
+import { useToast } from "@/components/ui/use-toast";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -17,6 +18,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState(startArray);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
+  const { toast } = useToast();
 
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
@@ -42,8 +44,15 @@ export default function Chatbot() {
 
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify(`${userInput}. Limit response to 100 characters.`),
+      body: JSON.stringify(`As an AI bot for a travel airline, 
+      your purpose is to answer questions related to flights and traveling. 
+      Act as customer representative. 
+      Limit response to 100 characters. 
+      Only answer queries related to traveling and airlines.
+      Remove quotation in response.
+      Here is the user prompt: ${userInput}.`),
     });
+
     const data = await response.json();
 
     let aiAnswer;
@@ -56,12 +65,20 @@ export default function Chatbot() {
       aiAnswer = data?.completion; //claude
     }
 
-    const assistantMessage = {
+    let assistantMessage = {
       role: "assistant",
       content: aiAnswer,
       id: uuidv4().slice(0, 4),
     };
-    setMessages([...messages, userMessage, assistantMessage]);
+    //TODO: remove loader if you get don't aiAnswer
+
+    if(aiAnswer === undefined){
+      assistantMessage.content = "I'm sorry. Please try again."
+      setMessages([...messages, userMessage, assistantMessage]);
+    } else {
+      setMessages([...messages, userMessage, assistantMessage]);
+    }
+
 
     setIsLoading(false);
   }
@@ -69,6 +86,13 @@ export default function Chatbot() {
   useEffect(() => {
     console.log(messages);
   }, [messages]);
+
+  const surveyResponseNotification = () => {
+    toast({
+      title: `Thank you for your response!`,
+      wrapperStyle: "bg-green-600 text-white font-sohne text-base border-none",
+    });
+  };
 
   return (
     <>
@@ -104,7 +128,10 @@ export default function Chatbot() {
                   size="icon"
                   title="How was our service today?"
                   className="rounded-full bg-[#55efc4] text-gray-900 hover:bg-[#00b894] dark:bg-[#55efc4] dark:text-gray-900 dark:hover:bg-[#00b894]"
-                  onClick={() => client?.track("ai-chatbot-good-service", client.getContext())}
+                  onClick={() => {
+                    surveyResponseNotification();
+                    client?.track("ai-chatbot-good-service", client.getContext());
+                  }}
                 >
                   <SmileIcon className="h-6 w-6" />
                   <span className="sr-only">Good</span>
@@ -114,7 +141,10 @@ export default function Chatbot() {
                   size="icon"
                   title="How was our service today?"
                   className="rounded-full bg-[#ffeaa7] text-gray-900 hover:bg-[#fdcb6e] dark:bg-[#ffeaa7] dark:text-gray-900 dark:hover:bg-[#fdcb6e]"
-                  onClick={() => client?.track("ai-chatbot-neutral-service", client.getContext())}
+                  onClick={() => {
+                    surveyResponseNotification();
+                    client?.track("ai-chatbot-neutral-service", client.getContext());
+                  }}
                 >
                   <MehIcon className="h-6 w-6" />
                   <span className="sr-only">Neutral</span>
@@ -124,7 +154,10 @@ export default function Chatbot() {
                   size="icon"
                   title="How was our service today?"
                   className="rounded-full bg-[#ff7675] text-gray-50 hover:bg-[#d63031] dark:bg-[#ff7675] dark:text-gray-50 dark:hover:bg-[#d63031]"
-                  onClick={() => client?.track("ai-chatbot-bad-service", client.getContext())}
+                  onClick={() => {
+                    surveyResponseNotification();
+                    client?.track("ai-chatbot-bad-service", client.getContext());
+                  }}
                 >
                   <FrownIcon className="h-6 w-6" />
                   <span className="sr-only">Bad</span>
@@ -163,7 +196,7 @@ export default function Chatbot() {
                         key={m?.id}
                         className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
                       >
-                        <BeatLoader className="" />
+                        <PulseLoader className="" />
                       </div>
                     );
                   }
