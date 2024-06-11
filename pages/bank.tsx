@@ -89,12 +89,6 @@ export default function Bank() {
     exit: { x: "100%" }, // exit to the right side of the container
   };
 
-  const ldclient = useLDClient();
-  function testContext () {
-    const context = ldclient?.getContext()
-  }
-    console.log(testContext());
-
   function handleLogout() {
     logoutUser();
   }
