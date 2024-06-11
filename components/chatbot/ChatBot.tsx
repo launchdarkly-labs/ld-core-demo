@@ -5,7 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 
 import { v4 as uuidv4 } from "uuid";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -18,6 +18,7 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
+  const flags = useFlags();
 
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
@@ -43,14 +44,18 @@ export default function Chatbot() {
 
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify(`As an AI bot for a travel airline, 
-      your purpose is to answer questions related to flights and traveling. 
-      Act as customer representative. 
+      body: JSON.stringify(`
+   
       Limit response to 100 characters. 
-      Only answer queries related to traveling and airlines.
-      Remove quotation in response.
       Here is the user prompt: ${userInput}.`),
     });
+
+    // As an AI bot for a travel airline, 
+    // your purpose is to answer questions related to flights and traveling. 
+    // Act as customer representative. 
+    // Only answer queries related to traveling and airlines.
+    // Remove quotation in response.
+
 
     const data = await response.json();
 
@@ -83,7 +88,9 @@ export default function Chatbot() {
   }
 
   useEffect(() => {
+    console.log("aiChatBot",flags["ai-chatbot"])
     console.log(messages);
+    console.log("aiChaaweftBot",client?.getContext());
   }, [messages]);
 
   const surveyResponseNotification = () => {

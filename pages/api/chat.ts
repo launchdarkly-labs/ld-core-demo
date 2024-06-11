@@ -20,6 +20,9 @@ import { getServerClient } from "@/utils/ld-server";
 import { getCookie } from "cookies-next";
 // export const dynamic = "force-dynamic";
 // export const runtime = "edge";
+import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
+import { v4 as uuidv4 } from "uuid";
+import { cookies } from "next/headers";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default async function chatResponse(req: NextApiRequest, res: NextApiResponse) {
@@ -31,31 +34,39 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     },
   });
   const messages = req.body;
+  const clientSideContext = JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }));
+  const extractedClientSideAudienceKey = clientSideContext?.audience?.key;
+
+  const clientSideAudienceContext = {
+    kind: "audience",
+    key: extractedClientSideAudienceKey,
+  }
 
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-  // console.log("ldClient",ldClient)
-  const context: any = getCookie("ld-context") || {
-    kind: "user",
-    name: "anonymous",
-    key: "abc-123",
+
+  const context: any = clientSideAudienceContext || {
+    kind: "audience",
+    key: uuidv4().slice(0, 6),
   };
-  console.log(getCookie("ld-context") )
 
   const model = await ldClient.variation("ai-chatbot", context, {
-    modelId: "anthropic.claude-instant-v1",
-    temperature: 0.9,
-    top_k: 250,
-    top_p: 1,
-    max_tokens_to_sample: 500,
+    modelId: "cohere.command-text-v14",
+    temperature: 0.4,
+    max_tokens: 400,
+    p: 1,
   });
 
-  // Ask Claude for a streaming chat completion given the prompt
-  // const claudeMessage = [
-  //   {
-  //     role: "user",
-  //     content: "Where is a good vacation place for under $1000? Limit to 100 characters.",
+  console.log("model", model);
+  // const model = await ldClient.variation('ai-chatbot', context, {
+  //     modelId: "cohere.command-text-v14",
+  //     temperature: 0.4,
+  //     max_tokens: 400,
+  //     p: 1,
   //   },
-  // ];
+  // (err, value) => {
+  //   // check value and proceed accordingly
+  //   console.log(value)
+  // });
 
   const modelWithoutModelId = Object.keys(model)
     .filter((objKey) => objKey !== "modelId")
@@ -82,16 +93,4 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
   } catch (error: any) {
     throw new Error(error.message);
   }
-
-  // const cohere = new InvokeModelWithResponseStreamCommand({
-  //   modelId: "cohere.command-text-v14",
-  //   contentType: "application/json",
-  //   accept: "application/json",
-  //   body: JSON.stringify({
-  //     prompt: experimental_buildLlama2Prompt(cohereMessage),
-  //     temperature: 0.9,
-  //     max_tokens: 500,
-  //     p: 1,
-  //   }),
-  // });
 }

@@ -5,11 +5,14 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
 import { setCookie } from "cookies-next";
-import { STANDARD } from "../constants";
+import { STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
 
 const LoginContext = createContext();
 
 export default LoginContext;
+
+const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
+const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 
 // Continue in TripsContext.js
 export const LoginProvider = ({ children }) => {
@@ -19,9 +22,6 @@ export const LoginProvider = ({ children }) => {
   const [email, setEmail] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState(STANDARD);
-  const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
-  const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
-
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
@@ -39,8 +39,8 @@ export const LoginProvider = ({ children }) => {
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     await client?.identify(context);
-    console.log
-    setCookie("ld-context", context);
+ 
+    setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
@@ -58,41 +58,11 @@ export const LoginProvider = ({ children }) => {
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
     setLaunchClubStatus(STANDARD);
-    const context = await createAnonymousContext();
+    const context = createAnonymousContext;
     await client?.identify(context);
-    setCookie("ld-context", context);
+    setCookie(LD_CONTEXT_COOKIE_KEY, context);
     console.log("Anonymous User", context);
   };
-  
-  const createAnonymousContext = async () => {
-    return {
-      "kind": "multi",
-      "user": {
-        "anonymous": true,
-        "tier":null
-      },
-      "device": {
-        "key": device,
-        "name": device,
-        "operating_system": operatingSystem,
-        "platform": device,
-      },
-      "location": {
-        "key": "America/New_York",
-        "name": "America/New_York",
-        "timeZone": "America/New_York",
-        "country": "US"
-      },
-      "experience": {
-        "key": "a380",
-        "name": "a380",
-        "airplane": "a380"
-      },
-      "audience": {
-        "key": uuidv4().slice(0, 10)
-      }
-    }
-  }
 
   const setPlaneContext = async (plane) => {
     const context = await client?.getContext();
@@ -133,4 +103,32 @@ export const LoginProvider = ({ children }) => {
       {children}
     </LoginContext.Provider>
   );
+};
+
+export const createAnonymousContext =  {
+  "kind": "multi",
+  "user": {
+    "anonymous": true,
+    "tier":null
+  },
+  "device": {
+    "key": device,
+    "name": device,
+    "operating_system": operatingSystem,
+    "platform": device,
+  },
+  "location": {
+    "key": "America/New_York",
+    "name": "America/New_York",
+    "timeZone": "America/New_York",
+    "country": "US"
+  },
+  "experience": {
+    "key": "a380",
+    "name": "a380",
+    "airplane": "a380"
+  },
+  "audience": {
+    "key": uuidv4().slice(0, 10)
+  }
 };
