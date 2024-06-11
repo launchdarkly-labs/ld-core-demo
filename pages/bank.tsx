@@ -5,7 +5,6 @@ import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { checkData } from "@/lib/checkingdata";
-import { setCookie } from "cookies-next";
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
@@ -94,10 +93,6 @@ export default function Bank() {
 
   function handleLogout() {
     logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
   }
 
   const bankingServicesArr = [

@@ -11,7 +11,6 @@ import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
-import { setCookie } from "cookies-next";
 import { Toaster } from "@/components/ui/toaster";
 
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
@@ -56,10 +55,6 @@ export default function Airways() {
 
   function handleLogout() {
     logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
   }
 
   function bookTrip() {

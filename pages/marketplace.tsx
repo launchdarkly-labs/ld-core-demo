@@ -12,7 +12,6 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
-import { setCookie } from "cookies-next";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -264,10 +263,6 @@ export default function Marketplace() {
 
   function handleLogout() {
     logoutUser();
-    const context: any = LDClient?.getContext();
-    context.user.tier = null;
-    LDClient?.identify(context);
-    setCookie("ldcontext", context);
   }
 
     useEffect(() => {

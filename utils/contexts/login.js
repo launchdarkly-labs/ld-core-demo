@@ -38,6 +38,7 @@ export const LoginProvider = ({ children }) => {
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     await client?.identify(context);
+    setCookie("ld-context", context);
     setIsLoggedIn(true);
     setUser(user);
     setEmail(email);
@@ -57,6 +58,7 @@ export const LoginProvider = ({ children }) => {
     setLaunchClubStatus("standard");
     const context = await createAnonymousContext();
     await client?.identify(context);
+    setCookie("ld-context", context);
     console.log("Anonymous User", context);
   };
   
@@ -64,7 +66,8 @@ export const LoginProvider = ({ children }) => {
     return {
       "kind": "multi",
       "user": {
-        "anonymous": true
+        "anonymous": true,
+        "tier":null
       },
       "device": {
         "key": device,
