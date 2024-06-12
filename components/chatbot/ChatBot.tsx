@@ -103,6 +103,7 @@ export default function Chatbot() {
     }
   }, [messages]);
 
+  //powered by
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -112,17 +113,14 @@ export default function Chatbot() {
           className="bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
-          <MessageCircleIcon className="h-6 w-6" />
+          {isOpen ? <XIcon className="h-6 w-6" /> : <MessageCircleIcon className="h-6 w-6" />}
           <span className="sr-only">Open Chatbot</span>
         </Button>
       </div>
       {/* "fixed top-[calc(50%-150px)] left-[calc(90%-100px)] transform -translate-x-1/2 z-50" */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]"
-          onClick={() => setIsOpen((prevState) => !prevState)}
-        >
-          <Card className="w-full max-w-md">
+        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
+          <Card className="w-full max-w-md border-2 border-grey-400">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
