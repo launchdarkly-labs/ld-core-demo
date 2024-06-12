@@ -116,7 +116,7 @@ export default function Chatbot() {
         <Button
           variant="ghost"
           size="icon"
-          className="bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg"
+          className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen ? <XIcon className="h-6 w-6" /> : <MessageCircleIcon className="h-6 w-6" />}
@@ -220,7 +220,7 @@ export default function Chatbot() {
                   return (
                     <div
                       key={m?.id}
-                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gray-900 text-gray-50 dark:bg-gray-50 dark:text-gray-900"
+                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-airlineblue text-white dark:bg-gray-50 dark:text-gray-900"
                     >
                       {m?.content}
                     </div>
@@ -241,7 +241,7 @@ export default function Chatbot() {
                   value={input}
                   onChange={handleInputChange}
                 />
-                <Button type="submit" size="icon" onClick={() => submitQuery()}>
+                <Button type="submit" size="icon" onClick={() => submitQuery()} className="bg-airlineblue">
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>
