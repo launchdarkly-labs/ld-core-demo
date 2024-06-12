@@ -184,7 +184,7 @@ export default function Chatbot() {
                   className="ml-auto rounded-full"
                   onClick={() => setIsOpen(false)}
                 >
-                  <XIcon className="h-4 w-4" />
+                  <XIcon className="h-6 w-6" />
                   <span className="sr-only">Close Chatbot</span>
                 </Button>
               </div>
