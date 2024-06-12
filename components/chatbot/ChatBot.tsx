@@ -116,7 +116,7 @@ export default function Chatbot() {
         <Button
           variant="ghost"
           size="icon"
-          className="bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90"
+          className="bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen ? <XIcon className="h-6 w-6" /> : <MessageCircleIcon className="h-6 w-6" />}
@@ -126,7 +126,7 @@ export default function Chatbot() {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
-          <Card className="w-full max-w-md border-2 border-grey-400">
+          <Card className="w-full max-w-md border-2 border-grey-400 shadow-lg">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
