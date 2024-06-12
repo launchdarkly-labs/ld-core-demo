@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -54,8 +54,6 @@ export default function Chatbot() {
       Here is the user prompt: ${userInput}.`),
     });
 
-
-
     const data = await response.json();
 
     let aiAnswer;
@@ -74,23 +72,22 @@ export default function Chatbot() {
       id: uuidv4().slice(0, 4),
     };
 
-    if(aiAnswer === undefined){
-      assistantMessage.content = "I'm sorry. Please try again."
+    if (aiAnswer === undefined) {
+      assistantMessage.content = "I'm sorry. Please try again.";
       setMessages([...messages, userMessage, assistantMessage]);
     } else {
       setMessages([...messages, userMessage, assistantMessage]);
     }
 
-
     setIsLoading(false);
   }
 
   useEffect(() => {
-    console.log("aiChatBot",flags["ai-chatbot"])
+    console.log("aiChatBot", flags["ai-chatbot"]);
     console.log(messages);
   }, [messages]);
 
-  const surveyResponseNotification = (surveyResponse:string) => {
+  const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
     client?.flush();
     toast({
@@ -98,6 +95,15 @@ export default function Chatbot() {
       wrapperStyle: "bg-green-600 text-white font-sohne text-base border-none",
     });
   };
+
+  const chatContentRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContentRef.current) {
+      console.log(chatContentRef)
+      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <>
@@ -176,7 +182,7 @@ export default function Chatbot() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="h-[400px] overflow-y-auto">
+            <CardContent className="h-[400px] overflow-y-auto" ref={chatContentRef}>
               <div className="space-y-4">
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
