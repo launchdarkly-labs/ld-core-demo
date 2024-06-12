@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 
 import { v4 as uuidv4 } from "uuid";
@@ -13,12 +13,13 @@ import { useToast } from "@/components/ui/use-toast";
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [aiModelName, setAiModelName] = useState("");
   const startArray: object[] = [];
   const [messages, setMessages] = useState(startArray);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const flags = useFlags();
+  const aiChatbotFlag = useFlags()["ai-chatbot"];
 
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
@@ -83,8 +84,14 @@ export default function Chatbot() {
   }
 
   useEffect(() => {
-    console.log("aiChatBot", flags["ai-chatbot"]);
-  }, [messages]);
+    if (aiChatbotFlag.modelId.includes("cohere")) {
+      setAiModelName("Cohere Coral");
+    } else if (aiChatbotFlag.modelId.includes("meta")) {
+      setAiModelName("Meta Llama");
+    } else if (aiChatbotFlag.modelId.includes("anthropic")) {
+      setAiModelName("Anthropic Claude");
+    }
+  }, [aiChatbotFlag]);
 
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
@@ -103,7 +110,6 @@ export default function Chatbot() {
     }
   }, [messages]);
 
-  //powered by
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50">
@@ -117,7 +123,7 @@ export default function Chatbot() {
           <span className="sr-only">Open Chatbot</span>
         </Button>
       </div>
-      {/* "fixed top-[calc(50%-150px)] left-[calc(90%-100px)] transform -translate-x-1/2 z-50" */}
+
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
           <Card className="w-full max-w-md border-2 border-grey-400">
@@ -129,7 +135,9 @@ export default function Chatbot() {
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium leading-none">Chatbot Assistant</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Here to help!</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Powered by {aiModelName}
+                  </p>
                 </div>
               </div>
               <div className="ml-auto flex items-center space-x-2">
