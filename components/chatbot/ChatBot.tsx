@@ -84,7 +84,6 @@ export default function Chatbot() {
 
   useEffect(() => {
     console.log("aiChatBot", flags["ai-chatbot"]);
-    console.log(messages);
   }, [messages]);
 
   const surveyResponseNotification = (surveyResponse: string) => {
@@ -100,7 +99,6 @@ export default function Chatbot() {
 
   useEffect(() => {
     if (chatContentRef.current) {
-      console.log(chatContentRef)
       chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
     }
   }, [messages]);
@@ -118,10 +116,13 @@ export default function Chatbot() {
           <span className="sr-only">Open Chatbot</span>
         </Button>
       </div>
-
+      {/* "fixed top-[calc(50%-150px)] left-[calc(90%-100px)] transform -translate-x-1/2 z-50" */}
       {isOpen && (
-        <div className="fixed top-[calc(50%-150px)] left-[calc(90%-100px)] transform -translate-x-1/2 z-50">
-          <Card className="max-w-md w-[500px]">
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]"
+          onClick={() => setIsOpen((prevState) => !prevState)}
+        >
+          <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
