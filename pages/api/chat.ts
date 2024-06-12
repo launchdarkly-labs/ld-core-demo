@@ -1,25 +1,12 @@
 import {
   BedrockRuntimeClient,
   InvokeModelCommand,
-  // InvokeModelWithResponseStreamCommand,
-  // ConverseStreamCommand,
-  // ConverseCommand,
-  // ConversationRole,
 } from "@aws-sdk/client-bedrock-runtime";
-// import {
-//   AWSBedrockAnthropicStream,
-//   StreamingTextResponse,
-//   AWSBedrockLlama2Stream,
-//   AWSBedrockCohereStream,
-//   AWSBedrockStream,
-// } from "ai";
-//import { experimental_buildAnthropicPrompt, experimental_buildLlama2Prompt } from "ai/prompts";
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerClient } from "@/utils/ld-server";
-// import { ldClient } from "@/utils/ld-server/serverClient";
 import { getCookie } from "cookies-next";
-// export const dynamic = "force-dynamic";
-// export const runtime = "edge";
+
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 
@@ -33,7 +20,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     },
   });
   const messages = req.body;
-  const clientSideContext = JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }));
+  const clientSideContext = JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || '{}');
   const extractedClientSideAudienceKey = clientSideContext?.audience?.key;
 
   const clientSideAudienceContext = {
