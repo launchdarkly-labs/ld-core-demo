@@ -13,7 +13,6 @@ import { useToast } from "@/components/ui/use-toast";
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [aiModelName, setAiModelName] = useState("");
   const startArray: object[] = [];
   const [messages, setMessages] = useState(startArray);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,16 +83,6 @@ export default function Chatbot() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    if (aiChatbotFlag.modelId.includes("cohere")) {
-      setAiModelName("Cohere Coral");
-    } else if (aiChatbotFlag.modelId.includes("meta")) {
-      setAiModelName("Meta Llama");
-    } else if (aiChatbotFlag.modelId.includes("anthropic")) {
-      setAiModelName("Anthropic Claude");
-    }
-  }, [aiChatbotFlag]);
-
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
     client?.flush();
@@ -104,6 +93,16 @@ export default function Chatbot() {
   };
 
   const chatContentRef = useRef(null);
+
+  const aiModelName = () => {
+    if (aiChatbotFlag?.modelId?.includes("cohere")) {
+      return "Cohere Coral";
+    } else if (aiChatbotFlag?.modelId?.includes("meta")) {
+      return "Meta Llama";
+    } else {
+      return "Anthropic Claude";
+    }
+  };
 
   useEffect(() => {
     if (chatContentRef.current) {
@@ -117,7 +116,7 @@ export default function Chatbot() {
         <Button
           variant="ghost"
           size="icon"
-          className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg !h-12 !w-12" 
+          className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg !h-12 !w-12"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen ? <XIcon className="h-8 w-8" /> : <MessageCircleIcon className="h-8 w-8" />}
@@ -126,9 +125,7 @@ export default function Chatbot() {
       </div>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]"
-        >
+        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
@@ -139,7 +136,7 @@ export default function Chatbot() {
                 <div>
                   <p className="text-sm font-medium leading-none">Chatbot Assistant</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Powered by {aiModelName}
+                    Powered by {aiModelName()}
                   </p>
                 </div>
               </div>
@@ -244,7 +241,12 @@ export default function Chatbot() {
                   value={input}
                   onChange={handleInputChange}
                 />
-                <Button type="submit" size="icon" onClick={() => submitQuery()} className="bg-airlineblue">
+                <Button
+                  type="submit"
+                  size="icon"
+                  onClick={() => submitQuery()}
+                  className="bg-airlineblue"
+                >
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>
