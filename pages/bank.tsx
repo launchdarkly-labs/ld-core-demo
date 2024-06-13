@@ -89,17 +89,15 @@ export default function Bank() {
     exit: { x: "100%" }, // exit to the right side of the container
   };
 
+  const ldclient = useLDClient();
+  function testContext () {
+    const context = ldclient?.getContext()
+  }
+    console.log(testContext());
+
   function handleLogout() {
     logoutUser();
   }
-
-  const bankingServicesArr = [
-    { imgSrc: "Checking.png", title: "Checking" },
-    { imgSrc: "Business.png", title: "Business" },
-    { imgSrc: "Credit.png", title: "Credit Card" },
-    { imgSrc: "Savings.png", title: "Savings" },
-    { imgSrc: "Mortgage.png", title: "Mortgages" },
-  ];
 
   return (
     <>
