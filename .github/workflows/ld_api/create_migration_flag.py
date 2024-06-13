@@ -28,7 +28,7 @@ def createMigrationFlag():
     url = "https://app.launchdarkly.com/api/v2/flags/" + project_key
 
     payload = {
-        "name": "04 - Migrate ToggleBank Financial DB",
+        "name": "03 - Migrate ToggleBank Financial DB",
         "key": "financialDBMigration",
         "clientSideAvailability": {
             "usingEnvironmentId": True,
