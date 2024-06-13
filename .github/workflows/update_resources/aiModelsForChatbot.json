@@ -10,38 +10,35 @@
         {
             "name": "Claude Haiku",
             "description": "This is Claude Haiku's AI model for quick response and cost saving",
-            "value": [
+            "value": 
                 {
                     "max_tokens_to_sample": 500,
                     "modelId": "anthropic.claude-instant-v1",
                     "temperature": 0.3,
                     "top_p": 1
                 }
-            ]
         },
         {
             "name": "Meta Llama",
             "description": "This is Meta's Llama AI model for more creative responses",
-            "value": [
+            "value": 
                 {
                     "max_gen_len": 500,
                     "modelId": "meta.llama2-13b-chat-v1",
                     "temperature": 0.9,
                     "top_p": 1
                 }
-            ]
         },
         {
             "name": "Cohere Coral",
             "description": "This is Cohere Coral AI model for balance between precision and creativity",
-            "value": [
+            "value":
                 {
                     "max_tokens": 500,
                     "modelId": "cohere.command-text-v14",
                     "p": 1,
                     "temperature": 0.5
                 }
-            ]
         }
     ],
     "tags": [

@@ -44,38 +44,37 @@ def createAIChatbotModelsFeatureFlag():
             {
                 "name": "Claude Haiku",
                 "description": "This is Claude Haiku's AI model for quick response and cost saving",
-                "value": [
+                "value": 
                     {
                         "max_tokens_to_sample": 500,
                         "modelId": "anthropic.claude-instant-v1",
                         "temperature": 0.3,
                         "top_p": 1
                     }
-                ]
+                
             },
             {
                 "name": "Meta Llama",
                 "description": "This is Meta's Llama AI model for more creative responses",
-                "value": [
+                "value": 
                     {
                         "max_gen_len": 500,
                         "modelId": "meta.llama2-13b-chat-v1",
                         "temperature": 0.9,
                         "top_p": 1
                     }
-                ]
+                
             },
             {
                 "name": "Cohere Coral",
                 "description": "This is Cohere Coral AI model for balance between precision and creativity",
-                "value": [
+                "value": 
                     {
                         "max_tokens": 500,
                         "modelId": "cohere.command-text-v14",
                         "p": 1,
                         "temperature": 0.5
                     }
-                ]
             }
         ],
         "tags": [
@@ -104,24 +103,24 @@ def createDestinationRecommendationFeatureFlag():
             {
                 "name": "Claude Haiku",
                 "description": "This is Claude Haiku's AI model for quick response and cost saving",
-                "value": [
+                "value": 
                     {
                         "max_tokens": 200,
                         "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
                         "temperature": 0.5
                     }
-                ]
+                
             },
             {
                 "name": "Cohere Text",
                 "description": "This is Cohere's AI model for detailed response with cost of high tokens",
-                "value": [
+                "value": 
                     {
                         "max_tokens": 400,
                         "modelId": "cohere.command-text-v14",
                         "temperature": 0.7
                     }
-                ]
+                
             }
         ],
         "tags": [
