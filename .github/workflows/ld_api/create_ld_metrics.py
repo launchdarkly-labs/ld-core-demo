@@ -1,4 +1,5 @@
 import os
+from venv import create
 import requests
 import json
 import shutil
@@ -31,7 +32,47 @@ def createMetricsForLDProject(ld_api_key):
     createRecentTradesDBErrorRates(ld_api_key, createMetricURL)
     createInCartUpSellMetric(ld_api_key, createMetricURL)
     createInCartTotalPriceMetric(ld_api_key, createMetricURL)
+    createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL)
+    createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL)
     
+def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "AI Chatbot Negative Feedback",
+        "key": "AI chatbot bad service",
+        "Description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
+        "isNumeric": False,
+        "eventKey": "AI Chatbot Bad Service",
+        "kind": "custom",
+        "successCriteria": "LowerThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["experiment"]
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'AI Chatbot Negative Feedback' created successfully.")
+        
+def createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "AI Chatbot Positive Feedback",
+        "key": "AI chatbot good service",
+        "Description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
+        "isNumeric": False,
+        "eventKey": "AI chatbot good service",
+        "kind": "custom",
+        "successCriteria": "HigherThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["experiment"]
+    }
+    
+    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'AI Chatbot Positive Feedback' created successfully.")
+
 def createStoreAccessedMetric(ld_api_key, createMetricURL):
     
     metricPayload = {

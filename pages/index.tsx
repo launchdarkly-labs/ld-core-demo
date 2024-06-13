@@ -70,10 +70,9 @@ export default function Home() {
 
         <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
           <div className="absolute z-50">
-            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Innovation Velocity Without Risk</h1>
+            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Ship faster, safer, and smarter</h1>
             <p className="w-3/5 text-center mx-auto">
-              Maximize the value of every software feature through safer releases, targeted
-              experiences, experimentation, and more.
+            LaunchDarkly enables high velocity teams to release, monitor, and optimize software in production.
             </p>
           </div>
           <div className="hidden sm:block absolute top-16 left-40 z-10">
