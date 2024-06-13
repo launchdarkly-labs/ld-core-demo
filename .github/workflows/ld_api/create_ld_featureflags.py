@@ -82,6 +82,9 @@ def createAIChatbotModelsFeatureFlag():
             "ai"
         ]
     }
+    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    if(response.status_code == 201):
+        print("AI Chatbot feature flag created successfully.")
     
 def createDestinationRecommendationFeatureFlag():
     
