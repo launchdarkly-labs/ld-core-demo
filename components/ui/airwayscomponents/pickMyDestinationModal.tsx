@@ -53,6 +53,11 @@ const prompt =
     }
 
     useEffect(() => {
+      console.log("useEffect triggered")
+      setDestinations(destinations)
+    },[loading])
+
+    useEffect(() => {
       setDestinations(destinations)
     },[recsGiven])
 
