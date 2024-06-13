@@ -1,38 +1,24 @@
-import { PlusSquare } from "lucide-react";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import { checkData } from "@/lib/checkingdata";
 import LoginContext from "@/utils/contexts/login";
-import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
-import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
 import NavBar from "@/components/ui/navbar";
 import LoginHomePage from "@/components/LoginHomePage";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
-import { motion } from "framer-motion";
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
-  const [federatedAccountOne, setFederatedAccountOne] = useState(false);
-  const [federatedAccountTwo, setFederatedAccountTwo] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState("");
-
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
-
-  const { wealthManagement, federatedAccounts, aiPromptText } = useFlags();
-
-  useEffect(() => {
-    setAIPrompt(aiPromptText);
-  }, [aiPromptText]);
-
+  const [aiPrompt] = useState("");
+  const { isLoggedIn, logoutUser } = useContext(LoginContext);
+  const { wealthManagement, federatedAccounts } = useFlags();
   const money = JSON.stringify(checkData);
-
-  // const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
+  const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
 
   async function submitQuery(query: any) {
     try {
@@ -65,29 +51,6 @@ export default function Bank() {
     { month: "09/23", balance: 64234 },
     { month: "10/23", balance: 83758 },
   ];
-
-  const pageVariants = {
-    initial: { x: "100%" },
-    in: { x: 0 },
-    out: { x: 0 },
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.5,
-  };
-
-  const variants = {
-    hidden: { scaleY: 0, originY: 1 }, // start from the base of the div
-    visible: { scaleY: 1, originY: 1 }, // grow up to the top of the div
-  };
-
-  const accountvariant = {
-    hidden: { x: "100%" }, // start from the right side of the container
-    visible: { x: 0 }, // animate back to the original position
-    exit: { x: "100%" }, // exit to the right side of the container
-  };
 
   function handleLogout() {
     logoutUser();

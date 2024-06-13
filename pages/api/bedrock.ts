@@ -9,6 +9,17 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     const client = new BedrockRuntimeClient({ region: "us-west-2" });
     const prompt = req.body;
 
+    const input = {
+        modelId: "anthropic.claude-instant-v1",
+        contentType: "application/json",
+        accept: "application/json",
+        body: JSON.stringify({
+            prompt: `\n\nHuman:${prompt}\n\nAssistant:`,
+            max_tokens_to_sample: 500,
+            temperature: 0.9,
+            top_p: 1,
+        }),
+    };
     
     const command = new InvokeModelCommand(input);
     try {
