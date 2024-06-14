@@ -79,8 +79,8 @@ export default function BookedFlights() {
 
   async function submitQuery(airport: any) {
     try {
-      const prompt: string = aiPromptText.replace('${destination}', airport);
-      
+      const prompt: string = aiPromptText.replace('${destination}', airport) + '. Limit responses to 40 words only';
+
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -222,7 +222,7 @@ export default function BookedFlights() {
                                   </div>
                                 ) : (
                                   <div>
-                                    <p className="text-lg mb-4 font-sohne">
+                                    <p className="text-lg mb-4 font-sohne  bg-gradient-airways-red text-white p-4">
                                       AI Travel Insights{" "}
                                       <span className="text-sm">powered by AWS Bedrock</span>{" "}
                                     </p>
@@ -324,21 +324,21 @@ export default function BookedFlights() {
                           </PopoverTrigger>
                           <PopoverContent
                             onCloseAutoFocus={() => setAIResponse("")}
-                            className="w-full sm:w-[400px] h-[300px] sm:h-[400px] mt-2 sm:absolute sm:right-[0%]"
+                            className="max-w-screen overflow-auto sm:w-[400px] h-auto mt-2"
                           >
-                            <div className="flex justify-center items-center bg-gradient-airways-red text-white sm:justify-normal">
+                            <div className="flex mx-auto justify-center items-center bg-gradient-airways-red text-white sm:justify-normal">
                               <p className="text-lg mb-4 mt-4 font-sohne ml-4 mr-4">
                                 AI Travel Insights{" "}
                                 <span className="text-sm">powered by Amazon Bedrock</span>
                               </p>
                             </div>
-                            <div className=" overflow-y-auto flex justify-center items-center ">
+                            <div className="justify-center overflow-y-auto items-center">
                               {loading ? (
                                 <div className="flex justify-center items-center h-full pt-2 pb-2">
                                   <BounceLoader color="#FF386B" />
                                 </div>
                               ) : (
-                                <div className="p-4 font-normal font-sohne ">
+                                <div className="p-4 font-normal font-sohne h-auto overflow-auto overflow-y-scroll max-h-[400px]">
                                   <p>{aiResponse}</p>
                                 </div>
                               )}

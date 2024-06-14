@@ -29,7 +29,7 @@ import Chatbot from "@/components/chatbot/ChatBot";
 
 
 export default function Airways() {
-  const { launchClubLoyalty } = useFlags();
+  const [launchClubLoyalty, setLaunchClubLoyalty] = useState(true);
 
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
