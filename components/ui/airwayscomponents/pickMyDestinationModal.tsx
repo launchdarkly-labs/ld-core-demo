@@ -25,7 +25,7 @@ const [recsGiven, setRecsGiven] = useState(false);
 const [destinations, setDestinations] = useState<Array<any>>([]);
 const [loading, setLoading] = useState(false);
 const prompt =
-  "give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots every time I ask. Only respond using JSON format with the keys 'name' and 'reason', it should be an array of 3 JSON objects returned, limiting each response to 50 characters or less";
+  "give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots every time I ask. Only respond using JSON format with the keys 'name' and 'reason', it should be an array of 3 JSON objects returned, limiting each response to 50 characters or less and 'name' should only contain the name of the destination.";
 
    async function getDestinations () {
     try {
@@ -36,8 +36,9 @@ const prompt =
           body: JSON.stringify({ prompt: prompt}),
         });
         const data = await response.json()
-        console.log(JSON.parse(data));
-        setDestinations(JSON.parse(data))
+        const formattedData = JSON.parse(data)
+        setDestinations(formattedData)
+        console.log(destinations)
         
     }
     catch {
@@ -54,8 +55,10 @@ const prompt =
 
     useEffect(() => {
       console.log("useEffect triggered")
+      if (!destinations) {
       setDestinations(destinations)
-    },[loading])
+      }
+    },[recsGiven])
 
     return (
       <AlertDialog>
