@@ -45,9 +45,7 @@ export default function Chatbot() {
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify(`
-      As an AI bot for a travel airline LaunchAirways.
-      state yourself as a travel assistant and powered by your AI model only only when user ask about who you are.
-      your purpose is to answer questions related to flights and traveling. 
+      As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. 
       Act as customer representative. 
       Only answer queries related to traveling and airlines.
       Remove quotation in response.  
@@ -130,7 +128,7 @@ export default function Chatbot() {
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
-                  <img src="ToggleAvatar.png" alt="Chatbot Avatar" />
+                  <img src="/airline/launch-airways.svg" alt="Chatbot Avatar" />
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
                 <div>
@@ -220,7 +218,7 @@ export default function Chatbot() {
                   return (
                     <div
                       key={m?.id}
-                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-airlineblue text-white dark:bg-gray-50 dark:text-gray-900"
+                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-airways text-white dark:bg-gray-50 dark:text-gray-900"
                     >
                       {m?.content}
                     </div>

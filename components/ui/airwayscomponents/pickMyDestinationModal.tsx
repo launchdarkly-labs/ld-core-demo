@@ -20,7 +20,6 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 export default function DestinationPicker () {
 const flags = useFlags();
 const flagName = flags["destination-picker-ai-model"];
-console.log(flagName)
 const [recsGiven, setRecsGiven] = useState(false);
 const [destinations, setDestinations] = useState<Array<any>>([]);
 const [loading, setLoading] = useState(false);
