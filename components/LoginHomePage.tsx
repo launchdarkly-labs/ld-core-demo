@@ -15,6 +15,10 @@ import Image from "next/image";
 import investmentCardImg1 from "@/public/investment/investment_image1.png";
 import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
+import governmentCardImg1 from "@/public/government/crypto.png";
+import governmentCardImg2 from "@/public/government/farm.png";
+import governmentCardImg3 from "@/public/government/military-family.jpg";
+import governmentCardImg4 from "@/public/government/rocket.jpg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 
 interface LoginHomePageProps {
@@ -183,22 +187,28 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       {variant === "government" && (
         <HomePageCardWrapper>
           <HomePageInfoCard
-            imgSrc={investmentCardImg1.src}
-            headerTitleText="Are returns worth the risk in investing in the market?"
-            subtitleText="Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. "
+            imgSrc={governmentCardImg1.src}
+            headerTitleText="Cybersecurity"
+            subtitleText="FedRAMP Authorized"
             key={1}
           />
           <HomePageInfoCard
-            imgSrc={investmentCardImg2.src}
-            headerTitleText="Fed to consumers: Inflation trending lower daily."
-            subtitleText="Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected."
+            imgSrc={governmentCardImg2.src}
+            headerTitleText="Resiliency"
+            subtitleText="Scalable architecture with 99.99% SLA"
             key={2}
           />
           <HomePageInfoCard
-            imgSrc={investmentCardImg3.src}
-            headerTitleText="Here’s how markets are moving this week."
-            subtitleText="With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks."
+            imgSrc={governmentCardImg3.src}
+            headerTitleText="Trust"
+            subtitleText="Optimized citizen services"
             key={3}
+          />
+           <HomePageInfoCard
+            imgSrc={governmentCardImg4.src}
+            headerTitleText="Quality"
+            subtitleText="Dark launches reduce risk"
+            key={4}
           />
         </HomePageCardWrapper>
       )}
