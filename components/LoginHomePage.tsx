@@ -18,7 +18,7 @@ import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 
 interface LoginHomePageProps {
-  variant: "bank" | "airlines" | "market" | "investment";
+  variant: "bank" | "airlines" | "market" | "investment" | "government";
   name: string;
 }
 
@@ -31,6 +31,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
     airlines:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     market: "Shop for the latest tech gadgets and more.",
+    government: "We improve control, availability, and security of government applications and sites.",
   };
 
   const bankingServicesArr = [
@@ -62,7 +63,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             ? "bg-gradient-investment"
             : variant === "market"
             ? " bg-market-header grid items-center justify-center"
-            : ""
+            : "bg-gradient-releases"
         }`}
       >
         {variant === "market" && (
@@ -157,6 +158,29 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       )}
       {/* TODO: need to apply this to all other home pages */}
       {variant === "investment" && (
+        <HomePageCardWrapper>
+          <HomePageInfoCard
+            imgSrc={investmentCardImg1.src}
+            headerTitleText="Are returns worth the risk in investing in the market?"
+            subtitleText="Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. "
+            key={1}
+          />
+          <HomePageInfoCard
+            imgSrc={investmentCardImg2.src}
+            headerTitleText="Fed to consumers: Inflation trending lower daily."
+            subtitleText="Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected."
+            key={2}
+          />
+          <HomePageInfoCard
+            imgSrc={investmentCardImg3.src}
+            headerTitleText="Here’s how markets are moving this week."
+            subtitleText="With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks."
+            key={3}
+          />
+        </HomePageCardWrapper>
+      )}
+
+      {variant === "government" && (
         <HomePageCardWrapper>
           <HomePageInfoCard
             imgSrc={investmentCardImg1.src}

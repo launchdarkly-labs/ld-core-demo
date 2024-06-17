@@ -27,6 +27,7 @@ import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizonta
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
+import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
 
 const variantToImageMap = {
@@ -34,6 +35,7 @@ const variantToImageMap = {
   airlines: launchAirwaysHorizontalLogo.src,
   market: galaxyMarketplaceHorizontalLogo.src,
   investment: frontierCapitalHorizontalLogo.src,
+  government: bureauOfRiskReductionHorizontalLogo.src,
   undefined: LDLogoWhite.src,
 };
 

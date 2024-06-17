@@ -133,6 +133,10 @@ export function CSNav() {
             <Link  href='/architecture' className="text-2xl text-navblue hover:underline" >
               Architecture
             </Link>
+
+            <Link  href='/government' className="text-2xl text-navblue hover:underline" >
+              FedRAMP
+            </Link>
           </div>
         </div>
         <SheetFooter>

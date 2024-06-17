@@ -17,12 +17,14 @@ import toggleBankVerticalLogo from '@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_logo_vertical.svg'
 import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
 import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
+import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
   airlines: launchAirwaysVerticalLogo.src,
   market: galaxyMarketplaceVerticalLogo.src,
   investment: frontierCapitalVerticalLogo.src,
+  government: bureauOfRiskReductionHorizontalLogo.src
 };
 interface LoginComponentProps {
   isLoggedIn: boolean;
