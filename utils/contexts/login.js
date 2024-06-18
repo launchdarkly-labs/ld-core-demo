@@ -4,7 +4,7 @@ import { createContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
-
+import { setCookie } from "cookies-next";
 
 const LoginContext = createContext();
 
@@ -58,13 +58,15 @@ export const LoginProvider = ({ children }) => {
     const context = await createAnonymousContext();
     await client?.identify(context);
     console.log("Anonymous User", context);
+    setCookie("ldcontext", context);
   };
   
   const createAnonymousContext = async () => {
     return {
       "kind": "multi",
       "user": {
-        "anonymous": true
+        "anonymous": true,
+        tier: null
       },
       "device": {
         "key": device,

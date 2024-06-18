@@ -30,7 +30,6 @@ import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketp
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
 import { useLDClient } from "launchdarkly-react-client-sdk";
-import { setCookie } from "cookies-next";
 
 const variantToImageMap = {
   bank: toggleBankHorizontalLogo.src,
@@ -73,13 +72,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
       "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none";
 
     const ldclient = useLDClient();
-    function handleLogout() {
-      logoutUser();
-      const context: any = ldclient?.getContext();
-      context.user.tier = null;
-      ldclient?.identify(context);
-      setCookie("ldcontext", context);
-    }
+  
 
     // TODO: popover should be a modular component
     switch (variant) {
@@ -130,7 +123,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         </p>
                       </div>
                       <div className="mx-auto text-center">
-                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -230,7 +223,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         </p>
                       </div>
                       <div className="mx-auto text-center">
-                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -346,7 +339,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </p>
                     </div>
                     <div className="mx-auto text-center mt-4">
-                      <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                      <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
                         Logout
                       </Button>
                       <QuickLoginDialog personas={personas} variant="market" />
@@ -460,7 +453,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </p>
 
                       <div className="mx-auto text-center">
-                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -572,7 +565,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </p>
 
                       <div className="mx-auto text-center">
-                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
