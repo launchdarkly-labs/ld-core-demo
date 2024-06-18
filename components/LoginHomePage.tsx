@@ -26,26 +26,6 @@ interface LoginHomePageProps {
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
 
-  const industryMessages = {
-    bank: "More than 100,000 customers worldwide",
-    investment: "Serving more than 100,000 customers, and 10 trillion in capital every day",
-    airlines:
-      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    market: "Shop for the latest tech gadgets and more.",
-    government:
-      "We improve control, availability, and security of government applications and sites.",
-  };
-
-  const bankingServicesArr = [
-    { imgSrc: "Checking.png", title: "Checking" },
-    { imgSrc: "Business.png", title: "Business" },
-    { imgSrc: "Credit.png", title: "Credit Card" },
-    { imgSrc: "Savings.png", title: "Savings" },
-    { imgSrc: "Mortgage.png", title: "Mortgages" },
-  ];
-
-  const message = industryMessages[variant];
-
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -57,15 +37,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 
       <header
         className={` ${
-          variant === "bank"
-            ? "bg-gradient-releases"
-            : variant === "airlines"
-            ? "bg-gradient-airways w-full mb-[4rem] relative"
-            : variant === "investment"
-            ? "bg-gradient-investment"
-            : variant === "market"
-            ? " bg-market-header grid items-center justify-center"
-            : "bg-gradient-releases"
+          variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-releases"
         }`}
       >
         {variant === "market" && (
@@ -99,7 +71,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
               Welcome to {name}{" "}
             </p>
             <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-              {message}
+              {homePageVariants[variant]?.industryMessages}
             </p>
           </div>
 
@@ -121,7 +93,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             sm:gap-y-0 gap-x-8
           sm:gap-x-12 lg:gap-x-24 py-8"
         >
-          {bankingServicesArr.map((ele, i) => {
+          {homePageVariants[variant]?.bankingServicesArr.map((ele, i) => {
             return (
               <div className="grid items-center justify-items-center" key={i}>
                 <img src={ele?.imgSrc} width={96} className="pb-2" />
@@ -133,106 +105,127 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {variant === "bank" && (
-        <HomePageCardWrapper>
-          <HomePageInfoCard
-            imgSrc="House.png"
-            headerTitleText="Home Mortgages"
-            subtitleText="Toggle the light on and come home. Were here to help."
-            key={1}
-          />
-          <HomePageInfoCard
-            imgSrc="Smoochy.png"
-            headerTitleText="Wealth Management"
-            subtitleText="Use next generation tooling to ensure your future is safe."
-            key={2}
-          />
-          <HomePageInfoCard
-            imgSrc="Cards.png"
-            headerTitleText="Sign Up For Toggle Card"
-            subtitleText="Special offers for our most qualified members. Terms apply."
-            key={3}
-          />
-        </HomePageCardWrapper>
-      )}
-
-      {/* TODO: need to apply this to all other home pages */}
-      {variant === "investment" && (
-        <HomePageCardWrapper>
-          <HomePageInfoCard
-            imgSrc={investmentCardImg1.src}
-            headerTitleText="Are returns worth the risk in investing in the market?"
-            subtitleText="Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. "
-            key={1}
-          />
-          <HomePageInfoCard
-            imgSrc={investmentCardImg2.src}
-            headerTitleText="Fed to consumers: Inflation trending lower daily."
-            subtitleText="Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected."
-            key={2}
-          />
-          <HomePageInfoCard
-            imgSrc={investmentCardImg3.src}
-            headerTitleText="Here’s how markets are moving this week."
-            subtitleText="With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks."
-            key={3}
-          />
-        </HomePageCardWrapper>
-      )}
-
-      {variant === "government" && (
-        <HomePageCardWrapper>
-          <HomePageInfoCard
-            imgSrc={governmentCardImg1.src}
-            headerTitleText="Cybersecurity"
-            subtitleText="FedRAMP Authorized"
-            key={1}
-          />
-          <HomePageInfoCard
-            imgSrc={governmentCardImg2.src}
-            headerTitleText="Resiliency"
-            subtitleText="Scalable architecture with 99.99% SLA"
-            key={2}
-          />
-          <HomePageInfoCard
-            imgSrc={governmentCardImg3.src}
-            headerTitleText="Trust"
-            subtitleText="Optimized citizen services"
-            key={3}
-          />
-          <HomePageInfoCard
-            imgSrc={governmentCardImg4.src}
-            headerTitleText="Quality"
-            subtitleText="Dark launches reduce risk"
-            key={4}
-          />
-        </HomePageCardWrapper>
-      )}
-
-      {variant === "airlines" && (
-        <HomePageCardWrapper>
-          <HomePageInfoCard
-            imgSrc={airplaneImg.src}
-            headerTitleText="Wheels up"
-            subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
-            key={1}
-          />
-          <HomePageInfoCard
-            imgSrc={hotAirBalloonImg.src}
-            headerTitleText="Ready for an adventure"
-            subtitleText="The world is open for travel. Plan your next adventure."
-            key={2}
-          />
-          <HomePageInfoCard
-            imgSrc={airplaneDining.src}
-            headerTitleText="Experience luxury"
-            subtitleText="Choose Launch Platinum. Select on longer flights."
-            key={3}
-          />
-        </HomePageCardWrapper>
-      )}
-
-     
+      <HomePageCardWrapper>
+        {homePageVariants[variant]?.cards.map((card: any, index: number) => {
+          return (
+            <HomePageInfoCard
+              imgSrc={card?.imgSrc}
+              headerTitleText={card?.titleText}
+              subtitleText={card?.subtitleText}
+              key={index}
+            />
+          );
+        })}
+      </HomePageCardWrapper>
     </motion.main>
   );
 }
+
+const homePageVariants: any = {
+  bank: {
+    industryMessages: "More than 100,000 customers worldwide",
+    gradiantColor: "bg-gradient-releases",
+    bankingServicesArr: [
+      { imgSrc: "Checking.png", title: "Checking" },
+      { imgSrc: "Business.png", title: "Business" },
+      { imgSrc: "Credit.png", title: "Credit Card" },
+      { imgSrc: "Savings.png", title: "Savings" },
+      { imgSrc: "Mortgage.png", title: "Mortgages" },
+    ],
+    cards: [
+      {
+        titleText: "Home Mortgages",
+        subtitleText: "Toggle the light on and come home. Were here to help.",
+        imgSrc: "House.png",
+      },
+      {
+        titleText: "Wealth Management",
+        subtitleText: "Use next generation tooling to ensure your future is safe.",
+        imgSrc: "Smoochy.png",
+      },
+      {
+        titleText: "Sign Up For Toggle Card",
+        subtitleText: "Special offers for our most qualified members. Terms apply.",
+        imgSrc: "Cards.png",
+      },
+    ],
+  },
+  investment: {
+    industryMessages: "Serving more than 100,000 customers, and 10 trillion in capital every day",
+    gradiantColor: "bg-gradient-investment",
+    cards: [
+      {
+        titleText: "Are returns worth the risk in investing in the market?",
+        subtitleText:
+          "Emerging-market local-currency bonds have rallied sharply since last October, along with other risky segments of the global bond market. ",
+        imgSrc: investmentCardImg1.src,
+      },
+      {
+        titleText: "Fed to consumers: Inflation trending lower daily.",
+        subtitleText:
+          "Inflation looks to still be trending lower, but a relatively stubborn decline will likely inspire the Fed to start cutting rates later (and slower) than expected.",
+        imgSrc: investmentCardImg2.src,
+      },
+      {
+        titleText: "Here’s how markets are moving this week.",
+        subtitleText:
+          "With thematic investing, you can choose from 40+ customizable themes, each with up to 25 research-backed stocks.",
+        imgSrc: investmentCardImg3.src,
+      },
+    ],
+  },
+  airlines: {
+    industryMessages:
+      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
+    gradiantColor: "bg-gradient-airways w-full mb-[4rem] relative",
+    cards: [
+      {
+        titleText: "Wheels up",
+        subtitleText:
+          "You deserve to arrive refreshed, stretch out in one of our luxurious cabins.",
+        imgSrc: airplaneImg.src,
+      },
+      {
+        titleText: "Ready for an adventure",
+        subtitleText: "The world is open for travel. Plan your next adventure.",
+        imgSrc: hotAirBalloonImg.src,
+      },
+      {
+        titleText: "Experience luxury",
+        subtitleText: "Choose Launch Platinum. Select on longer flights.",
+        imgSrc: airplaneDining.src,
+      },
+    ],
+  },
+  // market: {
+  //   industryMessages: "Shop for the latest tech gadgets and more.",
+  //   gradiantColor: " bg-market-header grid items-center justify-center",
+  // },
+  government: {
+    industryMessages:
+      "We improve control, availability, and security of government applications and sites.",
+    gradiantColor: "bg-gradient-releases",
+    cards: [
+      {
+        titleText: "Cybersecurity",
+        subtitleText: "FedRAMP Authorized",
+        imgSrc: governmentCardImg1.src,
+      },
+      {
+        titleText: "Resiliency",
+        subtitleText: "Scalable architecture with 99.99% SLA",
+        imgSrc: governmentCardImg2.src,
+      },
+      {
+        titleText: "Trust",
+        subtitleText: "Optimized citizen services",
+        imgSrc: governmentCardImg3.src,
+      },
+      {
+        titleText: "Quality",
+        subtitleText: "Dark launches reduce risk",
+        imgSrc: governmentCardImg4.src,
+      },
+    ],
+  },
+};
