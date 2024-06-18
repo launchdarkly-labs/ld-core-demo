@@ -14,18 +14,18 @@ import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAcco
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
-  const [aiPrompt] = useState("");
   const { isLoggedIn, logoutUser } = useContext(LoginContext);
   const { wealthManagement, federatedAccounts } = useFlags();
   const money = JSON.stringify(checkData);
   const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
-
+  const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'
+  
   async function submitQuery(query: any) {
     try {
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
-        body: JSON.stringify({ prompt: aiPrompt + query }),
+        body: JSON.stringify({ prompt: prompt }),
       });
 
       if (!response.ok) {
@@ -113,7 +113,7 @@ export default function Bank() {
                 <div className="w-full xl:w-[40%]">
                   <WealthManagementSheet
                     data={data}
-                    aiPrompt={aiPrompt}
+                    aiPrompt={viewPrompt}
                     submitQuery={submitQuery}
                     prompt={prompt}
                     loading={loading}

@@ -11,10 +11,10 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
-import experimentation from "@/public/sidenav/experimentation.svg";
-import ai from "@/public/sidenav/ai.svg";
-import remediate from "@/public/sidenav/remediate.svg";
-import toggleIcon from "@/public/sidenav/toggle_icon.svg";
+import experiment from "@/public/sidenav/experiment-navigate.svg";
+import ai from "@/public/sidenav/ai-navigate.svg";
+import remediate from "@/public/sidenav/remediate-navigate.svg";
+import release from "@/public/sidenav/release-navigate.svg";
 import Link from "next/link";
 
 export function CSNav() {
@@ -72,7 +72,7 @@ export function CSNav() {
                   className="bg-gradient-releases cursor-pointer"
                   cardTitle="Automate Releases"
                   cardSubtitle="Let developers move faster and more confidently with feature management."
-                  icon={toggleIcon}
+                  icon={release}
                 />
               </div>
             </motion.div>
@@ -117,7 +117,7 @@ export function CSNav() {
                   className="bg-gradient-experimentation cursor-pointer"
                   cardTitle="Experiment Everywhere"
                   cardSubtitle="Continuously measure and improve the business value of digital products."
-                  icon={experimentation}
+                  icon={experiment}
                 />
               </div>
             </motion.div>

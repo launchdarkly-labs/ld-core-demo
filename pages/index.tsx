@@ -72,7 +72,7 @@ export default function Home() {
           <div className="absolute z-50">
             <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Ship faster, safer, and smarter</h1>
             <p className="w-3/5 text-center mx-auto">
-            LaunchDarkly enables high velocity teams to release, monitor, and optimize software in production.
+              LaunchDarkly enables high velocity teams to release, monitor, and optimize software in production.
             </p>
           </div>
           <div className="hidden sm:block absolute top-16 left-40 z-10">
@@ -114,19 +114,27 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/bank">
-                  <img width="54" height="54" src="Release-Icon.png" className="mt-3" />
+                  <img width="44" height="44" src="release-icon.svg" />
 
                   <h2>Automate Releases</h2>
-                    <p>Release Best Practice Workflows, Sophisticated User Targeting, Real-Time Feature Changes</p>
+                  <ul className="list-disc list-inside">
+                    <li>Release Best Practice Workflows</li>
+                    <li>Sophisticated User Targeting</li>
+                    <li>Real-Time Feature Changes</li>
+                  </ul>
                 </a>
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
                 <a href="investment">
-                  <img width="34" height="44" src="remediate.png" />
+                  <img width="44" height="44" src="remediate-icon.svg" />
 
                   <h2>Monitor Features</h2>
-                  <p>Runtime Event Monitoring, Regression Auto-Remediation, Metric Driven Progressive Delivery</p>
+                  <ul className="list-disc list-inside">
+                    <li>Runtime Event Monitoring</li>
+                    <li>Regression Auto-Remediation</li>
+                    <li>Metric Driven Progressive Delivery</li>
+                  </ul>
                 </a>
               </div>
             </div>
@@ -134,21 +142,26 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/airways">
-                  <img width="44" height="24" src="AI.png" />
+                  <img width="44" height="24" src="ai-icon.svg" />
                   <h2>Accelerate AI</h2>
-                  <p>
-                    Runtime Configurations Controls, Targeted AI Experiences, Optimize Performance & Cost
-                  </p>
+                  <ul className="list-disc list-inside">
+                    <li>Runtime Configurations Controls</li>
+                    <li>Targeted AI Experiences</li>
+                    <li>Optimize Performance & Cost</li>
+                  </ul>
                 </a>
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/marketplace">
-                  <img width="24" height="24" src="Experimentation.png" />
+                  <img width="44" height="44" src="experiment-icon.svg" />
 
                   <h2>Experiment Everywhere</h2>
-                  <p>Experimentation For Everyone, Advanced Statistics, Measure Any Metric
-                  </p>
+                  <ul className="list-disc list-inside">
+                    <li>Experimentation For Everyone</li>
+                    <li>Advanced Statistics</li>
+                    <li>Measure Any Metric</li>
+                  </ul>
                 </a>
               </div>
 

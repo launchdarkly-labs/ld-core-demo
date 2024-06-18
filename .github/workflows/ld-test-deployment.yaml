@@ -13,12 +13,13 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}  
+  DEMO_NAMESPACE: test
 
 
 jobs:
-  deploy-to-test:
+  deploy-to-test: 
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,26 +34,65 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
 
-      - name: Get LD ENVs
-        id: get-envs
-        run: |
-          echo "var1=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '1p')" >> $GITHUB_ENV
-          echo "var2=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
+      - name: Create LD Project for User
+        id: create_ld_project
         env:
-          LD_ENV_KEY: test
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_ld_project.py
+
+      - name: Create Feature Flags in LD Project/Environment
+        id: create_feature_flag_in_LD
+        if: env.PROJECT_EXISTS == 'false'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_ld_featureflags.py
+
+      - name: Create metric group in LD Project/Environment
+        id: create_metric_group_in_LD
+        if: env.PROJECT_EXISTS == 'false'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating metrics in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_metric_group.py
+
+      - name: Create experiment in LD Project/Environment
+        id: create_experiment_in_LD
+        if: env.PROJECT_EXISTS == 'false'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating experiment in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_experiment.py
+          
+      - name: Create Migration FF in LD Project/Environment
+        id: create_migration_FF_in_LD
+        if: env.PROJECT_EXISTS == 'false'
+        env:
+          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+        run: |
+          echo "Creating migration feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/ld_api/create_migration_flag.py
 
       - name: Create .env file
         run: |
           touch ./.env.production
-          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
-          echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
+          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
+          echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
-          echo DESTINATIONENV=test >> ./.env.production
-          echo PROJECT_KEY=ld-core-demo >> ./.env.production
-
-          
+          echo DESTINATIONENV=${{ env.DEMO_NAMESPACE }} >> ./.env.production
+          echo PROJECT_KEY=${{ env.DEMO_NAMESPACE }}-ld-demo >> ./.env.production
+  
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -62,30 +102,75 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ld-core-demo
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }} .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:test-${{ github.run_number }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
 
       - name: Update K8s Deploy File
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
-          NAMESPACE: test
-          URL: test.launchdarklydemos.com
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: create namespace ${{ env.DEMO_NAMESPACE }}
 
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n test
+          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
 
-      - name: Restart Pods
-        uses: kodermax/kubectl-aws-eks@master
-        env:
-          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:test-${{ github.run_number }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n test
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Add Route 53 Record
+        run: |
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+          RECORD_SET_JSON='{
+            "Comment": "Creating Alias record that points to ALB",
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com",
+                  "Type": "A",
+                  "AliasTarget": {
+                    "HostedZoneId": "Z35SXDOTRQ7X7K",
+                    "DNSName": "k8s-ldcoredemolb-93af62c3af-1176236694.us-east-1.elb.amazonaws.com",
+                    "EvaluateTargetHealth": false
+                  }
+                }
+              }
+            ]
+          }'
+          aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch "$RECORD_SET_JSON"
+        env:
+          AWS_REGION: 'us-east-1'
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
 
       - name: Remove .env file
         run: rm ./.env.production
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
+
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2
+        with:
+          accessToken: ${{ secrets.LD_API_KEY }}
+          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
