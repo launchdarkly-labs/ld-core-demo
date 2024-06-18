@@ -19,12 +19,11 @@ const HomePageInfoCard = ({
     >
       <img src={imgSrc} className="w-full h-[15rem] object-cover" />
       <div
-        className=" font-sohne text-black m-8 flex flex-col gap-y-2 bg-white  h-full sm:h-[25rem] lg:h-[10rem] 
-      
+        className=" font-sohne text-black mx-8 my-6 flex flex-col gap-y-2 bg-white  h-full sm:h-[20rem] lg:h-[10rem] 
       overflow-y-auto text-ellipsis "
       >
         <p className=" text-2xl">{headerTitleText}</p>
-        <p className=" pt-2 text-lg font-sohnelight text-left">{subtitleText}</p>
+        <p className=" pt-2 text-lg font-sohnelight text-left">{truncateString(subtitleText,100)}</p>
       </div>
     </div>
   );

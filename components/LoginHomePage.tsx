@@ -2,13 +2,10 @@ import { useContext } from "react";
 import { motion } from "framer-motion";
 import NavBar from "@/components/ui/navbar";
 import LoginContext from "@/utils/contexts/login";
-import BankInfoCard from "@/components/ui/bankcomponents/bankInfoCard";
 import { LoginComponent } from "@/components/ui/logincomponent";
-import AirlineInfoCard from "@/components/ui/airwayscomponents/airlineInfoCard";
 import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
-import MarketInfoCard from "@/components/ui/marketcomponents/marketInfoCard";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
 import Image from "next/image";
@@ -35,7 +32,8 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
     airlines:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     market: "Shop for the latest tech gadgets and more.",
-    government: "We improve control, availability, and security of government applications and sites.",
+    government:
+      "We improve control, availability, and security of government applications and sites.",
   };
 
   const bankingServicesArr = [
@@ -136,30 +134,28 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       )}
 
       {variant === "bank" && (
-        <section
-          className="flex flex-col gap-y-8 sm:gap-y-8 sm:flex-row sm:gap-x-6 lg:gap-x-14
-           mx-auto py-12 justify-center px-4 lg:px-8"
-        >
-          <BankInfoCard
+        <HomePageCardWrapper>
+          <HomePageInfoCard
             imgSrc="House.png"
             headerTitleText="Home Mortgages"
             subtitleText="Toggle the light on and come home. Were here to help."
             key={1}
           />
-          <BankInfoCard
+          <HomePageInfoCard
             imgSrc="Smoochy.png"
             headerTitleText="Wealth Management"
             subtitleText="Use next generation tooling to ensure your future is safe."
             key={2}
           />
-          <BankInfoCard
+          <HomePageInfoCard
             imgSrc="Cards.png"
             headerTitleText="Sign Up For Toggle Card"
             subtitleText="Special offers for our most qualified members. Terms apply."
             key={3}
           />
-        </section>
+        </HomePageCardWrapper>
       )}
+
       {/* TODO: need to apply this to all other home pages */}
       {variant === "investment" && (
         <HomePageCardWrapper>
@@ -204,7 +200,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             subtitleText="Optimized citizen services"
             key={3}
           />
-           <HomePageInfoCard
+          <HomePageInfoCard
             imgSrc={governmentCardImg4.src}
             headerTitleText="Quality"
             subtitleText="Dark launches reduce risk"
@@ -214,50 +210,29 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       )}
 
       {variant === "airlines" && (
-        <section
-          className="flex flex-col gap-y-8 sm:gap-y-0 sm:flex-row sm:gap-x-6 lg:gap-x-14
-           xl:mx-auto w-full max-w-7xl py-12 justify-between px-4 xl:px-0"
-        >
-          <AirlineInfoCard
+        <HomePageCardWrapper>
+          <HomePageInfoCard
+            imgSrc={airplaneImg.src}
             headerTitleText="Wheels up"
             subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
-            imgSrc={airplaneImg}
+            key={1}
           />
-          <AirlineInfoCard
+          <HomePageInfoCard
+            imgSrc={hotAirBalloonImg.src}
             headerTitleText="Ready for an adventure"
             subtitleText="The world is open for travel. Plan your next adventure."
-            imgSrc={hotAirBalloonImg}
+            key={2}
           />
-          <AirlineInfoCard
+          <HomePageInfoCard
+            imgSrc={airplaneDining.src}
             headerTitleText="Experience luxury"
             subtitleText="Choose Launch Platinum. Select on longer flights."
-            imgSrc={airplaneDining}
+            key={3}
           />
-        </section>
+        </HomePageCardWrapper>
       )}
 
-      {variant === "market" && (
-        <section
-          className="relative flex flex-col sm:flex-row justify-center 
-        gap-x-0 gap-y-6 sm:gap-x-6 lg:gap-x-24 py-14 z-0 bg-white !font-sohne px-6"
-        >
-          <MarketInfoCard
-            headerTitleText="Shop Latest Gadgets"
-            subtitleText="Shop the latest gadgets and accessories."
-            imgSrc="marketinfo1.png"
-          />
-          <MarketInfoCard
-            headerTitleText="Exclusive Offers"
-            subtitleText="Get exclusive offers and deals on the latest gadgets."
-            imgSrc="marketinfo2.png"
-          />
-          <MarketInfoCard
-            headerTitleText="Shop Popular Brands"
-            subtitleText="Shop popular brands like Apple, Samsung, and more."
-            imgSrc="marketinfo3.png"
-          />
-        </section>
-      )}
+     
     </motion.main>
   );
 }
