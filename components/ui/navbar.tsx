@@ -67,7 +67,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { launchClubStatus } = useContext(LoginContext);
     const imageSrc = variantToImageMap[variant];
 
-    const logoutButtonClassname = "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none"; 
+    const logoutButtonClassname =
+      "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none";
 
     // TODO: popover should be a modular component
     switch (variant) {
@@ -118,10 +119,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         </p>
                       </div>
                       <div className="mx-auto text-center">
-                        <Button
-                          onClick={handleLogout}
-                          className={` ${logoutButtonClassname}`}
-                        >
+                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -221,10 +219,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         </p>
                       </div>
                       <div className="mx-auto text-center">
-                        <Button
-                          onClick={handleLogout}
-                          className={` ${logoutButtonClassname}`}
-                        >
+                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -340,10 +335,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </p>
                     </div>
                     <div className="mx-auto text-center mt-4">
-                      <Button
-                        onClick={handleLogout}
-                        className={` ${logoutButtonClassname}`}
-                      >
+                      <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
                         Logout
                       </Button>
                       <QuickLoginDialog personas={personas} variant="market" />
@@ -457,10 +449,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </p>
 
                       <div className="mx-auto text-center">
-                        <Button
-                          onClick={handleLogout}
-                          className={` ${logoutButtonClassname}`}
-                        >
+                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant={variant} />
@@ -532,6 +521,99 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </button>
           </>
         );
+        break;
+      case "government":
+        navChild = (
+          <>
+            {!isLoggedIn ? null : (
+              <div className="flex space-x-6 ml-auto mr-4 items-center">
+                <Search color={"white"} className="hidden sm:block" />
+                <div className="text-white hidden sm:block">
+                  <QRCodeImage />
+                </div>
+
+                <Popover>
+                  <PopoverTrigger>
+                    <Avatar>
+                      <AvatarImage
+                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                        className=""
+                      />
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] h-[440px]">
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                          className="rounded-full h-48"
+                        />
+                      </div>
+                      <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
+                        <p className="pt-4">
+                          Thank you {chosenPersona?.personaname || user} for banking with us as a
+                          <br></br>
+                          <span className="text-2xl">Platinum Member!</span>
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
+                          Logout
+                        </Button>
+                        <QuickLoginDialog personas={personas} variant={variant} />
+                      </div>
+                    </>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </>
+        );
+
+        navLinkMobileDropdown = (
+          <>
+            {isLoggedIn ? (
+              <>
+                <DropdownMenuItem href="/government">Submissions</DropdownMenuItem>
+                <DropdownMenuItem href="/government">About Us</DropdownMenuItem>
+                <DropdownMenuItem href="/government">Contact Us</DropdownMenuItem>
+              </>
+            ) : null}
+
+            <div className="flex justify-between">
+              <DropdownMenuItem>
+                <Search className="cursor-pointer" />
+              </DropdownMenuItem>
+              <div className="cursor-pointer">
+                <QRCodeImage />
+              </div>
+            </div>
+          </>
+        );
+
+        navLinksGroup = (
+          <>
+            <button
+              href="/government"
+              className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Submissions
+            </button>
+            <button
+              href="/government"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              About Us
+            </button>
+            <button
+              href="/government"
+              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
+            >
+              Contact Us
+            </button>
+          </>
+        );
+
         break;
       default:
         navChild = (
