@@ -29,6 +29,8 @@ import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_ho
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+import { setCookie } from "cookies-next";
 
 const variantToImageMap = {
   bank: toggleBankHorizontalLogo.src,
@@ -54,8 +56,8 @@ interface Persona {
 }
 
 const NavBar = React.forwardRef<any, NavBarProps>(
-  ({ launchClubLoyalty, cart, setCart, className, variant, handleLogout, ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn } =
+  ({ launchClubLoyalty, cart, setCart, className, variant, ...props }, ref) => {
+    const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
     let navChild, navLinkMobileDropdown, navLinksGroup;
@@ -69,6 +71,15 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
     const logoutButtonClassname =
       "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none";
+
+    const ldclient = useLDClient();
+    function handleLogout() {
+      logoutUser();
+      const context: any = ldclient?.getContext();
+      context.user.tier = null;
+      ldclient?.identify(context);
+      setCookie("ldcontext", context);
+    }
 
     // TODO: popover should be a modular component
     switch (variant) {
@@ -526,10 +537,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
         navChild = (
           <>
             {!isLoggedIn ? null : (
-              <div className="flex space-x-6 ml-auto mr-4 items-center">
-                <Search color={"white"} className="hidden sm:block" />
-                <div className="text-white hidden sm:block">
-                  <QRCodeImage />
+              <div className="flex space-x-3 sm:space-x-6 ml-auto items-center text-white">
+                <Search className="cursor-default hidden sm:block" />
+                <div className="cursor-pointer hidden sm:block">
+                  <QRCodeImage className="" />
                 </div>
 
                 <Popover>
@@ -541,6 +552,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       />
                     </Avatar>
                   </PopoverTrigger>
+
                   <PopoverContent className="w-[300px] h-[440px]">
                     <>
                       <div className="mx-auto flex place-content-center w-full">
@@ -549,13 +561,16 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           className="rounded-full h-48"
                         />
                       </div>
-                      <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
-                        <p className="pt-4">
-                          Thank you {chosenPersona?.personaname || user} for banking with us as a
-                          <br></br>
-                          <span className="text-2xl">Platinum Member!</span>
-                        </p>
-                      </div>
+
+                      <p className="pt-4 text-center  text-black font-sohnelight text-xl">
+                        Thank you {chosenPersona?.personaname || user} for
+                        <br></br>investing with us as a<br></br>
+                        <span className="text-2xl">
+                          {capitalizeFirstLetter(launchClubStatus)} Tier
+                        </span>
+                        !
+                      </p>
+
                       <div className="mx-auto text-center">
                         <Button onClick={handleLogout} className={` ${logoutButtonClassname}`}>
                           Logout

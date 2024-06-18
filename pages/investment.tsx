@@ -1,11 +1,9 @@
 import { useContext } from "react";
 import { motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
-import { useLDClient } from "launchdarkly-react-client-sdk";
 import NavBar from "@/components/ui/navbar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
-import { setCookie } from "cookies-next";
 import LoginContext from "@/utils/contexts/login";
 import InvestmentAccountHeader from "@/components/ui/investmentcomponents/InvestmentAccountHeader";
 
@@ -19,19 +17,7 @@ import StockRecommendationCard from "@/components/ui/investmentcomponents/StockR
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
 
 export default function Investment() {
-  const { isLoggedIn, logoutUser } = useContext(LoginContext);
-
-  const ldclient = useLDClient();
-
-  //TODO: either use this or the one in login.js
-  //TODO: move this into navbar
-  function handleLogout() {
-    logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
-  }
+  const { isLoggedIn, } = useContext(LoginContext);
 
   const cardStyle = "rounded-lg shadow-lg p-5 sm:p-5 bg-white";
 
@@ -48,7 +34,7 @@ export default function Investment() {
             transition={{ duration: 0.5 }}
             className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
           >
-            <NavBar variant={"investment"} handleLogout={handleLogout} />
+            <NavBar variant={"investment"} />
             <InvestmentAccountHeader />
             <div className="my-8 " data-testid="salient-accounts-test-id">
               <div className="mx-auto max-w-7xl font-sohnelight ">

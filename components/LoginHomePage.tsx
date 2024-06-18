@@ -75,15 +75,17 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             </p>
           </div>
 
-          <div className="w-full sm:w-auto z-10">
-            <LoginComponent
-              isLoggedIn={isLoggedIn}
-              setIsLoggedIn={setIsLoggedIn}
-              loginUser={loginUser}
-              variant={variant}
-              name={name}
-            />
-          </div>
+          {!isLoggedIn ? (
+            <div className="w-full sm:w-auto z-10">
+              <LoginComponent
+                isLoggedIn={isLoggedIn}
+                setIsLoggedIn={setIsLoggedIn}
+                loginUser={loginUser}
+                variant={variant}
+                name={name}
+              />
+            </div>
+          ) : null}
         </div>
       </header>
 

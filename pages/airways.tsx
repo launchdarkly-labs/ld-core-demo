@@ -10,7 +10,6 @@ import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
-import { setCookie } from "cookies-next";
 import { Toaster } from "@/components/ui/toaster";
 import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
 import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
@@ -45,14 +44,6 @@ export default function Airways() {
   }
 
   const ldclient = useLDClient();
-
-  function handleLogout() {
-    logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
-  }
 
   function bookTrip() {
     const startDate = `${
@@ -107,7 +98,6 @@ export default function Airways() {
             <NavBar
               launchClubLoyalty={launchClubLoyalty}
               variant="airlines"
-              handleLogout={handleLogout}
             />
 
             <header className={` py-10 lg:py-20 bg-gradient-airways`}>

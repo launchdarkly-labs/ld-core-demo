@@ -5,7 +5,6 @@ import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { checkData } from "@/lib/checkingdata";
-import { setCookie } from "cookies-next";
 import LoginContext from "@/utils/contexts/login";
 import { FederatedCheckingAccount } from "@/components/ui/bankcomponents/federatedChecking";
 import { FederatedCreditAccount } from "@/components/ui/bankcomponents/federatedCredit";
@@ -92,13 +91,6 @@ export default function Bank() {
 
   const ldclient = useLDClient();
 
-  function handleLogout() {
-    logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
-  }
 
   const bankingServicesArr = [
     { imgSrc: "Checking.png", title: "Checking" },
@@ -114,7 +106,7 @@ export default function Bank() {
         <LoginHomePage variant="bank" name="ToggleBank" />
       ) : (
         <div className="mb-8">
-          <NavBar variant={"bank"} handleLogout={handleLogout} />
+          <NavBar variant={"bank"} />
 
           <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl ">
             <section
