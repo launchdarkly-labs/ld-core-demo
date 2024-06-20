@@ -15,7 +15,7 @@ import {
   import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
   
   export default function CheckIn({ trip }: any) {
-    const { launchClubLoyalty, priorityBoarding, mealPromoExperience } =
+    const { priorityBoarding, mealPromoExperience } =
       useFlags();
     const { enrolledInLaunchClub } = useContext(LoginContext);
     const client = useLDClient();
@@ -47,7 +47,7 @@ import {
             <AlertDialogTitle>Ready to Check In?</AlertDialogTitle>
             <AlertDialogDescription>
               <div className="grid lg:flex mx-auto items-center justify-center space-x-4 mt-4">
-                {enrolledInLaunchClub && launchClubLoyalty && (
+                {enrolledInLaunchClub && (
                   <>
                     {priorityBoarding && (
                       <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">

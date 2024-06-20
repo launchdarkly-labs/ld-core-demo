@@ -54,14 +54,12 @@ interface Persona {
 }
 
 const NavBar = React.forwardRef<any, NavBarProps>(
-  ({ launchClubLoyalty, cart, setCart, className, variant, ...props }, ref) => {
+  ({ cart, setCart, className, variant, ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
-    let navChild, navLinkMobileDropdown, navLinksGroup;
-    const navLinkStyling =
-      "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-pointer";
-
+    let navChild;
+  
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
@@ -128,7 +126,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {!isLoggedIn ? null : (
               <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                <div className="hidden sm:block ">{!launchClubLoyalty && <LaunchClubStatus />}</div>
+                <div className="hidden sm:block ">{!enrolledInLaunchClub && <LaunchClubStatus />}</div>
 
                 <Search className="cursor-default hidden sm:block" />
                 <div className="hidden sm:block lg:hidden">
@@ -443,7 +441,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         );
                       })}
 
-                      {launchClubLoyalty && variant?.includes("airlines") && (
+                      {enrolledInLaunchClub && variant?.includes("airlines") && (
                         <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
                           <LaunchClubStatus />
                         </div>
@@ -480,11 +478,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       return (
                         <button
                           href={navLink?.href}
-                          className={`${navLinkStyling} 
+                          className={`hidden sm:block bg-transparent pb-[3rem] items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-pointer
                   ${
                     index === 0
-                      ? `text-white hover:text-white focus:text-airlinetext hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
-                      : `text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-${navElementsVariant[variant]?.navLinkColor}`
+                      ? `text-white hover:text-white focus:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
+                      : `text-navbargrey focus:text-navbarlightgrey hover:text-white hover:bg-${navElementsVariant[variant]?.navLinkColor}`
                   }`}
                           key={index}
                         >

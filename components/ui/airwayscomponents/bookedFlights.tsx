@@ -23,7 +23,7 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { enrolledInLaunchClub } = useContext(LoginContext);
-  const { launchClubLoyalty, priorityBoarding, aiTravelInsights } = useFlags();
+  const { priorityBoarding, aiTravelInsights } = useFlags();
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -289,7 +289,7 @@ export default function BookedFlights() {
                       </div>
                       <div className="border-2 mt-2 border-[#E6E6E6]" />
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
-                        {enrolledInLaunchClub && launchClubLoyalty && (
+                        {enrolledInLaunchClub && (
                           <>
                             {priorityBoarding && (
                               <p className="flex text-black bg-clip-text text-transparent bg-black  ">

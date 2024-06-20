@@ -22,7 +22,6 @@ import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/
 import { SelectTrigger } from "@radix-ui/react-select";
 
 export default function Airways() {
-  const { launchClubLoyalty } = useFlags();
 
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
@@ -96,7 +95,6 @@ export default function Airways() {
             className={`flex h-screen text-white flex-col font-audimat`}
           >
             <NavBar
-              launchClubLoyalty={launchClubLoyalty}
               variant="airlines"
             />
 
@@ -159,7 +157,7 @@ export default function Airways() {
               </div>
             </header>
 
-            <AirlineHero launchClubLoyalty={launchClubLoyalty} showSearch={showSearch} />
+            <AirlineHero showSearch={showSearch} />
 
             <HomePageCardWrapper>
               <HomePageInfoCard
