@@ -26,8 +26,6 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
         const response = await client.send(command);
         let decoder = new TextDecoder();
         let jsontext = JSON.parse(decoder.decode(response.body));
-        // jurassic return structure
-
         res.status(200).json(jsontext);
     } catch (error: any) {
       
