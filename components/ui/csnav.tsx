@@ -69,7 +69,7 @@ export function CSNav() {
             >
               <div onClick={goRelease}>
                 <CSCard
-                  className="bg-gradient-releases cursor-pointer"
+                  className="bg-gradient-bank cursor-pointer"
                   cardTitle="De-risked Releases"
                   cardSubtitle="Let developers move faster and more confidently with feature management."
                   icon={toggleIcon}

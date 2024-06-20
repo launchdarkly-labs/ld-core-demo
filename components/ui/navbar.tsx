@@ -1,6 +1,6 @@
 //@ts-nocheck
 import * as React from "react";
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import { CSNav } from "./csnav";
 import { Search, PanelTopOpen } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
@@ -29,7 +29,6 @@ import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_ho
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
-import { useLDClient } from "launchdarkly-react-client-sdk";
 
 const variantToImageMap = {
   bank: toggleBankHorizontalLogo.src,
@@ -61,7 +60,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
     let navChild, navLinkMobileDropdown, navLinksGroup;
     const navLinkStyling =
-      "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-auto";
+      "hidden sm:block bg-transparent pb-[3rem] flex items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-pointer";
 
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
@@ -71,8 +70,52 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const logoutButtonClassname =
       "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none";
 
-    const ldclient = useLDClient();
-  
+    const navElementsVariant: any = {
+      bank: {
+        navLinks: [
+          {
+            text: "Summary",
+            href: "/bank",
+          },
+          { text: "Transfers", href: "/bank" },
+          { text: "Deposits", href: "/bank" },
+          { text: "External Accounts", href: "/bank" },
+          { text: "Statements", href: "/bank" },
+        ],
+        navLinkColor: "from-banklightblue to-bankdarkblue",
+      },
+      government: {
+        navLinks: [
+          { text: "Submissions", href: "/government" },
+          { text: "About Us", href: "/government" },
+          { text: "Contact Us", href: "/government" },
+        ],
+      },
+      investment: {
+        navLinks: [
+          { text: "Accounts & Trade", href: "/investment" },
+          { text: "Planning", href: "/investment" },
+          { text: "News", href: "/investment" },
+          { text: "Investment Products", href: "/investment" },
+          { text: "About Us", href: "/investment" },
+        ],
+      },
+      market: {
+        navLinks: [
+          { text: "All", href: "/marketplace" },
+          { text: "Account", href: "/marketplace" },
+          { text: "Buy Again", href: "/marketplace" },
+          { text: "Today's Deals", href: "/marketplace" },
+          { text: "Sale", href: "/marketplace" },
+        ],
+      },
+      airlines: {
+        navLinks: [
+          { text: "Book", href: "/airways" },
+          { text: "Check-In", href: "/airways" },
+        ],
+      },
+    };
 
     // TODO: popover should be a modular component
     switch (variant) {
@@ -140,15 +183,19 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem href="/airways">Book</DropdownMenuItem>
+                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                  return (
+                    <DropdownMenuItem href={navLink?.href} key={index}>
+                      {navLink?.text}
+                    </DropdownMenuItem>
+                  );
+                })}
 
-                <DropdownMenuItem href="/airways">Check-In</DropdownMenuItem>
-
-                {launchClubLoyalty && enrolledInLaunchClub && (
+                {/* {launchClubLoyalty && enrolledInLaunchClub && (
                   <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
                     <LaunchClubStatus />
                   </div>
-                )}
+                )} */}
 
                 <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
                   <BookedFlights />
@@ -169,21 +216,26 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            <button
-              href="/airways"
-              className={`${navLinkStyling} ml-12 text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-[length:100%_3px] bg-no-repeat bg-bottom bg-gradient-airline-buttons outline-none cursor-auto`}
-            >
-              Book
-            </button>
+            {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+              return (
+                <button
+                  href={navLink?.href}
+                  className={`${navLinkStyling} 
+                  ${
+                    index === 0
+                      ? "text-white hover:text-white focus:text-airlinetext hover:bg-gradient-airline-buttons bg-gradient-airline-buttons outline-none"
+                      : "text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons"
+                  }`}
+                  key={index}
+                >
+                  {navLink?.text}
+                </button>
+              );
+            })}
+
             <div className="hidden lg:flex">
               <BookedFlights />
             </div>
-            <button
-              href="/airways"
-              className={`"${navLinkStyling} mx-6  text-airlineinactive focus:text-airlinetext  hover:text-white hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-auto`}
-            >
-              Check-In
-            </button>
             {/* {enrolledInLaunchClub && <LaunchClub />} */}
           </>
         );
@@ -240,18 +292,21 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem href="/bank">Book</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Transfers</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Deposits</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">External Accounts</DropdownMenuItem>
-                <DropdownMenuItem href="/bank">Statements</DropdownMenuItem>
+                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                  return (
+                    <DropdownMenuItem href={navLink?.href} key={index}>
+                      {" "}
+                      {navLink?.text}
+                    </DropdownMenuItem>
+                  );
+                })}
               </>
             ) : null}
-
             <div className="flex justify-between">
               <DropdownMenuItem>
-                <Search className="cursor-pointer" />
+                <Search className="" />
               </DropdownMenuItem>
+
               <div className="cursor-pointer">
                 <QRCodeImage />
               </div>
@@ -261,36 +316,22 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            <button
-              href="/bank"
-              className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Summary
-            </button>
-            <button
-              href="/bank"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Transfers
-            </button>
-            <button
-              href="/bank"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Deposits
-            </button>
-            <button
-              href="/bank"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              External Accounts
-            </button>
-            <button
-              href="/bank"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Statements
-            </button>
+            {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+              return (
+                <button
+                  href={navLink?.href}
+                  className={`${navLinkStyling} 
+                  ${
+                    index === 0
+                      ? "text-white hover:text-white focus:text-airlinetext hover:bg-gradient-bank bg-gradient-bank outline-none"
+                      : "text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-bank"
+                  }`}
+                  key={index}
+                >
+                  {navLink?.text}
+                </button>
+              );
+            })}
           </>
         );
 
@@ -361,16 +402,22 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinkMobileDropdown = (
           <>
-            <DropdownMenuItem href="/marketplace">All</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Account</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Buy Again</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Today's Deals</DropdownMenuItem>
-            <DropdownMenuItem href="/bank">Sale</DropdownMenuItem>
-
+            {isLoggedIn ? (
+              <>
+                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                  return (
+                    <DropdownMenuItem href={navLink?.href} key={index}>
+                      {navLink?.text}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </>
+            ) : null}
             <div className="flex justify-between">
               <DropdownMenuItem>
-                <Search className="cursor-pointer" />
+                <Search className="" />
               </DropdownMenuItem>
+
               <div className="cursor-pointer">
                 <QRCodeImage />
               </div>
@@ -380,36 +427,23 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            <button
-              href="/marketplace"
-              className={`${navLinkStyling} ml-12 flex items-start text-white hover:text-white focus:text-airlinetext bg-gradient-experimentation bg-[length:100%_3px]`}
-            >
-              All
-            </button>
-            <button
-              href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
-            >
-              Account
-            </button>
-            <button
-              href="/marketplace"
-              className={`${navLinkStyling}  text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
-            >
-              Buy Again
-            </button>
-            <button
-              href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
-            >
-              Today's Deals
-            </button>
-            <button
-              href="/marketplace"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation bg-[length:100%_3px]`}
-            >
-              Sale
-            </button>
+            {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+              return (
+                <button
+                  href={navLink?.href}
+                  className={`${navLinkStyling} 
+          
+                  ${
+                    index === 0
+                      ? "text-white hover:text-white focus:text-airlinetext hover:bg-gradient-experimentation bg-gradient-experimentation outline-none"
+                      : "text-navbargrey focus:text-airlinetext hover:text-white hover:bg-gradient-experimentation"
+                  }`}
+                  key={index}
+                >
+                  {navLink?.text}
+                </button>
+              );
+            })}
           </>
         );
 
@@ -470,11 +504,14 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem href="/investment">Accounts & Trade</DropdownMenuItem>
-                <DropdownMenuItem href="/investment">Planning</DropdownMenuItem>
-                <DropdownMenuItem href="/investment">News</DropdownMenuItem>
-                <DropdownMenuItem href="/investment">Investment Products</DropdownMenuItem>
-                <DropdownMenuItem href="/investment">About Us</DropdownMenuItem>
+                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                  return (
+                    <DropdownMenuItem href={navLink?.href} key={index}>
+                      {" "}
+                      {navLink?.text}
+                    </DropdownMenuItem>
+                  );
+                })}
               </>
             ) : null}
             <div className="flex justify-between">
@@ -491,40 +528,26 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            <button
-              href="/investment"
-              className={`${navLinkStyling}  text-white  hover:text-white focus:text-airlinetext hover:bg-gradient-investment  bg-gradient-investment outline-none`}
-            >
-              Accounts & Trade
-            </button>
-
-            <button
-              href="/investment"
-              className={`"${navLinkStyling}  text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-investment`}
-            >
-              Planning
-            </button>
-
-            <button
-              href="/investment"
-              className={`"${navLinkStyling}  text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
-            >
-              News
-            </button>
-            <button
-              href="/investment"
-              className={`"${navLinkStyling} text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
-            >
-              Investment Products
-            </button>
-            <button
-              href="/investment"
-              className={`"${navLinkStyling} text-navbargrey focus:text-navbarlightgrey  hover:text-white hover:bg-gradient-investment`}
-            >
-              About Us
-            </button>
+            {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+              return (
+                <button
+                  href={navLink?.href}
+                  className={`${navLinkStyling} 
+          
+                  ${
+                    index === 0
+                      ? "text-white hover:text-white focus:text-airlinetext hover:bg-gradient-investment bg-gradient-investment outline-none"
+                      : "text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-investment"
+                  }`}
+                  key={index}
+                >
+                  {navLink?.text}
+                </button>
+              );
+            })}
           </>
         );
+
         break;
       case "government":
         navChild = (
@@ -582,9 +605,14 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {isLoggedIn ? (
               <>
-                <DropdownMenuItem href="/government">Submissions</DropdownMenuItem>
-                <DropdownMenuItem href="/government">About Us</DropdownMenuItem>
-                <DropdownMenuItem href="/government">Contact Us</DropdownMenuItem>
+                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                  return (
+                    <DropdownMenuItem href={navLink?.href} key={index}>
+                      {" "}
+                      {navLink?.text}
+                    </DropdownMenuItem>
+                  );
+                })}
               </>
             ) : null}
 
@@ -601,24 +629,22 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
         navLinksGroup = (
           <>
-            <button
-              href="/government"
-              className={`${navLinkStyling} ml-12 text-white hover:text-white focus:text-airlinetext bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Submissions
-            </button>
-            <button
-              href="/government"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              About Us
-            </button>
-            <button
-              href="/government"
-              className={`${navLinkStyling} text-airlineinactive focus:text-airlinetext hover:text-white hover:bg-gradient-to-r from-banklightblue to-bankdarkblue bg-[length:100%_3px]`}
-            >
-              Contact Us
-            </button>
+            {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+              return (
+                <button
+                  href={navLink?.href}
+                  className={`${navLinkStyling} 
+                  ${
+                    index === 0
+                      ? "text-white hover:text-white focus:text-airlinetext hover:bg-gradient-bank bg-gradient-bank outline-none"
+                      : "text-navbargrey focus:text-airlinetext  hover:text-white hover:bg-gradient-bank"
+                  }`}
+                  key={index}
+                >
+                  {navLink?.text}
+                </button>
+              );
+            })}
           </>
         );
 

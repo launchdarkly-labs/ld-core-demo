@@ -37,7 +37,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 
       <header
         className={` ${
-          variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-releases"
+          variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
         }`}
       >
         {variant === "market" && (
@@ -126,7 +126,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 const homePageVariants: any = {
   bank: {
     industryMessages: "More than 100,000 customers worldwide",
-    gradiantColor: "bg-gradient-releases",
+    gradiantColor: "bg-gradient-bank",
     bankingServicesArr: [
       { imgSrc: "Checking.png", title: "Checking" },
       { imgSrc: "Business.png", title: "Business" },
@@ -206,7 +206,7 @@ const homePageVariants: any = {
   government: {
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
-    gradiantColor: "bg-gradient-releases",
+    gradiantColor: "bg-gradient-bank",
     cards: [
       {
         titleText: "Cybersecurity",

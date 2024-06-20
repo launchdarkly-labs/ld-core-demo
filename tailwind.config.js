@@ -32,10 +32,8 @@ module.exports = {
       },
       backgroundImage: (theme) => ({
         "gradient-radial": "radial-gradient(ellipse at center, #00c0e7 0%, #a34fde 100%)",
-        "gradient-releases": "linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)", 
+        "gradient-bank": "linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)", 
         "button-bank-gradient": "linear-gradient(195deg, #3DD6F5, #a34fde)",
-        "gradient-blue":
-          "linear-gradient(225deg, #405BFF -5.3%, #3DD6F5 112.86%)",
         "gradient-targeting": "linear-gradient(222deg,#18bdde 1.56%,#405bff 96.51%)",
         "gradient-experimentation":
           "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
