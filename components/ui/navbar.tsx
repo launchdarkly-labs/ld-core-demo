@@ -59,7 +59,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
       useContext(LoginContext);
 
     let navChild;
-  
+
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
@@ -126,7 +126,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {!isLoggedIn ? null : (
               <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                <div className="hidden sm:block ">{enrolledInLaunchClub && <LaunchClubStatus />}</div>
+                <div className="hidden sm:block ">
+                  {enrolledInLaunchClub && <LaunchClubStatus />}
+                </div>
 
                 <Search className="cursor-default hidden sm:block" />
                 <div className="hidden sm:block lg:hidden">
@@ -406,11 +408,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <QRCodeImage />
           </div>
         );
-        navLinkMobileDropdown = (
-          <div className="h-full w-full border-2 border-black rounded-md cursor-pointer">
-            <QRCodeImage />
-          </div>
-        );
     }
 
     return (
@@ -502,7 +499,83 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </div>
           ) : null}
 
-          {navChild}
+          {!isLoggedIn ? null : (
+            <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+              {variant?.includes("market") && (
+                <>
+                  <StoreCart cart={cart} setCart={setCart} />
+                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
+                </>
+              )}
+
+              {variant?.includes("airlines") && (
+                <div className="hidden sm:block ">
+                  {enrolledInLaunchClub && <LaunchClubStatus />}
+                </div>
+              )}
+
+              <Search className="cursor-default hidden sm:block" />
+              {variant?.includes("airlines") && (
+                <div className="hidden sm:block lg:hidden">
+                  <BookedFlights />
+                </div>
+              )}
+              <div className="cursor-pointer hidden sm:block">
+                <QRCodeImage className="" />
+              </div>
+
+              <Popover>
+                <PopoverTrigger>
+                  <Avatar>
+                    <AvatarImage
+                      src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                      className=""
+                    />
+                  </Avatar>
+                </PopoverTrigger>
+
+                <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
+                  {isLoggedIn ? (
+                    <>
+                      <div className="mx-auto flex place-content-center w-full">
+                        <img
+                          src={
+                            personas.find((persona) => persona.personaname === user)
+                              ?.personaimage || "ToggleAvatar.png"
+                          }
+                          className="rounded-full h-48"
+                        />
+                      </div>
+                      <div className="mx-auto text-center">
+                        <p className="text-2xl font-normal text-black font-shone mt-4">
+                          Hi {chosenPersona?.personaname}
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center">
+                        <p className="text-md uppercase font-normal tracking-widest text-[#939598] font-shone mt-0">
+                          PLATINUM MEMBER
+                        </p>
+                      </div>
+                      <div className="mx-auto text-center mt-4">
+                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
+                          Logout
+                        </Button>
+                        <QuickLoginDialog personas={personas} variant="market" />
+                      </div>
+                    </>
+                  ) : (
+                    <LoginComponent
+                      isLoggedIn={isLoggedIn}
+                      setIsLoggedIn={setIsLoggedIn}
+                      loginUser={loginUser}
+                      name="Galaxy Marketplace"
+                      variant={"market"}
+                    />
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
         </div>
       </nav>
     );
