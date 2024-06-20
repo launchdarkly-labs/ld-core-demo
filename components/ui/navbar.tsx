@@ -58,357 +58,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
-    let navChild;
-
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
     const imageSrc = variantToImageMap[variant];
-
-    const logoutButtonClassname =
-      "bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none";
-
-    const navElementsVariant: any = {
-      bank: {
-        navLinks: [
-          {
-            text: "Summary",
-            href: "/bank",
-          },
-          { text: "Transfers", href: "/bank" },
-          { text: "Deposits", href: "/bank" },
-          { text: "External Accounts", href: "/bank" },
-          { text: "Statements", href: "/bank" },
-        ],
-        navLinkColor: "gradient-bank",
-      },
-      government: {
-        navLinks: [
-          { text: "Submissions", href: "/government" },
-          { text: "About Us", href: "/government" },
-          { text: "Contact Us", href: "/government" },
-        ],
-        navLinkColor: "gradient-bank",
-      },
-      investment: {
-        navLinks: [
-          { text: "Accounts & Trade", href: "/investment" },
-          { text: "Planning", href: "/investment" },
-          { text: "News", href: "/investment" },
-          { text: "Investment Products", href: "/investment" },
-          { text: "About Us", href: "/investment" },
-        ],
-        navLinkColor: "gradient-investment",
-      },
-      market: {
-        navLinks: [
-          { text: "All", href: "/marketplace" },
-          { text: "Account", href: "/marketplace" },
-          { text: "Buy Again", href: "/marketplace" },
-          { text: "Today's Deals", href: "/marketplace" },
-          { text: "Sale", href: "/marketplace" },
-        ],
-        navLinkColor: "gradient-experimentation",
-      },
-      airlines: {
-        navLinks: [
-          { text: "Book", href: "/airways" },
-          { text: "Check-In", href: "/airways" },
-        ],
-        navLinkColor: "gradient-airline-buttons",
-      },
-    };
-
-    // TODO: popover should be a modular component
-    switch (variant) {
-      case "airlines":
-        navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                <div className="hidden sm:block ">
-                  {enrolledInLaunchClub && <LaunchClubStatus />}
-                </div>
-
-                <Search className="cursor-default hidden sm:block" />
-                <div className="hidden sm:block lg:hidden">
-                  <BookedFlights />
-                </div>
-                <div className="cursor-pointer hidden sm:block">
-                  <QRCodeImage className="" />
-                </div>
-
-                <Popover>
-                  <PopoverTrigger>
-                    <Avatar>
-                      <AvatarImage
-                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                        className=""
-                      />
-                    </Avatar>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-[300px] h-[440px]">
-                    <>
-                      <div className="mx-auto flex place-content-center w-full">
-                        <img
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className="rounded-full h-48"
-                        />
-                      </div>
-                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
-                        <p className="pt-4">
-                          Thank you {chosenPersona?.personaname || user} for flying Launch Airways
-                          with{"  "}
-                          <br></br>
-                          <span className="text-2xl">
-                            {capitalizeFirstLetter(launchClubStatus)} Tier
-                          </span>
-                          !
-                        </p>
-                      </div>
-                      <div className="mx-auto text-center">
-                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
-                          Logout
-                        </Button>
-                        <QuickLoginDialog personas={personas} variant={variant} />
-                      </div>
-                    </>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </>
-        );
-
-        break;
-      case "bank":
-        navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <div className="flex space-x-6 ml-auto mr-4 items-center">
-                <Search color={"white"} className="hidden sm:block" />
-                <div className="text-white hidden sm:block">
-                  <QRCodeImage />
-                </div>
-
-                <Popover>
-                  <PopoverTrigger>
-                    <Avatar>
-                      <AvatarImage
-                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                        className=""
-                      />
-                    </Avatar>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] h-[440px]">
-                    <>
-                      <div className="mx-auto flex place-content-center w-full">
-                        <img
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className="rounded-full h-48"
-                        />
-                      </div>
-                      <div className="mx-auto text-center align-center flex text-black font-sohnelight pt-4  text-xl items-center align-center">
-                        <p className="pt-4">
-                          Thank you {chosenPersona?.personaname || user} for banking with us as a
-                          <br></br>
-                          <span className="text-2xl">Platinum Member!</span>
-                        </p>
-                      </div>
-                      <div className="mx-auto text-center">
-                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
-                          Logout
-                        </Button>
-                        <QuickLoginDialog personas={personas} variant={variant} />
-                      </div>
-                    </>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </>
-        );
-
-        break;
-      case "market":
-        navChild = (
-          <div className="flex space-x-3 sm:space-x-6 ml-auto sm:mr-4 items-center">
-            <StoreCart cart={cart} setCart={setCart} />
-            <Search color={"white"} className="hidden sm:block cursor-pointer" />
-            <div className="hidden sm:block cursor-pointer text-white">
-              <QRCodeImage />
-            </div>
-
-            <Popover>
-              <PopoverTrigger>
-                <Avatar>
-                  <AvatarImage
-                    src={
-                      personas.find((persona) => persona.personaname === user)?.personaimage ||
-                      "ToggleAvatar.png"
-                    }
-                    className=""
-                  />
-                </Avatar>
-              </PopoverTrigger>
-              <PopoverContent className={`w-[300px] h-auto ${!isLoggedIn ? "p-0" : ""}`}>
-                {isLoggedIn ? (
-                  <>
-                    <div className="mx-auto flex place-content-center w-full">
-                      <img
-                        src={
-                          personas.find((persona) => persona.personaname === user)?.personaimage ||
-                          "ToggleAvatar.png"
-                        }
-                        className="rounded-full h-48"
-                      />
-                    </div>
-                    <div className="mx-auto text-center">
-                      <p className="text-2xl font-normal text-black font-shone mt-4">
-                        Hi {chosenPersona?.personaname}
-                      </p>
-                    </div>
-                    <div className="mx-auto text-center">
-                      <p className="text-md uppercase font-normal tracking-widest text-[#939598] font-shone mt-0">
-                        PLATINUM MEMBER
-                      </p>
-                    </div>
-                    <div className="mx-auto text-center mt-4">
-                      <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
-                        Logout
-                      </Button>
-                      <QuickLoginDialog personas={personas} variant="market" />
-                    </div>
-                  </>
-                ) : (
-                  <LoginComponent
-                    isLoggedIn={isLoggedIn}
-                    setIsLoggedIn={setIsLoggedIn}
-                    loginUser={loginUser}
-                    name="Galaxy Marketplace"
-                    variant={"market"}
-                  />
-                )}
-              </PopoverContent>
-            </Popover>
-          </div>
-        );
-
-        break;
-      case "investment":
-        navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <div className="flex space-x-3 sm:space-x-6 ml-auto items-center text-white">
-                <Search className="cursor-default hidden sm:block" />
-                <div className="cursor-pointer hidden sm:block">
-                  <QRCodeImage className="" />
-                </div>
-
-                <Popover>
-                  <PopoverTrigger>
-                    <Avatar>
-                      <AvatarImage
-                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                        className=""
-                      />
-                    </Avatar>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-[300px] h-[440px]">
-                    <>
-                      <div className="mx-auto flex place-content-center w-full">
-                        <img
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className="rounded-full h-48"
-                        />
-                      </div>
-
-                      <p className="pt-4 text-center  text-black font-sohnelight text-xl">
-                        Thank you {chosenPersona?.personaname || user} for
-                        <br></br>investing with us as a<br></br>
-                        <span className="text-2xl">
-                          {capitalizeFirstLetter(launchClubStatus)} Tier
-                        </span>
-                        !
-                      </p>
-
-                      <div className="mx-auto text-center">
-                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
-                          Logout
-                        </Button>
-                        <QuickLoginDialog personas={personas} variant={variant} />
-                      </div>
-                    </>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </>
-        );
-
-        break;
-      case "government":
-        navChild = (
-          <>
-            {!isLoggedIn ? null : (
-              <div className="flex space-x-3 sm:space-x-6 ml-auto items-center text-white">
-                <Search className="cursor-default hidden sm:block" />
-                <div className="cursor-pointer hidden sm:block">
-                  <QRCodeImage className="" />
-                </div>
-
-                <Popover>
-                  <PopoverTrigger>
-                    <Avatar>
-                      <AvatarImage
-                        src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                        className=""
-                      />
-                    </Avatar>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-[300px] h-[440px]">
-                    <>
-                      <div className="mx-auto flex place-content-center w-full">
-                        <img
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
-                          className="rounded-full h-48"
-                        />
-                      </div>
-
-                      <p className="pt-4 text-center  text-black font-sohnelight text-xl">
-                        Thank you {chosenPersona?.personaname || user} for
-                        <br></br>investing with us as a<br></br>
-                        <span className="text-2xl">
-                          {capitalizeFirstLetter(launchClubStatus)} Tier
-                        </span>
-                        !
-                      </p>
-
-                      <div className="mx-auto text-center">
-                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
-                          Logout
-                        </Button>
-                        <QuickLoginDialog personas={personas} variant={variant} />
-                      </div>
-                    </>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </>
-        );
-
-        break;
-      default:
-        navChild = (
-          <div className="ml-auto cursor-pointer flex self-center">
-            <QRCodeImage />
-          </div>
-        );
-    }
 
     return (
       <nav className="w-full bg-black z-40 font-audimat transition-all duration-150 py-6">
@@ -499,14 +152,9 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </div>
           ) : null}
 
-          {!isLoggedIn ? null : (
+          {!isLoggedIn && !variant.includes("market") ? null : (
             <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-              {variant?.includes("market") && (
-                <>
-                  <StoreCart cart={cart} setCart={setCart} />
-                  <Search color={"white"} className="hidden sm:block cursor-pointer" />
-                </>
-              )}
+              {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
 
               {variant?.includes("airlines") && (
                 <div className="hidden sm:block ">
@@ -514,13 +162,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 </div>
               )}
 
-              <Search className="cursor-default hidden sm:block" />
+              <Search className="cursor-default hidden sm:block text-white" />
               {variant?.includes("airlines") && (
                 <div className="hidden sm:block lg:hidden">
                   <BookedFlights />
                 </div>
               )}
-              <div className="cursor-pointer hidden sm:block">
+              <div className="cursor-pointer hidden sm:block text-white">
                 <QRCodeImage className="" />
               </div>
 
@@ -546,18 +194,21 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           className="rounded-full h-48"
                         />
                       </div>
-                      <div className="mx-auto text-center">
-                        <p className="text-2xl font-normal text-black font-shone mt-4">
-                          Hi {chosenPersona?.personaname}
+                      <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
+                        <p className="pt-4">
+                          {navElementsVariant[variant]?.popoverMessage}
+                          {chosenPersona?.personaname || user}, as a<br></br>
+                          <span className="text-2xl">
+                            {capitalizeFirstLetter(launchClubStatus)} Tier
+                          </span>
+                          !
                         </p>
                       </div>
                       <div className="mx-auto text-center">
-                        <p className="text-md uppercase font-normal tracking-widest text-[#939598] font-shone mt-0">
-                          PLATINUM MEMBER
-                        </p>
-                      </div>
-                      <div className="mx-auto text-center mt-4">
-                        <Button onClick={logoutUser} className={` ${logoutButtonClassname}`}>
+                        <Button
+                          onClick={logoutUser}
+                          className={`bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none`}
+                        >
                           Logout
                         </Button>
                         <QuickLoginDialog personas={personas} variant="market" />
@@ -581,5 +232,61 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     );
   }
 );
+
+const navElementsVariant: any = {
+  bank: {
+    navLinks: [
+      {
+        text: "Summary",
+        href: "/bank",
+      },
+      { text: "Transfers", href: "/bank" },
+      { text: "Deposits", href: "/bank" },
+      { text: "External Accounts", href: "/bank" },
+      { text: "Statements", href: "/bank" },
+    ],
+    navLinkColor: "gradient-bank",
+    popoverMessage: "Thank you for banking with us, ",
+  },
+  government: {
+    navLinks: [
+      { text: "Submissions", href: "/government" },
+      { text: "About Us", href: "/government" },
+      { text: "Contact Us", href: "/government" },
+    ],
+    navLinkColor: "gradient-bank",
+    popoverMessage: "Thank you for your service, ",
+  },
+  investment: {
+    navLinks: [
+      { text: "Accounts & Trade", href: "/investment" },
+      { text: "Planning", href: "/investment" },
+      { text: "News", href: "/investment" },
+      { text: "Investment Products", href: "/investment" },
+      { text: "About Us", href: "/investment" },
+    ],
+    navLinkColor: "gradient-investment",
+    popoverMessage: "Thank you for investing with us, ",
+  },
+  market: {
+    navLinks: [
+      { text: "All", href: "/marketplace" },
+      { text: "Account", href: "/marketplace" },
+      { text: "Buy Again", href: "/marketplace" },
+      { text: "Today's Deals", href: "/marketplace" },
+      { text: "Sale", href: "/marketplace" },
+    ],
+    navLinkColor: "gradient-experimentation",
+    popoverMessage: "Thank you for shopping with us, ",
+  },
+  airlines: {
+    navLinks: [
+      { text: "Book", href: "/airways" },
+      { text: "Check-In", href: "/airways" },
+    ],
+    navLinkColor: "gradient-airline-buttons",
+    popoverMessage: "Thank you for flying with us, ",
+  },
+};
 
 export default NavBar;
