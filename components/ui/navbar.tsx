@@ -126,7 +126,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {!isLoggedIn ? null : (
               <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                <div className="hidden sm:block ">{!enrolledInLaunchClub && <LaunchClubStatus />}</div>
+                <div className="hidden sm:block ">{enrolledInLaunchClub && <LaunchClubStatus />}</div>
 
                 <Search className="cursor-default hidden sm:block" />
                 <div className="hidden sm:block lg:hidden">
