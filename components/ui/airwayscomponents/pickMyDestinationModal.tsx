@@ -39,8 +39,9 @@ export default function DestinationPicker() {
       setDestinations(JSON.parse(data))
       setLoading(false)
     }
-    catch {
+    catch(error) {
       console.error(new Error("there was a problem with the API"))
+      console.error(error)
     }
   }
 

@@ -252,7 +252,7 @@ def createFeatureExperiment():
 
     while True:
         if response.status_code == 201:
-            print("Feature Experiment created successfully")
+            print("Cart Suggested Items Feature Experiment created successfully")
             break
         elif response.status_code == 429:
             print("Rate limit exceeded, waiting 10 seconds to retry...")
@@ -390,7 +390,7 @@ def createFunnelExperiment():
 
     while True:
         if response.status_code == 201:
-            print("Funnel Experiment created successfully")
+            print("Store Headers Funnel Experiment created successfully")
             break
         elif response.status_code == 429:
             print("Rate limit exceeded, waiting 10 seconds to retry...")

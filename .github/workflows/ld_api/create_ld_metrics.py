@@ -39,13 +39,13 @@ def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
     
     metricPayload = {
         "name": "AI Chatbot Negative Feedback",
-        "key": "AI chatbot bad service",
+        "eventKey": "AI Chatbot Bad Service",
         "Description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
         "isNumeric": False,
-        "eventKey": "AI Chatbot Bad Service",
+        "key": "AI chatbot bad service",
         "kind": "custom",
         "successCriteria": "LowerThanBaseline",
-        "randomizationUnits": ["audience", "user"],
+        "randomizationUnits": ["audience"],
         "tags": ["experiment"]
     }
     
@@ -58,13 +58,13 @@ def createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL):
     
     metricPayload = {
         "name": "AI Chatbot Positive Feedback",
-        "key": "AI chatbot good service",
+        "eventKey": "AI chatbot good service",
         "Description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
         "isNumeric": False,
-        "eventKey": "AI chatbot good service",
+        "key": "AI chatbot good service",
         "kind": "custom",
         "successCriteria": "HigherThanBaseline",
-        "randomizationUnits": ["audience", "user"],
+        "randomizationUnits": ["audience"],
         "tags": ["experiment"]
     }
     

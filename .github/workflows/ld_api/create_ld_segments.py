@@ -29,11 +29,6 @@ def createSegmentsForLDEnvs(ld_env_key):
     checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(betaSegmentPayload))
     patchBetaSegmentPayload(ld_api_key, environment_key, project_key)
     
-    print("Creating A330 Passengers segment for " + environment_key + " environment")
-    a330SegmentPayload = getA330SegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(a330SegmentPayload))
-    patchA330SegmentPayload(ld_api_key, environment_key, project_key)
-    
     print("Creating Launch Club - Platinum segment for " + environment_key + " environment")
     platinumSegmentPayload = getPlatinumSegmentPayload()
     checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(platinumSegmentPayload))
@@ -158,34 +153,7 @@ def patchBetaSegmentPayload(ld_api_key, environment_key, project_key):
     if response.status_code == 200:
         print("Patch for Beta Users segment successful")
 
-def patchA330SegmentPayload(ld_api_key, environment_key, project_key):
-    
-    segment_key = "airline-a-330-passengers"
-    patchSegmentURL = "/segments/" + project_key + "/" + environment_key + "/" + segment_key
-    
-    patchPayload = {
-        "patch":[
-            {
-                "op": "add",
-                "path": "/rules/0",
-                "value": {
-                    "clauses": [{ 
-                        "contextKind": "experience",
-                        "attribute": "airplane",
-                        "op": "in",
-                        "values": ["a330"],
-                        "negate": False
-                    }]
-                }
-            }
-        ]
-    }
-    
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
-    
-    if response.status_code == 200:
-        print("Patch for A330 Passengers segment successful")
-    
+
     
 def getDevTeamSegmentPayload():
     
@@ -225,20 +193,6 @@ def getPlatinumSegmentPayload():
         "description": "Exclusive targeting for Platinum Launch Club users",
         "tags": [
             "launchClubLoyalty"
-        ],
-        "unbounded": False,
-    }
-    
-    return payload
-    
-def getA330SegmentPayload():
-    
-    payload = {
-        "name": "A330 Passengers",
-        "key": "airline-a-330-passengers",
-        "description": "Any user who is flying on an A330 Airplane",
-        "tags": [
-            "A330-passengers"
         ],
         "unbounded": False,
     }

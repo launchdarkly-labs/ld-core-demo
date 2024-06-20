@@ -15,7 +15,8 @@ def main():
     
 def update_ld_project():
     
-    demo_namespace = "aqadri"
+    demo_namespace = os.getenv('DEMO_NAMESPACE')
+    LD_API_KEY = os.getenv('LD_API_KEY')
 
     print('Update Cart Suggested Items Feature Flag Config')
     update_command = f'ldcli flags update --project {demo_namespace}-ld-demo --flag cartSuggestedItems --semantic-patch -d "$(cat ./.github/workflows/update_resources/cartSuggestedItems.json)"'
@@ -88,8 +89,6 @@ def update_ld_project():
     print('Create AI Chatbot Negative Feedback Metric')
     update_command = f'ldcli metrics create --project {demo_namespace}-ld-demo -d "$(cat ./.github/workflows/update_resources/aiChatbotNegativeFeedback.json)"'
     runCommand(update_command)
-    
-    
     
 def runCommand(command):
     
