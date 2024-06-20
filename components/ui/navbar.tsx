@@ -124,9 +124,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <>
             {!isLoggedIn ? null : (
               <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
-                <div className="hidden sm:block">
-                  {launchClubLoyalty && enrolledInLaunchClub && <LaunchClubStatus />}
-                </div>
+                <div className="hidden sm:block">{!launchClubLoyalty && <LaunchClubStatus />}</div>
 
                 <Search className="cursor-default hidden sm:block" />
                 <div className="hidden sm:block lg:hidden">
@@ -179,40 +177,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLinkMobileDropdown = (
-          <>
-            {isLoggedIn ? (
-              <>
-                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                  return (
-                    <DropdownMenuItem href={navLink?.href} key={index}>
-                      {navLink?.text}
-                    </DropdownMenuItem>
-                  );
-                })}
-
-                {/* {launchClubLoyalty && enrolledInLaunchClub && (
-                  <div className="block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                    <LaunchClubStatus />
-                  </div>
-                )} */}
-
-                <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                  <BookedFlights />
-                </div>
-              </>
-            ) : null}
-            <div className="flex justify-between">
-              <DropdownMenuItem>
-                <Search className="" />
-              </DropdownMenuItem>
-
-              <div className="cursor-pointer">
-                <QRCodeImage />
-              </div>
-            </div>
-          </>
-        );
 
         navLinksGroup = (
           <>
@@ -236,7 +200,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <div className="hidden lg:flex">
               <BookedFlights />
             </div>
-            {/* {enrolledInLaunchClub && <LaunchClub />} */}
           </>
         );
         break;
@@ -288,31 +251,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLinkMobileDropdown = (
-          <>
-            {isLoggedIn ? (
-              <>
-                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                  return (
-                    <DropdownMenuItem href={navLink?.href} key={index}>
-                      {" "}
-                      {navLink?.text}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </>
-            ) : null}
-            <div className="flex justify-between">
-              <DropdownMenuItem>
-                <Search className="" />
-              </DropdownMenuItem>
-
-              <div className="cursor-pointer">
-                <QRCodeImage />
-              </div>
-            </div>
-          </>
-        );
 
         navLinksGroup = (
           <>
@@ -400,31 +338,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </div>
         );
 
-        navLinkMobileDropdown = (
-          <>
-            {isLoggedIn ? (
-              <>
-                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                  return (
-                    <DropdownMenuItem href={navLink?.href} key={index}>
-                      {navLink?.text}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </>
-            ) : null}
-            <div className="flex justify-between">
-              <DropdownMenuItem>
-                <Search className="" />
-              </DropdownMenuItem>
-
-              <div className="cursor-pointer">
-                <QRCodeImage />
-              </div>
-            </div>
-          </>
-        );
-
         navLinksGroup = (
           <>
             {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
@@ -500,31 +413,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLinkMobileDropdown = (
-          <>
-            {isLoggedIn ? (
-              <>
-                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                  return (
-                    <DropdownMenuItem href={navLink?.href} key={index}>
-                      {" "}
-                      {navLink?.text}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </>
-            ) : null}
-            <div className="flex justify-between">
-              <DropdownMenuItem>
-                <Search className="" />
-              </DropdownMenuItem>
-
-              <div className="cursor-pointer">
-                <QRCodeImage />
-              </div>
-            </div>
-          </>
-        );
 
         navLinksGroup = (
           <>
@@ -601,32 +489,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           </>
         );
 
-        navLinkMobileDropdown = (
-          <>
-            {isLoggedIn ? (
-              <>
-                {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                  return (
-                    <DropdownMenuItem href={navLink?.href} key={index}>
-                      {" "}
-                      {navLink?.text}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </>
-            ) : null}
-
-            <div className="flex justify-between">
-              <DropdownMenuItem>
-                <Search className="cursor-pointer" />
-              </DropdownMenuItem>
-              <div className="cursor-pointer">
-                <QRCodeImage />
-              </div>
-            </div>
-          </>
-        );
-
+        
         navLinksGroup = (
           <>
             {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
@@ -678,7 +541,43 @@ const NavBar = React.forwardRef<any, NavBarProps>(
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuContent>{navLinkMobileDropdown}</DropdownMenuContent>
+              <DropdownMenuContent>
+                <>
+                  {isLoggedIn ? (
+                    <>
+                      {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                        return (
+                          <DropdownMenuItem href={navLink?.href} key={index}>
+                            {navLink?.text}
+                          </DropdownMenuItem>
+                        );
+                      })}
+
+                      {launchClubLoyalty && variant?.includes("airlines") && (
+                        <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
+                          <LaunchClubStatus />
+                        </div>
+                      )}
+
+                      {variant?.includes("airlines") && (
+                        <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                          <BookedFlights />
+                        </div>
+                      )}
+                    </>
+                  ) : null}
+
+                  <div className="flex justify-between">
+                    <DropdownMenuItem>
+                      <Search className="" />
+                    </DropdownMenuItem>
+
+                    <div className="cursor-pointer">
+                      <QRCodeImage />
+                    </div>
+                  </div>
+                </>
+              </DropdownMenuContent>
             </DropdownMenuPortal>
           </DropdownMenu>
 
