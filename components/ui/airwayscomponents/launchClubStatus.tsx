@@ -14,7 +14,7 @@ const LaunchClubStatus = () => {
 
   return (
     <Popover>
-      <PopoverTrigger className="flex text-xl items-center">
+      <PopoverTrigger className="flex text-lg items-center">
         <PlaneIcon className="mr-2" />
         Launch Club
       </PopoverTrigger>
