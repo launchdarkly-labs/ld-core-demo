@@ -109,6 +109,8 @@ def runCommand(command):
         if 'error' in response:
             print(f"Failed to run command. Response ->  {response}")
             break
+        else:
+            break
         
     
 if __name__ == "__main__":
