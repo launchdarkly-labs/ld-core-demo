@@ -16,7 +16,7 @@ def main():
     experiment_key = "ai-chatbot-experiment"
     url = "https://app.launchdarkly.com/api/v2/projects/" + project_key + "/environments/" + environment_key + "/experiments/" + experiment_key
 
-    headers = {"Authorization": "api-b7249a11-dd14-495d-9d4f-1040259d8c71", "LD-API-Version": "beta"}
+    headers = {"Authorization": os.getenv('LD_API_KEY'), "LD-API-Version": "beta"}
 
     response = requests.get(url, headers=headers)
 
