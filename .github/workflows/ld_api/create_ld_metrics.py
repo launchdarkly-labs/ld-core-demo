@@ -14,7 +14,7 @@ def main():
     
     if len(sys.argv) > 1:
         ld_env_key = sys.argv[1]
-        print('Creating Metrics for LaunchDarkly Project: ')
+        
         createMetricsForLDProject(ld_env_key)
     
 def createMetricsForLDProject(ld_api_key):
@@ -22,6 +22,8 @@ def createMetricsForLDProject(ld_api_key):
     namespace = os.getenv('NAMESPACE')
     project_key = f"{namespace}-ld-demo"
     createMetricURL = "/metrics/" + project_key
+    
+    print('Creating Metrics for LaunchDarkly Project: ' +  project_key)
     
     createStoreAccessedMetric(ld_api_key, createMetricURL)
     createItemAddedMetrics(ld_api_key, createMetricURL)
@@ -51,7 +53,6 @@ def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
     }
     
     response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
-    print(response.status_code)
     if response.status_code == 201:
         print("Metric 'AI Chatbot Negative Feedback' created successfully.")
         
