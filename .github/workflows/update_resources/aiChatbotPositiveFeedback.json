@@ -1,15 +1,11 @@
 {
     "name": "AI Chatbot Positive Feedback",
-    "key": "ai-chatbot-good-service",
-    "description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
-    "kind": "custom",
-    "isNumeric": false,
     "eventKey": "AI chatbot good service",
+    "Description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
+    "isNumeric": false,
+    "key": "ai-chatbot-good-service",
+    "kind": "custom",
     "successCriteria": "HigherThanBaseline",
-    "randomizationUnits": "audience",
-    "tags": [
-        "AI",
-        "Chatbot",
-        "Positive Feedback"
-    ]
+    "randomizationUnits": ["audience"],
+    "tags": ["experiment"]
 }

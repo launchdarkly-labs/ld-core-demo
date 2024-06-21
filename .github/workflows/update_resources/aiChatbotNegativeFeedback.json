@@ -1,15 +1,11 @@
 {
     "name": "AI Chatbot Negative Feedback",
-    "key": "ai-chatbot-bad-service",
-    "description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
-    "kind": "custom",
-    "isNumeric": false,
     "eventKey": "AI Chatbot Bad Service",
+    "Description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
+    "isNumeric": false,
+    "key": "ai-chatbot-bad-service",
+    "kind": "custom",
     "successCriteria": "LowerThanBaseline",
-    "randomizationUnits": "audience",
-    "tags": [
-        "AI",
-        "Chatbot",
-        "Positive Feedback"
-    ]
+    "randomizationUnits": ["audience"],
+    "tags": ["experiment"]
 }

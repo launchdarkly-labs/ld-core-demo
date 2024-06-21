@@ -60,7 +60,7 @@ jobs:
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
           DEMO_NAMESPACE: ${{ env.DEMO_NAMESPACE }}
-        run: python ./.github/workflows/update_resources/create_ai_chatbot_experiment.py ${{ env.DEMO_NAMESPACE }}
+        run: python ./.github/workflows/update_resources/createChatbotExperiment.py ${{ env.DEMO_NAMESPACE }}
 
       - name: Create .env file
         run: |
