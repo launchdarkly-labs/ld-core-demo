@@ -90,6 +90,9 @@ def update_ld_project():
     update_command = f'ldcli metrics create --project {demo_namespace}-ld-demo -d "$(cat ./.github/workflows/update_resources/aiChatbotNegativeFeedback.json)"'
     runCommand(update_command)
     
+    print('Delete A330 Passengers Segment')
+    update_command = f'ldcli segments delete --project {demo_namespace}-ld-demo --environment {demo_namespace} --segment airline-a-330-passengers'
+    
 def runCommand(command):
     
     while True:
