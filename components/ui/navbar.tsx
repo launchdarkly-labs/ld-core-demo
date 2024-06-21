@@ -17,7 +17,6 @@ import {
   DropdownMenuPortal,
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
-import LDLogoWhite from "@/assets/img/LDLogoWhite.svg";
 import QRCodeImage from "./QRCodeImage";
 import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
@@ -30,21 +29,11 @@ import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketp
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
 
-const variantToImageMap = {
-  bank: toggleBankHorizontalLogo.src,
-  airlines: launchAirwaysHorizontalLogo.src,
-  market: galaxyMarketplaceHorizontalLogo.src,
-  investment: frontierCapitalHorizontalLogo.src,
-  government: bureauOfRiskReductionHorizontalLogo.src,
-  undefined: LDLogoWhite.src,
-};
-
 interface NavBarProps {
   cart: InventoryItem[];
   setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
   variant: string;
 }
-
 interface Persona {
   id: string | number;
   personaname: string;
@@ -53,16 +42,16 @@ interface Persona {
   personaemail: string;
 }
 
+//TODO: change user to christine, create a plat user already for targeting, 
 const NavBar = React.forwardRef<any, NavBarProps>(
-  ({ cart, setCart, className, variant, ...props }, ref) => {
+  ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
-    const imageSrc = variantToImageMap[variant];
-
+   
     return (
       <nav className="w-full bg-black z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
@@ -70,7 +59,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <CSNav />
           </div>
           <div className="ml-2 sm:ml-8 flex items-center">
-            <img src={imageSrc} className="pr-2 h-10 cursor-pointer" />
+            <img src={navElementsVariant[variant]?.logoImg} className="pr-2 h-10 cursor-pointer" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -247,6 +236,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for banking with us, ",
+    logoImg: toggleBankHorizontalLogo.src
   },
   government: {
     navLinks: [
@@ -256,6 +246,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for your service, ",
+    logoImg: bureauOfRiskReductionHorizontalLogo.src
   },
   investment: {
     navLinks: [
@@ -267,6 +258,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-investment",
     popoverMessage: "Thank you for investing with us, ",
+    logoImg: frontierCapitalHorizontalLogo.src
   },
   market: {
     navLinks: [
@@ -278,6 +270,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-experimentation",
     popoverMessage: "Thank you for shopping with us, ",
+    logoImg: galaxyMarketplaceHorizontalLogo.src
   },
   airlines: {
     navLinks: [
@@ -286,6 +279,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-airline-buttons",
     popoverMessage: "Thank you for flying with us, ",
+    logoImg: launchAirwaysHorizontalLogo.src
   },
 };
 
