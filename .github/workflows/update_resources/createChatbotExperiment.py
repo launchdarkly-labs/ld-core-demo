@@ -10,7 +10,7 @@ import time
 
 def main():
     
-    namespace = os.getenv('NAMESPACE')
+    namespace = os.getenv('DEMO_NAMESPACE')
     project_key = f"{namespace}-ld-demo"
     environment_key = namespace
     experiment_key = "ai-chatbot-experiment"
