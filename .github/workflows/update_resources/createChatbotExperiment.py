@@ -69,7 +69,7 @@ def createAIFeatureExperiment():
                 {
                     "name": variations[0]['name'],
                     "baseline": True,
-                    "allocationPercent": "50",
+                    "allocationPercent": "33",
                     "parameters": [
                     {
                         "flagKey": "ai-chatbot",
@@ -79,11 +79,21 @@ def createAIFeatureExperiment():
                 },
                 {
                     "name": variations[1]['name'],
-                    "allocationPercent": "50",
+                    "allocationPercent": "33",
                     "parameters": [
                     {
                         "flagKey": "ai-chatbot",
                         "variationId": variations[1]['_id']
+                    }
+                    ]
+                },
+                {
+                    "name": variations[2]['name'],
+                    "allocationPercent": "33",
+                    "parameters": [
+                    {
+                        "flagKey": "ai-chatbot",
+                        "variationId": variations[2]['_id']
                     }
                     ]
                 },
