@@ -85,7 +85,7 @@ export function QuickCommandDialog({ children }) {
                                 >
                                     <p onClick={resetFeatureFlags} className="font-bold font-sohnelight text-lg">Reset Feature Flags</p>
                                     {showTooltip && (
-                                        <div className="text-lg">This tool resets all Feature Flags to their default values. To use it, navigate to your LD project and open the template environment. Set your desired Feature Flag values and targeting options there. This tool will then use the template environment as a blueprint to apply these settings to your LD environment. This process takes 30 seconds to complete</div>
+                                        <div className="text-lg">This tool resets all Feature Flags to the source environment's values. To use it, navigate to your LD project and open the template environment. Set your desired Feature Flag values and targeting options there. This tool will then use the template environment as a blueprint to apply these settings to your LD environment. This process takes 30 seconds to complete</div>
                                         )}
                                 </div>
                             )}
