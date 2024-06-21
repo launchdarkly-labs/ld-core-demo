@@ -26,3 +26,7 @@ export const ALERT_TYPES = {
   WARNING: "warning",
   INFO: "info",
 };
+
+export const STANDARD = "standard";
+
+export const LD_CONTEXT_COOKIE_KEY = "ld-context"

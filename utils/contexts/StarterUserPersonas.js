@@ -1,10 +1,12 @@
+import { STANDARD } from "../constants";
+
 export const STARTER_PERSONAS = [
   {
     personaname: "Cody",
     personatype: "Standard User",
     personaimage: "standard.jpg",
     personaemail: "cody@launchmail.io",
-    personarole: "Standard",
+    personarole: STANDARD,
   },
   {
     personaname: "Alysha",
@@ -22,9 +24,9 @@ export const STARTER_PERSONAS = [
   },
   {
     personaname: "User",
-    personatype: "Standard",
+    personatype: "Standard User",
     personaimage: "/personas/persona3.png",
     personaemail: "user@launchmail.io",
-    personarole: "Standard",
+    personarole: STANDARD,
   },
 ];

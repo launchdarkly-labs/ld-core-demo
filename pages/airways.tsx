@@ -11,7 +11,6 @@ import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
-import { setCookie } from "cookies-next";
 import { Toaster } from "@/components/ui/toaster";
 
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
@@ -25,9 +24,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import Chatbot from "@/components/chatbot/ChatBot";
+// import IndexPage from "@/components/chatbot/(chat)/page";
+
 
 export default function Airways() {
-  const { launchClubLoyalty } = useFlags();
+  const [launchClubLoyalty, setLaunchClubLoyalty] = useState(true);
 
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
@@ -53,10 +55,6 @@ export default function Airways() {
 
   function handleLogout() {
     logoutUser();
-    const context: any = ldclient?.getContext();
-    context.user.tier = null;
-    ldclient?.identify(context);
-    setCookie("ldcontext", context);
   }
 
   function bookTrip() {
@@ -210,6 +208,8 @@ export default function Airways() {
           </motion.main>
         )}
       </AnimatePresence>
+
+      <Chatbot/>
     </>
   );
 }

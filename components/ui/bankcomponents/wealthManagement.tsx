@@ -118,8 +118,8 @@ const WealthManagementSheet = ({
                           </DialogTrigger>
                           <DialogContent className="">
                             <div className="m-4 fontsohnelight">
-                              <p className="aiinsightstext text-xl">
-                                Current AWS Bedrock Configured Prompt -
+                              <p className="aiinsightstext text-xl mb-4">
+                                AWS Bedrock Configured Prompt
                               </p>
                               {aiPrompt}
                             </div>
