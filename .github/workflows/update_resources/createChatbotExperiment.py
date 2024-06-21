@@ -131,7 +131,7 @@ def createAIFeatureExperiment():
     
 def getAIFeatureFlagDetails():
     ld_api_key = os.getenv('LD_API_KEY')
-    namespace = os.getenv('NAMESPACE')
+    namespace = os.getenv('DEMO_NAMESPACE')
     project_key = f"{namespace}-ld-demo"
     flag_key = "ai-chatbot"
     
