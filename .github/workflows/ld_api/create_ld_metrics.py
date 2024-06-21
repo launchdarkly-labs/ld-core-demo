@@ -14,6 +14,7 @@ def main():
     
     if len(sys.argv) > 1:
         ld_env_key = sys.argv[1]
+        print('Creating Metrics for LaunchDarkly Project: ')
         createMetricsForLDProject(ld_env_key)
     
 def createMetricsForLDProject(ld_api_key):
@@ -42,7 +43,7 @@ def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
         "eventKey": "AI Chatbot Bad Service",
         "Description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
         "isNumeric": False,
-        "key": "AI chatbot bad service",
+        "key": "ai-chatbot-bad-service",
         "kind": "custom",
         "successCriteria": "LowerThanBaseline",
         "randomizationUnits": ["audience"],
@@ -50,7 +51,7 @@ def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
     }
     
     response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
-    
+    print(response.status_code)
     if response.status_code == 201:
         print("Metric 'AI Chatbot Negative Feedback' created successfully.")
         
@@ -61,7 +62,7 @@ def createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL):
         "eventKey": "AI chatbot good service",
         "Description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
         "isNumeric": False,
-        "key": "AI chatbot good service",
+        "key": "ai-chatbot-good-service",
         "kind": "custom",
         "successCriteria": "HigherThanBaseline",
         "randomizationUnits": ["audience"],

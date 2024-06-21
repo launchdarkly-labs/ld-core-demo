@@ -42,15 +42,15 @@ def createAIFeatureExperiment():
             "canReshuffleTraffic": True,
             "metrics": [
             {
-                "key": "AI chatbot good service",
+                "key": "ai-chatbot-good-service",
                 "isGroup": False,
             },
             {
-                "key": "AI chatbot bad service",
+                "key": "ai-chatbot-bad-service",
                 "isGroup": False,
             }
             ],
-            "primarySingleMetricKey": "AI chatbot good service",
+            "primarySingleMetricKey": "ai-chatbot-good-service",
             "treatments": [
                 {
                     "name": variations[0]['name'],
