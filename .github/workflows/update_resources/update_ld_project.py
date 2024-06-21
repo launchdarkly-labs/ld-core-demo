@@ -92,6 +92,7 @@ def update_ld_project():
     
     print('Delete A330 Passengers Segment')
     update_command = f'ldcli segments delete --project {demo_namespace}-ld-demo --environment {demo_namespace} --segment airline-a-330-passengers'
+    runCommand(update_command)
     
 def runCommand(command):
     
