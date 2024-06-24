@@ -229,3 +229,7 @@ line-height: normal;
   }
 
 }
+
+.markdown > * {
+  all: revert;
+}

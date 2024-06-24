@@ -21,10 +21,11 @@ export default function DestinationPicker () {
 const flags = useFlags();
 const flagName = flags["destination-picker-ai-model"];
 const [recsGiven, setRecsGiven] = useState(false);
-const [destinations, setDestinations] = useState<Array<any>>([]);
+const [destinations, setDestinations] = useState("")
 const [loading, setLoading] = useState(false);
+
 const prompt =
-"give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots every time I ask. Only respond using JSON format with the keys 'name' and 'reason', it should be an array of 3 JSON objects returned, limiting each response to 50 characters or less and 'name' should only contain the name of the destination.";
+  "give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Limit the responses to 50 characters or less";
 
    async function getDestinations () {
     try {
@@ -35,8 +36,10 @@ const prompt =
           body: JSON.stringify({ prompt: prompt}),
         });
         const data = await response.json()
-        console.log(JSON.parse(data));
-        setDestinations(JSON.parse(data))
+        // console.log(JSON.parse(data));
+        // setDestinations(JSON.parse(data))
+        console.log(data)
+        setDestinations(data)
         
     }
     catch {
@@ -50,10 +53,6 @@ const prompt =
     function resetDestinations () {
         setRecsGiven(false)
     }
-
-    useEffect(() => {
-      setDestinations(destinations)
-    },[loading])
 
     useEffect(() => {
       setDestinations(destinations)
@@ -105,16 +104,10 @@ const prompt =
                 ) : (
                   <div className="font-sohnelight">
                     {destinations.length > 0 ? (
-                      destinations.map((destination) => (
-                        <div className="flex flex-col">
-                          <h2 className="flex text-xl text-black pb-2 items-center gap-2">
-                            <MapPinned size={20} />
-                            {"  "}
-                            {destination.name}
-                          </h2>
-                          <p className="flex pb-4">{destination.reason}</p>
-                        </div>
-                      ))
+                      // destinations.map((destination) => (
+                      <ReactMarkdown className="markdown">
+                        {destinations}
+                      </ReactMarkdown>
                     ) : (
                       <p className="text-zinc-300">
                         No response generated yet.
