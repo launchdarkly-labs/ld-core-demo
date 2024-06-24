@@ -16,7 +16,7 @@ def main():
     
     createFederatedFeatureFlag()
     createWealthManagementFeatureFlag()
-    createAIPromptTextFeatureFlag()
+    createaiTravelPromptTextFeatureFlag()
     createAITravelInsightsFeatureFlag()
     createStoreHeadersFeatureFlag()
     createStoreAttentionCalloutFeatureFlag()
@@ -210,7 +210,7 @@ def createWealthManagementFeatureFlag():
     if(response.status_code == 201):
         print("Wealth management feature flag created successfully")
     
-def createAIPromptTextFeatureFlag():
+def createaiTravelPromptTextFeatureFlag():
         
     print("Creating AI prompt text feature flag...")
     
@@ -221,7 +221,7 @@ def createAIPromptTextFeatureFlag():
             "usingEnvironmentId": True,
             "usingMobileKey": True
         },
-        "key": "aiPromptText",
+        "key": "aiTravelPromptText",
         "name": "08 - AI Prompts for Travel Insights",
         "description": "This feature flag will change AI prompts in real-time for AI Travel Insights Component component in LaunchAirways.",
         "variations": [
