@@ -177,3 +177,4 @@ jobs:
         with:
           accessToken: ${{ secrets.LD_API_KEY }}
           projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          repoName: main
