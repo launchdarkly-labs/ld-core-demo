@@ -27,7 +27,7 @@ def update_ld_project():
     runCommand(update_command)
     
     print('Delete Adjust Prompt for Wealth Insights FF')
-    update_command = f'ldcli flags delete --project aqadri-ld-demo --flag aiPromptText'
+    update_command = f'ldcli flags delete --project {demo_namespace}-ld-demo --flag aiPromptText'
     runCommand(update_command)
     
     print('Update 03 - Migrate ToggleBank Financial DB')
@@ -59,7 +59,7 @@ def update_ld_project():
     runCommand(update_command)
     
     print('Create AI Prompt for Travel Insights')
-    update_command = f'ldcli flags create --project aqadri-ld-demo -d "$(cat ./.github/workflows/update_resources/aiPromptTravelInsights.json)"'
+    update_command = f'ldcli flags create --project {demo_namespace}-ld-demo -d "$(cat ./.github/workflows/update_resources/aiPromptTravelInsights.json)"'
     runCommand(update_command)
     
     print('Create Destination Recommendations')
