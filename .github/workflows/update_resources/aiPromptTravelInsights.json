@@ -1,6 +1,6 @@
 {
     "name": "08 - AI Prompts for Travel Insights",
-    "key": "aiPromptText",
+    "key": "aiTravelPromptText",
     "description": "This feature flag will change AI prompts in real-time for AI Travel Insights Component component in LaunchAirways.",
     "clientSideAvailability": {
         "usingMobileKey": true,

@@ -22,7 +22,7 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { enrolledInLaunchClub } = useContext(LoginContext);
-  const { launchClubLoyalty, aiTravelInsights, aiPromptText } = useFlags();
+  const { launchClubLoyalty, aiTravelInsights, aiTravelPromptText } = useFlags();
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -79,7 +79,7 @@ export default function BookedFlights() {
 
   async function submitQuery(airport: any) {
     try {
-      const prompt: string = aiPromptText.replace('${destination}', airport) + '. Limit responses to 40 words only';
+      const prompt: string = aiTravelPromptText.replace('${destination}', airport) + '. Limit responses to 40 words only';
 
       setLoading(true);
       const response = await fetch("/api/bedrock", {
