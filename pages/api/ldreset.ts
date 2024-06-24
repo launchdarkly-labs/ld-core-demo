@@ -25,67 +25,32 @@ export default async function handler(
             : 0;
     }
 
-    async function checkRateLimit(method: string, url: string, apikey: string, body: any) {
-        let defaultTries = 5;
-        let tries = defaultTries;
-        let delay = 5;
-
-        while (tries > 0) {
-            try {
-                let response;
-                if (method === "GET") {
-                    response = await fetch(BASE_URL + url, {
-                        method: method,
-                        headers: {
-                            Authorization: apikey,
-                            "Content-Type": "application/json",
-                        },
-                    });
-                } else {
-                    response = await fetch(BASE_URL + url, {
-                        method: method,
-                        headers: {
-                            Authorization: apikey,
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(body),
-                    });
-                }
-                let rateLimitRemaining = response.headers.get(
-                    "X-Ratelimit-Route-Remaining"
-                );
-
-                if (parseInt(rateLimitRemaining as string) <= CALL_THRESHOLD) {
-                    let resetTime = parseInt(response.headers.get("X-Ratelimit-Reset") as string);
-                    //console.log("getting reset timing");
-                    delay = await timeToNextReset(resetTime);
-                    delay = delay < 1 ? 0.5 : delay;
-                    //console.log(`Rate limit is too low. It is currently ${rateLimitRemaining}. Retrying in ${delay} seconds.`);
-                    await new Promise((resolve) => setTimeout(resolve, delay * 1000));
-                    //console.log("current tries " + tries);
-                    tries -= 1;
-                } else {
-                    tries = defaultTries;
-                    if (response.status === 204) {
-                        //await console.log("completed! Received " + response.status);
-                        return null;
-                    } else {
-                        return response;
-                    }
-                }
-            } catch (err) {
-                console.error("An error occurred: ", err);
-                break;
-            }
-
-            if (tries === 0) {
-                throw new RateLimitError('stuff');
-            }
+    async function runAPICall(method: string, url: string, apikey: string, body: any) {
+            
+        let response;
+        if (method === "GET") {
+            response = await fetch(BASE_URL + url, {
+                method: method,
+                headers: {
+                    Authorization: apikey,
+                    "Content-Type": "application/json",
+                },
+            });
+        } else {
+            response = await fetch(BASE_URL + url, {
+                method: method,
+                headers: {
+                    Authorization: apikey,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
         }
+        return response;
     }
 
     async function get_flag_list(url: string) {
-        const response = await checkRateLimit("GET", url, API_KEY!, {});
+        const response = await runAPICall("GET", url, API_KEY!, {});
         const responseData = await response!.json();
         //console.log(responseData); // Add this line
         const items = responseData.items;
@@ -116,15 +81,15 @@ export default async function handler(
         for (let i of flag_list) {
             let flag_copy_url = `/flags/${PROJECT_KEY}/${i}/copy`;
             //console.log(`Trying at url ${flag_copy_url}`);
-            await checkRateLimit("POST", flag_copy_url, API_KEY!, flag_copy_body);
+            await runAPICall("POST", flag_copy_url, API_KEY!, flag_copy_body);
             //console.log(`Successfully copied settings for ${i}`);
         }
     }
 
     try {
-        const response = await checkRateLimit("GET", `/flags/${PROJECT_KEY}`, API_KEY!, {});
+        const response = await runAPICall("GET", `/flags/${PROJECT_KEY}`, API_KEY!, {});
         if (!response) {
-            throw new Error('No response received from checkRateLimit');
+            throw new Error('No response received from runAPICall');
         }
         const responseData = await response.json();
         if (!responseData || !responseData.items) {
@@ -153,7 +118,7 @@ export default async function handler(
         for (let i of flag_list) {
             let flag_copy_url = `/flags/${PROJECT_KEY}/${i}/copy`;
             //console.log(`Trying at url ${flag_copy_url}`);
-            await checkRateLimit("POST", flag_copy_url, API_KEY!, flag_copy_body);
+            await runAPICall("POST", flag_copy_url, API_KEY!, flag_copy_body);
             //console.log(`Successfully copied settings for ${i}`);
         }
 

@@ -6,11 +6,12 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-from ld_api_call import checkRateLimit
 
 ld_api_key = os.getenv('LD_API_KEY')
 namespace = os.getenv('NAMESPACE')
 project_key = f"{namespace}-ld-demo"
+BASE_URL = "https://app.launchdarkly.com/api/v2"
+
 
 def main():
     
@@ -81,7 +82,7 @@ def createAIChatbotModelsFeatureFlag():
             "ai"
         ]
     }
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("AI Chatbot feature flag created successfully.")
     
@@ -128,7 +129,7 @@ def createDestinationRecommendationFeatureFlag():
         ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Destination recommendation feature flag created successfully.")
     
@@ -167,7 +168,7 @@ def createFederatedFeatureFlag():
     ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Federated feature flag created successfully.")
     
@@ -206,7 +207,7 @@ def createWealthManagementFeatureFlag():
     ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Wealth management feature flag created successfully")
     
@@ -250,7 +251,7 @@ def createaiTravelPromptTextFeatureFlag():
         ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("AI prompt text feature flag created successfully.")
 
@@ -287,7 +288,7 @@ def createAITravelInsightsFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("AI travel insights feature flag created successfully.")
     
@@ -324,7 +325,7 @@ def createStoreHeadersFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Store headers feature flag created successfully.")
     
@@ -365,7 +366,7 @@ def createStoreAttentionCalloutFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Store attention callout feature flag created successfully.")
         
@@ -402,7 +403,7 @@ def createCartSuggestedItemsFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Cart Suggested items feature flag created successfully.")
 
@@ -439,7 +440,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Release New Investment Stock Api feature flag created successfully.")
 
@@ -476,7 +477,7 @@ def createReleaseNewRecentTradesDBFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Release New Recent Trades DB feature flag created successfully.")
 
