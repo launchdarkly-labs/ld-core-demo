@@ -7,8 +7,10 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-from ld_api_call import checkRateLimit
 import sys
+
+BASE_URL = "https://app.launchdarkly.com/api/v2"
+
 
 def main():
     
@@ -51,8 +53,7 @@ def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
         "randomizationUnits": ["audience"],
         "tags": ["experiment"]
     }
-    
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     if response.status_code == 201:
         print("Metric 'AI Chatbot Negative Feedback' created successfully.")
         
@@ -70,7 +71,7 @@ def createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL):
         "tags": ["experiment"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'AI Chatbot Positive Feedback' created successfully.")
@@ -89,7 +90,7 @@ def createStoreAccessedMetric(ld_api_key, createMetricURL):
         "tags": ["store", "accessed"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Store Accessed' created successfully.")
@@ -108,7 +109,7 @@ def createItemAddedMetrics(ld_api_key, createMetricURL):
         "tags": ["cart", "item", "added"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Item Added' created successfully.")
@@ -127,7 +128,7 @@ def createCartAccessedMetric(ld_api_key, createMetricURL):
         "tags": ["cart", "accessed"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Cart Accessed' created successfully.")
@@ -146,7 +147,7 @@ def createCustomerCheckoutMetric(ld_api_key, createMetricURL):
         "tags": ["checkout"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Customer Checkout' created successfully.")
@@ -166,7 +167,7 @@ def createStockAPILatencyMetric(ld_api_key, createMetricURL):
         "unit": "ms"
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Stock API Latency' created successfully.")
@@ -185,7 +186,7 @@ def createStocksAPIErrorRates(ld_api_key, createMetricURL):
         "tags": ["release", "stocks", "api", "error", "rates"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Stocks API Error Rate' created successfully.")
@@ -205,7 +206,7 @@ def createRecentTradesDBLatencyMetric(ld_api_key, createMetricURL):
         "unit": "ms"
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Recent Trades DB Latency' created successfully.")
@@ -224,7 +225,7 @@ def createRecentTradesDBErrorRates(ld_api_key, createMetricURL):
         "tags": ["remediate", "investment", "trades", "db", "error", "rates"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'Recent Trades DB Error Rates' created successfully.")
@@ -243,7 +244,7 @@ def createInCartUpSellMetric(ld_api_key, createMetricURL):
         "tags": ["experiment"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'In-Cart Up-Sell' created successfully.")
@@ -263,7 +264,7 @@ def createInCartTotalPriceMetric(ld_api_key, createMetricURL):
         "tags": ["experiment"]
     }
     
-    response = checkRateLimit("POST", createMetricURL, ld_api_key, json.dumps(metricPayload))
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
     
     if response.status_code == 201:
         print("Metric 'In-Cart Total Price' created successfully.")
