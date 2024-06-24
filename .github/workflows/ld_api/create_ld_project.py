@@ -52,7 +52,7 @@ def createContextKind(ld_api_key, project_key):
             "LD-API-Version": "beta"
 
         }
-        response = requests.request("PUT", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+        response = requests.request("PUT", BASE_URL + url, headers = headers, data = json.dumps(payload))
 
         if response.status_code == 200:
             print("Experimentation settings updated successfully.")
