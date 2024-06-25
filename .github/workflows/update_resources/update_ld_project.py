@@ -94,6 +94,10 @@ def update_ld_project():
     update_command = f'ldcli segments delete --project {demo_namespace}-ld-demo --environment {demo_namespace} --segment airline-a-330-passengers'
     runCommand(update_command)
     
+    print('Update Release AI Travel Insights FF')
+    update_command = f'ldcli flags update --project {demo_namespace}-ld-demo --flag aiTravelInsights -d "$(cat ./.github/workflows/update_resources/releaseAITravelInsights.json)"'
+    runCommand(update_command)
+    
 def runCommand(command):
     
     while True:

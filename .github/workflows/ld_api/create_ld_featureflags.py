@@ -284,7 +284,7 @@ def createAITravelInsightsFeatureFlag():
         "offVariation": 1
     },
     "tags": [
-        "target"
+        "ai"
     ]
     }
     
