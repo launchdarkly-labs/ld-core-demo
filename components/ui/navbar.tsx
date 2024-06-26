@@ -51,7 +51,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { personas } = useContext(PersonaContext);
     const chosenPersona = personas.find((persona) => persona.personaname === user);
     const { launchClubStatus } = useContext(LoginContext);
-   
+    console.log(personas)
     return (
       <nav className="w-full bg-black z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">

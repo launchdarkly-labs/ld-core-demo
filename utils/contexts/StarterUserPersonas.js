@@ -1,3 +1,4 @@
+import persona3 from "@/public/personas/persona3.png"
 export const STARTER_PERSONAS = [
   {
     personaname: "Cody",
