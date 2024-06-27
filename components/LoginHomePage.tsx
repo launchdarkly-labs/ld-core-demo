@@ -12,6 +12,9 @@ import Image from "next/image";
 import investmentCardImg1 from "@/public/investment/investment_image1.png";
 import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
+import governmentHeroImg1 from "@/public/government/government-building.jpg";
+import governmentHeroImg2 from "@/public/government/governmentBuildingB.jpeg";
+import governmentHeroImg3 from "@/public/government/governmentBuildingC.jpeg";
 import governmentCardImg1 from "@/public/government/crypto.png";
 import governmentCardImg2 from "@/public/government/farm.png";
 import governmentCardImg3 from "@/public/government/military-family.jpg";
@@ -50,7 +53,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         {variant === "airlines" || variant === "government" ? (
           <>
             <Image
-              src={airlineLoginHeroBackground}
+              src={homePageVariants[variant]?.heroImg?.imageA}
               alt="Airline Login Hero Background"
               layout="fill"
               objectFit="cover"
@@ -180,6 +183,11 @@ const homePageVariants: any = {
     industryMessages:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     gradiantColor: "bg-gradient-airways ",
+    heroImg:{
+      imageA: airlineLoginHeroBackground.src,
+      imageB: airlineLoginHeroBackground.src,
+      imageC: airlineLoginHeroBackground.src,
+    },
     cards: [
       {
         titleText: "Wheels up",
@@ -206,7 +214,12 @@ const homePageVariants: any = {
   government: {
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
-      gradiantColor: "bg-gradient-bank ",
+    gradiantColor: "bg-gradient-bank ",
+    heroImg:{
+      imageA: governmentHeroImg1.src,
+      imageB: governmentHeroImg2.src,
+      imageC: governmentHeroImg3.src,
+    },
     cards: [
       {
         titleText: "Cybersecurity",
