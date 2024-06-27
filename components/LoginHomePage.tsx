@@ -32,7 +32,9 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
-console.log(showHeroRedesignFlag)
+  const showDifferentHeroImageFlag = variant === "government" ? useFlags()["show-different-hero-image-string"] : "imageA";
+
+
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -57,7 +59,7 @@ console.log(showHeroRedesignFlag)
         {variant === "airlines" || variant === "government" ? (
           <>
             <Image
-              src={homePageVariants[variant]?.heroImg?.imageA}
+              src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
               alt="Airline Login Hero Background"
               layout="fill"
               objectFit="cover"
