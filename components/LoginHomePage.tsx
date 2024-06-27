@@ -20,6 +20,7 @@ import governmentCardImg2 from "@/public/government/farm.png";
 import governmentCardImg3 from "@/public/government/military-family.jpg";
 import governmentCardImg4 from "@/public/government/rocket.jpg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment" | "government";
@@ -28,6 +29,8 @@ interface LoginHomePageProps {
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
+  const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
+  const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
 
   return (
     <motion.main
@@ -110,18 +113,22 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      <HomePageCardWrapper>
-        {homePageVariants[variant]?.cards.map((card: any, index: number) => {
-          return (
-            <HomePageInfoCard
-              imgSrc={card?.imgSrc}
-              headerTitleText={card?.titleText}
-              subtitleText={card?.subtitleText}
-              key={index}
-            />
-          );
-        })}
-      </HomePageCardWrapper>
+      {showCardsSectionComponentFlag && variant === "government" ? (
+        <HomePageCardWrapper>
+          {homePageVariants[variant]?.cards.map((card: any, index: number) => {
+            const patchCardGovernmentLogic =
+              !patchShowCardsSectionComponentFlag && variant === "government" && index === 0;
+            return (
+              <HomePageInfoCard
+                imgSrc={patchCardGovernmentLogic ? null : card?.imgSrc}
+                headerTitleText={card?.titleText}
+                subtitleText={card?.subtitleText}
+                key={index}
+              />
+            );
+          })}
+        </HomePageCardWrapper>
+      ) : null}
     </motion.main>
   );
 }
@@ -183,7 +190,7 @@ const homePageVariants: any = {
     industryMessages:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     gradiantColor: "bg-gradient-airways ",
-    heroImg:{
+    heroImg: {
       imageA: airlineLoginHeroBackground.src,
       imageB: airlineLoginHeroBackground.src,
       imageC: airlineLoginHeroBackground.src,
@@ -215,7 +222,7 @@ const homePageVariants: any = {
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
     gradiantColor: "bg-gradient-bank ",
-    heroImg:{
+    heroImg: {
       imageA: governmentHeroImg1.src,
       imageB: governmentHeroImg2.src,
       imageC: governmentHeroImg3.src,
