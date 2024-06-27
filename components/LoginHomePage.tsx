@@ -62,7 +62,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
               src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
               alt="Airline Login Hero Background"
               layout="fill"
-              objectFit="cover"
+              className="object-cover"
               quality={100}
             />
             <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
