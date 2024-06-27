@@ -31,7 +31,8 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
-
+  const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
+console.log(showHeroRedesignFlag)
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -73,13 +74,31 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
               text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-[1]"
           >
-            <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-              Welcome to {name}{" "}
-            </p>
-            <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-              {homePageVariants[variant]?.industryMessages}
-            </p>
+            {showHeroRedesignFlag === "text-left" && variant === "government" ? (
+              <>
+                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                  Welcome to {name}{" "}
+                </p>
+                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                  {homePageVariants[variant]?.industryMessages}
+                </p>
+              </>
+            ) : null}
           </div>
+
+          {showHeroRedesignFlag === "text-right" && variant === "government" ? (
+            <div
+              className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-[1]"
+            >
+              <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                Welcome to {name}{" "}
+              </p>
+              <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                {homePageVariants[variant]?.industryMessages}
+              </p>
+            </div>
+          ) : null}
 
           {!isLoggedIn && variant !== "government" ? (
             <div className="w-full sm:w-auto z-10">
