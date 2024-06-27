@@ -36,7 +36,7 @@ if (typeof window !== "undefined") {
       kind: "multi",
       user: {
         key: CryptoJS.SHA256("user@launchmail.io").toString(),
-        name: "Christine",
+        name: "User",
         email: CryptoJS.SHA256("user@launchmail.io").toString(),
         appName: "LD Demo",
       },
