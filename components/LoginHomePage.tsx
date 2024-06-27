@@ -36,7 +36,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
       <NavBar variant={variant} />
 
       <header
-        className={` ${
+        className={`w-full relative ${
           variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
         }`}
       >
@@ -47,7 +47,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           </div>
         )}
 
-        {variant === "airlines" ? (
+        {variant === "airlines" || variant === "government" ? (
           <>
             <Image
               src={airlineLoginHeroBackground}
@@ -75,7 +75,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             </p>
           </div>
 
-          {!isLoggedIn ? (
+          {!isLoggedIn && variant !== "government" ? (
             <div className="w-full sm:w-auto z-10">
               <LoginComponent
                 isLoggedIn={isLoggedIn}
@@ -179,7 +179,7 @@ const homePageVariants: any = {
   airlines: {
     industryMessages:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    gradiantColor: "bg-gradient-airways w-full mb-[4rem] relative",
+    gradiantColor: "bg-gradient-airways ",
     cards: [
       {
         titleText: "Wheels up",
@@ -206,7 +206,7 @@ const homePageVariants: any = {
   government: {
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
-    gradiantColor: "bg-gradient-bank",
+      gradiantColor: "bg-gradient-bank ",
     cards: [
       {
         titleText: "Cybersecurity",

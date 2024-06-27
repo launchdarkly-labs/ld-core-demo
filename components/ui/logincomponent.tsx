@@ -31,7 +31,7 @@ interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loginUser: any
-  variant: 'bank' | 'airlines' | 'market' | 'investment';
+  variant: 'bank' | 'airlines' | 'market' | 'investment' | 'government';
   name: string;
 }
 
