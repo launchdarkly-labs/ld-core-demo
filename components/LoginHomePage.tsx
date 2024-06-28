@@ -32,9 +32,9 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
-  const showDifferentHeroImageFlag = variant === "government" ? useFlags()["show-different-hero-image-string"] : "imageA";
-
-
+  const showDifferentHeroImageFlag =
+    variant === "government" ? useFlags()["show-different-hero-image-string"] : "imageA";
+  console.log(showHeroRedesignFlag);
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -74,7 +74,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         >
           <div
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-[1]"
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
           >
             {showHeroRedesignFlag === "text-left" && variant === "government" ? (
               <>
@@ -85,34 +85,64 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
                   {homePageVariants[variant]?.industryMessages}
                 </p>
               </>
-            ) : null}
+            ) : showHeroRedesignFlag === "text-right" && variant === "government" ? (
+              !isLoggedIn ? (
+                <LoginComponent
+                  isLoggedIn={isLoggedIn}
+                  setIsLoggedIn={setIsLoggedIn}
+                  loginUser={loginUser}
+                  variant={variant}
+                  name={name}
+                />
+              ) : null
+            ) : (
+              <>
+                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                  Welcome to {name}{" "}
+                </p>
+                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                  {homePageVariants[variant]?.industryMessages}
+                </p>
+              </>
+            )}
           </div>
-
-          {showHeroRedesignFlag === "text-right" && variant === "government" ? (
-            <div
-              className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-[1]"
-            >
-              <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                Welcome to {name}{" "}
-              </p>
-              <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                {homePageVariants[variant]?.industryMessages}
-              </p>
+          {/* TODO: fix logic here to render */}
+          <div
+            className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+          >
+            {showHeroRedesignFlag === "text-right" && variant === "government" ? (
+              <>
+                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                  Welcome to {name}{" "}
+                </p>
+                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                  {homePageVariants[variant]?.industryMessages}
+                </p>
+              </>
+            ) : showHeroRedesignFlag === "text-left" && variant === "government" ? (
+              !isLoggedIn ? (
+                <LoginComponent
+                  isLoggedIn={isLoggedIn}
+                  setIsLoggedIn={setIsLoggedIn}
+                  loginUser={loginUser}
+                  variant={variant}
+                  name={name}
+                />
+              ) : null
+            ) : (
+              <div className="w-full sm:w-auto z-10">
+               <LoginComponent
+                  isLoggedIn={isLoggedIn}
+                  setIsLoggedIn={setIsLoggedIn}
+                  loginUser={loginUser}
+                  variant={variant}
+                  name={name}
+                />
             </div>
-          ) : null}
-
-          {!isLoggedIn && variant !== "government" ? (
-            <div className="w-full sm:w-auto z-10">
-              <LoginComponent
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                loginUser={loginUser}
-                variant={variant}
-                name={name}
-              />
-            </div>
-          ) : null}
+            )}
+          </div>
+          
         </div>
       </header>
 
