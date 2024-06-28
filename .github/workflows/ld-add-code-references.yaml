@@ -27,9 +27,9 @@ jobs:
           accessToken: ${{ secrets.LD_API_KEY }}
           repoName: main
           prune: true
-        projects:
-          - key: ${{ env.DEMO_NAMESPACE }}-ld-demo
-            dir: /
-            aliases:
-              - type: camelcase
+          projects:
+            - key: ${{ env.DEMO_NAMESPACE }}-ld-demo
+              dir: /
+              aliases:
+                - type: camelcase
     
