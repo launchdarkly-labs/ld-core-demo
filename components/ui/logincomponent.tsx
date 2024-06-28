@@ -18,7 +18,8 @@ import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_lo
 import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
 import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
-import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
+// import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
+import { STANDARD } from "@/utils/constants";
 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
@@ -76,7 +77,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
       email = defaultEmail;
       name = email.split('@')[0];
       name = name.charAt(0).toUpperCase() + name.slice(1);
-      role = 'Standard'
+      role = STANDARD
     }
     loginUser(name, email, role);
   };

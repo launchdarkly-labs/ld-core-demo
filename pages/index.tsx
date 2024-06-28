@@ -70,10 +70,9 @@ export default function Home() {
 
         <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
           <div className="absolute z-50">
-            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Innovation Velocity Without Risk</h1>
+            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Ship faster, safer, and smarter</h1>
             <p className="w-3/5 text-center mx-auto">
-              Maximize the value of every software feature through safer releases, targeted
-              experiences, experimentation, and more.
+              LaunchDarkly enables high velocity teams to release, monitor, and optimize software in production.
             </p>
           </div>
           <div className="hidden sm:block absolute top-16 left-40 z-10">
@@ -115,63 +114,27 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/bank">
-                  <svg
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_52)" />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M17.0093 15.9556C13.671 15.9556 10.9648 18.6617 10.9648 22C10.9648 25.3382 13.671 28.0444 17.0093 28.0444H26.9917C30.33 28.0444 33.0362 25.3382 33.0362 22C33.0362 18.6617 30.33 15.9556 26.9917 15.9556H17.0093ZM26.8194 26.5812C29.3495 26.5812 31.4005 24.5302 31.4005 22.0001C31.4005 19.47 29.3495 17.4189 26.8194 17.4189C24.2893 17.4189 22.2383 19.47 22.2383 22.0001C22.2383 24.5302 24.2893 26.5812 26.8194 26.5812Z"
-                      fill="white"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M17.0093 15.9556C13.671 15.9556 10.9648 18.6617 10.9648 22C10.9648 25.3382 13.671 28.0444 17.0093 28.0444H26.9917C30.33 28.0444 33.0362 25.3382 33.0362 22C33.0362 18.6617 30.33 15.9556 26.9917 15.9556H17.0093ZM26.8194 26.5812C29.3495 26.5812 31.4005 24.5302 31.4005 22.0001C31.4005 19.47 29.3495 17.4189 26.8194 17.4189C24.2893 17.4189 22.2383 19.47 22.2383 22.0001C22.2383 24.5302 24.2893 26.5812 26.8194 26.5812Z"
-                      fill="url(#paint1_linear_2085_52)"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_2085_52"
-                        x1="52.7292"
-                        y1="-11.66"
-                        x2="5.64921"
-                        y2="44"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0.123144" stopColor="#3DD6F5" />
-                        <stop offset="1" stopColor="#A34FDE" />
-                      </linearGradient>
-                      <linearGradient
-                        id="paint1_linear_2085_52"
-                        x1="22.0005"
-                        y1="15.9556"
-                        x2="22.0005"
-                        y2="28.0444"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stopColor="white" />
-                        <stop offset="1" stopColor="white" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
+                  <img width="44" height="44" src="release-icon.svg" />
 
-                  <h2>Release Confidently and Consistently</h2>
-                  <p>Help every develolper release features confidently and consistently</p>
+                  <h2>Automate Releases</h2>
+                  <ul className="list-disc list-inside">
+                    <li>Release Best Practice Workflows</li>
+                    <li>Sophisticated User Targeting</li>
+                    <li>Real-Time Feature Changes</li>
+                  </ul>
                 </a>
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
                 <a href="investment">
-                  <img width="44" height="44" src="remediate.png" />
+                  <img width="44" height="44" src="remediate-icon.svg" />
 
-                  <h2>Automatically Remediate Software Issues</h2>
-                  <p>Uncover and remediate software errors and performance problems before they become customer issues</p>
+                  <h2>Monitor Features</h2>
+                  <ul className="list-disc list-inside">
+                    <li>Runtime Event Monitoring</li>
+                    <li>Regression Auto-Remediation</li>
+                    <li>Metric Driven Progressive Delivery</li>
+                  </ul>
                 </a>
               </div>
             </div>
@@ -179,142 +142,26 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/airways">
-                  <svg
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_26)" />
-                    <path
-                      d="M32.6847 22.2292L34.0001 23.5217L27.8646 29.5625L24.6043 26.3542L25.9197 25.0617L27.8646 26.9683L32.6847 22.2292ZM22.2553 26.3542L25.0741 29.1042H15.6782V27.2708C15.6782 25.245 19.0419 23.6042 23.1949 23.6042L24.9707 23.705L22.2553 26.3542ZM23.1949 14.4375C24.1917 14.4375 25.1476 14.8238 25.8524 15.5114C26.5573 16.1991 26.9532 17.1317 26.9532 18.1042C26.9532 19.0766 26.5573 20.0093 25.8524 20.6969C25.1476 21.3845 24.1917 21.7708 23.1949 21.7708C22.1981 21.7708 21.2422 21.3845 20.5373 20.6969C19.8325 20.0093 19.4366 19.0766 19.4366 18.1042C19.4366 17.1317 19.8325 16.1991 20.5373 15.5114C21.2422 14.8238 22.1981 14.4375 23.1949 14.4375Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M32.6847 22.2292L34.0001 23.5217L27.8646 29.5625L24.6043 26.3542L25.9197 25.0617L27.8646 26.9683L32.6847 22.2292ZM22.2553 26.3542L25.0741 29.1042H15.6782V27.2708C15.6782 25.245 19.0419 23.6042 23.1949 23.6042L24.9707 23.705L22.2553 26.3542ZM23.1949 14.4375C24.1917 14.4375 25.1476 14.8238 25.8524 15.5114C26.5573 16.1991 26.9532 17.1317 26.9532 18.1042C26.9532 19.0766 26.5573 20.0093 25.8524 20.6969C25.1476 21.3845 24.1917 21.7708 23.1949 21.7708C22.1981 21.7708 21.2422 21.3845 20.5373 20.6969C19.8325 20.0093 19.4366 19.0766 19.4366 18.1042C19.4366 17.1317 19.8325 16.1991 20.5373 15.5114C21.2422 14.8238 22.1981 14.4375 23.1949 14.4375Z"
-                      fill="url(#paint1_linear_2085_26)"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="paint0_linear_2085_26"
-                        x1="3.5"
-                        y1="-1"
-                        x2="40.0963"
-                        y2="37.678"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0.123144" stopColor="#405BFF" />
-                        <stop offset="1" stopColor="#3DD6F5" />
-                      </linearGradient>
-                      <linearGradient
-                        id="paint1_linear_2085_26"
-                        x1="24.8392"
-                        y1="14.4375"
-                        x2="24.8392"
-                        y2="29.5625"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stopColor="white" />
-                        <stop offset="1" stopColor="white" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <h2>Delivery Personalized and Targeted Experiences</h2>
-                  <p>
-                    Deliver targeted and personalized experiences based on device, entitlement, or user behavior.
-                  </p>
+                  <img width="44" height="24" src="ai-icon.svg" />
+                  <h2>Accelerate AI</h2>
+                  <ul className="list-disc list-inside">
+                    <li>Runtime Configurations Controls</li>
+                    <li>Targeted AI Experiences</li>
+                    <li>Optimize Performance & Cost</li>
+                  </ul>
                 </a>
               </div>
 
               <div className="w-full sm:w-1/2 home-card">
                 <a href="/marketplace">
-                  <svg
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="44" height="44" rx="22" fill="url(#paint0_linear_2085_38)" />
-                    <g filter="url(#filter0_d_2085_38)">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M21.4121 22.9989C20.8789 22.3654 20.3308 21.714 19.404 21.714C18.1385 21.714 17.5366 22.9865 16.7785 24.5892C16.4558 25.2713 16.1049 26.0132 15.6625 26.7423C15.3702 27.224 15.0936 27.623 14.8379 27.9533L14.8379 14.497L12.9998 14.497V29.5032H14.8379V29.503H31.0004V15.4892C31.0004 15.4892 29.0487 12.8973 27.3247 16.0908C26.6795 17.2859 26.1649 18.7198 25.6889 20.0463C24.893 22.2643 24.2048 24.1821 23.1935 24.1821C22.4077 24.1821 21.9166 23.5985 21.4121 22.9989Z"
-                        fill="white"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M21.4121 22.9989C20.8789 22.3654 20.3308 21.714 19.404 21.714C18.1385 21.714 17.5366 22.9865 16.7785 24.5892C16.4558 25.2713 16.1049 26.0132 15.6625 26.7423C15.3702 27.224 15.0936 27.623 14.8379 27.9533L14.8379 14.497L12.9998 14.497V29.5032H14.8379V29.503H31.0004V15.4892C31.0004 15.4892 29.0487 12.8973 27.3247 16.0908C26.6795 17.2859 26.1649 18.7198 25.6889 20.0463C24.893 22.2643 24.2048 24.1821 23.1935 24.1821C22.4077 24.1821 21.9166 23.5985 21.4121 22.9989Z"
-                        fill="url(#paint1_linear_2085_38)"
-                      />
-                    </g>
-                    <defs>
-                      <filter
-                        id="filter0_d_2085_38"
-                        x="7"
-                        y="7"
-                        width="30"
-                        height="30"
-                        filterUnits="userSpaceOnUse"
-                        colorInterpolationFilters="sRGB"
-                      >
-                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                        <feColorMatrix
-                          in="SourceAlpha"
-                          type="matrix"
-                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                          result="hardAlpha"
-                        />
-                        <feOffset />
-                        <feGaussianBlur stdDeviation="1.5" />
-                        <feComposite in2="hardAlpha" operator="out" />
-                        <feColorMatrix
-                          type="matrix"
-                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                        />
-                        <feBlend
-                          mode="normal"
-                          in2="BackgroundImageFix"
-                          result="effect1_dropShadow_2085_38"
-                        />
-                        <feBlend
-                          mode="normal"
-                          in="SourceGraphic"
-                          in2="effect1_dropShadow_2085_38"
-                          result="shape"
-                        />
-                      </filter>
-                      <linearGradient
-                        id="paint0_linear_2085_38"
-                        x1="-9.5"
-                        y1="-5"
-                        x2="36"
-                        y2="42.5"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0.123144" stopColor="#DDF21E" />
-                        <stop offset="1" stopColor="#18D3F9" />
-                      </linearGradient>
-                      <linearGradient
-                        id="paint1_linear_2085_38"
-                        x1="22.0001"
-                        y1="14.4968"
-                        x2="22.0001"
-                        y2="29.5032"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stopColor="white" />
-                        <stop offset="1" stopColor="white" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
+                  <img width="44" height="44" src="experiment-icon.svg" />
 
-                  <h2>Optimize and Experiment Within Your Features</h2>
-                  <p>Optimize business impact and avoid costly mistakes with feature and configuration experimentation
-                  </p>
+                  <h2>Experiment Everywhere</h2>
+                  <ul className="list-disc list-inside">
+                    <li>Experimentation For Everyone</li>
+                    <li>Advanced Statistics</li>
+                    <li>Measure Any Metric</li>
+                  </ul>
                 </a>
               </div>
 

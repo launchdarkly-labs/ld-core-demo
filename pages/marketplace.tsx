@@ -13,8 +13,6 @@ import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
 
-
-
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
   const [products, setProducts] = useState([]);

@@ -13,8 +13,8 @@ import Head from "next/head";
 import { PersonaProvider } from "@/components/personacontext";
 import { QuickCommandDialog } from "@/components/quickcommand";
 import CryptoJS from 'crypto-js';
-
-
+import { setCookie } from "cookies-next";
+import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 
 let c;
 
@@ -24,6 +24,38 @@ if (typeof window !== "undefined") {
   const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
   const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 
+  const context= {
+    kind: "multi",
+    user: {
+      key: CryptoJS.SHA256("user@launchmail.io").toString(),
+      name: "User",
+      email: CryptoJS.SHA256("user@launchmail.io").toString(),
+      appName: "LD Demo",
+    },
+    device: {
+      key: device,
+      name: device,
+      operating_system: operatingSystem,
+      platform: device,
+    },
+    location: {
+      key: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      name: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      country: "US",
+    },
+    experience: {
+      key: "a380",
+      name: "a380",
+      airplane: "a380",
+    },
+    audience: {
+      key: uuidv4().slice(0, 6),
+    }
+  };
+
+  setCookie(LD_CONTEXT_COOKIE_KEY,context);
+  
   const LDProvider = await asyncWithLDProvider({
     clientSideID: process.env.NEXT_PUBLIC_LD_CLIENT_KEY || "",
     reactOptions: {
@@ -32,35 +64,7 @@ if (typeof window !== "undefined") {
     options: {
       privateAttributes: ['email', 'name']
     },
-    context: {
-      kind: "multi",
-      user: {
-        key: CryptoJS.SHA256("user@launchmail.io").toString(),
-        name: "User",
-        email: CryptoJS.SHA256("user@launchmail.io").toString(),
-        appName: "LD Demo",
-      },
-      device: {
-        key: device,
-        name: device,
-        operating_system: operatingSystem,
-        platform: device,
-      },
-      location: {
-        key: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        name: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        country: "US",
-      },
-      experience: {
-        key: "a380",
-        name: "a380",
-        airplane: "a380",
-      },
-      audience: {
-        key: uuidv4().slice(0, 6),
-      }
-    },
+    context: context
   });
 
   c = ({ Component, pageProps }: AppProps) => {

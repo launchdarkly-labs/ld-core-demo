@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import NavBar from "@/components/ui/navbar";
 import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
@@ -20,6 +19,9 @@ import LoginContext from "@/utils/contexts/login";
 import { addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import Chatbot from "@/components/chatbot/ChatBot";
+// import IndexPage from "@/components/chatbot/(chat)/page";
+
 
 export default function Airways() {
 
@@ -36,13 +38,8 @@ export default function Airways() {
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
 
-  function setAirport() {
-    setShowSearch(true);
-  }
-
-  const ldclient = useLDClient();
 
   function bookTrip() {
     const startDate = `${
@@ -182,6 +179,8 @@ export default function Airways() {
           </motion.main>
         )}
       </AnimatePresence>
+
+      <Chatbot/>
     </>
   );
 }

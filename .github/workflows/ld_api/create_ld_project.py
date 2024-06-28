@@ -6,15 +6,15 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-from ld_api_call import checkRateLimit
 from create_ld_segments import createSegmentsForLDEnvs
 from create_ld_metrics import createMetricsForLDProject
+
+BASE_URL = "https://app.launchdarkly.com/api/v2"
 
 def createContextKind(ld_api_key, project_key):
 
     key = "audience"
     url = "/projects/" + project_key + "/context-kinds/" + key
-    print(url)
 
     payload = {
         "name": "audience",
@@ -24,7 +24,7 @@ def createContextKind(ld_api_key, project_key):
         "version": 1
     }
         
-    response = checkRateLimit("PUT", url, ld_api_key, json.dumps(payload))
+    response = requests.request("PUT", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
 
     if response.status_code == 200:
         print("Context kind 'audience' updated successfully.")
@@ -52,19 +52,14 @@ def createContextKind(ld_api_key, project_key):
             "LD-API-Version": "beta"
 
         }
-        while True:
-            response = requests.put(url, json=payload, headers=headers)
+        response = requests.put(url, json=payload, headers=headers)
 
-            if response.status_code == 200:
-                print("Experimentation settings updated successfully.")
-                break
-            elif response.status_code == 429:
-                print("Rate limited. Waiting 5 seconds.")
-                time.sleep(5)
-            else:
-                print(f"Failed to update experimentation settings: {response.status_code}")
-                print(response.text)
-                exit(1)
+        if response.status_code == 200:
+            print("Experimentation settings updated successfully.")
+        else:
+            print(f"Failed to update experimentation settings: {response.status_code}")
+            print(response.text)
+            exit(1)
     else:
         print(f"Failed to update context kind 'audience': {response.status_code}")
         print(response.text)
@@ -85,13 +80,11 @@ def main():
         print("NAMESPACE not set")
         exit(1)
 
-    url = "https://app.launchdarkly.com/api/v2/projects/" + project_key
-    headers = {"Authorization": ld_api_key}
-    response = checkRateLimit("GET", "/projects/" + project_key, ld_api_key, None)
+    response = requests.request("GET", BASE_URL + '/projects/' + project_key, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = None)
     
     if response.status_code == 200:
         print(f"Project already exists for {namespace}")
-        response = checkRateLimit("GET", "/projects/" + project_key + "/environments/" + namespace, ld_api_key, None)
+        response = requests.request("GET", BASE_URL + '/projects/' + project_key + '/environments/' + namespace, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = None)
         data = response.json()
         sdk_key = data['apiKey']
         client_key = data['_id']
@@ -120,8 +113,8 @@ def main():
             "name": f"LD Demo - {namespace}",
         }
 
-        response = checkRateLimit("POST", "/projects", ld_api_key, json.dumps(payload))
-
+        response = requests.request("POST", BASE_URL + "/projects", headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+        
         if response.status_code == 201:
             environment_url = f"/projects/{project_key}/environments"
             environment_payload = {
@@ -130,7 +123,7 @@ def main():
                 "name": namespace
             }
 
-            response = checkRateLimit("POST", environment_url, ld_api_key, json.dumps(environment_payload))   
+            response = requests.request("POST", BASE_URL + environment_url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(environment_payload))
             if response.status_code == 201:
                 print(f"Project and Environment Created for {namespace}")
                 data = response.json()
@@ -162,7 +155,7 @@ def main():
                 "key": "template-env",
                 "name": "template-env"
             }
-            response = checkRateLimit("POST", environment_url, ld_api_key, json.dumps(environment_payload))     
+            response = requests.request("POST", BASE_URL + environment_url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(environment_payload))
             
             if response.status_code == 201:
                 print(f"Template Environment Created for LD Demo - {namespace}")

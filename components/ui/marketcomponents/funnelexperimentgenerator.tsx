@@ -96,7 +96,7 @@ export default function FunnelExperimentGenerator() {
 
         <Dialog>
             <DialogTrigger asChild>
-                <p className="font-bold font-sohnelight text-lg">Funnel Results Generator</p>
+                <p className="font-bold font-sohnelight text-lg">Funnel Results Generator (Marketplace)</p>
             </DialogTrigger>
             <DialogContent>
                 {expGenerator ? (
