@@ -29,12 +29,13 @@ interface LoginHomePageProps {
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
-  const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
+  const showCardsSectionComponentFlag =
+    variant === "government" ? useFlags()["show-cards-section-component"] : true;
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
   const showDifferentHeroImageFlag =
     variant === "government" ? useFlags()["show-different-hero-image-string"] : "imageA";
-  console.log(showHeroRedesignFlag);
+
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -125,13 +126,13 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           ) : showHeroRedesignFlag === "text-left" && variant === "government" ? (
             !isLoggedIn ? (
               <div className="w-full sm:w-auto z-10">
-              <LoginComponent
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                loginUser={loginUser}
-                variant={variant}
-                name={name}
-              />
+                <LoginComponent
+                  isLoggedIn={isLoggedIn}
+                  setIsLoggedIn={setIsLoggedIn}
+                  loginUser={loginUser}
+                  variant={variant}
+                  name={name}
+                />
               </div>
             ) : null
           ) : (
@@ -154,7 +155,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             sm:gap-y-0 gap-x-8
           sm:gap-x-12 lg:gap-x-24 py-8"
         >
-          {homePageVariants[variant]?.bankingServicesArr.map((ele, i) => {
+          {homePageVariants[variant]?.bankingServicesArr.map((ele: any, i: number) => {
             return (
               <div className="grid items-center justify-items-center" key={i}>
                 <img src={ele?.imgSrc} width={96} className="pb-2" />
@@ -166,7 +167,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {showCardsSectionComponentFlag && variant === "government" ? (
+      {showCardsSectionComponentFlag ? (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
             const patchCardGovernmentLogic =
