@@ -126,7 +126,7 @@ export function LoginComponent({
           onClick={() => handleLogin()}
           className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}
         >
-          Login with SSO
+          {variant.includes("government") ? "Sign Up!" :"Login with SSO"}
         </Button>
 
         <Dialog
