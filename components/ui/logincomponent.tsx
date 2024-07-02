@@ -71,7 +71,7 @@ export function LoginComponent({
   function handleLogin(e) {
     if (!defaultEmail) return;
     if (variant?.includes("government")) {
-      client?.track("login clicked", client.getContext());
+      client?.track("signup-clicked", client.getContext());
       client?.flush();
     }
 
