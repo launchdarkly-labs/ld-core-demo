@@ -5,13 +5,7 @@ import LaunchSignUp from "./launchSignup";
 import LoginContext from "@/utils/contexts/login";
 import DestinationPicker from "./pickMyDestinationModal";
 
-const AirlineHero = ({
-  showSearch,
-  launchClubLoyalty = false,
-}: {
-  showSearch: any;
-  launchClubLoyalty: boolean;
-}) => {
+const AirlineHero = ({ showSearch }: { showSearch: any }) => {
   const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
 
   return (
@@ -57,7 +51,7 @@ const AirlineHero = ({
                 </div>
               </div>
               <div className="mb-[5rem] lg:mb-0  w-full flex justify-center items-center">
-                {launchClubLoyalty && isLoggedIn && !enrolledInLaunchClub && (
+                {isLoggedIn && !enrolledInLaunchClub && (
                   <motion.div
                     initial={{ x: 300 }}
                     animate={{ x: 0 }}

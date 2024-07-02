@@ -1,3 +1,4 @@
+import persona3 from "@/public/personas/persona3.png"
 import { STANDARD } from "../constants";
 
 export const STARTER_PERSONAS = [

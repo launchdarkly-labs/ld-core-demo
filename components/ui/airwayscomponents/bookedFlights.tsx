@@ -288,7 +288,7 @@ export default function BookedFlights() {
                       </div>
                       <div className="border-2 mt-2 border-[#E6E6E6]" />
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
-                        {enrolledInLaunchClub && launchClubLoyalty && (
+                        {enrolledInLaunchClub && (
                           <>
 
                             <p className="flex text-black bg-clip-text text-transparent bg-black  ">
