@@ -50,7 +50,7 @@ if (typeof window !== "undefined") {
       airplane: "a380",
     },
     audience: {
-      key: uuidv4().slice(0, 6),
+      key: uuidv4().slice(0, 10),
     }
   };
 

@@ -4,7 +4,7 @@ import { createContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
-import { setCookie } from "cookies-next";
+import { setCookie, getCookie } from "cookies-next";
 import { STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
 
 const LoginContext = createContext();
@@ -13,6 +13,8 @@ export default LoginContext;
 
 const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
 const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
+const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+console.log(existingAudienceKey)
 
 // Continue in TripsContext.js
 export const LoginProvider = ({ children }) => {
@@ -22,6 +24,7 @@ export const LoginProvider = ({ children }) => {
   const [email, setEmail] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState(STANDARD);
+
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
@@ -36,7 +39,7 @@ export const LoginProvider = ({ children }) => {
     context.user.anonymous = false;
     context.user.key = hashedEmail;
     context.user.role = role;
-    context.audience.key = uuidv4().slice(0, 10);
+    context.audience.key = existingAudienceKey;
     context.user.launchclub = launchClubStatus;
     await client?.identify(context);
  
@@ -130,6 +133,6 @@ export const createAnonymousContext =  {
     "airplane": "a380"
   },
   "audience": {
-    "key": uuidv4().slice(0, 10)
+    "key": existingAudienceKey
   }
 };
