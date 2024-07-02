@@ -30,11 +30,11 @@ interface LoginHomePageProps {
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
   const showCardsSectionComponentFlag =
-    variant === "government" ? useFlags()["show-cards-section-component"] : true;
+    variant?.includes("government")  ? useFlags()["show-cards-section-component"] : true;
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
   const showDifferentHeroImageFlag =
-    variant === "government" ? useFlags()["show-different-hero-image-string"] : "imageA";
+  variant?.includes("government") ? useFlags()["show-different-hero-image-string"] : "imageA";
 
   return (
     <motion.main
@@ -50,14 +50,14 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
         }`}
       >
-        {variant === "market" && (
+        {variant?.includes("market") && (
           <div>
             <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
             <img src="union.png" className="absolute left-0 bottom-0" />
           </div>
         )}
 
-        {variant === "airlines" || variant === "government" ? (
+        {variant?.includes("airline") || variant?.includes("government") ? (
           <>
             <Image
               src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
@@ -77,7 +77,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
               text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
           >
-            {showHeroRedesignFlag === "text-left" && variant === "government" ? (
+            {showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
               <>
                 <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
                   Welcome to {name}{" "}
@@ -86,7 +86,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
                   {homePageVariants[variant]?.industryMessages}
                 </p>
               </>
-            ) : showHeroRedesignFlag === "text-right" && variant === "government" ? (
+            ) : showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
               !isLoggedIn ? (
                 <LoginComponent
                   isLoggedIn={isLoggedIn}
@@ -109,7 +109,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           </div>
           {/* TODO: fix logic here to render */}
 
-          {showHeroRedesignFlag === "text-right" && variant === "government" ? (
+          {showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
             <div
               className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
                           text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
@@ -123,7 +123,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
                 </p>
               </>
             </div>
-          ) : showHeroRedesignFlag === "text-left" && variant === "government" ? (
+          ) : showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
             !isLoggedIn ? (
               <div className="w-full sm:w-auto z-10">
                 <LoginComponent
@@ -149,7 +149,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </div>
       </header>
 
-      {variant === "bank" && (
+      {variant?.includes("bank") && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
             sm:gap-y-0 gap-x-8
@@ -171,7 +171,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
             const patchCardGovernmentLogic =
-              !patchShowCardsSectionComponentFlag && variant === "government" && index === 0;
+              !patchShowCardsSectionComponentFlag && variant?.includes("government") && index === 0;
             return (
               <HomePageInfoCard
                 imgSrc={patchCardGovernmentLogic ? null : card?.imgSrc}

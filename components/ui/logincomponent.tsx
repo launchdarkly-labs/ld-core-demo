@@ -1,9 +1,9 @@
 //@ts-nocheck
-import * as React from "react"
-import { useRef, useEffect, useContext } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { getVariantClassName } from '@/utils/getVariantClassName';
+import * as React from "react";
+import { useRef, useEffect, useContext } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { getVariantClassName } from "@/utils/getVariantClassName";
 import { useState } from "react";
 import {
   Dialog,
@@ -11,41 +11,49 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { PersonaContext } from "../personacontext";
-import toggleBankVerticalLogo from '@/public/banking/toggleBank_logo_vertical.svg'
-import frontierCapitalVerticalLogo from '@/public/investment/frontier_capital_logo_vertical.svg'
-import launchAirwaysVerticalLogo from '@/public/airline/launch_airways_logo_vertical.svg'
-import galaxyMarketplaceVerticalLogo from '@/public/marketplace/galaxy_marketplace_logo_vertical.svg'
+import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.svg";
+import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
+import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
+import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 // import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { STANDARD } from "@/utils/constants";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
   airlines: launchAirwaysVerticalLogo.src,
   market: galaxyMarketplaceVerticalLogo.src,
   investment: frontierCapitalVerticalLogo.src,
-  government: bureauOfRiskReductionHorizontalLogo.src
+  government: bureauOfRiskReductionHorizontalLogo.src,
 };
 interface LoginComponentProps {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  loginUser: any
-  variant: 'bank' | 'airlines' | 'market' | 'investment' | 'government';
+  loginUser: any;
+  variant: "bank" | "airlines" | "market" | "investment" | "government";
   name: string;
 }
 
-export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, name }: LoginComponentProps) {
+export function LoginComponent({
+  isLoggedIn,
+  setIsLoggedIn,
+  loginUser,
+  variant,
+  name,
+}: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
   const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
   const variantClass = getVariantClassName(variant);
-  const [newPersona, setNewPersona] = useState({ name: '', type: '', image: '', email: '' });
+  const [newPersona, setNewPersona] = useState({ name: "", type: "", image: "", email: "" });
   const { personas, getPersonas } = useContext(PersonaContext);
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const client = useLDClient();
 
   const handleNewPersonaChange = (e) => {
     setNewPersona({ ...newPersona, [e.target.name]: e.target.value });
@@ -60,27 +68,31 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
     setSubmitError(null);
   };
 
-
   function handleLogin(e) {
+    if (!defaultEmail) return;
+    if (variant?.includes("government")) {
+      client?.track("login clicked", client.getContext());
+      client?.flush();
+    }
+
     setIsLoggedIn(true);
     let email;
     let name;
     let role;
-    const activePersona = personas.find(p => p.personaname === activeElement);
-    console.log(activePersona)
+    const activePersona = personas.find((p) => p.personaname === activeElement);
+
     if (activePersona) {
       email = activePersona.personaemail;
       name = activePersona.personaname;
       role = activePersona.personarole;
-    }
-    else {
+    } else {
       email = defaultEmail;
-      name = email.split('@')[0];
+      name = email.split("@")[0];
       name = name.charAt(0).toUpperCase() + name.slice(1);
-      role = STANDARD
+      role = STANDARD;
     }
     loginUser(name, email, role);
-  };
+  }
 
   const handleSetActive = (personaname, personaemail) => {
     setActiveElement(personaname);
@@ -97,12 +109,8 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
 
   return (
     <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8">
-
       <div className="flex flex-col justify-center mx-auto text-center">
-        <img
-          src={imageSrc}
-          className="pt-10 mx-auto pb-4"
-        />
+        <img src={imageSrc} className="pt-10 mx-auto pb-4" />
       </div>
       <div className="w-full">
         <Input
@@ -115,13 +123,21 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
         />
 
         <Button
-          onClick={() => defaultEmail && handleLogin()}
-          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}>
+          onClick={() => handleLogin()}
+          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}
+        >
           Login with SSO
         </Button>
 
-        <Dialog onDismiss={() => { setIsAddUserDropdownOpen(false) }} className="z-10">
-          <DialogTrigger className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}>
+        <Dialog
+          onDismiss={() => {
+            setIsAddUserDropdownOpen(false);
+          }}
+          className="z-10"
+        >
+          <DialogTrigger
+            className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}
+          >
             Switch SSO User
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
@@ -139,13 +155,10 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                       <div className="flex flex-col items-center" key={index}>
                         <img
                           src={item.personaimage}
-                          className={`w-24 rounded-full mb-4 ${activeElement === item.personaname
-                            ? "border-4 border-black"
-                            : ""
-                            }`}
-                          onClick={() =>
-                            handleSetActive(item.personaname, item.personaemail)
-                          }
+                          className={`w-24 rounded-full mb-4 ${
+                            activeElement === item.personaname ? "border-4 border-black" : ""
+                          }`}
+                          onClick={() => handleSetActive(item.personaname, item.personaemail)}
                           alt={item.personaname}
                         />
                         <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
@@ -212,11 +225,11 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                                   key={imageName}
                                   src={`/personas/${imageName}`}
                                   alt={imageName}
-                                  className={`w-24 h-24 rounded-full cursor-pointer ${newPersona.image ===
-                                    `/personas/${imageName}`
-                                    ? "border-4 border-blue-500"
-                                    : ""
-                                    }`}
+                                  className={`w-24 h-24 rounded-full cursor-pointer ${
+                                    newPersona.image === `/personas/${imageName}`
+                                      ? "border-4 border-blue-500"
+                                      : ""
+                                  }`}
                                   onClick={() =>
                                     setNewPersona({
                                       ...newPersona,
@@ -235,9 +248,7 @@ export function LoginComponent({ isLoggedIn, setIsLoggedIn, loginUser, variant, 
                           </Button>
 
                           {submitError && (
-                            <p className="text-red-500 text-sm z-100">
-                              {submitError}
-                            </p>
+                            <p className="text-red-500 text-sm z-100">{submitError}</p>
                           )}
                         </div>
                       </div>
