@@ -13,8 +13,6 @@ export default LoginContext;
 
 const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
 const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
-const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
-console.log(existingAudienceKey)
 
 // Continue in TripsContext.js
 export const LoginProvider = ({ children }) => {
@@ -31,6 +29,8 @@ export const LoginProvider = ({ children }) => {
   };
 
   const loginUser = async (user, email, role) => {
+        //need to keep this here in order to pull getcookie and get same audience key as you initialized it
+    const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     const context = await client?.getContext();
     console.log("loginUser", context);
     context.user.name = user;
@@ -57,10 +57,39 @@ export const LoginProvider = ({ children }) => {
   };
 
   const logoutUser = async () => {
+    const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
     setLaunchClubStatus(STANDARD);
+    //need to keep this here in order to pull getcookie and get same audience key as you initialized it
+     const createAnonymousContext =  {
+      "kind": "multi",
+      "user": {
+        "anonymous": true,
+        "tier":null
+      },
+      "device": {
+        "key": device,
+        "name": device,
+        "operating_system": operatingSystem,
+        "platform": device,
+      },
+      "location": {
+        "key": "America/New_York",
+        "name": "America/New_York",
+        "timeZone": "America/New_York",
+        "country": "US"
+      },
+      "experience": {
+        "key": "a380",
+        "name": "a380",
+        "airplane": "a380"
+      },
+      "audience": {
+        "key": existingAudienceKey
+      }
+    };
     const context = createAnonymousContext;
     await client?.identify(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
@@ -109,30 +138,3 @@ export const LoginProvider = ({ children }) => {
   );
 };
 
-export const createAnonymousContext =  {
-  "kind": "multi",
-  "user": {
-    "anonymous": true,
-    "tier":null
-  },
-  "device": {
-    "key": device,
-    "name": device,
-    "operating_system": operatingSystem,
-    "platform": device,
-  },
-  "location": {
-    "key": "America/New_York",
-    "name": "America/New_York",
-    "timeZone": "America/New_York",
-    "country": "US"
-  },
-  "experience": {
-    "key": "a380",
-    "name": "a380",
-    "airplane": "a380"
-  },
-  "audience": {
-    "key": existingAudienceKey
-  }
-};

@@ -20,7 +20,6 @@ let c;
 
 if (typeof window !== "undefined") {
   //const uniqueKey = uuidv4().slice(0, 4);
-
   const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
   const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 
@@ -55,7 +54,7 @@ if (typeof window !== "undefined") {
   };
 
   setCookie(LD_CONTEXT_COOKIE_KEY,context);
-  
+  console.log(context)
   const LDProvider = await asyncWithLDProvider({
     clientSideID: process.env.NEXT_PUBLIC_LD_CLIENT_KEY || "",
     reactOptions: {

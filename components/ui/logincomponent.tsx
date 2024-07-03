@@ -86,6 +86,7 @@ export function LoginComponent({
       name = activePersona.personaname;
       role = activePersona.personarole;
     } else {
+      //TODO: fix this to change from user to christine
       email = defaultEmail;
       name = email.split("@")[0];
       name = name.charAt(0).toUpperCase() + name.slice(1);
