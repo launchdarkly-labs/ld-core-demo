@@ -131,3 +131,15 @@ resource "launchdarkly_metric" "in-cart-total-price" {
   tags           = ["experiment"]
 }
 
+resource "launchdarkly_metric" "signup-clicked" {
+  project_key    = var.project_key
+  key            = "signup-clicked"
+  name           = "[Gov] Signup Click in Home Page"
+  description    = "for government signup experimentation"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "signup clicked"
+  success_criteria = "HigherThanBaseline"
+  randomization_units = ["user", "audience"]
+  tags           = ["government"]
+}
