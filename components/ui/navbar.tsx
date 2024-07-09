@@ -53,7 +53,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { launchClubStatus } = useContext(LoginContext);
 
     return (
-      <nav className="w-full bg-black z-40 font-audimat transition-all duration-150 py-6">
+      <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
           <div className="items-center flex gap-x-6 text-white">
             <CSNav />

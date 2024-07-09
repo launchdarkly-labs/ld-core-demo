@@ -21,6 +21,7 @@ import governmentCardImg3 from "@/public/government/military-family.jpg";
 import governmentCardImg4 from "@/public/government/rocket.jpg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
+import FourColumnFooter from "./ui/govcomponents/footer";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment" | "government";
@@ -183,6 +184,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </HomePageCardWrapper>
       ) : null}
+      <FourColumnFooter/>
     </motion.main>
   );
 }
