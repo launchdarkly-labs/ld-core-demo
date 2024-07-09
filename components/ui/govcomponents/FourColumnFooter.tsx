@@ -74,12 +74,9 @@ const socials = [
 ];
 
 export default function FourColumnFooter({ industry = "government" }) {
-
-  const sectionStyle = "bg-white " 
-
  
   return (
-    <footer className={`${sectionStyle} border-t bg-navbardarkgrey text-white font-sohnelight`} aria-labelledby="footer-heading" data-testid="four-column-footer-test-id">
+    <footer className={` border-t bg-navbardarkgrey text-white font-sohnelight`} aria-labelledby="footer-heading" data-testid="four-column-footer-test-id">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>

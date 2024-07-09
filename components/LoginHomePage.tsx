@@ -21,7 +21,7 @@ import governmentCardImg3 from "@/public/government/military-family.jpg";
 import governmentCardImg4 from "@/public/government/rocket.jpg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import FourColumnFooter from "./ui/govcomponents/footer";
+import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
 import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
 
 interface LoginHomePageProps {
@@ -39,7 +39,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
   const showDifferentHeroImageFlag = variant?.includes("government")
     ? useFlags()["show-different-hero-image-string"]
     : "imageA";
-console.log(homePageVariants[variant]?.name)
+
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -49,7 +49,7 @@ console.log(homePageVariants[variant]?.name)
     >
       <NavBar variant={variant} />
 
-      <header
+    { !variant.includes("government") && <header
         className={`w-full relative ${
           variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
         }`}
@@ -60,8 +60,8 @@ console.log(homePageVariants[variant]?.name)
             <img src="union.png" className="absolute left-0 bottom-0" />
           </div>
         )}
-
-        {variant?.includes("airline") || variant?.includes("government") ? (
+{/* TODO: remove experiment from here */}
+        {variant?.includes("airline") ? (
           <>
             <Image
               src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
@@ -151,8 +151,13 @@ console.log(homePageVariants[variant]?.name)
             </div>
           )}
         </div>
-      </header>
-
+      </header>}
+      {
+        variant.includes("government") && <ImageWithContentHero
+          variant={variant}
+          homePageContent = {homePageVariants[variant]}
+        />
+      }
       {variant?.includes("bank") && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
@@ -170,12 +175,7 @@ console.log(homePageVariants[variant]?.name)
           })}
         </section>
       )}
-      {
-        variant.includes("government") && <ImageWithContentHero
-          variant={variant}
-          homePageContent = {homePageVariants[variant]}
-        />
-      }
+     
       {showCardsSectionComponentFlag ? (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {

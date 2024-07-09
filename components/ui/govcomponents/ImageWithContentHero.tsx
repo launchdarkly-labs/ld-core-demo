@@ -14,8 +14,8 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
     : "imageA";
 
   return (
-    <section
-      className="bg-slate-100 salient-hero-image"
+    <header
+      className="bg-slate-100 salient-hero-image font-sohnelight"
       data-testid="salient-image-with-content-hero-test-id"
     >
       <div className="flex flex-col border-b border-slate-400/10 lg:border-0">
@@ -33,12 +33,10 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
                   }`}
                 >
                   <h1
-                    className={`text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl ${
-                      showHeroRedesignFlag ? "lg:text-right" : ""
-                    }`}
+                    className={`text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl `}
                     data-testid={"salient-hero-title-test-id"}
                   >
-                         {homePageContent?.title}
+                      Welcome to {homePageContent?.name}{" "}
                   </h1>
                   <p
                     className={`mt-4 text-xl text-gray-600 `}
@@ -49,7 +47,7 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
                   <div className="mt-6">
                     <Button
                       // href={customizedStyleState["CUSTOM__salient-hero"]?.button?.href}
-
+                    className="bg-gradient-airways rounded-none w-[50%] py-[2rem] text-base"
  
                       // handleClick={() => {
                       //   if (showHeroInvestmentPromoLDFlag && !showHeroInvestmentPlanSignUpLDFlag) {
@@ -74,7 +72,7 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
                       //   }
                       // }}
                     >
-                      afawefawefawfafa
+                      Get Started Today
                     </Button>
                   </div>
                 </div>
@@ -104,7 +102,7 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
           </div>
         </div>
       </div>
-    </section>
+    </header>
   );
 }
 
