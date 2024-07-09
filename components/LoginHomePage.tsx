@@ -22,6 +22,7 @@ import governmentCardImg4 from "@/public/government/rocket.jpg";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import FourColumnFooter from "./ui/govcomponents/footer";
+import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment" | "government";
@@ -30,13 +31,15 @@ interface LoginHomePageProps {
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
-  const showCardsSectionComponentFlag =
-    variant?.includes("government")  ? useFlags()["show-cards-section-component"] : true;
+  const showCardsSectionComponentFlag = variant?.includes("government")
+    ? useFlags()["show-cards-section-component"]
+    : true;
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
-  const showDifferentHeroImageFlag =
-  variant?.includes("government") ? useFlags()["show-different-hero-image-string"] : "imageA";
-
+  const showDifferentHeroImageFlag = variant?.includes("government")
+    ? useFlags()["show-different-hero-image-string"]
+    : "imageA";
+console.log(homePageVariants[variant]?.name)
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -62,7 +65,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           <>
             <Image
               src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
-              alt="Airline Login Hero Background"
+              alt={homePageVariants[variant]?.industryMessages}
               layout="fill"
               className="object-cover"
               quality={100}
@@ -81,7 +84,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             {showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
               <>
                 <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {name}{" "}
+                  Welcome to {homePageVariants[variant]?.name}{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
                   {homePageVariants[variant]?.industryMessages}
@@ -100,7 +103,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             ) : (
               <>
                 <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {name}{" "}
+                  Welcome to {homePageVariants[variant]?.name}{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
                   {homePageVariants[variant]?.industryMessages}
@@ -117,7 +120,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             >
               <>
                 <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {name}{" "}
+                  Welcome to {homePageVariants[variant]?.name}{" "}
                 </p>
                 <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
                   {homePageVariants[variant]?.industryMessages}
@@ -167,7 +170,12 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </section>
       )}
-
+      {
+        variant.includes("government") && <ImageWithContentHero
+          variant={variant}
+          homePageContent = {homePageVariants[variant]}
+        />
+      }
       {showCardsSectionComponentFlag ? (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
@@ -184,13 +192,14 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </HomePageCardWrapper>
       ) : null}
-      <FourColumnFooter/>
+      <FourColumnFooter />
     </motion.main>
   );
 }
 
 const homePageVariants: any = {
   bank: {
+    name:"ToggleBank",
     industryMessages: "More than 100,000 customers worldwide",
     gradiantColor: "bg-gradient-bank",
     bankingServicesArr: [
@@ -219,6 +228,7 @@ const homePageVariants: any = {
     ],
   },
   investment: {
+    name:"Frontier Capital",
     industryMessages: "Serving more than 100,000 customers, and 10 trillion in capital every day",
     gradiantColor: "bg-gradient-investment",
     cards: [
@@ -243,6 +253,7 @@ const homePageVariants: any = {
     ],
   },
   airlines: {
+    name:"Launch Airways",
     industryMessages:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     gradiantColor: "bg-gradient-airways ",
@@ -275,6 +286,7 @@ const homePageVariants: any = {
   //   gradiantColor: " bg-market-header grid items-center justify-center",
   // },
   government: {
+    name:"The Bureau of Risk Reduction",
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
     gradiantColor: "bg-gradient-bank ",

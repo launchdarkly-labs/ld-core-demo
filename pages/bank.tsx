@@ -55,7 +55,7 @@ export default function Bank() {
   return (
     <>
       {!isLoggedIn ? (
-        <LoginHomePage variant="bank" name="ToggleBank" />
+        <LoginHomePage variant="bank" />
       ) : (
         <div className="mb-8">
           <NavBar variant={"bank"} />

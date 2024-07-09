@@ -26,7 +26,7 @@ export default function Investment() {
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="investment" name="Frontier Capital" />
+          <LoginHomePage variant="investment" />
         ) : (
           <motion.main
             initial={{ opacity: 0 }}
