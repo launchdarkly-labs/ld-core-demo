@@ -48,7 +48,6 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
                     <Button
                       // href={customizedStyleState["CUSTOM__salient-hero"]?.button?.href}
                     className="bg-gradient-airways rounded-none w-[50%] py-[2rem] text-base"
- 
                       // handleClick={() => {
                       //   if (showHeroInvestmentPromoLDFlag && !showHeroInvestmentPlanSignUpLDFlag) {
                       //     amplitude.track(
