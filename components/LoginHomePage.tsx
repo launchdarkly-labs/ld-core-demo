@@ -23,6 +23,11 @@ import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-
 import { useFlags } from "launchdarkly-react-client-sdk";
 import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
 import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
+import ServiceCards from "./ui/govcomponents/ServiceCards";
+import { IoShieldCheckmark } from "react-icons/io5";
+import { BsArrowsExpandVertical } from "react-icons/bs";
+import { FaHandsHelping } from "react-icons/fa";
+import { FaMedal } from "react-icons/fa";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment" | "government";
@@ -49,86 +54,99 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
     >
       <NavBar variant={variant} />
 
-    { !variant.includes("government") && <header
-        className={`w-full relative ${
-          variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
-        }`}
-      >
-        {variant?.includes("market") && (
-          <div>
-            <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
-            <img src="union.png" className="absolute left-0 bottom-0" />
-          </div>
-        )}
-{/* TODO: remove experiment from here */}
-        {variant?.includes("airline") ? (
-          <>
-            <Image
-              src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
-              alt={homePageVariants[variant]?.industryMessages}
-              layout="fill"
-              className="object-cover"
-              quality={100}
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
-          </>
-        ) : null}
-        <div
-          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
-             items-center"
+      {!variant.includes("government") && (
+        <header
+          className={`w-full relative ${
+            variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
+          }`}
         >
+          {variant?.includes("market") && (
+            <div>
+              <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
+              <img src="union.png" className="absolute left-0 bottom-0" />
+            </div>
+          )}
+          {/* TODO: remove experiment from here */}
+          {variant?.includes("airline") ? (
+            <>
+              <Image
+                src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
+                alt={homePageVariants[variant]?.industryMessages}
+                layout="fill"
+                className="object-cover"
+                quality={100}
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
+            </>
+          ) : null}
           <div
-            className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+            className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
+             items-center"
           >
-            {showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
-              <>
-                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {homePageVariants[variant]?.name}{" "}
-                </p>
-                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                  {homePageVariants[variant]?.industryMessages}
-                </p>
-              </>
-            ) : showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
-              !isLoggedIn ? (
-                <LoginComponent
-                  isLoggedIn={isLoggedIn}
-                  setIsLoggedIn={setIsLoggedIn}
-                  loginUser={loginUser}
-                  variant={variant}
-                  name={name}
-                />
-              ) : null
-            ) : (
-              <>
-                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {homePageVariants[variant]?.name}{" "}
-                </p>
-                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                  {homePageVariants[variant]?.industryMessages}
-                </p>
-              </>
-            )}
-          </div>
-          {/* TODO: fix logic here to render */}
-
-          {showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
             <div
               className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-                          text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
             >
-              <>
-                <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                  Welcome to {homePageVariants[variant]?.name}{" "}
-                </p>
-                <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                  {homePageVariants[variant]?.industryMessages}
-                </p>
-              </>
+              {showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
+                <>
+                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                    Welcome to {homePageVariants[variant]?.name}{" "}
+                  </p>
+                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                    {homePageVariants[variant]?.industryMessages}
+                  </p>
+                </>
+              ) : showHeroRedesignFlag?.includes("text-right") &&
+                variant?.includes("government") ? (
+                !isLoggedIn ? (
+                  <LoginComponent
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                    loginUser={loginUser}
+                    variant={variant}
+                    name={name}
+                  />
+                ) : null
+              ) : (
+                <>
+                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                    Welcome to {homePageVariants[variant]?.name}{" "}
+                  </p>
+                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                    {homePageVariants[variant]?.industryMessages}
+                  </p>
+                </>
+              )}
             </div>
-          ) : showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
-            !isLoggedIn ? (
+            {/* TODO: fix logic here to render */}
+
+            {showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
+              <div
+                className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+                          text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+              >
+                <>
+                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                    Welcome to {homePageVariants[variant]?.name}{" "}
+                  </p>
+                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                    {homePageVariants[variant]?.industryMessages}
+                  </p>
+                </>
+              </div>
+            ) : showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
+              !isLoggedIn ? (
+                <div className="w-full sm:w-auto z-10">
+                  <LoginComponent
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                    loginUser={loginUser}
+                    variant={variant}
+                    name={name}
+                  />
+                </div>
+              ) : null
+            ) : (
               <div className="w-full sm:w-auto z-10">
                 <LoginComponent
                   isLoggedIn={isLoggedIn}
@@ -138,26 +156,13 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
                   name={name}
                 />
               </div>
-            ) : null
-          ) : (
-            <div className="w-full sm:w-auto z-10">
-              <LoginComponent
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                loginUser={loginUser}
-                variant={variant}
-                name={name}
-              />
-            </div>
-          )}
-        </div>
-      </header>}
-      {
-        variant.includes("government") && <ImageWithContentHero
-          variant={variant}
-          homePageContent = {homePageVariants[variant]}
-        />
-      }
+            )}
+          </div>
+        </header>
+      )}
+      {variant.includes("government") && (
+        <ImageWithContentHero variant={variant} homePageContent={homePageVariants[variant]} />
+      )}
       {variant?.includes("bank") && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
@@ -175,7 +180,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </section>
       )}
-     
+
       {showCardsSectionComponentFlag ? (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
@@ -192,6 +197,12 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </HomePageCardWrapper>
       ) : null}
+      <HomePageCardWrapper>
+        {homePageVariants[variant]?.serviceCards.map((service: any, index: number) => {
+          return <ServiceCards key={index} serviceCardContent={service} />;
+        })}
+      </HomePageCardWrapper>
+
       <FourColumnFooter />
     </motion.main>
   );
@@ -199,7 +210,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
 
 const homePageVariants: any = {
   bank: {
-    name:"ToggleBank",
+    name: "ToggleBank",
     industryMessages: "More than 100,000 customers worldwide",
     gradiantColor: "bg-gradient-bank",
     bankingServicesArr: [
@@ -228,7 +239,7 @@ const homePageVariants: any = {
     ],
   },
   investment: {
-    name:"Frontier Capital",
+    name: "Frontier Capital",
     industryMessages: "Serving more than 100,000 customers, and 10 trillion in capital every day",
     gradiantColor: "bg-gradient-investment",
     cards: [
@@ -253,7 +264,7 @@ const homePageVariants: any = {
     ],
   },
   airlines: {
-    name:"Launch Airways",
+    name: "Launch Airways",
     industryMessages:
       "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
     gradiantColor: "bg-gradient-airways ",
@@ -286,7 +297,7 @@ const homePageVariants: any = {
   //   gradiantColor: " bg-market-header grid items-center justify-center",
   // },
   government: {
-    name:"The Bureau of Risk Reduction",
+    name: "The Bureau of Risk Reduction",
     industryMessages:
       "We improve control, availability, and security of government applications and sites.",
     gradiantColor: "bg-gradient-bank ",
@@ -315,6 +326,28 @@ const homePageVariants: any = {
         titleText: "Quality",
         subtitleText: "Dark launches reduce risk",
         imgSrc: governmentCardImg4.src,
+      },
+    ],
+    serviceCards: [
+      {
+        icon: <IoShieldCheckmark className="h-full w-full"/>,
+        title: "Cybersecurity",
+        subtitle: "FedRAMP Authorized",
+      },
+      {
+        icon: <BsArrowsExpandVertical className="h-full w-full"/>,
+        title: "Resiliency",
+        subtitle: "Scalable architecture with 99.99% SLA",
+      },
+      {
+        icon: <FaHandsHelping className="h-full w-full"/>,
+        title: "Trust",
+        subtitle: "Optimized citizen services",
+      },
+      {
+        icon: <FaMedal className="h-full w-full"/>,
+        title: "Quality",
+        subtitle: "Dark launches reduce risk",
       },
     ],
   },
