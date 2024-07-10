@@ -19,11 +19,13 @@ import governmentCardImg1 from "@/public/government/crypto.png";
 import governmentCardImg2 from "@/public/government/farm.png";
 import governmentCardImg3 from "@/public/government/military-family.jpg";
 import governmentCardImg4 from "@/public/government/rocket.jpg";
+
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
 import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
 import ServiceCards from "./ui/govcomponents/ServiceCards";
+import NewsCards from "./ui/govcomponents/NewsCards";
 import { IoShieldCheckmark } from "react-icons/io5";
 import { BsArrowsExpandVertical } from "react-icons/bs";
 import { FaHandsHelping } from "react-icons/fa";
@@ -197,11 +199,22 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
           })}
         </HomePageCardWrapper>
       ) : null}
-      <HomePageCardWrapper>
-        {homePageVariants[variant]?.serviceCards.map((service: any, index: number) => {
-          return <ServiceCards key={index} serviceCardContent={service} />;
-        })}
-      </HomePageCardWrapper>
+
+      {variant.includes("government") && (
+        <HomePageCardWrapper>
+          {homePageVariants[variant]?.serviceCards.map((service: any, index: number) => {
+            return <ServiceCards key={index} serviceCardContent={service} />;
+          })}
+        </HomePageCardWrapper>
+      )}
+
+      {variant.includes("government") && (
+        <HomePageCardWrapper>
+          {homePageVariants[variant]?.newsCards.map((news: any, index: number) => {
+            return <NewsCards key={index} newsCardContent={news} />;
+          })}
+        </HomePageCardWrapper>
+      )}
 
       <FourColumnFooter />
     </motion.main>
@@ -330,24 +343,41 @@ const homePageVariants: any = {
     ],
     serviceCards: [
       {
-        icon: <IoShieldCheckmark className="h-full w-full"/>,
+        icon: <IoShieldCheckmark className="h-full w-full" />,
         title: "Cybersecurity",
         subtitle: "FedRAMP Authorized",
       },
       {
-        icon: <BsArrowsExpandVertical className="h-full w-full"/>,
+        icon: <BsArrowsExpandVertical className="h-full w-full" />,
         title: "Resiliency",
         subtitle: "Scalable architecture with 99.99% SLA",
       },
       {
-        icon: <FaHandsHelping className="h-full w-full"/>,
+        icon: <FaHandsHelping className="h-full w-full" />,
         title: "Trust",
         subtitle: "Optimized citizen services",
       },
       {
-        icon: <FaMedal className="h-full w-full"/>,
+        icon: <FaMedal className="h-full w-full" />,
         title: "Quality",
         subtitle: "Dark launches reduce risk",
+      },
+    ],
+    newsCards: [
+      {
+        imgSrc: "/government/one_woman.svg",
+        title: "Cybersecurity",
+        newsCategory: "FedRAMP Authorized",
+      },
+      {
+        imgSrc: "/government/capitol_building.svg",
+        title: "Resiliency",
+        newsCategory: "Scalable architecture with 99.99% SLA",
+      },
+      {
+        imgSrc: "/government/two_women.svg",
+        title: "Trust",
+        newsCategory: "Optimized citizen services",
       },
     ],
   },
