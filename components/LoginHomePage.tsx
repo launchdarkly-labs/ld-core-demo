@@ -366,18 +366,18 @@ const homePageVariants: any = {
     newsCards: [
       {
         imgSrc: "/government/one_woman.svg",
-        title: "Cybersecurity",
-        newsCategory: "FedRAMP Authorized",
+        title: "BRR’s 2022 Year In Review",
+        newsCategory: "Blogs and Newsroom",
       },
       {
         imgSrc: "/government/capitol_building.svg",
-        title: "Resiliency",
-        newsCategory: "Scalable architecture with 99.99% SLA",
+        title: "Updated resilience planning framework",
+        newsCategory: "Recent Announcements",
       },
       {
         imgSrc: "/government/two_women.svg",
-        title: "Trust",
-        newsCategory: "Optimized citizen services",
+        title: "Find BRR agency job postings?",
+        newsCategory: "How Do I?",
       },
     ],
   },
