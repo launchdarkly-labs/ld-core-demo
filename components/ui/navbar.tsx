@@ -28,6 +28,7 @@ import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_ho
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
+import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -49,7 +50,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
       useContext(LoginContext);
 
     const { personas } = useContext(PersonaContext);
-    const chosenPersona = personas.find((persona) => persona.personaname === user);
+
+    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname.includes(user));
     const { launchClubStatus } = useContext(LoginContext);
 
     return (
@@ -142,7 +144,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           ) : null}
 
           {!isLoggedIn && !variant.includes("market") && !variant.includes("government") ? null : (
-            <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center" id="nav-login-group">
+            <div
+              className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
+              id="nav-login-group"
+            >
               {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
 
               {variant?.includes("airlines") && (
@@ -170,7 +175,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     />
                   </Avatar>
                 </PopoverTrigger>
-
+               
                 <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
                   {isLoggedIn ? (
                     <>
@@ -204,9 +209,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       </div>
                     </>
                   ) : (
-                    <LoginComponent
-                      variant={variant}
-                    />
+                    <LoginComponent variant={variant} />
                   )}
                 </PopoverContent>
               </Popover>

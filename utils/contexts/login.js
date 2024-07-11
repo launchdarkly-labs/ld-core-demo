@@ -18,8 +18,8 @@ const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
-  const [email, setEmail] = useState({});
+  const [user, setUser] = useState("user");
+  const [email, setEmail] = useState("");
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState(STANDARD);
 
@@ -33,6 +33,7 @@ export const LoginProvider = ({ children }) => {
     const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     const context = await client?.getContext();
     console.log("loginUser", context);
+    console.log(user, email, role)
     context.user.name = user;
     context.user.email = email;
     let hashedEmail = await hashEmail(email);
