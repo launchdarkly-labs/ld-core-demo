@@ -129,7 +129,7 @@ export default function BookedFlights() {
     <Sheet>
       <SheetTrigger asChild>
         <button
-          className={`${navLinkStyling} relative lg:mx-6 lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
+          className={`${navLinkStyling} relative  lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
         >
           <div className="block sm:hidden lg:block cursor-pointer sm:text-airlineinactive sm:focus:text-airlinetext  sm:hover:text-white ">
             <span className="">My Bookings</span>

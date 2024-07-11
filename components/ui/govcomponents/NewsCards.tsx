@@ -14,9 +14,7 @@ const NewsCards = ({ newsCardContent }: { newsCardContent: any }) => {
       overflow-y-auto text-ellipsis "
       >
         <p className=" text-base font-sohnelight">{newsCardContent?.newsCategory}</p>
-        <p className=" pt-2 text-2xl  text-left">
-          {truncateString(newsCardContent?.title, 100)}
-        </p>
+        <p className=" pt-2 text-2xl  text-left">{truncateString(newsCardContent?.title, 100)}</p>
       </div>
       <img src={newsCardContent?.imgSrc} className="w-full h-[15rem] object-cover" />
     </div>

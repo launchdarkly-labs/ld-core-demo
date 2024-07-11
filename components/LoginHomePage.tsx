@@ -38,9 +38,7 @@ interface LoginHomePageProps {
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
-  const showCardsSectionComponentFlag = variant?.includes("government")
-    ? useFlags()["show-cards-section-component"]
-    : true;
+  const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
   const showDifferentHeroImageFlag = variant?.includes("government")
@@ -68,7 +66,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
               <img src="union.png" className="absolute left-0 bottom-0" />
             </div>
           )}
-          {/* TODO: remove experiment from here */}
+
           {variant?.includes("airline") ? (
             <>
               <Image
@@ -81,6 +79,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
               <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
             </>
           ) : null}
+
           <div
             className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
              items-center"
@@ -89,82 +88,31 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
               className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
               text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
             >
-              {showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
-                <>
-                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                    Welcome to {homePageVariants[variant]?.name}{" "}
-                  </p>
-                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                    {homePageVariants[variant]?.industryMessages}
-                  </p>
-                </>
-              ) : showHeroRedesignFlag?.includes("text-right") &&
-                variant?.includes("government") ? (
-                !isLoggedIn ? (
-                  <LoginComponent
-                    isLoggedIn={isLoggedIn}
-                    setIsLoggedIn={setIsLoggedIn}
-                    loginUser={loginUser}
-                    variant={variant}
-                    name={name}
-                  />
-                ) : null
-              ) : (
-                <>
-                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                    Welcome to {homePageVariants[variant]?.name}{" "}
-                  </p>
-                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                    {homePageVariants[variant]?.industryMessages}
-                  </p>
-                </>
-              )}
+              <h1 className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+                Welcome to {homePageVariants[variant]?.name}{" "}
+              </h1>
+              <h2 className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+                {homePageVariants[variant]?.industryMessages}
+              </h2>
             </div>
-            {/* TODO: fix logic here to render */}
 
-            {showHeroRedesignFlag?.includes("text-right") && variant?.includes("government") ? (
-              <div
-                className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-                          text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
-              >
-                <>
-                  <p className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                    Welcome to {homePageVariants[variant]?.name}{" "}
-                  </p>
-                  <p className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                    {homePageVariants[variant]?.industryMessages}
-                  </p>
-                </>
-              </div>
-            ) : showHeroRedesignFlag?.includes("text-left") && variant?.includes("government") ? (
-              !isLoggedIn ? (
-                <div className="w-full sm:w-auto z-10">
-                  <LoginComponent
-                    isLoggedIn={isLoggedIn}
-                    setIsLoggedIn={setIsLoggedIn}
-                    loginUser={loginUser}
-                    variant={variant}
-                    name={name}
-                  />
-                </div>
-              ) : null
-            ) : (
-              <div className="w-full sm:w-auto z-10">
-                <LoginComponent
-                  isLoggedIn={isLoggedIn}
-                  setIsLoggedIn={setIsLoggedIn}
-                  loginUser={loginUser}
-                  variant={variant}
-                  name={name}
-                />
-              </div>
-            )}
+            <div className="w-full sm:w-auto z-10">
+              <LoginComponent
+                isLoggedIn={isLoggedIn}
+                setIsLoggedIn={setIsLoggedIn}
+                loginUser={loginUser}
+                variant={variant}
+                name={name}
+              />
+            </div>
           </div>
         </header>
       )}
+
       {variant.includes("government") && (
         <ImageWithContentHero variant={variant} homePageContent={homePageVariants[variant]} />
       )}
+
       {variant?.includes("bank") && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
@@ -183,14 +131,12 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {showCardsSectionComponentFlag ? (
+      {!variant.includes("government") && (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
-            const patchCardGovernmentLogic =
-              !patchShowCardsSectionComponentFlag && variant?.includes("government") && index === 0;
             return (
               <HomePageInfoCard
-                imgSrc={patchCardGovernmentLogic ? null : card?.imgSrc}
+                imgSrc={card?.imgSrc}
                 headerTitleText={card?.titleText}
                 subtitleText={card?.subtitleText}
                 key={index}
@@ -198,7 +144,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
             );
           })}
         </HomePageCardWrapper>
-      ) : null}
+      )}
 
       {variant.includes("government") && (
         <HomePageCardWrapper>
@@ -208,10 +154,13 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </HomePageCardWrapper>
       )}
 
-      {variant.includes("government") && (
+      {variant.includes("government") && showCardsSectionComponentFlag && (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.newsCards.map((news: any, index: number) => {
-            return <NewsCards key={index} newsCardContent={news} />;
+            const patchCardGovernmentLogic = !patchShowCardsSectionComponentFlag && index === 0;
+            return (
+              <NewsCards key={index} newsCardContent={patchCardGovernmentLogic ? null : news} />
+            );
           })}
         </HomePageCardWrapper>
       )}
