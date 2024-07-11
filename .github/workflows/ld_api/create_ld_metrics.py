@@ -39,6 +39,7 @@ def createMetricsForLDProject(ld_api_key):
     createInCartTotalPriceMetric(ld_api_key, createMetricURL)
     createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL)
     createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL)
+    createGovSignupClickedMetric(ld_api_key, createMetricURL)
     
 def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
     
@@ -268,6 +269,26 @@ def createInCartTotalPriceMetric(ld_api_key, createMetricURL):
     
     if response.status_code == 201:
         print("Metric 'In-Cart Total Price' created successfully.")
+
+def createGovSignupClickedMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "[Gov] Signup Click in Home Page",
+        "eventKey": "signup clicked",
+        "Description": "for government signup experimentation",
+        "isNumeric": False,
+        "key": "signup-clicked",
+        "kind": "custom",
+        "successCriteria": "HigherThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["government"]
+    }
+    
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric '[Gov] Signup Click in Home Page' created successfully.")
         
+
 if __name__ == "__main__":
     main()
