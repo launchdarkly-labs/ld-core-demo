@@ -205,10 +205,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     </>
                   ) : (
                     <LoginComponent
-                      isLoggedIn={isLoggedIn}
-                      setIsLoggedIn={setIsLoggedIn}
-                      loginUser={loginUser}
-                      name={navElementsVariant[variant]?.name}
                       variant={variant}
                     />
                   )}

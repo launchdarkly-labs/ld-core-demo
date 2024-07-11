@@ -22,6 +22,7 @@ import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_R
 import { STANDARD } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
+//TODO: create a central constant for all of this 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
   airlines: launchAirwaysVerticalLogo.src,
@@ -30,18 +31,10 @@ const variantToImageMap = {
   government: bureauOfRiskReductionHorizontalLogo.src,
 };
 interface LoginComponentProps {
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  loginUser: any;
   variant: "bank" | "airlines" | "market" | "investment" | "government";
-  name: string;
 }
 
-export function LoginComponent({
-
-  variant,
-  name,
-}: LoginComponentProps) {
+export function LoginComponent({ variant }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);
   const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
@@ -51,7 +44,7 @@ export function LoginComponent({
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { setIsLoggedIn, loginUser  } = useContext(LoginContext);
+  const { setIsLoggedIn, loginUser } = useContext(LoginContext);
   const handleNewPersonaChange = (e) => {
     setNewPersona({ ...newPersona, [e.target.name]: e.target.value });
   };
@@ -78,7 +71,6 @@ export function LoginComponent({
       email = activePersona.personaemail;
       name = activePersona.personaname;
       role = activePersona.personarole;
-
     } else {
       //TODO: fix this to change from user to christine
       email = defaultEmail;
