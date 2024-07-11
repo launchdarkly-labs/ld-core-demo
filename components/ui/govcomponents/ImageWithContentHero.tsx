@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { Button } from "../button";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { STANDARD } from "@/utils/constants";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 

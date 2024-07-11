@@ -20,6 +20,7 @@ import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketpla
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 // import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { STANDARD } from "@/utils/constants";
+import LoginContext from "@/utils/contexts/login";
 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
@@ -37,9 +38,7 @@ interface LoginComponentProps {
 }
 
 export function LoginComponent({
-  isLoggedIn,
-  setIsLoggedIn,
-  loginUser,
+
   variant,
   name,
 }: LoginComponentProps) {
@@ -52,7 +51,7 @@ export function LoginComponent({
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { setIsLoggedIn, loginUser  } = useContext(LoginContext);
   const handleNewPersonaChange = (e) => {
     setNewPersona({ ...newPersona, [e.target.name]: e.target.value });
   };
@@ -122,7 +121,7 @@ export function LoginComponent({
           onClick={() => handleLogin()}
           className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}
         >
-          {variant.includes("government") ? "Sign Up!" :"Login with SSO"}
+          Login with SSO
         </Button>
 
         <Dialog

@@ -42,7 +42,7 @@ interface Persona {
   personaemail: string;
 }
 
-//TODO: change user to christine, create a plat user already for targeting, 
+//TODO: change user to christine, create a plat user already for targeting,
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
@@ -141,8 +141,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </div>
           ) : null}
 
-          {!isLoggedIn && !variant.includes("market") ? null : (
-            <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center">
+          {!isLoggedIn && !variant.includes("market") && !variant.includes("government") ? null : (
+            <div className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center" id="nav-login-group">
               {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
 
               {variant?.includes("airlines") && (
@@ -200,7 +200,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         >
                           Logout
                         </Button>
-                        <QuickLoginDialog personas={personas} variant="market" />
+                        <QuickLoginDialog personas={personas} variant={variant} />
                       </div>
                     </>
                   ) : (
@@ -208,8 +208,8 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       isLoggedIn={isLoggedIn}
                       setIsLoggedIn={setIsLoggedIn}
                       loginUser={loginUser}
-                      name="Galaxy Marketplace"
-                      variant={"market"}
+                      name={navElementsVariant[variant]?.name}
+                      variant={variant}
                     />
                   )}
                 </PopoverContent>
@@ -236,7 +236,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for banking with us, ",
-    logoImg: toggleBankHorizontalLogo.src
+    logoImg: toggleBankHorizontalLogo.src,
   },
   government: {
     navLinks: [
@@ -246,7 +246,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for your service, ",
-    logoImg: bureauOfRiskReductionHorizontalLogo.src
+    logoImg: bureauOfRiskReductionHorizontalLogo.src,
   },
   investment: {
     navLinks: [
@@ -258,7 +258,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-investment",
     popoverMessage: "Thank you for investing with us, ",
-    logoImg: frontierCapitalHorizontalLogo.src
+    logoImg: frontierCapitalHorizontalLogo.src,
   },
   market: {
     navLinks: [
@@ -270,7 +270,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-experimentation",
     popoverMessage: "Thank you for shopping with us, ",
-    logoImg: galaxyMarketplaceHorizontalLogo.src
+    logoImg: galaxyMarketplaceHorizontalLogo.src,
   },
   airlines: {
     navLinks: [
@@ -279,7 +279,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-airline-buttons",
     popoverMessage: "Thank you for flying with us, ",
-    logoImg: launchAirwaysHorizontalLogo.src
+    logoImg: launchAirwaysHorizontalLogo.src,
   },
 };
 
