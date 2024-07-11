@@ -73,10 +73,19 @@ const socials = [
   },
 ];
 
-export default function FourColumnFooter({ industry = "government" }) {
- 
+export default function FourColumnFooter({
+  variant,
+  homePageContent,
+}: {
+  variant: string;
+  homePageContent: any;
+}) {
   return (
-    <footer className={` border-t bg-navbardarkgrey text-white font-sohnelight`} aria-labelledby="footer-heading" data-testid="four-column-footer-test-id">
+    <footer
+      className={` border-t bg-navbardarkgrey text-white font-sohnelight`}
+      aria-labelledby="footer-heading"
+      data-testid="four-column-footer-test-id"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -85,16 +94,14 @@ export default function FourColumnFooter({ industry = "government" }) {
           <div className="space-y-8 xl:col-span-1">
             <div className="flex items-center flex-shrink-0 mr-6">
               <img
-                src={
-                    bureauOfRiskReductionHorizontalLogo.src
-                }
+                src={bureauOfRiskReductionHorizontalLogo.src}
                 alt={"gov"}
                 className="CUSTOM__logo-image h-10 mr-2"
                 data-testid={`website-logo-test-id`}
               />
               {/* <span className="CUSTOM__website-name font-semibold text-2xl tracking-tight" data-testid = "website-name-test-id">{"Reducing risk in government."}</span> */}
             </div>
-            <p className="text-base">{industryNavigation[industry]?.slogan}</p>
+            <p className="text-base">{industryNavigation[variant]?.slogan}</p>
             <div className="flex space-x-6">
               {socials.map((item) => (
                 <a key={item.name} href={item.href} className="">
@@ -108,10 +115,10 @@ export default function FourColumnFooter({ industry = "government" }) {
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-base font-medium">
-                  {industryNavigation[industry]?.columnOneHeader}
+                  {industryNavigation[variant]?.columnOneHeader}
                 </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnOne.map((item:any) => (
+                  {industryNavigation[variant]?.columnOne.map((item: any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -122,10 +129,10 @@ export default function FourColumnFooter({ industry = "government" }) {
               </div>
               <div className="mt-12 md:mt-0">
                 <h3 className="text-base font-medium">
-                  {industryNavigation[industry]?.columnTwoHeader}
+                  {industryNavigation[variant]?.columnTwoHeader}
                 </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnTwo.map((item:any) => (
+                  {industryNavigation[variant]?.columnTwo.map((item: any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -137,9 +144,11 @@ export default function FourColumnFooter({ industry = "government" }) {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-base font-medium">{industryNavigation[industry]?.columnThreeHeader}</h3>
+                <h3 className="text-base font-medium">
+                  {industryNavigation[variant]?.columnThreeHeader}
+                </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnThree.map((item:any) => (
+                  {industryNavigation[variant]?.columnThree.map((item: any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -149,9 +158,11 @@ export default function FourColumnFooter({ industry = "government" }) {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium">{industryNavigation[industry]?.columnFourHeader}</h3>
+                <h3 className="text-base font-medium">
+                  {industryNavigation[variant]?.columnFourHeader}
+                </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnFour.map((item:any) => (
+                  {industryNavigation[variant]?.columnFour.map((item: any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -163,13 +174,13 @@ export default function FourColumnFooter({ industry = "government" }) {
             </div>
           </div>
         </div>
-        {/* {industry?.includes("Government") ? null : (
+        {variant?.includes("Government") ? null : (
           <div className="mt-12 border-t pt-8">
             <p className="text-base xl:text-center" data-testid="website-name-test-id">
-              &copy; 2022 {customizedStyleState["CUSTOM__website-name"]}, Inc. All rights reserved.
+              &copy; {new Date().getFullYear()} {homePageContent?.name}, Inc. All rights reserved.
             </p>
           </div>
-        )} */}
+        )}
       </div>
     </footer>
   );

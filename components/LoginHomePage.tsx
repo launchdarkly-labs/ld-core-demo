@@ -160,7 +160,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </HomePageCardWrapper>
       )}
 
-      {variant?.includes("government") && <FourColumnFooter />}
+      {variant?.includes("government") && <FourColumnFooter variant={variant} homePageContent={homePageVariants[variant]}/>}
     </motion.main>
   );
 }
