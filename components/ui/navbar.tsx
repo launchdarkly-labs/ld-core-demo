@@ -51,7 +51,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
     const { personas } = useContext(PersonaContext);
 
-    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname.includes(user));
+    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(user));
     const { launchClubStatus } = useContext(LoginContext);
 
     return (
@@ -143,7 +143,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </div>
           ) : null}
 
-          {!isLoggedIn && !variant.includes("market") && !variant.includes("government") ? null : (
+          {!isLoggedIn && !variant?.includes("market") && !variant?.includes("government") ? null : (
             <div
               className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
               id="nav-login-group"

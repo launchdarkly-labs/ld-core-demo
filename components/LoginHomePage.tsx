@@ -53,7 +53,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
     >
       <NavBar variant={variant} />
 
-      {!variant.includes("government") && (
+      {!variant?.includes("government") && (
         <header
           className={`w-full relative ${
             variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
@@ -104,7 +104,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </header>
       )}
 
-      {variant.includes("government") && (
+      {variant?.includes("government") && (
         <ImageWithContentHero variant={variant} homePageContent={homePageVariants[variant]} />
       )}
 
@@ -126,7 +126,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {!variant.includes("government") && (
+      {!variant?.includes("government") && (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.cards.map((card: any, index: number) => {
             return (
@@ -141,7 +141,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </HomePageCardWrapper>
       )}
 
-      {variant.includes("government") && (
+      {variant?.includes("government") && (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.serviceCards.map((service: any, index: number) => {
             return <ServiceCards key={index} serviceCardContent={service} />;
@@ -149,7 +149,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </HomePageCardWrapper>
       )}
 
-      {variant.includes("government") && showCardsSectionComponentFlag && (
+      {variant?.includes("government") && showCardsSectionComponentFlag && (
         <HomePageCardWrapper>
           {homePageVariants[variant]?.newsCards.map((news: any, index: number) => {
             const patchCardGovernmentLogic = !patchShowCardsSectionComponentFlag && index === 0;
@@ -160,7 +160,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </HomePageCardWrapper>
       )}
 
-      {variant.includes("government") && <FourColumnFooter />}
+      {variant?.includes("government") && <FourColumnFooter />}
     </motion.main>
   );
 }

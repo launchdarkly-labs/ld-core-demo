@@ -111,7 +111,7 @@ export default function FourColumnFooter({ industry = "government" }) {
                   {industryNavigation[industry]?.columnOneHeader}
                 </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnOne.map((item) => (
+                  {industryNavigation[industry]?.columnOne.map((item:any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -125,7 +125,7 @@ export default function FourColumnFooter({ industry = "government" }) {
                   {industryNavigation[industry]?.columnTwoHeader}
                 </h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnTwo.map((item) => (
+                  {industryNavigation[industry]?.columnTwo.map((item:any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -139,7 +139,7 @@ export default function FourColumnFooter({ industry = "government" }) {
               <div>
                 <h3 className="text-base font-medium">{industryNavigation[industry]?.columnThreeHeader}</h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnThree.map((item) => (
+                  {industryNavigation[industry]?.columnThree.map((item:any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
@@ -151,7 +151,7 @@ export default function FourColumnFooter({ industry = "government" }) {
               <div className="mt-12 md:mt-0">
                 <h3 className="text-base font-medium">{industryNavigation[industry]?.columnFourHeader}</h3>
                 <ul className="mt-4 space-y-4">
-                  {industryNavigation[industry]?.columnFour.map((item) => (
+                  {industryNavigation[industry]?.columnFour.map((item:any) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-base">
                         {item.name}
