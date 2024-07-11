@@ -2,17 +2,23 @@ import React, { useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { Button } from "../button";
 import { useFlags } from "launchdarkly-react-client-sdk";
-function ImageWithContentHero({ variant, homePageContent }: { variant: string, homePageContent:any }) {
+import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
+import { STANDARD } from "@/utils/constants";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+
+function ImageWithContentHero({
+  variant,
+  homePageContent,
+}: {
+  variant: string;
+  homePageContent: any;
+}) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
-  const showCardsSectionComponentFlag = variant?.includes("government")
-    ? useFlags()["show-cards-section-component"]
-    : true;
-  const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showHeroRedesignFlag = useFlags()["show-hero-redesign"].includes("text-left");
   const showDifferentHeroImageFlag = variant?.includes("government")
     ? useFlags()["show-different-hero-image-string"]
     : "imageA";
-
+  const client = useLDClient();
   return (
     <header
       className="bg-slate-100 salient-hero-image font-sohnelight"
@@ -29,14 +35,14 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
               <div className="mx-auto max-w-2xl py-12 lg:max-w-none lg:py-32">
                 <div
                   className={`flex flex-col ${
-                    showHeroRedesignFlag ? "lg:items-end lg:pl-16 " : "lg:pr-16 "
+                    showHeroRedesignFlag ? "lg:items-start lg:pl-16 " : "lg:pr-16"
                   }`}
                 >
                   <h1
                     className={`text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl `}
                     data-testid={"salient-hero-title-test-id"}
                   >
-                      Welcome to {homePageContent?.name}{" "}
+                    Welcome to {homePageContent?.name}{" "}
                   </h1>
                   <p
                     className={`mt-4 text-xl text-gray-600 `}
@@ -45,34 +51,19 @@ function ImageWithContentHero({ variant, homePageContent }: { variant: string, h
                     {homePageContent?.industryMessages}
                   </p>
                   <div className="mt-6">
-                    <Button
+                    <button
                       // href={customizedStyleState["CUSTOM__salient-hero"]?.button?.href}
-                    className="bg-gradient-airways rounded-none w-[50%] py-[2rem] text-base"
-                      // handleClick={() => {
-                      //   if (showHeroInvestmentPromoLDFlag && !showHeroInvestmentPlanSignUpLDFlag) {
-                      //     amplitude.track(
-                      //       "Sign Up for Early Access to Investment Platform Button Clicked"
-                      //     );
-                      //     ldClient?.track("sign-up-started-early-access-investment-platform");
-                      //     handleAlert({
-                      //       alert: alert,
-                      //       type: ALERT_TYPES.SUCCESS,
-                      //       message:
-                      //         "Congratulations! You are enrolled in early access to the investment platform!",
-                      //       timeout: 5000,
-                      //     });
-                      //   }
-
-                      //   if (!showHeroInvestmentPromoLDFlag && showHeroInvestmentPlanSignUpLDFlag) {
-                      //     amplitude.track(
-                      //       "Sign Up to Access new Investment Platform Button Clicked"
-                      //     );
-                      //     ldClient?.track("sign-up-started-new-access-investment-platform");
-                      //   }
-                      // }}
+                      className="bg-gradient-airways rounded-none  py-[1.5rem] px-[4rem] text-white text-base"
+                      onClick={() => {
+                        if (variant?.includes("government")) {
+                          client?.track("signup clicked", client.getContext());
+                          client?.flush();
+                        }
+                        loginUser("User", "user@launchmail.io", STANDARD);
+                      }}
                     >
                       Get Started Today
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>

@@ -20,7 +20,6 @@ import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketpla
 import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 // import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { STANDARD } from "@/utils/constants";
-import { useLDClient } from "launchdarkly-react-client-sdk";
 
 const variantToImageMap = {
   bank: toggleBankVerticalLogo.src,
@@ -53,7 +52,6 @@ export function LoginComponent({
   const [isAddUserDropdownOpen, setIsAddUserDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const client = useLDClient();
 
   const handleNewPersonaChange = (e) => {
     setNewPersona({ ...newPersona, [e.target.name]: e.target.value });
@@ -70,10 +68,6 @@ export function LoginComponent({
 
   function handleLogin(e) {
     if (!defaultEmail) return;
-    if (variant?.includes("government")) {
-      client?.track("signup clicked", client.getContext());
-      client?.flush();
-    }
 
     setIsLoggedIn(true);
     let email;
@@ -85,6 +79,7 @@ export function LoginComponent({
       email = activePersona.personaemail;
       name = activePersona.personaname;
       role = activePersona.personarole;
+
     } else {
       //TODO: fix this to change from user to christine
       email = defaultEmail;

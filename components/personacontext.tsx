@@ -19,7 +19,7 @@ interface PersonaContextType {
 }
 
 export const PersonaProvider = ({ children }) => {
-  const [personas, setPersonas] = useState<Persona[]>([]);
+  const [personas, setPersonas] = useState<Persona[]>(STARTER_PERSONAS);
  
   const [error, setError] = useState(null);
 

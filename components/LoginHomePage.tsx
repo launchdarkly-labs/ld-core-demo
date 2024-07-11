@@ -40,7 +40,6 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
-  const showHeroRedesignFlag = useFlags()["show-hero-redesign"];
   const showDifferentHeroImageFlag = variant?.includes("government")
     ? useFlags()["show-different-hero-image-string"]
     : "imageA";
