@@ -95,9 +95,9 @@ export function LoginComponent({ variant }: LoginComponentProps) {
   const imageSrc = variantToImageMap[variant];
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col justify-around">
       <div className="flex flex-col justify-center mx-auto text-center">
-        <img src={imageSrc} className="pt-10 mx-auto pb-4" />
+        <img src={imageSrc} className=" mx-auto" />
       </div>
       <div className="w-full">
         <Input
@@ -105,13 +105,13 @@ export function LoginComponent({ variant }: LoginComponentProps) {
           value={defaultEmail}
           ref={inputRef}
           required
-          className="mb-8 outline-none border-0 border-b-2 text-xl"
+          className="mb-4 outline-none border-0 border-b-2 text-xl"
           onChange={(e) => setDefaultEmail(e.target.value)}
         />
 
         <Button
           onClick={() => handleLogin()}
-          className={`mb-4 w-full h-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}
+          className={`mb-4 w-full mx-auto font-sohnelight rounded-none  text-lg bg-loginComponentBlue text-white`}
         >
           Login with SSO
         </Button>
@@ -123,7 +123,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
           className="z-10"
         >
           <DialogTrigger
-            className={`mb-4 p-2 w-full h-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}
+            className={`mb-4 p-2 w-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}
           >
             Switch SSO User
           </DialogTrigger>
