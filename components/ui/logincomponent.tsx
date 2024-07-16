@@ -95,11 +95,11 @@ export function LoginComponent({ variant }: LoginComponentProps) {
   const imageSrc = variantToImageMap[variant];
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col justify-around">
-      <div className="flex flex-col justify-center mx-auto text-center">
+    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">
+      <div className=" mx-auto text-center my-8">
         <img src={imageSrc} className=" mx-auto" />
       </div>
-      <div className="w-full">
+      <div className="w-full mb-4">
         <Input
           placeholder="Email"
           value={defaultEmail}
