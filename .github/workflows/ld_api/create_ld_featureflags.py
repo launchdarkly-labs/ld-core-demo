@@ -461,11 +461,11 @@ def createReleaseNewRecentTradesDBFeatureFlag():
      "variations": [
         {
             "value": True,
-            "name": "Available"
+            "name": "Postgres Cloud Database"
         },
         {
             "value": False,
-            "name": "Unavailable"
+            "name": "Local Database"
         }
     ],
     "defaults":{

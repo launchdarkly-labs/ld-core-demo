@@ -316,11 +316,11 @@ resource "launchdarkly_feature_flag" "investment-recent-trade-db" {
   variation_type = "boolean"
   variations {
     value = "true"
-    name  = "Available"
+    name  = "Postgres Cloud Database"
   }
   variations {
     value = "false"
-    name  = "Unavailable"
+    name  = "Local Database"
   }
 
   defaults {
