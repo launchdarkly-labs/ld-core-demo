@@ -26,10 +26,10 @@ def main():
     createCartSuggestedItemsFeatureFlag()
     createDestinationRecommendationFeatureFlag()
     createAIChatbotModelsFeatureFlag()
-    # createGovShowCardsSectionComponentFeatureFlag()
-    # createGovPatchShowCardsSectionComponentFeatureFlag()
-    # createGovShowHeroRedesignFeatureFlag()
-    # createGovShowDifferentHeroImageFeatureFlag()
+    createGovShowCardsSectionComponentFeatureFlag()
+    createGovPatchShowCardsSectionComponentFeatureFlag()
+    createGovShowHeroRedesignFeatureFlag()
+    createGovShowDifferentHeroImageFeatureFlag()
  
 def createAIChatbotModelsFeatureFlag():
     
