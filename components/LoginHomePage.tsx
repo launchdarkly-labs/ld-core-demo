@@ -15,22 +15,14 @@ import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
 
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
-import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
-import ServiceCards from "./ui/govcomponents/ServiceCards";
-import NewsCards from "./ui/govcomponents/NewsCards";
+
 interface LoginHomePageProps {
-  variant: "bank" | "airlines" | "market" | "investment" | "government";
+  variant: "bank" | "airlines" | "market" | "investment";
   name: string;
 }
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
   const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
-  const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
-  const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
-  const showDifferentHeroImageFlag = variant?.includes("government")
-    ? useFlags()["show-different-hero-image-string"]
-    : "imageA";
 
   return (
     <motion.main
@@ -41,60 +33,52 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
     >
       <NavBar variant={variant} />
 
-      {!variant?.includes("government") && (
-        <header
-          className={`w-full relative ${
-            variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
-          }`}
-        >
-          {variant?.includes("market") && (
-            <div>
-              <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
-              <img src="union.png" className="absolute left-0 bottom-0" />
-            </div>
-          )}
-
-          {variant?.includes("airline") ? (
-            <>
-              <Image
-                src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
-                alt={homePageVariants[variant]?.industryMessages}
-                layout="fill"
-                className="object-cover"
-                quality={100}
-              />
-              <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
-            </>
-          ) : null}
-
-          <div
-            className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
-             items-center"
-          >
-            <div
-              className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
-              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
-            >
-              <h1 className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
-                Welcome to {homePageVariants[variant]?.name}{" "}
-              </h1>
-              <h2 className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
-                {homePageVariants[variant]?.industryMessages}
-              </h2>
-            </div>
-
-            <div className="w-full sm:w-auto z-10">
-              <LoginComponent
-                variant={variant}
-              />
-            </div>
+      <header
+        className={`w-full relative ${
+          variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
+        }`}
+      >
+        {variant?.includes("market") && (
+          <div>
+            <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
+            <img src="union.png" className="absolute left-0 bottom-0" />
           </div>
-        </header>
-      )}
+        )}
 
-      {variant?.includes("government") && (
-        <ImageWithContentHero variant={variant} homePageContent={homePageVariants[variant]} />
-      )}
+        {variant?.includes("airline") ? (
+          <>
+            <Image
+              src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
+              alt={homePageVariants[variant]?.industryMessages}
+              layout="fill"
+              className="object-cover"
+              quality={100}
+            />
+            <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
+          </>
+        ) : null}
+
+        <div
+          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
+             items-center"
+        >
+          <div
+            className="grid grid-cols-2 sm:flex flex-row sm:flex-col 
+              text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+          >
+            <h1 className="text-6xl xl:text-[80px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full">
+              Welcome to {homePageVariants[variant]?.name}{" "}
+            </h1>
+            <h2 className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
+              {homePageVariants[variant]?.industryMessages}
+            </h2>
+          </div>
+
+          <div className="w-full sm:w-auto z-10">
+            <LoginComponent variant={variant} />
+          </div>
+        </div>
+      </header>
 
       {variant?.includes("bank") && (
         <section
@@ -114,41 +98,18 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         </section>
       )}
 
-      {!variant?.includes("government") && (
-        <HomePageCardWrapper>
-          {homePageVariants[variant]?.cards.map((card: any, index: number) => {
-            return (
-              <HomePageInfoCard
-                imgSrc={card?.imgSrc}
-                headerTitleText={card?.titleText}
-                subtitleText={card?.subtitleText}
-                key={index}
-              />
-            );
-          })}
-        </HomePageCardWrapper>
-      )}
-
-      {variant?.includes("government") && (
-        <HomePageCardWrapper>
-          {homePageVariants[variant]?.serviceCards.map((service: any, index: number) => {
-            return <ServiceCards key={index} serviceCardContent={service} />;
-          })}
-        </HomePageCardWrapper>
-      )}
-
-      {variant?.includes("government") && showCardsSectionComponentFlag && (
-        <HomePageCardWrapper>
-          {homePageVariants[variant]?.newsCards.map((news: any, index: number) => {
-            const patchCardGovernmentLogic = !patchShowCardsSectionComponentFlag && index === 0;
-            return (
-              <NewsCards key={index} newsCardContent={patchCardGovernmentLogic ? null : news} />
-            );
-          })}
-        </HomePageCardWrapper>
-      )}
-
-      {variant?.includes("government") && <FourColumnFooter variant={variant} homePageContent={homePageVariants[variant]}/>}
+      <HomePageCardWrapper>
+        {homePageVariants[variant]?.cards.map((card: any, index: number) => {
+          return (
+            <HomePageInfoCard
+              imgSrc={card?.imgSrc}
+              headerTitleText={card?.titleText}
+              subtitleText={card?.subtitleText}
+              key={index}
+            />
+          );
+        })}
+      </HomePageCardWrapper>
     </motion.main>
   );
 }

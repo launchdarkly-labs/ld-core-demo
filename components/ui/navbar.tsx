@@ -26,7 +26,6 @@ import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizonta
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
-import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import { LoginComponent } from "./logincomponent";
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 
@@ -143,7 +142,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             </div>
           ) : null}
 
-          {!isLoggedIn && !variant?.includes("market") && !variant?.includes("government") ? null : (
+          {!isLoggedIn && !variant?.includes("market") ? null : (
             <div
               className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
               id="nav-login-group"
@@ -236,16 +235,6 @@ const navElementsVariant: any = {
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for banking with us, ",
     logoImg: toggleBankHorizontalLogo.src,
-  },
-  government: {
-    navLinks: [
-      { text: "Submissions", href: "/government" },
-      { text: "About Us", href: "/government" },
-      { text: "Contact Us", href: "/government" },
-    ],
-    navLinkColor: "gradient-bank",
-    popoverMessage: "Thank you for your service, ",
-    logoImg: bureauOfRiskReductionHorizontalLogo.src,
   },
   investment: {
     navLinks: [

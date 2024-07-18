@@ -103,7 +103,6 @@ module.exports = {
         navbargrey: "#939598",
         navbarlightgrey: "#D1D3D4",
         navbardarkgrey:"#282828",
-        governmentBlue: "#405BFF",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

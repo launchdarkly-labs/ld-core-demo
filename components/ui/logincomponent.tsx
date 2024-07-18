@@ -17,7 +17,6 @@ import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
 import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
-import bureauOfRiskReductionHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 // import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { STANDARD } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
@@ -28,10 +27,9 @@ const variantToImageMap = {
   airlines: launchAirwaysVerticalLogo.src,
   market: galaxyMarketplaceVerticalLogo.src,
   investment: frontierCapitalVerticalLogo.src,
-  government: bureauOfRiskReductionHorizontalLogo.src,
 };
 interface LoginComponentProps {
-  variant: "bank" | "airlines" | "market" | "investment" | "government";
+  variant: "bank" | "airlines" | "market" | "investment" ;
 }
 
 export function LoginComponent({ variant }: LoginComponentProps) {

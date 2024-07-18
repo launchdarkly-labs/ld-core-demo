@@ -21,7 +21,7 @@ interface Persona {
 
 interface QuickLoginDialogProps {
   personas: Persona[];
-  variant: "bank" | "airlines" | "market" | "government" | "investment";
+  variant: "bank" | "airlines" | "market" | "investment";
 }
 
 export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
