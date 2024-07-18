@@ -82,7 +82,7 @@ export default function Chatbot() {
   }
 
   const surveyResponseNotification = (surveyResponse: string) => {
-    client?.track("ai-chatbot-neutral-service", client.getContext());
+    client?.track(surveyResponse, client.getContext());
     client?.flush();
     toast({
       title: `Thank you for your response!`,
