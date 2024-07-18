@@ -51,7 +51,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
                   .map((persona, index) => (
                     <div
                       key={index}
-                      className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0"
+                      className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0 hover:brightness-125"
                     >
                       <img
                         src={persona.personaimage}
