@@ -27,6 +27,17 @@ export const LoginProvider = ({ children }) => {
     return CryptoJS.SHA256(email).toString();
   };
 
+  const getLocation = async () => {
+    const options = Intl.DateTimeFormat().resolvedOptions();
+    const country = options.locale.split('-')[1] || "US"; // Default to "US" if country code is not available
+    return {
+      key: options.timeZone,
+      name: options.timeZone,
+      timeZone: options.timeZone,
+      country: country,
+    };
+  };
+
   const loginUser = async (user, email, role) => {
     const context = await client?.getContext();
     console.log("loginUser", context);
@@ -36,6 +47,7 @@ export const LoginProvider = ({ children }) => {
     context.user.anonymous = false;
     context.user.key = hashedEmail;
     context.user.role = role;
+    context.location = await getLocation();
     context.audience.key = uuidv4().slice(0, 10);
     context.user.launchclub = launchClubStatus;
     await client?.identify(context);
