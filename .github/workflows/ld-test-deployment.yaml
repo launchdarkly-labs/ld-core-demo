@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}  
-  DEMO_NAMESPACE: test
+  DEMO_NAMESPACE: coredemotest
 
 
 jobs:
