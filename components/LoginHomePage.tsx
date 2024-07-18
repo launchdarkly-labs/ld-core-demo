@@ -12,13 +12,6 @@ import Image from "next/image";
 import investmentCardImg1 from "@/public/investment/investment_image1.png";
 import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
-import governmentHeroImg1 from "@/public/government/government-building.jpg";
-import governmentHeroImg2 from "@/public/government/governmentBuildingB.jpeg";
-import governmentHeroImg3 from "@/public/government/governmentBuildingC.jpeg";
-import governmentCardImg1 from "@/public/government/crypto.png";
-import governmentCardImg2 from "@/public/government/farm.png";
-import governmentCardImg3 from "@/public/government/military-family.jpg";
-import governmentCardImg4 from "@/public/government/rocket.jpg";
 
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
@@ -26,11 +19,6 @@ import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
 import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
 import ServiceCards from "./ui/govcomponents/ServiceCards";
 import NewsCards from "./ui/govcomponents/NewsCards";
-import { IoShieldCheckmark } from "react-icons/io5";
-import { BsArrowsExpandVertical } from "react-icons/bs";
-import { FaHandsHelping } from "react-icons/fa";
-import { FaMedal } from "react-icons/fa";
-
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment" | "government";
   name: string;
@@ -253,76 +241,4 @@ const homePageVariants: any = {
   //   industryMessages: "Shop for the latest tech gadgets and more.",
   //   gradiantColor: " bg-market-header grid items-center justify-center",
   // },
-  government: {
-    name: "The Bureau of Risk Reduction",
-    industryMessages:
-      "We improve control, availability, and security of government applications and sites.",
-    gradiantColor: "bg-gradient-bank ",
-    heroImg: {
-      imageA: governmentHeroImg1.src,
-      imageB: governmentHeroImg2.src,
-      imageC: governmentHeroImg3.src,
-    },
-    cards: [
-      {
-        titleText: "Cybersecurity",
-        subtitleText: "FedRAMP Authorized",
-        imgSrc: governmentCardImg1.src,
-      },
-      {
-        titleText: "Resiliency",
-        subtitleText: "Scalable architecture with 99.99% SLA",
-        imgSrc: governmentCardImg2.src,
-      },
-      {
-        titleText: "Trust",
-        subtitleText: "Optimized citizen services",
-        imgSrc: governmentCardImg3.src,
-      },
-      {
-        titleText: "Quality",
-        subtitleText: "Dark launches reduce risk",
-        imgSrc: governmentCardImg4.src,
-      },
-    ],
-    serviceCards: [
-      {
-        icon: <IoShieldCheckmark className="h-full w-full" />,
-        title: "Cybersecurity",
-        subtitle: "FedRAMP Authorized",
-      },
-      {
-        icon: <BsArrowsExpandVertical className="h-full w-full" />,
-        title: "Resiliency",
-        subtitle: "Scalable architecture with 99.99% SLA",
-      },
-      {
-        icon: <FaHandsHelping className="h-full w-full" />,
-        title: "Trust",
-        subtitle: "Optimized citizen services",
-      },
-      {
-        icon: <FaMedal className="h-full w-full" />,
-        title: "Quality",
-        subtitle: "Dark launches reduce risk",
-      },
-    ],
-    newsCards: [
-      {
-        imgSrc: "/government/one_woman.svg",
-        title: "BRR’s 2022 Year In Review",
-        newsCategory: "Blogs and Newsroom",
-      },
-      {
-        imgSrc: "/government/capitol_building.svg",
-        title: "Updated resilience planning framework",
-        newsCategory: "Recent Announcements",
-      },
-      {
-        imgSrc: "/government/two_women.svg",
-        title: "Find BRR agency job postings?",
-        newsCategory: "How Do I?",
-      },
-    ],
-  },
 };
