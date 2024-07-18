@@ -13,21 +13,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { PersonaContext } from "../personacontext";
-import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.svg";
-import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
-import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
-import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
 // import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
-import { STANDARD } from "@/utils/constants";
+import { STANDARD, COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
-//TODO: create a central constant for all of this 
-const variantToImageMap = {
-  bank: toggleBankVerticalLogo.src,
-  airlines: launchAirwaysVerticalLogo.src,
-  market: galaxyMarketplaceVerticalLogo.src,
-  investment: frontierCapitalVerticalLogo.src,
-};
 interface LoginComponentProps {
   variant: "bank" | "airlines" | "market" | "investment" ;
 }
@@ -90,12 +79,11 @@ export function LoginComponent({ variant }: LoginComponentProps) {
     }
   }, [activeElement]);
 
-  const imageSrc = variantToImageMap[variant];
 
   return (
     <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">
       <div className=" mx-auto text-center my-8">
-        <img src={imageSrc} className=" mx-auto" />
+        <img src={COMPANY_LOGOS[variant].vertical.src} className=" mx-auto" />
       </div>
       <div className="w-full mb-4">
         <Input

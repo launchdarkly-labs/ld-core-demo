@@ -22,12 +22,9 @@ import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
 
-import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
-import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
-import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
-import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import { LoginComponent } from "./logincomponent";
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
+import {  COMPANY_LOGOS } from "@/utils/constants";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -60,7 +57,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <CSNav />
           </div>
           <div className="ml-2 sm:ml-8 flex items-center">
-            <img src={navElementsVariant[variant]?.logoImg} className="pr-2 h-10 cursor-pointer" />
+            <img src={navElementsVariant[variant]?.logoImg.src} className="pr-2 h-10 cursor-pointer" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -234,7 +231,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for banking with us, ",
-    logoImg: toggleBankHorizontalLogo.src,
+    logoImg: COMPANY_LOGOS["bank"].horizontal,
   },
   investment: {
     navLinks: [
@@ -246,7 +243,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-investment",
     popoverMessage: "Thank you for investing with us, ",
-    logoImg: frontierCapitalHorizontalLogo.src,
+    logoImg: COMPANY_LOGOS["investment"].horizontal,
   },
   market: {
     navLinks: [
@@ -258,7 +255,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-experimentation",
     popoverMessage: "Thank you for shopping with us, ",
-    logoImg: galaxyMarketplaceHorizontalLogo.src,
+    logoImg: COMPANY_LOGOS["market"].horizontal,
   },
   airlines: {
     navLinks: [
@@ -267,7 +264,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-airline-buttons",
     popoverMessage: "Thank you for flying with us, ",
-    logoImg: launchAirwaysHorizontalLogo.src,
+    logoImg: COMPANY_LOGOS["airlines"].horizontal,
   },
 };
 
