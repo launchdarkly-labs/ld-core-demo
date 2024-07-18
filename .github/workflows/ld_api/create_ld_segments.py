@@ -48,13 +48,46 @@ def createSegmentsForLDEnvs(ld_env_key):
         print("Launch Club Entitlement segment created successfully")
         patchEntitlementSegmentPayload(ld_api_key, environment_key, project_key)
     
-    print("Development Team Segments created successfully for " + environment_key + " environment")
+    print("Creating Development Team Segment for " + environment_key + " environment")
     devTeamSegmentPayload = getDevTeamSegmentPayload()
     response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(devTeamSegmentPayload))
     if response.status_code == 201:
         print("Development Team segment created successfully")
         patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key)
         
+    print("Creating Device Segment " + environment_key + " environment")
+    mobileSegmentPayload = getMobileSegmentPayload()
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(mobileSegmentPayload))
+    if response.status_code == 201:
+        print("Mobile segment created successfully")
+        patchMobileSegmentPayload(ld_api_key, environment_key, project_key)
+        
+        
+def patchMobileSegmentPayload(ld_api_key, environment_key, project_key):
+    
+    segment_key = "mobile-users"
+    patchSegmentURL = "/segments/" + project_key + "/" + environment_key + "/" + segment_key
+    
+    patchPayload = {
+        "patch":[
+            {
+            "op": "add",
+            "path": "/rules/0",
+            "value": {
+                "clauses": [{ 
+                    "contextKind": "device",
+                    "attribute": "platform",
+                    "op": "in",
+                    "values": ["Mobile"],
+                    "negate": False
+                }]
+            }
+            }]
+    }
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
+    if response.status_code == 200:
+        print("Patch for Development Team segment successful")
+    
 def patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key):
     
     segment_key = "dev-team"
@@ -206,6 +239,20 @@ def getPlatinumSegmentPayload():
     }
     
     return payload
+
+def getMobileSegmentPayload():
+        
+        payload = {
+            "name": "Mobile Users",
+            "key": "mobile-users",
+            "description": "Users who have accessed the application via mobile device",
+            "tags": [
+                "Mobile"
+            ],
+            "unbounded": False,
+        }
+        
+        return payload
     
 def getBetaSegmentPayload():
     
