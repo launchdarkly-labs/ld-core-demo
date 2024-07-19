@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { useContext, useState } from "react";
 import LoginContext from "@/utils/contexts/login";
@@ -41,30 +42,33 @@ export function QuickLoginDialog({ variant }: QuickLoginDialogProps) {
           >
             Quick Login
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[450px] w-4/5 flex flex-col justify-center items-center gap-10">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="mb-4">Quick Login SSO User</DialogTitle>
-
-              <div className="flex overflow-x-auto space-x-4 ">
-                {STARTER_PERSONAS
-                  .filter((persona) => persona.personaname !== user)
-                  .map((persona, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center mr-2 cursor-pointer flex-shrink-0 hover:brightness-125"
-                    >
-                      <img
-                        src={persona.personaimage}
-                        className="w-20 h-20 rounded-full"
-                        onClick={() => personaClicked(persona)}
-                        alt={persona.personaname}
-                      />
-                      <p className="text-md font-sohnelight text-center mt-2">
-                        {persona.personaname}
-                      </p>
-                      <p className="text-md font-sohnelight text-center mt-2"> {persona.personarole}</p>
-                    </div>
-                  ))}
+              <div className="overflow-y-auto h-64">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 justify-items-center py-4">
+                  {STARTER_PERSONAS.filter((persona) => persona.personaname !== user).map(
+                    (persona, index) => (
+                      <DialogClose>
+                        <div
+                          key={index}
+                          className="flex flex-col items-center cursor-pointer flex-shrink-0 hover:brightness-125 text-md font-sohnelight gap-y-2 text-center"
+                          onClick={() => personaClicked(persona)}
+                        >
+                          <img
+                            src={persona.personaimage}
+                            className="w-20 h-20 rounded-full"
+                            alt={persona.personaname}
+                          />
+                          <p className="">{persona.personaname}</p>
+                          <p className="">{persona.personaemail}</p>
+                          <p className="">Role: {persona.personarole}</p>
+                          <p className="">{persona.personatier} Tier</p>
+                        </div>
+                      </DialogClose>
+                    )
+                  )}
+                </div>
               </div>
             </DialogHeader>
           </DialogContent>
