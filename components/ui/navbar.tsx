@@ -18,7 +18,6 @@ import {
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
-import { PersonaContext } from "../personacontext";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
 
@@ -45,7 +44,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
-    const { personas } = useContext(PersonaContext);
 
     const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(user));
     const { launchClubStatus } = useContext(LoginContext);
@@ -178,7 +176,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto flex place-content-center w-full">
                         <img
                           src={
-                            personas.find((persona) => persona.personaname === user)
+                            STARTER_PERSONAS.find((persona) => persona.personaname === user)
                               ?.personaimage || "ToggleAvatar.png"
                           }
                           className="rounded-full h-48"
@@ -201,7 +199,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         >
                           Logout
                         </Button>
-                        <QuickLoginDialog personas={personas} variant={variant} />
+                        <QuickLoginDialog variant={variant} />
                       </div>
                     </>
                   ) : (

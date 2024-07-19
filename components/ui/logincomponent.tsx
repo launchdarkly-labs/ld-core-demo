@@ -12,9 +12,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PersonaContext } from "../personacontext";
+
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
-import { PERSONA_ROLE_STANARD, COMPANY_LOGOS } from "@/utils/constants";
+import {  COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
 interface LoginComponentProps {
@@ -41,7 +41,6 @@ export function LoginComponent({ variant }: LoginComponentProps) {
       name = activePersona.personaname;
       role = activePersona.personarole;
     } else {
-      //TODO: fix this to change from user to christine
       const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io" );
       email = standardPersona.personaemail;
       name = standardPersona.personaname;

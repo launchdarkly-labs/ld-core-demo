@@ -9,9 +9,9 @@ import {
 import { useContext, useState } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { getVariantClassName } from "@/utils/getVariantClassName";
+import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 
 interface Persona {
-  id: string | number;
   personaname: string;
   personatype: string;
   personaimage: string;
@@ -24,7 +24,7 @@ interface QuickLoginDialogProps {
   variant: "bank" | "airlines" | "market" | "investment";
 }
 
-export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
+export function QuickLoginDialog({ variant }: QuickLoginDialogProps) {
   const { user, loginUser } = useContext(LoginContext);
   const variantClass = getVariantClassName(variant);
   const [isDialogOpen, setIsDialogOpen] = useState(true);
@@ -46,7 +46,7 @@ export function QuickLoginDialog({ personas, variant }: QuickLoginDialogProps) {
               <DialogTitle className="mb-4">Quick Login SSO User</DialogTitle>
 
               <div className="flex overflow-x-auto space-x-4 ">
-                {personas
+                {STARTER_PERSONAS
                   .filter((persona) => persona.personaname !== user)
                   .map((persona, index) => (
                     <div
