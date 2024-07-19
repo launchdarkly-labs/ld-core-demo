@@ -20,7 +20,7 @@ import LoginContext from "@/utils/contexts/login";
 interface LoginComponentProps {
   variant: "bank" | "airlines" | "market" | "investment";
 }
-
+//TODO: change user to christine, create a plat user already for targeting,
 export function LoginComponent({ variant }: LoginComponentProps) {
   const inputRef = useRef();
   const [activeElement, setActiveElement] = useState(null);

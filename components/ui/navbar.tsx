@@ -23,7 +23,7 @@ import { capitalizeFirstLetter } from "@/utils/utils";
 
 import { LoginComponent } from "./logincomponent";
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
-import {  COMPANY_LOGOS } from "@/utils/constants";
+import { COMPANY_LOGOS } from "@/utils/constants";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -38,16 +38,14 @@ interface Persona {
   personaemail: string;
 }
 
-//TODO: change user to christine, create a plat user already for targeting,
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
     const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
       useContext(LoginContext);
 
-
     const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(user));
     const { launchClubStatus } = useContext(LoginContext);
-
+    console.log(chosenPersona)
     return (
       <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
@@ -55,7 +53,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
             <CSNav />
           </div>
           <div className="ml-2 sm:ml-8 flex items-center">
-            <img src={navElementsVariant[variant]?.logoImg.src} className="pr-2 h-10 cursor-pointer" />
+            <img
+              src={navElementsVariant[variant]?.logoImg.src}
+              className="pr-2 h-10 cursor-pointer"
+            />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -169,16 +170,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     />
                   </Avatar>
                 </PopoverTrigger>
-               
+
                 <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
                   {isLoggedIn ? (
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img
-                          src={
-                            STARTER_PERSONAS.find((persona) => persona.personaname === user)
-                              ?.personaimage || "ToggleAvatar.png"
-                          }
+                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
                           className="rounded-full h-48"
                         />
                       </div>
@@ -187,7 +185,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           {navElementsVariant[variant]?.popoverMessage}
                           {chosenPersona?.personaname || user}, as a<br></br>
                           <span className="text-2xl">
-                            {capitalizeFirstLetter(launchClubStatus)} Tier
+                            {variant.includes("airlines")
+                              ? capitalizeFirstLetter(launchClubStatus)
+                              : capitalizeFirstLetter(chosenPersona?.personatype)}{" "}
+                            Tier
                           </span>
                           !
                         </p>

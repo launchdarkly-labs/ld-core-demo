@@ -1,33 +1,45 @@
-import persona3 from "@/public/personas/persona3.png"
-import { PERSONA_ROLE_STANARD,PERSONA_ROLE_BETA, PERSONA_ROLE_DEVELOPER } from "../constants";
+import {
+  PERSONA_TYPE_STANARD,
+  PERSONA_ROLE_BETA,
+  PERSONA_ROLE_DEVELOPER,
+  PERSONA_TYPE_PLATINUM,
+  PERSONA_ROLE_USER
+} from "../constants";
 
 export const STARTER_PERSONAS = [
   {
     personaname: "Cody",
-    personatype: `${PERSONA_ROLE_STANARD} User`,
+    personatype: PERSONA_TYPE_STANARD,
     personaimage: "standard.jpg",
     personaemail: "cody@launchmail.io",
-    personarole: PERSONA_ROLE_STANARD,
+    personarole: PERSONA_ROLE_USER,
   },
   {
     personaname: "Alysha",
-    personatype: `${PERSONA_ROLE_BETA} User`,
+    personatype: PERSONA_TYPE_STANARD,
     personaimage: "beta.png",
     personaemail: "alysha@launchmail.io",
     personarole: PERSONA_ROLE_BETA,
   },
   {
     personaname: "Jenn",
-    personatype: PERSONA_ROLE_DEVELOPER,
+    personatype: PERSONA_TYPE_STANARD,
     personaimage: "woman.png",
     personaemail: "jenn@launchmail.io",
     personarole: PERSONA_ROLE_DEVELOPER,
   },
   {
     personaname: "Christine",
-    personatype: `${PERSONA_ROLE_STANARD} User`,
+    personatype: PERSONA_TYPE_STANARD,
     personaimage: "/personas/persona3.png",
     personaemail: "user@launchmail.io",
-    personarole: PERSONA_ROLE_STANARD,
+    personarole: PERSONA_ROLE_USER,
+  },
+  {
+    personaname: "Angela",
+    personatype: PERSONA_TYPE_PLATINUM,
+    personaimage: "/personas/persona6.jpg",
+    personaemail: "angela@launchmail.io",
+    personarole: PERSONA_ROLE_USER,
   },
 ];

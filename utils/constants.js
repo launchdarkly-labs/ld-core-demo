@@ -35,9 +35,11 @@ export const ALERT_TYPES = {
   INFO: "info",
 };
 
-export const PERSONA_ROLE_STANARD = "Standard";
+export const PERSONA_TYPE_STANARD = "Standard";
+export const PERSONA_TYPE_PLATINUM = "Platinum";
 export const PERSONA_ROLE_BETA = "Beta";
 export const PERSONA_ROLE_DEVELOPER = "Developer";
+export const PERSONA_ROLE_USER = "User";
 export const LAUNCH_CLUB_STANDARD = "standard";
 export const LAUNCH_CLUB_PLATINUM = "platinum";
 
