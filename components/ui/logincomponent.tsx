@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { PersonaContext } from "../personacontext";
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
-import { STANDARD, COMPANY_LOGOS } from "@/utils/constants";
+import { PERSONA_ROLE_STANARD, COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
 interface LoginComponentProps {
@@ -26,7 +26,6 @@ export function LoginComponent({ variant }: LoginComponentProps) {
   const [activeElement, setActiveElement] = useState(null);
   const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
   const { setIsLoggedIn, loginUser } = useContext(LoginContext);
-
 
   function handleLogin(e) {
     if (!defaultEmail) return;
@@ -43,10 +42,10 @@ export function LoginComponent({ variant }: LoginComponentProps) {
       role = activePersona.personarole;
     } else {
       //TODO: fix this to change from user to christine
-      email = defaultEmail;
-      name = email.split("@")[0];
-      name = name.charAt(0).toUpperCase() + name.slice(1);
-      role = STANDARD;
+      const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io" );
+      email = standardPersona.personaemail;
+      name = standardPersona.personaname;
+      role = standardPersona.personarole;
     }
     loginUser(name, email, role);
   }

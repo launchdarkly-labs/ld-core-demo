@@ -13,6 +13,7 @@ import { useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import { LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 export default function LaunchSignUp() {
   const client = useLDClient();
@@ -26,9 +27,9 @@ export default function LaunchSignUp() {
 
   const enrollLaunchClub = async () => {
     setEnrolledInLaunchClub(true);
-    setLaunchClubStatus("standard");
+    setLaunchClubStatus(LAUNCH_CLUB_STANDARD);
     const context = await client?.getContext();
-    context.user.launchclub = "standard";
+    context.user.launchclub = LAUNCH_CLUB_STANDARD;
     client.identify(context);
   };
 

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
 import { setCookie, getCookie } from "cookies-next";
-import { STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
+import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
 
 const LoginContext = createContext();
 
@@ -21,7 +21,7 @@ export const LoginProvider = ({ children }) => {
   const [user, setUser] = useState("user");
   const [email, setEmail] = useState("");
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
-  const [launchClubStatus, setLaunchClubStatus] = useState(STANDARD);
+  const [launchClubStatus, setLaunchClubStatus] = useState(LAUNCH_CLUB_STANDARD);
 
 
   const hashEmail = async (email) => {
@@ -62,7 +62,7 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUser("anonymous");
     setEnrolledInLaunchClub(false);
-    setLaunchClubStatus(STANDARD);
+    setLaunchClubStatus(LAUNCH_CLUB_STANDARD);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
      const createAnonymousContext =  {
       "kind": "multi",
