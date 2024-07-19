@@ -8,10 +8,17 @@ import {
 
 export const STARTER_PERSONAS = [
   {
-    personaname: "Cody",
+    personaname: "Christine",
     personatier: PERSONA_TIER_STANARD,
-    personaimage: "standard.jpg",
-    personaemail: "cody@launchmail.io",
+    personaimage: "/personas/persona3.png",
+    personaemail: "user@launchmail.io",
+    personarole: PERSONA_ROLE_USER,
+  },
+  {
+    personaname: "Angela",
+    personatier: PERSONA_TIER_PLATINUM,
+    personaimage: "/personas/persona6.jpg",
+    personaemail: "angela@launchmail.io",
     personarole: PERSONA_ROLE_USER,
   },
   {
@@ -29,17 +36,10 @@ export const STARTER_PERSONAS = [
     personarole: PERSONA_ROLE_DEVELOPER,
   },
   {
-    personaname: "Christine",
+    personaname: "Cody",
     personatier: PERSONA_TIER_STANARD,
-    personaimage: "/personas/persona3.png",
-    personaemail: "user@launchmail.io",
-    personarole: PERSONA_ROLE_USER,
-  },
-  {
-    personaname: "Angela",
-    personatier: PERSONA_TIER_PLATINUM,
-    personaimage: "/personas/persona6.jpg",
-    personaemail: "angela@launchmail.io",
+    personaimage: "standard.jpg",
+    personaemail: "cody@launchmail.io",
     personarole: PERSONA_ROLE_USER,
   },
 ];

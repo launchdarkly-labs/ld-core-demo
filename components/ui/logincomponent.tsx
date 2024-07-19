@@ -3,7 +3,7 @@ import * as React from "react";
 import { useRef, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getVariantClassName } from "@/utils/getVariantClassName";
+import { QuickLoginDialog } from "../quicklogindialog";
 import { useState } from "react";
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
-import {  COMPANY_LOGOS } from "@/utils/constants";
+import { COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
 interface LoginComponentProps {
@@ -41,7 +41,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
       name = activePersona.personaname;
       role = activePersona.personarole;
     } else {
-      const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io" );
+      const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
       email = standardPersona.personaemail;
       name = standardPersona.personaname;
       role = standardPersona.personarole;
@@ -81,41 +81,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
         >
           Login with SSO
         </Button>
-{/* TODO: make this into one component */}
-        <Dialog className="z-10">
-          <DialogTrigger
-            className={`mb-4 p-2 w-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`}
-          >
-            Switch SSO User
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Switch SSO User</DialogTitle>
-              <div className="overflow-y-auto h-64">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center mb-4 pt-6">
-                  {STARTER_PERSONAS.map((item: Persona, index: number) => (
-                    <div className="flex flex-col items-center cursor-pointer hover:brightness-125" key={index}>
-                      <img
-                        src={item.personaimage}
-                        className={`w-24 rounded-full mb-4 ${
-                          activeElement === item.personaname ? "border-4 border-black" : ""
-                        }`}
-                        onClick={() => handleSetActive(item.personaname, item.personaemail)}
-                        alt={item.personaname}
-                      />
-                      <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
-                        {item.personaname}
-                      </p>
-                      <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
-                        {item.personatier}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <QuickLoginDialog />
       </div>
       <div className="flex flex-col items-start sm:items-baseline font-sohnelight font-extralight sm:flex-row text-xs justify-between">
         <div className="pb-3">
