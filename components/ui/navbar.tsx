@@ -33,7 +33,7 @@ interface NavBarProps {
 interface Persona {
   id: string | number;
   personaname: string;
-  personatype: string;
+  personatier: string;
   personaimage: string;
   personaemail: string;
 }
@@ -187,7 +187,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           <span className="text-2xl">
                             {variant.includes("airlines")
                               ? capitalizeFirstLetter(launchClubStatus)
-                              : capitalizeFirstLetter(chosenPersona?.personatype)}{" "}
+                              : capitalizeFirstLetter(chosenPersona?.personatier)}{" "}
                             Tier
                           </span>
                           !

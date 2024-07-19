@@ -107,7 +107,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
                         {item.personaname}
                       </p>
                       <p className="text-xs sm:text-sm md:text-base text-center font-bold font-sohnelight">
-                        {item.personatype}
+                        {item.personatier}
                       </p>
                     </div>
                   ))}

@@ -13,7 +13,7 @@ import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 
 interface Persona {
   personaname: string;
-  personatype: string;
+  personatier: string;
   personaimage: string;
   personaemail: string;
   personarole: string;
