@@ -48,7 +48,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         {variant?.includes("airline") ? (
           <>
             <Image
-              src={homePageVariants[variant]?.heroImg[showDifferentHeroImageFlag]}
+              src={homePageVariants[variant]?.heroImg["imageA"]}
               alt={homePageVariants[variant]?.industryMessages}
               layout="fill"
               className="object-cover"

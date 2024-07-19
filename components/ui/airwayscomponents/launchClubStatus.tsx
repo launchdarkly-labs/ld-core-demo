@@ -8,6 +8,7 @@ import { PlaneIcon } from "lucide-react";
 import React, { useContext } from "react";
 import { Button } from "../button";
 import { AnimatePresence, motion } from "framer-motion";
+import { LAUNCH_CLUB_PLATINUM, LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 const LaunchClubStatus = () => {
   const { launchClubStatus, upgradeLaunchClub } = useContext(LoginContext);
@@ -45,10 +46,10 @@ const LaunchClubStatus = () => {
                   {launchClubStatus}
                 </p>
               </div>
-              {launchClubStatus != "platinum" && (
+              {launchClubStatus != LAUNCH_CLUB_PLATINUM && (
                 <div className="my-2">
                   <Button
-                    onClick={() => upgradeLaunchClub("platinum")}
+                    onClick={() => upgradeLaunchClub(LAUNCH_CLUB_PLATINUM)}
                     className="flex text-xl font-sohnelight rounded-none w-full h-full bg-gradient-airways hover:bg-gradient-airways-grey hover:text-white"
                   >
                     Unlock Platinum Status
@@ -71,7 +72,7 @@ const LaunchClubStatus = () => {
               <p className="text-xl font-sohne font-bold bg-no-repeat bg-bottom bg-gradient-airways bg-[length:100%_3px] outline-none pb-2 pt-2">
                 Flight Perks
               </p>
-              {launchClubStatus !== "platinum" ? (
+              {launchClubStatus !== LAUNCH_CLUB_STANDARD ? (
                 <div className="pt-2">
                   <div className="flex justify-between">
                     <p>AI Travel Insights</p>

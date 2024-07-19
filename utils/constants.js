@@ -39,6 +39,7 @@ export const PERSONA_ROLE_STANARD = "Standard";
 export const PERSONA_ROLE_BETA = "Beta";
 export const PERSONA_ROLE_DEVELOPER = "Developer";
 export const LAUNCH_CLUB_STANDARD = "standard";
+export const LAUNCH_CLUB_PLATINUM = "platinum";
 
 export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 
