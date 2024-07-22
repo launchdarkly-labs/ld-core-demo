@@ -23,42 +23,16 @@ interface LoginComponentProps {
 //TODO: change user to christine, create a plat user already for targeting,
 export function LoginComponent({ variant }: LoginComponentProps) {
   const inputRef = useRef();
-  const [activeElement, setActiveElement] = useState(null);
   const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
-  const { setIsLoggedIn, loginUser } = useContext(LoginContext);
+  const { loginUser } = useContext(LoginContext);
 
-  function handleLogin(e) {
+  function handleLogin() {
     if (!defaultEmail) return;
-
-    setIsLoggedIn(true);
-    let email;
-    let name;
-    let role;
-    const activePersona = STARTER_PERSONAS.find((p) => p.personaname === activeElement);
-
-    if (activePersona) {
-      email = activePersona.personaemail;
-      name = activePersona.personaname;
-      role = activePersona.personarole;
-    } else {
-      const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
-      email = standardPersona.personaemail;
-      name = standardPersona.personaname;
-      role = standardPersona.personarole;
-    }
-    loginUser(name, email, role);
+    const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
+   
+    loginUser(standardPersona.personaname, standardPersona.personaemail, standardPersona.personarole);
   }
 
-  const handleSetActive = (personaname, personaemail) => {
-    setActiveElement(personaname);
-    setDefaultEmail(personaemail);
-  };
-
-  useEffect(() => {
-    if (activeElement) {
-      handleLogin();
-    }
-  }, [activeElement]);
 
   return (
     <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">

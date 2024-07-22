@@ -40,12 +40,12 @@ interface Persona {
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub, user, loginUser, setIsLoggedIn, logoutUser } =
+    const { isLoggedIn, enrolledInLaunchClub, user, logoutUser } =
       useContext(LoginContext);
 
     const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(user));
     const { launchClubStatus } = useContext(LoginContext);
-    
+
     return (
       <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">

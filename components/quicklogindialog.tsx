@@ -41,9 +41,8 @@ export function QuickLoginDialog() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 justify-items-center py-4">
                 {STARTER_PERSONAS.filter((persona) => persona.personaname !== user).map(
                   (persona, index) => (
-                    <DialogClose>
+                    <DialogClose key={index}>
                       <div
-                        key={index}
                         className="flex flex-col items-center cursor-pointer flex-shrink-0 hover:brightness-125 text-md font-sohnelight gap-y-2 text-center"
                         onClick={() => personaClicked(persona)}
                       >
