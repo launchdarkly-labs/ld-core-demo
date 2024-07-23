@@ -22,7 +22,7 @@ export function QuickLoginDialog() {
   const { user, loginUser, isLoggedIn } = useContext(LoginContext);
 
   const personaClicked = (persona: Persona) => {
-    loginUser(persona.personaname, persona.personaemail, persona.personarole);
+    loginUser(persona.personaemail);
   };
 
   const homePageButtonStyling = `mb-4 p-2 w-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`;

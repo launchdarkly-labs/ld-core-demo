@@ -128,7 +128,7 @@ const RecentTradesCard = () => {
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
-      loginUser(loggedUser, loggedEmail);
+      loginUser(loggedEmail);
     }
   };
 

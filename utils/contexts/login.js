@@ -1,11 +1,12 @@
 // TripsContext.js
 import { useLDClient } from "launchdarkly-react-client-sdk";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from 'crypto-js';
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
 import { setCookie, getCookie } from "cookies-next";
 import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
+import { STARTER_PERSONAS } from "./StarterUserPersonas";
 
 const LoginContext = createContext();
 
@@ -20,35 +21,45 @@ export const LoginProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState("user");
   const [email, setEmail] = useState("");
+  const [chosenPersona, setChosenPersona] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState(LAUNCH_CLUB_STANDARD);
+  const [allPersonas, setAllPersonas] = useState(STARTER_PERSONAS);
 
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
   };
 
-  const loginUser = async (user, email, role) => {
-        //need to keep this here in order to pull getcookie and get same audience key as you initialized it
+  const loginUser = async ( email) => {
+    //need to keep this here in order to pull getcookie and get same audience key as you initialized it
     const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     const context = await client?.getContext();
-    console.log("loginUser", context);
-    console.log(user, email, role)
-    context.user.name = user;
+    const foundPersona = allPersonas.find((persona) => persona.personaemail?.includes(email));
+    //TODO: when you logout or login and isloggin is true, you need to update allpersona with chosenpersona changes before switching to the next new persona
+    //TODO: this is to keep track of launch club status when log in betweeen
+    await setChosenPersona(foundPersona);
+    context.user.name = chosenPersona.personaname;
     context.user.email = email;
     let hashedEmail = await hashEmail(email);
     context.user.anonymous = false;
     context.user.key = hashedEmail;
-    context.user.role = role;
+    context.user.role = chosenPersona.personarole;
     context.audience.key = existingAudienceKey;
-    context.user.launchclub = launchClubStatus;
+    context.user.launchclub = chosenPersona.personalaunchclubstatus;
     await client?.identify(context);
+    console.log("loginUser", context);
+    console.log(chosenPersona.personaname, email, chosenPersona.personarole)
  
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
-    setUser(user);
+    setUser(chosenPersona.personaname); //TODO: this is important for some reason
     setEmail(email);
   };
+
+  useEffect(()=>{
+    console.log(chosenPersona)
+  },[chosenPersona])
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();

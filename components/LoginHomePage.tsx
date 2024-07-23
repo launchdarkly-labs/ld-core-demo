@@ -22,7 +22,6 @@ interface LoginHomePageProps {
 }
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
 
   return (
     <motion.main

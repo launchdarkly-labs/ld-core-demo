@@ -3,7 +3,8 @@ import {
   PERSONA_ROLE_BETA,
   PERSONA_ROLE_DEVELOPER,
   PERSONA_TIER_PLATINUM,
-  PERSONA_ROLE_USER
+  PERSONA_ROLE_USER,
+  LAUNCH_CLUB_STANDARD
 } from "../constants";
 
 export const STARTER_PERSONAS = [
@@ -13,6 +14,7 @@ export const STARTER_PERSONAS = [
     personaimage: "/personas/persona3.png",
     personaemail: "user@launchmail.io",
     personarole: PERSONA_ROLE_USER,
+    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
   },
   {
     personaname: "Angela",
@@ -20,6 +22,7 @@ export const STARTER_PERSONAS = [
     personaimage: "/personas/persona6.jpg",
     personaemail: "angela@launchmail.io",
     personarole: PERSONA_ROLE_USER,
+    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
   },
   {
     personaname: "Alysha",
@@ -27,6 +30,7 @@ export const STARTER_PERSONAS = [
     personaimage: "beta.png",
     personaemail: "alysha@launchmail.io",
     personarole: PERSONA_ROLE_BETA,
+    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
   },
   {
     personaname: "Jenn",
@@ -34,6 +38,7 @@ export const STARTER_PERSONAS = [
     personaimage: "woman.png",
     personaemail: "jenn@launchmail.io",
     personarole: PERSONA_ROLE_DEVELOPER,
+    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
   },
   {
     personaname: "Cody",
@@ -41,5 +46,6 @@ export const STARTER_PERSONAS = [
     personaimage: "standard.jpg",
     personaemail: "cody@launchmail.io",
     personarole: PERSONA_ROLE_USER,
+    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
   },
 ];

@@ -20,7 +20,7 @@ import LoginContext from "@/utils/contexts/login";
 interface LoginComponentProps {
   variant: "bank" | "airlines" | "market" | "investment";
 }
-//TODO: change user to christine, create a plat user already for targeting,
+
 export function LoginComponent({ variant }: LoginComponentProps) {
   const inputRef = useRef();
   const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
@@ -28,9 +28,9 @@ export function LoginComponent({ variant }: LoginComponentProps) {
 
   function handleLogin() {
     if (!defaultEmail) return;
-    const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
+    // const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
    
-    loginUser(standardPersona.personaname, standardPersona.personaemail, standardPersona.personarole);
+    loginUser("user@launchmail.io");
   }
 
 
