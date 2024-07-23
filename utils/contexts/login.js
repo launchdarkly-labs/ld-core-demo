@@ -42,7 +42,7 @@ export const LoginProvider = ({ children }) => {
     if (Object.keys(userObject).length > 0) {
       //to update the all personas array with the changes
       setAllUsers((prevObj) => [
-        ...prevObj.filter((persona) => persona.personaname !== userObject.personaname),
+        ...prevObj.filter((persona) => persona.personaemail !== userObject.personaemail),
         userObject,
       ]);
     }
