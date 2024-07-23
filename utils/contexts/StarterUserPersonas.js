@@ -4,7 +4,8 @@ import {
   PERSONA_ROLE_DEVELOPER,
   PERSONA_TIER_PLATINUM,
   PERSONA_ROLE_USER,
-  LAUNCH_CLUB_STANDARD
+  LAUNCH_CLUB_STANDARD,
+  LAUNCH_CLUB_PLATINUM
 } from "../constants";
 
 export const STARTER_PERSONAS = [
@@ -23,8 +24,8 @@ export const STARTER_PERSONAS = [
     personaimage: "/personas/persona6.jpg",
     personaemail: "angela@launchmail.io",
     personarole: PERSONA_ROLE_USER,
-    personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
-    personaEnrolledInLaunchClub: false
+    personalaunchclubstatus: LAUNCH_CLUB_PLATINUM,
+    personaEnrolledInLaunchClub: true
   },
   {
     personaname: "Alysha",

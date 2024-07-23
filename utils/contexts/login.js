@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from "react-device-detect";
 import { setCookie, getCookie } from "cookies-next";
-import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
+import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM, LAUNCH_CLUB_STANDARD } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 
 const LoginContext = createContext();
@@ -57,6 +57,7 @@ export const LoginProvider = ({ children }) => {
     context.user.anonymous = false;
     context.user.key = hashedEmail;
     context.user.role = foundPersona.personarole;
+    context.user.tier = foundPersona.personatier;
     context.audience.key = existingAudienceKey;
     context.user.launchclub = foundPersona.personalaunchclubstatus;
     await client?.identify(context);
@@ -87,7 +88,6 @@ export const LoginProvider = ({ children }) => {
       kind: "multi",
       user: {
         anonymous: true,
-        tier: null,
       },
       device: {
         key: device,
