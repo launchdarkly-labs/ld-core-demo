@@ -7,6 +7,7 @@ import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react
 import { setCookie, getCookie } from "cookies-next";
 import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
+import { wait } from "../utils";
 
 const LoginContext = createContext();
 
@@ -38,22 +39,23 @@ export const LoginProvider = ({ children }) => {
     const foundPersona = allPersonas.find((persona) => persona.personaemail?.includes(email));
     //TODO: when you logout or login and isloggin is true, you need to update allpersona with chosenpersona changes before switching to the next new persona
     //TODO: this is to keep track of launch club status when log in betweeen
-    await setChosenPersona(foundPersona);
-    context.user.name = chosenPersona.personaname;
+    // await setChosenPersona(foundPersona)
+
+    context.user.name = foundPersona.personaname;
     context.user.email = email;
-    let hashedEmail = await hashEmail(email);
+    const hashedEmail = await hashEmail(email);
     context.user.anonymous = false;
     context.user.key = hashedEmail;
-    context.user.role = chosenPersona.personarole;
+    context.user.role = foundPersona.personarole;
     context.audience.key = existingAudienceKey;
-    context.user.launchclub = chosenPersona.personalaunchclubstatus;
+    context.user.launchclub = foundPersona.personalaunchclubstatus;
     await client?.identify(context);
     console.log("loginUser", context);
-    console.log(chosenPersona.personaname, email, chosenPersona.personarole)
+    console.log(foundPersona.personaname, email, foundPersona.personarole)
  
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
-    setUser(chosenPersona.personaname); //TODO: this is important for some reason
+    setUser(foundPersona.personaname); //TODO: this is important for some reason
     setEmail(email);
   };
 
@@ -109,13 +111,13 @@ export const LoginProvider = ({ children }) => {
     setCookie("ldcontext", context);
   };
 
-  const setPlaneContext = async (plane) => {
-    const context = await client?.getContext();
-    console.log("setPlaneContext", context);
-    context.experience.airplane = plane;
-    console.log("Plane context registered for trip as - " + plane);
-    client.identify(context);
-  };
+  // const setPlaneContext = async (plane) => {
+  //   const context = await client?.getContext();
+  //   console.log("setPlaneContext", context);
+  //   context.experience.airplane = plane;
+  //   console.log("Plane context registered for trip as - " + plane);
+  //   client.identify(context);
+  // };
 
   const upgradeLaunchClub = async (status) => {
     const context = await client?.getContext();
@@ -136,7 +138,7 @@ export const LoginProvider = ({ children }) => {
         setIsLoggedIn,
         enrolledInLaunchClub,
         upgradeLaunchClub,
-        setPlaneContext,
+        // setPlaneContext,
         setEnrolledInLaunchClub,
         launchClubStatus,
         setLaunchClubStatus,
