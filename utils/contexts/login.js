@@ -2,26 +2,32 @@
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { createContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CryptoJS from 'crypto-js';
-import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
+import CryptoJS from "crypto-js";
+import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from "react-device-detect";
 import { setCookie, getCookie } from "cookies-next";
-import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
+import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 
 const LoginContext = createContext();
 
 export default LoginContext;
 
-const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
-const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
+const operatingSystem = isAndroid
+  ? "Android"
+  : isIOS
+  ? "iOS"
+  : isWindows
+  ? "Windows"
+  : isMacOs
+  ? "macOS"
+  : "";
+const device = isMobile ? "Mobile" : isBrowser ? "Desktop" : "";
 
-// Continue in TripsContext.js
 export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObject, setUserObject] = useState({});
-  const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
-  const [launchClubStatus, setLaunchClubStatus] = useState(LAUNCH_CLUB_STANDARD);
+  const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false); //maybe this needs to be kept track of too in userObject
   const [allPersonas, setAllPersonas] = useState(STARTER_PERSONAS);
 
   const hashEmail = async (email) => {
@@ -30,15 +36,25 @@ export const LoginProvider = ({ children }) => {
 
   const loginUser = async (email) => {
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
-    const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+    const existingAudienceKey =
+      getCookie(LD_CONTEXT_COOKIE_KEY) &&
+      JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+
+    if (Object.keys(userObject).length > 0) {
+      setAllPersonas((prevObj) => [
+        ...prevObj.filter((persona) => persona.personaname !== userObject.personaname),
+        userObject,
+      ]);
+    }
+
     const context = await client?.getContext();
     const foundPersona = allPersonas.find((persona) => persona.personaemail?.includes(email));
     //TODO: when you logout or login and isloggin is true, you need to update allpersona with userObject changes before switching to the next new persona
     //TODO: this is to keep track of launch club status when log in betweeen
-    await setUserObject(foundPersona)
+    await setUserObject(foundPersona);
 
     context.user.name = foundPersona.personaname;
-    context.user.email = email;
+    context.user.email = foundPersona.personaemail;
     const hashedEmail = await hashEmail(email);
     context.user.anonymous = false;
     context.user.key = hashedEmail;
@@ -47,16 +63,19 @@ export const LoginProvider = ({ children }) => {
     context.user.launchclub = foundPersona.personalaunchclubstatus;
     await client?.identify(context);
     console.log("loginUser", context);
-    console.log(foundPersona.personaname, email, foundPersona.personarole)
- 
+    console.log(foundPersona.personaname, foundPersona.personaemail, foundPersona.personarole);
+
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
-
   };
 
-  useEffect(()=>{
-    console.log(userObject)
-  },[userObject])
+  useEffect(() => {
+    console.log(userObject);
+  }, [userObject]);
+  
+  useEffect(() => {
+    console.log(allPersonas);
+  }, [allPersonas]);
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();
@@ -66,38 +85,39 @@ export const LoginProvider = ({ children }) => {
   };
 
   const logoutUser = async () => {
-    const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+    const existingAudienceKey =
+      getCookie(LD_CONTEXT_COOKIE_KEY) &&
+      JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     setIsLoggedIn(false);
-    setUserObject({})
+    setUserObject({});
     setEnrolledInLaunchClub(false);
-    setLaunchClubStatus(LAUNCH_CLUB_STANDARD);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
-     const createAnonymousContext =  {
-      "kind": "multi",
-      "user": {
-        "anonymous": true,
-        "tier":null
+    const createAnonymousContext = {
+      kind: "multi",
+      user: {
+        anonymous: true,
+        tier: null,
       },
-      "device": {
-        "key": device,
-        "name": device,
-        "operating_system": operatingSystem,
-        "platform": device,
+      device: {
+        key: device,
+        name: device,
+        operating_system: operatingSystem,
+        platform: device,
       },
-      "location": {
-        "key": "America/New_York",
-        "name": "America/New_York",
-        "timeZone": "America/New_York",
-        "country": "US"
+      location: {
+        key: "America/New_York",
+        name: "America/New_York",
+        timeZone: "America/New_York",
+        country: "US",
       },
-      "experience": {
-        "key": "a380",
-        "name": "a380",
-        "airplane": "a380"
+      experience: {
+        key: "a380",
+        name: "a380",
+        airplane: "a380",
       },
-      "audience": {
-        "key": existingAudienceKey
-      }
+      audience: {
+        key: existingAudienceKey,
+      },
     };
     const context = createAnonymousContext;
     await client?.identify(context);
@@ -114,12 +134,12 @@ export const LoginProvider = ({ children }) => {
   //   client.identify(context);
   // };
 
-  const upgradeLaunchClub = async (status) => {
+  const upgradeLaunchClub = async () => {
     const context = await client?.getContext();
     console.log("upgradeLaunchClub", context);
-    setLaunchClubStatus(status);
-    context.user.launchclub = status;
-    console.log("User upgraded to " + status + " status");
+    setUserObject((prevObj) => ({ ...prevObj, personalaunchclubstatus: LAUNCH_CLUB_PLATINUM }));
+    context.user.launchclub = LAUNCH_CLUB_PLATINUM;
+    console.log("User upgraded to " + LAUNCH_CLUB_PLATINUM + " status");
     client.identify(context);
   };
 
@@ -134,15 +154,13 @@ export const LoginProvider = ({ children }) => {
         upgradeLaunchClub,
         // setPlaneContext,
         setEnrolledInLaunchClub,
-        launchClubStatus,
-        setLaunchClubStatus,
         updateAudienceContext,
         loginUser,
         logoutUser,
+        allPersonas,
       }}
     >
       {children}
     </LoginContext.Provider>
   );
 };
-

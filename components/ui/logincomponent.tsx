@@ -28,7 +28,6 @@ export function LoginComponent({ variant }: LoginComponentProps) {
 
   function handleLogin() {
     if (!defaultEmail) return;
-    // const standardPersona = STARTER_PERSONAS.find((p) => p.personaemail === "user@launchmail.io");
    
     loginUser("user@launchmail.io");
   }
@@ -55,7 +54,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
         >
           Login with SSO
         </Button>
-        <QuickLoginDialog />
+        <QuickLoginDialog  variant={variant}/>
       </div>
       <div className="flex flex-col items-start sm:items-baseline font-sohnelight font-extralight sm:flex-row text-xs justify-between">
         <div className="pb-3">

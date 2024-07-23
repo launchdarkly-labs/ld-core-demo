@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { LAUNCH_CLUB_PLATINUM, LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 const LaunchClubStatus = () => {
-  const { launchClubStatus, upgradeLaunchClub } = useContext(LoginContext);
+  const { upgradeLaunchClub, userObject } = useContext(LoginContext);
 
   return (
     <Popover>
@@ -43,13 +43,13 @@ const LaunchClubStatus = () => {
                   My Launch Status
                 </p>
                 <p className="flex text-xl uppercase pb-2">
-                  {launchClubStatus}
+                  {userObject.personalaunchclubstatus}
                 </p>
               </div>
-              {launchClubStatus != LAUNCH_CLUB_PLATINUM && (
+              {userObject.personalaunchclubstatus != LAUNCH_CLUB_PLATINUM && (
                 <div className="my-2">
                   <Button
-                    onClick={() => upgradeLaunchClub(LAUNCH_CLUB_PLATINUM)}
+                    onClick={() => upgradeLaunchClub()}
                     className="flex text-xl font-sohnelight rounded-none w-full h-full bg-gradient-airways hover:bg-gradient-airways-grey hover:text-white"
                   >
                     Unlock Platinum Status
@@ -72,7 +72,7 @@ const LaunchClubStatus = () => {
               <p className="text-xl font-sohne font-bold bg-no-repeat bg-bottom bg-gradient-airways bg-[length:100%_3px] outline-none pb-2 pt-2">
                 Flight Perks
               </p>
-              {launchClubStatus !== LAUNCH_CLUB_STANDARD ? (
+              {userObject.personalaunchclubstatus !== LAUNCH_CLUB_STANDARD ? (
                 <div className="pt-2">
                   <div className="flex justify-between">
                     <p>AI Travel Insights</p>

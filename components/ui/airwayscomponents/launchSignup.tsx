@@ -21,16 +21,11 @@ export default function LaunchSignUp() {
   const {
     enrolledInLaunchClub,
     setEnrolledInLaunchClub,
-    setLaunchClubStatus,
   } = useContext(LoginContext);
 
 
   const enrollLaunchClub = async () => {
     setEnrolledInLaunchClub(true);
-    setLaunchClubStatus(LAUNCH_CLUB_STANDARD);
-    const context = await client?.getContext();
-    context.user.launchclub = LAUNCH_CLUB_STANDARD;
-    client.identify(context);
   };
 
   const perks = [

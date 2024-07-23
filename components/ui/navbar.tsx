@@ -43,9 +43,6 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const { isLoggedIn, enrolledInLaunchClub, userObject, logoutUser } =
       useContext(LoginContext);
 
-    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(userObject.personaname));
-    const { launchClubStatus } = useContext(LoginContext);
-
     return (
       <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
@@ -165,7 +162,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 <PopoverTrigger>
                   <Avatar>
                     <AvatarImage
-                      src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                      src={userObject?.personaimage || "ToggleAvatar.png"}
                       className=""
                     />
                   </Avatar>
@@ -176,18 +173,18 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     <>
                       <div className="mx-auto flex place-content-center w-full">
                         <img
-                          src={chosenPersona?.personaimage || "ToggleAvatar.png"}
+                          src={userObject?.personaimage || "ToggleAvatar.png"}
                           className="rounded-full h-48"
                         />
                       </div>
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
                         <p className="pt-4">
                           {navElementsVariant[variant]?.popoverMessage}
-                          {chosenPersona?.personaname || userObject.personaname}, as a<br></br>
+                          {userObject?.personaname || userObject.personaname}, as a<br></br>
                           <span className="text-2xl">
                             {variant.includes("airlines")
-                              ? capitalizeFirstLetter(launchClubStatus)
-                              : capitalizeFirstLetter(chosenPersona?.personatier)}{" "}
+                              ? capitalizeFirstLetter(userObject?.personalaunchclubstatus)
+                              : capitalizeFirstLetter(userObject?.personatier)}{" "}
                             Tier
                           </span>
                           !

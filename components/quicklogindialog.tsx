@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
-import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 interface Persona {
   personaname: string;
@@ -16,10 +16,11 @@ interface Persona {
   personaimage: string;
   personaemail: string;
   personarole: string;
+  personalaunchclubstatus: string;
 }
 
-export function QuickLoginDialog() {
-  const { loginUser, isLoggedIn, userObject } = useContext(LoginContext);
+export function QuickLoginDialog({variant} :any) {
+  const { loginUser, isLoggedIn, userObject,allPersonas } = useContext(LoginContext);
 
   const personaClicked = (persona: Persona) => {
     loginUser(persona.personaemail);
@@ -39,8 +40,8 @@ export function QuickLoginDialog() {
             <DialogTitle className="mb-4">  {isLoggedIn ? "Quick Login SSO User" : "Switch SSO User"}</DialogTitle>
             <div className="overflow-y-auto h-64">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 justify-items-center py-4">
-                {STARTER_PERSONAS.filter((persona) => persona.personaname !== userObject.personaname).map(
-                  (persona, index) => (
+                {allPersonas?.filter((persona:any) => persona.personaname !== userObject.personaname).map(
+                  (persona:any, index:number) => (
                     <DialogClose key={index}>
                       <div
                         className="flex flex-col items-center cursor-pointer flex-shrink-0 hover:brightness-125 text-md font-sohnelight gap-y-2 text-center"
@@ -54,7 +55,7 @@ export function QuickLoginDialog() {
                         <p className="">{persona.personaname}</p>
                         <p className="">{persona.personaemail}</p>
                         <p className="">Role: {persona.personarole}</p>
-                        <p className="">{persona.personatier} Tier</p>
+                        <p className="">{variant?.includes("airlines") ? capitalizeFirstLetter(persona.personalaunchclubstatus) : capitalizeFirstLetter(persona.personatier)} Tier</p>
                       </div>
                     </DialogClose>
                   )
