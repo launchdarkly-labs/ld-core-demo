@@ -40,10 +40,10 @@ interface Persona {
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub, user, logoutUser } =
+    const { isLoggedIn, enrolledInLaunchClub, userObject, logoutUser } =
       useContext(LoginContext);
 
-    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(user));
+    const chosenPersona = STARTER_PERSONAS.find((persona) => persona.personaname?.includes(userObject.personaname));
     const { launchClubStatus } = useContext(LoginContext);
 
     return (
@@ -183,7 +183,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                       <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
                         <p className="pt-4">
                           {navElementsVariant[variant]?.popoverMessage}
-                          {chosenPersona?.personaname || user}, as a<br></br>
+                          {chosenPersona?.personaname || userObject.personaname}, as a<br></br>
                           <span className="text-2xl">
                             {variant.includes("airlines")
                               ? capitalizeFirstLetter(launchClubStatus)

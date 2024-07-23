@@ -24,7 +24,7 @@ import { stockData } from "./InvestmentData";
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
 const StockRecommendationCard = () => {
-  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
 
@@ -62,8 +62,8 @@ const StockRecommendationCard = () => {
 
   useEffect(() => {
     if (!loggedUser) {
-      setInitialUser(user);
-      setInitialEmail(email);
+      setInitialUser(userObject.personaname);
+      setInitialEmail(userObject.personaemail);
     }
 
     let loginInterval: NodeJS.Timeout | null = null;

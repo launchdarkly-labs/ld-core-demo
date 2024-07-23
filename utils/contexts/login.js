@@ -7,7 +7,6 @@ import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react
 import { setCookie, getCookie } from "cookies-next";
 import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
-import { wait } from "../utils";
 
 const LoginContext = createContext();
 
@@ -20,26 +19,23 @@ const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
 export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState("user");
-  const [email, setEmail] = useState("");
-  const [chosenPersona, setChosenPersona] = useState({});
+  const [userObject, setUserObject] = useState({});
   const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false);
   const [launchClubStatus, setLaunchClubStatus] = useState(LAUNCH_CLUB_STANDARD);
   const [allPersonas, setAllPersonas] = useState(STARTER_PERSONAS);
-
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
   };
 
-  const loginUser = async ( email) => {
+  const loginUser = async (email) => {
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
     const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     const context = await client?.getContext();
     const foundPersona = allPersonas.find((persona) => persona.personaemail?.includes(email));
-    //TODO: when you logout or login and isloggin is true, you need to update allpersona with chosenpersona changes before switching to the next new persona
+    //TODO: when you logout or login and isloggin is true, you need to update allpersona with userObject changes before switching to the next new persona
     //TODO: this is to keep track of launch club status when log in betweeen
-    // await setChosenPersona(foundPersona)
+    await setUserObject(foundPersona)
 
     context.user.name = foundPersona.personaname;
     context.user.email = email;
@@ -55,13 +51,12 @@ export const LoginProvider = ({ children }) => {
  
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
-    setUser(foundPersona.personaname); //TODO: this is important for some reason
-    setEmail(email);
+
   };
 
   useEffect(()=>{
-    console.log(chosenPersona)
-  },[chosenPersona])
+    console.log(userObject)
+  },[userObject])
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();
@@ -73,7 +68,7 @@ export const LoginProvider = ({ children }) => {
   const logoutUser = async () => {
     const existingAudienceKey = getCookie(LD_CONTEXT_COOKIE_KEY) && JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     setIsLoggedIn(false);
-    setUser("anonymous");
+    setUserObject({})
     setEnrolledInLaunchClub(false);
     setLaunchClubStatus(LAUNCH_CLUB_STANDARD);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
@@ -131,9 +126,8 @@ export const LoginProvider = ({ children }) => {
   return (
     <LoginContext.Provider
       value={{
-        user,
-        email,
-        setUser,
+        userObject,
+        setUserObject,
         isLoggedIn,
         setIsLoggedIn,
         enrolledInLaunchClub,

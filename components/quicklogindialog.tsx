@@ -19,7 +19,7 @@ interface Persona {
 }
 
 export function QuickLoginDialog() {
-  const { user, loginUser, isLoggedIn } = useContext(LoginContext);
+  const { loginUser, isLoggedIn, userObject } = useContext(LoginContext);
 
   const personaClicked = (persona: Persona) => {
     loginUser(persona.personaemail);
@@ -39,7 +39,7 @@ export function QuickLoginDialog() {
             <DialogTitle className="mb-4">  {isLoggedIn ? "Quick Login SSO User" : "Switch SSO User"}</DialogTitle>
             <div className="overflow-y-auto h-64">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 justify-items-center py-4">
-                {STARTER_PERSONAS.filter((persona) => persona.personaname !== user).map(
+                {STARTER_PERSONAS.filter((persona) => persona.personaname !== userObject.personaname).map(
                   (persona, index) => (
                     <DialogClose key={index}>
                       <div

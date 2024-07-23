@@ -19,7 +19,7 @@ export default function Marketplace() {
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
-  const { isLoggedIn, logoutUser } =
+  const { isLoggedIn } =
     useContext(LoginContext);
 
 {/* Step 1 code block */}
