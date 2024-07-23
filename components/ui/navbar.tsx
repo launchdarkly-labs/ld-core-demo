@@ -40,7 +40,7 @@ interface Persona {
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant = "bank", ...props }, ref) => {
-    const { isLoggedIn, enrolledInLaunchClub, userObject, logoutUser } =
+    const { isLoggedIn, userObject, logoutUser } =
       useContext(LoginContext);
 
     return (
@@ -74,7 +74,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                         );
                       })}
 
-                      {enrolledInLaunchClub && variant?.includes("airlines") && (
+                      {userObject.personaEnrolledInLaunchClub && variant?.includes("airlines") && (
                         <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
                           <LaunchClubStatus />
                         </div>
@@ -144,7 +144,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
 
               {variant?.includes("airlines") && (
                 <div className="hidden sm:block ">
-                  {enrolledInLaunchClub && <LaunchClubStatus />}
+                  {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
                 </div>
               )}
 

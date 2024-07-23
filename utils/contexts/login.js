@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from "react-device-detect";
 import { setCookie, getCookie } from "cookies-next";
-import { LAUNCH_CLUB_STANDARD, LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
+import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 
 const LoginContext = createContext();
@@ -27,8 +27,7 @@ export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObject, setUserObject] = useState({});
-  const [enrolledInLaunchClub, setEnrolledInLaunchClub] = useState(false); //maybe this needs to be kept track of too in userObject
-  const [allPersonas, setAllPersonas] = useState(STARTER_PERSONAS);
+  const [allUsers, setAllUsers] = useState(STARTER_PERSONAS);
 
   const hashEmail = async (email) => {
     return CryptoJS.SHA256(email).toString();
@@ -41,16 +40,15 @@ export const LoginProvider = ({ children }) => {
       JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
 
     if (Object.keys(userObject).length > 0) {
-      setAllPersonas((prevObj) => [
+      //to update the all personas array with the changes
+      setAllUsers((prevObj) => [
         ...prevObj.filter((persona) => persona.personaname !== userObject.personaname),
         userObject,
       ]);
     }
 
     const context = await client?.getContext();
-    const foundPersona = allPersonas.find((persona) => persona.personaemail?.includes(email));
-    //TODO: when you logout or login and isloggin is true, you need to update allpersona with userObject changes before switching to the next new persona
-    //TODO: this is to keep track of launch club status when log in betweeen
+    const foundPersona = allUsers.find((persona) => persona.personaemail?.includes(email));
     await setUserObject(foundPersona);
 
     context.user.name = foundPersona.personaname;
@@ -69,13 +67,6 @@ export const LoginProvider = ({ children }) => {
     setIsLoggedIn(true);
   };
 
-  useEffect(() => {
-    console.log(userObject);
-  }, [userObject]);
-  
-  useEffect(() => {
-    console.log(allPersonas);
-  }, [allPersonas]);
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();
@@ -90,7 +81,7 @@ export const LoginProvider = ({ children }) => {
       JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
     setIsLoggedIn(false);
     setUserObject({});
-    setEnrolledInLaunchClub(false);
+    setAllUsers(STARTER_PERSONAS);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
     const createAnonymousContext = {
       kind: "multi",
@@ -134,14 +125,18 @@ export const LoginProvider = ({ children }) => {
   //   client.identify(context);
   // };
 
-  const upgradeLaunchClub = async () => {
+  const upgradeLaunchClubStatus = async () => {
     const context = await client?.getContext();
-    console.log("upgradeLaunchClub", context);
+    console.log("upgradeLaunchClubStatus", context);
     setUserObject((prevObj) => ({ ...prevObj, personalaunchclubstatus: LAUNCH_CLUB_PLATINUM }));
     context.user.launchclub = LAUNCH_CLUB_PLATINUM;
     console.log("User upgraded to " + LAUNCH_CLUB_PLATINUM + " status");
     client.identify(context);
   };
+
+  const enrollInLaunchClub = ()=>{
+    setUserObject((prevObj) => ({ ...prevObj, personaEnrolledInLaunchClub: true }));
+  }
 
   return (
     <LoginContext.Provider
@@ -149,15 +144,13 @@ export const LoginProvider = ({ children }) => {
         userObject,
         setUserObject,
         isLoggedIn,
-        setIsLoggedIn,
-        enrolledInLaunchClub,
-        upgradeLaunchClub,
+        upgradeLaunchClubStatus,
         // setPlaneContext,
-        setEnrolledInLaunchClub,
+        enrollInLaunchClub,
         updateAudienceContext,
         loginUser,
         logoutUser,
-        allPersonas,
+        allUsers,
       }}
     >
       {children}

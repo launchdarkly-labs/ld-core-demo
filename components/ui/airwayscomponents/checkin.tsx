@@ -17,7 +17,7 @@ import {
   export default function CheckIn({ trip }: any) {
     const { priorityBoarding, mealPromoExperience } =
       useFlags();
-    const { enrolledInLaunchClub } = useContext(LoginContext);
+    const { userObject } = useContext(LoginContext);
     const client = useLDClient();
   
     const handleCheckIn = async () => {
@@ -47,7 +47,7 @@ import {
             <AlertDialogTitle>Ready to Check In?</AlertDialogTitle>
             <AlertDialogDescription>
               <div className="grid lg:flex mx-auto items-center justify-center space-x-4 mt-4">
-                {enrolledInLaunchClub && (
+                {userObject.personaEnrolledInLaunchClub && (
                   <>
                     {priorityBoarding && (
                       <p className="flex text-black  py-2 font-sohne bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600   ">

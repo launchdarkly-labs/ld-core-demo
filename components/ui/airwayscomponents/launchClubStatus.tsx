@@ -1,17 +1,12 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import LoginContext, { LoginProvider } from "@/utils/contexts/login";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import LoginContext from "@/utils/contexts/login";
 import { PlaneIcon } from "lucide-react";
 import React, { useContext } from "react";
 import { Button } from "../button";
-import { AnimatePresence, motion } from "framer-motion";
-import { LAUNCH_CLUB_PLATINUM, LAUNCH_CLUB_STANDARD } from "@/utils/constants";
+import { LAUNCH_CLUB_PLATINUM, } from "@/utils/constants";
 
 const LaunchClubStatus = () => {
-  const { upgradeLaunchClub, userObject } = useContext(LoginContext);
+  const { upgradeLaunchClubStatus, userObject } = useContext(LoginContext);
 
   return (
     <Popover>
@@ -25,13 +20,9 @@ const LaunchClubStatus = () => {
             <div>
               <p className="text-3xl font-sohne font-light text-black">Good Day</p>
               <p className="text-sm text-black font-light italic font-sohne">#8235232113</p>
-              
             </div>
             <div className="flex items-center">
-              <img
-                src="/airline/launch-airways.svg"
-                className="h-24 w-24 items-center"
-              />
+              <img src="/airline/launch-airways.svg" className="h-24 w-24 items-center" />
             </div>
           </div>
         </div>
@@ -39,17 +30,13 @@ const LaunchClubStatus = () => {
           <div className="flex flex-row">
             <div className="bg-no-repeat bg-bottom bg-gradient-airways bg-[length:100%_3px] outline-none w-full">
               <div className="flex justify-between">
-                <p className="text-xl font-sohne font-bold">
-                  My Launch Status
-                </p>
-                <p className="flex text-xl uppercase pb-2">
-                  {userObject.personalaunchclubstatus}
-                </p>
+                <p className="text-xl font-sohne font-bold">My Launch Status</p>
+                <p className="flex text-xl uppercase pb-2">{userObject.personalaunchclubstatus}</p>
               </div>
               {userObject.personalaunchclubstatus != LAUNCH_CLUB_PLATINUM && (
                 <div className="my-2">
                   <Button
-                    onClick={() => upgradeLaunchClub()}
+                    onClick={() => upgradeLaunchClubStatus()}
                     className="flex text-xl font-sohnelight rounded-none w-full h-full bg-gradient-airways hover:bg-gradient-airways-grey hover:text-white"
                   >
                     Unlock Platinum Status
@@ -67,50 +54,50 @@ const LaunchClubStatus = () => {
               <p className="font-sohnelight">Total Flights</p>
               <p className="font-sohne">248</p>
             </div>
-            
+
             <div>
               <p className="text-xl font-sohne font-bold bg-no-repeat bg-bottom bg-gradient-airways bg-[length:100%_3px] outline-none pb-2 pt-2">
                 Flight Perks
               </p>
-              {userObject.personalaunchclubstatus !== LAUNCH_CLUB_STANDARD ? (
-                <div className="pt-2">
-                  <div className="flex justify-between">
-                    <p>AI Travel Insights</p>
-                    <p>Locked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Free Checked Baggage</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Free First Class Upgrades</p>
-                    <p>Locked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Priority Boarding</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
+
+              <div className="pt-2">
+                <div className="flex justify-between">
+                  <p>AI Travel Insights</p>
+                  <p
+                    className={
+                      userObject.personalaunchclubstatus.includes(LAUNCH_CLUB_PLATINUM)
+                        ? `bg-clip-text text-transparent bg-gradient-airways`
+                        : ""
+                    }
+                  >
+                    {userObject.personalaunchclubstatus.includes(LAUNCH_CLUB_PLATINUM)
+                      ? "Unlocked"
+                      : "Locked"}
+                  </p>
                 </div>
-              ) : (
-                <div className="pt-2">
-                  <div className="flex justify-between">
-                    <p>AI Travel Insights</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Free Checked Baggage</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Free First Class Upgrades</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Priority Boarding</p>
-                    <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
-                  </div>
+                <div className="flex justify-between">
+                  <p>Free Checked Baggage</p>
+                  <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
                 </div>
-              )}
+                <div className="flex justify-between">
+                  <p>Free First Class Upgrades</p>
+                  <p
+                    className={
+                      userObject.personalaunchclubstatus.includes(LAUNCH_CLUB_PLATINUM)
+                        ? `bg-clip-text text-transparent bg-gradient-airways`
+                        : ""
+                    }
+                  >
+                    {userObject.personalaunchclubstatus.includes(LAUNCH_CLUB_PLATINUM)
+                      ? "Unlocked"
+                      : "Locked"}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p>Priority Boarding</p>
+                  <p className="bg-clip-text text-transparent bg-gradient-airways">Unlocked</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -15,6 +15,7 @@ export const STARTER_PERSONAS = [
     personaemail: "user@launchmail.io",
     personarole: PERSONA_ROLE_USER,
     personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+    personaEnrolledInLaunchClub: false
   },
   {
     personaname: "Angela",
@@ -23,6 +24,7 @@ export const STARTER_PERSONAS = [
     personaemail: "angela@launchmail.io",
     personarole: PERSONA_ROLE_USER,
     personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+    personaEnrolledInLaunchClub: false
   },
   {
     personaname: "Alysha",
@@ -31,6 +33,7 @@ export const STARTER_PERSONAS = [
     personaemail: "alysha@launchmail.io",
     personarole: PERSONA_ROLE_BETA,
     personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+    personaEnrolledInLaunchClub: false
   },
   {
     personaname: "Jenn",
@@ -39,6 +42,7 @@ export const STARTER_PERSONAS = [
     personaemail: "jenn@launchmail.io",
     personarole: PERSONA_ROLE_DEVELOPER,
     personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+    personaEnrolledInLaunchClub: false
   },
   {
     personaname: "Cody",
@@ -47,5 +51,6 @@ export const STARTER_PERSONAS = [
     personaemail: "cody@launchmail.io",
     personarole: PERSONA_ROLE_USER,
     personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+    personaEnrolledInLaunchClub: false
   },
 ];

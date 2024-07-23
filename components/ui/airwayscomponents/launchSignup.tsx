@@ -19,14 +19,10 @@ export default function LaunchSignUp() {
   const client = useLDClient();
 
   const {
-    enrolledInLaunchClub,
-    setEnrolledInLaunchClub,
+    userObject,
+    enrollInLaunchClub
   } = useContext(LoginContext);
 
-
-  const enrollLaunchClub = async () => {
-    setEnrolledInLaunchClub(true);
-  };
 
   const perks = [
     {
@@ -81,7 +77,7 @@ export default function LaunchSignUp() {
           Join Launch Club
         </Button>
       </SheetTrigger>
-      {!enrolledInLaunchClub ? (
+      {!userObject.personaEnrolledInLaunchClub ? (
         <SheetContent
           className="w-full lg:w-2/3 xl:w-1/2 overflow-y-scroll bg-white grid items-center "
           side="right"
@@ -125,7 +121,7 @@ export default function LaunchSignUp() {
                 <SheetTrigger
                   aschild = "true"
                   onClick={() => {
-                    enrollLaunchClub();
+                    enrollInLaunchClub();
                   }}
                   className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
                 >
