@@ -268,6 +268,7 @@ def createInCartTotalPriceMetric(ld_api_key, createMetricURL):
     
     if response.status_code == 201:
         print("Metric 'In-Cart Total Price' created successfully.")
-        
+
+
 if __name__ == "__main__":
     main()

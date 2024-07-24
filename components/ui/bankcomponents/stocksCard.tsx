@@ -15,9 +15,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
-import InfinityLoader from "../infinityloader";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -37,7 +36,7 @@ interface Stock {
 export const StocksComponent: React.FC = () => {
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
@@ -123,8 +122,8 @@ export const StocksComponent: React.FC = () => {
 
   useEffect(() => {
     if (!loggedUser) {
-      setInitialUser(user);
-      setInitialEmail(email);
+      setInitialUser(userObject.personaname);
+      setInitialEmail(userObject.personaemail);
     }
 
     let loginInterval: NodeJS.Timeout | null = null;
@@ -181,7 +180,7 @@ export const StocksComponent: React.FC = () => {
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
-      loginUser(loggedUser, loggedEmail);
+      loginUser(loggedEmail);
     }
   };
 

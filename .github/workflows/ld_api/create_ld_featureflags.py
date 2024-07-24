@@ -481,6 +481,5 @@ def createReleaseNewRecentTradesDBFeatureFlag():
     if(response.status_code == 201):
         print("Release New Recent Trades DB feature flag created successfully.")
 
-        
 if __name__ == "__main__":
     main()

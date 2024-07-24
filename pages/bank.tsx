@@ -14,7 +14,7 @@ import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAcco
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiResponse, setAIResponse] = useState<string>("");
-  const { isLoggedIn, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
   const { wealthManagement, federatedAccounts } = useFlags();
   const money = JSON.stringify(checkData);
   const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
@@ -52,17 +52,13 @@ export default function Bank() {
     { month: "10/23", balance: 83758 },
   ];
 
-  function handleLogout() {
-    logoutUser();
-  }
-
   return (
     <>
       {!isLoggedIn ? (
-        <LoginHomePage variant="bank" name="ToggleBank" />
+        <LoginHomePage variant="bank" />
       ) : (
         <div className="mb-8">
-          <NavBar variant={"bank"} handleLogout={handleLogout} />
+          <NavBar variant={"bank"} />
 
           <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl ">
             <section

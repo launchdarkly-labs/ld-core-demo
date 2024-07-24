@@ -7,6 +7,14 @@ import teslaLogo from "@/public/investment/stocks_logo/teslaLogo.svg";
 import shopifyLogo from "@/public/investment/stocks_logo/shopify.svg";
 import walmartLogo from "@/public/investment/stocks_logo/walmart_logo_icon.svg";
 import avgoLogo from "@/public/investment/stocks_logo/AVGO.webp";
+import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.svg";
+import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
+import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
+import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
+import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
+import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
+import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
+import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -27,6 +35,31 @@ export const ALERT_TYPES = {
   INFO: "info",
 };
 
-export const STANDARD = "standard";
+export const PERSONA_TIER_STANARD = "Standard";
+export const PERSONA_TIER_PLATINUM = "Platinum";
+export const PERSONA_ROLE_BETA = "Beta";
+export const PERSONA_ROLE_DEVELOPER = "Developer";
+export const PERSONA_ROLE_USER = "User";
+export const LAUNCH_CLUB_STANDARD = "standard";
+export const LAUNCH_CLUB_PLATINUM = "platinum";
 
-export const LD_CONTEXT_COOKIE_KEY = "ld-context"
+export const LD_CONTEXT_COOKIE_KEY = "ld-context";
+
+export const COMPANY_LOGOS = {
+  bank: {
+    vertical: toggleBankVerticalLogo,
+    horizontal: toggleBankHorizontalLogo,
+  },
+  investment: {
+    vertical: frontierCapitalVerticalLogo,
+    horizontal: frontierCapitalHorizontalLogo,
+  },
+  airlines: {
+    vertical: launchAirwaysVerticalLogo,
+    horizontal: launchAirwaysHorizontalLogo,
+  },
+  market: {
+    vertical: galaxyMarketplaceVerticalLogo,
+    horizontal: galaxyMarketplaceHorizontalLogo,
+  },
+};

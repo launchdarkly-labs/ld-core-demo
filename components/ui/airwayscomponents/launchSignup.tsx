@@ -13,24 +13,16 @@ import { useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import { LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 export default function LaunchSignUp() {
   const client = useLDClient();
 
   const {
-    enrolledInLaunchClub,
-    setEnrolledInLaunchClub,
-    setLaunchClubStatus,
+    userObject,
+    enrollInLaunchClub
   } = useContext(LoginContext);
 
-
-  const enrollLaunchClub = async () => {
-    setEnrolledInLaunchClub(true);
-    setLaunchClubStatus("standard");
-    const context = await client?.getContext();
-    context.user.launchclub = "standard";
-    client.identify(context);
-  };
 
   const perks = [
     {
@@ -85,7 +77,7 @@ export default function LaunchSignUp() {
           Join Launch Club
         </Button>
       </SheetTrigger>
-      {!enrolledInLaunchClub ? (
+      {!userObject.personaEnrolledInLaunchClub ? (
         <SheetContent
           className="w-full lg:w-2/3 xl:w-1/2 overflow-y-scroll bg-white grid items-center "
           side="right"
@@ -129,7 +121,7 @@ export default function LaunchSignUp() {
                 <SheetTrigger
                   aschild = "true"
                   onClick={() => {
-                    enrollLaunchClub();
+                    enrollInLaunchClub();
                   }}
                   className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
                 >

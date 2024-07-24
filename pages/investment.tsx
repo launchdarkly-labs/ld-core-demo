@@ -17,13 +17,7 @@ import StockRecommendationCard from "@/components/ui/investmentcomponents/StockR
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
 
 export default function Investment() {
-  const { isLoggedIn, logoutUser } = useContext(LoginContext);
-
-  //TODO: either use this or the one in login.js
-  //TODO: move this into navbar
-  function handleLogout() {
-    logoutUser();
-  }
+  const { isLoggedIn, } = useContext(LoginContext);
 
   const cardStyle = "rounded-lg shadow-lg p-5 sm:p-5 bg-white";
 
@@ -32,7 +26,7 @@ export default function Investment() {
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="investment" name="Frontier Capital" />
+          <LoginHomePage variant="investment" />
         ) : (
           <motion.main
             initial={{ opacity: 0 }}
@@ -40,7 +34,7 @@ export default function Investment() {
             transition={{ duration: 0.5 }}
             className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
           >
-            <NavBar variant={"investment"} handleLogout={handleLogout} />
+            <NavBar variant={"investment"} />
             <InvestmentAccountHeader />
             <div className="my-8 " data-testid="salient-accounts-test-id">
               <div className="mx-auto max-w-7xl font-sohnelight ">
