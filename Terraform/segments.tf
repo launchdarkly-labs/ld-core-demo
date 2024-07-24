@@ -34,6 +34,24 @@ resource "launchdarkly_segment" "dev-team" {
   }
 }
 
+resource "launchdarkly_segment" "location-country" {
+  key         = "location-country"
+  project_key = var.project_key
+  env_key     = var.ld_env_key
+  name        = "Location - Country"
+  description = "Location to target Users"
+  tags        = ["location"]
+
+  rules {
+    clauses {
+      attribute    = "timeZone"
+      op           = "in"
+      values       = ["America/Los_Angeles"]
+      context_kind = "location"
+    }
+  }
+}
+
 resource "launchdarkly_segment" "launch-club-platinum" {
   key         = "launch-club-platinum"
   project_key = var.project_key

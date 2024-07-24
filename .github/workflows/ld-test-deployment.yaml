@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}  
-  DEMO_NAMESPACE: test
+  DEMO_NAMESPACE: coredemotest
 
 
 jobs:
@@ -28,11 +28,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
+      
+      - name: Install LaunchDarkly CLI
+        run: npm install -g @launchdarkly/ldcli
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/requirements.txt
+
+      - name: Delete Test LD Project
+        run: |
+          ldcli projects delete ${{ env.DEMO_NAMESPACE }}-ld-demo
 
       - name: Create LD Project for User
         id: create_ld_project

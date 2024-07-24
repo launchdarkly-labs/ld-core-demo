@@ -33,6 +33,17 @@ export const LoginProvider = ({ children }) => {
     return CryptoJS.SHA256(email).toString();
   };
 
+  const getLocation = async () => {
+    const options = Intl.DateTimeFormat().resolvedOptions();
+    const country = options.locale.split("-")[1] || "US"; // Default to "US" if country code is not available
+    return {
+      key: options.timeZone,
+      name: options.timeZone,
+      timeZone: options.timeZone,
+      country: country,
+    };
+  };
+
   const loginUser = async (email) => {
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
     const existingAudienceKey =
@@ -59,6 +70,7 @@ export const LoginProvider = ({ children }) => {
     context.user.role = foundPersona.personarole;
     context.user.tier = foundPersona.personatier;
     context.audience.key = existingAudienceKey;
+    context.location = await getLocation();
     context.user.launchclub = foundPersona.personalaunchclubstatus;
     await client?.identify(context);
     console.log("loginUser", context);
@@ -67,7 +79,6 @@ export const LoginProvider = ({ children }) => {
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
   };
-
 
   const updateAudienceContext = async () => {
     const context = await client?.getContext();
@@ -134,9 +145,9 @@ export const LoginProvider = ({ children }) => {
     client.identify(context);
   };
 
-  const enrollInLaunchClub = ()=>{
+  const enrollInLaunchClub = () => {
     setUserObject((prevObj) => ({ ...prevObj, personaEnrolledInLaunchClub: true }));
-  }
+  };
 
   return (
     <LoginContext.Provider
