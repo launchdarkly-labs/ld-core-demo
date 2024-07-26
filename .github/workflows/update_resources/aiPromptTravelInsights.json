@@ -1,0 +1,29 @@
+{
+    "name": "08 - AI Prompts for Travel Insights",
+    "key": "aiTravelPromptText",
+    "description": "This feature flag will change AI prompts in real-time for AI Travel Insights Component component in LaunchAirways.",
+    "clientSideAvailability": {
+        "usingMobileKey": true,
+        "usingEnvironmentId": true
+    },
+    "variations": [
+        {
+            "value": "Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${destination}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit. do not specify word count in your reply",
+            "name": "General Travel",
+            "description": "General Advisor"
+        },
+        {
+            "value": "Tell me about the location ${destination} that I'm going to. Give me any relevant historical facts or places that have significant value that I should visit while I'm there. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+            "name": "Historical Focus",
+            "description": "Historical Advisor"
+        },
+        {
+            "value": "Tell me relevant climate and weather facts about my destination. Provide example clothing to wear upon arrival at the destination and suggest some activities based on the typical weather at the time of arrival. Use the current date to base your weather information on. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+            "name": "Weather Focus",
+            "description": "Weather Advisor"
+        }
+    ],
+    "tags": [
+        "ai"
+    ]
+}

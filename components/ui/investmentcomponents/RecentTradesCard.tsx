@@ -19,7 +19,7 @@ import { wait, randomLatency } from "@/utils/utils";
 const RecentTradesCard = () => {
   const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
 
-  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
 
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();
@@ -91,8 +91,8 @@ const RecentTradesCard = () => {
 
   useEffect(() => {
     if (!loggedUser) {
-      setInitialUser(user);
-      setInitialEmail(email);
+      setInitialUser(userObject.personaname);
+      setInitialEmail(userObject.personaemail);
     }
 
     let loginInterval: NodeJS.Timeout | null = null;
@@ -128,7 +128,7 @@ const RecentTradesCard = () => {
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
-      loginUser(loggedUser, loggedEmail);
+      loginUser(loggedEmail);
     }
   };
 

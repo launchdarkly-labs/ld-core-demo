@@ -42,8 +42,8 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   const filterAirports = debounce(() => {
     const filtered = airports.filter(
       (airport) =>
-        airport.cityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        airport.airportCode.toLowerCase().includes(searchTerm.toLowerCase())
+        airport.cityName.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        airport.airportCode.toLowerCase()?.includes(searchTerm.toLowerCase())
     );
     setFilteredAirports(filtered);
   }, 250);

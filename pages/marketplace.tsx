@@ -12,9 +12,6 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
-import { setCookie } from "cookies-next";
-
-
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -22,7 +19,7 @@ export default function Marketplace() {
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
-  const { isLoggedIn, logoutUser } =
+  const { isLoggedIn } =
     useContext(LoginContext);
 
 {/* Step 1 code block */}
@@ -264,14 +261,6 @@ export default function Marketplace() {
     );
   };
 
-  function handleLogout() {
-    logoutUser();
-    const context: any = LDClient?.getContext();
-    context.user.tier = null;
-    LDClient?.identify(context);
-    setCookie("ldcontext", context);
-  }
-
     useEffect(() => {
       if (isLoggedIn) {
         storeAccessed();
@@ -290,7 +279,7 @@ export default function Marketplace() {
             transition={{ duration: 0.5 }}
             className=""
           >
-            <NavBar cart={cart} setCart={setCart} variant={"market"} handleLogout={handleLogout} personas={[]} />
+            <NavBar cart={cart} setCart={setCart} variant={"market"} personas={[]} />
             <main className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>
               <header className="relative h-2/3 py-28 bg-gradient-experimentation-black grid items-center justify-center">
                 <img src="elipse.png" className="absolute right-0 top-0" />

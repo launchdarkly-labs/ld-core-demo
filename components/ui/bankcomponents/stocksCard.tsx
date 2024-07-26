@@ -15,9 +15,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
-import InfinityLoader from "../infinityloader";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -35,10 +34,9 @@ interface Stock {
 }
 
 export const StocksComponent: React.FC = () => {
-  let { stocksAPI } = useFlags();
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { loginUser, user, email, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();
@@ -124,8 +122,8 @@ export const StocksComponent: React.FC = () => {
 
   useEffect(() => {
     if (!loggedUser) {
-      setInitialUser(user);
-      setInitialEmail(email);
+      setInitialUser(userObject.personaname);
+      setInitialEmail(userObject.personaemail);
     }
 
     let loginInterval: NodeJS.Timeout | null = null;
@@ -140,32 +138,6 @@ export const StocksComponent: React.FC = () => {
           return newTime;
         });
       }, 100);
-
-      errorInterval = setInterval(() => {
-        let dynamicValue;
-        if (client) {
-          if (stocksAPI) {
-            //75% chance of hitting errors
-            if (Math.random() < 0.75) {
-              client.track("stocks-api-error-rates");
-              client.flush();
-            }
-            dynamicValue = Math.floor(Math.random() * (170 - 150 + 1)) + 150;
-            client.track("stock-api-latency", undefined, dynamicValue);
-            client.flush();
-          } else {
-            //25% chance of hitting errors
-            if (Math.random() < 0.25) {
-              client.track("stocks-api-error-rates");
-              client.flush();
-            }
-            dynamicValue = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
-            client.track("stock-api-latency", undefined, dynamicValue);
-            client.flush();
-          }
-        }
-        setElapsedTime((prevTime) => prevTime + 1);
-      }, 10);
     }
     const stocksinterval = setInterval(() => {
       const updatedStocks = stocks.map((stock) => {
@@ -203,37 +175,23 @@ export const StocksComponent: React.FC = () => {
         if (errorInterval !== null) clearInterval(errorInterval);
       }
     };
-  }, [client, stocksAPI, runDemo]);
+  }, [client, runDemo]);
 
   const toggleRunDemo = () => {
     setRunDemo((prev) => !prev);
     if (runDemo == true) {
-      loginUser(loggedUser, loggedEmail);
+      loginUser(loggedEmail);
     }
   };
 
   return (
     <div className="space-y-2">
       <div
-        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2 ${
-          runDemo ? "border-white" : "border-current"
-        }`}
+        className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2`}
       >
         <img src="stocksicon.png" onClick={toggleRunDemo} />
       </div>
       <p className=" font-bold font-sohne text-lg pt-2">Stocks</p>
-
-      {runDemo ? (
-        <div className="flex justify-center items-center h-52">
-          <div className=" font-bold font-sohne justify-center items-center text-xl">
-            Generating Data
-            <br />
-            <div className="flex items-center mt-2 justify-center">
-              <InfinityLoader />
-            </div>
-          </div>
-        </div>
-      ) : stocksAPI ? (
         <div className="space-y-4 ">
           {stocks.map((stock, index) => (
             <div key={index} className="mt-4 rounded-lg">
@@ -284,11 +242,6 @@ export const StocksComponent: React.FC = () => {
             </div>
           ))}
         </div>
-      ) : (
-        <div className="flex items-center justify-center h-52">
-          <div className=" font-bold font-sohne text-xl">COMING SOON</div>
-        </div>
-      )}
     </div>
   );
 };

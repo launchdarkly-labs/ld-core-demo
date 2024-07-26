@@ -130,4 +130,3 @@ resource "launchdarkly_metric" "in-cart-total-price" {
   randomization_units = ["audience", "user"]
   tags           = ["experiment"]
 }
-

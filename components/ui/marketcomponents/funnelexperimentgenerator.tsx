@@ -39,16 +39,16 @@ export default function FunnelExperimentGenerator() {
 
             if (flagvariation === "Final Hours!") {
                 console.log('final hours')
-                metric1 = 90;
-                metric2 = 80;
+                metric1 = 70;
+                metric2 = 60;
                 metric3 = 60;
-                metric4 = 50;
+                metric4 = 20;
                 totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
             }
             if (flagvariation === "Sale") {
                 console.log('sale')
-                metric1 = 80;
-                metric2 = 70;
+                metric1 = 70;
+                metric2 = 60;
                 metric3 = 50;
                 metric4 = 25;
                 totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
@@ -96,7 +96,7 @@ export default function FunnelExperimentGenerator() {
 
         <Dialog>
             <DialogTrigger asChild>
-                <p className="font-bold font-sohnelight text-lg">Funnel Results Generator</p>
+                <p className="font-bold font-sohnelight text-lg">Funnel Results Generator (Marketplace)</p>
             </DialogTrigger>
             <DialogContent>
                 {expGenerator ? (

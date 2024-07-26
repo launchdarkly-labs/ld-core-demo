@@ -6,28 +6,135 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-from ld_api_call import checkRateLimit
 
 ld_api_key = os.getenv('LD_API_KEY')
 namespace = os.getenv('NAMESPACE')
 project_key = f"{namespace}-ld-demo"
+BASE_URL = "https://app.launchdarkly.com/api/v2"
+
 
 def main():
     
     createFederatedFeatureFlag()
-    createStocksAPIFeatureFlag()
     createWealthManagementFeatureFlag()
-    createAIPromptTextFeatureFlag()
-    createLaunchClubLoyaltyFeatureFlag()
-    createPriorityBoardFeatureFlag()
-    createMealPromoExperienceFeatureFlag()
+    createaiTravelPromptTextFeatureFlag()
     createAITravelInsightsFeatureFlag()
     createStoreHeadersFeatureFlag()
     createStoreAttentionCalloutFeatureFlag()
     createReleaseNewInvestmentStockApiFeatureFlag()
     createReleaseNewRecentTradesDBFeatureFlag()
     createCartSuggestedItemsFeatureFlag()
-   
+    createDestinationRecommendationFeatureFlag()
+    createAIChatbotModelsFeatureFlag()
+ 
+def createAIChatbotModelsFeatureFlag():
+    
+    print("Creating AI chatbot models feature flag...")
+    
+    url = "/flags/" + project_key
+    
+    payload = {
+        "name": "09 - LaunchAirways Chatbot (AI Models)",
+        "key": "ai-chatbot",
+        "description": "This feature flag will change AI models in real-time for the LaunchAirways Chatbotcomponent in LaunchAirways.",
+        "clientSideAvailability": {
+            "usingMobileKey": True,
+            "usingEnvironmentId": True
+        },
+        "variations": [
+            {
+                "name": "Claude Haiku",
+                "description": "This is Claude Haiku's AI model for quick response and cost saving",
+                "value": 
+                    {
+                        "max_tokens_to_sample": 500,
+                        "modelId": "anthropic.claude-instant-v1",
+                        "temperature": 0.3,
+                        "top_p": 1
+                    }
+                
+            },
+            {
+                "name": "Meta Llama",
+                "description": "This is Meta's Llama AI model for more creative responses",
+                "value": 
+                    {
+                        "max_gen_len": 500,
+                        "modelId": "meta.llama2-13b-chat-v1",
+                        "temperature": 0.9,
+                        "top_p": 1
+                    }
+                
+            },
+            {
+                "name": "Cohere Coral",
+                "description": "This is Cohere Coral AI model for balance between precision and creativity",
+                "value": 
+                    {
+                        "max_tokens": 500,
+                        "modelId": "cohere.command-text-v14",
+                        "p": 1,
+                        "temperature": 0.5
+                    }
+            }
+        ],
+        "tags": [
+            "ai"
+        ]
+    }
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("AI Chatbot feature flag created successfully.")
+    
+def createDestinationRecommendationFeatureFlag():
+    
+    print("Creating destination recommendation feature flag...")
+    
+    url = "/flags/" + project_key
+    
+    payload = {
+        "name": "06 - Destination Recommendation (AI Models)",
+        "key": "destination-picker-ai-model",
+        "description": "This feature flag will change AI models in real-time for the destination recommendation component in LaunchAirways.",
+        "clientSideAvailability": {
+            "usingMobileKey": True,
+            "usingEnvironmentId": True
+        },
+        "variations": [
+            {
+                "name": "Claude Haiku",
+                "description": "This is Claude Haiku's AI model for quick response and cost saving",
+                "value": 
+                    {
+                        "max_tokens": 200,
+                        "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+                        "temperature": 0.5
+                    }
+                
+            },
+            {
+                "name": "Cohere Text",
+                "description": "This is Cohere's AI model for detailed response with cost of high tokens",
+                "value": 
+                    {
+                        "max_tokens": 400,
+                        "modelId": "cohere.command-text-v14",
+                        "temperature": 0.7
+                    }
+                
+            }
+        ],
+        "tags": [
+            "ai"
+        ]
+    }
+    
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("Destination recommendation feature flag created successfully.")
+    
+    
+      
 def createFederatedFeatureFlag(): 
     
     print("Creating federated feature flag...")
@@ -61,7 +168,7 @@ def createFederatedFeatureFlag():
     ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Federated feature flag created successfully.")
     
@@ -100,161 +207,54 @@ def createWealthManagementFeatureFlag():
     ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Wealth management feature flag created successfully")
     
-def createAIPromptTextFeatureFlag():
+def createaiTravelPromptTextFeatureFlag():
         
     print("Creating AI prompt text feature flag...")
     
     url = "/flags/" + project_key
 
     payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "aiPromptText",
-    "name": "03 - Adjust Prompts for Wealth Insights",
-    "description": "Tune and release new prompts for the AWS Bedrock powered Wealth Insights API",
-    "variations": [
-        {
-            "value": "Playing the role of a financial analyst, using the data contained within the information set at the end of this prompt, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor. Hard constraint on a maximum of 50 words. Financial data is next - ",
-            "name": "Baseline"
+        "clientSideAvailability": {
+            "usingEnvironmentId": True,
+            "usingMobileKey": True
         },
-        {
-            "value": "Playing the role of a financial analyst specializing in maximizing financial savings, using the data contained within the information set at the end of this prompt, write me 50 words focused on how I could adjust spending to improve my financial situation. Provide 2 areas I should reduce spending to improve my financial situation. Your response should be tuned to talking directly to the requestor. Hard constraint on a maximum of 50 words. Financial data is next - ",
-            "name": "Aggressive Savings"
+        "key": "aiTravelPromptText",
+        "name": "08 - AI Prompts for Travel Insights",
+        "description": "This feature flag will change AI prompts in real-time for AI Travel Insights Component component in LaunchAirways.",
+        "variations": [
+                {
+                    "value": "Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${destination}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit. do not specify word count in your reply",
+                    "name": "General Travel",
+                    "description": "General Advisor"
+                },
+                {
+                    "value": "Tell me about the location ${destination} that I'm going to. Give me any relevant historical facts or places that have significant value that I should visit while I'm there. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+                    "name": "Historical Focus",
+                    "description": "Historical Advisor"
+                },
+                {
+                    "value": "Tell me relevant climate and weather facts about my destination. Provide example clothing to wear upon arrival at the destination and suggest some activities based on the typical weather at the time of arrival. Use the current date to base your weather information on. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+                    "name": "Weather Focus",
+                    "description": "Weather Advisor"
+                }
+            ],
+        "defaults":{
+            "onVariation": 0,
+            "offVariation": 1
         },
-        {
-            "value": "Throw caution to the wind. Play the role of a financially irresponsible individual, who is looking to party in vegas for a weekend without regrets. Using the data contained within the information set at the end of this prompt, write me 50 words focused on how I could build hype in my life at Vegas this year. Provide 2 safe-for-work suggestions for me to spend additional money on to amplify my lifestyle. Your response should be tuned to talking directly to the requestor. Financial data is next - ",
-            "name": "Chaos Savings"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "release"
-    ]
+        "tags": [
+            "ai"
+        ]
     }
 
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("AI prompt text feature flag created successfully.")
-    
-def createLaunchClubLoyaltyFeatureFlag():
-    
-    print("Creating Launch Club Loyalty feature flag...")
-    
-    url = "/flags/" + project_key
 
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "launchClubLoyalty",
-    "name": "08 - Enable Launch Club Loyalty Program",
-    "description": "Enable Launch Club Loyalty Program on ToggleAirlines",
-     "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "target"
-    ]
-    }
-
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Launch Club Loyalty flag created successfully.")
-
-def createPriorityBoardFeatureFlag():
-    
-    print("Creating priority board feature flag...")
-    
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "priorityBoarding",
-    "name": "09 - Launch Club - Priority Boarding",
-    "description": "Enable Launch Club Priority Program on ToggleAirlines",
-     "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "target"
-    ]
-    }
-
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Priority Boarding feature flag created successfully.")
-    
-def createMealPromoExperienceFeatureFlag():
-    
-    print("Creating meal promo experience feature flag...")
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "mealPromoExperience",
-    "name": "10 - Targeted Plane Meal Promotion",
-    "description": "Rolling our meal service on our A330 aircraft - free promotion for testing",
-    "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "target"
-    ]
-    }
-
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Meal promo experience feature flag created successfully.")
-    
 def createAITravelInsightsFeatureFlag():
     
     print("Creating AI travel insights feature flag...")
@@ -267,7 +267,7 @@ def createAITravelInsightsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "aiTravelInsights",
-    "name": "11 - Release AI Travel Insights",
+    "name": "07 - Release AI Travel Insights",
     "description": "Amazon Bedrock Powered Travel Insights",
      "variations": [
         {
@@ -284,11 +284,11 @@ def createAITravelInsightsFeatureFlag():
         "offVariation": 1
     },
     "tags": [
-        "target"
+        "ai"
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("AI travel insights feature flag created successfully.")
     
@@ -304,7 +304,7 @@ def createStoreHeadersFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeHeaders",
-    "name": "12 - Featured Store Headers",
+    "name": "10 - Featured Store Headers",
     "description": "Headers to drive engagement on specific stores",
      "variations": [
         {
@@ -325,7 +325,7 @@ def createStoreHeadersFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Store headers feature flag created successfully.")
     
@@ -341,7 +341,7 @@ def createStoreAttentionCalloutFeatureFlag():
         "usingMobileKey": True
     },
     "key": "storeAttentionCallout",
-    "name": "13 - Store Highlight Text",
+    "name": "11 - Store Highlight Text",
     "description": "Header Text for Marketplace Stores",
      "variations": [
         {
@@ -366,7 +366,7 @@ def createStoreAttentionCalloutFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Store attention callout feature flag created successfully.")
         
@@ -382,7 +382,7 @@ def createCartSuggestedItemsFeatureFlag():
         "usingMobileKey": True
     },
     "key": "cartSuggestedItems",
-    "name": "14 - Cart Suggested items",
+    "name": "12 - Cart Suggested items",
     "description": "Show suggested items in the cart",
      "variations": [
         {
@@ -395,7 +395,7 @@ def createCartSuggestedItemsFeatureFlag():
         }
     ],
     "defaults":{
-        "onVariation": 0,
+        "onVariation": 1,
         "offVariation": 1
     },
     "tags": [
@@ -403,46 +403,9 @@ def createCartSuggestedItemsFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Cart Suggested items feature flag created successfully.")
-    
-def createStocksAPIFeatureFlag():
-        
-    print("Creating stocks API feature flag...")
-    
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "stocksAPI",
-    "name": "05 - Release Stocks API",
-    "description": "Release New Stocks API",
-     "variations": [
-        {
-            "value": True,
-            "name": "Available"
-        },
-        {
-            "value": False,
-            "name": "Unavailable"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "remediate"
-    ]
-    }
-    
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
-    if(response.status_code == 201):
-        print("Stocks API feature flag created successfully.")
 
 def createReleaseNewInvestmentStockApiFeatureFlag():
         
@@ -456,7 +419,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
         "usingMobileKey": True
     },
     "key": "release-new-investment-stock-api",
-    "name": "06 - Release New Investment Stock Api",
+    "name": "04 - Release New Investment Stock Api",
     "description": "Release New Investment Stock Api",
      "variations": [
         {
@@ -477,7 +440,7 @@ def createReleaseNewInvestmentStockApiFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Release New Investment Stock Api feature flag created successfully.")
 
@@ -493,7 +456,7 @@ def createReleaseNewRecentTradesDBFeatureFlag():
         "usingMobileKey": True
     },
     "key": "investment-recent-trade-db",
-    "name": "07 - Release New Recent Trades DB",
+    "name": "05 - Release New Recent Trades DB",
     "description": "Release New Recent Trades DB",
      "variations": [
         {
@@ -514,10 +477,9 @@ def createReleaseNewRecentTradesDBFeatureFlag():
     ]
     }
     
-    response = checkRateLimit("POST", url, ld_api_key, json.dumps(payload))
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Release New Recent Trades DB feature flag created successfully.")
 
-        
 if __name__ == "__main__":
     main()

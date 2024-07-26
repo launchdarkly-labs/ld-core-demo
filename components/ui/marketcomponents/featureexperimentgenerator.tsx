@@ -35,7 +35,7 @@ export default function FeatureExperimentGenerator() {
             if (cartSuggestedItems) {
                 totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
                 let probablity = Math.random() * 100;
-                if( probablity < 80 ) {
+                if( probablity < 60 ) {
                     client?.track("upsell-tracking", client.getContext());
                 }
                 client?.track("in-cart-total-price", client.getContext(), totalPrice);
@@ -60,7 +60,7 @@ export default function FeatureExperimentGenerator() {
 
         <Dialog>
             <DialogTrigger asChild>
-                <p className="font-bold font-sohnelight text-lg">Feature Results Generator</p>
+                <p className="font-bold font-sohnelight text-lg">Feature Results Generator (Marketplace)</p>
             </DialogTrigger>
             <DialogContent>
                 {expGenerator2 ? (
@@ -76,7 +76,7 @@ export default function FeatureExperimentGenerator() {
                 ) : (
                     <div className="flex justify-center text-xl font-bold items-center h-full">
                         <button onClick={() => setExpGenerator2(true)} className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:text-black hover:brightness-125 text-white">
-                            Generate Feature Experiment Results
+                            Generate Feature Experiment Results (MarketPlace)
                         </button>
                     </div>
                 )}

@@ -2,50 +2,27 @@
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AnimatePresence, motion } from "framer-motion";
-import { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
-import TripsContext from "@/utils/contexts/TripContext";
-import BookedFlights from "./bookedFlights";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import { LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 export default function LaunchSignUp() {
   const client = useLDClient();
 
-  const { bookedTrips, cancelTrip, setBookedTrips } = useContext(TripsContext);
-
   const {
-    isLoggedIn,
-    setIsLoggedIn,
-    loginUser,
-    logoutUser,
-    enrolledInLaunchClub,
-    setEnrolledInLaunchClub,
-    setLaunchClubStatus,
+    userObject,
+    enrollInLaunchClub
   } = useContext(LoginContext);
-  const [status, setStatus] = useState("Economy");
 
-  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    logoutUser();
-    setUsername("");
-  };
-
-  const enrollLaunchClub = async () => {
-    setEnrolledInLaunchClub(true);
-    setLaunchClubStatus("standard");
-    const context = await client?.getContext();
-    context.user.launchclub = "standard";
-    client.identify(context);
-  };
 
   const perks = [
     {
@@ -93,12 +70,6 @@ export default function LaunchSignUp() {
     },
   };
 
-  const childVariants = {
-    hidden: { x: -300, opacity: 0 },
-    show: { x: 0, opacity: 1 },
-    exit: { x: 300, opacity: 0 },
-  };
-
   return (
     <Sheet>
       <SheetTrigger className="text-white z-50" asChild>
@@ -106,7 +77,7 @@ export default function LaunchSignUp() {
           Join Launch Club
         </Button>
       </SheetTrigger>
-      {!enrolledInLaunchClub ? (
+      {!userObject.personaEnrolledInLaunchClub ? (
         <SheetContent
           className="w-full lg:w-2/3 xl:w-1/2 overflow-y-scroll bg-white grid items-center "
           side="right"
@@ -150,7 +121,7 @@ export default function LaunchSignUp() {
                 <SheetTrigger
                   aschild = "true"
                   onClick={() => {
-                    enrollLaunchClub();
+                    enrollInLaunchClub();
                   }}
                   className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
                 >

@@ -1,0 +1,31 @@
+name: Manually Add Code References to LaunchDarkly Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'User alias or LD env key'
+        required: true
+
+env:
+  LD_API_KEY: ${{ secrets.LD_API_KEY }} 
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+
+
+jobs:
+  add-code-references:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
+
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2.12.0
+        with:
+          accessToken: ${{ secrets.LD_API_KEY }}
+          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          repoName: main
+          prune: true
+    

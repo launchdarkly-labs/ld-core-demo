@@ -1,4 +1,6 @@
 import os
+import re
+from urllib import response
 import requests
 import json
 import shutil
@@ -6,8 +8,9 @@ from ruamel.yaml import YAML
 import yaml
 import base64
 import time
-from ld_api_call import checkRateLimit
 import sys
+
+BASE_URL = "https://app.launchdarkly.com/api/v2"
 
 def main():
     
@@ -26,28 +29,64 @@ def createSegmentsForLDEnvs(ld_env_key):
     
     print("Creating Beta Users segment for " + environment_key + " environment")
     betaSegmentPayload = getBetaSegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(betaSegmentPayload))
-    patchBetaSegmentPayload(ld_api_key, environment_key, project_key)
-    
-    print("Creating A330 Passengers segment for " + environment_key + " environment")
-    a330SegmentPayload = getA330SegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(a330SegmentPayload))
-    patchA330SegmentPayload(ld_api_key, environment_key, project_key)
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(betaSegmentPayload))
+    if response.status_code == 201:
+        print("Beta Users segment created successfully")
+        patchBetaSegmentPayload(ld_api_key, environment_key, project_key)
     
     print("Creating Launch Club - Platinum segment for " + environment_key + " environment")
     platinumSegmentPayload = getPlatinumSegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(platinumSegmentPayload))
-    patchPlatinumSegmentPayload(ld_api_key, environment_key, project_key)
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(platinumSegmentPayload))
+    if response.status_code == 201:
+        print("Launch Club - Platinum segment created successfully")
+        patchPlatinumSegmentPayload(ld_api_key, environment_key, project_key)
     
     print("Creating Launch Club Entitlement segment for " + environment_key + " environment")
     entitlementSegmentPayload = getEntitlementSegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(entitlementSegmentPayload))
-    patchEntitlementSegmentPayload(ld_api_key, environment_key, project_key)
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(entitlementSegmentPayload))
+    if response.status_code == 201:
+        print("Launch Club Entitlement segment created successfully")
+        patchEntitlementSegmentPayload(ld_api_key, environment_key, project_key)
     
-    print("Development Team Segments created successfully for " + environment_key + " environment")
+    print("Creating Development Team Segment for " + environment_key + " environment")
     devTeamSegmentPayload = getDevTeamSegmentPayload()
-    checkRateLimit("POST", createSegmentURL, ld_api_key, json.dumps(devTeamSegmentPayload))
-    patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key)
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(devTeamSegmentPayload))
+    if response.status_code == 201:
+        print("Development Team segment created successfully")
+        patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key)
+        
+    print("Creating Device Segment " + environment_key + " environment")
+    mobileSegmentPayload = getMobileSegmentPayload()
+    response = requests.request("POST", BASE_URL + createSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(mobileSegmentPayload))
+    if response.status_code == 201:
+        print("Mobile segment created successfully")
+        patchMobileSegmentPayload(ld_api_key, environment_key, project_key)
+        
+        
+def patchMobileSegmentPayload(ld_api_key, environment_key, project_key):
+    
+    segment_key = "mobile-users"
+    patchSegmentURL = "/segments/" + project_key + "/" + environment_key + "/" + segment_key
+    
+    patchPayload = {
+        "patch":[
+            {
+            "op": "add",
+            "path": "/rules/0",
+            "value": {
+                "clauses": [{ 
+                    "contextKind": "device",
+                    "attribute": "platform",
+                    "op": "in",
+                    "values": ["Mobile"],
+                    "negate": False
+                }]
+            }
+            }]
+    }
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
+    if response.status_code == 200:
+        print("Patch for Development Team segment successful")
     
 def patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key):
     
@@ -70,9 +109,7 @@ def patchDevTeamSegmentPayload(ld_api_key, environment_key, project_key):
             }
             }]
     }
-    
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
-
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
     if response.status_code == 200:
         print("Patch for Development Team segment successful")
         
@@ -98,8 +135,7 @@ def patchEntitlementSegmentPayload(ld_api_key, environment_key, project_key):
         ]
     }
     
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
-    
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
     if response.status_code == 200:
         print("Patch for Launch Club Entitlement segment successful")
     
@@ -125,7 +161,7 @@ def patchPlatinumSegmentPayload(ld_api_key, environment_key, project_key):
         ]
     }
     
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
     
     if response.status_code == 200:
         print("Patch for Launch Club - Platinum segment successful")
@@ -153,39 +189,12 @@ def patchBetaSegmentPayload(ld_api_key, environment_key, project_key):
         ]
     }
     
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
+    response = requests.request("PATCH", BASE_URL + patchSegmentURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(patchPayload))
     
     if response.status_code == 200:
         print("Patch for Beta Users segment successful")
 
-def patchA330SegmentPayload(ld_api_key, environment_key, project_key):
-    
-    segment_key = "airline-a-330-passengers"
-    patchSegmentURL = "/segments/" + project_key + "/" + environment_key + "/" + segment_key
-    
-    patchPayload = {
-        "patch":[
-            {
-                "op": "add",
-                "path": "/rules/0",
-                "value": {
-                    "clauses": [{ 
-                        "contextKind": "experience",
-                        "attribute": "airplane",
-                        "op": "in",
-                        "values": ["a330"],
-                        "negate": False
-                    }]
-                }
-            }
-        ]
-    }
-    
-    response = checkRateLimit("PATCH", patchSegmentURL, ld_api_key, json.dumps(patchPayload))
-    
-    if response.status_code == 200:
-        print("Patch for A330 Passengers segment successful")
-    
+
     
 def getDevTeamSegmentPayload():
     
@@ -230,20 +239,20 @@ def getPlatinumSegmentPayload():
     }
     
     return payload
-    
-def getA330SegmentPayload():
-    
-    payload = {
-        "name": "A330 Passengers",
-        "key": "airline-a-330-passengers",
-        "description": "Any user who is flying on an A330 Airplane",
-        "tags": [
-            "A330-passengers"
-        ],
-        "unbounded": False,
-    }
-    
-    return payload
+
+def getMobileSegmentPayload():
+        
+        payload = {
+            "name": "Mobile Users",
+            "key": "mobile-users",
+            "description": "Users who have accessed the application via mobile device",
+            "tags": [
+                "Mobile"
+            ],
+            "unbounded": False,
+        }
+        
+        return payload
     
 def getBetaSegmentPayload():
     
