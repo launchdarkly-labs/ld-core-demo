@@ -6,7 +6,7 @@ import LoginContext from "@/utils/contexts/login";
 import DestinationPicker from "./pickMyDestinationModal";
 
 const AirlineHero = ({ showSearch }: { showSearch: any }) => {
-  const { isLoggedIn, enrolledInLaunchClub } = useContext(LoginContext);
+  const { isLoggedIn, userObject } = useContext(LoginContext);
 
   return (
     <section
@@ -51,7 +51,7 @@ const AirlineHero = ({ showSearch }: { showSearch: any }) => {
                 </div>
               </div>
               <div className="mb-[5rem] lg:mb-0  w-full flex justify-center items-center">
-                {isLoggedIn && !enrolledInLaunchClub && (
+                {isLoggedIn && !userObject.personaEnrolledInLaunchClub && (
                   <motion.div
                     initial={{ x: 300 }}
                     animate={{ x: 0 }}

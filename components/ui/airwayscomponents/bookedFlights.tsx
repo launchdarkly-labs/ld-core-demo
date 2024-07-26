@@ -21,8 +21,8 @@ import { BounceLoader } from "react-spinners";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
-  const { enrolledInLaunchClub } = useContext(LoginContext);
-  const { launchClubLoyalty, aiTravelInsights, aiTravelPromptText } = useFlags();
+  const { userObject } = useContext(LoginContext);
+  const {  aiTravelInsights, aiTravelPromptText } = useFlags();
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -288,7 +288,7 @@ export default function BookedFlights() {
                       </div>
                       <div className="border-2 mt-2 border-[#E6E6E6]" />
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
-                        {enrolledInLaunchClub && (
+                        {userObject.personaEnrolledInLaunchClub && (
                           <>
 
                             <p className="flex text-black bg-clip-text text-transparent bg-black  ">
@@ -308,7 +308,7 @@ export default function BookedFlights() {
 
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-[#F8F8F8] grid ticket-content-right-side ">
                     <div className="flex flex-col items-center justify-center space-y-4">
-                      {enrolledInLaunchClub ? (
+                      {userObject.personaEnrolledInLaunchClub ? (
                         <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default">
                           Launch Priority Upgrade
                         </button>
