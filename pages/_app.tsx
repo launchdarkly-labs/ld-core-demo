@@ -10,7 +10,6 @@ import { TripsProvider } from "@/utils/contexts/TripContext";
 import { LoginProvider } from "@/utils/contexts/login";
 import KeyboardNavigation from "@/components/KeyboardNavigation";
 import Head from "next/head";
-import { PersonaProvider } from "@/components/personacontext";
 import { QuickCommandDialog } from "@/components/quickcommand";
 import CryptoJS from 'crypto-js';
 import { setCookie } from "cookies-next";
@@ -70,24 +69,21 @@ if (typeof window !== "undefined") {
     return (
       <NoSSRWrapper>
         <LDProvider>
-          <PersonaProvider>
-            
-              <LoginProvider>
-              <QuickCommandDialog>
-                <TripsProvider>
-                  <KeyboardNavigation />
-                  <Head>
-                    <meta
-                      name="viewport"
-                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
-                    />
-                    <link rel="apple-touch-icon" href="/apple-icon.png" />
-                  </Head>
-                  <Component {...pageProps} />
-                </TripsProvider>
-                </QuickCommandDialog>
-              </LoginProvider>
-          </PersonaProvider>
+          <LoginProvider>
+          <QuickCommandDialog>
+            <TripsProvider>
+              <KeyboardNavigation />
+              <Head>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+                />
+                <link rel="apple-touch-icon" href="/apple-icon.png" />
+              </Head>
+              <Component {...pageProps} />
+            </TripsProvider>
+            </QuickCommandDialog>
+          </LoginProvider>
         </LDProvider>
       </NoSSRWrapper>
     );
