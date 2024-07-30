@@ -12,6 +12,7 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
+import { VR_GALAXY_DATA, THE_BOOMIN_BOX_DATA, MACROCENTER_DATA } from "@/utils/constants";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -290,7 +291,7 @@ export default function Marketplace() {
                   </h1>
                   <div className="w-full sm:w-3/4 lg:w-1/2">
                     <ReactSearchAutocomplete
-                      items={products}
+                      items={[...VR_GALAXY_DATA,...THE_BOOMIN_BOX_DATA,...MACROCENTER_DATA]}
                       onSelect={handleOnSelect}
                       autoFocus
                       formatResult={formatResult}
