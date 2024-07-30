@@ -55,10 +55,11 @@ const ProductInventoryComponent = ({
 }) => {
   const LDClient = useLDClient();
   const { toast } = useToast();
-  const [showAllItems,setShowAllItems] = useState(false);
+  const [showAllItems, setShowAllItems] = useState(false);
+
   async function storeOpened() {
-    LDClient?.track("store-accessed", LDClient.getContext(), 1);
     setShowAllItems(false);
+    isVisibleStoreHeaders ? LDClient?.track("store-accessed", LDClient.getContext(), 1) : null;
   }
 
   return (
@@ -66,7 +67,7 @@ const ProductInventoryComponent = ({
       <SheetTrigger
         asChild
         onClick={() => {
-          isVisibleStoreHeaders ? storeOpened() : null;
+          storeOpened();
         }}
       >
         <div className="relative flex items-center justify-center">
@@ -106,8 +107,11 @@ const ProductInventoryComponent = ({
           </SheetTitle>
         </SheetHeader>
         <Table className="">
-          <TableCaption className="bg-gradient-experimentation text-transparent bg-clip-text font-bold text-base cursor-pointer hover:brightness-125" onClick={()=>setShowAllItems(prev=>!prev)} >
-          {showAllItems === false ? "Show More" : "Show Less"}
+          <TableCaption
+            className="bg-gradient-experimentation text-transparent bg-clip-text font-bold text-base cursor-pointer hover:brightness-125"
+            onClick={() => setShowAllItems((prev) => !prev)}
+          >
+            {showAllItems === false ? "Show More" : "Show Less"}
           </TableCaption>
           <TableHeader>
             <TableRow>
@@ -153,9 +157,7 @@ const ProductInventoryComponent = ({
                 </TableRow>
               );
             })}
-
           </TableBody>
-          
         </Table>
 
         <SheetFooter></SheetFooter>
