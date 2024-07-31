@@ -54,8 +54,8 @@ export default function Marketplace() {
 
   const handleOnSelect = (item: InventoryItem) => {
     
-    let clearIcon: HTMLElement = document?.querySelector(".clear-icon") as HTMLElement;
-    if (clearIcon) clearIcon.click();
+    let openShoppingCart: HTMLElement = document?.querySelector(".shopping-cart-trigger") as HTMLElement;
+    if (openShoppingCart) openShoppingCart.click();
 
     if (isNewSearchEngine) {
       addToCart(item);
@@ -82,8 +82,7 @@ export default function Marketplace() {
     return (
       <div className="flex justify-between gap-x-5 cursor-pointer brightness-125">
         <span style={{ display: "block", textAlign: "left" }}>
-          Buy Now: {item.item}{" "}
-         
+          {item.item}{" "}
         </span>
         {isNewSearchEngine ? (
             <Button className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto">

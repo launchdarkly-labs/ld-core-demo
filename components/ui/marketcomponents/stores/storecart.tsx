@@ -71,7 +71,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
 
   return (
     <Sheet>
-      <SheetTrigger onClick={() => cartClick()} asChild>
+      <SheetTrigger onClick={() => cartClick()} asChild className="shopping-cart-trigger">
         <div className="relative cursor-pointer">
           <ShoppingCart className="cart" color={"white"} />
           <div className="bg-gradient-experimentation w-3 h-3 sm:w-[1rem] sm:h-[1rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[-5px] right-[-10px]">
