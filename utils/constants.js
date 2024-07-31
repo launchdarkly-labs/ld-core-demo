@@ -145,12 +145,6 @@ export const VR_GALAXY_DATA = [
 
 export const THE_BOOMIN_BOX_DATA = [
   {
-    id: 21,
-    vendor: "boominbox",
-    item: "VR Headset - Advanced Model",
-    cost: "499.99",
-  },
-  {
     id: 22,
     vendor: "boominbox",
     item: "Bluetooth Noise-Canceling Headphones",
