@@ -19,6 +19,7 @@ interface InventoryItem {
   item: string;
   cost: number;
   vendor: string;
+  image?: any;
 }
 
 const badgesText = [
