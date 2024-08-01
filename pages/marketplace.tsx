@@ -37,10 +37,10 @@ export default function Marketplace() {
   const [openBoominBox, setOpenBoominBox] = useState(false);
   const { isLoggedIn } = useContext(LoginContext);
   const { toast } = useToast();
-  const isNewSearchEngine = true;
 
   const LDClient = useLDClient();
   const { storeAttentionCallout } = useFlags();
+  const releaseNewSearchEngine = useFlags()["release-new-search-engine"]?.includes("new-search-engine");
 
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
@@ -62,9 +62,9 @@ export default function Marketplace() {
     let openShoppingCart: HTMLElement = document?.querySelector(
       ".shopping-cart-trigger"
     ) as HTMLElement;
-    if (openShoppingCart) openShoppingCart.click();
+    if (openShoppingCart && releaseNewSearchEngine) openShoppingCart.click();
 
-    if (isNewSearchEngine) {
+    if (releaseNewSearchEngine) {
       addToCart(item);
       toast({
         title: `${item.item} has been added to your cart!`,
@@ -89,7 +89,7 @@ export default function Marketplace() {
     return (
       <div className="flex justify-between gap-x-5 cursor-pointer items-center mr-4">
         <span className="w-full truncate">{item.item} </span>
-        {isNewSearchEngine ? (
+        {releaseNewSearchEngine ? (
           <Button className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto">
             Add To Cart
           </Button>
@@ -131,7 +131,7 @@ export default function Marketplace() {
                     formatResult={formatResult}
                     fuseOptions={{
                       shouldSort: true,
-                      threshold: isNewSearchEngine ? 0.3 : 0.6, // 0.3 more precise, 0.6 less
+                      threshold: releaseNewSearchEngine ? 0.3 : 0.6, // 0.3 more precise, 0.6 less
                       location: 0,
                       distance: 100,
                       minMatchCharLength: 1,

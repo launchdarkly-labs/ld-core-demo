@@ -21,9 +21,9 @@ import {
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useLDClient } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from "@/public/market.png";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 
 interface InventoryItem {
   id: string | number;
@@ -37,7 +37,6 @@ const ProductInventoryComponent = ({
   open,
   addToCart,
   sheetTitle,
-  tableCaption,
   inventory,
   mainImg,
   isVisibleStoreHeaders,
@@ -54,6 +53,7 @@ const ProductInventoryComponent = ({
   headerLabel?: string;
 }) => {
   const LDClient = useLDClient();
+  const releaseNewShortenCollectionsPage = useFlags()["release-new-shorten-collections-page"]?.includes("new-shorten-collections-page");
   const { toast } = useToast();
   const [showAllItems, setShowAllItems] = useState(false);
 
@@ -123,7 +123,7 @@ const ProductInventoryComponent = ({
           </TableHeader>
           <TableBody>
             {inventory.map((item: InventoryItem, index: number) => {
-              if (index > 2 && showAllItems === false) return null;
+              if (index > 2 && showAllItems === false && releaseNewShortenCollectionsPage) return null;
               return (
                 <TableRow key={`${item.id}-${index}`}>
                   <TableCell>
