@@ -49,6 +49,8 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   };
 
   const checkOut = () => {
+    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
+    LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
     toast({
       title: `Checkout is successful! Enjoy your purchase!`,
       wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base"
@@ -64,10 +66,6 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
     router.push("/marketplace");
   };
 
-  const checkOutTracking = () => {
-    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
-    LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
-  };
 
   return (
     <Sheet>
@@ -127,7 +125,6 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
             </div>
             <SheetTrigger onClick={checkOut} asChild>
               <Button
-                onClick={checkOutTracking}
                 className="w-full bg-gradient-experimentation hover:brightness-[120%] rounded-none"
               >
                 Checkout

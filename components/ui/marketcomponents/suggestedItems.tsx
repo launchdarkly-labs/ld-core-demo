@@ -32,7 +32,7 @@ export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: 
             <h3 className="flex flex-col items-center bg-gradient-experimentation text-transparent bg-clip-text my-4">
                 Suggested Items
             </h3>
-            <Carousel showArrows={true} autoPlay={true} infiniteLoop={true} className="w-full h-full">
+            <Carousel showArrows={true} autoPlay={true} infiniteLoop={true} className="">
                 {VR_GALAXY_DATA.slice(5, 8).map(item => (
                     <div key={item.id} className="flex flex-col items-center">
                         <img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} />
