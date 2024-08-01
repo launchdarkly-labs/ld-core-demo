@@ -21,6 +21,15 @@ interface InventoryItem {
   vendor: string;
 }
 
+const badgesText = [
+  "Accessories",
+  "Gifts for devs",
+  "Popular shops",
+  "Best sellers",
+  "Newest",
+  "Top deals",
+];
+
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
@@ -29,7 +38,6 @@ export default function Marketplace() {
   const { isLoggedIn } = useContext(LoginContext);
   const { toast } = useToast();
   const isNewSearchEngine = true;
-
 
   const LDClient = useLDClient();
   const { storeAttentionCallout } = useFlags();
@@ -46,15 +54,14 @@ export default function Marketplace() {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
   };
 
- 
-
   useEffect(() => {
     setHeaderLabel(storeAttentionCallout);
   }, [storeAttentionCallout]);
 
   const handleOnSelect = (item: InventoryItem) => {
-    
-    let openShoppingCart: HTMLElement = document?.querySelector(".shopping-cart-trigger") as HTMLElement;
+    let openShoppingCart: HTMLElement = document?.querySelector(
+      ".shopping-cart-trigger"
+    ) as HTMLElement;
     if (openShoppingCart) openShoppingCart.click();
 
     if (isNewSearchEngine) {
@@ -80,15 +87,13 @@ export default function Marketplace() {
 
   const formatResult = (item: InventoryItem) => {
     return (
-      <div className="flex justify-between gap-x-5 cursor-pointer brightness-125">
-        <span style={{ display: "block", textAlign: "left" }}>
-          {item.item}{" "}
-        </span>
+      <div className="flex justify-between gap-x-5 cursor-pointer items-center mr-4">
+        <span className="w-full truncate">{item.item} </span>
         {isNewSearchEngine ? (
-            <Button className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto">
-              Add To Cart
-            </Button>
-          ) : null}
+          <Button className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto">
+            Add To Cart
+          </Button>
+        ) : null}
       </div>
     );
   };
@@ -120,13 +125,13 @@ export default function Marketplace() {
                 </h1>
                 <div className="w-full sm:w-3/4 lg:w-1/2">
                   <ReactSearchAutocomplete
-                    items={[...VR_GALAXY_DATA,...THE_BOOMIN_BOX_DATA,...MACROCENTER_DATA]}
+                    items={[...VR_GALAXY_DATA, ...THE_BOOMIN_BOX_DATA, ...MACROCENTER_DATA]}
                     onSelect={handleOnSelect}
                     autoFocus
                     formatResult={formatResult}
                     fuseOptions={{
                       shouldSort: true,
-                      threshold: 0.3, // could change from .6 to .3
+                      threshold: isNewSearchEngine ? 0.3 : 0.6, // 0.3 more precise, 0.6 less
                       location: 0,
                       distance: 100,
                       minMatchCharLength: 1,
@@ -135,28 +140,21 @@ export default function Marketplace() {
                     resultStringKeyName="item"
                     placeholder="Browse a Galaxy of Storefronts"
                     styling={{}}
-                    showClear = {true}
+                    showClear={true}
+                    className="z-10"
                   />
                 </div>
                 <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Accessories
-                  </Badge>
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Gifts for devs
-                  </Badge>
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Popular shops
-                  </Badge>
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Best sellers
-                  </Badge>
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Newest
-                  </Badge>
-                  <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                    Top deals
-                  </Badge>
+                  {badgesText.map((badgeText, index) => {
+                    return (
+                      <Badge
+                        className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray justify-center"
+                        key={index}
+                      >
+                        {badgeText}
+                      </Badge>
+                    );
+                  })}
                 </div>
               </div>
             </header>
@@ -171,7 +169,7 @@ export default function Marketplace() {
                       <p className="shoptext text-xl">Popular Shops</p>
                     </div>
                     <div>
-                      <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray h-full">
+                      <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray h-full cursor-default">
                         Search Popular
                       </Button>
                     </div>
@@ -215,7 +213,7 @@ export default function Marketplace() {
                     </div>
 
                     <div>
-                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
+                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray cursor-default">
                         Search Categories
                       </Button>
                     </div>
@@ -239,7 +237,7 @@ export default function Marketplace() {
                       <p className="shoptext">Trending Now</p>
                     </div>
                     <div>
-                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
+                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray cursor-default">
                         Search Trending
                       </Button>
                     </div>

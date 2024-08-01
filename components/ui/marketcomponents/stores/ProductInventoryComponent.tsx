@@ -81,7 +81,7 @@ const ProductInventoryComponent = ({
                 damping: 20,
                 duration: 1.5,
               }}
-              className="flex justify-center absolute top-[10px] right-[20px] z-10 bg-[#EBFF38] px-4 pt-2 pb-[2rem] h-auto marketplace-item-banner-cutout"
+              className="flex justify-center absolute top-[10px] right-[20px] z-[1] bg-[#EBFF38] px-4 pt-2 pb-[2rem] h-auto marketplace-item-banner-cutout"
             >
               <p className="flex font-sohne uppercase text-xs text-black text-center flex-col justify-around mb-1.5 w-full">
                 {headerLabel
