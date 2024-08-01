@@ -28,6 +28,7 @@ interface InventoryItem {
   id: string | number;
   item: string;
   cost: number;
+  image: any;
 }
 // @ts-nocheck
 export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
@@ -101,7 +102,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               cart?.map((item: InventoryItem, index: number) => {
                 return (
                   <TableRow key={`${item.id}-${index}`}>
-                    <TableCell> <img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
+                    <TableCell> <img src={`${item?.image ? item?.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
                     <TableCell className="">{item.item}</TableCell>
                     <TableCell className="">${item.cost}</TableCell>
                   </TableRow>

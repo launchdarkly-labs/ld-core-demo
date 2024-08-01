@@ -8,7 +8,7 @@ interface InventoryItem {
     vendor: string;
     item: string;
     cost: string;
-    image?: StaticImageData;
+    image?: any;
 }
 
 export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: any }) {
@@ -17,10 +17,10 @@ export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: 
     const LDClient = useLDClient();
 
 
-    const totalCost = (cart || []).reduce(
-        (total: number, item: InventoryItem) => total + Number(item.cost),
-        0
-      );
+    // const totalCost = (cart || []).reduce(
+    //     (total: number, item: InventoryItem) => total + Number(item.cost),
+    //     0
+    //   );
 
     const addedSuggestedItemToCart = (item: InventoryItem) => {
         setCart([...cart, item]);
