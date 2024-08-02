@@ -26,6 +26,8 @@ def main():
     createCartSuggestedItemsFeatureFlag()
     createDestinationRecommendationFeatureFlag()
     createAIChatbotModelsFeatureFlag()
+    createReleaseNewSearchEngineFeatureFlag()
+    createReleaseNewShortenCollectionsPageFeatureFlag()
  
 def createAIChatbotModelsFeatureFlag():
     
@@ -369,7 +371,81 @@ def createStoreAttentionCalloutFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Store attention callout feature flag created successfully.")
-        
+
+def createReleaseNewShortenCollectionsPageFeatureFlag():
+    
+    print("Creating Release New Shorten Collections Page feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "release-new-shorten-collections-page",
+    "name": "Release New Shorten Collections Page",
+    "description": "In Marketplace, after you click on a collection, you would now see a New Shorten Collections Page.",
+     "variations": [
+        {
+            "value": "old-long-collections-page",
+            "name": "Old Long Collections Page"
+        },
+        {
+            "value": "new-shorten-collections-page",
+            "name": "New Shorten Collections Page"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 0
+    },
+    "tags": [
+        "experiment"
+    ]
+    }
+    
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("Release New Shorten Collections Page feature flag created successfully.")
+
+def createReleaseNewSearchEngineFeatureFlag():
+    
+    print("Creating Release New Search Engine feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "release-new-search-engine",
+    "name": "Release New Search Engine",
+    "description": "In Marketplace, you get a new search engine that has an add to cart button.",
+     "variations": [
+        {
+            "value": "old-search-engine",
+            "name": "Old Search Engine"
+        },
+        {
+            "value": "new-search-engine",
+            "name": "New Search Engine"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 0
+    },
+    "tags": [
+        "experiment"
+    ]
+    }
+    
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("Release New Search Engine feature flag created successfully.")
+                  
 def createCartSuggestedItemsFeatureFlag():
     
     print("Creating cartSuggestedItems feature flag...")
