@@ -133,10 +133,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
 
             </SheetTrigger>
             {cartSuggestedItems ? (
-              <SuggestedItems
-                cart={cart}
-                setCart={setCart}
-              />
+             null
             ) : (
               <SheetTrigger onClick={continueShopping} asChild>
                 <div className="text-center mt-4">
