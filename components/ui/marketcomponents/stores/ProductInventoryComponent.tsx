@@ -29,7 +29,7 @@ interface InventoryItem {
   id: string | number;
   item: string;
   cost: number;
-  image: string;
+  image: any;
 }
 
 const ProductInventoryComponent = ({
