@@ -600,7 +600,7 @@ def createShortenCollectionsPageIncreaseConversionFunnelExperiment():
             "canReshuffleTraffic": True,
             "metrics": [
             {
-                "key": "store-checkout-metrics",
+                "key": "shorten-collections-page-store-checkout-metrics",
                 "isGroup": True,
             },
             {
@@ -608,7 +608,7 @@ def createShortenCollectionsPageIncreaseConversionFunnelExperiment():
                 "isGroup": False,
             }
             ],
-            "primaryFunnelKey": "store-checkout-metrics",
+            "primaryFunnelKey": "shorten-collections-page-store-checkout-metrics",
             "treatments": [
                 {
                     "name": variations[0]['name'],
