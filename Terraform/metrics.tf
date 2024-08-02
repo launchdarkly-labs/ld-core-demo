@@ -130,3 +130,16 @@ resource "launchdarkly_metric" "in-cart-total-price" {
   randomization_units = ["audience", "user"]
   tags           = ["experiment"]
 }
+
+resource "launchdarkly_metric" "search-engine-add-to-cart" {
+  project_key    = var.project_key
+  key            = "search-engine-add-to-cart"
+  name           = "Search Engine Add to Cart"
+  description    = "Track to see if Add to Cart button in Search Engine"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "search-engine-add-to-cart"
+  success_criteria = "HigherThanBaseline"
+  randomization_units = ["audience", "user"]
+  tags           = ["experiment"]
+}
