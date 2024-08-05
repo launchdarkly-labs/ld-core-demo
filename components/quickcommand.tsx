@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, FlaskConical, Beaker } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useRouter } from "next/router";
 
 import {
@@ -62,8 +62,8 @@ export function QuickCommandDialog({ children }: { children: any }) {
   return (
     <>
       {children}
-      <CommandDialog open={open} onOpenChange={setOpen} >
-        <CommandList  className="!max-h-[100rem] h-full">
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandList className="!max-h-[100rem] h-full">
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Demo Tools">
             <CommandItem>
@@ -91,25 +91,33 @@ export function QuickCommandDialog({ children }: { children: any }) {
               )}
             </CommandItem>
             <CommandItem>
-              <FlaskConical className="mr-2 h-4 w-4" />
-              <FunnelExperimentGenerator />
+              <FeatureExperimentGenerator
+                title={"[Airlines] Feature Experiment Results Generator for AI Chatbot"}
+                type={"airlines-chatbot-ai"}
+              />
+            </CommandItem>
+            <CommandItem>
+              <FunnelExperimentGenerator
+                title={"[Marketplace] Funnel Experiment Results Generator for Store Header"}
+                type={"marketplace-store-header"}
+              />
+            </CommandItem>
+            <CommandItem>
+              <FunnelExperimentGenerator
+                title={"[Marketplace] Funnel Experiment Results Generator for Shorten Collections Page"}
+                type={"marketplace-shorten-collections-page"}
+              />
             </CommandItem>
             <CommandItem>
               <FeatureExperimentGenerator
-                title={"[Marketplace] Feature Experiment Results for Suggested Items"}
+                title={"[Marketplace] Feature Experiment Results Generator for Suggested Items"}
                 type={"marketplace-suggested-item"}
               />
             </CommandItem>
             <CommandItem>
               <FeatureExperimentGenerator
-                title={"[Marketplace] Feature Experiment Results for New Search Engine"}
+                title={"[Marketplace] Feature Experiment Results Generator for New Search Engine"}
                 type={"marketplace-new-search-engine"}
-              />
-            </CommandItem>
-            <CommandItem>
-              <FeatureExperimentGenerator
-                title={"[Airlines] Feature Results Generator for AI Chatbot"}
-                type={"airlines-chatbot-ait"}
               />
             </CommandItem>
           </CommandGroup>

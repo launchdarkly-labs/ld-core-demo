@@ -77,36 +77,35 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
 };
 
 export const generateNewSearchEngineFeatureExperimentResults = async ({
-    client,
-    updateContext,
-    setProgress,
-    setExpGenerator,
-  }) => {
-    setProgress(0);
-    setExpGenerator(true);
-    let totalPrice = 0;
-    for (let i = 0; i < 500; i++) {
-      const newSearchEngineFeatureFlag = client?.variation("release-new-search-engine", false);
-      if (newSearchEngineFeatureFlag) {
-        totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
-        let probablity = Math.random() * 100;
-        if (probablity < 60) {
-          client?.track("search-engine-add-to-cart", client.getContext());
-        }
-        client?.track("in-cart-total-price", client.getContext(), totalPrice);
-      } else {
-        totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
-        let probablity = Math.random() * 100;
-        if (probablity < 40) {
-          client?.track("search-engine-add-to-cart", client.getContext());
-        }
-        client?.track("in-cart-total-price", client.getContext(), totalPrice);
+  client,
+  updateContext,
+  setProgress,
+  setExpGenerator,
+}) => {
+  setProgress(0);
+  setExpGenerator(true);
+  let totalPrice = 0;
+  for (let i = 0; i < 500; i++) {
+    const newSearchEngineFeatureFlag = client?.variation("release-new-search-engine", false);
+    if (newSearchEngineFeatureFlag) {
+      totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
+      let probablity = Math.random() * 100;
+      if (probablity < 60) {
+        client?.track("search-engine-add-to-cart", client.getContext());
       }
-      await client?.flush();
-      setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      await updateContext();
+      client?.track("in-cart-total-price", client.getContext(), totalPrice);
+    } else {
+      totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
+      let probablity = Math.random() * 100;
+      if (probablity < 40) {
+        client?.track("search-engine-add-to-cart", client.getContext());
+      }
+      client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
-    setExpGenerator(false);
-  };
-  
+    await client?.flush();
+    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await updateContext();
+  }
+  setExpGenerator(false);
+};
