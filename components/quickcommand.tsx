@@ -22,6 +22,7 @@ import { toast } from "./ui/use-toast";
 import FunnelExperimentGenerator from "@/components/ui/marketcomponents/funnelexperimentgenerator";
 import FeatureExperimentGenerator from "@/components/ui/marketcomponents/featureexperimentgenerator";
 import FeatureExperimentGeneratorAI from "@/components/ui/airwayscomponents/featureexperimentgeneratorai"
+import FeatureExperimentGenerator2 from "@/experimentation-automation/featureExperimentGeneratorGeneral";
 
 
 export function QuickCommandDialog({ children }) {
