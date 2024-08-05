@@ -16,11 +16,9 @@ import {
 } from "@/components/ui/command";
 import { toast } from "./ui/use-toast";
 import FunnelExperimentGenerator from "@/components/ui/marketcomponents/funnelexperimentgenerator";
-//import FeatureExperimentGeneratorAI from "@/components/ui/airwayscomponents/featureexperimentgeneratorai";
 import FeatureExperimentGenerator from "@/experimentation-automation/featureExperimentGeneratorGeneral";
-//import FeatureExperimentGenerator from "./ui/marketcomponents/featureexperimentgenerator";
 
-export function QuickCommandDialog({ children }) {
+export function QuickCommandDialog({ children }: { children: any }) {
   const [open, setOpen] = React.useState(false);
   const location = useRouter();
   const [timer, setTimer] = React.useState(0);
@@ -64,8 +62,8 @@ export function QuickCommandDialog({ children }) {
   return (
     <>
       {children}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandList>
+      <CommandDialog open={open} onOpenChange={setOpen} >
+        <CommandList  className="!max-h-[100rem] h-full">
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Demo Tools">
             <CommandItem>
@@ -97,17 +95,20 @@ export function QuickCommandDialog({ children }) {
               <FunnelExperimentGenerator />
             </CommandItem>
             <CommandItem>
-         
               <FeatureExperimentGenerator
-                title={"Feature Experiment Results (MarketPlace)"}
+                title={"[Marketplace] Feature Experiment Results for Suggested Items"}
                 type={"marketplace-suggested-item"}
               />
-              {/* <FeatureExperimentGenerator/> */}
             </CommandItem>
             <CommandItem>
-      
               <FeatureExperimentGenerator
-                title={"Feature Results Generator (AI Models - Airways)"}
+                title={"[Marketplace] Feature Experiment Results for New Search Engine"}
+                type={"marketplace-new-search-engine"}
+              />
+            </CommandItem>
+            <CommandItem>
+              <FeatureExperimentGenerator
+                title={"[Airlines] Feature Results Generator for AI Chatbot"}
                 type={"airlines-chatbot-ait"}
               />
             </CommandItem>

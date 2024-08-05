@@ -5,6 +5,7 @@ import { useLDClient } from "launchdarkly-react-client-sdk";
 import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
+  generateNewSearchEngineFeatureExperimentResults
 } from "@/experimentation-automation/featureExperimentGeneratorFunctions";
 import { Beaker } from "lucide-react";
 
@@ -26,20 +27,33 @@ export default function FeatureExperimentGenerator({
 
   useEffect(() => {
     if (expGenerator) {
-      if (type?.includes("marketplace-suggested-item")) {
-        generateSuggestedItemsFeatureExperimentResults({
-          client,
-          updateContext,
-          setProgress,
-          setExpGenerator,
-        });
-      } else if (type?.includes("airlines-chatbot-ai")) {
-        generateAIChatBotFeatureExperimentResults({
-          client,
-          updateContext,
-          setProgress,
-          setExpGenerator,
-        });
+      switch (type) {
+        case "marketplace-suggested-item":
+          generateSuggestedItemsFeatureExperimentResults({
+            client,
+            updateContext,
+            setProgress,
+            setExpGenerator,
+          });
+          break;
+        case "airlines-chatbot-ai":
+          generateAIChatBotFeatureExperimentResults({
+            client,
+            updateContext,
+            setProgress,
+            setExpGenerator,
+          });
+          break;
+        case "marketplace-new-search-engine":
+            generateNewSearchEngineFeatureExperimentResults({
+            client,
+            updateContext,
+            setProgress,
+            setExpGenerator,
+          });
+          break;
+        default:
+          alert("No function exist for feature experimentation");
       }
     }
   }, [expGenerator]);
