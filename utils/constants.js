@@ -50,7 +50,6 @@ export const PERSONA_ROLE_DEVELOPER = "Developer";
 export const PERSONA_ROLE_USER = "User";
 export const LAUNCH_CLUB_STANDARD = "standard";
 export const LAUNCH_CLUB_PLATINUM = "platinum";
-
 export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 
 export const COMPANY_LOGOS = {

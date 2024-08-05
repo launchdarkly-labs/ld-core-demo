@@ -90,8 +90,8 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
 
     if (flagvariation === "old-long-collections-page") {
       console.log("old-long-collections-page");
-      metric1 = 70;
-      metric2 = 60;
+      metric1 = 50;
+      metric2 = 40;
       metric3 = 20;
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
     }
@@ -99,7 +99,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
       console.log("new-shorten-collections-page");
       metric1 = 70;
       metric2 = 60;
-      metric3 = 25;
+      metric3 = 30;
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
     }
 
@@ -107,10 +107,10 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
 
     if (stage1metric < metric1) {
       client?.track("item-added", client.getContext());
-
       let stage2metric = Math.random() * 100;
 
       if (stage2metric < metric2) {
+        client?.track("cart-accessed", client.getContext());
         let stage3metric = Math.random() * 100;
 
         if (stage3metric < metric3) {

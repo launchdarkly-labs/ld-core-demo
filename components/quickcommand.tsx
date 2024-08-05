@@ -15,8 +15,14 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { toast } from "./ui/use-toast";
-import FunnelExperimentGenerator from "@/experimentation-automation/funnelExperimentGeneratorGeneral";
-import FeatureExperimentGenerator from "@/experimentation-automation/featureExperimentGeneratorGeneral";
+import ExperimentGenerator from "@/experimentation-automation/experimentGeneratorGeneral";
+import {
+  AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY,
+  MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY,
+  MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY,
+  MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
+  MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
+} from "@/experimentation-automation/experimentationConstants";
 
 export function QuickCommandDialog({ children }: { children: any }) {
   const [open, setOpen] = React.useState(false);
@@ -91,33 +97,35 @@ export function QuickCommandDialog({ children }: { children: any }) {
               )}
             </CommandItem>
             <CommandItem>
-              <FeatureExperimentGenerator
+              <ExperimentGenerator
                 title={"[Airlines] Feature Experiment Results Generator for AI Chatbot"}
-                type={"airlines-chatbot-ai"}
+                experimentationKey={AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY}
               />
             </CommandItem>
             <CommandItem>
-              <FunnelExperimentGenerator
+              <ExperimentGenerator
                 title={"[Marketplace] Funnel Experiment Results Generator for Store Header"}
-                type={"marketplace-store-header"}
+                experimentationKey={MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY}
               />
             </CommandItem>
             <CommandItem>
-              <FunnelExperimentGenerator
-                title={"[Marketplace] Funnel Experiment Results Generator for Shorten Collections Page"}
-                type={"marketplace-shorten-collections-page"}
+              <ExperimentGenerator
+                title={
+                  "[Marketplace] Funnel Experiment Results Generator for Shorten Collections Page"
+                }
+                experimentationKey={MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY}
               />
             </CommandItem>
             <CommandItem>
-              <FeatureExperimentGenerator
+              <ExperimentGenerator
                 title={"[Marketplace] Feature Experiment Results Generator for Suggested Items"}
-                type={"marketplace-suggested-item"}
+                experimentationKey={MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY}
               />
             </CommandItem>
             <CommandItem>
-              <FeatureExperimentGenerator
+              <ExperimentGenerator
                 title={"[Marketplace] Feature Experiment Results Generator for New Search Engine"}
-                type={"marketplace-new-search-engine"}
+                experimentationKey={MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY}
               />
             </CommandItem>
           </CommandGroup>

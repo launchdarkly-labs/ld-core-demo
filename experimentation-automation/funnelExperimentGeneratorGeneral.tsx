@@ -10,10 +10,10 @@ import { FlaskConical } from "lucide-react";
 
 export default function FunnelExperimentGenerator({
   title,
-  type,
+  key,
 }: {
   title: string;
-  type: string;
+  key: string;
 }) {
   const client = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
@@ -26,7 +26,7 @@ export default function FunnelExperimentGenerator({
 
   useEffect(() => {
     if (expGenerator) {
-      switch (type) {
+      switch (key) {
         case "marketplace-store-header":
           generateStoreHeaderFunnelExperimentResults({
             client: client,
@@ -72,7 +72,7 @@ export default function FunnelExperimentGenerator({
             <div className="flex justify-center text-xl font-bold items-center h-full">
               <button
                 onClick={() => setExpGenerator(true)}
-                className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:text-black hover:brightness-125 text-white"
+                className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:brightness-125 text-white"
               >
                 Generate {title}
               </button>

@@ -11,10 +11,10 @@ import { Beaker } from "lucide-react";
 
 export default function FeatureExperimentGenerator({
   title,
-  type,
+  key,
 }: {
   title: string;
-  type: string;
+  key: string;
 }) {
   const client = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
@@ -27,7 +27,7 @@ export default function FeatureExperimentGenerator({
 
   useEffect(() => {
     if (expGenerator) {
-      switch (type) {
+      switch (key) {
         case "marketplace-suggested-item":
           generateSuggestedItemsFeatureExperimentResults({
             client: client,
@@ -80,7 +80,7 @@ export default function FeatureExperimentGenerator({
             <div className="flex justify-center text-xl font-bold items-center h-full">
               <button
                 onClick={() => setExpGenerator(true)}
-                className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:text-black hover:brightness-125 text-white"
+                className={`mt-2 ${key.includes("airlines") ? "bg-gradient-airways": "bg-gradient-experimentation" } p-2 rounded-sm hover:brightness-125 text-white`}
               >
                 Generate {title}
               </button>
