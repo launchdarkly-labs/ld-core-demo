@@ -52,8 +52,8 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   setExpGenerator(true);
   let totalPrice = 0;
   for (let i = 0; i < 500; i++) {
-    let newSearchEngineFeatureFlag = client?.variation("newSearchEngineFeatureFlag", false);
-    if (newSearchEngineFeatureFlag) {
+    let cartSuggestedItems = client?.variation("cartSuggestedItems", false);
+    if (cartSuggestedItems) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
       if (probablity < 60) {

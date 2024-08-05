@@ -15,7 +15,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { toast } from "./ui/use-toast";
-import FunnelExperimentGenerator from "@/components/ui/marketcomponents/funnelexperimentgenerator";
+import FunnelExperimentGenerator from "@/experimentation-automation/funnelExperimentGeneratorGeneral";
 import FeatureExperimentGenerator from "@/experimentation-automation/featureExperimentGeneratorGeneral";
 
 export function QuickCommandDialog({ children }: { children: any }) {

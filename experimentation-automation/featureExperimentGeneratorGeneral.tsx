@@ -30,26 +30,26 @@ export default function FeatureExperimentGenerator({
       switch (type) {
         case "marketplace-suggested-item":
           generateSuggestedItemsFeatureExperimentResults({
-            client,
-            updateContext,
-            setProgress,
-            setExpGenerator,
+            client: client,
+            updateContext: updateContext,
+            setProgress:setProgress,
+            setExpGenerator:setExpGenerator,
           });
           break;
         case "airlines-chatbot-ai":
           generateAIChatBotFeatureExperimentResults({
-            client,
-            updateContext,
-            setProgress,
-            setExpGenerator,
+            client: client,
+            updateContext: updateContext,
+            setProgress:setProgress,
+            setExpGenerator:setExpGenerator,
           });
           break;
         case "marketplace-new-search-engine":
             generateNewSearchEngineFeatureExperimentResults({
-            client,
-            updateContext,
-            setProgress,
-            setExpGenerator,
+              client: client,
+              updateContext: updateContext,
+              setProgress:setProgress,
+              setExpGenerator:setExpGenerator,
           });
           break;
         default:
