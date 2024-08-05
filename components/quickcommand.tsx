@@ -72,7 +72,7 @@ export function QuickCommandDialog({ children }: { children: any }) {
         <CommandList className="!max-h-[100rem] h-full">
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Demo Tools">
-            <CommandItem>
+            <CommandItem className="cursor-pointer">
               <RotateCcw className="mr-2 h-4 w-4" />
               {timer > 0 ? (
                 <p>Resetting in {timer}</p>
