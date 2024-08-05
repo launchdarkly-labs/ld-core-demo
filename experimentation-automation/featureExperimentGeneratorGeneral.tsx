@@ -2,11 +2,22 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React, { useState, useEffect, useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import {
+  generateSuggestedItemsFeatureExperimentResults,
+  generateAIChatBotFeatureExperimentResults,
+} from "@/experimentation-automation/featureExperimentGeneratorFunctions";
+import { Beaker } from "lucide-react";
 
-export default function FeatureExperimentGenerator() {
+export default function FeatureExperimentGenerator({
+  title,
+  type,
+}: {
+  title: string;
+  type: string;
+}) {
   const client = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
-  const [expGenerator2, setExpGenerator2] = useState(false);
+  const [expGenerator, setExpGenerator] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const updateContext = async () => {
@@ -14,67 +25,55 @@ export default function FeatureExperimentGenerator() {
   };
 
   useEffect(() => {
-    if (expGenerator2) {
-      generateResults();
-    }
-  }, [expGenerator2]);
-
-  const generateResults = async () => {
-    setProgress(0);
-    setExpGenerator2(true);
-    let totalPrice = 0;
-    for (let i = 0; i < 500; i++) {
-      let cartSuggestedItems = client?.variation("cartSuggestedItems", false);
-      if (cartSuggestedItems) {
-        totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
-        let probablity = Math.random() * 100;
-        if (probablity < 60) {
-          client?.track("upsell-tracking", client.getContext());
-        }
-        client?.track("in-cart-total-price", client.getContext(), totalPrice);
-      } else {
-        totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
-        let probablity = Math.random() * 100;
-        if (probablity < 40) {
-          client?.track("upsell-tracking", client.getContext());
-        }
-        client?.track("in-cart-total-price", client.getContext(), totalPrice);
+    if (expGenerator) {
+      if (type?.includes("marketplace-suggested-item")) {
+        generateSuggestedItemsFeatureExperimentResults({
+          client,
+          updateContext,
+          setProgress,
+          setExpGenerator,
+        });
+      } else if (type?.includes("airlines-chatbot-ai")) {
+        generateAIChatBotFeatureExperimentResults({
+          client,
+          updateContext,
+          setProgress,
+          setExpGenerator,
+        });
       }
-      await client?.flush();
-      setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      await updateContext();
     }
-    setExpGenerator2(false);
-  };
+  }, [expGenerator]);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <p className="font-bold font-sohnelight text-lg">Feature Results Generator (Marketplace)</p>
-      </DialogTrigger>
-      <DialogContent>
-        {expGenerator2 ? (
-          <div className="flex justify-center items-center h-52">
-            <div className=" font-bold font-sohne justify-center items-center text-xl">
-              Generating Data
-              <br />
-              <div className="flex items-center mt-2 justify-center">
-                <p>{progress.toFixed(0)}% Complete</p>
+    <>
+      <Beaker className="mr-2 h-4 w-4" />
+      <Dialog>
+        <DialogTrigger asChild>
+          <p className="font-bold font-sohnelight text-lg">{title}</p>
+        </DialogTrigger>
+        <DialogContent>
+          {expGenerator ? (
+            <div className="flex justify-center items-center h-52">
+              <div className=" font-bold font-sohne justify-center items-center text-xl">
+                Generating Data
+                <br />
+                <div className="flex items-center mt-2 justify-center">
+                  <p>{progress.toFixed(0)}% Complete</p>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex justify-center text-xl font-bold items-center h-full">
-            <button
-              onClick={() => setExpGenerator2(true)}
-              className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:text-black hover:brightness-125 text-white"
-            >
-              Generate Feature Experiment Results (MarketPlace)
-            </button>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
+          ) : (
+            <div className="flex justify-center text-xl font-bold items-center h-full">
+              <button
+                onClick={() => setExpGenerator(true)}
+                className="mt-2 bg-gradient-experimentation p-2 rounded-sm hover:text-black hover:brightness-125 text-white"
+              >
+                Generate {title}
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
