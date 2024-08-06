@@ -12,7 +12,7 @@ export function MacroCenter({
   setOpen: any;
 }) {
 
-  const mainImg = {
+  const mainImg: object = {
     imgSrc: "computers.png",
     alt: "MacroCenter",
   };
@@ -22,7 +22,7 @@ export function MacroCenter({
       setOpen={setOpen}
       open={open}
       addToCart={addToCart}
-      sheetDescription="Computer Parts and Consumer Electronics!"
+      // sheetDescription="Computer Parts and Consumer Electronics!"
       sheetTitle="MacroCenter"
       tableCaption="MacroCenter Inventory"
       inventory={MACROCENTER_DATA}
