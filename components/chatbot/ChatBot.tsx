@@ -9,6 +9,12 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 
+interface Message {
+  role: string;
+  content: string;
+  id: string;
+}
+
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,17 +30,17 @@ export default function Chatbot() {
     setInput(e.target.value);
   };
 
-  async function submitQuery() {
+  async function submitQuery(): Promise<void> {
     const userInput = input;
     setInput("");
     setIsLoading(true);
-    const userMessage = {
+    const userMessage: Message = {
       role: "user",
       content: userInput,
       id: uuidv4().slice(0, 4),
     };
 
-    const loadingMessage = {
+    const loadingMessage: Message = {
       role: "loader",
       content: "loading",
       id: uuidv4().slice(0, 4),
@@ -53,9 +59,18 @@ export default function Chatbot() {
       Here is the user prompt: ${userInput}.`),
     });
 
-    const data = await response.json();
+    const data: {
+      generation: string;
+      generations: [{ text: string }];
+      completion: string;
+      stop: string;
+      type: string;
+      generation_token_count: number;
+      prompt_token_count: number;
+      prompt: string;
+    } = await response.json();
 
-    let aiAnswer;
+    let aiAnswer:string;
 
     if (data?.generation) {
       aiAnswer = data?.generation; //llama
@@ -65,7 +80,7 @@ export default function Chatbot() {
       aiAnswer = data?.completion; //claude
     }
 
-    let assistantMessage = {
+    let assistantMessage: Message = {
       role: "assistant",
       content: aiAnswer,
       id: uuidv4().slice(0, 4),
@@ -81,7 +96,7 @@ export default function Chatbot() {
     setIsLoading(false);
   }
 
-  const surveyResponseNotification = (surveyResponse: string) => {
+  const surveyResponseNotification = (surveyResponse: string): void => {
     client?.track(surveyResponse, client.getContext());
     client?.flush();
     toast({
@@ -92,7 +107,7 @@ export default function Chatbot() {
 
   const chatContentRef = useRef(null);
 
-  const aiModelName = () => {
+  const aiModelName = (): string => {
     if (aiChatbotFlag?.modelId?.includes("cohere")) {
       return "Cohere Coral";
     } else if (aiChatbotFlag?.modelId?.includes("meta")) {

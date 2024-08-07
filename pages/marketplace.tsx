@@ -68,6 +68,7 @@ export default function Marketplace() {
     if (releaseNewSearchEngine) {
       addToCart(item);
       LDClient?.track("search-engine-add-to-cart", LDClient.getContext());
+      LDClient?.flush();
       toast({
         title: `${item.item} has been added to your cart!`,
         wrapperStyle: "bg-gradient-experimentation text-white !text-medium font-bold font-sohne",
