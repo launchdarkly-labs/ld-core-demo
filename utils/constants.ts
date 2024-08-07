@@ -23,6 +23,7 @@ import vrtreadmill from "@/public/marketplace/vrgalaxy_image/vrtreadmill.svg";
 import hapticgloves from "@/public/marketplace/vrgalaxy_image/hapticgloves.svg";
 import vrheadsetcleaningkit from "@/public/marketplace/vrgalaxy_image/vrheadsetcleaningkit.svg";
 import vrcontrollers from "@/public/marketplace/vrgalaxy_image/vrcontrollers.svg";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceMarketplace";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -71,7 +72,7 @@ export const COMPANY_LOGOS = {
   },
 };
 
-export const VR_GALAXY_DATA = [
+export const VR_GALAXY_DATA: InventoryItem[] = [
   {
     id: 1,
     vendor: "vrgalaxy",
@@ -142,7 +143,7 @@ export const VR_GALAXY_DATA = [
   },
 ];
 
-export const THE_BOOMIN_BOX_DATA = [
+export const THE_BOOMIN_BOX_DATA: InventoryItem[] = [
   {
     id: 22,
     vendor: "boominbox",
@@ -199,7 +200,7 @@ export const THE_BOOMIN_BOX_DATA = [
   },
 ];
 
-export const MACROCENTER_DATA = [
+export const MACROCENTER_DATA: InventoryItem[] = [
   {
     id: 11,
     vendor: "macrocenter",

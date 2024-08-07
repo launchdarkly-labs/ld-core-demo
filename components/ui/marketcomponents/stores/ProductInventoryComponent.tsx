@@ -24,13 +24,8 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from "@/public/market.png";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
-
-interface InventoryItem {
-  id: string | number;
-  item: string;
-  cost: number;
-  image: any;
-}
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceMarketplace";
+import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceMarketplace";
 
 const ProductInventoryComponent = ({
   setOpen,
@@ -42,22 +37,24 @@ const ProductInventoryComponent = ({
   isVisibleStoreHeaders,
   headerLabel,
 }: {
-  setOpen: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean;
-  addToCart: any;
+  addToCart: AddToCartFunction;
   sheetTitle?: string;
   tableCaption?: string;
-  inventory: any;
-  mainImg: any;
+  inventory: InventoryItem[];
+  mainImg: { imgSrc: string; alt: string };
   isVisibleStoreHeaders?: boolean;
   headerLabel?: string;
 }) => {
   const LDClient = useLDClient();
-  const releaseNewShortenCollectionsPage = useFlags()["release-new-shorten-collections-page"]?.includes("new-shorten-collections-page");
+  const releaseNewShortenCollectionsPage:string = useFlags()[
+    "release-new-shorten-collections-page"
+  ]?.includes("new-shorten-collections-page");
   const { toast } = useToast();
-  const [showAllItems, setShowAllItems] = useState(false);
+  const [showAllItems, setShowAllItems] = useState<boolean>(false);
 
-  async function storeOpened() {
+  async function storeOpened():Promise<void> {
     setShowAllItems(false);
     isVisibleStoreHeaders ? LDClient?.track("store-accessed", LDClient.getContext(), 1) : null;
   }
@@ -123,7 +120,8 @@ const ProductInventoryComponent = ({
           </TableHeader>
           <TableBody>
             {inventory.map((item: InventoryItem, index: number) => {
-              if (index > 2 && showAllItems === false && releaseNewShortenCollectionsPage) return null;
+              if (index > 2 && showAllItems === false && releaseNewShortenCollectionsPage)
+                return null;
               return (
                 <TableRow key={`${item.id}-${index}`}>
                   <TableCell>

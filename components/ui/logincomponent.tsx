@@ -1,19 +1,10 @@
 //@ts-nocheck
 import * as React from "react";
-import { useRef, useEffect, useContext } from "react";
+import { useRef, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 
@@ -23,10 +14,10 @@ interface LoginComponentProps {
 
 export function LoginComponent({ variant }: LoginComponentProps) {
   const inputRef = useRef();
-  const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
+  const [defaultEmail, setDefaultEmail] = useState<string>("user@launchmail.io");
   const { loginUser } = useContext(LoginContext);
 
-  function handleLogin() {
+  function handleLogin():void {
     if (!defaultEmail) return;
    
     loginUser("user@launchmail.io");

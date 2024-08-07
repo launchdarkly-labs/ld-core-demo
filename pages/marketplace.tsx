@@ -13,7 +13,7 @@ import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
 import { VR_GALAXY_DATA, THE_BOOMIN_BOX_DATA, MACROCENTER_DATA } from "@/utils/constants";
 import { useToast } from "@/components/ui/use-toast";
-import { InventoryItem } from "@/experimentation-automation/typescriptTypesInterface";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceMarketplace";
 
 const badgesText = [
   "Accessories",
@@ -25,33 +25,28 @@ const badgesText = [
 ];
 
 export default function Marketplace() {
-  const [headerLabel, setHeaderLabel] = useState<string>("");
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
   const [cart, setCart] = useState<InventoryItem[]>([]);
-  const { isLoggedIn } = useContext(LoginContext);
+  const { isLoggedIn }: { isLoggedIn: boolean } = useContext(LoginContext);
   const { toast } = useToast();
 
   const LDClient = useLDClient();
-  const { storeAttentionCallout }: {storeAttentionCallout:string} = useFlags();
-  const releaseNewSearchEngine:string = useFlags()["release-new-search-engine"]?.includes("new-search-engine");
+  const releaseNewSearchEngine: string =
+    useFlags()["release-new-search-engine"]?.includes("new-search-engine");
 
-  const addToCart = (item: InventoryItem):void => {
+  const addToCart = (item: InventoryItem): void => {
     LDClient?.track("item-added", LDClient.getContext(), 1);
 
     setCart([...cart, item]);
   };
 
-  const storeAccessed = ():void => {
+  const storeAccessed = (): void => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
   };
 
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
-
-  const handleOnSelect = (item: InventoryItem):void => {
+  const handleOnSelect = (item: InventoryItem): void => {
     let openShoppingCart: HTMLElement = document?.querySelector(
       ".shopping-cart-trigger"
     ) as HTMLElement;
@@ -80,7 +75,7 @@ export default function Marketplace() {
     }
   };
 
-  const formatResult = (item: InventoryItem):JSX.Element => {
+  const formatResult = (item: InventoryItem): JSX.Element => {
     return (
       <div className="flex justify-between gap-x-5 cursor-pointer items-center mr-4">
         <span className="w-full truncate">{item.item} </span>

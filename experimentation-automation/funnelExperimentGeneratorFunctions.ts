@@ -1,5 +1,5 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
-import type { UpdateContextFunction } from "@/experimentation-automation/typescriptTypesInterface";
+import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceMarketplace";
 
 export const generateStoreHeaderFunnelExperimentResults = async ({
   client,
