@@ -1,4 +1,4 @@
-
+export type LoginUserFunctionType = (email: string) => Promise<void>;
 export interface Persona {
     personaname: string,
     personatier: string,
@@ -7,4 +7,8 @@ export interface Persona {
     personarole: string,
     personalaunchclubstatus: string,
     personaEnrolledInLaunchClub: boolean
+  }
+
+ export interface VariantInterface {
+    variant: "bank" | "airlines" | "market" | "investment";
   }

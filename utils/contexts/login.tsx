@@ -7,19 +7,20 @@ import { setCookie, getCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 import { Persona } from "../typescriptTypesInterfaceLogin";
+import type { LoginUserFunctionType } from "@/utils/typescriptTypesInterfaceLogin";
 
-export type LoginContextType = {
+type LoginContextType = {
   userObject: Persona;
   isLoggedIn: boolean;
   upgradeLaunchClubStatus: () => Promise<void>;
+  // setPlaneContext:()=> Promise<void>;
   enrollInLaunchClub: () => void;
   updateAudienceContext: () => Promise<void>;
-  loginUser: (email: string) => Promise<void>;
+  loginUser: LoginUserFunctionType;
   logoutUser: () => Promise<void>;
   allUsers: Persona[];
 };
 
-//could add interface here
 const LoginContext = createContext<LoginContextType | null>(null);
 
 export default LoginContext;
