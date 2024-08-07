@@ -19,14 +19,18 @@ interface Message {
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const startArray: object[] = [];
-  const [messages, setMessages] = useState(startArray);
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const aiChatbotFlag = useFlags()["ai-chatbot"];
+  const aiChatbotFlag: {
+    max_tokens: number;
+    modelId: string;
+    p: number;
+    temperature: number;
+  } = useFlags()["ai-chatbot"];
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: any): void => {
     setInput(e.target.value);
   };
 
@@ -70,7 +74,7 @@ export default function Chatbot() {
       prompt: string;
     } = await response.json();
 
-    let aiAnswer:string;
+    let aiAnswer: string;
 
     if (data?.generation) {
       aiAnswer = data?.generation; //llama
