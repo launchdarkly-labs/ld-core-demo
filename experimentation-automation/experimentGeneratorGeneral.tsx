@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React, { useState, useEffect, useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
+import { LDClient } from "launchdarkly-js-client-sdk";
 import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
@@ -27,7 +28,7 @@ export default function ExperimentGenerator({
   title: string;
   experimentationKey: string;
 }) {
-  const client = useLDClient();
+  const client:LDClient | undefined = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);

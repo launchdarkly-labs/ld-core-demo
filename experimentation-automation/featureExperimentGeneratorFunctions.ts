@@ -1,4 +1,4 @@
-import { LDClient } from "@launchdarkly/node-server-sdk";
+import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/experimentation-automation/typescriptTypesInterface";
 
 export const generateAIChatBotFeatureExperimentResults = async ({
@@ -7,7 +7,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: any;
+  client: LDClient;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,7 +61,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: any;
+  client: LDClient;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -100,7 +100,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: any;
+  client: LDClient;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
