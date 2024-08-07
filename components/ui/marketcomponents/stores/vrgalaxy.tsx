@@ -11,16 +11,14 @@ export function VRGalaxy({
   open: boolean;
   setOpen: any;
 }) {
-  const { storeAttentionCallout, storeHeaders } = useFlags();
+  const { storeAttentionCallout } = useFlags();
 
-  const isVisibleStoreHeaders=storeHeaders;
-  const headerLabel = storeAttentionCallout;
+  const headerLabel:string = storeAttentionCallout;
 
   const mainImg = {
     imgSrc: "gaming.png",
     alt: "VR Gaming",
   };
-
 
   return (
     <ProductInventoryComponent
@@ -32,7 +30,7 @@ export function VRGalaxy({
       inventory={VR_GALAXY_DATA}
       mainImg={mainImg}
       headerLabel={headerLabel}
-      isVisibleStoreHeaders={isVisibleStoreHeaders}
+      isVisibleStoreHeaders={headerLabel ? true : false}
     />
   );
 }
