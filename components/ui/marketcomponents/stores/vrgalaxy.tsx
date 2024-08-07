@@ -1,19 +1,20 @@
 import { useFlags } from "launchdarkly-react-client-sdk";
 import ProductInventoryComponent from "./ProductInventoryComponent";
 import { VR_GALAXY_DATA } from "@/utils/constants";
-// @ts-nocheck
+import type { AddToCartFunction } from "@/experimentation-automation/typescriptTypesInterface";
+
 export function VRGalaxy({
   addToCart,
   open,
   setOpen,
 }: {
-  addToCart: any;
+  addToCart: AddToCartFunction;
   open: boolean;
-  setOpen: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { storeAttentionCallout } = useFlags();
+  const { storeAttentionCallout }: { storeAttentionCallout: string } = useFlags();
 
-  const headerLabel:string = storeAttentionCallout;
+  const headerLabel = storeAttentionCallout;
 
   const mainImg = {
     imgSrc: "gaming.png",

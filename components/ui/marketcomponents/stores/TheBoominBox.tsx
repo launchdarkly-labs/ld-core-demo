@@ -1,16 +1,15 @@
 import { THE_BOOMIN_BOX_DATA } from "@/utils/constants";
-
 import ProductInventoryComponent from "./ProductInventoryComponent";
+import type { AddToCartFunction } from "@/experimentation-automation/typescriptTypesInterface";
 
-//TODO: open, setopen, addtocart needs to be a wrapper function or hook
 export function TheBoominBox({
   addToCart,
   open,
   setOpen,
 }: {
-  addToCart: any;
+  addToCart: AddToCartFunction;
   open: boolean;
-  setOpen: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
  
   const mainImg = {

@@ -1,5 +1,5 @@
 import { MACROCENTER_DATA } from "@/utils/constants";
-
+import type { AddToCartFunction } from "@/experimentation-automation/typescriptTypesInterface";
 import ProductInventoryComponent from "./ProductInventoryComponent";
 
 export function MacroCenter({
@@ -7,9 +7,9 @@ export function MacroCenter({
   open,
   setOpen,
 }: {
-  addToCart: any;
+  addToCart: AddToCartFunction;
   open: boolean;
-  setOpen: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 
   const mainImg: object = {

@@ -13,14 +13,7 @@ import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
 import { VR_GALAXY_DATA, THE_BOOMIN_BOX_DATA, MACROCENTER_DATA } from "@/utils/constants";
 import { useToast } from "@/components/ui/use-toast";
-
-interface InventoryItem {
-  id: string | number;
-  item: string;
-  cost: string;
-  vendor: string;
-  image?: any;
-}
+import { InventoryItem } from "@/experimentation-automation/typescriptTypesInterface";
 
 const badgesText = [
   "Accessories",
