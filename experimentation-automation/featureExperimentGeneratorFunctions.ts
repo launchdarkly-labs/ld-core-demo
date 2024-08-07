@@ -7,7 +7,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: LDClient;
+  client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,7 +61,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: LDClient;
+  client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -100,7 +100,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   setProgress,
   setExpGenerator,
 }: {
-  client: LDClient;
+  client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,9 +1,17 @@
+import { LDClient } from "launchdarkly-js-client-sdk";
+import type { UpdateContextFunction } from "@/experimentation-automation/typescriptTypesInterface";
+
 export const generateStoreHeaderFunnelExperimentResults = async ({
   client,
   updateContext,
   setProgress,
   setExpGenerator,
-}) => {
+}: {
+  client: LDClient | undefined;
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+}): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
@@ -13,26 +21,23 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
   let metric4 = 0;
 
   for (let i = 0; i < 500; i++) {
-    const flagvariation = client?.variation("storeAttentionCallout", "New Items");
+    const flagVariation: string = client?.variation("storeAttentionCallout", "New Items");
 
-    if (flagvariation === "Final Hours!") {
-      console.log("final hours");
+    if (flagVariation === "Final Hours!") {
       metric1 = 70;
       metric2 = 60;
       metric3 = 60;
       metric4 = 20;
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
     }
-    if (flagvariation === "Sale") {
-      console.log("sale");
+    if (flagVariation === "Sale") {
       metric1 = 70;
       metric2 = 60;
       metric3 = 50;
       metric4 = 25;
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
     }
-    if (flagvariation === "New Items") {
-      console.log("new items");
+    if (flagVariation === "New Items") {
       metric1 = 70;
       metric2 = 50;
       metric3 = 30;
@@ -41,7 +46,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
     }
 
     let stage1metric = Math.random() * 100;
-    console.log("metric 1 " + metric1);
+
     if (stage1metric < metric1) {
       client?.track("store-accessed", client.getContext());
       let stage2metric = Math.random() * 100;
@@ -62,7 +67,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
       }
     }
     await client?.flush();
-    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -74,7 +79,12 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-}) => {
+}: {
+  client: LDClient | undefined;
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+}): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
@@ -83,20 +93,18 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   let metric3 = 0;
 
   for (let i = 0; i < 500; i++) {
-    const flagvariation = client?.variation(
+    const flagVariation: string = client?.variation(
       "release-new-shorten-collections-page",
       "old-long-collections-page"
     );
 
-    if (flagvariation === "old-long-collections-page") {
-      console.log("old-long-collections-page");
+    if (flagVariation === "old-long-collections-page") {
       metric1 = 50;
       metric2 = 40;
       metric3 = 20;
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
     }
-    if (flagvariation === "new-shorten-collections-page") {
-      console.log("new-shorten-collections-page");
+    if (flagVariation === "new-shorten-collections-page") {
       metric1 = 70;
       metric2 = 60;
       metric3 = 30;
@@ -120,7 +128,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
       }
     }
     await client?.flush();
-    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
