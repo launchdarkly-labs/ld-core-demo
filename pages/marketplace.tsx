@@ -17,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 interface InventoryItem {
   id: string | number;
   item: string;
-  cost: number;
+  cost: string;
   vendor: string;
   image?: any;
 }
@@ -36,22 +36,21 @@ export default function Marketplace() {
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
+  const [cart, setCart] = useState<InventoryItem[]>([]);
   const { isLoggedIn } = useContext(LoginContext);
   const { toast } = useToast();
 
   const LDClient = useLDClient();
-  const { storeAttentionCallout } = useFlags();
-  const releaseNewSearchEngine = useFlags()["release-new-search-engine"]?.includes("new-search-engine");
+  const { storeAttentionCallout }: {storeAttentionCallout:string} = useFlags();
+  const releaseNewSearchEngine:string = useFlags()["release-new-search-engine"]?.includes("new-search-engine");
 
-  const [cart, setCart] = useState<InventoryItem[]>([]);
-
-  const addToCart = (item: any) => {
+  const addToCart = (item: InventoryItem):void => {
     LDClient?.track("item-added", LDClient.getContext(), 1);
 
     setCart([...cart, item]);
   };
 
-  const storeAccessed = () => {
+  const storeAccessed = ():void => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
   };
 
@@ -59,7 +58,7 @@ export default function Marketplace() {
     setHeaderLabel(storeAttentionCallout);
   }, [storeAttentionCallout]);
 
-  const handleOnSelect = (item: InventoryItem) => {
+  const handleOnSelect = (item: InventoryItem):void => {
     let openShoppingCart: HTMLElement = document?.querySelector(
       ".shopping-cart-trigger"
     ) as HTMLElement;
@@ -88,7 +87,7 @@ export default function Marketplace() {
     }
   };
 
-  const formatResult = (item: InventoryItem) => {
+  const formatResult = (item: InventoryItem):JSX.Element => {
     return (
       <div className="flex justify-between gap-x-5 cursor-pointer items-center mr-4">
         <span className="w-full truncate">{item.item} </span>

@@ -3,6 +3,11 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
+}: {
+  client: any;
+  updateContext: any;
+  setProgress: any;
+  setExpGenerator: any;
 }) => {
   setProgress(0);
   setExpGenerator(true);
