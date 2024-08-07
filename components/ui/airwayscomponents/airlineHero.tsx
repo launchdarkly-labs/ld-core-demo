@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import LaunchSignUp from "./launchSignup";
 import LoginContext from "@/utils/contexts/login";
 import DestinationPicker from "./pickMyDestinationModal";
+import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 const AirlineHero = ({ showSearch }: { showSearch: any }) => {
-  const { isLoggedIn, userObject } = useContext(LoginContext);
+  const { isLoggedIn, userObject }:LoginContextType = useContext(LoginContext);
 
   return (
     <section

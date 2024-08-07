@@ -20,27 +20,20 @@ import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
-
 import { LoginComponent } from "./logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
+import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 interface NavBarProps {
   cart: InventoryItem[];
   setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
   variant: string;
 }
-interface Persona {
-  id: string | number;
-  personaname: string;
-  personatier: string;
-  personaimage: string;
-  personaemail: string;
-}
 
-const NavBar = React.forwardRef<any, NavBarProps>(
+const NavBar = React.forwardRef<NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
-    const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+    const { isLoggedIn, userObject, logoutUser }:LoginContextType = useContext(LoginContext);
 
     const homePageLocation = useRouter()?.pathname === "/";
 

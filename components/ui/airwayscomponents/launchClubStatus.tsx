@@ -4,9 +4,10 @@ import { PlaneIcon } from "lucide-react";
 import React, { useContext } from "react";
 import { Button } from "../button";
 import { LAUNCH_CLUB_PLATINUM, } from "@/utils/constants";
+import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 const LaunchClubStatus = () => {
-  const { upgradeLaunchClubStatus, userObject } = useContext(LoginContext);
+  const { upgradeLaunchClubStatus, userObject }:LoginContextType = useContext(LoginContext);
 
   return (
     <Popover>

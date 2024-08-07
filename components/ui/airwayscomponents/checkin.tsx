@@ -13,11 +13,12 @@ import {
   import { useContext } from "react";
   import LoginContext from "@/utils/contexts/login";
   import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
   
   export default function CheckIn({ trip }: any) {
     const { priorityBoarding, mealPromoExperience } =
       useFlags();
-    const { userObject } = useContext(LoginContext);
+    const { userObject }:LoginContextType = useContext(LoginContext);
     const client = useLDClient();
   
     const handleCheckIn = async () => {
