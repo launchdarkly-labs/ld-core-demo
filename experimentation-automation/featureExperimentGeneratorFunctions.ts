@@ -70,7 +70,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   setExpGenerator(true);
   let totalPrice = 0;
   for (let i = 0; i < 500; i++) {
-    let cartSuggestedItems = client?.variation("cartSuggestedItems", false);
+    const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
     if (cartSuggestedItems) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
@@ -109,8 +109,11 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   setExpGenerator(true);
   let totalPrice = 0;
   for (let i = 0; i < 500; i++) {
-    const newSearchEngineFeatureFlag = client?.variation("release-new-search-engine", false);
-    if (newSearchEngineFeatureFlag) {
+    const newSearchEngineFeatureFlag: string = client?.variation(
+      "release-new-search-engine",
+      "old-search-engine"
+    );
+    if (newSearchEngineFeatureFlag?.includes("new-search-engine")) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
       if (probablity < 60) {
