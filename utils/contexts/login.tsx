@@ -7,21 +7,27 @@ import { setCookie, getCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 import { Persona } from "../typescriptTypesInterfaceLogin";
-import type { LoginUserFunctionType } from "@/utils/typescriptTypesInterfaceLogin";
+import type { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
-type LoginContextType = {
-  userObject: Persona;
-  isLoggedIn: boolean;
-  upgradeLaunchClubStatus: () => Promise<void>;
-  // setPlaneContext:()=> Promise<void>;
-  enrollInLaunchClub: () => void;
-  updateAudienceContext: () => Promise<void>;
-  loginUser: LoginUserFunctionType;
-  logoutUser: () => Promise<void>;
-  allUsers: Persona[];
-};
-
-const LoginContext = createContext<LoginContextType | null>(null);
+const LoginContext = createContext<LoginContextType>({
+  userObject: {
+    personaname: "",
+    personatier: "",
+    personaimage: "",
+    personaemail: "",
+    personarole: "",
+    personalaunchclubstatus: "",
+    personaEnrolledInLaunchClub: false,
+  },
+  isLoggedIn: false,
+  async upgradeLaunchClubStatus() {},
+  // async setPlaneContext(),
+  async enrollInLaunchClub() {},
+  async updateAudienceContext() {},
+  async loginUser() {},
+  async logoutUser() {},
+  allUsers: [],
+});
 
 export default LoginContext;
 

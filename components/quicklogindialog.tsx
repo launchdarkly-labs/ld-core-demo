@@ -10,12 +10,13 @@ import { useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { capitalizeFirstLetter } from "@/utils/utils";
 import type { VariantInterface, Persona } from "@/utils/typescriptTypesInterfaceLogin";
-
+import type { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 export function QuickLoginDialog({ variant }: VariantInterface) {
-  const { loginUser, isLoggedIn, userObject, allUsers } = useContext(LoginContext);
+  const { loginUser, isLoggedIn, userObject, allUsers }: LoginContextType =
+    useContext(LoginContext);
 
-  const personaClicked = (persona: Persona):void => {
+  const personaClicked = (persona: Persona): void => {
     loginUser(persona.personaemail);
   };
 
