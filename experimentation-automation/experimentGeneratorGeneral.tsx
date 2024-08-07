@@ -20,13 +20,19 @@ import {
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
 } from "@/experimentation-automation/experimentationConstants";
 
-export default function ExperimentGenerator({ title, experimentationKey }: { title: string; experimentationKey: string }) {
+export default function ExperimentGenerator({
+  title,
+  experimentationKey,
+}: {
+  title: string;
+  experimentationKey: string;
+}) {
   const client = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
-  const [expGenerator, setExpGenerator] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [expGenerator, setExpGenerator] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
-  const updateContext = async () => {
+  const updateContext = async (): Promise<void> => {
     updateAudienceContext();
   };
 
@@ -106,7 +112,9 @@ export default function ExperimentGenerator({ title, experimentationKey }: { tit
               <button
                 onClick={() => setExpGenerator(true)}
                 className={`mt-2 ${
-                  experimentationKey.includes("airlines") ? "bg-gradient-airways" : "bg-gradient-experimentation"
+                  experimentationKey.includes("airlines")
+                    ? "bg-gradient-airways"
+                    : "bg-gradient-experimentation"
                 } p-2 rounded-sm hover:brightness-125 text-white`}
               >
                 Generate {title}

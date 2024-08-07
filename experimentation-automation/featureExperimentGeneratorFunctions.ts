@@ -1,3 +1,6 @@
+import { LDClient } from "@launchdarkly/node-server-sdk";
+import type { UpdateContextFunction } from "@/experimentation-automation/typescriptTypesInterface";
+
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,
   updateContext,
@@ -5,14 +8,19 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   setExpGenerator,
 }: {
   client: any;
-  updateContext: any;
-  setProgress: any;
-  setExpGenerator: any;
-}) => {
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+}): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   for (let i = 0; i < 500; i++) {
-    let aiModelVariation = client?.variation(
+    const aiModelVariation: {
+      max_tokens_to_sample: number;
+      modelId: string;
+      temperature: number;
+      top_p: number;
+    } = client?.variation(
       "ai-chatbot",
       '{ "max_tokens_to_sample": 500, "modelId": "anthropic.claude-instant-v1", "temperature": 0.3, "top_p": 1 }'
     );
@@ -40,7 +48,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       }
     }
     await client?.flush();
-    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -52,7 +60,12 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-}) => {
+}: {
+  client: any;
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+}): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
@@ -74,7 +87,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -86,7 +99,12 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-}) => {
+}: {
+  client: any;
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+}): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
@@ -108,7 +126,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
