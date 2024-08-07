@@ -20,7 +20,6 @@ import {
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
 } from "@/experimentation-automation/experimentationConstants";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function ExperimentGenerator({
   title,
@@ -30,7 +29,7 @@ export default function ExperimentGenerator({
   experimentationKey: string;
 }) {
   const client:LDClient | undefined = useLDClient();
-  const { updateAudienceContext }:LoginContextType = useContext(LoginContext);
+  const { updateAudienceContext } = useContext(LoginContext);
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
 

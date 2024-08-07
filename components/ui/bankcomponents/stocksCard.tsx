@@ -17,7 +17,6 @@ import {
 } from "chart.js";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -37,7 +36,7 @@ interface Stock {
 export const StocksComponent: React.FC = () => {
   const client = useLDClient();
   const [elapsedTime, setElapsedTime] = useState(0);
-  const { loginUser, userObject, updateAudienceContext }:LoginContextType = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
   const [loggedUser, setInitialUser] = useState();
   const [loggedEmail, setInitialEmail] = useState();

@@ -23,7 +23,6 @@ import { capitalizeFirstLetter } from "@/utils/utils";
 import { LoginComponent } from "./logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 interface NavBarProps {
   cart: InventoryItem[];
@@ -33,7 +32,7 @@ interface NavBarProps {
 
 const NavBar = React.forwardRef<NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
-    const { isLoggedIn, userObject, logoutUser }:LoginContextType = useContext(LoginContext);
+    const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
 
     const homePageLocation = useRouter()?.pathname === "/";
 

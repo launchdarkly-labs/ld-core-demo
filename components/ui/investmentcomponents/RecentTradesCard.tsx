@@ -15,12 +15,11 @@ import { STOCK_LOGO_IMAGE } from "@/utils/constants";
 import StatusBubble from "@/components/ui/investmentcomponents/StatusBubble";
 import LoginContext from "@/utils/contexts/login";
 import { wait, randomLatency } from "@/utils/utils";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 const RecentTradesCard = () => {
   const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
 
-  const { loginUser, userObject, updateAudienceContext }:LoginContextType = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
 
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();

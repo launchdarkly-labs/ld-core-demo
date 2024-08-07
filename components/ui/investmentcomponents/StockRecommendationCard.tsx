@@ -20,12 +20,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { BounceLoader } from "react-spinners";
 import { wait, randomLatency } from "@/utils/utils";
 import { stockData } from "./InvestmentData";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
 const StockRecommendationCard = () => {
-  const { loginUser, userObject, updateAudienceContext }:LoginContextType = useContext(LoginContext);
+  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
 

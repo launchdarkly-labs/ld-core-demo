@@ -7,12 +7,12 @@ import { QuickLoginDialog } from "../quicklogindialog";
 import { useState } from "react";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
-import  { VariantInterface, LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
+import  { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
 export function LoginComponent({ variant }: VariantInterface) {
   const inputRef = useRef();
   const [defaultEmail, setDefaultEmail] = useState<string>("user@launchmail.io");
-  const { loginUser }: LoginContextType = useContext(LoginContext);
+  const { loginUser } = useContext(LoginContext);
 
   function handleLogin(): void {
     if (!defaultEmail) return;

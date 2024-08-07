@@ -12,16 +12,13 @@ import { motion } from "framer-motion";
 import { useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
-import { useLDClient } from "launchdarkly-react-client-sdk";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function LaunchSignUp() {
-  const client = useLDClient();
 
   const {
     userObject,
     enrollInLaunchClub
-  }:LoginContextType = useContext(LoginContext);
+  } = useContext(LoginContext);
 
 
   const perks = [

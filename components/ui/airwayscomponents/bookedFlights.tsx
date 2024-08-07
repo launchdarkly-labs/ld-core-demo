@@ -18,11 +18,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
-import { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
-  const { userObject }:LoginContextType = useContext(LoginContext);
+  const { userObject } = useContext(LoginContext);
   const {  aiTravelInsights, aiTravelPromptText } = useFlags();
   const [aiResponse, setAIResponse] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

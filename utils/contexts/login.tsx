@@ -9,16 +9,18 @@ import { STARTER_PERSONAS } from "./StarterUserPersonas";
 import { Persona } from "../typescriptTypesInterfaceLogin";
 import type { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 
+const startingUserObject = {
+  personaname: "",
+  personatier: "",
+  personaimage: "",
+  personaemail: "",
+  personarole: "",
+  personalaunchclubstatus: "",
+  personaEnrolledInLaunchClub: false,
+}
+
 const LoginContext = createContext<LoginContextType>({
-  userObject: {
-    personaname: "",
-    personatier: "",
-    personaimage: "",
-    personaemail: "",
-    personarole: "",
-    personalaunchclubstatus: "",
-    personaEnrolledInLaunchClub: false,
-  },
+  userObject: startingUserObject,
   isLoggedIn: false,
   async upgradeLaunchClubStatus() {},
   // async setPlaneContext(),
@@ -42,18 +44,11 @@ const operatingSystem = isAndroid
   : "";
 const device = isMobile ? "Mobile" : isBrowser ? "Desktop" : "";
 
+
 export const LoginProvider = ({ children }: { children: any }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userObject, setUserObject] = useState<Persona>({
-    personaname: "",
-    personatier: "",
-    personaimage: "",
-    personaemail: "",
-    personarole: "",
-    personalaunchclubstatus: "",
-    personaEnrolledInLaunchClub: false,
-  });
+  const [userObject, setUserObject] = useState<Persona>(startingUserObject);
   const [allUsers, setAllUsers] = useState<Persona[]>(STARTER_PERSONAS);
 
   const hashEmail = async (email: string): Promise<string> => {
@@ -78,9 +73,9 @@ export const LoginProvider = ({ children }: { children: any }) => {
 
   const loginUser = async (email: string): Promise<void> => {
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
+    const ldContextCookieKey: string | undefined = getCookie(LD_CONTEXT_COOKIE_KEY);
     const existingAudienceKey: string =
-      getCookie(LD_CONTEXT_COOKIE_KEY) &&
-      JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+      ldContextCookieKey && JSON.parse(ldContextCookieKey)?.audience?.key;
 
     if (Object.keys(userObject).length > 0) {
       //to update the all personas array with the changes
@@ -122,11 +117,11 @@ export const LoginProvider = ({ children }: { children: any }) => {
   };
 
   const logoutUser = async (): Promise<void> => {
+    const ldContextCookieKey: string | undefined = getCookie(LD_CONTEXT_COOKIE_KEY);
     const existingAudienceKey: string =
-      getCookie(LD_CONTEXT_COOKIE_KEY) &&
-      JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
+      ldContextCookieKey && JSON.parse(ldContextCookieKey)?.audience?.key;
     setIsLoggedIn(false);
-    setUserObject({});
+    setUserObject(startingUserObject);
     setAllUsers(STARTER_PERSONAS);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
     const createAnonymousContext = {
