@@ -8,6 +8,7 @@ import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
 import { STARTER_PERSONAS } from "./StarterUserPersonas";
 import { Persona } from "../typescriptTypesInterfaceLogin";
 import type { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
+import { LDContext } from "launchdarkly-js-client-sdk";
 
 const startingUserObject = {
   personaname: "",
@@ -79,18 +80,18 @@ export const LoginProvider = ({ children }: { children: any }) => {
 
     if (Object.keys(userObject).length > 0) {
       //to update the all personas array with the changes
-      setAllUsers((prevObj: (Persona | undefined)[]) => [
+      setAllUsers((prevObj) => [
         ...prevObj.filter((persona) => persona?.personaemail !== userObject?.personaemail),
         userObject,
       ]);
     }
 
-    const context = await client?.getContext();
-    const foundPersona: Persona = allUsers.find((persona) =>
+    const context: LDContext | undefined =  client?.getContext();
+    //don't know how to fix this without using undefined
+    const foundPersona:Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)
     );
     await setUserObject(foundPersona);
-
     context.user.name = foundPersona?.personaname;
     context.user.email = foundPersona?.personaemail;
     const hashedEmail = await hashEmail(email);

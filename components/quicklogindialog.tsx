@@ -36,8 +36,8 @@ export function QuickLoginDialog({ variant }: VariantInterface) {
             <div className="overflow-y-auto h-64">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 justify-items-center py-4">
                 {allUsers
-                  ?.filter((persona: any) => persona.personaname !== userObject.personaname)
-                  .map((persona: any, index: number) => (
+                  ?.filter((persona: Persona) => persona.personaname !== userObject.personaname)
+                  .map((persona: Persona, index: number) => (
                     <DialogClose key={index}>
                       <div
                         className="flex flex-col items-center cursor-pointer flex-shrink-0 hover:brightness-125 text-md font-sohnelight gap-y-2 text-center"
