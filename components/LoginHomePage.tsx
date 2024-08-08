@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { motion } from "framer-motion";
 import NavBar from "@/components/ui/navbar";
-import LoginContext from "@/utils/contexts/login";
 import { LoginComponent } from "@/components/ui/logincomponent";
 import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
@@ -14,7 +13,6 @@ import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
 
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function LoginHomePage({ variant, ...props }: VariantInterface) {
