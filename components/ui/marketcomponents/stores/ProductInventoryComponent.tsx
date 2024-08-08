@@ -24,8 +24,8 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from "@/public/market.png";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
-import { InventoryItem } from "@/utils/typescriptTypesInterfaceMarketplace";
-import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceMarketplace";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
+import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 
 const ProductInventoryComponent = ({
   setOpen,

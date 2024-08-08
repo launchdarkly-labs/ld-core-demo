@@ -1,5 +1,5 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
-import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceMarketplace";
+import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,

@@ -23,7 +23,7 @@ import vrtreadmill from "@/public/marketplace/vrgalaxy_image/vrtreadmill.svg";
 import hapticgloves from "@/public/marketplace/vrgalaxy_image/hapticgloves.svg";
 import vrheadsetcleaningkit from "@/public/marketplace/vrgalaxy_image/vrheadsetcleaningkit.svg";
 import vrcontrollers from "@/public/marketplace/vrgalaxy_image/vrcontrollers.svg";
-import { InventoryItem } from "@/utils/typescriptTypesInterfaceMarketplace";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,

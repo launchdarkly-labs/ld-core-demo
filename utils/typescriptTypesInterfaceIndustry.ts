@@ -8,3 +8,14 @@ export interface InventoryItem {
   vendor: string;
   image?: any;
 }
+
+export interface BookedTrips  {
+  airplane: string,
+  depart: string,
+  from: string,
+  fromCity: string,
+  id: number,
+  to: string,
+  toCity: string,
+  type: string,
+}

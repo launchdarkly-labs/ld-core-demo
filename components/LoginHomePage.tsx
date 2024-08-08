@@ -15,13 +15,9 @@ import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
 
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
+import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
-interface LoginHomePageProps {
-  variant: "bank" | "airlines" | "market" | "investment";
-  name: string;
-}
-
-export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
+export default function LoginHomePage({ variant, ...props }: VariantInterface) {
 
   return (
     <motion.main

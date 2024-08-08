@@ -1,7 +1,7 @@
 import { useFlags } from "launchdarkly-react-client-sdk";
 import ProductInventoryComponent from "./ProductInventoryComponent";
 import { VR_GALAXY_DATA } from "@/utils/constants";
-import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceMarketplace";
+import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export function VRGalaxy({
   addToCart,

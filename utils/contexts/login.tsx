@@ -86,7 +86,7 @@ export const LoginProvider = ({ children }: { children: any }) => {
       ]);
     }
 
-    const context: LDContext | undefined =  client?.getContext();
+    const context: LDContext | undefined = await client?.getContext();
     //don't know how to fix this without using undefined
     const foundPersona:Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)

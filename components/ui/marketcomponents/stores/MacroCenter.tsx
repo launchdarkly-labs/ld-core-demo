@@ -1,5 +1,5 @@
 import { MACROCENTER_DATA } from "@/utils/constants";
-import type { AddToCartFunction } from "@/experimentation-automation/typescriptTypesInterface";
+import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import ProductInventoryComponent from "./ProductInventoryComponent";
 
 export function MacroCenter({

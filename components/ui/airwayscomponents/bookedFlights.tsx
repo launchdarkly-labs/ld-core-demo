@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
+import { BookedTrips } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
@@ -168,17 +169,7 @@ export default function BookedFlights() {
           <AnimatePresence>
             {bookedTrips.map(
               (
-                trip: {
-                  id: number;
-                  from: string;
-                  fromCity: string;
-                  toCity: string;
-                  to: string;
-                  type: string;
-                  airplane: string;
-                  depart: string;
-                  flightNumber: string;
-                },
+                trip: BookedTrips,
                 index: number
               ) => (
                 <motion.div
