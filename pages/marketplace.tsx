@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useContext } from "react";
 import { motion } from "framer-motion";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
@@ -12,236 +11,59 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
+import { VR_GALAXY_DATA, THE_BOOMIN_BOX_DATA, MACROCENTER_DATA } from "@/utils/constants";
+import { useToast } from "@/components/ui/use-toast";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
+
+const badgesText = [
+  "Accessories",
+  "Gifts for devs",
+  "Popular shops",
+  "Best sellers",
+  "Newest",
+  "Top deals",
+];
 
 export default function Marketplace() {
-  const [headerLabel, setHeaderLabel] = useState<string>("");
-  const [products, setProducts] = useState([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
-  const { isLoggedIn } =
-    useContext(LoginContext);
-
-{/* Step 1 code block */}
+  const [cart, setCart] = useState<InventoryItem[]>([]);
+  const { isLoggedIn }: { isLoggedIn: boolean } = useContext(LoginContext);
+  const { toast } = useToast();
 
   const LDClient = useLDClient();
-  const { storeAttentionCallout} = useFlags();
+  const releaseNewSearchEngine: string =
+    useFlags()["release-new-search-engine"]?.includes("new-search-engine");
 
-  {/* Step 1 code block */}
-
-  interface InventoryItem {
-    id: string | number;
-    item: string;
-    cost: number;
-    vendor: string;
-  }
-  const [cart, setCart] = useState<InventoryItem[]>([]);
-
-
-  const addToCart = (item: any) => {
-
+  const addToCart = (item: InventoryItem): void => {
     LDClient?.track("item-added", LDClient.getContext(), 1);
 
     setCart([...cart, item]);
   };
 
-  const storeAccessed = () => {
+  const storeAccessed = (): void => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
-
   };
 
+  const handleOnSelect = (item: InventoryItem): void => {
+    let openShoppingCart: HTMLElement = document?.querySelector(
+      ".shopping-cart-trigger"
+    ) as HTMLElement;
+    if (openShoppingCart && releaseNewSearchEngine) openShoppingCart.click();
 
-  useEffect(() => {
-    const data = [
-      {
-      "id": 1,
-      "vendor": "vrgalaxy",
-      "item": "VR Headset - Advanced Model",
-      "cost": "499.99"
-      },
-      {
-      "id": 2,
-      "vendor": "vrgalaxy",
-      "item": "Wireless VR Controllers (Pair)",
-      "cost": "119.99"
-      },
-      {
-      "id": 3,
-      "vendor": "vrgalaxy",
-      "item": "VR Treadmill for Immersive Movement",
-      "cost": "899.99"
-      },
-      {
-      "id": 4,
-      "vendor": "vrgalaxy",
-      "item": "Haptic Feedback Gloves",
-      "cost": "259.99"
-      },
-      {
-      "id": 5,
-      "vendor": "vrgalaxy",
-      "item": "Virtual Reality Game - Space Adventure",
-      "cost": "59.99"
-      },
-      {
-      "id": 6,
-      "vendor": "vrgalaxy",
-      "item": "VR Headset Cleaning Kit",
-      "cost": "29.99"
-      },
-      {
-      "id": 7,
-      "vendor": "vrgalaxy",
-      "item": "360° VR Camera",
-      "cost": "349.99"
-      },
-      {
-      "id": 8,
-      "vendor": "vrgalaxy",
-      "item": "Virtual Reality Development Software",
-      "cost": "199.99"
-      },
-      {
-      "id": 9,
-      "vendor": "vrgalaxy",
-      "item": "Adjustable VR Headset Stand",
-      "cost": "39.99"
-      },
-      {
-      "id": 10,
-      "vendor": "vrgalaxy",
-      "item": "Virtual Reality Experience Ticket - Underwater World",
-      "cost": "14.99"
-      },
-      {
-      "id": 11,
-      "vendor": "macrocenter",
-      "item": "High-Performance Graphics Card - 8GB",
-      "cost": "699.99"
-      },
-      {
-      "id": 12,
-      "vendor": "macrocenter",
-      "item": "Gaming Motherboard - RGB Lighting",
-      "cost": "259.99"
-      },
-      {
-      "id": 13,
-      "vendor": "macrocenter",
-      "item": "Solid State Drive (SSD) - 1TB",
-      "cost": "129.99"
-      },
-      {
-      "id": 14,
-      "vendor": "macrocenter",
-      "item": "DDR4 RAM - 16GB Kit (2x8GB)",
-      "cost": "89.99"
-      },
-      {
-      "id": 15,
-      "vendor": "macrocenter",
-      "item": "Modular Power Supply - 750W",
-      "cost": "119.99"
-      },
-      {
-      "id": 16,
-      "vendor": "macrocenter",
-      "item": "CPU Cooler - Liquid Cooling System",
-      "cost": "139.99"
-      },
-      {
-      "id": 17,
-      "vendor": "macrocenter",
-      "item": "Full-Tower PC Case - Tempered Glass",
-      "cost": "199.99"
-      },
-      {
-      "id": 18,
-      "vendor": "macrocenter",
-      "item": "Wireless Gaming Keyboard and Mouse Combo",
-      "cost": "99.99"
-      },
-      {
-      "id": 19,
-      "vendor": "macrocenter",
-      "item": "27-inch Gaming Monitor - 144Hz",
-      "cost": "329.99"
-      },
-      {
-      "id": 20,
-      "vendor": "macrocenter",
-      "item": "Internal Sound Card - 7.1 Surround",
-      "cost": "79.99"
-      },
-      {
-      "id": 21,
-      "vendor": "boominbox",
-      "item": "VR Headset - Advanced Model",
-      "cost": "499.99"
-      },
-      {
-      "id": 22,
-      "vendor": "boominbox",
-      "item": "Bluetooth Noise-Canceling Headphones",
-      "cost": "299.99"
-      },
-      {
-      "id": 23,
-      "vendor": "boominbox",
-      "item": "Wireless Earbuds - Waterproof Edition",
-      "cost": "159.99"
-      },
-      {
-      "id": 24,
-      "vendor": "boominbox",
-      "item": "High-Fidelity Turntable",
-      "cost": "349.99"
-      },
-      {
-      "id": 25,
-      "vendor": "boominbox",
-      "item": "Portable Bluetooth Speaker - Rugged Design",
-      "cost": "119.99"
-      },
-      {
-      "id": 26,
-      "vendor": "boominbox",
-      "item": "Studio Monitor Speakers (Pair)",
-      "cost": "499.99"
-      },
-      {
-      "id": 27,
-      "vendor": "boominbox",
-      "item": "Multi-Channel Home Theater System",
-      "cost": "999.99"
-      },
-      {
-      "id": 28,
-      "vendor": "boominbox",
-      "item": "Digital Audio Interface - Pro Series",
-      "cost": "229.99"
-      },
-      {
-      "id": 29,
-      "vendor": "boominbox",
-      "item": "Smart Home Sound System with Voice Control",
-      "cost": "399.99"
-      },
-      {
-      "id": 30,
-      "vendor": "boominbox",
-      "item": "Professional DJ Mixer",
-      "cost": "699.99"
-      }
-      ];
-      setProducts(data);
-  }, []);
+    if (releaseNewSearchEngine) {
+      addToCart(item);
+      LDClient?.track("search-engine-add-to-cart", LDClient.getContext());
+      LDClient?.flush();
+      toast({
+        title: `${item.item} has been added to your cart!`,
+        wrapperStyle: "bg-gradient-experimentation text-white !text-medium font-bold font-sohne",
+      });
 
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
+      return;
+    }
 
-  const handleOnSelect = (item: InventoryItem) => {
     if (item.vendor === "vrgalaxy") {
       setOpenVRGalaxy(true);
     }
@@ -253,175 +75,179 @@ export default function Marketplace() {
     }
   };
 
-  const formatResult = (item: InventoryItem) => {
+  const formatResult = (item: InventoryItem): JSX.Element => {
     return (
-      <>
-        <span style={{ display: "block", textAlign: "left" }}>{item.item}</span>
-      </>
+      <div className="flex justify-between gap-x-5 cursor-pointer items-center mr-4">
+        <span className="w-full truncate">{item.item} </span>
+        {releaseNewSearchEngine ? (
+          <Button className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto">
+            Add To Cart
+          </Button>
+        ) : null}
+      </div>
     );
   };
 
-    useEffect(() => {
-      if (isLoggedIn) {
-        storeAccessed();
-      }
-    }, [isLoggedIn]);
-
+  useEffect(() => {
+    if (isLoggedIn) {
+      storeAccessed();
+    }
+  }, [isLoggedIn]);
 
   return (
     <>
       <Toaster />
       <AnimatePresence mode="wait">
-        (
-            <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className=""
-          >
-            <NavBar cart={cart} setCart={setCart} variant={"market"} personas={[]} />
-            <main className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>
-              <header className="relative h-2/3 py-28 bg-gradient-experimentation-black grid items-center justify-center">
-                <img src="elipse.png" className="absolute right-0 top-0" />
-                <img src="union.png" className="absolute left-0 bottom-0" />
-                <div className="flex flex-col text-center px-4 sm:mx-auto items-center ">
-                  <h1 className="flex justify-center items-center marketplace text-7xl mx-auto pb-8 w-full lg:w-1/2 font-audimat">
-                    A galaxy of stores at your fingertips
-                  </h1>
-                  <div className="w-full sm:w-3/4 lg:w-1/2">
-                    <ReactSearchAutocomplete
-                      items={products}
-                      onSelect={handleOnSelect}
-                      autoFocus
-                      formatResult={formatResult}
-                      fuseOptions={{ keys: ["item"] }}
-                      resultStringKeyName="item"
-                      placeholder="Browse a Galaxy of Storefronts"
-                    />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className=""
+        >
+          <NavBar cart={cart} setCart={setCart} variant={"market"} />
+          <main className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>
+            <header className="relative h-2/3 py-28 bg-gradient-experimentation-black grid items-center justify-center">
+              <img src="elipse.png" className="absolute right-0 top-0" />
+              <img src="union.png" className="absolute left-0 bottom-0" />
+              <div className="flex flex-col text-center px-4 sm:mx-auto items-center ">
+                <h1 className="flex justify-center items-center marketplace text-7xl mx-auto pb-8 w-full lg:w-1/2 font-audimat">
+                  A galaxy of stores at your fingertips
+                </h1>
+                <div className="w-full sm:w-3/4 lg:w-1/2">
+                  <ReactSearchAutocomplete
+                    items={[...VR_GALAXY_DATA, ...THE_BOOMIN_BOX_DATA, ...MACROCENTER_DATA]}
+                    onSelect={handleOnSelect}
+                    autoFocus
+                    formatResult={formatResult}
+                    fuseOptions={{
+                      shouldSort: true,
+                      threshold: releaseNewSearchEngine ? 0.3 : 0.6, // 0.3 more precise, 0.6 less
+                      location: 0,
+                      distance: 100,
+                      minMatchCharLength: 1,
+                      keys: ["item"],
+                    }}
+                    resultStringKeyName="item"
+                    placeholder="Browse a Galaxy of Storefronts"
+                    styling={{}}
+                    showClear={true}
+                    className="z-10"
+                  />
+                </div>
+                <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
+                  {badgesText.map((badgeText, index) => {
+                    return (
+                      <Badge
+                        className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray justify-center"
+                        key={index}
+                      >
+                        {badgeText}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            </header>
+
+            <div className="mx-8 sm:mx-12 xl:mx-auto pt-14 ">
+              <div className="space-y-16">
+                <div>
+                  {/* Popular Shops heading and row */}
+
+                  <div className="flex justify-between pb-10">
+                    <div>
+                      <p className="shoptext text-xl">Popular Shops</p>
+                    </div>
+                    <div>
+                      <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray h-full cursor-default">
+                        Search Popular
+                      </Button>
+                    </div>
                   </div>
-                  <div className="mt-4 sm:mt-6 gap-x-2 gap-y-4 sm:gap-y-0 grid grid-cols-3 sm:flex sm:grid-cols-0  ">
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Accessories
-                    </Badge>
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Gifts for devs
-                    </Badge>
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Popular shops
-                    </Badge>
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Best sellers
-                    </Badge>
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Newest
-                    </Badge>
-                    <Badge className="text-lg border-2 bg-transparent border-gray-500 text-ldlightgray">
-                      Top deals
-                    </Badge>
+
+                  {/* Store individual callouts */}
+                  {/* Individual callouts can be found components/ui/marketcomponents/stores */}
+                  <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
+                    <div className="prodcard">
+                      <VRGalaxy
+                        addToCart={addToCart}
+                        open={openVRGalaxy}
+                        setOpen={setOpenVRGalaxy}
+                      />
+                    </div>
+
+                    <div className="prodcard">
+                      <MacroCenter
+                        addToCart={addToCart}
+                        open={openMacroCenter}
+                        setOpen={setOpenMacroCenter}
+                      />
+                    </div>
+
+                    <div className="prodcard">
+                      <TheBoominBox
+                        addToCart={addToCart}
+                        open={openBoominBox}
+                        setOpen={setOpenBoominBox}
+                      />
+                    </div>
                   </div>
                 </div>
-              </header>
 
-              <div className="mx-8 sm:mx-12 xl:mx-auto pt-14 ">
-                <div className="space-y-16">
-                  <div>
-                    {/* Popular Shops heading and row */}
+                {/* Categories header +*/}
 
-                    <div className="flex justify-between pb-10">
-                      <div>
-                        <p className="shoptext text-xl">Popular Shops</p>
-                      </div>
-                      <div>
-                        <Button className="rounded-full text-xl bg-ldblack border-2 border-gray-500 text-ldlightgray h-full">
-                          Search Popular
-                        </Button>
-                      </div>
+                <div>
+                  <div className="flex justify-between items-center pb-10">
+                    <div>
+                      <p className="shoptext">Shop By Category</p>
                     </div>
 
-                    {/* Store individual callouts */}
-                    {/* Individual callouts can be found components/ui/marketcomponents/stores */}
-                    <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
-                      <div className="prodcard">
-                        <VRGalaxy
-                          addToCart={addToCart}
-                          open={openVRGalaxy}
-                          setOpen={setOpenVRGalaxy}
-                        />
-                      </div>
-
-                      <div className="prodcard">
-                        <MacroCenter
-                          addToCart={addToCart}
-                          open={openMacroCenter}
-                          setOpen={setOpenMacroCenter}
-                        />
-                      </div>
-
-                      <div className="prodcard">
-                        <TheBoominBox
-                          addToCart={addToCart}
-                          open={openBoominBox}
-                          setOpen={setOpenBoominBox}
-                        />
-                      </div>
+                    <div>
+                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray cursor-default">
+                        Search Categories
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Categories header +*/}
-
-                  <div>
-                    <div className="flex justify-between items-center pb-10">
-                      <div>
-                        <p className="shoptext">Shop By Category</p>
-                      </div>
-
-                      <div>
-                        <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
-                          Search Categories
-                        </Button>
-                      </div>
+                  <div className="flex flex-col lg:flex-row gap-8 justify-between items-center">
+                    <div>
+                      <img src="Hardware.png" className="h-[300px] sm:h-[350px]" />
                     </div>
-
-                    <div className="flex flex-col lg:flex-row gap-8 justify-between items-center">
-                      <div>
-                        <img src="Hardware.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
-                      <div>
-                        <img src="smarthome.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
-                      <div>
-                        <img src="networking.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
+                    <div>
+                      <img src="smarthome.png" className="h-[300px] sm:h-[350px]" />
+                    </div>
+                    <div>
+                      <img src="networking.png" className="h-[300px] sm:h-[350px]" />
                     </div>
                   </div>
-                  <div>
-                    <div className="flex justify-between items-center pb-10">
-                      <div>
-                        <p className="shoptext">Trending Now</p>
-                      </div>
-                      <div>
-                        <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray">
-                          Search Trending
-                        </Button>
-                      </div>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center pb-10">
+                    <div>
+                      <p className="shoptext">Trending Now</p>
                     </div>
-                    <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
-                      <div>
-                        <img src="software.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
-                      <div>
-                        <img src="makers.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
-                      <div>
-                        <img src="toys.png" className="h-[300px] sm:h-[350px]" />
-                      </div>
+                    <div>
+                      <Button className="rounded-full text-xl h-full bg-ldblack border-2 border-gray-500 text-ldlightgray cursor-default">
+                        Search Trending
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col lg:flex-row gap-20 justify-between items-center">
+                    <div>
+                      <img src="software.png" className="h-[300px] sm:h-[350px]" />
+                    </div>
+                    <div>
+                      <img src="makers.png" className="h-[300px] sm:h-[350px]" />
+                    </div>
+                    <div>
+                      <img src="toys.png" className="h-[300px] sm:h-[350px]" />
                     </div>
                   </div>
                 </div>
               </div>
-            </main>
-          </motion.div>
-        )}
+            </div>
+          </main>
+        </motion.div>
       </AnimatePresence>
     </>
   );
