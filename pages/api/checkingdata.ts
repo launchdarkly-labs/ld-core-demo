@@ -6,32 +6,26 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
 import { transactions } from "@/schema/schema";
-import { checkData } from "@/lib/checkingdata";
-import { checkData as checkingInserts } from "@/lib/checkingInserts";
+import { oldCheckingData } from "@/lib/oldCheckingData";
+import { newCheckingData } from "@/lib/newCheckingData";
 import * as ld from "@launchdarkly/node-server-sdk";
 import { check } from "drizzle-orm/pg-core";
+import { BankingDataInterface } from "@/utils/apiTypesInterface";
 
-type Data = {
-  id: number | null;
-  date: string | null;
-  merchant: string | null;
-  status: string | null;
-  amount: string | null;
-  accounttype: string | null;
-  user: string | null;
-}[];
+
+function delay(low: number, high: number) {
+  const min = low * 1000;
+  const max = high * 1000;
+  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+  //console.log("Delay is: "+randomDelay)
+  return new Promise((resolve) => setTimeout(resolve, randomDelay));
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data[] | { error: string }>
+  res: NextApiResponse<BankingDataInterface[] | { error: string }>
 ) {
-  function delay(low: number, high: number) {
-    const min = low * 1000;
-    const max = high * 1000;
-    const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-    //console.log("Delay is: "+randomDelay)
-    return new Promise((resolve) => setTimeout(resolve, randomDelay));
-  }
+  
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
   const clientContext: any = getCookie("ldcontext", { req, res });
   const connectionString = process.env.DB_URL;
@@ -53,7 +47,7 @@ export default async function handler(
         // console.log("Waiting delay")
         await delay(1, 3);
         // console.log("Delay complete")
-        return checkData;
+        return oldCheckingData;
       }
 
       const result = await getMyData();
@@ -66,18 +60,19 @@ export default async function handler(
     },
 
     readNew: async (key?: string) => {
-      let checkingTransactions: Data;
+      let checkingTransactions: BankingDataInterface[];
       checkingTransactions = await db
         .select()
         .from(transactions)
         .where(eq(transactions.accounttype, "checking"));
-      console.log("awefawefawe", checkingTransactions);
+      console.log("awefawefawe line 76", checkingTransactions);
       if (checkingTransactions) {
         return ld.LDMigrationSuccess(checkingTransactions);
       } else {
         // @ts-ignore
         console.log("triggeed");
-        return ld.LDMigrationError(checkingTransactions.error as Error);
+        return ld.LDMigrationSuccess(newCheckingData);
+        //return ld.LDMigrationError(checkingTransactions.error as Error);
       }
     },
 
@@ -110,9 +105,12 @@ export default async function handler(
 
   if (req.method === "GET") {
     const checkingTransactions = await migration.read("financialDBMigration", jsonObject, "off");
-    // console.log(checkingTransactions);
+    console.log("checkingTransactions line 115",checkingTransactions);
     if (checkingTransactions.success) {
       //console.log("the success is - " + JSON.stringify(checkingTransactions))
+      // if (checkingTransactions.length <7){
+      //   res.status(200).json(checkingInserts);
+      // }
       res.status(200).json(checkingTransactions.result);
     } else {
       //("the failure is - " + JSON.stringify(checkingTransactions))

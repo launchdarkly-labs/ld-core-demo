@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
 
 type Transaction = {

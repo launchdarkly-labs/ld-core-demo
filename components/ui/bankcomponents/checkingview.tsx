@@ -25,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CiMoneyCheck1 } from "react-icons/ci";
