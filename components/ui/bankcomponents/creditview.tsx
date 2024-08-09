@@ -10,7 +10,6 @@ import {
 import { useFlags } from "launchdarkly-react-client-sdk";
 
 import { CreditCard, Menu, Navigation } from "lucide-react";
-import { useRouter } from "next/router";
 import {
   Table,
   TableBody,
@@ -35,12 +34,10 @@ type Transaction = {
 export function CreditAccount() {
   const { financialDBMigration } = useFlags();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const router = useRouter();
 
   async function getTransactions() {
     const response = await fetch("/api/creditdata");
     let transactionsJson: Transaction[];
-    console.log(await response)
     if (response.status == 200) {
       const data = await response?.json();
      

@@ -11,6 +11,7 @@ import * as ld from "@launchdarkly/node-server-sdk";
 import { BankingDataInterface, UserContextInterface,MigrationTransactionsInterface } from "@/utils/apiTypesInterface";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { delay } from "@/utils/utils";
+import { newCheckingData } from "@/lib/newCheckingData";
 
 export default async function handler(
   req: NextApiRequest,
@@ -47,7 +48,7 @@ export default async function handler(
       audience: { key: "52ba904d-c" },
     };
   }
-  
+
   const config: ld.LDMigrationOptions = {
     readOld: async (key?: string) => {
       async function getMyData() {
@@ -73,13 +74,17 @@ export default async function handler(
     },
 
     readNew: async (key?: string) => {
-      let creditTransactions;
+      let creditTransactions: BankingDataInterface[];
       creditTransactions = await db
         .select()
         .from(transactions)
         .where(eq(transactions.accounttype, "checking"));
-      // @ts-ignore
-      return [ld.LDMigrationSuccess, creditTransactions];
+      if (creditTransactions) {
+        return ld.LDMigrationSuccess(creditTransactions);
+      } else {
+        // @ts-ignore
+        return ld.LDMigrationError(creditTransactions.error as Error);
+      }
     },
 
     WriteOld: async (params?: { key: string; value: any }) => {
@@ -94,12 +99,21 @@ export default async function handler(
     latencyTracking: true,
     errorTracking: true,
   };
-
+  //@ts-ignore
   const migration = new ld.createMigration(ldClient, config);
 
   if (req.method === "GET") {
     const creditTransactions: MigrationTransactionsInterface = await migration.read("financialDBMigration", clientSideContext, "off");
-    console.log("creditTransactions at line 82",creditTransactions)
-    res.status(200).json(creditTransactions[1]);
+    if (creditTransactions.success) {
+      //console.log("the success is - " + JSON.stringify(checkingTransactions))
+      if (creditTransactions.result.length < 9 && creditTransactions?.origin?.includes("new")) {
+        res.status(200).json(newCheckingData); //send this data if data from db is not the new data 
+        return;
+      }
+      res.status(200).json(creditTransactions.result);
+    } else {
+      //("the failure is - " + JSON.stringify(checkingTransactions))
+      res.status(502).json({ error: "Server encountered an error processing the request." });
+    }
   }
 }
