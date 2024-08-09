@@ -12,7 +12,6 @@ import * as ld from "@launchdarkly/node-server-sdk";
 import { check } from "drizzle-orm/pg-core";
 import { BankingDataInterface } from "@/utils/apiTypesInterface";
 
-
 function delay(low: number, high: number) {
   const min = low * 1000;
   const max = high * 1000;
@@ -25,9 +24,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<BankingDataInterface[] | { error: string }>
 ) {
-  
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-  const clientContext: any = getCookie("ldcontext", { req, res });
+  const clientContext: string | undefined = getCookie("ldcontext", { req, res });
   const connectionString = process.env.DB_URL;
   if (!connectionString) {
     throw new Error("DATABASE_URL is not set");
@@ -35,11 +33,12 @@ export default async function handler(
   const client = postgres(connectionString);
   const db = drizzle(client);
 
-  const config:ld.LDMigrationOptions = {
+  const config: ld.LDMigrationOptions = {
+    //it always hit readOld
     readOld: async (key?: string) => {
       async function getMyData() {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
-        //console.log("random failure number: " + randomNumber)
+        console.log("random failure number: " + randomNumber);
         if (randomNumber <= 20) {
           //console.log("Error caught -")
           throw new Error("Simulated failure");
@@ -91,12 +90,33 @@ export default async function handler(
   //@ts-ignore
   const migration: ld = new ld.createMigration(ldClient, config);
 
-  let jsonObject;
+  let jsonObject: {
+    user: { anonymous: boolean };
+    kind: string;
+    device?: object;
+    location?: object;
+    experience?: object;
+    audience?: object;
+  };
 
   if (clientContext == undefined) {
     jsonObject = {
-      key: "12234",
-      user: "Anonymous",
+      kind: "multi",
+      user: { anonymous: true },
+      device: {
+        key: "Desktop",
+        name: "Desktop",
+        operating_system: "macOS",
+        platform: "Desktop",
+      },
+      location: {
+        key: "America/New_York",
+        name: "America/New_York",
+        timeZone: "America/New_York",
+        country: "US",
+      },
+      experience: { key: "a380", name: "a380", airplane: "a380" },
+      audience: { key: "52ba904d-c" },
     };
   } else {
     const json = decodeURIComponent(clientContext);
@@ -104,13 +124,19 @@ export default async function handler(
   }
 
   if (req.method === "GET") {
-    const checkingTransactions = await migration.read("financialDBMigration", jsonObject, "off");
-    console.log("checkingTransactions line 115",checkingTransactions);
+    const checkingTransactions: {
+      origin: string;
+      success: boolean;
+      result: BankingDataInterface[];
+    } = await migration.read("financialDBMigration", jsonObject, "off");
+    console.log("checkingTransactions line 106", checkingTransactions);
+
     if (checkingTransactions.success) {
       //console.log("the success is - " + JSON.stringify(checkingTransactions))
-      // if (checkingTransactions.length <7){
-      //   res.status(200).json(checkingInserts);
-      // }
+      if (checkingTransactions.result.length < 9 && checkingTransactions?.origin?.includes("new")) {
+        res.status(200).json(newCheckingData); //send this data if there is an error and the data isn't sent from the db
+        return;
+      }
       res.status(200).json(checkingTransactions.result);
     } else {
       //("the failure is - " + JSON.stringify(checkingTransactions))

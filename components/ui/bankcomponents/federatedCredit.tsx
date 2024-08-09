@@ -36,10 +36,6 @@ type Transaction = {
   user: string;
 };
 
-type CheckingAccountProps = {
-  wealthManagement: any; // replace 'any' with the actual type if known
-};
-
 export function FederatedCreditAccount() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const router = useRouter();
