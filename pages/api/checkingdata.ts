@@ -11,6 +11,7 @@ import { newCheckingData } from "@/lib/newCheckingData";
 import * as ld from "@launchdarkly/node-server-sdk";
 import { check } from "drizzle-orm/pg-core";
 import { BankingDataInterface } from "@/utils/apiTypesInterface";
+import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 
 function delay(low: number, high: number) {
   const min = low * 1000;
@@ -19,13 +20,66 @@ function delay(low: number, high: number) {
   //console.log("Delay is: "+randomDelay)
   return new Promise((resolve) => setTimeout(resolve, randomDelay));
 }
+interface UserContextInterface {
+  user: { anonymous: boolean };
+  kind: string;
+  device?: object;
+  location?: object;
+  experience?: object;
+  audience?: object;
+}
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<BankingDataInterface[] | { error: string }>
 ) {
   const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
-  const clientContext: string | undefined = getCookie("ldcontext", { req, res });
+  let clientSideContext: UserContextInterface = JSON.parse(
+    getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
+  );
+
+  // let clientSideContext: UserContextInterface = {
+  //   kind: "multi",
+  //   user: { anonymous: true },
+  //   device: {
+  //     key: "Desktop",
+  //     name: "Desktop",
+  //     operating_system: "macOS",
+  //     platform: "Desktop",
+  //   },
+  //   location: {
+  //     key: "America/New_York",
+  //     name: "America/New_York",
+  //     timeZone: "America/New_York",
+  //     country: "US",
+  //   },
+  //   experience: { key: "a380", name: "a380", airplane: "a380" },
+  //   audience: { key: "52ba904d-c" },
+  // };
+
+
+
+  if (clientSideContext == undefined) {
+    clientSideContext = {
+      kind: "multi",
+      user: { anonymous: true },
+      device: {
+        key: "Desktop",
+        name: "Desktop",
+        operating_system: "macOS",
+        platform: "Desktop",
+      },
+      location: {
+        key: "America/New_York",
+        name: "America/New_York",
+        timeZone: "America/New_York",
+        country: "US",
+      },
+      experience: { key: "a380", name: "a380", airplane: "a380" },
+      audience: { key: "52ba904d-c" },
+    };
+  }
+
   const connectionString = process.env.DB_URL;
   if (!connectionString) {
     throw new Error("DATABASE_URL is not set");
@@ -90,45 +144,12 @@ export default async function handler(
   //@ts-ignore
   const migration: ld = new ld.createMigration(ldClient, config);
 
-  let jsonObject: {
-    user: { anonymous: boolean };
-    kind: string;
-    device?: object;
-    location?: object;
-    experience?: object;
-    audience?: object;
-  };
-
-  if (clientContext == undefined) {
-    jsonObject = {
-      kind: "multi",
-      user: { anonymous: true },
-      device: {
-        key: "Desktop",
-        name: "Desktop",
-        operating_system: "macOS",
-        platform: "Desktop",
-      },
-      location: {
-        key: "America/New_York",
-        name: "America/New_York",
-        timeZone: "America/New_York",
-        country: "US",
-      },
-      experience: { key: "a380", name: "a380", airplane: "a380" },
-      audience: { key: "52ba904d-c" },
-    };
-  } else {
-    const json = decodeURIComponent(clientContext);
-    jsonObject = JSON.parse(json);
-  }
-
   if (req.method === "GET") {
     const checkingTransactions: {
       origin: string;
       success: boolean;
       result: BankingDataInterface[];
-    } = await migration.read("financialDBMigration", jsonObject, "off");
+    } = await migration.read("financialDBMigration", clientSideContext, "off");
     console.log("checkingTransactions line 106", checkingTransactions);
 
     if (checkingTransactions.success) {
