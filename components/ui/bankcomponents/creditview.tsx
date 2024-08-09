@@ -40,8 +40,10 @@ export function CreditAccount() {
   async function getTransactions() {
     const response = await fetch("/api/creditdata");
     let transactionsJson: Transaction[];
+    console.log(await response)
     if (response.status == 200) {
-      const data = await response.json();
+      const data = await response?.json();
+     
       transactionsJson = data;
     } else {
       transactionsJson = [

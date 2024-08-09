@@ -77,3 +77,10 @@ export function wait(seconds: number) {
 export   const randomLatency = (min: number, max: number) =>
   max === undefined ? Math.random() * min : min + Math.random() * (max - min + 1);
 
+export function delay(low: number, high: number) {
+  const min = low * 1000;
+  const max = high * 1000;
+  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+  //console.log("Delay is: "+randomDelay)
+  return new Promise((resolve) => setTimeout(resolve, randomDelay));
+}

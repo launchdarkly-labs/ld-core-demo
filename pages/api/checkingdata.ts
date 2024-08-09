@@ -10,24 +10,9 @@ import { oldCheckingData } from "@/lib/oldCheckingData";
 import { newCheckingData } from "@/lib/newCheckingData";
 import * as ld from "@launchdarkly/node-server-sdk";
 import { check } from "drizzle-orm/pg-core";
-import { BankingDataInterface } from "@/utils/apiTypesInterface";
+import { BankingDataInterface,UserContextInterface,MigrationTransactionsInterface } from "@/utils/apiTypesInterface";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
-
-function delay(low: number, high: number) {
-  const min = low * 1000;
-  const max = high * 1000;
-  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-  //console.log("Delay is: "+randomDelay)
-  return new Promise((resolve) => setTimeout(resolve, randomDelay));
-}
-interface UserContextInterface {
-  user: { anonymous: boolean };
-  kind: string;
-  device?: object;
-  location?: object;
-  experience?: object;
-  audience?: object;
-}
+import { delay } from "@/utils/utils";
 
 export default async function handler(
   req: NextApiRequest,
@@ -122,11 +107,7 @@ export default async function handler(
   const migration: ld = new ld.createMigration(ldClient, config);
 
   if (req.method === "GET") {
-    const checkingTransactions: {
-      origin: string;
-      success: boolean;
-      result: BankingDataInterface[];
-    } = await migration.read("financialDBMigration", clientSideContext, "off");
+    const checkingTransactions: MigrationTransactionsInterface = await migration.read("financialDBMigration", clientSideContext, "off");
 
     if (checkingTransactions.success) {
       //console.log("the success is - " + JSON.stringify(checkingTransactions))
