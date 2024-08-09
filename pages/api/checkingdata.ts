@@ -38,26 +38,6 @@ export default async function handler(
     getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
   );
 
-  // let clientSideContext: UserContextInterface = {
-  //   kind: "multi",
-  //   user: { anonymous: true },
-  //   device: {
-  //     key: "Desktop",
-  //     name: "Desktop",
-  //     operating_system: "macOS",
-  //     platform: "Desktop",
-  //   },
-  //   location: {
-  //     key: "America/New_York",
-  //     name: "America/New_York",
-  //     timeZone: "America/New_York",
-  //     country: "US",
-  //   },
-  //   experience: { key: "a380", name: "a380", airplane: "a380" },
-  //   audience: { key: "52ba904d-c" },
-  // };
-
-
 
   if (clientSideContext == undefined) {
     clientSideContext = {
@@ -92,7 +72,7 @@ export default async function handler(
     readOld: async (key?: string) => {
       async function getMyData() {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
-        console.log("random failure number: " + randomNumber);
+        // console.log("random failure number: " + randomNumber);
         if (randomNumber <= 20) {
           //console.log("Error caught -")
           throw new Error("Simulated failure");
@@ -118,14 +98,11 @@ export default async function handler(
         .select()
         .from(transactions)
         .where(eq(transactions.accounttype, "checking"));
-      console.log("awefawefawe line 76", checkingTransactions);
       if (checkingTransactions) {
         return ld.LDMigrationSuccess(checkingTransactions);
       } else {
         // @ts-ignore
-        console.log("triggeed");
-        return ld.LDMigrationSuccess(newCheckingData);
-        //return ld.LDMigrationError(checkingTransactions.error as Error);
+        return ld.LDMigrationError(checkingTransactions.error as Error);
       }
     },
 
@@ -150,12 +127,11 @@ export default async function handler(
       success: boolean;
       result: BankingDataInterface[];
     } = await migration.read("financialDBMigration", clientSideContext, "off");
-    console.log("checkingTransactions line 106", checkingTransactions);
 
     if (checkingTransactions.success) {
       //console.log("the success is - " + JSON.stringify(checkingTransactions))
       if (checkingTransactions.result.length < 9 && checkingTransactions?.origin?.includes("new")) {
-        res.status(200).json(newCheckingData); //send this data if there is an error and the data isn't sent from the db
+        res.status(200).json(newCheckingData); //send this data if data from db is not the new data 
         return;
       }
       res.status(200).json(checkingTransactions.result);
