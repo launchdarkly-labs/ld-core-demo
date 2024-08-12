@@ -47,7 +47,7 @@ jobs:
 
       - name: Delete Test LD Project
         run: |
-          ldcli projects delete ${{ env.DEMO_NAMESPACE }}-ld-demo
+          ldcli projects delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo
 
       - name: Create LD Project
         id: create_ld_project
