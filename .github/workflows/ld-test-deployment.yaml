@@ -1,9 +1,12 @@
-name: "Build and Deploy Images to Test Environment"
+name: "Deploy to Test Environment"
 
 on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -12,7 +15,7 @@ env:
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  LD_API_KEY: ${{ secrets.LD_API_KEY }}  
+  LD_API_KEY: ${{ secrets.LD_API_KEY }}
   DEMO_NAMESPACE: coredemotest
 
 
@@ -32,6 +35,11 @@ jobs:
       - name: Install LaunchDarkly CLI
         run: npm install -g @launchdarkly/ldcli
 
+      - name: Set LaunchDarkly CLI Config
+        run: |
+          echo "Setting up LaunchDarkly CLI"
+          ldcli config --set access-token ${{ secrets.LD_API_KEY }}
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -41,7 +49,7 @@ jobs:
         run: |
           ldcli projects delete ${{ env.DEMO_NAMESPACE }}-ld-demo
 
-      - name: Create LD Project for User
+      - name: Create LD Project
         id: create_ld_project
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
