@@ -32,6 +32,11 @@ export default function Chatbot({ variant }: { variant: VariantInterface }) {
     temperature: number;
   } = useFlags()["ai-chatbot"];
 
+  const avatarLogoImgSrc = {
+    [AIRLINES]:"/airline/launch-airways.svg",
+    [GOVERNMENT]:"/government/Bureau_of_Risk_Reduction_Logo_Only.svg"
+  }
+
   const handleInputChange = (e: any): void => {
     setInput(e.target.value);
   };
@@ -63,7 +68,8 @@ export default function Chatbot({ variant }: { variant: VariantInterface }) {
       Limit response to 100 characters. 
       Here is the user prompt: ${userInput}.`,
       [GOVERNMENT]: `
-      As an AI bot for a government institution Bureau of Risk Reduction your purpose is to answer questions related to improving control, availability, and security of government applications and sites. 
+      As an AI bot for a government institution Bureau of Risk Reduction your purpose is to answer questions 
+      related to improving control, availability, and security of government applications and sites. 
       Act as customer representative. 
       Only answer queries related to improving control, availability, and security of government applications and sites.
       Remove quotation in response.  
@@ -160,8 +166,8 @@ export default function Chatbot({ variant }: { variant: VariantInterface }) {
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
-                <Avatar>
-                  <img src="/airline/launch-airways.svg" alt="Chatbot Avatar" />
+                <Avatar >
+                  <img src={avatarLogoImgSrc[variant]} alt="Chatbot Avatar" className=" "/>
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
                 <div>
