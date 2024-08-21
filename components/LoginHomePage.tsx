@@ -1,7 +1,5 @@
-import { useContext } from "react";
 import { motion } from "framer-motion";
 import NavBar from "@/components/ui/navbar";
-import LoginContext from "@/utils/contexts/login";
 import { LoginComponent } from "@/components/ui/logincomponent";
 import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
@@ -30,13 +28,9 @@ import { IoShieldCheckmark } from "react-icons/io5";
 import { BsArrowsExpandVertical } from "react-icons/bs";
 import { FaHandsHelping } from "react-icons/fa";
 import { FaMedal } from "react-icons/fa";
+import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
-interface LoginHomePageProps {
-  variant: "bank" | "airlines" | "market" | "investment" | "government";
-  name: string;
-}
-
-export default function LoginHomePage({ variant }: LoginHomePageProps) {
+export default function LoginHomePage({ variant }: VariantInterface) {
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showDifferentHeroImageFlag = variant?.includes("government")
@@ -164,7 +158,7 @@ export default function LoginHomePage({ variant }: LoginHomePageProps) {
   );
 }
 
-const homePageVariants: any = {
+const homePageVariants:any = {
   bank: {
     name: "ToggleBank",
     industryMessages: "More than 100,000 customers worldwide",

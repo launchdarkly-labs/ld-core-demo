@@ -26,15 +26,15 @@ import { COMPANY_LOGOS, INVESTMENT,BANK,GOVERNMENT,MARKET,AIRLINES } from "@/uti
 import { useRouter } from "next/router";
 
 interface NavBarProps {
-  cart: InventoryItem[];
-  setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
-  variant: string;
+  cart?: InventoryItem[];
+  setCart?: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
+  variant: string | VariantInterface;
+  className?: string;
 }
 
-const NavBar = React.forwardRef<any, NavBarProps>(
-  ({ cart, setCart, className, variant, ...props }, ref) => {
+const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) => {
     const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
-console.log(userObject)
+
     const homePageLocation = useRouter()?.pathname === "/";
     return (
       <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
@@ -208,7 +208,7 @@ console.log(userObject)
       </nav>
     );
   }
-);
+;
 
 const navElementsVariant: any = {
   bank: {
