@@ -91,6 +91,7 @@ export const LoginProvider = ({ children }: { children: any }) => {
     const foundPersona:Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)
     );
+    console.log(foundPersona)
     await setUserObject(foundPersona);
     context.user.name = foundPersona?.personaname;
     context.user.email = foundPersona?.personaemail;

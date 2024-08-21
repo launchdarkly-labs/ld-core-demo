@@ -34,7 +34,7 @@ interface NavBarProps {
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
     const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
-
+console.log(userObject)
     const homePageLocation = useRouter()?.pathname === "/";
     return (
       <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">

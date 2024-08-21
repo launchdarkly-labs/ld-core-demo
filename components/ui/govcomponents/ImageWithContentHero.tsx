@@ -58,7 +58,7 @@ function ImageWithContentHero({
                           client?.track("signup clicked", client.getContext());
                           client?.flush();
                         }
-                        loginUser("User", "user@launchmail.io", STANDARD);
+                        loginUser("user@launchmail.io");
                       }}
                     >
                       Get Started Today
