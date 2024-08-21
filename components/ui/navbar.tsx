@@ -70,13 +70,13 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                         })}
 
                         {userObject.personaEnrolledInLaunchClub &&
-                          variant?.includes("airlines") && (
+                          variant?.includes(AIRLINES) && (
                             <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
                               <LaunchClubStatus />
                             </div>
                           )}
 
-                        {variant?.includes("airlines") && (
+                        {variant?.includes(AIRLINES) && (
                           <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
                             <BookedFlights />
                           </div>
@@ -98,7 +98,7 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
               </DropdownMenuPortal>
             </DropdownMenu>
 
-            {(isLoggedIn && !variant?.includes("market")) || variant?.includes("market") ? (
+            {(isLoggedIn && !variant?.includes(MARKET)) || variant?.includes(MARKET) ? (
               <div className="hidden lg:block relative ml-8 w-[55%]   mt-2">
                 <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">
                   {
@@ -120,7 +120,7 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                         );
                       })}
 
-                      {variant?.includes("airlines") && (
+                      {variant?.includes(AIRLINES) && (
                         <div className="hidden lg:flex">
                           <BookedFlights />
                         </div>
@@ -131,21 +131,21 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
               </div>
             ) : null}
 
-            {!isLoggedIn && !variant?.includes("market") ? null : (
+            {!isLoggedIn && !variant?.includes(MARKET) && !variant?.includes(GOVERNMENT) ? null : (
               <div
                 className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
                 id="nav-login-group"
               >
-                {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
+                {variant?.includes(MARKET) && <StoreCart cart={cart} setCart={setCart} />}
 
-                {variant?.includes("airlines") && (
+                {variant?.includes(AIRLINES) && (
                   <div className="hidden sm:block ">
                     {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
                   </div>
                 )}
 
                 <Search className="cursor-default hidden sm:block text-white" />
-                {variant?.includes("airlines") && (
+                {variant?.includes(AIRLINES) && (
                   <div className="hidden sm:block lg:hidden">
                     <BookedFlights />
                   </div>
@@ -178,7 +178,7 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                             {navElementsVariant[variant]?.popoverMessage}
                             {userObject?.personaname || userObject.personaname}, as a<br></br>
                             <span className="text-2xl">
-                              {variant?.includes("airlines")
+                              {variant?.includes(AIRLINES)
                                 ? capitalizeFirstLetter(userObject?.personalaunchclubstatus)
                                 : capitalizeFirstLetter(userObject?.personatier)}{" "}
                               Tier
@@ -211,7 +211,7 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
 ;
 
 const navElementsVariant: any = {
-  bank: {
+  [BANK]: {
     navLinks: [
       {
         text: "Summary",
@@ -226,7 +226,7 @@ const navElementsVariant: any = {
     popoverMessage: "Thank you for banking with us, ",
     logoImg: COMPANY_LOGOS[BANK]?.horizontal,
   },
-  government: {
+  [GOVERNMENT]: {
     navLinks: [
       { text: "Submissions", href: "/government" },
       { text: "About Us", href: "/government" },
@@ -236,7 +236,7 @@ const navElementsVariant: any = {
     popoverMessage: "Thank you for your service, ",
     logoImg: COMPANY_LOGOS[GOVERNMENT]?.horizontal,
   },
-  investment: {
+  [INVESTMENT]: {
     navLinks: [
       { text: "Accounts & Trade", href: "/investment" },
       { text: "Planning", href: "/investment" },
@@ -248,7 +248,7 @@ const navElementsVariant: any = {
     popoverMessage: "Thank you for investing with us, ",
     logoImg: COMPANY_LOGOS[INVESTMENT].horizontal,
   },
-  market: {
+  [MARKET]: {
     navLinks: [
       { text: "All", href: "/marketplace" },
       { text: "Account", href: "/marketplace" },
@@ -260,7 +260,7 @@ const navElementsVariant: any = {
     popoverMessage: "Thank you for shopping with us, ",
     logoImg: COMPANY_LOGOS[MARKET].horizontal,
   },
-  airlines: {
+  [AIRLINES]: {
     navLinks: [
       { text: "Book", href: "/airways" },
       { text: "Check-In", href: "/airways" },
