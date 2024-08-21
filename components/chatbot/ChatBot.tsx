@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
+import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
+import { GOVERNMENT, AIRLINES } from "@/utils/constants";
 
 interface Message {
   role: string;
@@ -16,7 +18,7 @@ interface Message {
 }
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
-export default function Chatbot() {
+export default function Chatbot({ variant }: { variant: VariantInterface }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,15 +54,27 @@ export default function Chatbot() {
 
     setMessages([...messages, userMessage, loadingMessage]);
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify(`
+    const variantPrompt = {
+      [AIRLINES]: `
       As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. 
       Act as customer representative. 
       Only answer queries related to traveling and airlines.
       Remove quotation in response.  
       Limit response to 100 characters. 
-      Here is the user prompt: ${userInput}.`),
+      Here is the user prompt: ${userInput}.`,
+      [GOVERNMENT]: `
+      As an AI bot for a government institution Bureau of Risk Reduction your purpose is to answer questions related to improving control, availability, and security of government applications and sites. 
+      Act as customer representative. 
+      Only answer queries related to improving control, availability, and security of government applications and sites.
+      Remove quotation in response.  
+      Limit response to 100 characters. 
+      Here is the user prompt: ${userInput}.`,
+    };
+    
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify(variantPrompt[variant]),
     });
 
     const data: {
@@ -276,7 +290,7 @@ export default function Chatbot() {
   );
 }
 
-function MessageCircleIcon(props:any) {
+function MessageCircleIcon(props: any) {
   return (
     <svg
       {...props}
@@ -295,7 +309,7 @@ function MessageCircleIcon(props:any) {
   );
 }
 
-function SendIcon(props:any) {
+function SendIcon(props: any) {
   return (
     <svg
       {...props}
@@ -315,7 +329,7 @@ function SendIcon(props:any) {
   );
 }
 
-function XIcon(props:any) {
+function XIcon(props: any) {
   return (
     <svg
       {...props}
@@ -335,7 +349,7 @@ function XIcon(props:any) {
   );
 }
 
-function SmileIcon(props:any) {
+function SmileIcon(props: any) {
   return (
     <svg
       {...props}
@@ -357,7 +371,7 @@ function SmileIcon(props:any) {
   );
 }
 
-function FrownIcon(props:any) {
+function FrownIcon(props: any) {
   return (
     <svg
       {...props}

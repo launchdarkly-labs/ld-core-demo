@@ -21,7 +21,7 @@ export default function Government() {
       <Toaster />
       <AnimatePresence mode="wait">
         <LoginHomePage variant="government"/>
-        <Chatbot/>
+        <Chatbot variant="government"/>
       </AnimatePresence>
     </>
   );

@@ -20,6 +20,7 @@ import { addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
+import { AIRLINES } from "@/utils/constants";
 // import IndexPage from "@/components/chatbot/(chat)/page";
 
 
@@ -180,7 +181,7 @@ export default function Airways() {
         )}
       </AnimatePresence>
 
-      <Chatbot/>
+      <Chatbot variant={AIRLINES}/>
     </>
   );
 }

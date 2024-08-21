@@ -1,4 +1,5 @@
 export type LoginUserFunctionType = (email: string) => Promise<void>;
+import { AIRLINES,INVESTMENT,BANK,MARKET, GOVERNMENT } from "./constants";
 export interface Persona {
     personaname: string,
     personatier: string,
@@ -10,7 +11,7 @@ export interface Persona {
   }
 
  export interface VariantInterface {
-    variant: "bank" | "airlines" | "market" | "investment";
+    variant: typeof BANK | typeof AIRLINES | typeof MARKET | typeof INVESTMENT | typeof GOVERNMENT;
   }
 
  export type LoginContextType = {
