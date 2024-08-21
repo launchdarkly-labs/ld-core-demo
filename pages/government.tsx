@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
+import Chatbot from "@/components/chatbot/ChatBot";
 
 import LoginContext from "@/utils/contexts/login";
 
@@ -20,6 +21,7 @@ export default function Government() {
       <Toaster />
       <AnimatePresence mode="wait">
         <LoginHomePage variant="government"/>
+        <Chatbot/>
       </AnimatePresence>
     </>
   );

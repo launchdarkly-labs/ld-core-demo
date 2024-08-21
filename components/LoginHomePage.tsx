@@ -36,8 +36,7 @@ interface LoginHomePageProps {
   name: string;
 }
 
-export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
-  const { isLoggedIn, setIsLoggedIn, loginUser, logoutUser, user } = useContext(LoginContext);
+export default function LoginHomePage({ variant }: LoginHomePageProps) {
   const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
   const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
   const showDifferentHeroImageFlag = variant?.includes("government")

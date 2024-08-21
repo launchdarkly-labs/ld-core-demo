@@ -7,22 +7,18 @@ import { QuickLoginDialog } from "../quicklogindialog";
 import { useState } from "react";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
+import  { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
-interface LoginComponentProps {
-  variant: "bank" | "airlines" | "market" | "investment";
-}
-
-export function LoginComponent({ variant }: LoginComponentProps) {
+export function LoginComponent({ variant }: VariantInterface) {
   const inputRef = useRef();
-  const [defaultEmail, setDefaultEmail] = useState("user@launchmail.io");
+  const [defaultEmail, setDefaultEmail] = useState<string>("user@launchmail.io");
   const { loginUser } = useContext(LoginContext);
 
-  function handleLogin() {
+  function handleLogin(): void {
     if (!defaultEmail) return;
-   
+
     loginUser("user@launchmail.io");
   }
-
 
   return (
     <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">
@@ -45,7 +41,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
         >
           Login with SSO
         </Button>
-        <QuickLoginDialog  variant={variant}/>
+        <QuickLoginDialog variant={variant} />
       </div>
       <div className="flex flex-col items-start sm:items-baseline font-sohnelight font-extralight sm:flex-row text-xs justify-between">
         <div className="pb-3">
