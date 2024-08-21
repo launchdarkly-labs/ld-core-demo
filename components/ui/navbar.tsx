@@ -30,13 +30,6 @@ interface NavBarProps {
   setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
   variant: string;
 }
-interface Persona {
-  id: string | number;
-  personaname: string;
-  personatype: string;
-  personaimage: string;
-  personaemail: string;
-}
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
@@ -231,7 +224,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for banking with us, ",
-    logoImg: COMPANY_LOGOS[BANK].horizontal,
+    logoImg: COMPANY_LOGOS[BANK]?.horizontal,
   },
   government: {
     navLinks: [
@@ -241,7 +234,7 @@ const navElementsVariant: any = {
     ],
     navLinkColor: "gradient-bank",
     popoverMessage: "Thank you for your service, ",
-    logoImg: COMPANY_LOGOS[GOVERNMENT].horizontal,
+    logoImg: COMPANY_LOGOS[GOVERNMENT]?.horizontal,
   },
   investment: {
     navLinks: [

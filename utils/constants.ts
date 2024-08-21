@@ -15,6 +15,8 @@ import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizonta
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
+import governmentVerticalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
+import governmentHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
 import vrgame from "@/public/marketplace/vrgalaxy_image/vrgame.svg";
 import vrcamera from "@/public/marketplace/vrgalaxy_image/vrcamera.svg";
 import vrheadset from "@/public/marketplace/vrgalaxy_image/vrheadset.svg";
@@ -24,6 +26,7 @@ import hapticgloves from "@/public/marketplace/vrgalaxy_image/hapticgloves.svg";
 import vrheadsetcleaningkit from "@/public/marketplace/vrgalaxy_image/vrheadsetcleaningkit.svg";
 import vrcontrollers from "@/public/marketplace/vrgalaxy_image/vrcontrollers.svg";
 import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
+
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -51,6 +54,12 @@ export const PERSONA_ROLE_DEVELOPER = "Developer";
 export const PERSONA_ROLE_USER = "User";
 export const LAUNCH_CLUB_STANDARD = "standard";
 export const LAUNCH_CLUB_PLATINUM = "platinum";
+export const BANK = "bank";
+export const GOVERNMENT = "government";
+export const AIRLINES = "airlines";
+export const INVESTMENT = "investment";
+export const MARKET = "market";
+
 export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 
 export const COMPANY_LOGOS = {
@@ -69,6 +78,10 @@ export const COMPANY_LOGOS = {
   market: {
     vertical: galaxyMarketplaceVerticalLogo,
     horizontal: galaxyMarketplaceHorizontalLogo,
+  },
+  government: {
+    vertical: governmentVerticalLogo,
+    horizontal: governmentHorizontalLogo,
   },
 };
 
