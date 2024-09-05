@@ -18,7 +18,7 @@ const startingUserObject = {
   personarole: "",
   personalaunchclubstatus: "",
   personaEnrolledInLaunchClub: false,
-}
+};
 
 const LoginContext = createContext<LoginContextType>({
   userObject: startingUserObject,
@@ -45,13 +45,12 @@ const operatingSystem = isAndroid
   : "";
 const device = isMobile ? "Mobile" : isBrowser ? "Desktop" : "";
 
-
 export const LoginProvider = ({ children }: { children: any }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userObject, setUserObject] = useState<Persona>(startingUserObject);
+  const [userObject, setUserObject] = useState<Persona | {}>({});
   const [allUsers, setAllUsers] = useState<Persona[]>(STARTER_PERSONAS);
-
+  
   const hashEmail = async (email: string): Promise<string> => {
     return CryptoJS.SHA256(email).toString();
   };
@@ -88,7 +87,7 @@ export const LoginProvider = ({ children }: { children: any }) => {
 
     const context: LDContext | undefined = await client?.getContext();
     //don't know how to fix this without using undefined
-    const foundPersona:Persona = allUsers?.find((persona) =>
+    const foundPersona: Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)
     );
     await setUserObject(foundPersona);

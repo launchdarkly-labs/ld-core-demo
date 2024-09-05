@@ -20,7 +20,7 @@ export function QuickLoginDialog({ variant }: VariantInterface) {
 
   const homePageButtonStyling = `mb-4 p-2 w-full mx-auto font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:bg-gray-800 hover:text-white`;
   const dashboardButtonStyling = `w-full min-h-full p-1  font-audimat rounded-none text-xl border-2 border-loginComponentBlue text-black hover:text-white hover:bg-gray-800`;
-
+  console.log(allUsers)
   return (
     <>
       <Dialog>
