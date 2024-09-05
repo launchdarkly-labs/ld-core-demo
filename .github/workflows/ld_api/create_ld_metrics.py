@@ -39,6 +39,7 @@ def createMetricsForLDProject(ld_api_key):
     createInCartTotalPriceMetric(ld_api_key, createMetricURL)
     createAIChatbotPositiveFeedbackMetric(ld_api_key, createMetricURL)
     createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL)
+    createSearchEngineAddToCartMetric(ld_api_key, createMetricURL)
     
 def createAIChatbotNegativeFeedbackMetric(ld_api_key, createMetricURL):
     
@@ -248,6 +249,25 @@ def createInCartUpSellMetric(ld_api_key, createMetricURL):
     
     if response.status_code == 201:
         print("Metric 'In-Cart Up-Sell' created successfully.")
+
+def createSearchEngineAddToCartMetric(ld_api_key, createMetricURL):
+    
+    metricPayload = {
+        "name": "Search Engine Add to Cart",
+        "eventKey": "search-engine-add-to-cart",
+        "Description": "Track to see if Add to Cart button in Search Engine",
+        "isNumeric": False,
+        "key": "search-engine-add-to-cart",
+        "kind": "custom",
+        "successCriteria": "HigherThanBaseline",
+        "randomizationUnits": ["audience", "user"],
+        "tags": ["experiment"]
+    }
+    
+    response = requests.request("POST", BASE_URL + createMetricURL, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(metricPayload))
+    
+    if response.status_code == 201:
+        print("Metric 'Search Engine Add to Cart' created successfully.")
         
 def createInCartTotalPriceMetric(ld_api_key, createMetricURL):
     

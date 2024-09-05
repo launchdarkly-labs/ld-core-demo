@@ -28,6 +28,7 @@ interface InventoryItem {
   id: string | number;
   item: string;
   cost: number;
+  image: any;
 }
 // @ts-nocheck
 export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
@@ -49,6 +50,8 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   };
 
   const checkOut = () => {
+    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
+    LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
     toast({
       title: `Checkout is successful! Enjoy your purchase!`,
       wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base"
@@ -64,14 +67,10 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
     router.push("/marketplace");
   };
 
-  const checkOutTracking = () => {
-    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
-    LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
-  };
 
   return (
     <Sheet>
-      <SheetTrigger onClick={() => cartClick()} asChild>
+      <SheetTrigger onClick={() => cartClick()} asChild className="shopping-cart-trigger">
         <div className="relative cursor-pointer">
           <ShoppingCart className="cart" color={"white"} />
           <div className="bg-gradient-experimentation w-3 h-3 sm:w-[1rem] sm:h-[1rem] flex justify-center align-center items-center  rounded-[100%] absolute top-[-5px] right-[-10px]">
@@ -103,7 +102,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               cart?.map((item: InventoryItem, index: number) => {
                 return (
                   <TableRow key={`${item.id}-${index}`}>
-                    <TableCell> <img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
+                    <TableCell> <img src={`${item?.image ? item?.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
                     <TableCell className="">{item.item}</TableCell>
                     <TableCell className="">${item.cost}</TableCell>
                   </TableRow>
@@ -127,7 +126,6 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
             </div>
             <SheetTrigger onClick={checkOut} asChild>
               <Button
-                onClick={checkOutTracking}
                 className="w-full bg-gradient-experimentation hover:brightness-[120%] rounded-none"
               >
                 Checkout

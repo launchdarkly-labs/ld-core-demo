@@ -20,44 +20,38 @@ import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
-
 import { LoginComponent } from "./logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
+import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
 interface NavBarProps {
-  cart: InventoryItem[];
-  setCart: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
-  variant: string;
-}
-interface Persona {
-  id: string | number;
-  personaname: string;
-  personatier: string;
-  personaimage: string;
-  personaemail: string;
+  cart?: InventoryItem[];
+  setCart?: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
+  variant: string | VariantInterface;
+  className?: string;
 }
 
-const NavBar = React.forwardRef<any, NavBarProps>(
-  ({ cart, setCart, className, variant, ...props }, ref) => {
-    const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) => {
+  const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
 
-    const homePageLocation = useRouter()?.pathname === "/";
+  const homePageLocation = useRouter()?.pathname === "/";
 
-    return (
-      <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
-        <div className="mx-4 xl:mx-auto max-w-7xl flex">
-          <div className="items-center flex gap-x-6 text-white">
-            <CSNav />
-          </div>
-          <div className="ml-2 sm:ml-8 flex items-center">
-            <img
-              src={navElementsVariant[variant]?.logoImg.src || "ld-logo.svg"}
-              className="pr-2 h-10 cursor-pointer"
-            />
-          </div>
+  return (
+    <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
+      <div className="mx-4 xl:mx-auto max-w-7xl flex">
+        <div className="items-center flex gap-x-6 text-white">
+          <CSNav />
+        </div>
+        <div className="ml-2 sm:ml-8 flex items-center">
+          <img
+            src={navElementsVariant[variant]?.logoImg.src || "ld-logo.svg"}
+            className="pr-2 h-10 cursor-pointer"
+          />
+        </div>
 
-          {homePageLocation ? null : <>
+        {homePageLocation ? null : (
+          <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
@@ -211,12 +205,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                 </Popover>
               </div>
             )}
-          </>}
-        </div>
-      </nav>
-    );
-  }
-);
+          </>
+        )}
+      </div>
+    </nav>
+  );
+};
 
 const navElementsVariant: any = {
   bank: {
