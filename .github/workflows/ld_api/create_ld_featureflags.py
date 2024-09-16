@@ -39,9 +39,9 @@ def createAIChatbotModelsFeatureFlag():
     url = "/flags/" + project_key
     
     payload = {
-        "name": "09 - LaunchAirways Chatbot (AI Models)",
+        "name": "09 - Bureau of Risk Reduction Chatbot (AI Models)",
         "key": "ai-chatbot",
-        "description": "This feature flag will change AI models in real-time for the LaunchAirways Chatbotcomponent in LaunchAirways.",
+        "description": "This feature flag will change AI models in real-time for the Bureau of Risk Reduction Chatbot Component.",
         "clientSideAvailability": {
             "usingMobileKey": True,
             "usingEnvironmentId": True
@@ -84,7 +84,7 @@ def createAIChatbotModelsFeatureFlag():
             }
         ],
         "tags": [
-            "ai"
+            "ai", "government"
         ]
     }
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
@@ -597,7 +597,44 @@ def createGovShowHeroRedesignFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("[Experimentation] Show Hero Redesign [Gov Vertical] feature flag created successfully.")
+
+def createShowLoginInNavbarFeatureFlag(): 
     
+    print("Creating Show Login In Navbar [Gov Vertical] feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "show-cards-section-component",
+    "name": "Show Login In Navbar [Gov Vertical]",
+    "description": "Show Login In Navbar [Gov Vertical]",
+    "variations": [
+        {
+            "value": True,
+            "name": "Show Login Component In Navbar"
+        },
+        {
+            "value": False,
+            "name": "Hide Login Component In Navbar"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 1
+    },
+    "tags": [
+        "government"
+    ]
+    }
+
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("Show Show Login In Navbar [Gov Vertical] feature flag created successfully.")
+   
 def createGovShowDifferentHeroImageFeatureFlag(): 
     
     print("[Experimentation] Show Different Hero Image [Gov Vertical] feature flag...")
@@ -638,43 +675,6 @@ def createGovShowDifferentHeroImageFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("[Experimentation] Show Different Hero Image [Gov Vertical] feature flag created successfully.")
-
-def createShowLoginInNavbarFeatureFlag(): 
-    
-    print("Creating Show Login In Navbar [Gov Vertical] feature flag...")
-    
-    url = "/flags/" + project_key
-
-    payload = {
-    "clientSideAvailability": {
-        "usingEnvironmentId": True,
-        "usingMobileKey": True
-    },
-    "key": "show-cards-section-component",
-    "name": "Show Login In Navbar [Gov Vertical]",
-    "description": "Show Login In Navbar [Gov Vertical]",
-    "variations": [
-        {
-            "value": True,
-            "name": "Show Login Component In Navbar"
-        },
-        {
-            "value": False,
-            "name": "Hide Login Component In Navbar"
-        }
-    ],
-    "defaults":{
-        "onVariation": 0,
-        "offVariation": 1
-    },
-    "tags": [
-        "government"
-    ]
-    }
-
-    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
-    if(response.status_code == 201):
-        print("Show Show Login In Navbar [Gov Vertical] feature flag created successfully.")
-      
+ 
 if __name__ == "__main__":
     main()
