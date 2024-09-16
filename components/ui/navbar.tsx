@@ -20,9 +20,9 @@ import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
 import { QuickLoginDialog } from "../quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
-
+import { useFlags } from "launchdarkly-react-client-sdk";
 import { LoginComponent } from "./logincomponent";
-import { COMPANY_LOGOS, INVESTMENT,BANK,GOVERNMENT,MARKET,AIRLINES } from "@/utils/constants";
+import { COMPANY_LOGOS, INVESTMENT, BANK, GOVERNMENT, MARKET, AIRLINES } from "@/utils/constants";
 import { useRouter } from "next/router";
 
 interface NavBarProps {
@@ -32,24 +32,25 @@ interface NavBarProps {
   className?: string;
 }
 
-const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) => {
-    const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+const NavBar = ({ cart, setCart, className, variant, ...props }: NavBarProps) => {
+  const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+  const showLoginInNavbarFlag = useFlags()["show-login-in-navbar"];
+  const homePageLocation = useRouter()?.pathname === "/";
+  return (
+    <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
+      <div className="mx-4 xl:mx-auto max-w-7xl flex">
+        <div className="items-center flex gap-x-6 text-white">
+          <CSNav />
+        </div>
+        <div className="ml-2 sm:ml-8 flex items-center">
+          <img
+            src={navElementsVariant[variant]?.logoImg.src || "ld-logo.svg"}
+            className="pr-2 h-10 cursor-pointer"
+          />
+        </div>
 
-    const homePageLocation = useRouter()?.pathname === "/";
-    return (
-      <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
-        <div className="mx-4 xl:mx-auto max-w-7xl flex">
-          <div className="items-center flex gap-x-6 text-white">
-            <CSNav />
-          </div>
-          <div className="ml-2 sm:ml-8 flex items-center">
-            <img
-              src={navElementsVariant[variant]?.logoImg.src || "ld-logo.svg"}
-              className="pr-2 h-10 cursor-pointer"
-            />
-          </div>
-
-          {homePageLocation ? null : <>
+        {homePageLocation ? null : (
+          <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="ml-2 cursor-pointer block lg:hidden text-white mr-4">
@@ -69,12 +70,11 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                           );
                         })}
 
-                        {userObject.personaEnrolledInLaunchClub &&
-                          variant?.includes(AIRLINES) && (
-                            <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
-                              <LaunchClubStatus />
-                            </div>
-                          )}
+                        {userObject.personaEnrolledInLaunchClub && variant?.includes(AIRLINES) && (
+                          <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
+                            <LaunchClubStatus />
+                          </div>
+                        )}
 
                         {variant?.includes(AIRLINES) && (
                           <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
@@ -154,62 +154,63 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                   <QRCodeImage className="" />
                 </div>
 
-                <Popover>
-                  <PopoverTrigger>
-                    <Avatar>
-                      <AvatarImage
-                        src={userObject?.personaimage || "ToggleAvatar.png"}
-                        className=""
-                      />
-                    </Avatar>
-                  </PopoverTrigger>
+                {showLoginInNavbarFlag ? (
+                  <Popover>
+                    <PopoverTrigger>
+                      <Avatar>
+                        <AvatarImage
+                          src={userObject?.personaimage || "ToggleAvatar.png"}
+                          className=""
+                        />
+                      </Avatar>
+                    </PopoverTrigger>
 
-                  <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
-                    {isLoggedIn ? (
-                      <>
-                        <div className="mx-auto flex place-content-center w-full">
-                          <img
-                            src={userObject?.personaimage || "ToggleAvatar.png"}
-                            className="rounded-full h-48"
-                          />
-                        </div>
-                        <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
-                          <p className="pt-4">
-                            {navElementsVariant[variant]?.popoverMessage}
-                            {userObject?.personaname || userObject.personaname}, as a<br></br>
-                            <span className="text-2xl">
-                              {variant?.includes(AIRLINES)
-                                ? capitalizeFirstLetter(userObject?.personalaunchclubstatus)
-                                : capitalizeFirstLetter(userObject?.personatier)}{" "}
-                              Tier
-                            </span>
-                            !
-                          </p>
-                        </div>
-                        <div className="mx-auto text-center">
-                          <Button
-                            onClick={logoutUser}
-                            className={`bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none`}
-                          >
-                            Logout
-                          </Button>
-                          <QuickLoginDialog variant={variant} />
-                        </div>
-                      </>
-                    ) : (
-                      <LoginComponent variant={variant} />
-                    )}
-                  </PopoverContent>
-                </Popover>
+                    <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
+                      {isLoggedIn ? (
+                        <>
+                          <div className="mx-auto flex place-content-center w-full">
+                            <img
+                              src={userObject?.personaimage || "ToggleAvatar.png"}
+                              className="rounded-full h-48"
+                            />
+                          </div>
+                          <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
+                            <p className="pt-4">
+                              {navElementsVariant[variant]?.popoverMessage}
+                              {userObject?.personaname || userObject.personaname}, as a<br></br>
+                              <span className="text-2xl">
+                                {variant?.includes(AIRLINES)
+                                  ? capitalizeFirstLetter(userObject?.personalaunchclubstatus)
+                                  : capitalizeFirstLetter(userObject?.personatier)}{" "}
+                                Tier
+                              </span>
+                              !
+                            </p>
+                          </div>
+                          <div className="mx-auto text-center">
+                            <Button
+                              onClick={logoutUser}
+                              className={`bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none`}
+                            >
+                              Logout
+                            </Button>
+                            <QuickLoginDialog variant={variant} />
+                          </div>
+                        </>
+                      ) : (
+                        <LoginComponent variant={variant} />
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                ) : null}
               </div>
             )}
-          </>}
-        </div>
-      </nav>
-    );
-  }
-;
-
+          </>
+        )}
+      </div>
+    </nav>
+  );
+};
 const navElementsVariant: any = {
   [BANK]: {
     navLinks: [
