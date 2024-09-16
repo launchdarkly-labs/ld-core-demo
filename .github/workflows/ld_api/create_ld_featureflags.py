@@ -30,6 +30,7 @@ def main():
     createGovPatchShowCardsSectionComponentFeatureFlag()
     createGovShowHeroRedesignFeatureFlag()
     createGovShowDifferentHeroImageFeatureFlag()
+    createShowLoginInNavbarFeatureFlag()
  
 def createAIChatbotModelsFeatureFlag():
     
