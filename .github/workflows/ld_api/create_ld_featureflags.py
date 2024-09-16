@@ -637,6 +637,43 @@ def createGovShowDifferentHeroImageFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("[Experimentation] Show Different Hero Image [Gov Vertical] feature flag created successfully.")
+
+def createShowLoginInNavbarFeatureFlag(): 
     
+    print("Creating Show Login In Navbar [Gov Vertical] feature flag...")
+    
+    url = "/flags/" + project_key
+
+    payload = {
+    "clientSideAvailability": {
+        "usingEnvironmentId": True,
+        "usingMobileKey": True
+    },
+    "key": "show-cards-section-component",
+    "name": "Show Login In Navbar [Gov Vertical]",
+    "description": "Show Login In Navbar [Gov Vertical]",
+    "variations": [
+        {
+            "value": True,
+            "name": "Show Login Component In Navbar"
+        },
+        {
+            "value": False,
+            "name": "Hide Login Component In Navbar"
+        }
+    ],
+    "defaults":{
+        "onVariation": 0,
+        "offVariation": 1
+    },
+    "tags": [
+        "government"
+    ]
+    }
+
+    response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
+    if(response.status_code == 201):
+        print("Show Show Login In Navbar [Gov Vertical] feature flag created successfully.")
+      
 if __name__ == "__main__":
     main()

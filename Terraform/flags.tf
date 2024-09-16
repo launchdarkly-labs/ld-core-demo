@@ -397,6 +397,36 @@ resource "launchdarkly_feature_flag" "show-cards-section-component" {
   ]
 }
 
+resource "launchdarkly_feature_flag" "show-login-in-navbar" {
+  project_key = var.project_key
+  key         = "show-login-in-navbar"
+  name        = "Show Login In Navbar [Gov Vertical]"
+  description = "Show Login In Navbar [Gov Vertical]"
+
+  variation_type = "boolean"
+  variations {
+    value = "true"
+    name  = "Show Login Component In Navbar"
+  }
+  variations {
+    value = "false"
+    name  = "Hide Login Component In Navbar"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 1
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "government"
+  ]
+}
+
 resource "launchdarkly_feature_flag" "patch-show-cards-section-component" {
   project_key = var.project_key
   key         = "patch-show-cards-section-component"
