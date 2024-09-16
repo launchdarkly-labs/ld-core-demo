@@ -39,7 +39,7 @@ def createAIChatbotModelsFeatureFlag():
     url = "/flags/" + project_key
     
     payload = {
-        "name": "09 - Bureau of Risk Reduction Chatbot (AI Models)",
+        "name": "Bureau of Risk Reduction Chatbot (AI Models)",
         "key": "ai-chatbot",
         "description": "This feature flag will change AI models in real-time for the Bureau of Risk Reduction Chatbot Component.",
         "clientSideAvailability": {
@@ -486,7 +486,6 @@ def createReleaseNewRecentTradesDBFeatureFlag():
     if(response.status_code == 201):
         print("Release New Recent Trades DB feature flag created successfully.")
 
-
 def createGovShowCardsSectionComponentFeatureFlag(): 
     
     print("Creating Show Cards Section Component [Gov Vertical] feature flag...")
@@ -609,7 +608,7 @@ def createShowLoginInNavbarFeatureFlag():
         "usingEnvironmentId": True,
         "usingMobileKey": True
     },
-    "key": "show-cards-section-component",
+    "key": "show-login-in-navbar",
     "name": "Show Login In Navbar [Gov Vertical]",
     "description": "Show Login In Navbar [Gov Vertical]",
     "variations": [
@@ -634,7 +633,7 @@ def createShowLoginInNavbarFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("Show Show Login In Navbar [Gov Vertical] feature flag created successfully.")
-   
+
 def createGovShowDifferentHeroImageFeatureFlag(): 
     
     print("[Experimentation] Show Different Hero Image [Gov Vertical] feature flag...")
@@ -675,6 +674,6 @@ def createGovShowDifferentHeroImageFeatureFlag():
     response = requests.request("POST", BASE_URL + url, headers = {'Authorization': ld_api_key, 'Content-Type': 'application/json'}, data = json.dumps(payload))
     if(response.status_code == 201):
         print("[Experimentation] Show Different Hero Image [Gov Vertical] feature flag created successfully.")
- 
+
 if __name__ == "__main__":
     main()
