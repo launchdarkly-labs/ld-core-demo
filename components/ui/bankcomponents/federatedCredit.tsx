@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-import { checkData } from "@/lib/checkingdata";
 import { useEffect, useState } from "react";
 
 type Transaction = {
@@ -35,10 +34,6 @@ type Transaction = {
   amount: number;
   accounttype: string;
   user: string;
-};
-
-type CheckingAccountProps = {
-  wealthManagement: any; // replace 'any' with the actual type if known
 };
 
 export function FederatedCreditAccount() {

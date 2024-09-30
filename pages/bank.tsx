@@ -3,7 +3,7 @@ import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import { checkData } from "@/lib/checkingdata";
+import { oldCheckingData } from "@/lib/oldCheckingData";
 import LoginContext from "@/utils/contexts/login";
 import NavBar from "@/components/ui/navbar";
 import LoginHomePage from "@/components/LoginHomePage";
@@ -16,7 +16,7 @@ export default function Bank() {
   const [aiResponse, setAIResponse] = useState<string>("");
   const { isLoggedIn } = useContext(LoginContext);
   const { wealthManagement, federatedAccounts } = useFlags();
-  const money = JSON.stringify(checkData);
+  const money = JSON.stringify(oldCheckingData);
   const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
   const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'
   
