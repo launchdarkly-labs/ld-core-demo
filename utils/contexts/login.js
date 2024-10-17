@@ -65,6 +65,25 @@ export const LoginProvider = ({ children }) => {
     context.user.name = foundPersona.personaname;
     context.user.email = foundPersona.personaemail;
     const hashedEmail = await hashEmail(email);
+
+      switch (user) {
+      case 'Cody':
+        context.user.segment = "Family";
+        context.user.country = "Norway";
+        break;
+      case 'Jenn':
+        context.user.segment = "Young Adult";
+        context.user.country = "United Kingdom";
+        break;
+      case 'Alysha':
+        context.user.segment = "Affluent Adult";
+        context.user.country = "United States";
+        break;
+      default:
+        context.user.segment = "Student";
+        context.user.country = "United States";
+    }
+    
     context.user.anonymous = false;
     context.user.key = hashedEmail;
     context.user.role = foundPersona.personarole;
