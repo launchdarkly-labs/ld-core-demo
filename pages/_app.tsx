@@ -60,7 +60,7 @@ if (typeof window !== "undefined") {
       useCamelCaseFlagKeys: false,
     },
     options: {
-      privateAttributes: ['email', 'name']
+      privateAttributes: ['email']
     },
     context: context
   });
