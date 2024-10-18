@@ -66,7 +66,7 @@ export const LoginProvider = ({ children }) => {
     context.user.email = foundPersona.personaemail;
     const hashedEmail = await hashEmail(email);
 
-      switch (user) {
+    switch (context.user.name) {
       case 'Cody':
         context.user.segment = "Family";
         context.user.country = "Norway";
