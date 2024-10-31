@@ -14,7 +14,6 @@ env:
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  LD_API_KEY: ${{ contains(github.event.inputs.name, 'eaptest') && secrets.LD_EAP_API_KEY || secrets.LD_API_KEY }}
   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 
@@ -31,6 +30,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
+
+      - name: Set LD_API_KEY
+        run: |
+          if [[ "${{ github.event.inputs.name }}" == *"eaptest"* ]]; then
+            echo "LD_API_KEY=${{ secrets.LD_EAP_API_KEY }}" >> $GITHUB_ENV
+          else
+            echo "LD_API_KEY=${{ secrets.LD_API_KEY }}" >> $GITHUB_ENV
+          fi
 
       - name: Install dependencies
         run: |
