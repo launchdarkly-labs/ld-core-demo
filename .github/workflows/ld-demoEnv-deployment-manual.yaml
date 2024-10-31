@@ -29,13 +29,13 @@ jobs:
         with:
           python-version: "3.9"
           
-      - name: Set LD_API_KEY
-        run: |
-          if [[ "${{ github.event.inputs.name }}" == "eaptest" ]]; then
-            echo "LD_API_KEY=${{ secrets.LD_EAP_API_KEY }}" >> $GITHUB_ENV
-          else
-            echo "LD_API_KEY=${{ secrets.LD_API_KEY }}" >> $GITHUB_ENV
-          fi
+      - name: Set LD_API_KEY for Demo Engineering EAP Account - Testing Only
+        if: ${{ github.event.inputs.name == 'eaptest' }}
+        run: echo "LD_API_KEY=${{ secrets.LD_EAP_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Set LD_API_KEY for Demo Engineering Account
+        if: ${{ github.event.inputs.name != 'eaptest' }}
+        run: echo "LD_API_KEY=${{ secrets.LD_API_KEY }}" >> $GITHUB_ENV
           
       - name: Install dependencies
         run: |
