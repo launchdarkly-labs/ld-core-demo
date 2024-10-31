@@ -31,7 +31,7 @@ jobs:
           
       - name: Set LD_API_KEY
         run: |
-          if [[ "${{ github.event.inputs.name }}" == *"eaptest"* ]]; then
+          if [[ "${{ github.event.inputs.name }}" == "eaptest" ]]; then
             echo "LD_API_KEY=${{ secrets.LD_EAP_API_KEY }}" >> $GITHUB_ENV
           else
             echo "LD_API_KEY=${{ secrets.LD_API_KEY }}" >> $GITHUB_ENV
