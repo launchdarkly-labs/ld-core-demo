@@ -14,7 +14,7 @@ env:
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  LD_API_KEY: ${{ secrets.LD_API_KEY }} 
+  LD_API_KEY: ${{ contains(github.event.inputs.name, 'eaptest') && secrets.LD_EAP_API_KEY || secrets.LD_API_KEY }}
   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 
@@ -40,7 +40,7 @@ jobs:
       - name: Delete LD Project for User
         id: delete_ld_project
         env:
-          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          LD_API_KEY: ${{ env.LD_API_KEY }}
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
         run: |
           echo "Deleting LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"

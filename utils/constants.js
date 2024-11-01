@@ -15,6 +15,37 @@ import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizonta
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
+import releaseHoverImage from "@/public/homepage/release-card-hovering.svg";
+import releaseNoHoverImage from "@/public/homepage/release-card-not-hovering.svg";
+import monitorHoverImage from "@/public/homepage/card-demo-desktop-monitorfeatures-hover.svg";
+import monitorNoHoverImage from "@/public/homepage/card-demo-desktop-monitorfeatures.svg";
+import aiHoverImage from "@/public/homepage/card-demo-desktop-accelerateai-hover.svg";
+import aiNoHoverImage from "@/public/homepage/card-demo-desktop-accelerateai.svg";
+import experimentHoverImage from "@/public/homepage/card-demo-desktop-experimenteverywhere-hover.svg";
+import experimentNoHoverImage from "@/public/homepage/card-demo-desktop-experimenteverywhere.svg";
+import architectureIconCSNAV from "@/public/sidenav/architecture-icon.svg";
+import aiHoverCSNAV from "@/public/sidenav/card-demo-sidenav-accelerateai-hover.svg";
+import aiNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-accelerateai.svg";
+import architectureHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture-hover.svg";
+import architectureNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture.svg";
+import releaseHoverCSNAV from "@/public/sidenav/card-demo-sidenav-automatereleases-hover.svg";
+import releaseNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-automatereleases.svg";
+import codeexamplesHoverCSNAV from "@/public/sidenav/card-demo-sidenav-codeexamples-hover.svg";
+import codeexamplesNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-codeexamples.svg";
+import experimentHoverCSNAV from "@/public/sidenav/card-demo-sidenav-experimenteverywhere-hover.svg";
+import experimentNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-experimenteverywhere.svg";
+import monitorHoverCSNAV from "@/public/sidenav/card-demo-sidenav-monitorfeatures-hover.svg";
+import monitorNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-monitorfeatures.svg";
+import curlyBrackets from "@/public/sidenav/curly-brackets.svg";
+import aiIconHover from "@/public/sidenav/illo-ai-hover.svg";
+import aiIcon from "@/public/sidenav/illo-ai.svg";
+import experimentIconHover from "@/public/sidenav/illo-experiment-hover.svg";
+import experimentIcon from "@/public/sidenav/illo-experiment.svg";
+import releaseIconHover from "@/public/sidenav/illo-release-1.svg";
+import releaseIcon from "@/public/sidenav/illo-release.svg";
+import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
+import monitorIcon from "@/public/sidenav/illo-monitor.svg";
+import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -45,6 +76,37 @@ export const LAUNCH_CLUB_PLATINUM = "platinum";
 
 export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 
+export const HOMEPAGE_CARDS = {
+  release: {
+    name: "Automate Releases",
+    description: "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
+    desktopNoHoveringImage: releaseNoHoverImage,
+    desktopHoveringImage: releaseHoverImage,
+    link: "/bank"
+  },
+  monitor: {
+    name: "De-Risk releases",
+    description: "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
+    desktopNoHoveringImage: monitorNoHoverImage,
+    desktopHoveringImage: monitorHoverImage,
+    link: "/investment"
+  },
+  ai: {
+    name: "Safely Ship AI",
+    description: "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
+    desktopNoHoveringImage: aiNoHoverImage,
+    desktopHoveringImage: aiHoverImage,
+    link: "/airways"
+  },
+  experiment: {
+    name: "Optimize Experiences",
+    description: "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
+    desktopNoHoveringImage: experimentNoHoverImage,
+    desktopHoveringImage: experimentHoverImage,
+    link: "/marketplace"
+  }
+};
+
 export const COMPANY_LOGOS = {
   bank: {
     vertical: toggleBankVerticalLogo,
@@ -63,3 +125,62 @@ export const COMPANY_LOGOS = {
     horizontal: galaxyMarketplaceHorizontalLogo,
   },
 };
+
+export const CSNAV_ITEMS = {
+
+  arrow: arrowIconCSNAV,
+  codeexamples: {
+    hoverBackground: codeexamplesHoverCSNAV,
+    noHoverBackground: codeexamplesNoHoverCSNAV,
+    icon: curlyBrackets,
+    type: "resource",
+    link: "/examples",
+    title: "Code Examples"
+  },
+  architecture: {
+    icon: architectureIconCSNAV,
+    hoverBackground: architectureHoverCSNAV,
+    noHoverBackground: architectureNoHoverCSNAV,
+    type: "resource",
+    link: "/architecture",
+    title: "Architecture"
+  },
+  release: {
+    icon: releaseIcon,
+    hoverBackground: releaseHoverCSNAV,
+    noHoverBackground: releaseNoHoverCSNAV,
+    iconHover: releaseIconHover,
+    type: "usecase",
+    link: "/bank",
+    title: "Automate Releases"
+  },
+  monitor: {
+    icon: monitorIcon,
+    hoverBackground: monitorHoverCSNAV,
+    noHoverBackground: monitorNoHoverCSNAV,
+    iconHover: monitorIconHover,
+    type: "usecase",
+    link: "/investment",
+    title: "De-Risk releases"
+  },
+  ai: {
+    icon: aiIcon,
+    hoverBackground: aiHoverCSNAV,
+    noHoverBackground: aiNoHoverCSNAV,
+    iconHover: aiIconHover,
+    type: "usecase",
+    link: "/airways",
+    title: "Safely Ship AI"
+  },
+  experiment: {
+    icon: experimentIcon,
+    hoverBackground: experimentHoverCSNAV,
+    noHoverBackground: experimentNoHoverCSNAV,
+    iconHover: experimentIconHover,
+    type: "usecase",
+    link: "/marketplace",
+    title: "Optimize Experiences"
+  }
+  
+
+}

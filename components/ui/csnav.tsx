@@ -11,11 +11,8 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
-import experiment from "@/public/sidenav/experiment-navigate.svg";
-import ai from "@/public/sidenav/ai-navigate.svg";
-import remediate from "@/public/sidenav/remediate-navigate.svg";
-import release from "@/public/sidenav/release-navigate.svg";
 import Link from "next/link";
+import { CSNAV_ITEMS } from "@/utils/constants";
 
 export function CSNav() {
   const router = useRouter();
@@ -40,6 +37,10 @@ export function CSNav() {
     router.push("/marketplace");
   }
 
+  function gotToHome() {
+    router.push("/");
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -48,91 +49,72 @@ export function CSNav() {
       <SheetContent className="overflow-y-scroll w-full" side="left">
         <SheetHeader className="">
           <SheetTitle className="font-sohne text-2xl">
-            <img src="ldLogo_black.svg" className="w-64" />
+            <img src="ldLogo_black.svg" onClick={goHome} className="w-56 cursor-pointer" />
           </SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid items-center gap-4">
-          <div className="my-2">
-              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Core Service Demos</h3>
-              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
-            </div>
-            <Button onClick={goHome} variant={"secondary"} className="w-full rounded-2xl">
-              Go Home
-            </Button>
-
-            <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-            >
-              <div onClick={goRelease}>
-                <CSCard
-                  className="bg-gradient-bank cursor-pointer"
-                  cardTitle="Automate Releases"
-                  cardSubtitle="Let developers move faster and more confidently with feature management."
-                  icon={release}
-                />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <div onClick={goRemediate}>
-                <CSCard
-                  className="bg-gradient-investment cursor-pointer"
-                  cardTitle="Monitor Features"
-                  cardSubtitle="Uncover and remediate software errors before they become customer issues."
-                  icon={remediate}
-                />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              <div onClick={goTargeting}>
-                <CSCard
-                  className="bg-gradient-targeting cursor-pointer"
-                  cardTitle="Accelerate AI"
-                  cardSubtitle="Modernize AI solutions with control, visibility, and speed"
-                  icon={ai}
-                />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-            >
-              <div onClick={goExp}>
-                <CSCard
-                  className="bg-gradient-experimentation cursor-pointer"
-                  cardTitle="Experiment Everywhere"
-                  cardSubtitle="Continuously measure and improve the business value of digital products."
-                  icon={experiment}
-                />
-              </div>
-            </motion.div>
             <div className="my-2">
-              <h3 className="text-ldlightgray font-sohnelight tracking-widest">Explore More</h3>
-              <hr className="border border-1 border-ldlightgray/30 w-full mt-4" />
+              <h3 className="text-ldlightgray font-sohnelight text-sm tracking-widest">CORE SERVICES DEMO</h3>
+            </div>
+            {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
+              if (item.type === "usecase") {
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ x: -100, opacity: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                    className="cursor-pointer"
+                  >
+                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                      <CSCard
+                        className="cursor-pointer"
+                        cardTitle={item.title}
+                        icon={item.icon}
+                        iconHover={item.iconHover}
+                        hoverBackground={item.hoverBackground}
+                        noHoverBackground={item.noHoverBackground}
+                      />
+                    </div>
+                  </motion.div>
+                );
+              }
+              return null;
+            })}
+
+            <div className="my-2">
+              <h3 className="text-ldlightgray font-sohnelight tracking-widest text-sm">EXPLORE MORE</h3>
             </div>
 
-            <Link href='/examples' className="text-2xl text-navblue hover:underline">
-              Code Examples
-            </Link>
+            {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
+              if (item.type === "resource") {
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ x: -100, opacity: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                    className="cursor-pointer"
+                  >
+                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                      <CSCard
+                        className="cursor-pointer"
+                        cardTitle={item.title}
+                        icon={item.icon}
+                        iconHover={item.icon}
+                        hoverBackground={item.hoverBackground}
+                        noHoverBackground={item.noHoverBackground}
+                      />
+                    </div>
+                  </motion.div>
+                );
+              }
+              return null;
+            })}
 
-            <Link  href='/architecture' className="text-2xl text-navblue hover:underline" >
-              Architecture
-            </Link>
           </div>
         </div>
         <SheetFooter>

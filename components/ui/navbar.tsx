@@ -45,16 +45,25 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const homePageLocation = useRouter()?.pathname === "/";
 
     return (
-      <nav className="w-full bg-navbardarkgrey z-40 font-audimat transition-all duration-150 py-6">
+      <nav className="w-full bg-ldblack z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
           <div className="items-center flex gap-x-6 text-white">
             <CSNav />
           </div>
-          <div className="ml-2 sm:ml-8 flex items-center">
-            <img
-              src={navElementsVariant[variant]?.logoImg.src || "ld-logo.svg"}
-              className="pr-2 h-10 cursor-pointer"
-            />
+          <div className="ml-2 sm:ml-8 flex">
+            {navElementsVariant[variant]?.logoImg?.src ? (
+              <img
+                src={navElementsVariant[variant].logoImg.src}
+                alt={`${variant} logo`}
+                className="h-10 pr-2"
+              />
+            ) : (
+                <img
+                  src="ld-logo.svg"
+                  alt="Default logo"
+                  className="h-10 pr-2"
+                />
+            )}
           </div>
 
           {homePageLocation ? null : <>
@@ -116,11 +125,10 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           <button
                             href={navLink?.href}
                             className={`hidden sm:block bg-transparent pb-[3rem] items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-pointer
-                  ${
-                    index === 0
-                      ? `text-white hover:text-white focus:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
-                      : `text-navbargrey focus:text-navbarlightgrey hover:text-white hover:bg-${navElementsVariant[variant]?.navLinkColor}`
-                  }`}
+                  ${index === 0
+                                ? `text-white hover:text-white focus:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
+                                : `text-navbargrey focus:text-navbarlightgrey hover:text-white hover:bg-${navElementsVariant[variant]?.navLinkColor}`
+                              }`}
                             key={index}
                           >
                             {navLink?.text}
