@@ -95,9 +95,7 @@ export default function Home() {
                 />
               </motion.div>
             </div>
-            <div className="absolute bottom-0 font-sohne text-lg font-semibold opacity-80 p-4 text-center text-white w-3/5 bg-opacity-50">
-              Bugs and software issues are inevitable. But the disruptions and problems they cause don’t have to be. Take the risk out of every software release.
-            </div>
+           
           </header>
 
 
@@ -107,7 +105,7 @@ export default function Home() {
                 key={index}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
+                transition={{ duration: 0.5 }}
                 className="relative rounded-3xl w-1/4 h-96  overflow-hidden transition-transform duration-300 hover:-translate-y-16"
               >
                 <Image

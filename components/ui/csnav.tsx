@@ -65,7 +65,7 @@ export function CSNav() {
                     initial={{ x: -100, opacity: 0 }}
                     whileHover={{ scale: 1.05 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.5 }}
+                    transition={{ delay: 0.05, duration: 0.2 }}
                     className="cursor-pointer"
                   >
                     <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
@@ -96,7 +96,7 @@ export function CSNav() {
                     initial={{ x: -100, opacity: 0 }}
                     whileHover={{ scale: 1.05 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.5 }}
+                    transition={{ delay: 0.05, duration: 0.2 }}
                     className="cursor-pointer"
                   >
                     <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
