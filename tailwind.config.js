@@ -43,6 +43,7 @@ module.exports = {
         "gradient-experimentation-grey":"linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
         "market-header": "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
         "gradient-airways": "linear-gradient(224.68deg, #405BFF -5.3%, #3DD6F5 112.86%)",
+        "gradient-airways-darker-blue": "linear-gradient(178.76deg, #405BFF 1.06%, #7084FF 123.42%)",
         "gradient-airways-grey": "linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
         "gradient-airways-red": "linear-gradient(223.42deg, #FF386B -1.29%, #A34FDE 110.16%)",
         "gradient-investment": "linear-gradient(223.42deg, #FF386B -1.29%, #A34FDE 110.16%)",

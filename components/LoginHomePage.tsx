@@ -18,7 +18,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment";
-  name: string;
+  name?: string;
 }
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {

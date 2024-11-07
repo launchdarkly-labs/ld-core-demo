@@ -13,7 +13,7 @@ import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vert
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
 import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
-import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
+import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal_black.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import releaseHoverImage from "@/public/homepage/release-card-hovering.svg";
 import releaseNoHoverImage from "@/public/homepage/release-card-not-hovering.svg";

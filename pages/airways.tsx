@@ -89,7 +89,7 @@ export default function Airways() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-screen text-white flex-col font-audimat`}
+            className={`flex h-screen text-white flex-col font-audimat bg-[url('/airline/airwaysHomePageBG.svg')] bg-contain bg-center bg-no-repeat`}
           >
             <NavBar
               variant="airlines"

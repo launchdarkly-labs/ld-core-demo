@@ -143,7 +143,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               <SheetTrigger onClick={continueShopping} asChild>
                 <div className="text-center mt-4">
                   <Button
-                    className="text-md  bg-gradient-experimentation hover:brightness-[120%] text-transparent bg-clip-text rounded-none"
+                    className="text-md bg-gradient-experimentation hover:brightness-[120%] text-transparent bg-clip-text rounded-none"
                   >
                     Continue Shopping →
                   </Button>
