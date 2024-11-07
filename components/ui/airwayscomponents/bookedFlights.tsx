@@ -123,7 +123,7 @@ export default function BookedFlights() {
     exit: { x: 300, opacity: 0 },
   };
   const navLinkStyling =
-    "lg:pb-[3rem] lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
+    "lg:mt-[.1rem] lg:pb-[3rem] lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
 
   return (
     <Sheet>
@@ -131,7 +131,7 @@ export default function BookedFlights() {
         <button
           className={`${navLinkStyling} relative  lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
         >
-          <div className="block sm:hidden lg:block cursor-pointer sm:text-airlineinactive sm:focus:text-airlinetext  sm:hover:text-white ">
+          <div className="block sm:hidden lg:block cursor-pointer sm:text-navlink sm:focus:text-airlinetext  sm:hover:text-white ">
             <span className="">My Bookings</span>
             {bookedTrips.length > 0 && (
               <span className="absolute ml-2 lg:ml-0 lg:bottom-[35px] lg:right-[-25px] bg-gradient-airways rounded-full text-white text-xs w-5 h-5 pt-[.12rem] pr-[0.05rem] ">

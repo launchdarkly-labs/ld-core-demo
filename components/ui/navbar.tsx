@@ -47,7 +47,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     return (
       <nav className="w-full bg-transparent z-40 font-audimat transition-all duration-150 py-6">
         <div className="mx-4 xl:mx-auto max-w-7xl flex">
-          <div className="items-center flex gap-x-6 text-black" id="navbar-sidebar">
+          <div className="items-center flex gap-x-6 text-navlink" id="navbar-sidebar">
             <CSNav />
           </div>
 
@@ -126,11 +126,11 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                           return (
                             <button
                               href={navLink?.href}
-                              className={`hidden sm:block bg-transparent pb-[3rem] items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] cursor-pointer
+                              className={`cursor-default hidden sm:block bg-transparent pb-[3rem] items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] 
                   ${
                     index === 0
-                      ? `text-white hover:text-white focus:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
-                      : `text-navbargrey focus:text-navbarlightgrey hover:text-white hover:bg-${navElementsVariant[variant]?.navLinkColor}`
+                      ? `text-navlink hover:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
+                      : `text-navlink  hover:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor}`
                   }`}
                               key={index}
                             >
@@ -169,15 +169,13 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     </div>
                   )}
 
-                  <Button className="rounded-3xl w-[6rem] bg-gradient-airways">Join Now</Button>
-                  <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text ">
-                        Sign In
-                      </Button>
-                  <div class="rounded-3xl p-px bg-gradient-airways-darker-blue">
-                    <div class="bg-white  rounded-[calc(1.5rem-1px)]">
-                     
-                    </div>
-                  </div>
+                  <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
+                    Join Now
+                  </Button>
+                  <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
+                    Sign In
+                  </Button>
+
                   <Popover id="navbar-login">
                     <PopoverTrigger>
                       <Avatar>
