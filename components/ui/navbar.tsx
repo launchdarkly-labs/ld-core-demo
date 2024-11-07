@@ -18,12 +18,19 @@ import {
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
-import { QuickLoginDialog } from "../quicklogindialog";
+import { QuickLoginDialog } from "./quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
-
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import { LoginComponent } from "./logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
+import NavWrapper from "./NavComponent/NavWrapper";
+import CSNavWrapper from "./NavComponent/CSNavWrapper";
+import NavLogoWrapper from "./NavComponent/NavLogoWrapper";
+import NavLinkWrapper from "./NavComponent/NavLinkWrapper";
+import NavLinkButton from "./NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "./NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "./NavComponent/NavbarLogin";
 
 interface NavBarProps {
   cart?: InventoryItem[];
@@ -45,243 +52,132 @@ const NavBar = React.forwardRef<any, NavBarProps>(
     const homePageLocation = useRouter()?.pathname === "/";
 
     return (
-      <nav className="w-full bg-transparent z-40 font-audimat transition-all duration-150 py-6">
-        <div className="mx-4 xl:mx-auto max-w-7xl flex">
-          <div className="items-center flex gap-x-6 text-navlink" id="navbar-sidebar">
-            <CSNav />
-          </div>
+      <NavWrapper>
+        <CSNavWrapper>
+          <CSNav />
+        </CSNavWrapper>
 
-          <div className="ml-2 sm:ml-8 flex" id="navbar-logo">
-            {navElementsVariant[variant]?.logoImg?.src ? (
-              <img
-                src={navElementsVariant[variant].logoImg.src}
-                alt={`${variant} logo`}
-                className="h-10 pr-2"
-              />
-            ) : (
-              <img src="ld-logo.svg" alt="Default logo" className="h-10 pr-2" />
-            )}
-          </div>
+        <NavLogoWrapper>
+          {NAV_ELEMENTS_VARIANT[variant]?.logoImg?.src ? (
+            <img
+              src={NAV_ELEMENTS_VARIANT[variant].logoImg.src}
+              alt={`${variant} logo`}
+              className="h-10 pr-2"
+            />
+          ) : (
+            <img src="ld-logo.svg" alt="Default logo" className="h-10 pr-2" />
+          )}
+        </NavLogoWrapper>
 
-          {homePageLocation ? null : (
-            <>
-              <DropdownMenu id="nav-link-dropdown-mobile">
-                <DropdownMenuTrigger asChild>
-                  <button className="ml-2 cursor-pointer block lg:hidden text-black mr-4">
-                    <PanelTopOpen size={24} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuContent>
-                    <>
-                      {isLoggedIn ? (
-                        <>
-                          {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
-                            return (
-                              <DropdownMenuItem href={navLink?.href} key={index}>
-                                {navLink?.text}
-                              </DropdownMenuItem>
-                            );
-                          })}
-
-                          {userObject.personaEnrolledInLaunchClub &&
-                            variant?.includes("airlines") && (
-                              <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
-                                <LaunchClubStatus />
-                              </div>
-                            )}
-
-                          {variant?.includes("airlines") && (
-                            <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                              <BookedFlights />
-                            </div>
-                          )}
-                        </>
-                      ) : null}
-
-                      <div className="flex justify-between">
-                        <DropdownMenuItem>
-                          <Search className="" />
-                        </DropdownMenuItem>
-
-                        <div className="cursor-pointer">
-                          <QRCodeImage />
-                        </div>
-                      </div>
-                    </>
-                  </DropdownMenuContent>
-                </DropdownMenuPortal>
-              </DropdownMenu>
-              {/* left side navbar template */}
-
-              {(isLoggedIn && !variant?.includes("market")) || variant?.includes("market") ? (
-                <div
-                  className="hidden lg:block relative ml-8 w-[55%] mt-2"
-                  id="navbar-left-side-wrapper"
-                >
-                  <div className="flex sm:gap-x-2 lg:gap-x-8 h-full absolute ">
-                    {
+        {homePageLocation ? null : (
+          <>
+            <DropdownMenu id="nav-link-dropdown-mobile">
+              <DropdownMenuTrigger asChild>
+                <button className="ml-2 cursor-pointer block lg:hidden text-black mr-4">
+                  <PanelTopOpen size={24} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuContent>
+                  <>
+                    {isLoggedIn ? (
                       <>
-                        {navElementsVariant[variant]?.navLinks.map((navLink, index) => {
+                        {NAV_ELEMENTS_VARIANT[variant]?.navLinks.map((navLink, index) => {
                           return (
-                            <button
-                              href={navLink?.href}
-                              className={`cursor-default hidden sm:block bg-transparent pb-[3rem] items-start text-base font-sohnelight font-medium transition-colors bg-no-repeat bg-bottom bg-[length:100%_3px] 
-                  ${
-                    index === 0
-                      ? `text-navlink hover:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor} bg-${navElementsVariant[variant]?.navLinkColor} outline-none`
-                      : `text-navlink  hover:text-navbarlightgrey hover:bg-${navElementsVariant[variant]?.navLinkColor}`
-                  }`}
-                              key={index}
-                            >
+                            <DropdownMenuItem href={navLink?.href} key={index}>
                               {navLink?.text}
-                            </button>
+                            </DropdownMenuItem>
                           );
                         })}
 
+                        {userObject.personaEnrolledInLaunchClub &&
+                          variant?.includes("airlines") && (
+                            <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
+                              <LaunchClubStatus />
+                            </div>
+                          )}
+
                         {variant?.includes("airlines") && (
-                          <div className="hidden lg:flex">
+                          <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
                             <BookedFlights />
                           </div>
                         )}
                       </>
-                    }
-                  </div>
-                </div>
-              ) : null}
+                    ) : null}
 
-              {!isLoggedIn && !variant?.includes("market") ? null : (
-                <div
-                  className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
-                  id="navbar-right-side-wrapper"
-                >
-                  {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
+                    <div className="flex justify-between">
+                      <DropdownMenuItem>
+                        <Search className="" />
+                      </DropdownMenuItem>
 
-                  {variant?.includes("airlines") && (
-                    <div className="hidden sm:block ">
-                      {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
+                      <div className="cursor-pointer">
+                        <QRCodeImage />
+                      </div>
                     </div>
-                  )}
+                  </>
+                </DropdownMenuContent>
+              </DropdownMenuPortal>
+            </DropdownMenu>
 
-                  {variant?.includes("airlines") && (
-                    <div className="hidden sm:block lg:hidden">
-                      <BookedFlights />
-                    </div>
-                  )}
-
-                  <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
-                    Join Now
-                  </Button>
-                  <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
-                    Sign In
-                  </Button>
-
-                  <Popover id="navbar-login">
-                    <PopoverTrigger>
-                      <Avatar>
-                        <AvatarImage
-                          src={userObject?.personaimage || "ToggleAvatar.png"}
-                          className=""
+            {/* left side navbar template */}
+            {(isLoggedIn && !variant?.includes("market")) || variant?.includes("market") ? (
+              <NavLinkWrapper>
+                {
+                  <>
+                    {NAV_ELEMENTS_VARIANT[variant]?.navLinks.map((navLink, index) => {
+                      return (
+                        <NavLinkButton
+                          text={navLink?.text}
+                          href={navLink?.href}
+                          navLinkColor={NAV_ELEMENTS_VARIANT[variant]?.navLinkColor}
+                          index={index}
+                          key={index}
                         />
-                      </Avatar>
-                    </PopoverTrigger>
+                      );
+                    })}
 
-                    <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
-                      {isLoggedIn ? (
-                        <>
-                          <div className="mx-auto flex place-content-center w-full">
-                            <img
-                              src={userObject?.personaimage || "ToggleAvatar.png"}
-                              className="rounded-full h-48"
-                            />
-                          </div>
-                          <div className="mx-auto text-center items-center align-center flex text-black font-sohnelight pt-4  text-xl align-center">
-                            <p className="pt-4">
-                              {navElementsVariant[variant]?.popoverMessage}
-                              {userObject?.personaname || userObject.personaname}, as a<br></br>
-                              <span className="text-2xl">
-                                {variant?.includes("airlines")
-                                  ? capitalizeFirstLetter(userObject?.personalaunchclubstatus)
-                                  : capitalizeFirstLetter(userObject?.personatier)}{" "}
-                                Tier
-                              </span>
-                              !
-                            </p>
-                          </div>
-                          <div className="mx-auto text-center">
-                            <Button
-                              onClick={logoutUser}
-                              className={`bg-loginComponentBlue text-white text-xl font-audimat items-center my-2 w-full rounded-none`}
-                            >
-                              Logout
-                            </Button>
-                            <QuickLoginDialog variant={variant} />
-                          </div>
-                        </>
-                      ) : (
-                        <LoginComponent variant={variant} />
-                      )}
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </nav>
+                    {variant?.includes("airlines") && (
+                      <div className="hidden lg:flex">
+                        <BookedFlights />
+                      </div>
+                    )}
+                  </>
+                }
+              </NavLinkWrapper>
+            ) : null}
+
+            {!isLoggedIn && !variant?.includes("market") ? null : (
+              <NavbarRightSideWrapper>
+                {variant?.includes("market") && <StoreCart cart={cart} setCart={setCart} />}
+
+                {variant?.includes("airlines") && (
+                  <div className="hidden sm:block ">
+                    {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
+                  </div>
+                )}
+
+                {variant?.includes("airlines") && (
+                  <div className="hidden sm:block lg:hidden">
+                    <BookedFlights />
+                  </div>
+                )}
+
+                <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
+                  Join Now
+                </Button>
+                <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
+                  Sign In
+                </Button>
+
+                <NavbarLogin variant={variant}/>
+
+              </NavbarRightSideWrapper>
+            )}
+          </>
+        )}
+      </NavWrapper>
     );
   }
 );
-
-const navElementsVariant: any = {
-  bank: {
-    navLinks: [
-      {
-        text: "Summary",
-        href: "/bank",
-      },
-      { text: "Transfers", href: "/bank" },
-      { text: "Deposits", href: "/bank" },
-      { text: "External Accounts", href: "/bank" },
-      { text: "Statements", href: "/bank" },
-    ],
-    navLinkColor: "gradient-bank",
-    popoverMessage: "Thank you for banking with us, ",
-    logoImg: COMPANY_LOGOS["bank"].horizontal,
-  },
-  investment: {
-    navLinks: [
-      { text: "Accounts & Trade", href: "/investment" },
-      { text: "Planning", href: "/investment" },
-      { text: "News", href: "/investment" },
-      { text: "Investment Products", href: "/investment" },
-      { text: "About Us", href: "/investment" },
-    ],
-    navLinkColor: "gradient-investment",
-    popoverMessage: "Thank you for investing with us, ",
-    logoImg: COMPANY_LOGOS["investment"].horizontal,
-  },
-  market: {
-    navLinks: [
-      { text: "All", href: "/marketplace" },
-      { text: "Account", href: "/marketplace" },
-      { text: "Buy Again", href: "/marketplace" },
-      { text: "Today's Deals", href: "/marketplace" },
-      { text: "Sale", href: "/marketplace" },
-    ],
-    navLinkColor: "gradient-experimentation",
-    popoverMessage: "Thank you for shopping with us, ",
-    logoImg: COMPANY_LOGOS["market"].horizontal,
-  },
-  airlines: {
-    navLinks: [
-      { text: "Book", href: "/airways" },
-      { text: "Check-In", href: "/airways" },
-    ],
-    navLinkColor: "gradient-airline-buttons",
-    popoverMessage: "Thank you for flying with us, ",
-    logoImg: COMPANY_LOGOS["airlines"].horizontal,
-  },
-};
 
 export default NavBar;

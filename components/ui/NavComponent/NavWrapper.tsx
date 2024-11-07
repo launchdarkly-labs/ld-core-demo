@@ -1,0 +1,11 @@
+import React, { ReactElement } from "react";
+
+const NavWrapper = ({ children }: { children: ReactElement }) => {
+  return (
+    <nav className="w-full bg-transparent z-40 font-audimat transition-all duration-150 py-6">
+      <div className="mx-4 xl:mx-auto max-w-7xl flex">{children}</div>
+    </nav>
+  );
+};
+
+export default NavWrapper;

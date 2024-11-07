@@ -3,7 +3,7 @@ import * as React from "react";
 import { useRef, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { QuickLoginDialog } from "../quicklogindialog";
+import { QuickLoginDialog } from "./quicklogindialog";
 import { useState } from "react";
 import {
   Dialog,
