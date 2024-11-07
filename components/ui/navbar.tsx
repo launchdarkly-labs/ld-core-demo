@@ -31,19 +31,7 @@ import NavLinkWrapper from "./NavComponent/NavLinkWrapper";
 import NavLinkButton from "./NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "./NavComponent/NavbarRightSideWrapper";
 import NavbarLogin from "./NavComponent/NavbarLogin";
-
-interface NavBarProps {
-  cart?: InventoryItem[];
-  setCart?: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
-  variant: string;
-}
-interface Persona {
-  id: string | number;
-  personaname: string;
-  personatier: string;
-  personaimage: string;
-  personaemail: string;
-}
+import { NavBarProps, Persona } from "@/utils/typesInterface";
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
@@ -169,8 +157,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   Sign In
                 </Button>
 
-                <NavbarLogin variant={variant}/>
-
+                <NavbarLogin variant={variant} />
               </NavbarRightSideWrapper>
             )}
           </>

@@ -21,6 +21,12 @@ import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/
 import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogoWrapper from "@/components/ui/NavComponent/NavLogoWrapper";
+import NavLinkWrapper from "@/components/ui/NavComponent/NavLinkWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
 
 
 export default function Airways() {

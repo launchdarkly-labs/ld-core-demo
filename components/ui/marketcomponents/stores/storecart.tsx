@@ -23,12 +23,8 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from '@/public/market.png'
 import SuggestedItems from "../suggestedItems";
+import { InventoryItem } from "@/utils/typesInterface";
 
-interface InventoryItem {
-  id: string | number;
-  item: string;
-  cost: number;
-}
 // @ts-nocheck
 export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const router = useRouter();

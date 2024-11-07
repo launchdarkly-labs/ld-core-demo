@@ -24,12 +24,7 @@ import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import { LoginComponent } from "@/components/ui/logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
-import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
-import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
-import NavLogoWrapper from "@/components/ui/NavComponent/NavLogoWrapper";
-import NavLinkWrapper from "@/components/ui/NavComponent/NavLinkWrapper";
-import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
-import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+
 
 const NavbarLogin = ({ variant }) => {
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);

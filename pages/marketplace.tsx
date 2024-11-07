@@ -12,10 +12,11 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import LoginContext from "@/utils/contexts/login";
+import { InventoryItem } from "@/utils/typesInterface";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<InventoryItem[]>([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
@@ -29,12 +30,6 @@ export default function Marketplace() {
 
   {/* Step 1 code block */}
 
-  interface InventoryItem {
-    id: string | number;
-    item: string;
-    cost: number;
-    vendor: string;
-  }
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
 
@@ -52,7 +47,7 @@ export default function Marketplace() {
 
 
   useEffect(() => {
-    const data = [
+    const data:InventoryItem[] = [
       {
       "id": 1,
       "vendor": "vrgalaxy",
