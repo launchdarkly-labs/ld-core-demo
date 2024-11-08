@@ -97,190 +97,186 @@ export default function Airways() {
     <>
       <Toaster />
       <AnimatePresence mode="wait">
-        {!isLoggedIn ? (
-          <LoginHomePage variant="airlines" />
-        ) : (
-          <motion.main
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className={`flex h-screen text-white flex-col font-audimat bg-[url('/airline/airwaysHomePageBG.svg')] bg-contain bg-center bg-no-repeat`}
-          >
-            <NavWrapper>
-              <>
-                <CSNavWrapper>
-                  <CSNav />
-                </CSNavWrapper>
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className={`flex h-screen text-white flex-col font-audimat bg-[url('/airline/airwaysHomePageBG.svg')] bg-contain bg-center bg-no-repeat`}
+        >
+          <NavWrapper>
+            <>
+              <CSNavWrapper>
+                <CSNav />
+              </CSNavWrapper>
 
-                <NavLogo
-                  srcHref={NAV_ELEMENTS_VARIANT["airlines"]?.logoImg?.src}
-                  altText={"airlines"}
-                />
+              <NavLogo
+                srcHref={NAV_ELEMENTS_VARIANT["airlines"]?.logoImg?.src}
+                altText={"airlines"}
+              />
 
-                {isLoggedIn && (
-                  <NavbarDropdownMenu>
+              {isLoggedIn && (
+                <NavbarDropdownMenu>
+                  <>
+                    {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                      return (
+                        <DropdownMenuItem href={navLink?.href} key={index}>
+                          {navLink?.text}
+                        </DropdownMenuItem>
+                      );
+                    })}
+
+                    {userObject.personaEnrolledInLaunchClub && (
+                      <NavbarDropdownMenuItemWrapper>
+                        <LaunchClubStatus />
+                      </NavbarDropdownMenuItemWrapper>
+                    )}
+
+                    <NavbarDropdownMenuItemWrapper>
+                      <BookedFlights />
+                    </NavbarDropdownMenuItemWrapper>
+                  </>
+                </NavbarDropdownMenu>
+              )}
+
+              {/* left side navbar template */}
+              {isLoggedIn && (
+                <NavbarLeftSideWrapper>
+                  <>
+                    {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                      return (
+                        <NavLinkButton
+                          text={navLink?.text}
+                          href={navLink?.href}
+                          navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
+                          index={index}
+                          key={index}
+                        />
+                      );
+                    })}
+
+                    <NavbarLeftSideLinkWrapper>
+                      <BookedFlights />
+                    </NavbarLeftSideLinkWrapper>
+                  </>
+                </NavbarLeftSideWrapper>
+              )}
+
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <>
+                  {isLoggedIn && (
                     <>
-                      {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
-                        return (
-                          <DropdownMenuItem href={navLink?.href} key={index}>
-                            {navLink?.text}
-                          </DropdownMenuItem>
-                        );
-                      })}
-
                       {userObject.personaEnrolledInLaunchClub && (
-                        <NavbarDropdownMenuItemWrapper>
+                        <NavbarRightSideLinkWrapper>
                           <LaunchClubStatus />
-                        </NavbarDropdownMenuItemWrapper>
+                        </NavbarRightSideLinkWrapper>
                       )}
 
-                      <NavbarDropdownMenuItemWrapper>
+                      <NavbarRightSideLinkWrapper customCSS="lg:hidden">
                         <BookedFlights />
-                      </NavbarDropdownMenuItemWrapper>
+                      </NavbarRightSideLinkWrapper>
                     </>
-                  </NavbarDropdownMenu>
-                )}
+                  )}
 
-                {/* left side navbar template */}
-                {isLoggedIn && (
-                  <NavbarLeftSideWrapper>
+                  {!isLoggedIn && (
                     <>
-                      {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
-                        return (
-                          <NavLinkButton
-                            text={navLink?.text}
-                            href={navLink?.href}
-                            navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
-                            index={index}
-                            key={index}
-                          />
-                        );
-                      })}
+                      <NavbarSignUpButton backgroundColor="bg-gradient-airways" />
 
-                      <NavbarLeftSideLinkWrapper>
-                        <BookedFlights />
-                      </NavbarLeftSideLinkWrapper>
+                      <NavbarSignInButton
+                        borderColor="border-airlinedarkblue"
+                        backgroundColor="bg-gradient-airways-darker-blue"
+                      />
                     </>
-                  </NavbarLeftSideWrapper>
-                )}
+                  )}
 
-                {/* right side navbar template */}
-                <NavbarRightSideWrapper>
-                  <>
-                    {isLoggedIn && (
-                      <>
-                        {userObject.personaEnrolledInLaunchClub && (
-                          <NavbarRightSideLinkWrapper>
-                            <LaunchClubStatus />
-                          </NavbarRightSideLinkWrapper>
-                        )}
+                  <NavbarLogin variant={"airlines"} />
+                </>
+              </NavbarRightSideWrapper>
+            </>
+          </NavWrapper>
 
-                        <NavbarRightSideLinkWrapper customCSS="lg:hidden">
-                          <BookedFlights />
-                        </NavbarRightSideLinkWrapper>
-                      </>
-                    )}
+          <header className={` py-10 lg:py-20 bg-gradient-airways`}>
+            <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
+              <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
+                <AirlineDestination
+                  setActiveField={setActiveField}
+                  setShowSearch={setShowSearch}
+                  fromLocation={fromLocation}
+                  setFromCity={setFromCity}
+                  toLocation={toLocation}
+                  showSearch={showSearch}
+                  activeField={activeField}
+                  setToLocation={setToLocation}
+                  setToCity={setToCity}
+                  setFromLocation={setFromLocation}
+                />
 
-                    {!isLoggedIn && (
-                      <>
-                        <NavbarSignUpButton backgroundColor="bg-gradient-airways" />
+                <div className="grid h-10 border-b-2 border-white/40 text-4xl lg:text-3xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
+                  <Select defaultValue="Round Trip">
+                    <SelectTrigger className="text-white">
+                      <SelectValue placeholder="Select trip type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Round Trip">Round Trip</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                        <NavbarSignInButton
-                          borderColor="border-airlinedarkblue"
-                          backgroundColor="bg-gradient-airways-darker-blue"
-                        />
-                      </>
-                    )}
-
-                    <NavbarLogin variant={"airlines"} />
-                  </>
-                </NavbarRightSideWrapper>
-              </>
-            </NavWrapper>
-
-            <header className={` py-10 lg:py-20 bg-gradient-airways`}>
-              <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
-                <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
-                  <AirlineDestination
-                    setActiveField={setActiveField}
-                    setShowSearch={setShowSearch}
-                    fromLocation={fromLocation}
-                    setFromCity={setFromCity}
-                    toLocation={toLocation}
-                    showSearch={showSearch}
-                    activeField={activeField}
-                    setToLocation={setToLocation}
-                    setToCity={setToCity}
-                    setFromLocation={setFromLocation}
-                  />
-
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl lg:text-3xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
-                    <Select defaultValue="Round Trip">
-                      <SelectTrigger className="text-white">
-                        <SelectValue placeholder="Select trip type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Round Trip">Round Trip</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div
-                    className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
-                      showSearch ? "" : ""
-                    }`}
-                  >
-                    <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-                  </div>
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
-                    <Select defaultValue="1 Passenger">
-                      <SelectTrigger className="text-white">
-                        <SelectValue placeholder="Select Passengers" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1 Passenger">1 Passenger</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex mx-auto">
-                    {fromLocation !== "From" && toLocation !== "To" && (
-                      <motion.button
-                        whileTap={{ scale: 0.5 }}
-                        onClick={() => bookTrip()}
-                        className={` items-center `}
-                      >
-                        <img src="ArrowButton.png" width={60} className="" />
-                      </motion.button>
-                    )}
-                  </div>
+                <div
+                  className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
+                    showSearch ? "" : ""
+                  }`}
+                >
+                  <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
+                </div>
+                <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
+                  <Select defaultValue="1 Passenger">
+                    <SelectTrigger className="text-white">
+                      <SelectValue placeholder="Select Passengers" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1 Passenger">1 Passenger</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex mx-auto">
+                  {fromLocation !== "From" && toLocation !== "To" && (
+                    <motion.button
+                      whileTap={{ scale: 0.5 }}
+                      onClick={() => bookTrip()}
+                      className={` items-center `}
+                    >
+                      <img src="ArrowButton.png" width={60} className="" />
+                    </motion.button>
+                  )}
                 </div>
               </div>
-            </header>
+            </div>
+          </header>
 
-            <AirlineHero showSearch={showSearch} />
+          <AirlineHero showSearch={showSearch} />
 
-            <HomePageCardWrapper>
-              <HomePageInfoCard
-                imgSrc={airplaneImg.src}
-                headerTitleText="Wheels up"
-                subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
-                key={1}
-              />
-              <HomePageInfoCard
-                imgSrc={hotAirBalloonImg.src}
-                headerTitleText="Ready for an adventure"
-                subtitleText="The world is open for travel. Plan your next adventure."
-                key={2}
-              />
-              <HomePageInfoCard
-                imgSrc={airplaneDining.src}
-                headerTitleText="Experience luxury"
-                subtitleText="Choose Launch Platinum. Select on longer flights."
-                key={3}
-              />
-            </HomePageCardWrapper>
-          </motion.main>
-        )}
+          <HomePageCardWrapper>
+            <HomePageInfoCard
+              imgSrc={airplaneImg.src}
+              headerTitleText="Wheels up"
+              subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
+              key={1}
+            />
+            <HomePageInfoCard
+              imgSrc={hotAirBalloonImg.src}
+              headerTitleText="Ready for an adventure"
+              subtitleText="The world is open for travel. Plan your next adventure."
+              key={2}
+            />
+            <HomePageInfoCard
+              imgSrc={airplaneDining.src}
+              headerTitleText="Experience luxury"
+              subtitleText="Choose Launch Platinum. Select on longer flights."
+              key={3}
+            />
+          </HomePageCardWrapper>
+        </motion.main>
       </AnimatePresence>
 
       <Chatbot />
