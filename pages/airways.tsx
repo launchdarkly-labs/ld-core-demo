@@ -12,7 +12,7 @@ import LoginHomePage from "@/components/LoginHomePage";
 import { Toaster } from "@/components/ui/toaster";
 import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
 import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
-
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
@@ -23,14 +23,22 @@ import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
-import NavLogoWrapper from "@/components/ui/NavComponent/NavLogoWrapper";
-import NavLinkWrapper from "@/components/ui/NavComponent/NavLinkWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavLinksWrapper from "@/components/ui/NavComponent/NavLinksWrapper";
 import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
-
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import LaunchClubStatus from "@/components/ui/airwayscomponents/launchClubStatus";
+import { Button } from "@/components/ui/button";
+import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
 
 export default function Airways() {
-
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
   const [fromCity, setFromCity] = useState("");
@@ -44,8 +52,7 @@ export default function Airways() {
     to: addDays(new Date(), 7),
   });
 
-  const { isLoggedIn } = useContext(LoginContext);
-
+  const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
 
   function bookTrip() {
     const startDate = `${
@@ -97,9 +104,91 @@ export default function Airways() {
             transition={{ duration: 0.5 }}
             className={`flex h-screen text-white flex-col font-audimat bg-[url('/airline/airwaysHomePageBG.svg')] bg-contain bg-center bg-no-repeat`}
           >
-            <NavBar
-              variant="airlines"
-            />
+            <NavWrapper>
+              <>
+                <CSNavWrapper>
+                  <CSNav />
+                </CSNavWrapper>
+
+                <NavLogo
+                  srcHref={NAV_ELEMENTS_VARIANT["airlines"]?.logoImg?.src}
+                  altText={"airlines"}
+                />
+
+                {isLoggedIn ? (
+                  <NavbarDropdownMenu>
+                    <>
+                      {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                        return (
+                          <DropdownMenuItem href={navLink?.href} key={index}>
+                            {navLink?.text}
+                          </DropdownMenuItem>
+                        );
+                      })}
+
+                      {userObject.personaEnrolledInLaunchClub && (
+                        <NavbarDropdownMenuItemWrapper>
+                          <LaunchClubStatus />
+                        </NavbarDropdownMenuItemWrapper>
+                      )}
+
+                      <NavbarDropdownMenuItemWrapper>
+                        <BookedFlights />
+                      </NavbarDropdownMenuItemWrapper>
+                    </>
+                  </NavbarDropdownMenu>
+                ) : null}
+
+                {/* left side navbar template */}
+                {isLoggedIn && (
+                  <NavLinksWrapper>
+                    {
+                      <>
+                        {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                          return (
+                            <NavLinkButton
+                              text={navLink?.text}
+                              href={navLink?.href}
+                              navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
+                              index={index}
+                              key={index}
+                            />
+                          );
+                        })}
+
+                        <NavbarLeftSideLinkWrapper>
+                          <BookedFlights />
+                        </NavbarLeftSideLinkWrapper>
+                      </>
+                    }
+                  </NavLinksWrapper>
+                )}
+
+                {/* right side navbar template */}
+                {isLoggedIn && (
+                  <NavbarRightSideWrapper>
+                    <>
+                      <NavbarRightSideLinkWrapper>
+                        {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
+                      </NavbarRightSideLinkWrapper>
+
+                      <NavbarRightSideLinkWrapper>
+                        <BookedFlights />
+                      </NavbarRightSideLinkWrapper>
+
+                      <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
+                        Join Now
+                      </Button>
+                      <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
+                        Sign In
+                      </Button>
+
+                      <NavbarLogin variant={"airlines"} />
+                    </>
+                  </NavbarRightSideWrapper>
+                )}
+              </>
+            </NavWrapper>
 
             <header className={` py-10 lg:py-20 bg-gradient-airways`}>
               <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
@@ -186,7 +275,7 @@ export default function Airways() {
         )}
       </AnimatePresence>
 
-      <Chatbot/>
+      <Chatbot />
     </>
   );
 }

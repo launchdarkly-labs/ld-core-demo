@@ -2,9 +2,7 @@
 import * as React from "react";
 import { useContext } from "react";
 import { CSNav } from "./csnav";
-import { Search, PanelTopOpen } from "lucide-react";
-import { Avatar, AvatarImage } from "./avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { PanelTopOpen } from "lucide-react";
 import LoginContext from "@/utils/contexts/login";
 import { Button } from "./button";
 import BookedFlights from "./airwayscomponents/bookedFlights";
@@ -17,21 +15,17 @@ import {
   DropdownMenuPortal,
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
-import QRCodeImage from "./QRCodeImage";
-import { QuickLoginDialog } from "./quicklogindialog";
-import { capitalizeFirstLetter } from "@/utils/utils";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
-import { LoginComponent } from "./logincomponent";
-import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
 import NavWrapper from "./NavComponent/NavWrapper";
 import CSNavWrapper from "./NavComponent/CSNavWrapper";
-import NavLogoWrapper from "./NavComponent/NavLogoWrapper";
-import NavLinkWrapper from "./NavComponent/NavLinkWrapper";
+import NavLogo from "./NavComponent/NavLogo";
+import NavLinksWrapper from "./NavComponent/NavLinksWrapper";
 import NavLinkButton from "./NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "./NavComponent/NavbarRightSideWrapper";
 import NavbarLogin from "./NavComponent/NavbarLogin";
-import { NavBarProps, Persona } from "@/utils/typesInterface";
+import { NavBarProps } from "@/utils/typesInterface";
+import NavbarDropdownMenu from "./NavComponent/NavbarDropdownMenu";
 
 const NavBar = React.forwardRef<any, NavBarProps>(
   ({ cart, setCart, className, variant, ...props }, ref) => {
@@ -45,71 +39,42 @@ const NavBar = React.forwardRef<any, NavBarProps>(
           <CSNav />
         </CSNavWrapper>
 
-        <NavLogoWrapper>
-          {NAV_ELEMENTS_VARIANT[variant]?.logoImg?.src ? (
-            <img
-              src={NAV_ELEMENTS_VARIANT[variant].logoImg.src}
-              alt={`${variant} logo`}
-              className="h-10 pr-2"
-            />
-          ) : (
-            <img src="ld-logo.svg" alt="Default logo" className="h-10 pr-2" />
-          )}
-        </NavLogoWrapper>
+        <NavLogo
+                  srcHref={NAV_ELEMENTS_VARIANT[variant]?.logoImg?.src}
+                  altText={variant}
+                />
 
         {homePageLocation ? null : (
           <>
-            <DropdownMenu id="nav-link-dropdown-mobile">
-              <DropdownMenuTrigger asChild>
-                <button className="ml-2 cursor-pointer block lg:hidden text-black mr-4">
-                  <PanelTopOpen size={24} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuContent>
-                  <>
-                    {isLoggedIn ? (
-                      <>
-                        {NAV_ELEMENTS_VARIANT[variant]?.navLinks.map((navLink, index) => {
-                          return (
-                            <DropdownMenuItem href={navLink?.href} key={index}>
-                              {navLink?.text}
-                            </DropdownMenuItem>
-                          );
-                        })}
-
-                        {userObject.personaEnrolledInLaunchClub &&
-                          variant?.includes("airlines") && (
-                            <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
-                              <LaunchClubStatus />
-                            </div>
-                          )}
-
-                        {variant?.includes("airlines") && (
-                          <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
-                            <BookedFlights />
-                          </div>
-                        )}
-                      </>
-                    ) : null}
-
-                    <div className="flex justify-between">
-                      <DropdownMenuItem>
-                        <Search className="" />
+            {isLoggedIn ? (
+              <NavbarDropdownMenu>
+                <>
+                  {NAV_ELEMENTS_VARIANT[variant]?.navLinks.map((navLink, index) => {
+                    return (
+                      <DropdownMenuItem href={navLink?.href} key={index}>
+                        {navLink?.text}
                       </DropdownMenuItem>
+                    );
+                  })}
 
-                      <div className="cursor-pointer">
-                        <QRCodeImage />
-                      </div>
+                  {userObject.personaEnrolledInLaunchClub && variant?.includes("airlines") && (
+                    <div className="block sm:hidden text-black hover:bg-gray-100 p-[.30rem] rounded-sm">
+                      <LaunchClubStatus />
                     </div>
-                  </>
-                </DropdownMenuContent>
-              </DropdownMenuPortal>
-            </DropdownMenu>
+                  )}
+
+                  {variant?.includes("airlines") && (
+                    <div className="cursor-pointer block sm:hidden hover:bg-gray-100 p-[.30rem] rounded-sm">
+                      <BookedFlights />
+                    </div>
+                  )}
+                </>
+              </NavbarDropdownMenu>
+            ) : null}
 
             {/* left side navbar template */}
             {(isLoggedIn && !variant?.includes("market")) || variant?.includes("market") ? (
-              <NavLinkWrapper>
+              <NavLinksWrapper>
                 {
                   <>
                     {NAV_ELEMENTS_VARIANT[variant]?.navLinks.map((navLink, index) => {
@@ -131,7 +96,7 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                     )}
                   </>
                 }
-              </NavLinkWrapper>
+              </NavLinksWrapper>
             ) : null}
 
             {!isLoggedIn && !variant?.includes("market") ? null : (
