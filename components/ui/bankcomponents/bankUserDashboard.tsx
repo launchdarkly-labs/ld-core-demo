@@ -5,16 +5,13 @@ import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { oldCheckingData } from "@/lib/oldCheckingData";
 import LoginContext from "@/utils/contexts/login";
-import LoginHomePage from "@/components/LoginHomePage";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
-import BankHomePage from "@/components/ui/bankcomponents/bankHomePage";
-import BankBackgroundImage from "@/public/banking/bank-background.svg";
 import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
-import bankDashboardBackgroundRightCard from "@/public/banking/backgrounds/bank-dashboard-background-rightcard.svg";
+import { motion } from "framer-motion";
 
 export default function BankUserDashboard() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -88,15 +85,24 @@ export default function BankUserDashboard() {
                                 </p>
 
                                 <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white shadow-xl rounded-2xl cursor-pointer">
+                                    <motion.div
+                                        className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer"
+                                        whileHover={{ scale: 1.1 }}
+                                    >
                                         <CheckingAccount wealthManagement={wealthManagement} />
-                                    </div>
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer">
+                                    </motion.div>
+                                    <motion.div
+                                        className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer"
+                                        whileHover={{ scale: 1.2 }}
+                                    >
                                         <CreditAccount />
-                                    </div>
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer">
+                                    </motion.div>
+                                    <motion.div
+                                        className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer"
+                                        whileHover={{ scale: 1.2 }}
+                                    >
                                         <MorgtgageAccount />
-                                    </div>
+                                    </motion.div>
                                 </div>
                             </div>
                         </div>

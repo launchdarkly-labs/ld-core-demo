@@ -32,12 +32,13 @@ export default function FederatedAccountModule() {
         </p>
         <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 justify-start">
           {!federatedAccountOne ? (
-            <div
-              onClick={() => setFederatedAccountOne(true)}
-              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
-            >
-              <PlusSquare size={96} className="text-gray-400 mx-auto" />
-            </div>
+             <motion.div
+             onClick={() => setFederatedAccountOne(true)}
+             className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
+             whileHover={{ scale: 1.2 }}
+           >
+             <PlusSquare size={96} className="text-gray-400 mx-auto" />
+           </motion.div>
           ) : (
             <motion.div
               initial="hidden"
@@ -51,12 +52,13 @@ export default function FederatedAccountModule() {
           )}
 
           {!federatedAccountTwo ? (
-            <div
+             <motion.div
               onClick={() => setFederatedAccountTwo(true)}
-              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
+              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
+              whileHover={{ scale: 1.2 }}
             >
               <PlusSquare size={96} className="text-gray-400 mx-auto" />
-            </div>
+            </motion.div>
           ) : (
             <motion.div
               initial="hidden"
