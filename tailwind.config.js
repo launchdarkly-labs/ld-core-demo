@@ -32,7 +32,8 @@ module.exports = {
       },
       backgroundImage: (theme) => ({
         "gradient-radial": "radial-gradient(ellipse at center, #00c0e7 0%, #a34fde 100%)",
-        "gradient-bank": "linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)", 
+        "gradient-bank": "linear-gradient(220.23deg, #405BFF -8.97%, #405BFF 94.12%)", 
+        "nav-gradient": "linear-gradient(220.23deg, #405BFF -8.97%, #405BFF 94.12%)",
         "button-bank-gradient": "linear-gradient(195deg, #3DD6F5, #a34fde)",
         "gradient-targeting": "linear-gradient(222deg,#18bdde 1.56%,#405bff 96.51%)",
         "gradient-experimentation":
@@ -51,6 +52,14 @@ module.exports = {
         card3: "linear-gradient(187.72deg, #FF386B -57.74%, #EBFF38 222.08%)",
         "gradient-airline-buttons": "linear-gradient(224.68deg, #405BFF -5.3%, #3DD6F5 112.86%)",
         bankblue: "linear-gradient(225deg, #3DD6F5 -5.3%, #405BFF 112.86%)",
+        // V2 UPDATED LIST BELOW
+        'bank-homepage-background': "url('/banking/backgrounds/bank-homepage-background.svg')",
+        'bank-homepage-hero-background': "url('/banking/backgrounds/bank-homepage-hero-background.svg')",
+        'bank-gradient-text-color': 'linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)',
+        'bank-gradient-blue-background': 'linear-gradient(178.76deg, #405BFF 1.06%, #7084FF 123.42%)',
+        'bank-gradient-white-background': 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%)'
+
+
       }),
       fontFamily: {
         sohne: ["Sohne"],
@@ -131,6 +140,8 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        //V2 Update List Below
+        bankhomepagebuttonblue: '#405BFF',
       },
 
       borderRadius: {

@@ -14,37 +14,17 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CSNAV_ITEMS } from "@/utils/constants";
 
-export function CSNav() {
+export function CSNav(color: string) {
   const router = useRouter();
 
   function goHome() {
     router.push("/");
   }
 
-  function goRelease() {
-    router.push("/bank");
-  }
-
-  function goRemediate() {
-    router.push("/investment");
-  }
-
-  function goTargeting() {
-    router.push("/airways");
-  }
-
-  function goExp() {
-    router.push("/marketplace");
-  }
-
-  function gotToHome() {
-    router.push("/");
-  }
-
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Menu size={24} className="text-white cursor-pointer" />
+        <Menu size={24} className={`text-${color} cursor-pointer`} />
       </SheetTrigger>
       <SheetContent className="overflow-y-scroll w-full" side="left">
         <SheetHeader className="">

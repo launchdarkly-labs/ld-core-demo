@@ -76,7 +76,7 @@ const QRCodeImage = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <QrCode className="w-full h-full" />
+          <QrCode className="w-full h-full text-black" />
         </DialogTrigger>
         <DialogContent>
           <div className="flex flex-col gap-y-4 items-center">

@@ -11,7 +11,7 @@ import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
 import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
-import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
+import toggleBankHorizontalLogo from "@/public/banking/bankLogo.svg";
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
@@ -46,6 +46,8 @@ import releaseIcon from "@/public/sidenav/illo-release.svg";
 import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
 import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
+
+
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
