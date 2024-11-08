@@ -11,6 +11,10 @@ import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
 import BankHomePage from "@/components/ui/bankcomponents/bankHomePage";
 import BankBackgroundImage from "@/public/banking/bank-background.svg";
+import Image from "next/image";
+import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
+import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
+import bankDashboardBackgroundRightCard from "@/public/banking/backgrounds/bank-dashboard-background-rightcard.svg";
 
 export default function BankUserDashboard() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -57,29 +61,40 @@ export default function BankUserDashboard() {
         <div className="mb-8">
 
 
-            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl ">
+            <Image
+                src={bankDashboardBackgroundRight}
+                className="fixed right-0 top-0 bottom-0 min-h-screen  z-0"
+                alt="Bank Home Page Background"
+            />
+            <Image
+                src={bankDashboardBackgroundLeft}
+                className="fixed left-0 bottom-0 m-h-screen z-0"
+                alt="Bank Home Page Background"
+            />
+
+            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative z-10 ">
                 <section
                     className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
                         }`}
                 >
                     <section
                         className={`w-full h-full ${federatedAccounts ? "xl:w-[60%]" : "xl:w-full"
-                            } font-sohne shadow-xl rounded-xl border border-zinc-200`}
+                            } font-sohne  `}
                     >
-                        <div className="p-6 bg-bglightblue w-full rounded-xl">
+                        <div className="p-6 w-full rounded-xl">
                             <div className="justify-center xl:justify-start">
-                                <p className="text-black font-sohne mb-6 text-[24px]">
+                                <p className="text-blue-600 font-sohne mb-6 text-[24px]">
                                     Account Summary
                                 </p>
 
                                 <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
+                                    <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white shadow-xl rounded-2xl cursor-pointer">
                                         <CheckingAccount wealthManagement={wealthManagement} />
                                     </div>
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white">
+                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer">
                                         <CreditAccount />
                                     </div>
-                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white">
+                                    <div className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer">
                                         <MorgtgageAccount />
                                     </div>
                                 </div>
@@ -91,7 +106,11 @@ export default function BankUserDashboard() {
                         <FederatedAccountModule /> : null}
                 </section>
 
+                <p className="text-blue-600 font-sohne mb-6 ml-6 text-[24px]">
+                    Wealth Management
+                </p>
                 <section className="flex flex-col xl:flex-row w-full gap-y-8 sm:gap-x-8 mb-10 h-full">
+
                     <div
                         className={`w-full  ${wealthManagement ? "xl:w-[60%]" : "sm:w-full"
                             }`}
@@ -115,13 +134,15 @@ export default function BankUserDashboard() {
 
                 <div className="flex flex-col lg:flex-row w-full h-full gap-y-8 sm:gap-x-8 justify-between">
                     <div className="w-full lg:w-1/2">
-                        <img src="CC.png" className="shadow-xl" />
+                        <img src="CC.png" className="shadow-xl rounded-xl" />
                     </div>
-                    <div className="w-full lg:w-1/2 flex justify-end">
-                        <img src="Loan.png" className="shadow-xl" />
+                    <div className="w-full lg:w-1/2 flex justify-end ">
+                        <img src="Loan.png" className="shadow-xl rounded-xl" />
                     </div>
                 </div>
             </main>
+
+
         </div>
     );
 }

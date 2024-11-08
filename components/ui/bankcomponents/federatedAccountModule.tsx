@@ -19,13 +19,13 @@ export default function FederatedAccountModule() {
   };
 
   return (
-    <section className="h-full w-full xl:w-[40%]  font-sohne rounded-xl  shadow-xl">
+    <section className="h-full w-full xl:w-[40%]  font-sohne rounded-xl  ">
       <motion.div
         initial="hidden"
         animate="visible"
         exit="exit"
         variants={accountvariant}
-        className=" p-6 gap-4 w-full bg-zinc-100 h-full rounded-xl border bg-zinc-200"
+        className=" p-6 gap-4 w-full h-full rounded-xl borde"
       >
         <p className="text-black font-sohne mb-6 text-[24px]">
           Federated account access
@@ -44,7 +44,7 @@ export default function FederatedAccountModule() {
               animate="visible"
               variants={variants}
               transition={{ duration: 0.5 }}
-              className="p-4 h-[300px] w-full sm:w-1/2 bg-white "
+              className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCheckingAccount />
             </motion.div>
@@ -63,7 +63,7 @@ export default function FederatedAccountModule() {
               animate="visible"
               variants={variants}
               transition={{ duration: 0.5 }}
-              className="p-4 h-[300px] w-full sm:w-1/2 bg-white"
+              className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCreditAccount />
             </motion.div>

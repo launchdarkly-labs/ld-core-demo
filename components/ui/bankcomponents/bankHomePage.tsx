@@ -89,8 +89,8 @@ export default function BankHomePage() {
 
             <div className="container mx-auto my-10 p-4">
                 <div className="flex flex-col sm:flex-row mb-4 gap-x-8 p-4 mx-10 sm:mx-20 sm:pb-8 gap-y-10 sm:gap-y-0">
-                    <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-xl">
-                        <div className="flex flex-col gap-y-6 mt-4">
+                    <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
+                        <div className="flex flex-col gap-y-6 mt-4 ">
                             <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
                                 MORTGAGE
                             </div>
@@ -102,7 +102,7 @@ export default function BankHomePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-xl flex">
+                    <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
                         <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
                             <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
                                 RETIREMENT
@@ -121,7 +121,7 @@ export default function BankHomePage() {
                 </div>
                 {/* Second Row */}
                 <div className="p-4 mx-10 sm:mx-20 sm:pb-20">
-                    <div className="flex flex-col sm:flex-row shadow-xl p-y-10 sm:p-y-0">
+                    <div className="flex flex-col sm:flex-row shadow-2xl p-y-10 sm:p-y-0 rounded-2xl sm:rounded-2xl ">
                         <div className="w-full sm:w-1/3 bg-white p-4 rounded-2xl sm:rounded-r-none">
                             <div className="flex flex-col gap-y-4 mt-4">
                                 <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
@@ -135,7 +135,7 @@ export default function BankHomePage() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full hidden sm:block mt-4 sm:mt-0 sm:w-2/3 bg-purple-500 p-4 rounded-r-2xl relative">
+                        <div className="w-full hidden sm:block mt-4 sm:mt-0 sm:w-2/3 bg-purple-500 p-4 rounded-2xl relative">
                             <Image src={specialOfferBackground} className='rounded-r-2xl' layout="fill" objectFit="cover" alt="Retirement Background" />
                         </div>
                     </div>
