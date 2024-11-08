@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
-import NavBar from "@/components/ui/navbar";
 import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
@@ -24,7 +23,7 @@ import Chatbot from "@/components/chatbot/ChatBot";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
-import NavLinksWrapper from "@/components/ui/NavComponent/NavLinksWrapper";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
 import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
 import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
@@ -32,11 +31,14 @@ import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu"
 import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import LaunchClubStatus from "@/components/ui/airwayscomponents/launchClubStatus";
-import { Button } from "@/components/ui/button";
 import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
 import { CSNav } from "@/components/ui/csnav";
 import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
 import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+  NavbarSignInButton,
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
 
 export default function Airways() {
   const { toast } = useToast();
@@ -53,7 +55,7 @@ export default function Airways() {
   });
 
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
-
+  console.log("userObject", userObject);
   function bookTrip() {
     const startDate = `${
       date!.from.getMonth() + 1
@@ -115,7 +117,7 @@ export default function Airways() {
                   altText={"airlines"}
                 />
 
-                {isLoggedIn ? (
+                {isLoggedIn && (
                   <NavbarDropdownMenu>
                     <>
                       {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
@@ -137,56 +139,62 @@ export default function Airways() {
                       </NavbarDropdownMenuItemWrapper>
                     </>
                   </NavbarDropdownMenu>
-                ) : null}
+                )}
 
                 {/* left side navbar template */}
                 {isLoggedIn && (
-                  <NavLinksWrapper>
-                    {
-                      <>
-                        {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
-                          return (
-                            <NavLinkButton
-                              text={navLink?.text}
-                              href={navLink?.href}
-                              navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
-                              index={index}
-                              key={index}
-                            />
-                          );
-                        })}
+                  <NavbarLeftSideWrapper>
+                    <>
+                      {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                        return (
+                          <NavLinkButton
+                            text={navLink?.text}
+                            href={navLink?.href}
+                            navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
+                            index={index}
+                            key={index}
+                          />
+                        );
+                      })}
 
-                        <NavbarLeftSideLinkWrapper>
-                          <BookedFlights />
-                        </NavbarLeftSideLinkWrapper>
-                      </>
-                    }
-                  </NavLinksWrapper>
+                      <NavbarLeftSideLinkWrapper>
+                        <BookedFlights />
+                      </NavbarLeftSideLinkWrapper>
+                    </>
+                  </NavbarLeftSideWrapper>
                 )}
 
                 {/* right side navbar template */}
-                {isLoggedIn && (
-                  <NavbarRightSideWrapper>
-                    <>
-                      <NavbarRightSideLinkWrapper>
-                        {userObject.personaEnrolledInLaunchClub && <LaunchClubStatus />}
-                      </NavbarRightSideLinkWrapper>
+                <NavbarRightSideWrapper>
+                  <>
+                    {isLoggedIn && (
+                      <>
+                        {userObject.personaEnrolledInLaunchClub && (
+                          <NavbarRightSideLinkWrapper>
+                            <LaunchClubStatus />
+                          </NavbarRightSideLinkWrapper>
+                        )}
 
-                      <NavbarRightSideLinkWrapper>
-                        <BookedFlights />
-                      </NavbarRightSideLinkWrapper>
+                        <NavbarRightSideLinkWrapper customCSS="lg:hidden">
+                          <BookedFlights />
+                        </NavbarRightSideLinkWrapper>
+                      </>
+                    )}
 
-                      <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
-                        Join Now
-                      </Button>
-                      <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
-                        Sign In
-                      </Button>
+                    {!isLoggedIn && (
+                      <>
+                        <NavbarSignUpButton backgroundColor="bg-gradient-airways" />
 
-                      <NavbarLogin variant={"airlines"} />
-                    </>
-                  </NavbarRightSideWrapper>
-                )}
+                        <NavbarSignInButton
+                          borderColor="border-airlinedarkblue"
+                          backgroundColor="bg-gradient-airways-darker-blue"
+                        />
+                      </>
+                    )}
+
+                    <NavbarLogin variant={"airlines"} />
+                  </>
+                </NavbarRightSideWrapper>
               </>
             </NavWrapper>
 

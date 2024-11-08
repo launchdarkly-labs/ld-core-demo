@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
 import LoginContext from "@/utils/contexts/login";
-import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane } from "lucide-react";
+import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane, TicketIcon } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import {
   Popover,
@@ -141,7 +141,7 @@ export default function BookedFlights() {
           </div>
 
           <div className="hidden sm:block lg:hidden relative">
-            <Plane className="text-block sm:text-white" />
+            <TicketIcon className="text-block sm:text-airlinedarkblue" />
 
             {bookedTrips.length > 0 && (
               <span className="absolute top-[-13px] right-[-20px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">

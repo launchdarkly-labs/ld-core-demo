@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import NavWrapper from "./NavComponent/NavWrapper";
 import CSNavWrapper from "./NavComponent/CSNavWrapper";
 import NavLogo from "./NavComponent/NavLogo";
-import NavLinksWrapper from "./NavComponent/NavLinksWrapper";
+import NavLinksWrapper from "./NavComponent/NavbarLeftSideWrapper";
 import NavLinkButton from "./NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "./NavComponent/NavbarRightSideWrapper";
 import NavbarLogin from "./NavComponent/NavbarLogin";
