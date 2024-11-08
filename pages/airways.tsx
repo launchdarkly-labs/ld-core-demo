@@ -40,6 +40,8 @@ import {
   NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 
+import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
+
 export default function Airways() {
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("From");
@@ -55,7 +57,7 @@ export default function Airways() {
   });
 
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
-  console.log("userObject", userObject);
+
   function bookTrip() {
     const startDate = `${
       date!.from.getMonth() + 1
@@ -101,7 +103,7 @@ export default function Airways() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className={`flex h-screen text-white flex-col font-audimat bg-[url('/airline/airwaysHomePageBG.svg')] bg-contain bg-center bg-no-repeat`}
+          className={`  min-w-screen min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat`}
         >
           <NavWrapper>
             <>
@@ -194,8 +196,8 @@ export default function Airways() {
               </NavbarRightSideWrapper>
             </>
           </NavWrapper>
-
-          <header className={` py-10 lg:py-20 bg-gradient-airways`}>
+          <AirwaysHero />
+          {/* <header className={` py-10 lg:py-20 bg-gradient-airways`}>
             <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
               <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
                 <AirlineDestination
@@ -254,9 +256,9 @@ export default function Airways() {
             </div>
           </header>
 
-          <AirlineHero showSearch={showSearch} />
+          <AirlineHero showSearch={showSearch} /> */}
 
-          <HomePageCardWrapper>
+          {/* <HomePageCardWrapper>
             <HomePageInfoCard
               imgSrc={airplaneImg.src}
               headerTitleText="Wheels up"
@@ -275,7 +277,7 @@ export default function Airways() {
               subtitleText="Choose Launch Platinum. Select on longer flights."
               key={3}
             />
-          </HomePageCardWrapper>
+          </HomePageCardWrapper> */}
         </motion.main>
       </AnimatePresence>
 
