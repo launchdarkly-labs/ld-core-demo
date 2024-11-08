@@ -84,28 +84,40 @@ export const HOMEPAGE_CARDS = {
     description: "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
     desktopNoHoveringImage: releaseNoHoverImage,
     desktopHoveringImage: releaseHoverImage,
-    link: "/bank"
+    link: "/bank",
+    mobileHoverBackground: releaseHoverCSNAV,
+    mobileNoHoverBackground: releaseNoHoverCSNAV,
+    icon: releaseIcon,
   },
   monitor: {
     name: "De-Risk releases",
     description: "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
-    link: "/investment"
+    link: "/investment",
+    mobileHoverBackground: monitorHoverCSNAV,
+    mobileNoHoverBackground: monitorNoHoverCSNAV,
+    icon: monitorIcon,
   },
   ai: {
     name: "Safely Ship AI",
     description: "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
-    link: "/airways"
+    link: "/airways",
+    mobileHoverBackground: aiHoverCSNAV,
+    mobileNoHoverBackground: aiNoHoverCSNAV,
+    icon: aiIcon,
   },
   experiment: {
     name: "Optimize Experiences",
     description: "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
     desktopNoHoveringImage: experimentNoHoverImage,
     desktopHoveringImage: experimentHoverImage,
-    link: "/marketplace"
+    link: "/marketplace",
+    mobileHoverBackground: experimentHoverCSNAV,
+    mobileNoHoverBackground: experimentNoHoverCSNAV,
+    icon: experimentIcon,
   }
 };
 
