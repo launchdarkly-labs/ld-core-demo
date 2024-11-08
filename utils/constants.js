@@ -47,8 +47,6 @@ import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
 import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
 
-
-
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
   AMZN: amazonLogo,
@@ -81,7 +79,8 @@ export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 export const HOMEPAGE_CARDS = {
   release: {
     name: "Automate Releases",
-    description: "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
+    description:
+      "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
     desktopNoHoveringImage: releaseNoHoverImage,
     desktopHoveringImage: releaseHoverImage,
     link: "/bank",
@@ -91,7 +90,8 @@ export const HOMEPAGE_CARDS = {
   },
   monitor: {
     name: "De-Risk releases",
-    description: "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
+    description:
+      "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
     link: "/investment",
@@ -101,7 +101,8 @@ export const HOMEPAGE_CARDS = {
   },
   ai: {
     name: "Safely Ship AI",
-    description: "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
+    description:
+      "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
     link: "/airways",
@@ -111,14 +112,15 @@ export const HOMEPAGE_CARDS = {
   },
   experiment: {
     name: "Optimize Experiences",
-    description: "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
+    description:
+      "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
     desktopNoHoveringImage: experimentNoHoverImage,
     desktopHoveringImage: experimentHoverImage,
     link: "/marketplace",
     mobileHoverBackground: experimentHoverCSNAV,
     mobileNoHoverBackground: experimentNoHoverCSNAV,
     icon: experimentIcon,
-  }
+  },
 };
 
 export const COMPANY_LOGOS = {
@@ -141,7 +143,6 @@ export const COMPANY_LOGOS = {
 };
 
 export const CSNAV_ITEMS = {
-
   arrow: arrowIconCSNAV,
   codeexamples: {
     hoverBackground: codeexamplesHoverCSNAV,
@@ -149,7 +150,7 @@ export const CSNAV_ITEMS = {
     icon: curlyBrackets,
     type: "resource",
     link: "/examples",
-    title: "Code Examples"
+    title: "Code Examples",
   },
   architecture: {
     icon: architectureIconCSNAV,
@@ -157,7 +158,7 @@ export const CSNAV_ITEMS = {
     noHoverBackground: architectureNoHoverCSNAV,
     type: "resource",
     link: "/architecture",
-    title: "Architecture"
+    title: "Architecture",
   },
   release: {
     icon: releaseIcon,
@@ -166,7 +167,7 @@ export const CSNAV_ITEMS = {
     iconHover: releaseIconHover,
     type: "usecase",
     link: "/bank",
-    title: "Automate Releases"
+    title: "Automate Releases",
   },
   monitor: {
     icon: monitorIcon,
@@ -175,7 +176,7 @@ export const CSNAV_ITEMS = {
     iconHover: monitorIconHover,
     type: "usecase",
     link: "/investment",
-    title: "De-Risk releases"
+    title: "De-Risk releases",
   },
   ai: {
     icon: aiIcon,
@@ -184,7 +185,7 @@ export const CSNAV_ITEMS = {
     iconHover: aiIconHover,
     type: "usecase",
     link: "/airways",
-    title: "Safely Ship AI"
+    title: "Safely Ship AI",
   },
   experiment: {
     icon: experimentIcon,
@@ -193,8 +194,6 @@ export const CSNAV_ITEMS = {
     iconHover: experimentIconHover,
     type: "usecase",
     link: "/marketplace",
-    title: "Optimize Experiences"
-  }
-  
-
-}
+    title: "Optimize Experiences",
+  },
+};

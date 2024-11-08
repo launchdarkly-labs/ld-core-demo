@@ -115,86 +115,82 @@ export default function Home() {
               </motion.div>
             </div>
           </header>
+          {isLargeScreen ? (
+            <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 bottom-20 fixed left-0 right-0 ">
+              {Object.entries(HOMEPAGE_CARDS).map(([key, card], index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative rounded-3xl w-full lg:w-1/4 h-32 lg:h-96 overflow-hidden transition-transform duration-300 hover:-translate-y-16"
+                >
+                  <Image
+                    src={card.desktopNoHoveringImage}
+                    alt={`${card.name} Card`}
+                    layout="fill"
+                    objectFit="cover"
+                    className="transition-opacity duration-300 hover:opacity-0 rounded-3xl"
+                  />
+                  <div className="absolute inset-0 mx-10 mt-10 justify-center transition-opacity duration-300 hover:opacity-0 z-10">
+                    <span className="text-white lg:text-3xl sm:text-sm font-sohne">{card.name}</span>
+                  </div>
 
-          <div className="overflow-hidden">
-            {isLargeScreen ? (
-              <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 bottom-20 fixed left-0 right-0 overflow-auto max-h-[calc(100vh-24rem)]">
-                {/* Large screen content */}
-                {Object.entries(HOMEPAGE_CARDS).map(([key, card], index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="relative rounded-3xl w-full lg:w-1/4 h-32 lg:h-96 overflow-hidden transition-transform duration-300 hover:-translate-y-16"
-                  >
+                  <div onClick={() => goToVertical(card.link)} className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100">
                     <Image
-                      src={card.desktopNoHoveringImage}
-                      alt={`${card.name} Card`}
+                      src={card.desktopHoveringImage}
+                      alt={`${card.name} Card Hover`}
                       layout="fill"
                       objectFit="cover"
-                      className="transition-opacity duration-300 hover:opacity-0 rounded-3xl"
+                      className="rounded-3xl"
                     />
-                    <div className="absolute inset-0 mx-10 mt-10 justify-center transition-opacity duration-300 hover:opacity-0 z-10">
-                      <span className="text-white lg:text-3xl sm:text-sm font-sohne">{card.name}</span>
+                    <div className="absolute inset-0 flex flex-col overflow-auto z-40">
+                      <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">{card.name}</span>
+                      <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">{card.description}</span>
+                      <span className="text-white text-2xl absolute bottom-10 right-10">&#8594;</span>
                     </div>
+                  </div>
+                </motion.div>
+              ))}
+            </section>
+          ) : (
 
-                    <div onClick={() => goToVertical(card.link)} className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100">
-                      <Image
-                        src={card.desktopHoveringImage}
-                        alt={`${card.name} Card Hover`}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-3xl"
-                      />
-                      <div className="absolute inset-0 flex flex-col overflow-auto z-40">
-                        <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">{card.name}</span>
-                        <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">{card.description}</span>
-                        <span className="text-white text-2xl absolute bottom-10 right-10">&#8594;</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </section>
-            ) : (
+            <div className="grid gap-4 py-4 mx-10">
+              <div className="grid items-center gap-4">
 
-              <div className="grid gap-4 py-4 mx-10">
-                <div className="grid items-center gap-4">
+                {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
+                  if (item.type === "usecase") {
+                    return (
+                      <motion.div
+                        key={key}
+                        initial={{ x: -100, opacity: 0 }}
+                        whileHover={{ scale: 1.05 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.05, duration: 0.2 }}
+                        className="cursor-pointer"
+                      >
+                        <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                          <CSCard
+                            className="cursor-pointer"
+                            cardTitle={item.title}
+                            icon={item.icon}
+                            iconHover={item.iconHover}
+                            hoverBackground={item.hoverBackground}
+                            noHoverBackground={item.noHoverBackground}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  }
+                  return null;
+                })}
 
-                  {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
-                    if (item.type === "usecase") {
-                      return (
-                        <motion.div
-                          key={key}
-                          initial={{ x: -100, opacity: 0 }}
-                          whileHover={{ scale: 1.05 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: 0.05, duration: 0.2 }}
-                          className="cursor-pointer"
-                        >
-                          <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
-                            <CSCard
-                              className="cursor-pointer"
-                              cardTitle={item.title}
-                              icon={item.icon}
-                              iconHover={item.iconHover}
-                              hoverBackground={item.hoverBackground}
-                              noHoverBackground={item.noHoverBackground}
-                            />
-                          </div>
-                        </motion.div>
-                      );
-                    }
-                    return null;
-                  })}
-
-                </div>
               </div>
-           
-            )}
-          </div>
+            </div>
+
+          )}
         </main>
-      </AnimatePresence>
+      </AnimatePresence >
     </>
   );
 }
