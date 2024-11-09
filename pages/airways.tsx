@@ -254,9 +254,9 @@ export default function Airways() {
                 </div>
               </div>
             </div>
-          </header>
+          </header> */}
 
-          <AirlineHero showSearch={showSearch} /> */}
+          {/* <AirlineHero showSearch={showSearch} /> */}
 
           {/* <HomePageCardWrapper>
             <HomePageInfoCard

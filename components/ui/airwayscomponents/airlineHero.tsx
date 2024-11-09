@@ -10,7 +10,7 @@ const AirlineHero = ({ showSearch }: { showSearch: any }) => {
 
   return (
     <section
-      className={`airline-hero-image text-white  ${
+      className={`airline-hero-image font-audimat text-white  ${
         showSearch ? "blur-lg" : ""
       }`}
     >
