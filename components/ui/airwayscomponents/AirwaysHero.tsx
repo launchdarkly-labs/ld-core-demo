@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import LoginContext from "@/utils/contexts/login";
 
 import { Sparkles, ChevronDown } from "lucide-react";
-import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
+import airlineLoginHeroBackground from "@/public/airline/airline-login-hero-background.jpeg";
 
 import { Button } from "../button";
 import DestinationPicker from "./DestinationPicker";
@@ -83,12 +83,12 @@ const AirwaysHero = () => {
           <img
             alt=""
             src={airlineLoginHeroBackground.src}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-cover object-center  translate-y-[20rem]  translate-x-[30rem] scale-[2]"
           />
         </div>
         {/* <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff] rounded-3xl"
+          className="absolute inset-0 bg-gradient-to-tl from-[#21212100] to-[#212121ff] rounded-3xl"
         /> */}
 
         <div
