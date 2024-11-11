@@ -243,7 +243,7 @@ export default function Chatbot() {
                   type="submit"
                   size="icon"
                   onClick={() => submitQuery()}
-                  className="bg-airlineblue"
+                  className="bg-airlinedarkblue"
                 >
                   <SendIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>

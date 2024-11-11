@@ -87,7 +87,7 @@ const AirwaysHero = () => {
   }
 
   return (
-    <section className=" flex justify-center mx-auto w-full h-[40rem] max-w-7xl rounded-3xl px-4">
+    <section className=" flex justify-center mx-auto w-full h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
       {/* Hero section */}
       <div className="relative bg-gray-900 w-full rounded-3xl">
         {/* Decorative image and overlay */}
@@ -115,7 +115,7 @@ const AirwaysHero = () => {
               Launch into the skies. In the air in milliseconds, reach your destination without
               risk, and ship your travel dreams faster than ever before
             </h2> */}
-            <Button className="bg-airlineblue rounded-3xl w-[15rem] py-6">
+            <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6">
               <span>
                 <Sparkles />{" "}
               </span>
@@ -160,22 +160,14 @@ const AirwaysHero = () => {
                   </Select>
                 </div>
 
-                <div
-                  className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
-                    showSearch ? "" : ""
-                  }`}
-                >
-                  <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-                </div>
-                <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
-                 
-                </div>
+                <FlightCalendar date={date} setDate={setDate} className="" />
+             
                 <div className="flex mx-auto">
                   {fromLocation !== "From" && toLocation !== "To" && (
                     <motion.button
                       whileTap={{ scale: 0.5 }}
                       onClick={() => bookTrip()}
-                      className={` items-center border-2 rounded-3xl py-2 px-4`}
+                      className={`text-sm items-center border-2 border-airlinedarkblue text-airlinedarkblue rounded-3xl py-2 px-4`}
                     >
                       <p>Book Your Trip</p>
                     </motion.button>

@@ -31,10 +31,10 @@ const AirlineDestination = ({
       initial={{ scale: 0.25, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className={``}
+      className={`w-full`}
     >
       <div
-        className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${
+        className={`flex items-center gap-x-6 justify-between relative ${
           showSearch ? "" : ""
         }`}
       >
@@ -45,11 +45,11 @@ const AirlineDestination = ({
               setShowSearch(true);
             }}
           >
-            <p className="font-audimat py-2 ">{fromLocation}</p>
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl">{fromLocation}</p>
           </button>
-          <p className="text-center text-xs font-audimat uppercase">Origin</p>
+          <p className="text-center text-xs f">Origin</p>
         </div>
-        <MoveHorizontalIcon className=" text-airlinegray grid col-start-2 mx-auto" />
+        <MoveHorizontalIcon className=" text-airlinegray " />
         
         <div className="relative text-center grid col-start-3">
           <button
@@ -59,9 +59,9 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="font-audimat py-2 ">{toLocation}</p>
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl">{toLocation}</p>
           </button>
-          <p className="text-center text-xs font-audimat uppercase">Destination</p>
+          <p className="text-center text-xs  ">Destination</p>
         </div>
       </div>
 
