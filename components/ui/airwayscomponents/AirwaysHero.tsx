@@ -83,7 +83,7 @@ const AirwaysHero = () => {
           <img
             alt=""
             src={airlineLoginHeroBackground.src}
-            className="h-full w-full object-cover object-center  translate-y-[20rem]  translate-x-[30rem] scale-[2]"
+            className="h-full w-full object-cover object-center  translate-y-[50%]  translate-x-[40%] scale-[2]"
           />
         </div>
         {/* <div
@@ -111,12 +111,12 @@ const AirwaysHero = () => {
             </h2> */}
 
             <DestinationPicker>
-            <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2">
-              <span>
-                <Sparkles />{" "}
-              </span>
-              Find your next trip with AI
-            </Button>
+              <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2">
+                <span>
+                  <Sparkles />{" "}
+                </span>
+                Find your next trip with AI
+              </Button>
             </DestinationPicker>
           </div>
 
