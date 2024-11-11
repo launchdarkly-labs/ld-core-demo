@@ -37,7 +37,7 @@ const LaunchClubStatus = () => {
                 <div className="my-2">
                   <Button
                     onClick={() => upgradeLaunchClubStatus()}
-                    className="flex text-xl font-sohnelight rounded-none w-full h-full bg-gradient-airways hover:bg-gradient-airways-grey hover:text-white"
+                    className="flex text-xl font-sohnelight rounded-full w-full h-full bg-gradient-airways hover:bg-gradient-airways-grey hover:text-white"
                   >
                     Unlock Platinum Status
                   </Button>

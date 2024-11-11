@@ -1,23 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { motion } from "framer-motion";
-import TripsContext from "@/utils/contexts/TripContext";
-import { useToast } from "@/components/ui/use-toast";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
-import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
-import LoginHomePage from "@/components/LoginHomePage";
 import { Toaster } from "@/components/ui/toaster";
-import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
-import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
-import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
-import { addDays } from "date-fns";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
@@ -39,12 +25,11 @@ import {
   NavbarSignInButton,
   NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
-
 import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
+import LaunchSignUp from "@/components/ui/airwayscomponents/launchSignup";
 
 export default function Airways() {
-
-  const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn, userObject } = useContext(LoginContext);
 
   return (
     <>
@@ -54,7 +39,7 @@ export default function Airways() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className={`  min-w-screen min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat`}
+          className={`  min-w-screen min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
         >
           <NavWrapper>
             <>
@@ -147,28 +132,43 @@ export default function Airways() {
               </NavbarRightSideWrapper>
             </>
           </NavWrapper>
+
           <AirwaysHero />
 
-          {/* <HomePageCardWrapper>
-            <HomePageInfoCard
-              imgSrc={airplaneImg.src}
-              headerTitleText="Wheels up"
-              subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
-              key={1}
-            />
-            <HomePageInfoCard
-              imgSrc={hotAirBalloonImg.src}
-              headerTitleText="Ready for an adventure"
-              subtitleText="The world is open for travel. Plan your next adventure."
-              key={2}
-            />
-            <HomePageInfoCard
-              imgSrc={airplaneDining.src}
-              headerTitleText="Experience luxury"
-              subtitleText="Choose Launch Platinum. Select on longer flights."
-              key={3}
-            />
-          </HomePageCardWrapper> */}
+          {isLoggedIn && !userObject.personaEnrolledInLaunchClub && (
+            <motion.section
+              initial={{ x: 300 }}
+              animate={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 50 }}
+              className=" bg-transparent flex items-center mx-auto w-full max-w-7xl rounded-3xl px-4 font-sohnelight"
+            >
+              <div
+                className="py-8 sm:py-[2rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
+        flex flex-col md:flex-row justify-center items-center w-full bg-white rounded-3xl "
+              >
+                <div
+                  className="flex-col md:flex md:flex-col
+      text-airlineblack w-full pr-0 md:pr-10 md:mb-0 gap-y-2 "
+                >
+                  <h2 className="text-airlinedarkblue text-3xl font-audimat">
+                    Closer to the sky and perks
+                  </h2>
+                  <p className="">
+                    Join LaunchClub for exclusive access to flights, rewards, and much more. See
+                    details within.
+                  </p>
+                </div>
+
+                <div className="">
+                  <LaunchSignUp>
+                    <NavbarSignUpButton
+                      className={`rounded-3xl w-[6rem] bg-gradient-airways animate-pulse hover:animate-none cursor-pointer`}
+                    />
+                  </LaunchSignUp>
+                </div>
+              </div>
+            </motion.section>
+          )}
         </motion.main>
       </AnimatePresence>
 

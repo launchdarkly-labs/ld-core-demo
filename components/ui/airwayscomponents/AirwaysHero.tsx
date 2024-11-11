@@ -1,27 +1,17 @@
 import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import LoginContext from "@/utils/contexts/login";
-import { LoginComponent } from "@/components/ui/logincomponent";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
-import Image from "next/image";
+
 import { Sparkles, ChevronDown } from "lucide-react";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
-import { useFlags } from "launchdarkly-react-client-sdk";
+
 import { Button } from "../button";
 import DestinationPicker from "./DestinationPicker";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
 
 import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
-import { AnimatePresence } from "framer-motion";
-import LoginHomePage from "@/components/LoginHomePage";
-import { Toaster } from "@/components/ui/toaster";
-import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
-import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
+
 import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import { addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
@@ -85,7 +75,7 @@ const AirwaysHero = () => {
   }
 
   return (
-    <section className=" flex justify-center items-center mx-auto w-full md:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
+    <section className=" flex justify-center items-center mx-auto w-full md:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight mb-10">
       {/* Hero section */}
       <div className="relative bg-gray-900 w-full rounded-3xl h-full flex">
         {/* Decorative image and overlay */}
@@ -131,7 +121,7 @@ const AirwaysHero = () => {
           </div>
 
           <div className="w-full  md:w-[25rem] z-10">
-            <section className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
+            <div className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
               <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
                 <AirlineDestination
                   setActiveField={setActiveField}
@@ -189,7 +179,7 @@ const AirwaysHero = () => {
                   )}
                 </div>
               </div>
-            </section>
+            </div>
           </div>
         </div>
       </div>

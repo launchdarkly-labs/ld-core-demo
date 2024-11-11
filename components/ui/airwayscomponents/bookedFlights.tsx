@@ -309,17 +309,17 @@ export default function BookedFlights() {
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-[#F8F8F8] grid ticket-content-right-side ">
                     <div className="flex flex-col items-center justify-center space-y-4">
                       {userObject.personaEnrolledInLaunchClub ? (
-                        <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default">
+                        <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default rounded-xl">
                           Launch Priority Upgrade
                         </button>
                       ) : (
-                        <button className="bg-[#405BFF] text-white  p-4 w-full py-3 font-shone cursor-default">
+                        <button className="bg-[#405BFF] text-white rounded-full p-4 w-full py-3 font-shone cursor-default">
                           Upgrade
                         </button>
                       )}
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none">
+                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
