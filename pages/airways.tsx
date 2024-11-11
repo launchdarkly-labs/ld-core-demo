@@ -58,42 +58,42 @@ export default function Airways() {
 
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
 
-  function bookTrip() {
-    const startDate = `${
-      date!.from.getMonth() + 1
-    }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
-    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
-    const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
+  // function bookTrip() {
+  //   const startDate = `${
+  //     date!.from.getMonth() + 1
+  //   }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
+  //   const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
+  //   const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
+  //   const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
 
-    const outboundTrip = {
-      id: tripIdOutbound,
-      fromCity: fromCity,
-      from: fromLocation,
-      to: toLocation,
-      toCity: toCity,
-      depart: startDate,
-      airplane: "a380",
-      type: "Outbound",
-    };
-    const returnTrip = {
-      id: tripIdReturn,
-      from: toLocation,
-      fromCity: toCity,
-      to: fromLocation,
-      toCity: fromCity,
-      depart: returnDate,
-      airplane: "a330",
-      type: "Return",
-    };
+  //   const outboundTrip = {
+  //     id: tripIdOutbound,
+  //     fromCity: fromCity,
+  //     from: fromLocation,
+  //     to: toLocation,
+  //     toCity: toCity,
+  //     depart: startDate,
+  //     airplane: "a380",
+  //     type: "Outbound",
+  //   };
+  //   const returnTrip = {
+  //     id: tripIdReturn,
+  //     from: toLocation,
+  //     fromCity: toCity,
+  //     to: fromLocation,
+  //     toCity: fromCity,
+  //     depart: returnDate,
+  //     airplane: "a330",
+  //     type: "Return",
+  //   };
 
-    setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
+  //   setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
 
-    toast({
-      title: "Flight booked",
-      description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
-    });
-  }
+  //   toast({
+  //     title: "Flight booked",
+  //     description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
+  //   });
+  // }
 
   return (
     <>
@@ -197,64 +197,8 @@ export default function Airways() {
             </>
           </NavWrapper>
           <AirwaysHero />
-          {/* <header className={` py-10 lg:py-20 bg-gradient-airways`}>
-            <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
-              <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
-                <AirlineDestination
-                  setActiveField={setActiveField}
-                  setShowSearch={setShowSearch}
-                  fromLocation={fromLocation}
-                  setFromCity={setFromCity}
-                  toLocation={toLocation}
-                  showSearch={showSearch}
-                  activeField={activeField}
-                  setToLocation={setToLocation}
-                  setToCity={setToCity}
-                  setFromLocation={setFromLocation}
-                />
-
-                <div className="grid h-10 border-b-2 border-white/40 text-4xl lg:text-3xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
-                  <Select defaultValue="Round Trip">
-                    <SelectTrigger className="text-white">
-                      <SelectValue placeholder="Select trip type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Round Trip">Round Trip</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div
-                  className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
-                    showSearch ? "" : ""
-                  }`}
-                >
-                  <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-                </div>
-                <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
-                  <Select defaultValue="1 Passenger">
-                    <SelectTrigger className="text-white">
-                      <SelectValue placeholder="Select Passengers" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1 Passenger">1 Passenger</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex mx-auto">
-                  {fromLocation !== "From" && toLocation !== "To" && (
-                    <motion.button
-                      whileTap={{ scale: 0.5 }}
-                      onClick={() => bookTrip()}
-                      className={` items-center `}
-                    >
-                      <img src="ArrowButton.png" width={60} className="" />
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </header> */}
+          
+       
 
           {/* <AirlineHero showSearch={showSearch} /> */}
 

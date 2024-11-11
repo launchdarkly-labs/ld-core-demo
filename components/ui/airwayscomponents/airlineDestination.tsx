@@ -33,7 +33,11 @@ const AirlineDestination = ({
       transition={{ duration: 0.25 }}
       className={``}
     >
-      <div className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
+      <div
+        className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${
+          showSearch ? "" : ""
+        }`}
+      >
         <div className=" text-center grid col-start-1 animate-pulse hover:animate-none">
           <button
             onClick={() => {
@@ -41,11 +45,12 @@ const AirlineDestination = ({
               setShowSearch(true);
             }}
           >
-            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{fromLocation}</p>
+            <p className="font-audimat py-2 ">{fromLocation}</p>
           </button>
           <p className="text-center text-xs font-audimat uppercase">Origin</p>
         </div>
-        <MoveHorizontalIcon className="h-14 w-14 text-white grid col-start-2 mx-auto" />
+        <MoveHorizontalIcon className=" text-airlinegray grid col-start-2 mx-auto" />
+        
         <div className="relative text-center grid col-start-3">
           <button
             onClick={() => {
@@ -54,7 +59,7 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{toLocation}</p>
+            <p className="font-audimat py-2 ">{toLocation}</p>
           </button>
           <p className="text-center text-xs font-audimat uppercase">Destination</p>
         </div>
