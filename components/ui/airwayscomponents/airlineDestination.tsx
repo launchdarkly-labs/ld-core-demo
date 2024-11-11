@@ -38,7 +38,7 @@ const AirlineDestination = ({
       className={`w-full`}
     >
       <div className={`flex items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
-        <div className=" text-center grid col-start-1 animate-pulse hover:animate-none">
+        <div className=" text-center grid col-start-1">
           <button
             onClick={() => {
               setActiveField("from");

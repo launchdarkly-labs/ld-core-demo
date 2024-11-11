@@ -170,7 +170,7 @@ const AirwaysHero = () => {
                       onClick={() => (isLoggedIn ? bookTrip() : null)}
                       className={`text-sm items-center border-2 ${
                         isLoggedIn
-                          ? "border-airlinedarkblue text-airlinedarkblue"
+                          ? "border-airlinedarkblue text-airlinedarkblue animate-pulse hover:animate-none"
                           : "border-airlinegray text-airlinegray"
                       } rounded-3xl py-2 px-4`}
                     >
