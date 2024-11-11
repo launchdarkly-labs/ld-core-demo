@@ -86,9 +86,9 @@ const AirwaysHero = () => {
   }
 
   return (
-    <section className=" flex justify-center mx-auto w-full sm:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
+    <section className=" flex justify-center items-center mx-auto w-full md:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
       {/* Hero section */}
-      <div className="relative bg-gray-900 w-full rounded-3xl">
+      <div className="relative bg-gray-900 w-full rounded-3xl h-full flex">
         {/* Decorative image and overlay */}
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-3xl">
           <img
@@ -102,12 +102,14 @@ const AirwaysHero = () => {
           className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff] rounded-3xl"
         /> */}
 
-        <div className="  py-14 sm:py-[4rem] px-10 sm:px-2 gap-y-4 sm:gap-y-0  flex flex-col sm:flex-row justify-center items-center">
+        <div className="py-14 sm:py-[4rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
+        flex flex-col md:flex-row justify-center items-center">
           <div
-            className="grid grid-cols-2 sm:flex flex-row sm:flex-col
-      text-airlineblack w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
+            className="grid grid-cols-2 md:flex flex-row md:flex-col
+      text-airlineblack w-full md:w-1/2 pr-10 md:mb-0 gap-y-10 z-10"
           >
-            <h1 className="text-6xl xl:text-[70px] 3xl:text-[112px] font-audimat col-span-2 sm:col-span-0 w-full bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text cursor-auto">
+            <h1 className="text-6xl xl:text-[70px] font-audimat col-span-2 sm:col-span-0 
+            w-full bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text cursor-auto">
               Let Launch Airways take you further
             </h1>
             {/* <h2 className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
@@ -122,8 +124,7 @@ const AirwaysHero = () => {
             </Button>
           </div>
 
-          <div className="w-full  sm:w-[25rem] z-10">
-            {/* <LoginComponent variant={"airlines"} /> */}
+          <div className="w-full  md:w-[25rem] z-10">
 
             <section className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
               <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
@@ -142,7 +143,7 @@ const AirwaysHero = () => {
                   setFromLocation={setFromLocation}
                 />
 
-                <div className="flex justify-between gap-x-4 w-full text-sm ">
+                <div className="flex justify-between gap-x-4 w-full text-sm sm:text-base ">
                   <Select defaultValue="Round Trip">
                     <SelectTrigger className="text-airlineblack flex items-center justify-between border-b-[1px] w-full gap-2 border-airlinelightgray pb-1">
                       <SelectValue placeholder="Select trip type" />
@@ -167,7 +168,7 @@ const AirwaysHero = () => {
 
                 <FlightCalendar date={date} setDate={setDate} />
 
-                <div className=" mt-4">
+                <div className=" mt-4 flex justify-center">
                   {fromLocation !== "From" && toLocation !== "To" && (
                     <motion.button
                       whileTap={{ scale: 0.5 }}

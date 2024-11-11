@@ -45,13 +45,13 @@ const AirlineDestination = ({
               setShowSearch(true);
             }}
           >
-            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-5xl">
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl">
               {fromLocation}
             </p>
           </button>
-          <p className="text-center text-xs f">{fromCity}</p>
+          <p className="text-center text-xs sm:text-sm xl:text-base ">{fromCity}</p>
         </div>
-        <MoveHorizontalIcon className=" text-airlinegray " />
+        <img src="./airline/moveHorizontalArrow.svg" alt="move horizontal arrow "  className="text-airlinegray"/>
 
         <div className="relative text-center grid col-start-3">
           <button
@@ -61,11 +61,11 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-5xl">
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl">
               {toLocation}
             </p>
           </button>
-          <p className="text-center text-xs  ">{toCity}</p>
+          <p className="text-center text-xs sm:text-sm xl:text-base ">{toCity}</p>
         </div>
       </div>
 

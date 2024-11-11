@@ -24,7 +24,7 @@ export function FlightCalendar({ date, setDate, className }: FlightCalendarProps
   //   });
 
   return (
-    <div className={cn("w-full text-sm !ml-0", className)}>
+    <div className={cn("w-full text-sm sm:text-base ", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <button className={cn("w-full rounded-none flex gap-x-4 justify-between")}>

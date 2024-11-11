@@ -148,10 +148,6 @@ export default function Airways() {
             </>
           </NavWrapper>
           <AirwaysHero />
-          
-       
-
-          {/* <AirlineHero showSearch={showSearch} /> */}
 
           {/* <HomePageCardWrapper>
             <HomePageInfoCard
