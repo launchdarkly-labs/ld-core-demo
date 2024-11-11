@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import LaunchSignUp from "./launchSignup";
 import LoginContext from "@/utils/contexts/login";
-import DestinationPicker from "./pickMyDestinationModal";
+import DestinationPicker from "./DestinationPicker";
 
 const AirlineHero = ({ showSearch }: { showSearch: any }) => {
   const { isLoggedIn, userObject } = useContext(LoginContext);

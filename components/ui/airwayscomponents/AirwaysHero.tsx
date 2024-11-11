@@ -10,7 +10,7 @@ import { Sparkles, ChevronDown } from "lucide-react";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { Button } from "../button";
-
+import DestinationPicker from "./DestinationPicker";
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -33,7 +33,6 @@ interface LoginHomePageProps {
 }
 
 const AirwaysHero = () => {
-
   const { isLoggedIn } = useContext(LoginContext);
   const { toast } = useToast();
   const [fromLocation, setFromLocation] = useState("JFK");
@@ -47,7 +46,7 @@ const AirwaysHero = () => {
     from: new Date(),
     to: addDays(new Date(), 7),
   });
-  
+
   function bookTrip() {
     const startDate = `${
       date!.from.getMonth() + 1
@@ -102,30 +101,36 @@ const AirwaysHero = () => {
           className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff] rounded-3xl"
         /> */}
 
-        <div className="py-14 sm:py-[4rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
-        flex flex-col md:flex-row justify-center items-center">
+        <div
+          className="py-14 sm:py-[4rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
+        flex flex-col md:flex-row justify-center items-center"
+        >
           <div
             className="grid grid-cols-2 md:flex flex-row md:flex-col
       text-airlineblack w-full md:w-1/2 pr-10 md:mb-0 gap-y-10 z-10"
           >
-            <h1 className="text-6xl xl:text-[70px] font-audimat col-span-2 sm:col-span-0 
-            w-full bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text cursor-auto">
+            <h1
+              className="text-6xl xl:text-[70px] font-audimat col-span-2 sm:col-span-0 
+            w-full bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text cursor-auto"
+            >
               Let Launch Airways take you further
             </h1>
             {/* <h2 className="col-span-2 sm:col-span-0 text-2xl lg:text-4xl font-sohnelight w-full">
               Launch into the skies. In the air in milliseconds, reach your destination without
               risk, and ship your travel dreams faster than ever before
             </h2> */}
+
+            <DestinationPicker>
             <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2">
-              <span >
+              <span>
                 <Sparkles />{" "}
               </span>
               Find your next trip with AI
             </Button>
+            </DestinationPicker>
           </div>
 
           <div className="w-full  md:w-[25rem] z-10">
-
             <section className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
               <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
                 <AirlineDestination
@@ -172,8 +177,12 @@ const AirwaysHero = () => {
                   {fromLocation !== "From" && toLocation !== "To" && (
                     <motion.button
                       whileTap={{ scale: 0.5 }}
-                      onClick={() => isLoggedIn? bookTrip() : null}
-                      className={`text-sm items-center border-2 ${isLoggedIn? "border-airlinedarkblue text-airlinedarkblue" : "border-airlinegray text-airlinegray"} rounded-3xl py-2 px-4`}
+                      onClick={() => (isLoggedIn ? bookTrip() : null)}
+                      className={`text-sm items-center border-2 ${
+                        isLoggedIn
+                          ? "border-airlinedarkblue text-airlinedarkblue"
+                          : "border-airlinegray text-airlinegray"
+                      } rounded-3xl py-2 px-4`}
                     >
                       <p>{isLoggedIn ? "Book Your Trip" : "Sign In to Finish Booking"}</p>
                     </motion.button>
