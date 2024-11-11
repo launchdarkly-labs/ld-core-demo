@@ -6,8 +6,7 @@ import airplaneImg from "@/assets/img/airways/airplane.jpg";
 import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
 import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
-
+import { Sparkles, ChevronDown } from "lucide-react";
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { Button } from "../button";
@@ -34,13 +33,13 @@ interface LoginHomePageProps {
 }
 
 const AirwaysHero = () => {
-  const variant = "airlines";
 
+  const { isLoggedIn } = useContext(LoginContext);
   const { toast } = useToast();
-  const [fromLocation, setFromLocation] = useState("From");
-  const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("");
-  const [toLocation, setToLocation] = useState("To");
+  const [fromLocation, setFromLocation] = useState("JFK");
+  const [fromCity, setFromCity] = useState("New York");
+  const [toCity, setToCity] = useState("San Francisco");
+  const [toLocation, setToLocation] = useState("SFO");
   const [showSearch, setShowSearch] = useState(false);
   const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
   const { bookedTrips, setBookedTrips } = useContext(TripsContext);
@@ -48,7 +47,7 @@ const AirwaysHero = () => {
     from: new Date(),
     to: addDays(new Date(), 7),
   });
-
+  
   function bookTrip() {
     const startDate = `${
       date!.from.getMonth() + 1
@@ -87,7 +86,7 @@ const AirwaysHero = () => {
   }
 
   return (
-    <section className=" flex justify-center mx-auto w-full h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
+    <section className=" flex justify-center mx-auto w-full sm:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight">
       {/* Hero section */}
       <div className="relative bg-gray-900 w-full rounded-3xl">
         {/* Decorative image and overlay */}
@@ -103,7 +102,7 @@ const AirwaysHero = () => {
           className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff] rounded-3xl"
         /> */}
 
-        <div className="  py-14 sm:py-[4rem] px-10 sm:px-2  flex flex-col sm:flex-row justify-center items-center">
+        <div className="  py-14 sm:py-[4rem] px-10 sm:px-2 gap-y-4 sm:gap-y-0  flex flex-col sm:flex-row justify-center items-center">
           <div
             className="grid grid-cols-2 sm:flex flex-row sm:flex-col
       text-airlineblack w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10"
@@ -115,24 +114,26 @@ const AirwaysHero = () => {
               Launch into the skies. In the air in milliseconds, reach your destination without
               risk, and ship your travel dreams faster than ever before
             </h2> */}
-            <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6">
-              <span>
+            <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2">
+              <span >
                 <Sparkles />{" "}
               </span>
               Find your next trip with AI
             </Button>
           </div>
 
-          <div className="w-full sm:w-auto z-10">
+          <div className="w-full  sm:w-[25rem] z-10">
             {/* <LoginComponent variant={"airlines"} /> */}
 
             <section className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
-              <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
+              <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
                 <AirlineDestination
                   setActiveField={setActiveField}
                   setShowSearch={setShowSearch}
                   fromLocation={fromLocation}
                   setFromCity={setFromCity}
+                  fromCity={fromCity}
+                  toCity={toCity}
                   toLocation={toLocation}
                   showSearch={showSearch}
                   activeField={activeField}
@@ -141,35 +142,39 @@ const AirwaysHero = () => {
                   setFromLocation={setFromLocation}
                 />
 
-                <div className="flex justify-between w-full  ">
+                <div className="flex justify-between gap-x-4 w-full text-sm ">
                   <Select defaultValue="Round Trip">
-                    <SelectTrigger className="text-airlineblack">
+                    <SelectTrigger className="text-airlineblack flex items-center justify-between border-b-[1px] w-full gap-2 border-airlinelightgray pb-1">
                       <SelectValue placeholder="Select trip type" />
+                      <ChevronDown className="text-airlinelightgray h-4 w-4" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Round Trip">Round Trip</SelectItem>
+                      {/* <SelectItem value="One Way">One Way</SelectItem> */}
                     </SelectContent>
                   </Select>
                   <Select defaultValue="1 Passenger">
-                    <SelectTrigger className="text-airlineblack">
-                      <SelectValue placeholder="Select Passengers" />
+                    <SelectTrigger className="text-airlineblack flex items-center justify-between border-b-[1px] w-full  gap-2 border-airlinelightgray pb-1 ">
+                      <SelectValue placeholder="Select Passengers" />{" "}
+                      <ChevronDown className="text-airlinelightgray h-4 w-4" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1 Passenger">1 Passenger</SelectItem>
+                      <SelectItem value="2 Passenger">2 Passengers</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <FlightCalendar date={date} setDate={setDate} className="" />
-             
-                <div className="flex mx-auto">
+                <FlightCalendar date={date} setDate={setDate} />
+
+                <div className=" mt-4">
                   {fromLocation !== "From" && toLocation !== "To" && (
                     <motion.button
                       whileTap={{ scale: 0.5 }}
-                      onClick={() => bookTrip()}
-                      className={`text-sm items-center border-2 border-airlinedarkblue text-airlinedarkblue rounded-3xl py-2 px-4`}
+                      onClick={() => isLoggedIn? bookTrip() : null}
+                      className={`text-sm items-center border-2 ${isLoggedIn? "border-airlinedarkblue text-airlinedarkblue" : "border-airlinegray text-airlinegray"} rounded-3xl py-2 px-4`}
                     >
-                      <p>Book Your Trip</p>
+                      <p>{isLoggedIn ? "Book Your Trip" : "Sign In to Finish Booking"}</p>
                     </motion.button>
                   )}
                 </div>

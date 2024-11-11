@@ -24,15 +24,15 @@ export function FlightCalendar({ date, setDate, className }: FlightCalendarProps
   //   });
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full text-sm !ml-0", className)}>
       <Popover>
         <PopoverTrigger asChild>
-          <button className={cn("w-full rounded-none flex gap-x-2 justify-between")}>
-            <span className="border-b-[1px] flex items-center gap-2 border-airlinelightgray pb-1">
+          <button className={cn("w-full rounded-none flex gap-x-4 justify-between")}>
+            <span className="border-b-[1px] flex justify-between items-center gap-2 border-airlinelightgray pb-1 w-full">
               <span>{date?.from && format(date.from, "MM/dd/yy")}</span>{" "}
               <CalendarIcon className="text-airlinelightgray h-4 w-4" />
             </span>
-            <span className="border-b-[1px] flex items-center gap-2 border-airlinelightgray pb-1">
+            <span className="border-b-[1px] flex justify-between items-center gap-2 border-airlinelightgray pb-1 w-full">
               <span> {date?.to && format(date.to, "MM/dd/yy")}</span>{" "}
               <CalendarIcon className="text-airlinelightgray h-4 w-4" />
             </span>

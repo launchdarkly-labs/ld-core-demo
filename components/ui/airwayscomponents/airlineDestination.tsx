@@ -14,6 +14,8 @@ const AirlineDestination = ({
   setToLocation,
   setToCity,
   setFromLocation,
+  toCity,
+  fromCity,
 }: {
   setActiveField: any;
   setShowSearch: any;
@@ -25,6 +27,8 @@ const AirlineDestination = ({
   setToLocation: any;
   setToCity: any;
   setFromLocation: any;
+  toCity: string;
+  fromCity: string;
 }) => {
   return (
     <motion.div
@@ -33,11 +37,7 @@ const AirlineDestination = ({
       transition={{ duration: 0.25 }}
       className={`w-full`}
     >
-      <div
-        className={`flex items-center gap-x-6 justify-between relative ${
-          showSearch ? "" : ""
-        }`}
-      >
+      <div className={`flex items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
         <div className=" text-center grid col-start-1 animate-pulse hover:animate-none">
           <button
             onClick={() => {
@@ -45,12 +45,14 @@ const AirlineDestination = ({
               setShowSearch(true);
             }}
           >
-            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl">{fromLocation}</p>
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-5xl">
+              {fromLocation}
+            </p>
           </button>
-          <p className="text-center text-xs f">Origin</p>
+          <p className="text-center text-xs f">{fromCity}</p>
         </div>
         <MoveHorizontalIcon className=" text-airlinegray " />
-        
+
         <div className="relative text-center grid col-start-3">
           <button
             onClick={() => {
@@ -59,9 +61,11 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl">{toLocation}</p>
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-5xl">
+              {toLocation}
+            </p>
           </button>
-          <p className="text-center text-xs  ">Destination</p>
+          <p className="text-center text-xs  ">{toCity}</p>
         </div>
       </div>
 

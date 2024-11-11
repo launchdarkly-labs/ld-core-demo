@@ -23,7 +23,7 @@ export const NavbarSignInButton = ({
     backgroundColor: string;
   }) => {
     return (
-        <Button className={`rounded-3xl w-[6rem] border-2 ${borderColor} bg-transparent ${backgroundColor} text-transparent bg-clip-text cursor-auto`}>
+        <Button className={`rounded-3xl w-[6rem] border-2 hidden sm:block ${borderColor} bg-transparent ${backgroundColor} text-transparent bg-clip-text cursor-auto`}>
         Sign In
       </Button>
     );

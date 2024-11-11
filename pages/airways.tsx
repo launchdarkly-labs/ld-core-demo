@@ -43,57 +43,8 @@ import {
 import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
 
 export default function Airways() {
-  const { toast } = useToast();
-  const [fromLocation, setFromLocation] = useState("From");
-  const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("");
-  const [toLocation, setToLocation] = useState("To");
-  const [showSearch, setShowSearch] = useState(false);
-  const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
-  const { bookedTrips, setBookedTrips } = useContext(TripsContext);
-  const [date, setDate] = useState<{ from: Date; to: Date } | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
-  });
 
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
-
-  // function bookTrip() {
-  //   const startDate = `${
-  //     date!.from.getMonth() + 1
-  //   }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-  //   const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
-  //   const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
-  //   const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
-
-  //   const outboundTrip = {
-  //     id: tripIdOutbound,
-  //     fromCity: fromCity,
-  //     from: fromLocation,
-  //     to: toLocation,
-  //     toCity: toCity,
-  //     depart: startDate,
-  //     airplane: "a380",
-  //     type: "Outbound",
-  //   };
-  //   const returnTrip = {
-  //     id: tripIdReturn,
-  //     from: toLocation,
-  //     fromCity: toCity,
-  //     to: fromLocation,
-  //     toCity: fromCity,
-  //     depart: returnDate,
-  //     airplane: "a330",
-  //     type: "Return",
-  //   };
-
-  //   setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
-
-  //   toast({
-  //     title: "Flight booked",
-  //     description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
-  //   });
-  // }
 
   return (
     <>
@@ -184,10 +135,10 @@ export default function Airways() {
                     <>
                       <NavbarSignUpButton backgroundColor="bg-gradient-airways" />
 
-                      <NavbarSignInButton
+                      {/* <NavbarSignInButton
                         borderColor="border-airlinedarkblue"
                         backgroundColor="bg-gradient-airways-darker-blue"
-                      />
+                      /> */}
                     </>
                   )}
 
