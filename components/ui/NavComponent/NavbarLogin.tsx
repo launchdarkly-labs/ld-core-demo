@@ -25,7 +25,6 @@ import { LoginComponent } from "@/components/ui/logincomponent";
 import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
 
-
 const NavbarLogin = ({ variant }) => {
   const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
   return (
@@ -36,8 +35,8 @@ const NavbarLogin = ({ variant }) => {
         </Avatar>
       </PopoverTrigger>
 
-      <PopoverContent className={`w-[300px] h-[440px] ${!isLoggedIn ? "p-0" : ""}`}>
-        {isLoggedIn ? (
+      <PopoverContent className={`  ${!isLoggedIn ? "p-0" : ""}`}>
+        {isLoggedIn && (
           <>
             <div className="mx-auto flex place-content-center w-full">
               <img
@@ -68,9 +67,9 @@ const NavbarLogin = ({ variant }) => {
               <QuickLoginDialog variant={variant} />
             </div>
           </>
-        ) : (
-          <LoginComponent variant={variant} />
         )}
+
+        {!isLoggedIn && <LoginComponent variant={variant} />}
       </PopoverContent>
     </Popover>
   );
