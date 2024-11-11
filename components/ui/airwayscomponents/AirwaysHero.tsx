@@ -111,7 +111,7 @@ const AirwaysHero = () => {
             </h2> */}
 
             <DestinationPicker>
-              <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2">
+              <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
                 <span>
                   <Sparkles />{" "}
                 </span>

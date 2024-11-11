@@ -114,7 +114,7 @@ export default function Chatbot() {
         <Button
           variant="ghost"
           size="icon"
-          className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg !h-12 !w-12"
+          className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg !h-12 !w-12 animate-pulse hover:animate-none"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen ? <XIcon className="h-8 w-8" /> : <MessageCircleIcon className="h-8 w-8" />}
