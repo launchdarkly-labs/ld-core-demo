@@ -1,6 +1,6 @@
 import React from "react";
 
-const NavLogo = ({ srcHref, altText }: { srcHref: string; altText: string }) => {
+const NavLogo = ({ srcHref, altText }: { srcHref?: string; altText?: string }) => {
   return (
     <div className="ml-2 sm:ml-8 flex" id="navbar-logo">
       {srcHref ? (

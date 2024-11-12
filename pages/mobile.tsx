@@ -1,5 +1,7 @@
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
 import { CSNav } from "@/components/ui/csnav";
-import NavBar from "@/components/ui/navbar";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import { isMobile } from 'react-device-detect';
@@ -29,7 +31,15 @@ const MobilePage = () => {
         className="flex flex-col items-center justify-center h-screen bg-ldblack"
       >
         <div className="absolute top-0 w-full">
-        <NavBar />
+        <NavWrapper>
+          <>
+            <CSNavWrapper>
+                <CSNav />
+            </CSNavWrapper>
+
+            <NavLogo />
+          </>
+        </NavWrapper>
         </div>
         {isMobile ? (
           <video

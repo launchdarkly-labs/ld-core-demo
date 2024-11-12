@@ -1,7 +1,7 @@
 export interface NavBarProps {
     cart?: InventoryItem[];
     setCart?: React.Dispatch<React.SetStateAction<InventoryItem[]>>;
-    variant: string;
+    variant?: string;
   }
   
   export interface Persona {

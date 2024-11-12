@@ -4,11 +4,13 @@ import { Inter } from "next/font/google";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Globe } from "lucide-react";
 import { useRouter } from "next/router";
-import { CSNav } from "@/components/ui/csnav";
 import NavBar from "@/components/ui/navbar";
 import Script from "next/script";
 import HomePageImage from "@/public/homepage/homepage-title.svg";
-
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import { CSNav } from "@/components/ui/csnav";
 
 import { HOMEPAGE_CARDS } from "@/utils/constants";
 
@@ -74,7 +76,15 @@ export default function Home() {
       <AnimatePresence>
         <main className="min-h-screen flex-col items-center justify-center bg-ldblack ">
           <div className="w-full text-white flex h-20 shadow-2xl">
-            <NavBar />
+          <NavWrapper>
+            <>
+              <CSNavWrapper>
+                  <CSNav />
+              </CSNavWrapper>
+
+              <NavLogo />
+            </>
+          </NavWrapper>
           </div>
 
           <header className="relative banner mx-auto w-full sm:w-1/3 h-[24rem] flex items-center bg-ldblack justify-center z-0">

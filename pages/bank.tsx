@@ -74,7 +74,7 @@ export default function Bank() {
   return (
     <>
       {!isLoggedIn ? (
-        <LoginHomePage variant="bank" />
+        <LoginHomePage variant={BANK} />
       ) : (
         <div className="mb-8">
           <NavWrapper>
