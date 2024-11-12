@@ -96,7 +96,7 @@ module.exports = {
         banklightblue: "#3DD6F5",
         bankdarkblue: "#405BFF",
         markettext: "#D1D3D4",
-        marketinactive: "#939598",
+        marketgray: "#939598",
         marketblue: "#3DD6F5",
         marketgreen: "#EBFF38",
         marketBaseBlue: "#405BFF",

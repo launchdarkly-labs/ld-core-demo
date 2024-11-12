@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import NavBar from "@/components/ui/navbar";
 import { MacroCenter } from "@/components/ui/marketcomponents/stores/MacroCenter";
 import { VRGalaxy } from "@/components/ui/marketcomponents/stores/vrgalaxy";
 import { TheBoominBox } from "@/components/ui/marketcomponents/stores/TheBoominBox";
@@ -20,6 +19,7 @@ import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
 import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
 import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
 import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
 import { CSNav } from "@/components/ui/csnav";
 import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
@@ -29,6 +29,7 @@ import {
   NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import { StoreCart } from "@/components/ui/marketcomponents/stores/storecart";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -288,8 +289,87 @@ export default function Marketplace() {
           transition={{ duration: 0.5 }}
           className="bg-ldblack"
         >
-          <NavBar cart={cart} setCart={setCart} variant={"market"} personas={[]} />
+          <NavWrapper>
+            <>
+              <CSNavWrapper>
+                <CSNav />
+              </CSNavWrapper>
 
+              <NavLogo srcHref={NAV_ELEMENTS_VARIANT["market"]?.logoImg?.src} altText={"market"} />
+
+              <NavbarDropdownMenu>
+                <>
+                  {NAV_ELEMENTS_VARIANT["market"]?.navLinks.map((navLink, index) => {
+                    return (
+                      <DropdownMenuItem href={navLink?.href} key={index}>
+                        {navLink?.text}
+                      </DropdownMenuItem>
+                    );
+                  })}
+
+                  {/* {userObject.personaEnrolledInLaunchClub && (
+                      <NavbarDropdownMenuItemWrapper>
+                        <LaunchClubStatus />
+                      </NavbarDropdownMenuItemWrapper>
+                    )} */}
+
+                  {/* <NavbarDropdownMenuItemWrapper>
+                      <BookedFlights />
+                    </NavbarDropdownMenuItemWrapper> */}
+                </>
+              </NavbarDropdownMenu>
+
+              {/* left side navbar template */}
+
+              <NavbarLeftSideWrapper>
+                <>
+                  {NAV_ELEMENTS_VARIANT["market"]?.navLinks.map((navLink, index) => {
+                    return (
+                      <NavLinkButton
+                        text={navLink?.text}
+                        href={navLink?.href}
+                        navLinkColor={NAV_ELEMENTS_VARIANT["market"]?.navLinkColor}
+                        index={index}
+                        key={index}
+                      />
+                    );
+                  })}
+
+                  {/* <NavbarLeftSideLinkWrapper>
+                      <BookedFlights />
+                    </NavbarLeftSideLinkWrapper> */}
+                </>
+              </NavbarLeftSideWrapper>
+
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <>
+                  {!isLoggedIn && (
+                    <>
+                      <NavbarSignUpButton backgroundColor="bg-gradient-experimentation" />
+
+                      {/* <NavbarSignInButton
+                        borderColor="border-airlinedarkblue"
+                        backgroundColor="bg-gradient-airways-darker-blue"
+                      /> */}
+                    </>
+                  )}
+
+                  <>
+                    <NavbarRightSideLinkWrapper>
+                      <StoreCart cart={cart} setCart={setCart} />
+                    </NavbarRightSideLinkWrapper>
+
+                    {/* <NavbarRightSideLinkWrapper customCSS="lg:hidden">
+                        <BookedFlights />
+                      </NavbarRightSideLinkWrapper> */}
+                  </>
+
+                  <NavbarLogin variant={"market"} />
+                </>
+              </NavbarRightSideWrapper>
+            </>
+          </NavWrapper>
 
           <section className={`flex h-full bg-ldblack pb-20 text-white flex-col font-roboto`}>
             <section className="relative h-2/3 py-28 bg-gradient-experimentation-black grid items-center justify-center">

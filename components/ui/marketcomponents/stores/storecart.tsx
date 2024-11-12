@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useContext } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
+import LoginContext from "@/utils/contexts/login";
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/router";
 
@@ -21,14 +22,14 @@ import {
 } from "@/components/ui/table";
 import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
-import galaxyMarketLogo from '@/public/market.png'
+import galaxyMarketLogo from "@/public/market.png";
 import SuggestedItems from "../suggestedItems";
 import { InventoryItem } from "@/utils/typesInterface";
 
 // @ts-nocheck
 export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const router = useRouter();
-
+  const { isLoggedIn } = useContext(LoginContext);
   const LDClient = useLDClient();
   const { cartSuggestedItems } = useFlags();
 
@@ -47,7 +48,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const checkOut = () => {
     toast({
       title: `Checkout is successful! Enjoy your purchase!`,
-      wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base"
+      wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base",
     });
 
     setCart([]);
@@ -56,7 +57,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
 
   const continueShopping = () => {
     LDClient?.track("upsell-tracking", LDClient.getContext());
-    
+
     router.push("/marketplace");
   };
 
@@ -83,7 +84,6 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
           <SheetTitle className="font-sohne text-2xl bg-gradient-experimentation text-transparent bg-clip-text">
             Cart
           </SheetTitle>
-
         </SheetHeader>
         <Table className="font-sohnelight">
           {/* <TableCaption>Your Items</TableCaption> */}
@@ -99,7 +99,14 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               cart?.map((item: InventoryItem, index: number) => {
                 return (
                   <TableRow key={`${item.id}-${index}`}>
-                    <TableCell> <img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" /></TableCell>
+                    <TableCell>
+                      {" "}
+                      <img
+                        src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`}
+                        alt={item.item}
+                        className="h-10 w-10 sm:h-20 sm:w-20"
+                      />
+                    </TableCell>
                     <TableCell className="">{item.item}</TableCell>
                     <TableCell className="">${item.cost}</TableCell>
                   </TableRow>
@@ -115,32 +122,29 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
         <hr className="my-4 border-t border-gray-200" />
 
         <SheetFooter>
-
           <div className="w-full px-4 ">
             <div className="w-full px-4 flex justify-between">
               <p className="pb-4 font-sohne">Total:</p>
               <p className="pb-4 font-sohne">${totalCost.toFixed(2)}</p>
             </div>
-            <SheetTrigger onClick={checkOut} asChild>
+            <SheetTrigger onClick={isLoggedIn ? checkOut : null} asChild>
               <Button
-                onClick={checkOutTracking}
-                className="w-full bg-gradient-experimentation hover:brightness-[120%] rounded-none"
+                onClick={isLoggedIn ? checkOutTracking : null}
+                className={`w-full ${
+                  isLoggedIn
+                    ? "bg-gradient-experimentation"
+                    : "text-marketgray border-2 border-marketgray bg-transparent hover:bg-transparent"
+                } hover:brightness-[120%] rounded-none`}
               >
-                Checkout
+                {isLoggedIn ? "Checkout" : "Login to Continue Checkout"}
               </Button>
-
             </SheetTrigger>
             {cartSuggestedItems ? (
-              <SuggestedItems
-                cart={cart}
-                setCart={setCart}
-              />
+              <SuggestedItems cart={cart} setCart={setCart} />
             ) : (
               <SheetTrigger onClick={continueShopping} asChild>
                 <div className="text-center mt-4">
-                  <Button
-                    className="text-md bg-gradient-experimentation hover:brightness-[120%] text-transparent bg-clip-text rounded-none"
-                  >
+                  <Button className="text-md bg-gradient-experimentation hover:brightness-[120%] text-transparent bg-clip-text rounded-none">
                     Continue Shopping →
                   </Button>
                 </div>
@@ -148,7 +152,6 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
             )}
           </div>
         </SheetFooter>
-
       </SheetContent>
     </Sheet>
   );
