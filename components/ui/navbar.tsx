@@ -115,12 +115,12 @@ const NavBar = React.forwardRef<any, NavBarProps>(
                   </div>
                 )}
 
-                <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
+                {/* <Button className="rounded-3xl w-[6rem] bg-gradient-airways cursor-auto">
                   Join Now
                 </Button>
                 <Button className="rounded-3xl w-[6rem] border-2 border-airlinedarkblue bg-transparent bg-gradient-airways-darker-blue text-transparent bg-clip-text cursor-auto">
                   Sign In
-                </Button>
+                </Button> */}
 
                 <NavbarLogin variant={variant} />
               </NavbarRightSideWrapper>

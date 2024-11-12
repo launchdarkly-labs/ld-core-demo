@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import NavBar from "@/components/ui/navbar";
 import LoginContext from "@/utils/contexts/login";
 import { LoginComponent } from "@/components/ui/logincomponent";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
+import airplaneImg from "@/public/airline/airplane.jpg";
+import hotAirBalloonImg from "@/public/airline/hotairBalloon.jpg";
+import airplaneDining from "@/public/airline/airplaneDining.jpg";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
 import Image from "next/image";
@@ -168,35 +168,35 @@ const homePageVariants: any = {
       },
     ],
   },
-  airlines: {
-    name: "Launch Airways",
-    industryMessages:
-      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    gradiantColor: "bg-gradient-airways ",
-    heroImg: {
-      imageA: airlineLoginHeroBackground.src,
-      imageB: airlineLoginHeroBackground.src,
-      imageC: airlineLoginHeroBackground.src,
-    },
-    cards: [
-      {
-        titleText: "Wheels up",
-        subtitleText:
-          "You deserve to arrive refreshed, stretch out in one of our luxurious cabins.",
-        imgSrc: airplaneImg.src,
-      },
-      {
-        titleText: "Ready for an adventure",
-        subtitleText: "The world is open for travel. Plan your next adventure.",
-        imgSrc: hotAirBalloonImg.src,
-      },
-      {
-        titleText: "Experience luxury",
-        subtitleText: "Choose Launch Platinum. Select on longer flights.",
-        imgSrc: airplaneDining.src,
-      },
-    ],
-  },
+  // airlines: {
+  //   name: "Launch Airways",
+  //   industryMessages:
+  //     "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
+  //   gradiantColor: "bg-gradient-airways ",
+  //   heroImg: {
+  //     imageA: airlineLoginHeroBackground.src,
+  //     imageB: airlineLoginHeroBackground.src,
+  //     imageC: airlineLoginHeroBackground.src,
+  //   },
+  //   cards: [
+  //     {
+  //       titleText: "Wheels up",
+  //       subtitleText:
+  //         "You deserve to arrive refreshed, stretch out in one of our luxurious cabins.",
+  //       imgSrc: airplaneImg.src,
+  //     },
+  //     {
+  //       titleText: "Ready for an adventure",
+  //       subtitleText: "The world is open for travel. Plan your next adventure.",
+  //       imgSrc: hotAirBalloonImg.src,
+  //     },
+  //     {
+  //       titleText: "Experience luxury",
+  //       subtitleText: "Choose Launch Platinum. Select on longer flights.",
+  //       imgSrc: airplaneDining.src,
+  //     },
+  //   ],
+  // },
   // market: {
   //   industryMessages: "Shop for the latest tech gadgets and more.",
   //   gradiantColor: " bg-market-header grid items-center justify-center",

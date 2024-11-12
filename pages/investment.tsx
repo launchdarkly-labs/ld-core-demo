@@ -6,7 +6,6 @@ import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import LoginContext from "@/utils/contexts/login";
 import InvestmentAccountHeader from "@/components/ui/investmentcomponents/InvestmentAccountHeader";
-
 import NewsCard from "@/components/ui/investmentcomponents/NewsCard";
 import StockMoversCard from "@/components/ui/investmentcomponents/StockMoversCard";
 import BalanceCard from "@/components/ui/investmentcomponents/BalanceCard";
@@ -15,6 +14,24 @@ import TradingTrainingCard from "@/components/ui/investmentcomponents/TradingTra
 import MarketCard from "@/components/ui/investmentcomponents/MarketCard";
 import StockRecommendationCard from "@/components/ui/investmentcomponents/StockRecommendationCard";
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
+
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+  NavbarSignInButton,
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 
 export default function Investment() {
   const { isLoggedIn, } = useContext(LoginContext);
@@ -32,7 +49,7 @@ export default function Investment() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
+            className={`flex h-full flex-col  bg-white`}
           >
             <NavBar variant={"investment"} />
             <InvestmentAccountHeader />
