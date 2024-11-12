@@ -5,11 +5,29 @@ import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { oldCheckingData } from "@/lib/oldCheckingData";
 import LoginContext from "@/utils/contexts/login";
-import NavBar from "@/components/ui/navbar";
 import LoginHomePage from "@/components/LoginHomePage";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+  NavbarSignInButton,
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import { BANK } from "@/utils/constants";
 
 export default function Bank() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,8 +36,9 @@ export default function Bank() {
   const { wealthManagement, federatedAccounts } = useFlags();
   const money = JSON.stringify(oldCheckingData);
   const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
-  const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'
-  
+  const viewPrompt: string =
+    "Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.";
+
   async function submitQuery(query: any) {
     try {
       setLoading(true);
@@ -58,7 +77,61 @@ export default function Bank() {
         <LoginHomePage variant="bank" />
       ) : (
         <div className="mb-8">
-          <NavBar variant={"bank"} />
+          <NavWrapper>
+            <>
+              <CSNavWrapper>
+                <CSNav />
+              </CSNavWrapper>
+
+              <NavLogo
+                srcHref={NAV_ELEMENTS_VARIANT[BANK]?.logoImg?.src}
+                altText={BANK}
+              />
+
+              <NavbarDropdownMenu>
+                <>
+                  {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                    return (
+                      <DropdownMenuItem href={navLink?.href} key={index}>
+                        {navLink?.text}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </>
+              </NavbarDropdownMenu>
+
+              {/* left side navbar template */}
+
+              <NavbarLeftSideWrapper>
+                <>
+                  {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                    return (
+                      <NavLinkButton
+                        text={navLink?.text}
+                        href={navLink?.href}
+                        navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
+                        index={index}
+                        key={index}
+                      />
+                    );
+                  })}
+                </>
+              </NavbarLeftSideWrapper>
+
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <>
+                  {!isLoggedIn && (
+                    <>
+                      <NavbarSignUpButton backgroundColor="bg-gradient-experimentation" />
+                    </>
+                  )}
+
+                  <NavbarLogin variant={BANK} />
+                </>
+              </NavbarRightSideWrapper>
+            </>
+          </NavWrapper>
 
           <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl ">
             <section
@@ -73,9 +146,7 @@ export default function Bank() {
               >
                 <div className="p-6 bg-bglightblue w-full rounded-xl">
                   <div className="justify-center xl:justify-start">
-                    <p className="text-black font-sohne mb-6 text-[24px]">
-                      Account Summary
-                    </p>
+                    <p className="text-black font-sohne mb-6 text-[24px]">Account Summary</p>
 
                     <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
                       <div className="p-4 h-[300px] w-full sm:w-1/3  bg-white ">
@@ -92,16 +163,11 @@ export default function Bank() {
                 </div>
               </section>
 
-              {federatedAccounts ? 
-                <FederatedAccountModule /> : null}
+              {federatedAccounts ? <FederatedAccountModule /> : null}
             </section>
 
             <section className="flex flex-col xl:flex-row w-full gap-y-8 sm:gap-x-8 mb-10 h-full">
-              <div
-                className={`w-full  ${
-                  wealthManagement ? "xl:w-[60%]" : "sm:w-full"
-                }`}
-              >
+              <div className={`w-full  ${wealthManagement ? "xl:w-[60%]" : "sm:w-full"}`}>
                 <AccountTrends data={data} />
               </div>
 

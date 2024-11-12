@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import { StoreCart } from "@/components/ui/marketcomponents/stores/storecart";
+import { MARKET } from "@/utils/constants";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -295,27 +296,17 @@ export default function Marketplace() {
                 <CSNav />
               </CSNavWrapper>
 
-              <NavLogo srcHref={NAV_ELEMENTS_VARIANT["market"]?.logoImg?.src} altText={"market"} />
+              <NavLogo srcHref={NAV_ELEMENTS_VARIANT[MARKET]?.logoImg?.src} altText={MARKET} />
 
               <NavbarDropdownMenu>
                 <>
-                  {NAV_ELEMENTS_VARIANT["market"]?.navLinks.map((navLink, index) => {
+                  {NAV_ELEMENTS_VARIANT[MARKET]?.navLinks.map((navLink, index) => {
                     return (
                       <DropdownMenuItem href={navLink?.href} key={index}>
                         {navLink?.text}
                       </DropdownMenuItem>
                     );
                   })}
-
-                  {/* {userObject.personaEnrolledInLaunchClub && (
-                      <NavbarDropdownMenuItemWrapper>
-                        <LaunchClubStatus />
-                      </NavbarDropdownMenuItemWrapper>
-                    )} */}
-
-                  {/* <NavbarDropdownMenuItemWrapper>
-                      <BookedFlights />
-                    </NavbarDropdownMenuItemWrapper> */}
                 </>
               </NavbarDropdownMenu>
 
@@ -323,21 +314,17 @@ export default function Marketplace() {
 
               <NavbarLeftSideWrapper>
                 <>
-                  {NAV_ELEMENTS_VARIANT["market"]?.navLinks.map((navLink, index) => {
+                  {NAV_ELEMENTS_VARIANT[MARKET]?.navLinks.map((navLink, index) => {
                     return (
                       <NavLinkButton
                         text={navLink?.text}
                         href={navLink?.href}
-                        navLinkColor={NAV_ELEMENTS_VARIANT["market"]?.navLinkColor}
+                        navLinkColor={NAV_ELEMENTS_VARIANT[MARKET]?.navLinkColor}
                         index={index}
                         key={index}
                       />
                     );
                   })}
-
-                  {/* <NavbarLeftSideLinkWrapper>
-                      <BookedFlights />
-                    </NavbarLeftSideLinkWrapper> */}
                 </>
               </NavbarLeftSideWrapper>
 
@@ -347,11 +334,6 @@ export default function Marketplace() {
                   {!isLoggedIn && (
                     <>
                       <NavbarSignUpButton backgroundColor="bg-gradient-experimentation" />
-
-                      {/* <NavbarSignInButton
-                        borderColor="border-airlinedarkblue"
-                        backgroundColor="bg-gradient-airways-darker-blue"
-                      /> */}
                     </>
                   )}
 
@@ -359,13 +341,9 @@ export default function Marketplace() {
                     <NavbarRightSideLinkWrapper>
                       <StoreCart cart={cart} setCart={setCart} />
                     </NavbarRightSideLinkWrapper>
-
-                    {/* <NavbarRightSideLinkWrapper customCSS="lg:hidden">
-                        <BookedFlights />
-                      </NavbarRightSideLinkWrapper> */}
                   </>
 
-                  <NavbarLogin variant={"market"} />
+                  <NavbarLogin variant={MARKET} />
                 </>
               </NavbarRightSideWrapper>
             </>

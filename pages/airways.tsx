@@ -27,6 +27,7 @@ import LaunchClubStatus from "@/components/ui/airwayscomponents/launchClubStatus
 import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
 import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
 import LaunchSignUp from "@/components/ui/airwayscomponents/launchSignup";
+import { AIRLINES } from "@/utils/constants";
 
 export default function Airways() {
   const { isLoggedIn, userObject } = useContext(LoginContext);
@@ -48,14 +49,14 @@ export default function Airways() {
               </CSNavWrapper>
 
               <NavLogo
-                srcHref={NAV_ELEMENTS_VARIANT["airlines"]?.logoImg?.src}
-                altText={"airlines"}
+                srcHref={NAV_ELEMENTS_VARIANT[AIRLINES]?.logoImg?.src}
+                altText={AIRLINES}
               />
 
               {isLoggedIn && (
                 <NavbarDropdownMenu>
                   <>
-                    {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                    {NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinks.map((navLink, index) => {
                       return (
                         <DropdownMenuItem href={navLink?.href} key={index}>
                           {navLink?.text}
@@ -80,12 +81,12 @@ export default function Airways() {
               {isLoggedIn && (
                 <NavbarLeftSideWrapper>
                   <>
-                    {NAV_ELEMENTS_VARIANT["airlines"]?.navLinks.map((navLink, index) => {
+                    {NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinks.map((navLink, index) => {
                       return (
                         <NavLinkButton
                           text={navLink?.text}
                           href={navLink?.href}
-                          navLinkColor={NAV_ELEMENTS_VARIANT["airlines"]?.navLinkColor}
+                          navLinkColor={NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinkColor}
                           index={index}
                           key={index}
                         />
@@ -127,7 +128,7 @@ export default function Airways() {
                     </>
                   )}
 
-                  <NavbarLogin variant={"airlines"} />
+                  <NavbarLogin variant={AIRLINES} />
                 </>
               </NavbarRightSideWrapper>
             </>
