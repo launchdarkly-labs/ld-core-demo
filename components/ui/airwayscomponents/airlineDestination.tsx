@@ -44,10 +44,9 @@ const AirlineDestination = ({
               setActiveField("from");
               setShowSearch(true);
             }}
+            className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl"
           >
-            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl">
-              {fromLocation}
-            </p>
+            {fromLocation}
           </button>
           <p className="text-center text-xs sm:text-sm xl:text-base ">{fromCity}</p>
         </div>
@@ -80,6 +79,8 @@ const AirlineDestination = ({
             toLocation={toLocation}
             setToCity={setToCity}
             fromLocation={fromLocation}
+            toCity ={toCity}
+            fromCity={fromCity}
           />
         </>
       )}

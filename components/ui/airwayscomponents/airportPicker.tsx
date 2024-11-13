@@ -31,6 +31,8 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
   activeField,
   toLocation,
   fromLocation,
+  toCity,
+  fromCity
 }) => {
   // const [airports, setAirports] = useState<Airport[]>([]);
   const [selectedAirport, setSelectedAirport] = useState<Airport | null>(null);
@@ -91,9 +93,9 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
 
   return (
     <div
-      className={`w-full sm:w-[430px] bg-white rounded-md shadow-md absolute
-     z-20 mt-4 p-[.2rem] sm:p-[1rem] font-sohne font-normal ml-[-1.7rem] ${
-       activeField === "from" ? "sm:ml-0" : "md:ml-[9rem] lg:ml-[9.5rem]"
+      className={`w-[70%] sm:w-[430px] bg-white rounded-md shadow-md absolute
+     z-20 mt-4 p-[.2rem] sm:p-[1rem] font-sohne font-normal  ${
+       activeField === "from" ? "" : "right-[13%]"
      }`}
     >
       <button
@@ -110,14 +112,14 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
           <div className="w-full h-1 border-b-2 border-[#3DD6F5] justify-center mx-auto"></div>
         </div>
 
-        <div className="flex-col justify-start items-start gap-[15px] flex">
+        <div className="flex-col justify-start items-start flex">
           <div className="flex-col justify-start items-start flex">
             <div className="text-neutral-500 text-base leading-normal mb-2 ">
               {activeField === "from" ? "Origin" : "Destination"}
             </div>
             <input
-              className="w-full text-black text-[60px]  
-                 leading-[66.65px] outline-none border-b-2 border-[#405BFF] pb-4"
+              className="w-full text-black text-3xl  
+                 leading-[66.65px] outline-none border-b-2 border-[#405BFF]"
               placeholder="Airport"
               value={searchTerm}
               autoFocus
