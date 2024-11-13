@@ -93,7 +93,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({
 
   return (
     <div
-      className={`w-[70%] sm:w-[430px] bg-white rounded-md shadow-md absolute
+      className={`w-[70%] sm:w-[360px] bg-white rounded-md shadow-md absolute
      z-20 mt-4 p-[.2rem] sm:p-[1rem] font-sohne font-normal  ${
        activeField === "from" ? "" : "right-[13%]"
      }`}
