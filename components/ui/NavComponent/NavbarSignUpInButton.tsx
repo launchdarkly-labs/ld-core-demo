@@ -11,7 +11,7 @@ export const NavbarSignUpButton = ({
   className?: string
 }) => {
   return (
-    <Button className={`rounded-3xl w-[6rem] ${backgroundColor} ${textColor} cursor-auto`} {...props}>
+    <Button className={`rounded-3xl w-[6rem] ${backgroundColor} ${textColor} cursor-auto`} style={{ boxShadow: '0 14px 16px rgba(0, 0, 0, 0.1)' }} {...props}>
       Join Now
     </Button>
   );
@@ -26,7 +26,7 @@ export const NavbarSignInButton = ({
 }) => {
   return (
     <Button
-      className={`rounded-3xl w-[6rem] border-2 hidden sm:block ${borderColor} bg-transparent ${backgroundColor} text-transparent bg-clip-text cursor-auto`}
+      className={`rounded-3xl w-[6rem] border-2 hidden sm:block ${borderColor} bg-transparent ${backgroundColor} text-transparent bg-clip-text cursor-auto`} style={{ boxShadow: '0 14px 16px rgba(0, 0, 0, 0.1)' }}
     >
       Sign In
     </Button>

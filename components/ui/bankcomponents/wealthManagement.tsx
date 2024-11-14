@@ -56,7 +56,7 @@ const WealthManagementSheet = ({
       </p>
       <Sheet>
         <SheetTrigger asChild>
-          <div className="flex justify-end">
+          <div className="flex justify-end ">
             <Button
               variant="default"
               className="w-full px-6 py-6 bg-bankdarkblue font-sohnelight rounded-none text-[20px] mx-auto"
@@ -71,13 +71,13 @@ const WealthManagementSheet = ({
             <SheetDescription className="text-xl pb-24"></SheetDescription>
           </SheetHeader>
 
-          <div className={`w-full h-full font-sohne`}>
-            <div className="p-6 bg-zinc-100 w-full rounded-xl shadow-xl text-black">
+          <div className={`w-full h-full font-sohne rounded-2xl`}>
+            <div className="p-6 bg-gradient-bank  w-full rounded-2xl shadow-xl text-black">
               <div className="justify-center xl:justify-start">
-                <p className="font-sohne mb-6 text-[24px]">Wealth Management</p>
+                <p className="font-sohne mb-6 text-[24px] text-white ">Wealth Management</p>
 
                 <div className="flex flex-col lg:flex-row gap-y-4 sm:gap-x-4 accounttext">
-                  <div className="px-6 pt-6 w-full lg:w-1/3  bg-white">
+                  <div className="px-6 pt-6 w-full lg:w-1/3  bg-white rounded-2xl">
                     <div className="flex justify-between">
                       <p className="  font-sohne font-bold text-lg">
                         Wealth Insights AI <br />
@@ -90,8 +90,8 @@ const WealthManagementSheet = ({
                         <img src="aws.png" />
                       </div>
                     </div>
-                    <div className="relative py-2 sm:col-span-1 lg:col-span-2 w-full overflow-y-auto ">
-                      <div className="h-40 overflow-auto flex flex-col justify-center">
+                    <div className="relative py-2 sm:col-span-1 lg:col-span-2 w-full overflow-y-auto mb-4 ">
+                      <div className="max-h-screen overflow-auto flex flex-col justify-center">
                         {loading ? (
                           <BounceLoader
                             color="rgb(59 130 246)"
@@ -112,7 +112,7 @@ const WealthManagementSheet = ({
                       <div className="flex flex-row gap-2 pt-12">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button className="bg-bankdarkblue text-white rounded-none font-sohnelight w-full">
+                            <Button className="bg-bankdarkblue text-white rounded-2xl font-sohnelight w-full">
                               View Prompt
                             </Button>
                           </DialogTrigger>
@@ -129,7 +129,7 @@ const WealthManagementSheet = ({
                           onClick={() => {
                             submitQuery(prompt);
                           }}
-                          className="flex bg-white text-bankdarkblue rounded-none font-sohnelight items-center w-full hover:bg-zinc-100"
+                          className="flex bg-white text-bankdarkblue rounded-2xl font-sohnelight items-center w-full hover:bg-zinc-100"
                         >
                           Generate{" "}
                           <ArrowRight className="text-bankdarkblue ml-2" />
@@ -137,7 +137,7 @@ const WealthManagementSheet = ({
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 w-full lg:w-1/3 bg-white">
+                  <div className="p-4 w-full lg:w-1/3 bg-white rounded-2xl">
                     <div className="space-y-2">
                       <div className="bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10">
                         <AiOutlineAreaChart className="text-blue-700 h-8 w-8" />
@@ -165,7 +165,7 @@ const WealthManagementSheet = ({
                       </div>
                     </div>
                   </div>
-                  <div className="p-4  w-full lg:w-1/3 bg-white">
+                  <div className="p-4  w-full lg:w-1/3 bg-white rounded-2xl">
                     <StocksComponent />
                   </div>
                 </div>

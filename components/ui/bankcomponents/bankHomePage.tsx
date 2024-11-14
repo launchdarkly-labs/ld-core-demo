@@ -1,12 +1,8 @@
-import { useState } from 'react';
+import { useContext, useState } from "react";
 import { motion } from "framer-motion";
-import NavBar from "@/components/ui/navbar";
-import Image from "next/image";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import iconBackground from "@/public/banking/icons/icon-background.svg";
 import heroBackgroundCreditcard from "@/public/banking/backgrounds/bank-hero-background-creditcard.svg";
 import heroBackgroundDollarSign from "@/public/banking/backgrounds/bank-hero-background-dollarsign.svg";
-import iconBackgroundOnHover from "@/public/banking/icons/icon-background-on-hover.svg";
 import checking from "@/public/banking/icons/checking.svg";
 import checkingOnHover from "@/public/banking/icons/checking-on-hover.svg";
 import creditcard from "@/public/banking/icons/creditcard.svg";
@@ -19,8 +15,34 @@ import savings from "@/public/banking/icons/savings.svg";
 import savingsOnHover from "@/public/banking/icons/savings-on-hover.svg";
 import retirmentBackground from "@/public/banking/backgrounds/bank-homepage-retirment-card-background.svg";
 import specialOfferBackground from "@/public/banking/backgrounds/bank-homepage-specialoffer-background.svg";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+  NavbarSignInButton,
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import Image from "next/image";
+import { BANK } from "@/utils/constants";
+import LoginContext from "@/utils/contexts/login";
+
+
 
 export default function BankHomePage() {
+
+    const { isLoggedIn } = useContext(LoginContext);
+
 
     return (
         <motion.main
@@ -29,6 +51,61 @@ export default function BankHomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
         >
+            <NavWrapper>
+                <>
+                    <CSNavWrapper>
+                        <CSNav />
+                    </CSNavWrapper>
+
+                    <NavLogo
+                        srcHref={NAV_ELEMENTS_VARIANT[BANK]?.logoImg?.src}
+                        altText={BANK}
+                    />
+
+                    <NavbarDropdownMenu>
+                        <>
+                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                return (
+                                    <DropdownMenuItem href={navLink?.href} key={index}>
+                                        {navLink?.text}
+                                    </DropdownMenuItem>
+                                );
+                            })}
+                        </>
+                    </NavbarDropdownMenu>
+
+                    {/* left side navbar template */}
+
+                    <NavbarLeftSideWrapper>
+                        <>
+                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                return (
+                                    <NavLinkButton
+                                        text={navLink?.text}
+                                        href={navLink?.href}
+                                        navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
+                                        index={index}
+                                        key={index}
+                                    />
+                                );
+                            })}
+                        </>
+                    </NavbarLeftSideWrapper>
+
+                    {/* right side navbar template */}
+                    <NavbarRightSideWrapper>
+                        <>
+                            {!isLoggedIn && (
+                                <>
+                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
+                                </>
+                            )}
+
+                            <NavbarLogin variant={BANK} />
+                        </>
+                    </NavbarRightSideWrapper>
+                </>
+            </NavWrapper>
 
             <header className={`w-full relative `}>
                 <Image src={heroBackgroundCreditcard} className='absolute right-0 w-2/6 xl:w-2/6 min-w-lg max-w-lg' alt="Icon Background" />
@@ -44,10 +121,10 @@ export default function BankHomePage() {
                             {bankHomePageValues?.industryMessages}
                         </h2>
                         <div className="flex space-x-4 px-6 sm:px-2 md:px-4 lg:px-6 xl:px-8">
-                            <button className="bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
+                            <button className="shadow-2xl bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
                                 Join Now
                             </button>
-                            <button className="border hover:bg-bank-gradient-text-color border-blue-800 hover:border-bankhomepagebuttonblue hover:text-white text-blue-800  rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
+                            <button className="shadow-2xl border hover:bg-bank-gradient-text-color border-blue-800 hover:border-bankhomepagebuttonblue hover:text-white text-blue-800  rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
                                 Learn More
                             </button>
                         </div>
@@ -76,7 +153,7 @@ export default function BankHomePage() {
                                 key={i}
                                 whileHover={{ scale: 1.2 }}
                             >
-                                <div className="relative w-24 h-24 cursor-pointer">
+                                <div className="relative w-24 h-24  cursor-pointer" >
                                     <Image src={iconBackground} width={160} height={120} className="absolute inset-0 m-auto" alt="Icon Background" />
                                     <Image src={ele?.imgSrc} width={40} height={96} className="absolute left-1 bottom-1 inset-0 m-auto" alt={ele?.title} />
                                 </div>

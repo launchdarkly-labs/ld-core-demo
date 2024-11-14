@@ -11,9 +11,9 @@ import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
 import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
-import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
-import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
-import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
+import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal_black.svg";
+import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal_black.svg";
+import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal_black.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import releaseHoverImage from "@/public/homepage/release-card-hovering.svg";
 import releaseNoHoverImage from "@/public/homepage/release-card-not-hovering.svg";
@@ -88,7 +88,7 @@ export const HOMEPAGE_CARDS = {
       "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
     desktopNoHoveringImage: releaseNoHoverImage,
     desktopHoveringImage: releaseHoverImage,
-    link: "/bank"
+    link: "/bank",
   },
   monitor: {
     name: "De-Risk releases",
@@ -96,7 +96,7 @@ export const HOMEPAGE_CARDS = {
       "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
-    link: "/investment"
+    link: "/investment",
   },
   ai: {
     name: "Safely Ship AI",
@@ -104,7 +104,7 @@ export const HOMEPAGE_CARDS = {
       "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
-    link: "/airways"
+    link: "/airways",
   },
   experiment: {
     name: "Optimize Experiences",
@@ -112,8 +112,8 @@ export const HOMEPAGE_CARDS = {
       "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
     desktopNoHoveringImage: experimentNoHoverImage,
     desktopHoveringImage: experimentHoverImage,
-    link: "/marketplace"
-  }
+    link: "/marketplace",
+  },
 };
 
 export const COMPANY_LOGOS = {
@@ -187,8 +187,57 @@ export const CSNAV_ITEMS = {
     iconHover: experimentIconHover,
     type: "usecase",
     link: "/marketplace",
-    title: "Optimize Experiences"
-  }
-  
+    title: "Optimize Experiences",
+  },
+};
 
-}
+export const NAV_ELEMENTS_VARIANT = {
+  bank: {
+    navLinks: [
+      {
+        text: "Summary",
+        href: "/bank",
+      },
+      { text: "Transfers", href: "/bank" },
+      { text: "Deposits", href: "/bank" },
+      { text: "External Accounts", href: "/bank" },
+      { text: "Statements", href: "/bank" },
+    ],
+    navLinkColor: "gradient-bank",
+    popoverMessage: "Thank you for banking with us, ",
+    logoImg: COMPANY_LOGOS["bank"].horizontal,
+  },
+  investment: {
+    navLinks: [
+      { text: "Accounts & Trade", href: "/investment" },
+      { text: "Planning", href: "/investment" },
+      { text: "News", href: "/investment" },
+      { text: "Investment Products", href: "/investment" },
+      { text: "About Us", href: "/investment" },
+    ],
+    navLinkColor: "gradient-investment",
+    popoverMessage: "Thank you for investing with us, ",
+    logoImg: COMPANY_LOGOS["investment"].horizontal,
+  },
+  market: {
+    navLinks: [
+      { text: "All", href: "/marketplace" },
+      { text: "Account", href: "/marketplace" },
+      { text: "Buy Again", href: "/marketplace" },
+      { text: "Today's Deals", href: "/marketplace" },
+      { text: "Sale", href: "/marketplace" },
+    ],
+    navLinkColor: "gradient-experimentation",
+    popoverMessage: "Thank you for shopping with us, ",
+    logoImg: COMPANY_LOGOS["market"].horizontal,
+  },
+  airlines: {
+    navLinks: [
+      { text: "Book", href: "/airways" },
+      { text: "Check-In", href: "/airways" },
+    ],
+    navLinkColor: "gradient-airline-buttons",
+    popoverMessage: "Thank you for flying with us, ",
+    logoImg: COMPANY_LOGOS["airlines"].horizontal,
+  },
+};

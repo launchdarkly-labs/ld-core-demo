@@ -12,6 +12,25 @@ import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
 import { motion } from "framer-motion";
+import { BANK } from "@/utils/constants";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+    NavbarSignInButton,
+    NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 
 export default function BankUserDashboard() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -57,19 +76,74 @@ export default function BankUserDashboard() {
     return (
         <div className="mb-8">
 
+            <NavWrapper>
+                <>
+                    <CSNavWrapper>
+                        <CSNav />
+                    </CSNavWrapper>
+
+                    <NavLogo
+                        srcHref={NAV_ELEMENTS_VARIANT[BANK]?.logoImg?.src}
+                        altText={BANK}
+                    />
+
+                    <NavbarDropdownMenu>
+                        <>
+                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                return (
+                                    <DropdownMenuItem href={navLink?.href} key={index}>
+                                        {navLink?.text}
+                                    </DropdownMenuItem>
+                                );
+                            })}
+                        </>
+                    </NavbarDropdownMenu>
+
+                    {/* left side navbar template */}
+
+                    <NavbarLeftSideWrapper>
+                        <>
+                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                return (
+                                    <NavLinkButton
+                                        text={navLink?.text}
+                                        href={navLink?.href}
+                                        navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
+                                        index={index}
+                                        key={index}
+                                    />
+                                );
+                            })}
+                        </>
+                    </NavbarLeftSideWrapper>
+
+                    {/* right side navbar template */}
+                    <NavbarRightSideWrapper>
+                        <>
+                            {!isLoggedIn && (
+                                <>
+                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
+                                </>
+                            )}
+
+                            <NavbarLogin variant={BANK} />
+                        </>
+                    </NavbarRightSideWrapper>
+                </>
+            </NavWrapper>
 
             <Image
                 src={bankDashboardBackgroundRight}
-                className="fixed right-0 top-0 bottom-0 min-h-screen  z-0"
+                className="fixed right-0 top-0 bottom-0 min-h-screen"
                 alt="Bank Home Page Background"
             />
             <Image
                 src={bankDashboardBackgroundLeft}
-                className="fixed left-0 bottom-0 m-h-screen z-0"
+                className="fixed left-0 bottom-0 m-h-screen"
                 alt="Bank Home Page Background"
             />
 
-            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative z-10 ">
+            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative ">
                 <section
                     className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
                         }`}
