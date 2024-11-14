@@ -74,9 +74,23 @@ export default function BankUserDashboard() {
     ];
 
     return (
-        <div className="mb-8">
+        <>
 
-            <NavWrapper>
+            
+
+            <Image
+                src={bankDashboardBackgroundRight}
+                className="fixed right-0 top-0 bottom-0 min-h-screen"
+                alt="Bank Home Page Background"
+            />
+            <Image
+                src={bankDashboardBackgroundLeft}
+                className="fixed left-0 bottom-0 m-h-screen"
+                alt="Bank Home Page Background"
+            />
+
+            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative ">
+            <NavWrapper> 
                 <>
                     <CSNavWrapper>
                         <CSNav />
@@ -131,19 +145,6 @@ export default function BankUserDashboard() {
                     </NavbarRightSideWrapper>
                 </>
             </NavWrapper>
-
-            <Image
-                src={bankDashboardBackgroundRight}
-                className="fixed right-0 top-0 bottom-0 min-h-screen"
-                alt="Bank Home Page Background"
-            />
-            <Image
-                src={bankDashboardBackgroundLeft}
-                className="fixed left-0 bottom-0 m-h-screen"
-                alt="Bank Home Page Background"
-            />
-
-            <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative ">
                 <section
                     className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
                         }`}
@@ -223,6 +224,6 @@ export default function BankUserDashboard() {
             </main>
 
 
-        </div>
+        </>
     );
 }
