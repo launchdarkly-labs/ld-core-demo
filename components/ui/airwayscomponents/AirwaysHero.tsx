@@ -77,7 +77,7 @@ const AirwaysHero = () => {
   return (
     <section className=" flex justify-center items-center mx-auto w-full md:h-[40rem] max-w-7xl rounded-3xl px-4 font-sohnelight mb-10">
       {/* Hero section */}
-      <div className="relative bg-gray-900 w-full rounded-3xl h-full flex">
+      <div className="relative shadow-2xl bg-gray-900 w-full rounded-3xl h-full flex">
         {/* Decorative image and overlay */}
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-3xl">
           <img
@@ -111,7 +111,7 @@ const AirwaysHero = () => {
             </h2> */}
 
             <DestinationPicker>
-              <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
+              <Button className="bg-airlinedarkblue shadow-2xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
                 <span>
                   <Sparkles />{" "}
                 </span>
@@ -120,7 +120,7 @@ const AirwaysHero = () => {
             </DestinationPicker>
           </div>
 
-          <div className="w-full  md:w-[25rem] z-10">
+          <div className="w-full shadow-2xl  md:w-[25rem] z-10">
             <div className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
               <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
                 <AirlineDestination
@@ -168,7 +168,7 @@ const AirwaysHero = () => {
                     <motion.button
                       whileTap={{ scale: 0.5 }}
                       onClick={() => (isLoggedIn ? bookTrip() : null)}
-                      className={`text-sm items-center border-2 ${
+                      className={`text-sm shadow-2xl items-center border-2 ${
                         isLoggedIn
                           ? "border-airlinedarkblue text-airlinedarkblue"
                           : "border-airlinegray text-airlinegray"
