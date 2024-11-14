@@ -144,7 +144,7 @@ export default function Airways() {
               className=" bg-transparent flex items-center mx-auto w-full max-w-7xl rounded-3xl px-4 font-sohnelight"
             >
               <div
-                className="py-8 sm:py-[2rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
+                className="py-8 shadow-xl sm:py-[2rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
         flex flex-col md:flex-row justify-center items-center w-full bg-white rounded-3xl "
               >
                 <div
