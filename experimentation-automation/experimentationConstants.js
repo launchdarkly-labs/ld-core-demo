@@ -1,0 +1,5 @@
+export const AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY = "airlines-chatbot-ai-feature-experiment"
+export const MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY = "marketplace-store-header-funnel-experiment"
+export const MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY = "marketplace-shorten-collections-page-funnel-experiment"
+export const MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY = "marketplace-suggested-item-feature-experiment"
+export const MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY = "marketplace-new-search-engine-feature-experiment"

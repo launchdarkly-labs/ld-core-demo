@@ -8,7 +8,9 @@ import {
   LAUNCH_CLUB_PLATINUM
 } from "../constants";
 
-export const STARTER_PERSONAS = [
+import {Persona} from '@/utils/typescriptTypesInterfaceLogin'
+
+export const STARTER_PERSONAS: Persona[] = [
   {
     personaname: "Christine",
     personatier: PERSONA_TIER_STANARD,

@@ -12,11 +12,8 @@ import { motion } from "framer-motion";
 import { useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
-import { useLDClient } from "launchdarkly-react-client-sdk";
-import { LAUNCH_CLUB_STANDARD } from "@/utils/constants";
 
 export default function LaunchSignUp() {
-  const client = useLDClient();
 
   const {
     userObject,
