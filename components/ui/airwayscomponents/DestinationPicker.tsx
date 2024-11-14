@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { GridLoader } from "react-spinners";
 import { Button } from "../button";
-import {useEffect, useState} from 'react'
+import {ReactElement, useEffect, useState} from 'react'
 import ReactMarkdown from 'react-markdown'
 import Image from "next/image";
 import { MapPinned } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 
-export default function DestinationPicker () {
+export default function DestinationPicker ({children}:{children: ReactElement}) {
 const flags = useFlags();
 const flagName = flags["destination-picker-ai-model"];
 const [recsGiven, setRecsGiven] = useState(false);
@@ -59,12 +59,8 @@ const prompt =
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="bg-white text-black rounded-none h-full w-full text-3xl p-4 cursor-pointer hover:bg-zinc-200">
-            <div className="flex flex-col items-center justify-center">
-              <div className="flex">Find My Next Trip</div>
-              <div className="flex text-xs">powered by AI</div>
-            </div>
-          </Button>
+          {children}
+        
         </AlertDialogTrigger>
         {recsGiven ? (
           <AlertDialogContent>
@@ -151,15 +147,15 @@ const prompt =
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-none">
-                Cancel
-              </AlertDialogCancel>
               <Button
                 onClick={getDestinations}
-                className="bg-gradient-airways rounded-none h-full cursor-pointer"
+                className="bg-gradient-airways rounded-3xl h-full cursor-pointer"
               >
                 Let's Go!
               </Button>
+              <AlertDialogCancel className="rounded-3xl ">
+                Cancel
+              </AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         )}

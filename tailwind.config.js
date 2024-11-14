@@ -25,25 +25,28 @@ module.exports = {
       },
       screens: {
         "3xl": "2500px",
-        "investmentXL" : "1440px"
+        investmentXL: "1440px",
       },
       height: {
         "screen-20": "calc(100vh - 5rem)", // 5rem is equivalent to 20 in Tailwind's spacing scale
       },
       backgroundImage: (theme) => ({
         "gradient-radial": "radial-gradient(ellipse at center, #00c0e7 0%, #a34fde 100%)",
-        "gradient-bank": "linear-gradient(220.23deg, #405BFF -8.97%, #405BFF 94.12%)", 
-        "nav-gradient": "linear-gradient(220.23deg, #405BFF -8.97%, #405BFF 94.12%)",
+        "gradient-bank": "linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)",
         "button-bank-gradient": "linear-gradient(195deg, #3DD6F5, #a34fde)",
         "gradient-targeting": "linear-gradient(222deg,#18bdde 1.56%,#405bff 96.51%)",
-        "gradient-experimentation":
-          "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
+        "gradient-experimentation": "linear-gradient(222deg,#c0d600 -2.68%,#05b0d2 92.81%);",
         "gradient-mobile": "linear-gradient(65deg,#ff386b 3.6%,#ffaf38 98.81%)",
         "gradient-experimentation-black":
           "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
-        "gradient-experimentation-grey":"linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
+        "gradient-experimentation-grey":
+          "linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
         "market-header": "linear-gradient(108.59deg, #212121 2.18%, #000000 75.85%)",
+        
         "gradient-airways": "linear-gradient(224.68deg, #405BFF -5.3%, #3DD6F5 112.86%)",
+        "gradient-airways-2":" linear-gradient(224.68deg, #405BFF 11.37%, #3DD6F5 112.86%)",
+        "gradient-airways-darker-blue":
+          "linear-gradient(178.76deg, #405BFF 1.06%, #7084FF 123.42%)",
         "gradient-airways-grey": "linear-gradient(200.65deg, #58595B -25.37%, #212121 75.5%)",
         "gradient-airways-red": "linear-gradient(223.42deg, #FF386B -1.29%, #A34FDE 110.16%)",
         "gradient-investment": "linear-gradient(223.42deg, #FF386B -1.29%, #A34FDE 110.16%)",
@@ -87,20 +90,21 @@ module.exports = {
         ldstoreheader: "#D1D3D4",
         awsorange: "#FF9900",
         navgray: "#282828",
-        navblue:"#405BFF",
-        loginComponentBlue:"#405BFF",
+        navblue: "#405BFF",
+        navlink: "#6D6E71",
+        loginComponentBlue: "#405BFF",
         airlinepurple: "#A34FDE",
         airlinepink: "#FF386B",
-        airlineblue: "#405BFF",
         airlinetext: "#D1D3D4",
-        airlineinactive: "#939598",
+        airlinegray: "#939598",
+        airlinelightgray: "#D1D3D4",
         airlinedarkblue: "#405BFF",
         airlinelightblue: "#3DD6F5",
-        airlineBlack: "#2C2C2C",
+        airlineblack: "#212121",
         banklightblue: "#3DD6F5",
         bankdarkblue: "#405BFF",
         markettext: "#D1D3D4",
-        marketinactive: "#939598",
+        marketgray: "#939598",
         marketblue: "#3DD6F5",
         marketgreen: "#EBFF38",
         marketBaseBlue: "#405BFF",
@@ -111,7 +115,7 @@ module.exports = {
         investmentgreen: "#00B969",
         navbargrey: "#939598",
         navbarlightgrey: "#D1D3D4",
-        navbardarkgrey:"#282828",
+        navbardarkgrey: "#282828",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

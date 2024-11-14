@@ -8,11 +8,7 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { isBefore, endOfDay } from "date-fns";
 
 type FlightCalendarProps = {
@@ -21,43 +17,26 @@ type FlightCalendarProps = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export function FlightCalendar({
-  date,
-  setDate,
-  className,
-}: FlightCalendarProps) {
+export function FlightCalendar({ date, setDate, className }: FlightCalendarProps) {
   //   const [date, setDate] = React.useState<DateRange | undefined>({
   //     from: new Date(2022, 0, 20),
   //     to: addDays(new Date(2022, 0, 20), 20),
   //   });
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full text-sm sm:text-base ", className)}>
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            id="date"
-            variant={"outline"}
-            className={cn(
-              "w-full font-audimat border-0 bg-transparent hover:bg-transparent hover:text-white  rounded-none"
-            )}
-          >
-            <div className="text-4xl md:text-3xl lg:text-4xl">
-              {" "}
-              {/* Add margin-bottom here */}
-              {!date?.from && !date?.to ? (
-                <div className="flex items-center">
-                  Depart - Return
-                  <CalendarIcon size={28} className="ml-20" />
-                </div>
-              ) : (
-                <div className="calendar-date text-4xl lg:text-3xl xl:text-4xl">
-                  {date?.from && format(date.from, "MM/dd/yy")} -{" "}
-                  {date?.to && format(date.to, "MM/dd/yy")}
-                </div>
-              )}
-            </div>
-          </Button>
+          <button className={cn("w-full rounded-none flex gap-x-4 justify-between")}>
+            <span className="border-b-[1px] flex justify-between items-center gap-2 border-airlinelightgray pb-1 w-full">
+              <span>{date?.from && format(date.from, "MM/dd/yy")}</span>{" "}
+              <CalendarIcon className="text-airlinelightgray h-4 w-4" />
+            </span>
+            <span className="border-b-[1px] flex justify-between items-center gap-2 border-airlinelightgray pb-1 w-full">
+              <span> {date?.to && format(date.to, "MM/dd/yy")}</span>{" "}
+              <CalendarIcon className="text-airlinelightgray h-4 w-4" />
+            </span>
+          </button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
@@ -68,7 +47,10 @@ export function FlightCalendar({
             onSelect={setDate}
             numberOfMonths={2}
             disabled={(date) => isBefore(date, endOfDay(new Date()))}
-            classNames={{day_selected:"bg-airlinepink text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-airlinepink focus:text-primary-foreground"}}
+            classNames={{
+              day_selected:
+                "bg-airlinedarkblue text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-airlinepink focus:text-primary-foreground",
+            }}
           />
         </PopoverContent>
       </Popover>

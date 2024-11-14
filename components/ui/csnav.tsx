@@ -24,7 +24,7 @@ export function CSNav(color: string) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Menu size={24} className={`text-${color} cursor-pointer`} />
+        <Menu size={24} className="text-navlink cursor-pointer" />
       </SheetTrigger>
       <SheetContent className="overflow-y-scroll w-full" side="left">
         <SheetHeader className="">

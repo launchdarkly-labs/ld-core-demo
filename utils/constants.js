@@ -11,7 +11,7 @@ import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
 import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
-import toggleBankHorizontalLogo from "@/public/banking/bankLogo.svg";
+import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
 import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
 import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
@@ -76,6 +76,11 @@ export const LAUNCH_CLUB_PLATINUM = "platinum";
 
 export const LD_CONTEXT_COOKIE_KEY = "ld-context";
 
+export const INVESTMENT = "investment";
+export const MARKET = "market";
+export const AIRLINES = "airlines";
+export const BANK = "bank";
+
 export const HOMEPAGE_CARDS = {
   release: {
     name: "Automate Releases",
@@ -83,10 +88,7 @@ export const HOMEPAGE_CARDS = {
       "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
     desktopNoHoveringImage: releaseNoHoverImage,
     desktopHoveringImage: releaseHoverImage,
-    link: "/bank",
-    mobileHoverBackground: releaseHoverCSNAV,
-    mobileNoHoverBackground: releaseNoHoverCSNAV,
-    icon: releaseIcon,
+    link: "/bank"
   },
   monitor: {
     name: "De-Risk releases",
@@ -94,10 +96,7 @@ export const HOMEPAGE_CARDS = {
       "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
-    link: "/investment",
-    mobileHoverBackground: monitorHoverCSNAV,
-    mobileNoHoverBackground: monitorNoHoverCSNAV,
-    icon: monitorIcon,
+    link: "/investment"
   },
   ai: {
     name: "Safely Ship AI",
@@ -105,10 +104,7 @@ export const HOMEPAGE_CARDS = {
       "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
-    link: "/airways",
-    mobileHoverBackground: aiHoverCSNAV,
-    mobileNoHoverBackground: aiNoHoverCSNAV,
-    icon: aiIcon,
+    link: "/airways"
   },
   experiment: {
     name: "Optimize Experiences",
@@ -116,11 +112,8 @@ export const HOMEPAGE_CARDS = {
       "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
     desktopNoHoveringImage: experimentNoHoverImage,
     desktopHoveringImage: experimentHoverImage,
-    link: "/marketplace",
-    mobileHoverBackground: experimentHoverCSNAV,
-    mobileNoHoverBackground: experimentNoHoverCSNAV,
-    icon: experimentIcon,
-  },
+    link: "/marketplace"
+  }
 };
 
 export const COMPANY_LOGOS = {
@@ -194,6 +187,8 @@ export const CSNAV_ITEMS = {
     iconHover: experimentIconHover,
     type: "usecase",
     link: "/marketplace",
-    title: "Optimize Experiences",
-  },
-};
+    title: "Optimize Experiences"
+  }
+  
+
+}

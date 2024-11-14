@@ -33,18 +33,6 @@ export default function Bank() {
           </>
         ) : (
           <>
-            {/* <Image
-              src={bankDashboardBackgroundRight}
-              className="fixed right-0 bottom-0 m-h-screen z-0"
-              alt="Bank Home Page Background"
-            />
-            <Image
-              src={bankDashboardBackgroundLeft}
-              className="fixed left-0 bottom-0 m-h-screen z-0"
-              alt="Bank Home Page Background"
-            /> */}
-
-
             <BankUserDashboard />
           </>
         )}

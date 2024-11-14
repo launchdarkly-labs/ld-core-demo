@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
 import LoginContext from "@/utils/contexts/login";
-import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane } from "lucide-react";
+import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane, TicketIcon } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import {
   Popover,
@@ -123,7 +123,7 @@ export default function BookedFlights() {
     exit: { x: 300, opacity: 0 },
   };
   const navLinkStyling =
-    "lg:pb-[3rem] lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
+    "lg:mt-[.1rem] lg:pb-[3rem] lg:mr-4 flex items-start text-sm font-sohnelight font-medium lg:transition-colors lg:bg-no-repeat lg:bg-bottom lg:bg-transparent";
 
   return (
     <Sheet>
@@ -131,7 +131,7 @@ export default function BookedFlights() {
         <button
           className={`${navLinkStyling} relative  lg:hover:bg-gradient-airline-buttons bg-[length:100%_3px] cursor-poiner animate-pulse hover:animate-none`}
         >
-          <div className="block sm:hidden lg:block cursor-pointer sm:text-airlineinactive sm:focus:text-airlinetext  sm:hover:text-white ">
+          <div className="block sm:hidden lg:block cursor-pointer sm:text-navlink sm:focus:text-airlinetext  sm:hover:text-navbarlightgrey ">
             <span className="">My Bookings</span>
             {bookedTrips.length > 0 && (
               <span className="absolute ml-2 lg:ml-0 lg:bottom-[35px] lg:right-[-25px] bg-gradient-airways rounded-full text-white text-xs w-5 h-5 pt-[.12rem] pr-[0.05rem] ">
@@ -141,7 +141,7 @@ export default function BookedFlights() {
           </div>
 
           <div className="hidden sm:block lg:hidden relative">
-            <Plane className="text-block sm:text-white" />
+            <TicketIcon className="text-block sm:text-airlinedarkblue" />
 
             {bookedTrips.length > 0 && (
               <span className="absolute top-[-13px] right-[-20px] bg-airlinepink rounded-full text-white text-xs w-5 h-5 flex items-center justify-center">
@@ -309,17 +309,17 @@ export default function BookedFlights() {
                   <div className="p-6 xl:p-6 w-full sm:w-1/3 bg-[#F8F8F8] grid ticket-content-right-side ">
                     <div className="flex flex-col items-center justify-center space-y-4">
                       {userObject.personaEnrolledInLaunchClub ? (
-                        <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default">
+                        <button className="bg-gradient-airways text-white font-bold py-2 px-4 w-full cursor-default rounded-xl">
                           Launch Priority Upgrade
                         </button>
                       ) : (
-                        <button className="bg-[#405BFF] text-white  p-4 w-full py-3 font-shone cursor-default">
+                        <button className="bg-[#405BFF] text-white rounded-full p-4 w-full py-3 font-shone cursor-default">
                           Upgrade
                         </button>
                       )}
                       {aiTravelInsights && (
                         <Popover>
-                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none">
+                          <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
                           </PopoverTrigger>
                           <PopoverContent
