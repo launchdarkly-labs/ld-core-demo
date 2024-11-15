@@ -113,20 +113,20 @@ export default function Chatbot() {
   }, [messages]);
 
   const aiModelColors = (aiModelFlag?: string): string => {
-    if (aiModelFlag?.includes("cohere") || aiNewModelChatbotFlag?.model.modelId.includes(COHERE)) {
+    if (aiModelFlag?.includes("cohere") || aiNewModelChatbotFlag?.model?.modelId.includes(COHERE)) {
       return "#39594D";
     } else if (
       aiModelFlag?.includes("meta") ||
-      aiNewModelChatbotFlag?.model.modelId.includes(META)
+      aiNewModelChatbotFlag?.model?.modelId?.includes(META)
     ) {
       return "#0668E1";
     } else if (
       aiModelFlag?.includes("claude") ||
-      aiNewModelChatbotFlag?.model.modelId.includes(CLAUDE)
+      aiNewModelChatbotFlag?.model?.modelId?.includes(CLAUDE)
     ) {
       return "#da7756";
     } else {
-      return "white";
+      return "text-airlinegray";
     }
   };
 
@@ -164,7 +164,7 @@ export default function Chatbot() {
                   <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
-                      style={{ color: aiModelColors(aiNewModelChatbotFlag?.model.modelId) }}
+                      style={{ color: aiModelColors(aiNewModelChatbotFlag?.model?.modelId) }}
                       className="font-bold"
                     >
                       {aiModelName()}
