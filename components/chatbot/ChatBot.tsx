@@ -98,7 +98,7 @@ export default function Chatbot() {
 
   const aiModelName = () => {
     if (aiNewModelChatbotFlag?.model?.modelId?.includes(COHERE)) {
-      return "Cohere Coral";
+      return "Cohere Command";
     } else if (aiNewModelChatbotFlag?.model?.modelId?.includes(META)) {
       return "Meta Llama";
     } else {

@@ -77,7 +77,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
                   <strong className="text-cohereColor pl-1">Cohere Command</strong>
                 )}
                 {destinationPickerNewAIModelLDFlag?.model?.modelId.includes("anthropic") && (
-                  <strong className="text-anthropicColor pl-1">Claude 3 Haiku</strong>
+                  <strong className="text-anthropicColor pl-1">Anthropic Claude</strong>
                 )}
               </div>
             </AlertDialogTitle>

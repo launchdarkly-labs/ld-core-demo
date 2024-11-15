@@ -270,7 +270,8 @@ export default function BookedFlights() {
                                   <div>
                                     <p className="text-lg mb-4 font-sohne  bg-gradient-airways-red text-white p-4">
                                       AI Travel Insights{" "}
-                                      <span className="text-sm">powered by Amazon Bedrock</span>{" "}
+                                      <br></br>
+                                      <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>{" "}
                                     </p>
                                     <p className="p-4 font-normal font-sohne">{aiResponse}</p>
                                   </div>
@@ -331,7 +332,8 @@ export default function BookedFlights() {
                             <div className="flex mx-auto justify-center items-center bg-gradient-airways-red text-white sm:justify-normal">
                               <p className="text-lg mb-4 mt-4 font-sohne ml-4 mr-4">
                                 AI Travel Insights{" "}
-                                <span className="text-sm">powered by Amazon Bedrock</span>
+                                <br></br>
+                                <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>
                               </p>
                             </div>
                             <div className="justify-center overflow-y-auto items-center">
