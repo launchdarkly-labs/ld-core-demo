@@ -108,7 +108,7 @@ module.exports = {
         navbargrey: "#939598",
         navbarlightgrey: "#D1D3D4",
         navbardarkgrey: "#282828",
-        metaLlamaColor: "#0668E1",
+        metaColor: "#0668E1",
         cohereColor: "#39594D",
         anthropicColor:"#da7756",
         primary: {

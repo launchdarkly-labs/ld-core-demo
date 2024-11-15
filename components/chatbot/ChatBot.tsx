@@ -97,9 +97,9 @@ export default function Chatbot() {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiNewModelChatbotFlag?.model?.modelId?.includes("cohere")) {
+    if (aiNewModelChatbotFlag?.model?.modelId?.includes(COHERE)) {
       return "Cohere Coral";
-    } else if (aiNewModelChatbotFlag?.model?.modelId?.includes("meta")) {
+    } else if (aiNewModelChatbotFlag?.model?.modelId?.includes(META)) {
       return "Meta Llama";
     } else {
       return "Anthropic Claude";
@@ -111,24 +111,6 @@ export default function Chatbot() {
       chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
     }
   }, [messages]);
-
-  const aiModelColors = (aiModelFlag?: string): string => {
-    if (aiModelFlag?.includes("cohere") || aiNewModelChatbotFlag?.model?.modelId.includes(COHERE)) {
-      return "#39594D";
-    } else if (
-      aiModelFlag?.includes("meta") ||
-      aiNewModelChatbotFlag?.model?.modelId?.includes(META)
-    ) {
-      return "#0668E1";
-    } else if (
-      aiModelFlag?.includes("claude") ||
-      aiNewModelChatbotFlag?.model?.modelId?.includes(CLAUDE)
-    ) {
-      return "#da7756";
-    } else {
-      return "text-airlinegray";
-    }
-  };
 
   return (
     <>
@@ -164,8 +146,22 @@ export default function Chatbot() {
                   <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
-                      style={{ color: aiModelColors(aiNewModelChatbotFlag?.model?.modelId) }}
-                      className="font-bold"
+                      className={`font-bold text-white ${
+                        aiNewModelChatbotFlag?.model?.modelId.includes(COHERE)
+                          ? "!text-cohereColor"
+                          : ""
+                      } 
+                      ${
+                        aiNewModelChatbotFlag?.model?.modelId.includes(CLAUDE)
+                          ? "!text-anthropicColor"
+                          : ""
+                      }
+                             ${
+                               aiNewModelChatbotFlag?.model?.modelId.includes(META)
+                                 ? "!text-metaColor"
+                                 : ""
+                             }
+                      `}
                     >
                       {aiModelName()}
                     </span>
