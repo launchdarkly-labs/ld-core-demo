@@ -35,7 +35,7 @@ export default function FederatedAccountModule() {
              <motion.div
              onClick={() => setFederatedAccountOne(true)}
              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
-             whileHover={{ scale: 1.2 }}
+             whileHover={{ scale: 1.1 }}
            >
              <PlusSquare size={96} className="text-gray-400 mx-auto" />
            </motion.div>
@@ -44,7 +44,7 @@ export default function FederatedAccountModule() {
               initial="hidden"
               animate="visible"
               variants={variants}
-              transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.1 }}
               className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCheckingAccount />
@@ -55,7 +55,7 @@ export default function FederatedAccountModule() {
              <motion.div
               onClick={() => setFederatedAccountTwo(true)}
               className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
-              whileHover={{ scale: 1.2 }}
+              whileHover={{ scale: 1.1 }}
             >
               <PlusSquare size={96} className="text-gray-400 mx-auto" />
             </motion.div>
@@ -64,7 +64,7 @@ export default function FederatedAccountModule() {
               initial="hidden"
               animate="visible"
               variants={variants}
-              transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.1 }}
               className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCreditAccount />

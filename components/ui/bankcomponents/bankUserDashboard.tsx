@@ -168,13 +168,13 @@ export default function BankUserDashboard() {
                                     </motion.div>
                                     <motion.div
                                         className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer"
-                                        whileHover={{ scale: 1.2 }}
+                                        whileHover={{ scale: 1.1 }}
                                     >
                                         <CreditAccount />
                                     </motion.div>
                                     <motion.div
                                         className="p-4 h-[300px] w-full sm:w-1/3 bg-white shadow-xl rounded-2xl cursor-pointer"
-                                        whileHover={{ scale: 1.2 }}
+                                        whileHover={{ scale: 1.1 }}
                                     >
                                         <MorgtgageAccount />
                                     </motion.div>
