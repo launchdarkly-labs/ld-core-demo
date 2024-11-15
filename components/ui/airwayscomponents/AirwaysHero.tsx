@@ -16,6 +16,7 @@ import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestina
 import { addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment";
@@ -36,6 +37,9 @@ const AirwaysHero = () => {
     from: new Date(),
     to: addDays(new Date(), 7),
   });
+
+  const flags = useFlags();
+  const destinationPickerNewAIModelLDFlag = flags["destination-picker-new-ai-model"];
 
   function bookTrip() {
     const startDate = `${
@@ -110,14 +114,16 @@ const AirwaysHero = () => {
               risk, and ship your travel dreams faster than ever before
             </h2> */}
 
-            <DestinationPicker>
-              <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
-                <span>
-                  <Sparkles />{" "}
-                </span>
-                Find your next trip with AI
-              </Button>
-            </DestinationPicker>
+            {destinationPickerNewAIModelLDFlag.enabled !== false && (
+              <DestinationPicker>
+                <Button className="bg-airlinedarkblue rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
+                  <span>
+                    <Sparkles />{" "}
+                  </span>
+                  Find your next trip with AI
+                </Button>
+              </DestinationPicker>
+            )}
           </div>
 
           <div className="w-full  md:w-[25rem] z-10">

@@ -204,7 +204,7 @@ export default function BookedFlights() {
                             {trip.type} flight
                           </p>
 
-                          {aiTravelInsights ? (
+                          {aiTravelInsights && aiTravelPromptText.enabled !== false ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -250,7 +250,7 @@ export default function BookedFlights() {
                           <p className="text-black">Aircraft</p>
 
 
-                          {aiTravelInsights ? (
+                          {aiTravelInsights && aiTravelPromptText.enabled !== false  ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -318,7 +318,8 @@ export default function BookedFlights() {
                           Upgrade
                         </button>
                       )}
-                      {aiTravelInsights && (
+
+                      {aiTravelInsights && aiTravelPromptText.enabled !== false  && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
