@@ -126,7 +126,7 @@ export default function LaunchSignUp({ children }: { children: ReactElement }) {
                   onClick={() => {
                     enrollInLaunchClub();
                   }}
-                  className="bg-gradient-airways text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone !cursor-pointer rounded-[2rem] animate-pulse hover:animate-none "
+                  className="bg-gradient-airways shadow-2xl text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone !cursor-pointer rounded-[2rem] animate-pulse hover:animate-none "
                 >
                   Enroll Today!
                 </SheetTrigger>

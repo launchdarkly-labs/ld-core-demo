@@ -76,7 +76,7 @@ export default function BankUserDashboard() {
     return (
         <>
 
-            
+
 
             <Image
                 src={bankDashboardBackgroundRight}
@@ -90,61 +90,61 @@ export default function BankUserDashboard() {
             />
 
             <main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative ">
-            <NavWrapper> 
-                <>
-                    <CSNavWrapper>
-                        <CSNav />
-                    </CSNavWrapper>
+                <NavWrapper>
+                    <>
+                        <CSNavWrapper>
+                            <CSNav />
+                        </CSNavWrapper>
 
-                    <NavLogo
-                        srcHref={NAV_ELEMENTS_VARIANT[BANK]?.logoImg?.src}
-                        altText={BANK}
-                    />
+                        <NavLogo
+                            srcHref={NAV_ELEMENTS_VARIANT[BANK]?.logoImg?.src}
+                            altText={BANK}
+                        />
 
-                    <NavbarDropdownMenu>
-                        <>
-                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
-                                return (
-                                    <DropdownMenuItem href={navLink?.href} key={index}>
-                                        {navLink?.text}
-                                    </DropdownMenuItem>
-                                );
-                            })}
-                        </>
-                    </NavbarDropdownMenu>
+                        <NavbarDropdownMenu>
+                            <>
+                                {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                    return (
+                                        <DropdownMenuItem href={navLink?.href} key={index}>
+                                            {navLink?.text}
+                                        </DropdownMenuItem>
+                                    );
+                                })}
+                            </>
+                        </NavbarDropdownMenu>
 
-                    {/* left side navbar template */}
+                        {/* left side navbar template */}
 
-                    <NavbarLeftSideWrapper>
-                        <>
-                            {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
-                                return (
-                                    <NavLinkButton
-                                        text={navLink?.text}
-                                        href={navLink?.href}
-                                        navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
-                                        index={index}
-                                        key={index}
-                                    />
-                                );
-                            })}
-                        </>
-                    </NavbarLeftSideWrapper>
+                        <NavbarLeftSideWrapper>
+                            <>
+                                {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
+                                    return (
+                                        <NavLinkButton
+                                            text={navLink?.text}
+                                            href={navLink?.href}
+                                            navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
+                                            index={index}
+                                            key={index}
+                                        />
+                                    );
+                                })}
+                            </>
+                        </NavbarLeftSideWrapper>
 
-                    {/* right side navbar template */}
-                    <NavbarRightSideWrapper>
-                        <>
-                            {!isLoggedIn && (
-                                <>
-                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
-                                </>
-                            )}
+                        {/* right side navbar template */}
+                        <NavbarRightSideWrapper>
+                            <>
+                                {!isLoggedIn && (
+                                    <>
+                                        <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
+                                    </>
+                                )}
 
-                            <NavbarLogin variant={BANK} />
-                        </>
-                    </NavbarRightSideWrapper>
-                </>
-            </NavWrapper>
+                                <NavbarLogin variant={BANK} />
+                            </>
+                        </NavbarRightSideWrapper>
+                    </>
+                </NavWrapper>
                 <section
                     className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
                         }`}

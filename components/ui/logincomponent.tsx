@@ -34,7 +34,7 @@ export function LoginComponent({ variant }: LoginComponentProps) {
 
 
   return (
-    <div className="w-full  bg-white font-audimat shadow-xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">
+    <div className="w-full  bg-white font-audimat shadow-2xl mx-auto text-black p-4 sm:p-8 h-full flex flex-col">
       <div className=" mx-auto text-center mt-4 mb-8">
         <img src={COMPANY_LOGOS[variant].vertical.src} className=" mx-auto" />
       </div>

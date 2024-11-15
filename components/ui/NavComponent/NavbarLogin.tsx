@@ -30,7 +30,7 @@ const NavbarLogin = ({ variant }) => {
   return (
     <Popover id="navbar-login">
       <PopoverTrigger>
-        <Avatar>
+        <Avatar className="shadow-xl">
           <AvatarImage src={userObject?.personaimage || "ToggleAvatar.png"} className="" />
         </Avatar>
       </PopoverTrigger>

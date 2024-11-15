@@ -38,9 +38,8 @@ const AirwaysHero = () => {
   });
 
   function bookTrip() {
-    const startDate = `${
-      date!.from.getMonth() + 1
-    }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
+    const startDate = `${date!.from.getMonth() + 1
+      }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
     const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
     const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
     const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
@@ -168,11 +167,10 @@ const AirwaysHero = () => {
                     <motion.button
                       whileTap={{ scale: 0.5 }}
                       onClick={() => (isLoggedIn ? bookTrip() : null)}
-                      className={`text-sm shadow-2xl items-center border-2 ${
-                        isLoggedIn
+                      className={`text-sm shadow-2xl items-center border-2 ${isLoggedIn
                           ? "border-airlinedarkblue text-airlinedarkblue"
                           : "border-airlinegray text-airlinegray"
-                      } rounded-3xl py-2 px-4`}
+                        } rounded-3xl py-2 px-4`}
                     >
                       <p>{isLoggedIn ? "Book Your Trip" : "Sign In to Finish Booking"}</p>
                     </motion.button>

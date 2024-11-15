@@ -23,12 +23,8 @@ import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSide
 import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
 import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
 import { CSNav } from "@/components/ui/csnav";
-import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
-import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
 import {
-  NavbarSignInButton,
   NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
@@ -51,7 +47,7 @@ export default function Investment() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col  bg-white`}
+            className={`flex h-full flex-col  bg-investment-graident-background`}
           >
             <NavWrapper>
               <>
@@ -97,12 +93,7 @@ export default function Investment() {
                 {/* right side navbar template */}
                 <NavbarRightSideWrapper>
                   <>
-                    {!isLoggedIn && (
-                      <>
-                        <NavbarSignUpButton backgroundColor="bg-gradient-experimentation" />
-                      </>
-                    )}
-
+                    
                     <NavbarLogin variant={INVESTMENT} />
                   </>
                 </NavbarRightSideWrapper>

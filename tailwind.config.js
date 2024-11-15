@@ -60,7 +60,8 @@ module.exports = {
         'bank-homepage-hero-background': "url('/banking/backgrounds/bank-homepage-hero-background.svg')",
         'bank-gradient-text-color': 'linear-gradient(220.23deg, #3DD6F5 -8.97%, #A34FDE 94.12%)',
         'bank-gradient-blue-background': 'linear-gradient(178.76deg, #405BFF 1.06%, #7084FF 123.42%)',
-        'bank-gradient-white-background': 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%)'
+        'bank-gradient-white-background': 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%)',
+        "investment-graident-background": 'linear-gradient(0deg, rgba(248, 246, 255, 0) 18.81%, #F8F6FF 130.2%)'
 
 
       }),

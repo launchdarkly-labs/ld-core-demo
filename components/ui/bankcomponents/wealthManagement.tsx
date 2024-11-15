@@ -59,7 +59,7 @@ const WealthManagementSheet = ({
           <div className="flex justify-end ">
             <Button
               variant="default"
-              className="w-full px-6 py-6 bg-bankdarkblue font-sohnelight rounded-none text-[20px] mx-auto"
+              className="w-full px-6 py-6 shadow-2xl bg-bankdarkblue font-sohnelight rounded-xl text-[20px] mx-auto"
             >
               Start now
             </Button>

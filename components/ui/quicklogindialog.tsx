@@ -49,7 +49,7 @@ export function QuickLoginDialog({variant} :any) {
                       >
                         <img
                           src={persona.personaimage}
-                          className="w-20 h-20 rounded-full"
+                          className="w-20 h-20 rounded-full shadow-xl"
                           alt={persona.personaname}
                         />
                         <p className="">{persona.personaname}</p>

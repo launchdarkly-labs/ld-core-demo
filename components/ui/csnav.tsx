@@ -48,7 +48,7 @@ export function CSNav(color: string) {
                     transition={{ delay: 0.05, duration: 0.2 }}
                     className="cursor-pointer"
                   >
-                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl shadow-lg`}>
                       <CSCard
                         className="cursor-pointer"
                         cardTitle={item.title}
@@ -79,7 +79,7 @@ export function CSNav(color: string) {
                     transition={{ delay: 0.05, duration: 0.2 }}
                     className="cursor-pointer"
                   >
-                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                    <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl shadow-lg`}>
                       <CSCard
                         className="cursor-pointer"
                         cardTitle={item.title}
