@@ -1,13 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-
+import LoginContext from "@/utils/contexts/login";
 import { v4 as uuidv4 } from "uuid";
 import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
+
+import { PERSONA_ROLE_DEVELOPER } from "@/utils/constants";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -18,8 +20,9 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const aiChatbotFlag = useFlags()["ai-chatbot"];
-
+  const aiNewModelChatbotFlag = useFlags()["ai-new-model-chatbot"];
+  //console.log("ai-new-model-chatbot", aiNewModelChatbotFlag);
+  const { userObject } = useContext(LoginContext);
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
   };
@@ -55,7 +58,7 @@ export default function Chatbot() {
 
     const data = await response.json();
 
-    let aiAnswer;
+    let aiAnswer: string;
 
     if (data?.generation) {
       aiAnswer = data?.generation; //llama
@@ -71,13 +74,15 @@ export default function Chatbot() {
       id: uuidv4().slice(0, 4),
     };
 
-    if (aiAnswer === undefined) {
+    if (aiAnswer === undefined && !userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)) {
       assistantMessage.content = "I'm sorry. Please try again.";
+      setMessages([...messages, userMessage, assistantMessage]);
+    } else if (aiAnswer === undefined && userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)){
+      assistantMessage.content = data; //error message
       setMessages([...messages, userMessage, assistantMessage]);
     } else {
       setMessages([...messages, userMessage, assistantMessage]);
     }
-
     setIsLoading(false);
   }
 
@@ -93,9 +98,9 @@ export default function Chatbot() {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiChatbotFlag?.modelId?.includes("cohere")) {
+    if (aiNewModelChatbotFlag?.model?.modelId?.includes("cohere")) {
       return "Cohere Coral";
-    } else if (aiChatbotFlag?.modelId?.includes("meta")) {
+    } else if (aiNewModelChatbotFlag?.model?.modelId?.includes("meta")) {
       return "Meta Llama";
     } else {
       return "Anthropic Claude";
