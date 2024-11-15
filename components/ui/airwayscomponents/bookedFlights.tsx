@@ -22,7 +22,7 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { userObject } = useContext(LoginContext);
-  const aiTravelInsights = useFlags()["aiTravelInsights"];
+  // const aiTravelInsights = useFlags()["aiTravelInsights"];
   const aiTravelPromptText = useFlags()["ai-travel-prompt-text"];
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
@@ -204,7 +204,7 @@ export default function BookedFlights() {
                             {trip.type} flight
                           </p>
 
-                          {aiTravelInsights && aiTravelPromptText.enabled !== false ? (
+                          {aiTravelPromptText.enabled !== false ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -250,7 +250,7 @@ export default function BookedFlights() {
                           <p className="text-black">Aircraft</p>
 
 
-                          {aiTravelInsights && aiTravelPromptText.enabled !== false  ? (
+                          {aiTravelPromptText.enabled !== false  ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -319,7 +319,7 @@ export default function BookedFlights() {
                         </button>
                       )}
 
-                      {aiTravelInsights && aiTravelPromptText.enabled !== false  && (
+                      { aiTravelPromptText.enabled !== false  && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
