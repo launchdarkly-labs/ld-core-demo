@@ -14,12 +14,12 @@ import { Button } from "../button";
 import {ReactElement, useEffect, useState} from 'react'
 import ReactMarkdown from 'react-markdown'
 import Image from "next/image";
-import { MapPinned } from "lucide-react";
+// import { MapPinned } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 
 export default function DestinationPicker ({children}:{children: ReactElement}) {
 const flags = useFlags();
-const flagName = flags["destination-picker-ai-model"];
+const flagName = flags["destination-picker-new-ai-model"];
 const [recsGiven, setRecsGiven] = useState(false);
 const [destinations, setDestinations] = useState("")
 const [loading, setLoading] = useState(false);
@@ -79,7 +79,7 @@ const prompt =
                 </div>
                 <div className="flex w-full justify-center pb-6 text-base text-zinc-600 font-sohnelight">
                   powered by
-                  {flagName.modelId === "cohere.command-text-v14" ? (
+                  {flagName?.model?.modelId === "cohere.command-text-v14" ? (
                     <strong className="text-amber-500 pl-1">
                       Cohere Command
                     </strong>

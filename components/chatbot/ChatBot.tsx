@@ -21,7 +21,6 @@ export default function Chatbot() {
   const client = useLDClient();
   const { toast } = useToast();
   const aiNewModelChatbotFlag = useFlags()["ai-new-model-chatbot"];
-  //console.log("ai-new-model-chatbot", aiNewModelChatbotFlag);
   const { userObject } = useContext(LoginContext);
   const handleInputChange = (e: any) => {
     setInput(e.target.value);

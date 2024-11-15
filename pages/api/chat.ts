@@ -34,7 +34,6 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
 
   const model2 = await ldClient.variation("ai-new-model-chatbot", context, {
     prompt: [{ content: "", role: "system" }],
-    _ldMeta: { enabled: true, versionKey: "32cae452-e1b9-422d-b4cd-ea669e01ff87" },
     model: {
       modelId: "cohere.command-text-v14",
       temperature: 0.5,
@@ -42,21 +41,20 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     },
   });
 
-  //console.log("model2", model2);
 
-  const model = await ldClient.variation("ai-chatbot", context, {
-    modelId: "cohere.command-text-v14",
-    temperature: 0.4,
-    max_tokens: 400,
-    p: 1,
-  });
+  // const model = await ldClient.variation("ai-chatbot", context, {
+  //   modelId: "cohere.command-text-v14",
+  //   temperature: 0.4,
+  //   max_tokens: 400,
+  //   p: 1,
+  // });
 
-  const objWithoutModelId = Object.keys(model)
-    .filter((objKey) => objKey !== "modelId")
-    .reduce((newObj: any, key) => {
-      newObj[key] = model[key];
-      return newObj;
-    }, {});
+  // const objWithoutModelId = Object.keys(model)
+  //   .filter((objKey) => objKey !== "modelId")
+  //   .reduce((newObj: any, key) => {
+  //     newObj[key] = model[key];
+  //     return newObj;
+  //   }, {});
     
 
     const objWithoutModelId2 = Object.keys(model2?.model)
