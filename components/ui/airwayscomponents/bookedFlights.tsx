@@ -22,7 +22,8 @@ import { BounceLoader } from "react-spinners";
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { userObject } = useContext(LoginContext);
-  const {  aiTravelInsights, aiTravelPromptText } = useFlags();
+  // const aiTravelInsights = useFlags()["aiTravelInsights"];
+  const aiTravelPromptText = useFlags()["ai-travel-prompt-text"];
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -79,7 +80,7 @@ export default function BookedFlights() {
 
   async function submitQuery(airport: any) {
     try {
-      const prompt: string = aiTravelPromptText.replace('${destination}', airport) + '. Limit responses to 40 words only';
+      const prompt: string = aiTravelPromptText?.prompt[0]?.content?.replace('${destination}', airport) + '. Limit responses to 40 words only';
 
       setLoading(true);
       const response = await fetch("/api/bedrock", {
@@ -203,7 +204,7 @@ export default function BookedFlights() {
                             {trip.type} flight
                           </p>
 
-                          {aiTravelInsights ? (
+                          {aiTravelPromptText.enabled !== false ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -249,7 +250,7 @@ export default function BookedFlights() {
                           <p className="text-black">Aircraft</p>
 
 
-                          {aiTravelInsights ? (
+                          {aiTravelPromptText.enabled !== false  ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -269,7 +270,8 @@ export default function BookedFlights() {
                                   <div>
                                     <p className="text-lg mb-4 font-sohne  bg-gradient-airways-red text-white p-4">
                                       AI Travel Insights{" "}
-                                      <span className="text-sm">powered by Amazon Bedrock</span>{" "}
+                                      <br></br>
+                                      <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>{" "}
                                     </p>
                                     <p className="p-4 font-normal font-sohne">{aiResponse}</p>
                                   </div>
@@ -317,7 +319,8 @@ export default function BookedFlights() {
                           Upgrade
                         </button>
                       )}
-                      {aiTravelInsights && (
+
+                      { aiTravelPromptText.enabled !== false  && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
@@ -329,7 +332,8 @@ export default function BookedFlights() {
                             <div className="flex mx-auto justify-center items-center bg-gradient-airways-red text-white sm:justify-normal">
                               <p className="text-lg mb-4 mt-4 font-sohne ml-4 mr-4">
                                 AI Travel Insights{" "}
-                                <span className="text-sm">powered by Amazon Bedrock</span>
+                                <br></br>
+                                <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>
                               </p>
                             </div>
                             <div className="justify-center overflow-y-auto items-center">

@@ -81,6 +81,10 @@ export const MARKET = "market";
 export const AIRLINES = "airlines";
 export const BANK = "bank";
 
+export const CLAUDE = "claude";
+export const COHERE = "cohere";
+export const META = "meta";
+
 export const HOMEPAGE_CARDS = {
   release: {
     name: "Automate Releases",

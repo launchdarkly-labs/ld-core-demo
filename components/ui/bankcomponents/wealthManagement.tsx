@@ -82,7 +82,7 @@ const WealthManagementSheet = ({
                       <p className="  font-sohne font-bold text-lg">
                         Wealth Insights AI <br />
                         <span className="font-sohnelight text-xs text-zinc-400 italic">
-                          Powered By Amazon Bedrock
+                          Powered Anthropic Claude in By Amazon Bedrock
                         </span>
                       </p>
 

@@ -1,13 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-
+import LoginContext from "@/utils/contexts/login";
 import { v4 as uuidv4 } from "uuid";
 import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
+import { BatteryCharging } from "lucide-react";
+import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META } from "@/utils/constants";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -18,8 +20,8 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const aiChatbotFlag = useFlags()["ai-chatbot"];
-
+  const aiNewModelChatbotFlag = useFlags()["ai-new-model-chatbot"];
+  const { userObject } = useContext(LoginContext);
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
   };
@@ -55,7 +57,7 @@ export default function Chatbot() {
 
     const data = await response.json();
 
-    let aiAnswer;
+    let aiAnswer: string;
 
     if (data?.generation) {
       aiAnswer = data?.generation; //llama
@@ -71,13 +73,15 @@ export default function Chatbot() {
       id: uuidv4().slice(0, 4),
     };
 
-    if (aiAnswer === undefined) {
+    if (aiAnswer === undefined && !userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)) {
       assistantMessage.content = "I'm sorry. Please try again.";
+      setMessages([...messages, userMessage, assistantMessage]);
+    } else if (aiAnswer === undefined && userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)) {
+      assistantMessage.content = data; //error message
       setMessages([...messages, userMessage, assistantMessage]);
     } else {
       setMessages([...messages, userMessage, assistantMessage]);
     }
-
     setIsLoading(false);
   }
 
@@ -93,9 +97,9 @@ export default function Chatbot() {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiChatbotFlag?.modelId?.includes("cohere")) {
-      return "Cohere Coral";
-    } else if (aiChatbotFlag?.modelId?.includes("meta")) {
+    if (aiNewModelChatbotFlag?.model?.modelId?.includes(COHERE)) {
+      return "Cohere Command";
+    } else if (aiNewModelChatbotFlag?.model?.modelId?.includes(META)) {
       return "Meta Llama";
     } else {
       return "Anthropic Claude";
@@ -117,7 +121,13 @@ export default function Chatbot() {
           className="bg-airlinedarkblue text-gray-50 hover:bg-airlinedarkblue/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 shadow-lg !h-12 !w-12 animate-pulse hover:animate-none"
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
-          {isOpen ? <XIcon className="h-8 w-8" /> : <MessageCircleIcon className="h-8 w-8" />}
+          {isOpen && <XIcon className="h-8 w-8" />}
+          {!isOpen && aiNewModelChatbotFlag.enabled !== false && (
+            <MessageCircleIcon className="h-8 w-8" />
+          )}
+          {!isOpen && aiNewModelChatbotFlag.enabled === false && (
+            <BatteryCharging className="h-8 w-8" />
+          )}
           <span className="sr-only">Open Chatbot</span>
         </Button>
       </div>
@@ -133,8 +143,28 @@ export default function Chatbot() {
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium leading-none">Chatbot Assistant</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Powered by {aiModelName()}
+                  <p className={"text-sm text-gray-500 dark:text-gray-400"}>
+                    Powered by{" "}
+                    <span
+                      className={`font-bold text-white ${
+                        aiNewModelChatbotFlag?.model?.modelId.includes(COHERE)
+                          ? "!text-cohereColor"
+                          : ""
+                      } 
+                      ${
+                        aiNewModelChatbotFlag?.model?.modelId.includes(CLAUDE)
+                          ? "!text-anthropicColor"
+                          : ""
+                      }
+                             ${
+                               aiNewModelChatbotFlag?.model?.modelId.includes(META)
+                                 ? "!text-metaColor"
+                                 : ""
+                             }
+                      `}
+                    >
+                      {aiModelName()}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -231,23 +261,31 @@ export default function Chatbot() {
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => e.preventDefault()}
               >
-                <Input
-                  id="message"
-                  placeholder="Type your message..."
-                  className="flex-1"
-                  autoComplete="off"
-                  value={input}
-                  onChange={handleInputChange}
-                />
-                <Button
-                  type="submit"
-                  size="icon"
-                  onClick={() => submitQuery()}
-                  className="bg-airlinedarkblue"
-                >
-                  <SendIcon className="h-4 w-4" />
-                  <span className="sr-only">Send</span>
-                </Button>
+                {aiNewModelChatbotFlag.enabled === false ? (
+                  <p className="text-airlinegray">
+                    We are offline for today. Please return next time!
+                  </p>
+                ) : (
+                  <>
+                    <Input
+                      id="message"
+                      placeholder="Type your message..."
+                      className="flex-1"
+                      autoComplete="off"
+                      value={input}
+                      onChange={handleInputChange}
+                    />
+                    <Button
+                      type="submit"
+                      size="icon"
+                      onClick={() => submitQuery()}
+                      className="bg-airlinedarkblue"
+                    >
+                      <SendIcon className="h-4 w-4" />
+                      <span className="sr-only">Send</span>
+                    </Button>
+                  </>
+                )}
               </form>
             </CardFooter>
           </Card>

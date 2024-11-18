@@ -16,6 +16,7 @@ import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestina
 import { addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 interface LoginHomePageProps {
   variant: "bank" | "airlines" | "market" | "investment";
@@ -36,6 +37,9 @@ const AirwaysHero = () => {
     from: new Date(),
     to: addDays(new Date(), 7),
   });
+
+  const flags = useFlags();
+  const destinationPickerNewAIModelLDFlag = flags["destination-picker-new-ai-model"];
 
   function bookTrip() {
     const startDate = `${date!.from.getMonth() + 1
@@ -109,14 +113,16 @@ const AirwaysHero = () => {
               risk, and ship your travel dreams faster than ever before
             </h2> */}
 
-            <DestinationPicker>
-              <Button className="bg-airlinedarkblue shadow-2xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
-                <span>
-                  <Sparkles />{" "}
-                </span>
-                Find your next trip with AI
-              </Button>
-            </DestinationPicker>
+            {destinationPickerNewAIModelLDFlag.enabled !== false && (
+              <DestinationPicker>
+                <Button className="bg-airlinedarkblue shadow-xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
+                  <span>
+                    <Sparkles />{" "}
+                  </span>
+                  Find your next trip with AI
+                </Button>
+              </DestinationPicker>
+            )}
           </div>
 
           <div className="w-full shadow-2xl  md:w-[25rem] z-10">
@@ -170,7 +176,7 @@ const AirwaysHero = () => {
                       className={`text-sm shadow-2xl items-center border-2 ${isLoggedIn
                           ? "border-airlinedarkblue text-airlinedarkblue"
                           : "border-airlinegray text-airlinegray"
-                        } rounded-3xl py-2 px-4`}
+                        } rounded-3xl py-2 px-4 shadow-xl`}
                     >
                       <p>{isLoggedIn ? "Book Your Trip" : "Sign In to Finish Booking"}</p>
                     </motion.button>

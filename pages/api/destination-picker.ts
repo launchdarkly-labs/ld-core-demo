@@ -18,12 +18,21 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     const prompt = req.body
     const context: any = getCookie("ld-context") || { "kind": "user", "name": "anonymous", "key": "abc-123" };
 
-    const model = await ldClient.variation("destination-picker-ai-model", context, {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 200,
-        "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
-        "name": "claude-haiku"
-    })
+    // const model = await ldClient.variation("destination-picker-ai-model", context, {
+    //     "anthropic_version": "bedrock-2023-05-31",
+    //     "max_tokens": 200,
+    //     "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    //     "name": "claude-haiku"
+    // })
+
+    const model2 = await ldClient.variation("destination-picker-new-ai-model", context, {
+        prompt: [{ content: "", role: "system" }],
+        model: {
+          modelId: "cohere.command-text-v14",
+          temperature: 0.5,
+          max_tokens: 200,
+        },
+      })
 
 const messages = [
     {
@@ -37,11 +46,11 @@ const messages = [
     ]
 
     const command = new ConverseCommand({
-        modelId: model?.modelId, 
+        modelId: model2?.model?.modelId, 
         messages: messages,
         inferenceConfig: {
-                maxTokens: model?.max_tokens,
-                temperature: model?.temperature || 0
+                maxTokens: model2?.model?.maxTokens,
+                temperature: model2?.model?.temperature || 0.5
             }});
     try {
         const response = await client.send(command);
