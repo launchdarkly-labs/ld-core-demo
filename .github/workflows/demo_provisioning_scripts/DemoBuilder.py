@@ -32,10 +32,11 @@ class DemoBuilder:
     
     def build(self):
         self.create_project()
+        self.create_flags()
         self.create_segments()
         self.create_metrics()
         self.create_metric_groups()
-        self.create_flags()
+        
         self.run_funnel_experiment()
         self.run_feature_experiment()
         self.run_ai_models_experiment()
@@ -245,6 +246,12 @@ class DemoBuilder:
             print("Error: Metric not created")
             return
         print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "cartSuggestedItems",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
         print(" - 10 - Feature Experiment: Suggested Items Carousel")
         self.exp_feature_experiment()
         self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
@@ -271,6 +278,12 @@ class DemoBuilder:
             print("Error: Metric not created")
             return
         print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "ai-chatbot",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
         print(" - 08 - Experiment: AI Models for Chatbot")
         self.exp_ai_models_experiment()
         self.ldproject.start_exp_iteration("chatbot-ai-models", "production")
@@ -335,27 +348,7 @@ class DemoBuilder:
             "on",
             "production",
             "Turn on flag for database migration",
-        )
-        res = self.ldproject.toggle_flag(
-            "ai-chatbot",
-            "on",
-            "production",
-            "Turn on flag for ai chatbot",
-        )
-        res = self.ldproject.toggle_flag(
-            "storeAttentionCallout",
-            "on",
-            "production",
-            "Turn on flag for promotion banner",
-        )
-        res = self.ldproject.toggle_flag(
-            "cartSuggestedItems",
-            "on",
-            "production",
-            "Turn on flag for cart suggested items",
-        )
-        
-            
+        )          
         
 ############################################################################################################
 
