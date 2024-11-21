@@ -222,7 +222,7 @@ class DemoBuilder:
         )
         print(" - 09 - Funnel Experiment: Promotion Banner ")
         self.exp_funnel_experiment()
-        self.ldproject.start_exp_iteration("promotion-banner-experiment", "production")
+        self.ldproject.start_exp_iteration("grow-engagement-with-promotion-banner", "production")
         print("Done")
         self.experiment_created = True
         
@@ -254,7 +254,7 @@ class DemoBuilder:
         )
         print(" - 10 - Feature Experiment: Suggested Items Carousel")
         self.exp_feature_experiment()
-        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
+        self.ldproject.start_exp_iteration("upsell-tracking-experiment", "production")
         print("Done")
         self.experiment_created = True
         
@@ -286,7 +286,7 @@ class DemoBuilder:
         )
         print(" - 08 - Experiment: AI Models for Chatbot")
         self.exp_ai_models_experiment()
-        self.ldproject.start_exp_iteration("chatbot-ai-models", "production")
+        self.ldproject.start_exp_iteration("ai-chatbot-experiment", "production")
         print("Done")
         self.experiment_created = True
         
