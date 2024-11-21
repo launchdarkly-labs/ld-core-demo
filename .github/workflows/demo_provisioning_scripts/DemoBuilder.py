@@ -37,11 +37,10 @@ class DemoBuilder:
         self.create_metric_groups()
         self.create_flags()
        
-        #Not Working (Check request in LDPlatform.py)
+        # Waiting for Product to release this API
         #self.create_ai_config()
         
         # To be implemented
-        
         # self.run_funnel_experiment()
         # self.run_feature_experiment()
         # self.run_ai_models_experiment()
@@ -64,6 +63,18 @@ class DemoBuilder:
         self.sdk_key = self.ldproject.sdk_key
         self.project_created = True
         
+        env_file = os.getenv('GITHUB_ENV')
+        if env_file:
+            try:
+                with open(env_file, "a") as f:
+                    f.write(f"LD_SDK_KEY={self.sdk_key}\n")
+                    f.write(f"LD_CLIENT_KEY={self.client_id}\n")
+                    f.write(f"Projected_Created={self.project_created}\n")   
+            except IOError as e:
+                print(f"Unable to write to environment file: {e}")
+        else:
+            print("GITHUB_ENV not set")
+            
 ############################################################################################################     
         
     # Create all the metrics
@@ -405,7 +416,7 @@ class DemoBuilder:
     
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
-            "destination-picker-new-ai-model",
+            "ai-config--destination-picker-new-ai-model",
             "AI Models: Destination Recommendations",
             "This ai config will provide ai models to the destination recommendations component in LaunchAirways",
             ["ai-models","ai-config"]

@@ -103,7 +103,7 @@ export const HOMEPAGE_CARDS = {
     link: "/investment",
   },
   ai: {
-    name: "Safely Ship AI",
+    name: "Accelerate AI",
     description:
       "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
     desktopNoHoveringImage: aiNoHoverImage,
@@ -182,7 +182,7 @@ export const CSNAV_ITEMS = {
     iconHover: aiIconHover,
     type: "usecase",
     link: "/airways",
-    title: "Safely Ship AI",
+    title: "Accelerate AI",
   },
   experiment: {
     icon: experimentIcon,
