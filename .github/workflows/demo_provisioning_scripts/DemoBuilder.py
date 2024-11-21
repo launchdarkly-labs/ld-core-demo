@@ -758,6 +758,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.attach_metric_to_flag("investment-recent-trade-db",["recent-trades-db-latency","recent-trades-db-errors"])
+        res = self.ldproject.add_guarded_rollout("investment-recent-trade-db", "production")
     
     def flag_api_guarded_release(self):
         res = self.ldproject.create_flag(
