@@ -1087,6 +1087,3 @@ if __name__ == "__main__":
         LD_API_KEY, email, LD_API_KEY_USER, os.getenv("DEMO_NAMESPACE"), LD_PROJECT_NAME)
     
     demo.build()
-    
-    print("Client-side SDK key: " + demo.client_id)
-    print("Server-side SDK key: " + demo.sdk_key)
