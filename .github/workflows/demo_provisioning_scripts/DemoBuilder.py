@@ -57,7 +57,7 @@ class DemoBuilder:
     # Create the project
     def create_project(self):
         if self.ldproject.project_exists(self.project_key):
-            self.ldproject.delete_project(self.project_key)
+            self.ldproject.delete_project()
         print("Creating project", end="...")
         self.ldproject.create_project(self.project_key, self.project_name)
         print("Done")
