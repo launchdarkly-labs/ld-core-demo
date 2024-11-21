@@ -36,10 +36,10 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
-        self.project_settings()
         self.run_funnel_experiment()
         self.run_feature_experiment()
         self.run_ai_models_experiment()
+        self.project_settings()
        
         # Waiting for Product to release this API
         #self.create_ai_config()
@@ -305,10 +305,11 @@ class DemoBuilder:
     # Update project settings
     def project_settings(self):
         print("Updating project settings:")
-        print("  - Add targeting")
-        self.add_targeting_rules()
+        
         print("  - Toggling flags")
         self.toggle_flags()
+        print("  - Add targeting")
+        self.add_targeting_rules()
         print("Done")
         
     def add_targeting_rules(self):
