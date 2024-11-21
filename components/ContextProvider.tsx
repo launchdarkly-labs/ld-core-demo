@@ -17,7 +17,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
       const context = {
         kind: "multi",
         user: {
-          key: CryptoJS.SHA256("user@launchmail.io").toString(),
+          key: uuidv4().slice(0, 10),
           name: "User",
           email: CryptoJS.SHA256("user@launchmail.io").toString(),
           appName: "LD Demo",

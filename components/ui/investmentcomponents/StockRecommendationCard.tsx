@@ -24,7 +24,7 @@ import { stockData } from "./InvestmentData";
 //TODO: have values constantly change
 //TODO: have change in stocks per reload?
 const StockRecommendationCard = () => {
-  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateUserContext } = useContext(LoginContext);
 
   const releaseNewInvestmentStockApi = useFlags()["release-new-investment-stock-api"];
 
@@ -74,7 +74,7 @@ const StockRecommendationCard = () => {
         setElapsedTime((prevTime) => {
           const newTime = prevTime + 1;
           if (newTime % 1 === 0) {
-            updateAudienceContext();
+            updateUserContext();
           }
           return newTime;
         });

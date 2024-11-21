@@ -20,10 +20,8 @@ export function VRGalaxy({
   open: boolean;
   setOpen: any;
 }) {
-  const { storeAttentionCallout, storeHeaders } = useFlags();
+  const { storeAttentionCallout} = useFlags();
   const [inventory, setInventory] = useState([]);
-
-  const isVisibleStoreHeaders=storeHeaders;
   const headerLabel = storeAttentionCallout;
 
   useEffect(() => {
@@ -116,7 +114,7 @@ export function VRGalaxy({
       inventory={inventory}
       mainImg={mainImg}
       headerLabel={headerLabel}
-      isVisibleStoreHeaders={isVisibleStoreHeaders}
+      isVisibleStoreHeaders={true}
     />
   );
 }

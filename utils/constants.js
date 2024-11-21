@@ -173,7 +173,7 @@ export const CSNAV_ITEMS = {
     iconHover: monitorIconHover,
     type: "usecase",
     link: "/investment",
-    title: "De-Risk releases",
+    title: "De-Risk Releases",
   },
   ai: {
     icon: aiIcon,
