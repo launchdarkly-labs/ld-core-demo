@@ -36,16 +36,18 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
+        self.project_settings()
+        self.run_funnel_experiment()
+        self.run_feature_experiment()
+        self.run_ai_models_experiment()
        
         # Waiting for Product to release this API
         #self.create_ai_config()
         
-        # To be implemented
-        # self.run_funnel_experiment()
-        # self.run_feature_experiment()
-        # self.run_ai_models_experiment()
+        
+        
         # self.update_add_userid_to_flags()
-        # self.project_settings()
+        
         
         ## Not required
         #self.create_contexts()
@@ -199,45 +201,96 @@ class DemoBuilder:
 
 ############################################################################################################
 
-#     # Create all the experiments    
-#     def run_funnel_experiment(self):
-#         if not self.metric_groups_created:
-#             print("Error: Metric groups not created")
-#             return
-#         print("Creating experiment: ")
-#         self.ldproject.toggle_flag(
-#             "storeAttentionCallout",
-#             "on",
-#             "production",
-#             "Turn on flag for experiment",
-#         )
-#         print(" - 09 - Funnel Experiment: Promotion Banner ")
-#         self.exp_funnel_experiment()
-#         self.ldproject.start_exp_iteration("promotion-banner-experiment", "production")
-#         print("Done")
-#         self.experiment_created = True
-        
-#     def run_feature_experiment(self):
-#         if not self.metrics_created:
-#             print("Error: Metric not created")
-#             return
-#         print("Creating experiment: ")
-#         print(" - 10 - Feature Experiment: Suggested Items Carousel")
-#         self.exp_feature_experiment()
-#         self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
-#         print("Done")
-#         self.experiment_created = True
+    ##################################################
+    # Experiments Definitions
+    # ----------------
+    # Each experiment is defined in its own function below
     
-#     def run_ai_models_experiment(self):
-#         if not self.metrics_created:
-#             print("Error: Metric not created")
-#             return
-#         print("Creating experiment: ")
-#         print(" - 08 - Experiment: AI Models for Chatbot")
-#         self.exp_ai_models_experiment()
-#         self.ldproject.start_exp_iteration("chatbot-ai-models", "production")
-#         print("Done")
-#         self.experiment_created = True
+    ##################################################
+    # Create all the experiments    
+    def run_funnel_experiment(self):
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "storeAttentionCallout",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - 09 - Funnel Experiment: Promotion Banner ")
+        self.exp_funnel_experiment()
+        self.ldproject.start_exp_iteration("promotion-banner-experiment", "production")
+        print("Done")
+        self.experiment_created = True
+        
+    def exp_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("store-purchases", True),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "grow-engagement-with-promotion-banner",
+            "Grow engagement with promotion banner",
+            "production",
+            "storeAttentionCallout",
+            "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
+            metrics=metrics,
+            primary_key="store-purchases",
+        )   
+        
+    def run_feature_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        print(" - 10 - Feature Experiment: Suggested Items Carousel")
+        self.exp_feature_experiment()
+        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
+        print("Done")
+        self.experiment_created = True
+        
+    def exp_feature_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("upsell-tracking", False),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "upsell-tracking-experiment",
+            "Upsell Tracking Experiment",
+            "production",
+            "cartSuggestedItems",
+            "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
+            metrics=metrics,
+            primary_key="upsell-tracking",
+        )  
+    
+    def run_ai_models_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        print(" - 08 - Experiment: AI Models for Chatbot")
+        self.exp_ai_models_experiment()
+        self.ldproject.start_exp_iteration("chatbot-ai-models", "production")
+        print("Done")
+        self.experiment_created = True
+        
+    def exp_ai_models_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-chatbot-positive-feedback", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "ai-chatbot-experiment",
+            "AI Chatbot Experiment",
+            "production",
+            "ai-chatbot",
+            "Which AI Models are providing best experiences to customers and delivering best responses",
+            metrics=metrics,
+            primary_key="ai-chatbot-positive-feedback",
+        )
         
 # ############################################################################################################
 
@@ -249,14 +302,59 @@ class DemoBuilder:
         
 # ############################################################################################################
 
-#     # Update project settings
-#     def project_settings(self):
-#         print("Updating project settings:")
-#         print("  - Toggling flags")
-#         self.toggle_flags()
-#         print("  - Add targeting")
-#         self.add_targeting_rules()
-#         print("Done")
+    # Update project settings
+    def project_settings(self):
+        print("Updating project settings:")
+        print("  - Add targeting")
+        self.add_targeting_rules()
+        print("  - Toggling flags")
+        self.toggle_flags()
+        print("Done")
+        
+    def add_targeting_rules(self):
+        res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
+                
+    def toggle_flags(self):
+        res = self.ldproject.toggle_flag(
+            "federatedAccounts",
+            "on",
+            "production",
+            "Turn on flag for federated accounts",
+        )
+        res = self.ldproject.toggle_flag(
+            "wealthManagement",
+            "on",
+            "production",
+            "Turn on flag for wealth management",
+        )
+        res = self.ldproject.toggle_flag(
+            "financialDBMigration",
+            "on",
+            "production",
+            "Turn on flag for database migration",
+        )
+        res = self.ldproject.toggle_flag(
+            "ai-chatbot",
+            "on",
+            "production",
+            "Turn on flag for ai chatbot",
+        )
+        res = self.ldproject.toggle_flag(
+            "storeAttentionCallout",
+            "on",
+            "production",
+            "Turn on flag for promotion banner",
+        )
+        res = self.ldproject.toggle_flag(
+            "cartSuggestedItems",
+            "on",
+            "production",
+            "Turn on flag for cart suggested items",
+        )
+        
+            
         
 ############################################################################################################
 
