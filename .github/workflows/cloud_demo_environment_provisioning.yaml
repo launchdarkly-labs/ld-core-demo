@@ -19,7 +19,7 @@ env:
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
-  DEMO_NAMESPACE: ${{ github.event.inputs.name }}-ld-demo
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 
 jobs:
