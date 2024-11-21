@@ -3,18 +3,18 @@ import { Button } from "../button";
 
 const InvestmentAccountHeader = () => {
   return (
-    <div className="bg-white pt-[2rem] sm:pt-[2rem] lg:pt-[4rem] pb-[2rem] sm:pb-[0rem] font-sohnelight  ">
+    <div className=" pt-[2rem] sm:pt-[2rem] lg:pt-[4rem] pb-[2rem] sm:pb-[0rem] font-sohnelight  ">
       <div className="mx-4 xl:mx-auto max-w-7xl h-[12.5rem] sm:h-[11rem] lg:h-[8rem] flex flex-col justify-between">
         <div className="flex justify-between flex-col lg:flex-row gap-y-6 lg:gap-y-0">
           <h1 className="text-4xl">All accounts</h1>
           <div className="flex gap-x-4">
-            <Button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white cursor-default">
+            <Button className="bg-investmentblue p-2 rounded-full w-[8rem] shadow-xl text-white cursor-default">
               Trade
             </Button>
-            <Button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white cursor-default">
+            <Button className="bg-investmentblue p-2 shadow-xl rounded-full w-[8rem] text-white cursor-default">
               Transfer
             </Button>
-            <Button className="bg-investmentblue p-2 rounded-full w-[8rem] text-white cursor-default">Buy</Button>
+            <Button className="bg-investmentblue p-2 shadow-xl rounded-full w-[8rem] text-white cursor-default">Buy</Button>
           </div>
         </div>
 

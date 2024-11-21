@@ -71,7 +71,7 @@ export function MorgtgageAccount() {
               <p className="balance">$712,124</p>
             </div>
             <div>
-              <p className="text-bankdarkblue pt-4 text-xs">Next Due: May 14th, 2024</p>
+              <p className="text-bankdarkblue pt-4 text-xs">Next Due: January 15th, 2025</p>
             </div>
           </div>
         </div>

@@ -10,12 +10,12 @@ import { useLDClient } from "launchdarkly-react-client-sdk";
 export default function FeatureExperimentGeneratorAI() {
 
     const client = useLDClient();
-    const { updateAudienceContext } = useContext(LoginContext);
+    const { updateUserContext } = useContext(LoginContext);
     const [expGenerator2, setExpGenerator2] = useState(false);
     const [progress, setProgress] = useState(0);
 
     const updateContext = async () => {
-        updateAudienceContext();
+        updateUserContext();
     }
 
     useEffect(() => {

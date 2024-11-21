@@ -14,6 +14,8 @@ const AirlineDestination = ({
   setToLocation,
   setToCity,
   setFromLocation,
+  toCity,
+  fromCity,
 }: {
   setActiveField: any;
   setShowSearch: any;
@@ -25,27 +27,31 @@ const AirlineDestination = ({
   setToLocation: any;
   setToCity: any;
   setFromLocation: any;
+  toCity: string;
+  fromCity: string;
 }) => {
   return (
     <motion.div
       initial={{ scale: 0.25, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className={``}
+      className={`w-full`}
     >
-      <div className={`grid grid-cols-3 items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
-        <div className=" text-center grid col-start-1 animate-pulse hover:animate-none">
+      <div className={`flex items-center gap-x-6 justify-between relative ${showSearch ? "" : ""}`}>
+        <div className=" text-center grid col-start-1">
           <button
             onClick={() => {
               setActiveField("from");
               setShowSearch(true);
             }}
+            className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl"
           >
-            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{fromLocation}</p>
+            {fromLocation}
           </button>
-          <p className="text-center text-xs font-audimat uppercase">Origin</p>
+          <p className="text-center text-xs sm:text-sm xl:text-base ">{fromCity}</p>
         </div>
-        <MoveHorizontalIcon className="h-14 w-14 text-white grid col-start-2 mx-auto" />
+        <img src="./airline/moveHorizontalArrow.svg" alt="move horizontal arrow "  className="text-airlinegray"/>
+
         <div className="relative text-center grid col-start-3">
           <button
             onClick={() => {
@@ -54,9 +60,11 @@ const AirlineDestination = ({
             }}
             className=""
           >
-            <p className="text-6xl md:text-4xl xl:text-6xl font-audimat py-2 ">{toLocation}</p>
+            <p className="font-audimat py-2 bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-3xl sm:text-5xl">
+              {toLocation}
+            </p>
           </button>
-          <p className="text-center text-xs font-audimat uppercase">Destination</p>
+          <p className="text-center text-xs sm:text-sm xl:text-base ">{toCity}</p>
         </div>
       </div>
 
@@ -71,6 +79,8 @@ const AirlineDestination = ({
             toLocation={toLocation}
             setToCity={setToCity}
             fromLocation={fromLocation}
+            toCity ={toCity}
+            fromCity={fromCity}
           />
         </>
       )}

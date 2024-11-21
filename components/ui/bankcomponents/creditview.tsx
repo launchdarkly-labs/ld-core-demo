@@ -91,7 +91,7 @@ export function CreditAccount() {
             </div>
             <div>
               <p className="text-bankdarkblue pt-4 text-xs">
-                Next Due: June 23rd, 2024
+                Next Due: January 15th, 2025
               </p>
             </div>
           </div>

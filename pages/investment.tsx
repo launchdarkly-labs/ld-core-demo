@@ -1,12 +1,10 @@
 import { useContext } from "react";
 import { motion } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
-import NavBar from "@/components/ui/navbar";
 import { AnimatePresence } from "framer-motion";
 import LoginHomePage from "@/components/LoginHomePage";
 import LoginContext from "@/utils/contexts/login";
 import InvestmentAccountHeader from "@/components/ui/investmentcomponents/InvestmentAccountHeader";
-
 import NewsCard from "@/components/ui/investmentcomponents/NewsCard";
 import StockMoversCard from "@/components/ui/investmentcomponents/StockMoversCard";
 import BalanceCard from "@/components/ui/investmentcomponents/BalanceCard";
@@ -16,8 +14,25 @@ import MarketCard from "@/components/ui/investmentcomponents/MarketCard";
 import StockRecommendationCard from "@/components/ui/investmentcomponents/StockRecommendationCard";
 import RecentTradesCard from "@/components/ui/investmentcomponents/RecentTradesCard";
 
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { CSNav } from "@/components/ui/csnav";
+import {
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+
+import { INVESTMENT } from "@/utils/constants";
+
 export default function Investment() {
-  const { isLoggedIn, } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
 
   const cardStyle = "rounded-lg shadow-lg p-5 sm:p-5 bg-white";
 
@@ -26,15 +41,65 @@ export default function Investment() {
       <Toaster />
       <AnimatePresence mode="wait">
         {!isLoggedIn ? (
-          <LoginHomePage variant="investment" />
+          <LoginHomePage variant={INVESTMENT} />
         ) : (
           <motion.main
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col  bg-investmentbackgroundgrey`}
+            className={`flex h-full flex-col  bg-investment-graident-background`}
           >
-            <NavBar variant={"investment"} />
+            <NavWrapper>
+              <>
+                <CSNavWrapper>
+                  <CSNav />
+                </CSNavWrapper>
+
+                <NavLogo
+                  srcHref={NAV_ELEMENTS_VARIANT[INVESTMENT]?.logoImg?.src}
+                  altText={INVESTMENT}
+                />
+
+                <NavbarDropdownMenu>
+                  <>
+                    {NAV_ELEMENTS_VARIANT[INVESTMENT]?.navLinks.map((navLink, index) => {
+                      return (
+                        <DropdownMenuItem href={navLink?.href} key={index}>
+                          {navLink?.text}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </>
+                </NavbarDropdownMenu>
+
+                {/* left side navbar template */}
+
+                <NavbarLeftSideWrapper>
+                  <>
+                    {NAV_ELEMENTS_VARIANT[INVESTMENT]?.navLinks.map((navLink, index) => {
+                      return (
+                        <NavLinkButton
+                          text={navLink?.text}
+                          href={navLink?.href}
+                          navLinkColor={NAV_ELEMENTS_VARIANT[INVESTMENT]?.navLinkColor}
+                          index={index}
+                          key={index}
+                        />
+                      );
+                    })}
+                  </>
+                </NavbarLeftSideWrapper>
+
+                {/* right side navbar template */}
+                <NavbarRightSideWrapper>
+                  <>
+                    
+                    <NavbarLogin variant={INVESTMENT} />
+                  </>
+                </NavbarRightSideWrapper>
+              </>
+            </NavWrapper>
+
             <InvestmentAccountHeader />
             <div className="my-8 " data-testid="salient-accounts-test-id">
               <div className="mx-auto max-w-7xl font-sohnelight ">

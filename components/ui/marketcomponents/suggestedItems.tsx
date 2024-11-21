@@ -12,18 +12,7 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import galaxyMarketLogo from '@/public/market.png'
 import { useLDClient } from "launchdarkly-react-client-sdk";
-
-
-
-interface InventoryItem {
-    id: number;
-    vendor: string;
-    item: string;
-    cost: string;
-    image?: StaticImageData;
-}
-
-
+import { InventoryItem } from "@/utils/typesInterface";
 
 export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: any }) {
 
@@ -42,7 +31,7 @@ export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: 
     }
 
     useEffect(() => {
-        const data = [
+        const data:InventoryItem[] = [
             {
                 "id": 6,
                 "vendor": "vrgalaxy",

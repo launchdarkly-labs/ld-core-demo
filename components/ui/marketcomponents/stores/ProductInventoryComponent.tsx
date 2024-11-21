@@ -24,13 +24,7 @@ import { motion } from "framer-motion";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from '@/public/market.png'
-
-interface InventoryItem {
-  id: string | number;
-  item: string;
-  cost: number;
-  image: string;
-}
+import { InventoryItem } from "@/utils/typesInterface";
 
 const ProductInventoryComponent = ({
   setOpen,
