@@ -707,7 +707,7 @@ class DemoBuilder:
                 }
             ],
             tags=["release"],
-            on_variation=0,
+            on_variation=1,
         )
         
     def flag_wealth_management(self):
@@ -726,7 +726,7 @@ class DemoBuilder:
                 }
             ],
             tags=["release"],
-            on_variation=0,
+            on_variation=1,
         )
     
     def flag_database_migration(self):
