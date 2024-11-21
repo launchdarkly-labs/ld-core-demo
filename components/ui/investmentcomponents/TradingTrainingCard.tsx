@@ -42,13 +42,13 @@ const TradingTrainingCard = () => {
         transition={{ duration: 0.3, repeat: 1 }}
       >
         <Button
-          className={`${buttonStyle} rounded-none cursor-default`}
+          className={`${buttonStyle} rounded-3xl shadow-xl cursor-default`}
           onClick={goToTrading}     
         >
           {shake ? "Error" : initialTradeCardContent.buttonText}
         </Button>
       </motion.div>
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <p className="text-red-500 shadow-xl rounded-3xl">{errorMessage}</p>}
     </div>
   );
 };

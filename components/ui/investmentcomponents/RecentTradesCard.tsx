@@ -19,7 +19,7 @@ import { wait, randomLatency } from "@/utils/utils";
 const RecentTradesCard = () => {
   const releasNewInvestmentRecentTradeDBFlag = useFlags()["investment-recent-trade-db"];
 
-  const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
+  const { loginUser, userObject, updateUserContext } = useContext(LoginContext);
 
   const [recentTrades, setRecentTrades] = useState([]);
   const client = useLDClient();
@@ -103,7 +103,7 @@ const RecentTradesCard = () => {
         setElapsedTime((prevTime) => {
           const newTime = prevTime + 1;
           if (newTime % 1 === 0) {
-            updateAudienceContext();
+            updateUserContext();
           }
           return newTime;
         });

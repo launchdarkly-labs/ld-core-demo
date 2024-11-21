@@ -10,12 +10,12 @@ import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 
 export default function FunnelExperimentGenerator() {
     const client = useLDClient();
-    const { updateAudienceContext } = useContext(LoginContext);
+    const { updateUserContext } = useContext(LoginContext);
     const [expGenerator, setExpGenerator] = useState(false);
     const [progress, setProgress] = useState(0);
 
     const updateContext = async () => {
-        updateAudienceContext();
+        updateUserContext();
     }
 
     useEffect(() => {

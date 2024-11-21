@@ -87,6 +87,13 @@ export const LoginProvider = ({ children }) => {
     await client?.identify(context);
   };
 
+  const updateUserContext = async () => {
+    const context = await client?.getContext();
+    console.log("updateUserContext", context);
+    context.user.key = uuidv4().slice(0, 10);
+    await client?.identify(context);
+  };
+
   const logoutUser = async () => {
     const existingAudienceKey =
       getCookie(LD_CONTEXT_COOKIE_KEY) &&
@@ -159,6 +166,7 @@ export const LoginProvider = ({ children }) => {
         // setPlaneContext,
         enrollInLaunchClub,
         updateAudienceContext,
+        updateUserContext,
         loginUser,
         logoutUser,
         allUsers,
