@@ -975,8 +975,8 @@ class DemoBuilder:
 
 if __name__ == "__main__":
     
-    LD_API_KEY = 'api-9e0d84d9-e118-4f03-ba3f-aa001f71ae08'
-    LD_API_KEY_USER = 'api-9e0d84d9-e118-4f03-ba3f-aa001f71ae08'
+    LD_API_KEY = os.getenv("LD_API_KEY")
+    LD_API_KEY_USER = os.getenv("LD_API_KEY_USER")
     email = "aqadri@launchdarkly.com"
 
     demo = DemoBuilder(
