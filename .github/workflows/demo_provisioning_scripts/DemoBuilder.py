@@ -32,11 +32,10 @@ class DemoBuilder:
     
     def build(self):
         self.create_project()
-        self.create_flags()
         self.create_segments()
         self.create_metrics()
         self.create_metric_groups()
-        
+        self.create_flags()
         self.run_funnel_experiment()
         self.run_feature_experiment()
         self.run_ai_models_experiment()
