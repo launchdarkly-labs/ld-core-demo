@@ -120,6 +120,8 @@ module.exports = {
         metaColor: "#0668E1",
         cohereColor: "#39594D",
         anthropicColor:"#da7756",
+        amazonColor:"#ff9900",
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

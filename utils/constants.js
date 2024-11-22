@@ -120,6 +120,15 @@ export const HOMEPAGE_CARDS = {
   },
 };
 
+export const DEFAULT_AI_MODEL = {
+  prompt: [{ content: "", role: "system" }],
+  model: {
+    modelId: "anthropic.claude-instant-v1",
+    temperature: 0.5,
+    max_tokens: 500,
+  },
+};
+
 export const COMPANY_LOGOS = {
   bank: {
     vertical: toggleBankVerticalLogo,
