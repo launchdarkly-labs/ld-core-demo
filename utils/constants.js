@@ -129,6 +129,16 @@ export const DEFAULT_AI_MODEL = {
   },
 };
 
+export const DEFAULT_AI_TRAVEL_PROMPT = {
+  prompt: [
+    {
+      content:
+        "Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${destination}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit. do not specify word count in your reply",
+      role: "system",
+    },
+  ],
+};
+
 export const COMPANY_LOGOS = {
   bank: {
     vertical: toggleBankVerticalLogo,

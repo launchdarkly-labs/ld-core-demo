@@ -1,28 +1,22 @@
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import TripsContext from "@/utils/contexts/TripContext";
 import LoginContext from "@/utils/contexts/login";
 import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane, TicketIcon } from "lucide-react";
 import { useFlags } from "launchdarkly-react-client-sdk";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
+import { DEFAULT_AI_TRAVEL_PROMPT } from "@/utils/constants";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { userObject } = useContext(LoginContext);
-  const aiTravelPromptText = useFlags()["ai-travel-prompt-text"];
+  const aiTravelPromptText =
+    useFlags()["ai-travel-prompt-text"] == undefined
+      ? DEFAULT_AI_TRAVEL_PROMPT
+      : useFlags()["ai-travel-prompt-text"];
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -30,7 +24,7 @@ export default function BookedFlights() {
 
   async function travelLocationsInfo(start: any, end: any) {
     try {
-      const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`
+      const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`;
 
       setLoading(true);
       const response = await fetch("/api/bedrock", {
@@ -79,7 +73,9 @@ export default function BookedFlights() {
 
   async function submitQuery(airport: any) {
     try {
-      const prompt: string = aiTravelPromptText?.prompt[0]?.content?.replace('${destination}', airport) + '. Limit responses to 40 words only';
+      const prompt: string =
+        aiTravelPromptText?.prompt[0]?.content?.replace("${destination}", airport) +
+        ". Limit responses to 40 words only";
 
       setLoading(true);
       const response = await fetch("/api/bedrock", {
@@ -194,24 +190,27 @@ export default function BookedFlights() {
                   exit="exit" // Add this line
                 >
                   <div className="ticket-content-left-side py-4 px-6 relative w-full sm:w-2/3 font-sohne">
-
                     <div className="ticket-main-wrapper flex flex-col gap-y-4 my-4 ">
                       <div className="ticket-main-informationflex flex-col gap-y-[.1rem]">
                         <div className="flex justify-between items-center">
-
                           <p className="ticket-type-flight  tracking-wide text-md bg-clip-text bg-gradient-airline font-semibold">
                             {trip.type} flight
                           </p>
 
-                          {aiTravelPromptText?.enabled !== false ? (
+                          {/* {aiTravelPromptText?.enabled !== false ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
                                   onClick={() => travelLocationsInfo(trip.fromCity, trip.toCity)}
                                   className=" uppercase flex font-bold animate-pulse hover:animate-none text-airlinepink gap-x-1 hover:underline cursor-pointer"
                                 >
-                                  <span className="text-air" style={{ color: "#405BFF" }}>{trip.fromCity}</span> <ArrowRight />
-                                  <span className="text-end" style={{ color: "#405BFF" }}>{trip.toCity}</span>
+                                  <span className="text-air" style={{ color: "#405BFF" }}>
+                                    {trip.fromCity}
+                                  </span>{" "}
+                                  <ArrowRight />
+                                  <span className="text-end" style={{ color: "#405BFF" }}>
+                                    {trip.toCity}
+                                  </span>
                                 </p>
                               </PopoverTrigger>
 
@@ -224,7 +223,9 @@ export default function BookedFlights() {
                                   <div>
                                     <p className="text-lg mb-4 font-sohne  bg-gradient-airways-red text-white p-4">
                                       AI Travel Insights{" "}
-                                      <span className="text-sm">powered by AWS Bedrock</span>{" "}
+                                      <span className="text-sm">
+                                        powered by Anthropic Claude with Amazon Bedrock
+                                      </span>{" "}
                                     </p>
                                     <p>{aiResponse}</p>
                                   </div>
@@ -233,9 +234,17 @@ export default function BookedFlights() {
                             </Popover>
                           ) : (
                             <p className="text-lg flex font-bold text-[#405BFF] ">
-                              {trip.fromCity} <ArrowRight color="black" width={20} className="ml-2 mr-2" /> {trip.toCity}
+                              {trip.fromCity}{" "}
+                              <ArrowRight color="black" width={20} className="ml-2 mr-2" />{" "}
+                              {trip.toCity}
                             </p>
-                          )}
+                          )} */}
+
+                          <p className="text-lg  font-bold text-[#405BFF] flex items-center ">
+                            <span>{trip.fromCity} </span>
+                            <ArrowRight color="black" width={20} className="ml-2 mr-2" />{" "}
+                            <span>{trip.toCity}</span>
+                          </p>
                         </div>
 
                         <div className="border-2 mt-2 border-[#E6E6E6]" />
@@ -247,9 +256,8 @@ export default function BookedFlights() {
 
                         <div className="flex justify-between mt-2">
                           <p className="text-black">Aircraft</p>
-
-
-                          {aiTravelPromptText?.enabled !== false  ? (
+                          {/* 
+                          {aiTravelPromptText?.enabled !== false ? (
                             <Popover>
                               <PopoverTrigger asChild>
                                 <p
@@ -259,8 +267,10 @@ export default function BookedFlights() {
                                   {trip.airplane}
                                 </p>
                               </PopoverTrigger>
-                              <PopoverContent onCloseAutoFocus={() => setAIResponse("")} className="pt-0 pr-0 pl-0 flex items-center max-h-screen mx-auto my-auto">
-
+                              <PopoverContent
+                                onCloseAutoFocus={() => setAIResponse("")}
+                                className="pt-0 pr-0 pl-0 flex items-center max-h-screen mx-auto my-auto"
+                              >
                                 {loading ? (
                                   <div className="flex justify-center mx-auto my-auto pt-2 pb-0">
                                     <BounceLoader color="#FF386B" />
@@ -268,9 +278,10 @@ export default function BookedFlights() {
                                 ) : (
                                   <div>
                                     <p className="text-lg mb-4 font-sohne  bg-gradient-airways-red text-white p-4">
-                                      AI Travel Insights{" "}
-                                      <br></br>
-                                      <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>{" "}
+                                      AI Travel Insights <br></br>
+                                      <span className="text-sm">
+                                        powered by Anthropic Claude with Amazon Bedrock
+                                      </span>{" "}
                                     </p>
                                     <p className="p-4 font-normal font-sohne">{aiResponse}</p>
                                   </div>
@@ -279,7 +290,9 @@ export default function BookedFlights() {
                             </Popover>
                           ) : (
                             <p className="text-black">{trip.airplane}</p>
-                          )}
+                          )} */}
+
+                          <p className=" capitalize text-black ">{trip.airplane}</p>
                         </div>
 
                         <div className="flex justify-between mt-2">
@@ -291,12 +304,9 @@ export default function BookedFlights() {
                       <div className="ticket-benefits-list flex justify-between align-center gap-x-1">
                         {userObject.personaEnrolledInLaunchClub && (
                           <>
-
                             <p className="flex text-black bg-clip-text text-transparent bg-black  ">
-                              <Star className="mr-2 " color="blue" /> Launch
-                              Priority
+                              <Star className="mr-2 " color="blue" /> Launch Priority
                             </p>
-
 
                             <p className="flex text-black bg-clip-text text-transparent bg-black ">
                               <Wifi className=" mr-2" color="blue" /> Free WiFi
@@ -319,7 +329,7 @@ export default function BookedFlights() {
                         </button>
                       )}
 
-                      { aiTravelPromptText?.enabled !== false  && (
+                      {aiTravelPromptText?.enabled !== false && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
@@ -328,11 +338,12 @@ export default function BookedFlights() {
                             onCloseAutoFocus={() => setAIResponse("")}
                             className="max-w-screen overflow-auto sm:w-[400px] h-auto mt-2"
                           >
-                            <div className="flex mx-auto justify-center items-center bg-gradient-airways-red text-white sm:justify-normal">
-                              <p className="text-lg mb-4 mt-4 font-sohne ml-4 mr-4">
-                                AI Travel Insights{" "}
-                                <br></br>
-                                <span className="text-sm">powered by Anthropic Claude in Amazon Bedrock</span>
+                            <div className="flex mx-auto justify-center items-center sm:justify-normal pb-4">
+                              <p className="  font-sohne ">
+                                <span className="bg-transparent bg-gradient-airways-red text-transparent bg-clip-text text-xl">AI Travel Insights</span> <br></br>
+                                <span className="text-sm">
+                                  powered by <span className="text-anthropicColor">Anthropic Claude</span> with <span className="text-amazonColor">Amazon Bedrock</span>
+                                </span>
                               </p>
                             </div>
                             <div className="justify-center overflow-y-auto items-center">
@@ -341,7 +352,7 @@ export default function BookedFlights() {
                                   <BounceLoader color="#FF386B" />
                                 </div>
                               ) : (
-                                <div className="p-4 font-normal font-sohne h-auto overflow-auto overflow-y-scroll max-h-[400px]">
+                                <div className=" font-normal font-sohnelight h-auto overflow-auto overflow-y-scroll max-h-[400px]">
                                   <p>{aiResponse}</p>
                                 </div>
                               )}
@@ -349,7 +360,7 @@ export default function BookedFlights() {
                             {!aiResponse && !loading ? (
                               <Button
                                 onClick={() => submitQuery(trip.to)}
-                                className="bg-transparent  text-blue-700 hover:bg-transparent hover:text-black mx-auto "
+                                className=" px-0 py-0    bg-transparent  text-blue-700 hover:bg-transparent hover:text-black mx-auto "
                               >
                                 Generate <ArrowRight className="text-blue-700" />
                               </Button>
@@ -377,4 +388,3 @@ export default function BookedFlights() {
     </Sheet>
   );
 }
-

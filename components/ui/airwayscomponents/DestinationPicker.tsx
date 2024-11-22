@@ -73,24 +73,24 @@ export default function DestinationPicker({ children }: { children: ReactElement
           <AlertDialogHeader className="flex flex-col items-center text-2xl">
             <Image
               src="/airline/launch-airways.svg"
-              className=" pb-6"
+              className=" pb-4"
               height={100}
               width={100}
               alt="Launch Airways"
             />
-            <AlertDialogTitle className="text-2xl flex w-full justify-center pb-2 ">
+            <AlertDialogTitle className="text-2xl flex w-full justify-center ">
               Destination Recommendations
             </AlertDialogTitle>
             <p className="flex w-full justify-center text-base text-zinc-600 font-sohnelight">
-              powered by
+              powered by&nbsp;
               {destinationPickerNewAIModelLDFlag?.model?.modelId.includes("cohere") && (
-                <span className="text-cohereColor pl-1">Cohere Command </span>
-              )}
+                <span className="text-cohereColor"> Cohere Command </span>
+              )} 
               {destinationPickerNewAIModelLDFlag?.model?.modelId.includes("anthropic") && (
-                <span className="text-anthropicColor pl-1">Anthropic Claude </span>
+                <span className="text-anthropicColor">Anthropic Claude </span>
               )}
-              <span className="pl-1">with</span>
-              <span className="text-amazonColor pl-1"> Amazon Bedrock </span>
+              &nbsp;with&nbsp;
+              <span className="text-amazonColor"> Amazon Bedrock </span>
             </p>
           </AlertDialogHeader>
           {loading ? (
@@ -101,7 +101,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
             <>
               {destinations.length > 0 ? (
                 // destinations.map((destination) => (
-                <ReactMarkdown className="markdown font-sohnelight">{destinations}</ReactMarkdown>
+                <ReactMarkdown className="markdown font-sohnelight w-full h-full">{destinations}</ReactMarkdown>
               ) : (
                 <p className="text-zinc-300">No response generated yet.</p>
               )}

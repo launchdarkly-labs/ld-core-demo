@@ -167,7 +167,8 @@ export default function Chatbot() {
                       `}
                     >
                       {aiModelName()}
-                    </span>
+                    </span>{" "}
+                    with <span className="text-amazonColor font-bold"> Amazon Bedrock </span>
                   </p>
                 </div>
               </div>
