@@ -9,7 +9,7 @@ on:
         description: 'Username'
         required: true
       type:
-        description: 'Type of environment to provision'
+        description: 'Type of environment to provision (eap or production)'
         required: true
        
 env:
