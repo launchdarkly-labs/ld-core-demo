@@ -100,6 +100,23 @@ class LDPlatform:
             },
         )
         return response
+    
+    ##################################################
+    # Create an environment
+    ##################################################
+    def create_environment(self, env_key, env_name):
+        payload = {"key": env_key, "name": env_name}
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/environments",
+            json=payload,
+            headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+        )
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating environment: " + data["message"])
+        return response
+    ##################################################
 
     ##################################################
     # Delete a project
@@ -178,6 +195,41 @@ class LDPlatform:
             print("Error creating flag: " + data["message"])
         return response
 
+    ##################################################
+    # Copy a flag
+    ##################################################
+    def copy_flag_settings(self, flag_key, source_env_key, target_env_key):
+
+        payload = {
+            "comment": "copy feature flag settings",
+            "source": {
+                "currentVersion": 1,
+                "key": source_env_key
+            },
+            "target": {
+                "currentVersion": 1,
+                "key": target_env_key
+            }
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+            + "/copy",
+            json=payload,
+            headers=headers,
+        )
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error copying flag: " + data["message"])
+        return response
     
     ##################################################
     # Create AI Config
