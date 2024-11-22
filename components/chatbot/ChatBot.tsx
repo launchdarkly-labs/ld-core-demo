@@ -9,7 +9,7 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
-import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META } from "@/utils/constants";
+import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -20,7 +20,10 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const aiNewModelChatbotFlag = useFlags()["ai-new-model-chatbot"];
+  const aiNewModelChatbotFlag =
+    useFlags()["ai-new-model-chatbot"] == undefined
+      ? DEFAULT_AI_MODEL
+      : useFlags()["ai-new-model-chatbot"];
   const { userObject } = useContext(LoginContext);
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
@@ -122,10 +125,10 @@ export default function Chatbot() {
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen && <XIcon className="h-8 w-8" />}
-          {!isOpen && aiNewModelChatbotFlag.enabled !== false && (
+          {!isOpen && aiNewModelChatbotFlag?.enabled !== false && (
             <MessageCircleIcon className="h-8 w-8" />
           )}
-          {!isOpen && aiNewModelChatbotFlag.enabled === false && (
+          {!isOpen && aiNewModelChatbotFlag?.enabled === false && (
             <BatteryCharging className="h-8 w-8" />
           )}
           <span className="sr-only">Open Chatbot</span>
@@ -164,7 +167,8 @@ export default function Chatbot() {
                       `}
                     >
                       {aiModelName()}
-                    </span>
+                    </span>{" "}
+                    with <span className="text-amazonColor font-bold"> Amazon Bedrock </span>
                   </p>
                 </div>
               </div>
@@ -261,7 +265,7 @@ export default function Chatbot() {
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => e.preventDefault()}
               >
-                {aiNewModelChatbotFlag.enabled === false ? (
+                {aiNewModelChatbotFlag?.enabled === false ? (
                   <p className="text-airlinegray">
                     We are offline for today. Please return next time!
                   </p>

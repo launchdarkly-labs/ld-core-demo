@@ -6,6 +6,7 @@ import { getCookie } from "cookies-next";
 
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
+import { DEFAULT_AI_MODEL } from "@/utils/constants";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default async function chatResponse(req: NextApiRequest, res: NextApiResponse) {
@@ -32,14 +33,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     key: uuidv4().slice(0, 6),
   };
 
-  const model2 = await ldClient.variation("ai-new-model-chatbot", context, {
-    prompt: [{ content: "", role: "system" }],
-    model: {
-      modelId: "cohere.command-text-v14",
-      temperature: 0.5,
-      max_tokens: 400,
-    },
-  });
+  const model2 = await ldClient.variation("ai-new-model-chatbot", context, DEFAULT_AI_MODEL);
 
 
   // const model = await ldClient.variation("ai-chatbot", context, {
