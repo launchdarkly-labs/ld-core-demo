@@ -44,7 +44,7 @@ class DemoBuilder:
         self.setup_template_environment()
        
         # Waiting for Product to release this API
-        #self.create_ai_config()
+        self.create_ai_config()
         
         
         
