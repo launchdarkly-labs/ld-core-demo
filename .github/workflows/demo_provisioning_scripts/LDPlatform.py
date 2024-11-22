@@ -105,7 +105,7 @@ class LDPlatform:
     # Create an environment
     ##################################################
     def create_environment(self, env_key, env_name):
-        payload = {"key": env_key, "name": env_name}
+        payload = {"key": env_key, "name": env_name, "color": "DADBEE"}
         response = self.getrequest(
             "POST",
             "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/environments",
