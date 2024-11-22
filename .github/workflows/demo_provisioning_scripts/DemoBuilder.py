@@ -40,6 +40,8 @@ class DemoBuilder:
         self.run_feature_experiment()
         self.run_ai_models_experiment()
         self.project_settings()
+        self.setup_release_pipeline()
+        self.setup_template_environment()
        
         # Waiting for Product to release this API
         #self.create_ai_config()
@@ -64,6 +66,9 @@ class DemoBuilder:
         self.client_id = self.ldproject.client_id
         self.sdk_key = self.ldproject.sdk_key
         self.project_created = True
+        
+        print("Creating template environment", end="...")
+        self.ldproject.create_environment("template-env", "Template")
         
         env_file = os.getenv('GITHUB_ENV')
         if env_file:
@@ -911,6 +916,22 @@ class DemoBuilder:
             "in",
             ["Mobile"]
         )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "mobile-users",
+            "Mobile Users",
+            "template-env",
+            "Users who have accessed the application via mobile device"
+        )
+        res = self.ldproject.add_segment_rule(
+            "mobile-users",
+            "template-env",
+            "device",
+            "platform",
+            "in",
+            ["Mobile"]
+        )
     
     def segment_development_team(self):
         ################ Test Environment ################
@@ -939,6 +960,22 @@ class DemoBuilder:
         res = self.ldproject.add_segment_rule(
             "development-team",
             "production",
+            "user",
+            "role",
+            "in",
+            ["Developer"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "development-team",
+            "Development Team",
+            "template-env",
+            "Users who are part of the development team"
+        )
+        res = self.ldproject.add_segment_rule(
+            "development-team",
+            "template-env",
             "user",
             "role",
             "in",
@@ -977,6 +1014,22 @@ class DemoBuilder:
             "in",
             ["standard", "platinum"]
         )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-all-members",
+            "Launch Airways All Members",
+            "template-env",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-all-members",
+            "template-env",
+            "user",
+            "launchclub",
+            "in",
+            ["standard", "platinum"]
+        )
     
     def segment_launch_airways_platinum_members(self):
         ################ Test Environment ################
@@ -1004,6 +1057,22 @@ class DemoBuilder:
         res = self.ldproject.add_segment_rule(
             "launch-airways-platinum-members",
             "production",
+            "user",
+            "launchclub",
+            "in",
+            ["platinum"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-platinum-members",
+            "Launch Airways Platinum Members",
+            "template-env",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-platinum-members",
+            "template-env",
             "user",
             "launchclub",
             "in",
@@ -1043,6 +1112,22 @@ class DemoBuilder:
             ["Beta"]
         )
         
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "beta-users",
+            "Beta Users",
+            "template-env",
+            "Users who are part of the beta program"
+        )
+        res = self.ldproject.add_segment_rule(
+            "beta-users",
+            "template-env",
+            "user",
+            "role",
+            "in",
+            ["Beta"]
+        )
+        
 ############################################################################################################
 
     ##################################################
@@ -1074,7 +1159,50 @@ class DemoBuilder:
             "experience",
             for_experiment=True,
         )
+        
+############################################################################################################
+
+    ##################################################
+    # Release Pipelines Definitions
+    # ----------------
+    # Each release pipeline is defined in its own function below
+    ##################################################
+
+    def setup_release_pipeline(self):
+        print("Creating release pipeline", end="...")
+        self.rp_default_releases()
+        print("Done")
+        
+    def rp_default_releases(self):
+        # Default Releases
+        res = self.ldproject.create_release_pipeline(
+            "default-releases", "Default Releases"
+        )
+        self.phase_ids = self.ldproject.get_pipeline_phase_ids("default-releases")
+        
+############################################################################################################
+
+    ##################################################
+    # Template Environment Definitions
+    # ----------------
+    # Each release pipeline is defined in its own function below
+    ##################################################
+
+    def setup_template_environment(self):
+        
+        print("Copying Flag Settings From Production to Template Environment")
+        self.ldproject.copy_flag_settings("federatedAccounts", "production", "template-env")
+        self.ldproject.copy_flag_settings("wealthManagement", "test", "template-env")
+        self.ldproject.copy_flag_settings("financialDBMigration", "production", "template-env")
+        self.ldproject.copy_flag_settings("investment-recent-trade-db", "test", "template-env")
+        self.ldproject.copy_flag_settings("release-new-investment-stock-api", "production", "template-env")
+        self.ldproject.copy_flag_settings("ai-chatbot", "production", "template-env")
+        self.ldproject.copy_flag_settings("storeAttentionCallout", "test", "template-env")
+        self.ldproject.copy_flag_settings("cartSuggestedItems", "production", "template-env")
+        
+        print("Done")
     
+
 
 if __name__ == "__main__":
     
