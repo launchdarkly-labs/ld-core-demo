@@ -1192,12 +1192,12 @@ class DemoBuilder:
         
         print("Copying Flag Settings From Production to Template Environment")
         self.ldproject.copy_flag_settings("federatedAccounts", "production", "template-env")
-        self.ldproject.copy_flag_settings("wealthManagement", "test", "template-env")
+        self.ldproject.copy_flag_settings("wealthManagement", "production", "template-env")
         self.ldproject.copy_flag_settings("financialDBMigration", "production", "template-env")
-        self.ldproject.copy_flag_settings("investment-recent-trade-db", "test", "template-env")
+        self.ldproject.copy_flag_settings("investment-recent-trade-db", "production", "template-env")
         self.ldproject.copy_flag_settings("release-new-investment-stock-api", "production", "template-env")
         self.ldproject.copy_flag_settings("ai-chatbot", "production", "template-env")
-        self.ldproject.copy_flag_settings("storeAttentionCallout", "test", "template-env")
+        self.ldproject.copy_flag_settings("storeAttentionCallout", "production", "template-env")
         self.ldproject.copy_flag_settings("cartSuggestedItems", "production", "template-env")
         
         print("Done")
