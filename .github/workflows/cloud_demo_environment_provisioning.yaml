@@ -55,7 +55,7 @@ jobs:
           echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ env.LD_API_KEY }} >> ./.env.production
-          echo DESTINATIONENV=${{ env.LD_PROJECT_KEY }} >> ./.env.production
+          echo DESTINATIONENV=production >> ./.env.production
           echo PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
           echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
           echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
