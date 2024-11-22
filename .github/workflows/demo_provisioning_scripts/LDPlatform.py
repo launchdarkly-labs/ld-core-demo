@@ -203,11 +203,9 @@ class LDPlatform:
         payload = {
             "comment": "copy feature flag settings",
             "source": {
-                "currentVersion": 1,
                 "key": source_env_key
             },
             "target": {
-                "currentVersion": 1,
                 "key": target_env_key
             }
         }
