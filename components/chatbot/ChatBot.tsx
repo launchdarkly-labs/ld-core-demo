@@ -122,10 +122,10 @@ export default function Chatbot() {
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen && <XIcon className="h-8 w-8" />}
-          {!isOpen && aiNewModelChatbotFlag.enabled !== false && (
+          {!isOpen && aiNewModelChatbotFlag?.enabled !== false && (
             <MessageCircleIcon className="h-8 w-8" />
           )}
-          {!isOpen && aiNewModelChatbotFlag.enabled === false && (
+          {!isOpen && aiNewModelChatbotFlag?.enabled === false && (
             <BatteryCharging className="h-8 w-8" />
           )}
           <span className="sr-only">Open Chatbot</span>
@@ -261,7 +261,7 @@ export default function Chatbot() {
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => e.preventDefault()}
               >
-                {aiNewModelChatbotFlag.enabled === false ? (
+                {aiNewModelChatbotFlag?.enabled === false ? (
                   <p className="text-airlinegray">
                     We are offline for today. Please return next time!
                   </p>
