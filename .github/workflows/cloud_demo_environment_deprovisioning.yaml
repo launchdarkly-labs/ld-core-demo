@@ -1,0 +1,58 @@
+name: Cloud Demo Environment De-Provisioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'User alias or LD env key'
+        required: true
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  ECR_REPOSITORY: ld-core-demo
+  KUBECTL_VERSION: "v1.23.0"
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+
+jobs:
+  deploy-to-demoenv: 
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install LaunchDarkly CLI
+        run: npm install -g @launchdarkly/ldcli
+
+      - name: Set LaunchDarkly Production CLI Config
+        run: |
+          echo "Setting up LaunchDarkly CLI for LD Production Account"
+          ldcli config --set access-token ${{ secrets.LD_API_KEY }}
+
+      - name: Remove Demo Environment from LD Production Account
+        run: |
+          ldcli projects delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo
+      
+      - name: Set LaunchDarkly EAP CLI Config
+        run: |
+          echo "Setting up LaunchDarkly CLI for LD EAP Account"
+          ldcli config --set access-token ${{ secrets.LD_EAP_API_KEY }}
+      
+      - name: Remove Demo Environment from LD EAP Account
+        run: |
+          ldcli projects delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Delete Kubernetes Namespace
+        if: env.namespace_exists == 'true'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: delete namespace ${{ env.DEMO_NAMESPACE }}
+          
