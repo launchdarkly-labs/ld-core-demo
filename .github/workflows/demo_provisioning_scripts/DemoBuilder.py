@@ -522,9 +522,9 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                    "maxTokens": 200,
-                    "modelId": "anthropic.claude-instant-v1",
-                    "temperature": 0.5
+                "maxTokens": 200,
+                "modelId": "anthropic.claude-instant-v1",
+                "temperature": 0.5
             },
             [
                 {
@@ -578,9 +578,9 @@ class DemoBuilder:
             "historical-focus",
             "Historical Focus",
             {
-                    "maxTokens": 500,
-                    "modelId": "anthropic.claude-instant-v1",
-                    "temperature": 0.9
+                "maxTokens": 500,
+                "modelId": "anthropic.claude-instant-v1",
+                "temperature": 0.9
             },
             [
                 {
@@ -594,9 +594,9 @@ class DemoBuilder:
             "weather-focus",
             "Weather Focus",
             {
-                    "maxTokens": 500,
-                    "modelId": "anthropic.claude-instant-v1",
-                    "temperature": 0.9
+                "maxTokens": 500,
+                "modelId": "anthropic.claude-instant-v1",
+                "temperature": 0.9
             },
             [
                 {
@@ -618,9 +618,9 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                    "maxTokens": 500,
-                    "modelId": "anthropic.claude-instant-v1",
-                    "temperature": 0.5
+                "maxTokens": 500,
+                "modelId": "anthropic.claude-instant-v1",
+                "temperature": 0.5
             },
             [
                 {
@@ -634,11 +634,9 @@ class DemoBuilder:
             "cohere-coral",
             "Cohere Coral",
             {
-                {
-                    "maxTokens": 500,
-                    "modelId": "cohere.command-text-v14",
-                    "temperature": 0.5
-                }
+                "maxTokens": 500,
+                "modelId": "cohere.command-text-v14",
+                "temperature": 0.5
             },
             [
                 {
@@ -652,9 +650,9 @@ class DemoBuilder:
             "meta-llama",
             "Meta Llama",
             {
-                    "maxTokens": 500,
-                    "modelId": "meta.llama2-13b-chat-v1",
-                    "temperature": 0.7
+                "maxTokens": 500,
+                "modelId": "meta.llama2-13b-chat-v1",
+                "temperature": 0.7
             },
             [
                 {
