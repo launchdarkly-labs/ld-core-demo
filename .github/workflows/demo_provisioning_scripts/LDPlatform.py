@@ -270,7 +270,7 @@ class LDPlatform:
         payload = {
             "key": ai_config_version_key,
             "name": ai_config_version_name,
-            "prompts:": prompts,
+            "prompts": prompts,
             "model": model
         }
 
