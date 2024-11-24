@@ -512,7 +512,7 @@ class DemoBuilder:
     
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
-            "ai-config--destination-picker-new-ai-model",
+            "destination-picker-new-ai-model",
             "AI Models: Destination Recommendations",
             "This ai config will provide ai models to the destination recommendations component in LaunchAirways",
             ["ai-models","ai-config"]
