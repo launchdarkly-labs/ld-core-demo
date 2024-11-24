@@ -1209,7 +1209,7 @@ if __name__ == "__main__":
     LD_API_KEY = os.getenv("LD_API_KEY")
     LD_API_KEY_USER = os.getenv("LD_API_KEY_USER")
     LD_PROJECT_KEY = os.getenv("LD_PROJECT_KEY")
-    email = {os.getenv('DEMO_NAMESPACE')}+"@launchdarkly.com"
+    email = os.getenv('DEMO_NAMESPACE') + "@launchdarkly.com"
     LD_PROJECT_NAME = f"LD Core Demo - {os.getenv('DEMO_NAMESPACE')}"
 
     demo = DemoBuilder(
