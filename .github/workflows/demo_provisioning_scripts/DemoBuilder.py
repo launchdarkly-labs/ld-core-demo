@@ -163,10 +163,10 @@ class DemoBuilder:
         print("Creating AI Config:")
         print("AI Models: Destination Recommendations")
         self.create_destination_recommendation_ai_config()
-        # print("AI Prompts: Travel Insights")
-        # self.create_travel_insights_ai_config()
-        # print("AI Models: AI Chatbot")
-        # self.create_ai_chatbot_ai_config()
+        print("AI Prompts: Travel Insights")
+        self.create_travel_insights_ai_config()
+        print("AI Models: AI Chatbot")
+        self.create_ai_chatbot_ai_config()
         print("Done")
         self.ai_config_created = True
         
@@ -518,7 +518,7 @@ class DemoBuilder:
             ["ai-models", "ai-config"]
         )
         res2 = self.ldproject.create_ai_config_versions(
-            "destination-picker-new-ai-model",
+            "ai-config--destination-picker-new-ai-model",
             "claude-haiku",
             "Claude Haiku",
             {
@@ -534,7 +534,7 @@ class DemoBuilder:
             ]
         )
         res3 = self.ldproject.create_ai_config_versions(
-            "destination-picker-new-ai-model",
+            "ai-config--destination-picker-new-ai-model",
             "cohere-text",
             "Cohere Text",
             {
@@ -552,13 +552,13 @@ class DemoBuilder:
         
     def create_travel_insights_ai_config(self):
         res = self.ldproject.create_ai_config(
-            "ai-travel-prompt-text",
+            "ai-config--ai-travel-prompt-text",
             "AI Prompts: Travel Insights",
             "This ai config will provide ai prompts to the travel insights component in LaunchAirways",
             ["ai-prompts","ai-config"]
         )
         res2 = self.ldproject.create_ai_config_versions(
-            "ai-travel-prompt-text",
+            "ai-config--ai-travel-prompt-text",
             "general-travel",
             "General Travel",
             {
@@ -574,7 +574,7 @@ class DemoBuilder:
             ]
         )
         res3 = self.ldproject.create_ai_config_versions(
-            "ai-travel-prompt-text",
+            "ai-config--ai-travel-prompt-text",
             "historical-focus",
             "Historical Focus",
             {
@@ -590,7 +590,7 @@ class DemoBuilder:
             ]
         )
         res4 = self.ldproject.create_ai_config_versions(
-            "ai-travel-prompt-text",
+            "ai-config--ai-travel-prompt-text",
             "weather-focus",
             "Weather Focus",
             {
@@ -608,13 +608,13 @@ class DemoBuilder:
     
     def create_ai_chatbot_ai_config(self):
         res = self.ldproject.create_ai_config(
-            "ai-new-model-chatbot",
+            "ai-config--ai-new-model-chatbot",
             "AI Prompts: Chatbot",
             "This ai config will provide ai prompts to the chatbot component in LaunchAirways",
             ["ai-models","ai-config"]
         )
         res2 = self.ldproject.create_ai_config_versions(
-            "ai-new-model-chatbot",
+            "ai-config--ai-new-model-chatbot",
             "claude-haiku",
             "Claude Haiku",
             {
@@ -630,7 +630,7 @@ class DemoBuilder:
             ]
         )
         res3 = self.ldproject.create_ai_config_versions(
-            "ai-new-model-chatbot",
+            "ai-config--ai-new-model-chatbot",
             "cohere-coral",
             "Cohere Coral",
             {
@@ -648,7 +648,7 @@ class DemoBuilder:
             ]
         )
         res4 = self.ldproject.create_ai_config_versions(
-            "ai-new-model-chatbot",
+            "ai-config--ai-new-model-chatbot",
             "meta-llama",
             "Meta Llama",
             {
