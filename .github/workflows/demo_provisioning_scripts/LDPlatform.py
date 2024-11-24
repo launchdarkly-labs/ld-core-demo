@@ -265,12 +265,13 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, config_key, config_version_key, config_version_name, prompts):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_config_version_name, model, prompts):
         
         payload = {
-            "key": config_version_key,
-            "name": config_version_name,
+            "key": ai_config_version_key,
+            "name": ai_config_version_name,
             "prompts:": prompts,
+            "model": model
         }
 
         headers = {
