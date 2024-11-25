@@ -104,6 +104,6 @@ jobs:
       - name: LaunchDarkly Code References
         uses: launchdarkly/find-code-references@v2.12.0
         with:
-          accessToken: ${{ secrets.LD_API_KEY }}
+          accessToken: ${{ secrets.LD_EAP_API_KEY }}
           projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
           repoName: main
