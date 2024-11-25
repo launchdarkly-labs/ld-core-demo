@@ -11,6 +11,7 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}
+  LD_EAP_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
 jobs:
   deploy-to-pods:
@@ -39,7 +40,7 @@ jobs:
           echo "var2=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
         env:
           LD_ENV_KEY: demo-${{ matrix.environment }}
-          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          LD_EAP_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
       - name: Create .env file
         run: |
