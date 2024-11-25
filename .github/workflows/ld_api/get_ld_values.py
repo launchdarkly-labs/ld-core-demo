@@ -14,7 +14,7 @@ def main():
 
 def getLDEnvs():
 
-    LD_API_KEY = os.getenv('LD_API_KEY')
+    LD_API_KEY = os.getenv('LD_EAP_API_KEY')
     LD_ENV_KEY = os.getenv('LD_ENV_KEY')
     
     if LD_API_KEY is None:
@@ -22,7 +22,7 @@ def getLDEnvs():
         exit(1)
 
    
-    url = "https://app.launchdarkly.com/api/v2/projects/ld-core-demo/environments/" + LD_ENV_KEY
+    url = "https://app.launchdarkly.com/api/v2/projects/ld-core-demo-app-reinvent-24/environments/" + LD_ENV_KEY
 
     headers = {"Authorization": LD_API_KEY}
 
