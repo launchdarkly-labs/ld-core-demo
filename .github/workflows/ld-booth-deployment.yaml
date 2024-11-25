@@ -105,5 +105,5 @@ jobs:
         uses: launchdarkly/find-code-references@v2.12.0
         with:
           accessToken: ${{ secrets.LD_EAP_API_KEY }}
-          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          projKey: ld-core-demo-app-reinvent-24
           repoName: main
