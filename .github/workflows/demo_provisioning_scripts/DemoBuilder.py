@@ -41,15 +41,10 @@ class DemoBuilder:
         self.run_ai_models_experiment()
         self.project_settings()
         self.setup_release_pipeline()
-        self.setup_template_environment()
-       
-        # Waiting for Product to release this API
+        self.setup_template_environment()       
         self.create_ai_config()
         
-        
-        
         # self.update_add_userid_to_flags()
-        
         
         ## Not required
         #self.create_contexts()
