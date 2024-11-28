@@ -51,7 +51,8 @@ jobs:
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
           echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
           echo PROJECT_KEY=ld-core-demo >> ./.env.production
-
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
 
       - name: Login to Amazon ECR
         id: login-ecr
