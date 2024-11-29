@@ -131,3 +131,10 @@ jobs:
 
       - name: Remove .env file
         run: rm ./.env.production
+
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2.12.0
+        with:
+          accessToken: ${{ env.LD_API_KEY }}
+          projKey: ${{ env.LD_PROJECT_KEY }}
+          repoName: main
