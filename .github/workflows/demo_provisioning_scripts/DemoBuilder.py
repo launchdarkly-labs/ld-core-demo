@@ -517,9 +517,11 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                "maxTokens": 200,
-                "modelId": "anthropic.claude-instant-v1",
-                "temperature": 0.5
+                "id": "anthropic.claude-instant-v1",
+                "parameters": {
+                    "temperature": 0.5,
+                    "maxTokens": 200
+                }
             },
             [
                 {
@@ -533,9 +535,11 @@ class DemoBuilder:
             "cohere-text",
             "Cohere Text",
             {
-                "maxTokens": 400,
-                "modelId": "cohere.command-text-v14",
-                "temperature": 0.7
+                "id": "cohere.command-text-v14",
+                "parameters": {
+                    "temperature": 0.7,
+                    "maxTokens": 400
+                }
             },
             [
                 {
@@ -557,9 +561,11 @@ class DemoBuilder:
             "general-travel",
             "General Travel",
             {
-                "maxTokens": 500,
-                "modelId": "anthropic.claude-instant-v1",
-                "temperature": 0.9
+                "id": "anthropic.claude-instant-v1",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.9
+                }
             },
             [
                 {
@@ -573,9 +579,11 @@ class DemoBuilder:
             "historical-focus",
             "Historical Focus",
             {
-                "maxTokens": 500,
-                "modelId": "anthropic.claude-instant-v1",
-                "temperature": 0.9
+                "id": "anthropic.claude-instant-v1",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.9
+                }
             },
             [
                 {
@@ -589,9 +597,11 @@ class DemoBuilder:
             "weather-focus",
             "Weather Focus",
             {
-                "maxTokens": 500,
-                "modelId": "anthropic.claude-instant-v1",
-                "temperature": 0.9
+                "id": "anthropic.claude-instant-v1",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.9
+                }
             },
             [
                 {
@@ -613,9 +623,11 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                "maxTokens": 500,
-                "modelId": "anthropic.claude-instant-v1",
-                "temperature": 0.5
+                "id": "anthropic.claude-instant-v1",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.5
+                }
             },
             [
                 {
@@ -629,9 +641,11 @@ class DemoBuilder:
             "cohere-coral",
             "Cohere Coral",
             {
-                "maxTokens": 500,
-                "modelId": "cohere.command-text-v14",
-                "temperature": 0.5
+                "id": "cohere.command-text-v14",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.5
+                }
             },
             [
                 {
@@ -645,10 +659,12 @@ class DemoBuilder:
             "meta-llama",
             "Meta Llama",
             {
-                "maxTokens": 500,
-                "modelId": "meta.llama2-13b-chat-v1",
-                "temperature": 0.7
-            },
+                "id": "meta.llama2-13b-chat-v1",
+                "parameters": {
+                    "maxTokens": 500,
+                    "temperature": 0.7
+                }
+            }
             [
                 {
                     "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
