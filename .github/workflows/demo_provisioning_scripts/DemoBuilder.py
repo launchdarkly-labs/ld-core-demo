@@ -664,7 +664,7 @@ class DemoBuilder:
                     "maxTokens": 500,
                     "temperature": 0.7
                 }
-            }
+            },
             [
                 {
                     "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
