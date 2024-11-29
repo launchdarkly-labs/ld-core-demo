@@ -255,7 +255,6 @@ class LDPlatform:
             headers=headers,
         )
         data = json.loads(response.text)
-        print(response.text)
         if "message" in data:
             print("Error creating AI Config: " + data["message"])
         return response
