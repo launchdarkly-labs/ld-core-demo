@@ -265,12 +265,12 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_config_version_name, model, prompts):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_config_version_name, model, messages):
         
         payload = {
             "key": ai_config_version_key,
             "name": ai_config_version_name,
-            "prompts": prompts,
+            "messages": messages,
             "model": model
         }
 
