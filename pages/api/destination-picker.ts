@@ -25,37 +25,46 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     //     "name": "claude-haiku"
     // })
 
-    const model2 = await ldClient.variation("destination-picker-new-ai-model", context, {
-        prompt: [{ content: "", role: "system" }],
-        model: {
-          modelId: "cohere.command-text-v14",
-          temperature: 0.5,
-          max_tokens: 200,
-        },
-      })
-
-const messages = [
-    {
-        role: "user" as ConversationRole,
-        content: [
+    const ai_config_version = await ldClient.variation("ai-config--destination-picker-new-ai-model", context, {
+        messages: [
             {
-                text: prompt
+                content: "give me three recommendations of places to travel based on popular travel destinations, consider best air fare prices and places tourists / travelers are visiting currently and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. ",
+                role: "system"
             }
-        ]
-    }
+        ],
+        model: {
+            parameters: {
+                temperature: 0.7
+            },
+            id: "cohere.command-text-v14"
+        },
+        _ldMeta: {
+            versionKey: "aedbe7e5-d275-40d7-93e6-d18862145713",
+            enabled: true
+        }
+    })    
+
+    const messages = [
+        {
+            role: "user" as ConversationRole,
+            content: [
+                {
+                    text: ai_config_version?.messages[0].content || ""
+                }
+            ]
+        }
     ]
 
     const command = new ConverseCommand({
-        modelId: model2?.model?.modelId, 
+        modelId: ai_config_version?.model?.id, 
         messages: messages,
         inferenceConfig: {
-                maxTokens: model2?.model?.maxTokens,
-                temperature: model2?.model?.temperature || 0.5
+                maxTokens: ai_config_version?.model?.parameters?.maxTokens || 100,
+                temperature: ai_config_version?.model?.parameters?.temperature || 0.5
             }});
     try {
         const response = await client.send(command);
         const responseText = response?.output?.message?.content?.[0]?.text || ""
-        console.log(responseText)
         return res.status(200).json(responseText)
 
     } catch (error: any) {

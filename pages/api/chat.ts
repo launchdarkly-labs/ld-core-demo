@@ -33,8 +33,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
     key: uuidv4().slice(0, 6),
   };
 
-  const model2 = await ldClient.variation("ai-new-model-chatbot", context, DEFAULT_AI_MODEL);
-
+  const ai_config_version = await ldClient.variation("ai-config--ai-new-model-chatbot", context, DEFAULT_AI_MODEL);
 
   // const model = await ldClient.variation("ai-chatbot", context, {
   //   modelId: "cohere.command-text-v14",
@@ -51,30 +50,23 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
   //   }, {});
     
 
-    const objWithoutModelId2 = Object.keys(model2?.model)
-    .filter((objKey) => objKey !== "modelId")
-    .reduce((newObj: any, key) => {
-      
-      if(key === "maxTokens" && model2?.model.modelId.includes("cohere")){
-        newObj["max_tokens"] = model2.model[key];
-      }
-
-      if(key === "maxTokens" && model2?.model.modelId.includes("anthropic")){
-        newObj["max_tokens_to_sample"] = model2.model[key];
-      }
-
-      if(key === "maxTokens" && model2?.model.modelId.includes("meta")){
-        newObj["max_gen_len"] = model2.model[key];
-      } 
-      if(key !== "maxTokens"){
-        newObj[key] = model2.model[key];
-      }
-      return newObj;
-    }, {});
+  const objWithoutModelId2 = Object.keys(ai_config_version?.model.parameters)
+  .reduce((newObj: any, key) => {
+    if (key === "maxTokens" && ai_config_version?.model.id.includes("cohere")) {
+      newObj["max_tokens"] = ai_config_version.model.parameters[key];
+    }
+    if (key === "maxTokens" && ai_config_version?.model.id.includes("anthropic")) {
+      newObj["max_tokens_to_sample"] = ai_config_version.model.parameters[key];
+    }
+    if (key !== "maxTokens") {
+      newObj[key] = ai_config_version.model[key];
+    }
+    return newObj;
+  }, {});
 
 
   const chatBotModelInput = new InvokeModelCommand({
-    modelId: model2.model.modelId,
+    modelId: ai_config_version.model.id,
     // modelId: model.modelId,
     contentType: "application/json",
     accept: "application/json",

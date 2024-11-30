@@ -121,11 +121,16 @@ export const HOMEPAGE_CARDS = {
 };
 
 export const DEFAULT_AI_MODEL = {
-  prompt: [{ content: "", role: "system" }],
+  messages: [
+    {
+      content:
+        "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
+      role: "system",
+    },
+  ],
   model: {
-    modelId: "anthropic.claude-instant-v1",
-    temperature: 0.5,
-    max_tokens: 500,
+    parameters: { temperature: 0.5, maxTokens: 500 },
+    id: "cohere.command-text-v14",
   },
 };
 

@@ -20,24 +20,12 @@ import { DEFAULT_AI_MODEL } from "@/utils/constants";
 
 export default function DestinationPicker({ children }: { children: ReactElement }) {
   const destinationPickerNewAIModelLDFlag =
-    useFlags()["destination-picker-new-ai-model"] == undefined
+    useFlags()["ai-config--destination-picker-new-ai-model"] == undefined
       ? DEFAULT_AI_MODEL
-      : useFlags()["destination-picker-new-ai-model"];
+      : useFlags()["ai-config--destination-picker-new-ai-model"];
   const [recsGiven, setRecsGiven] = useState(false);
   const [destinations, setDestinations] = useState("");
   const [loading, setLoading] = useState(false);
-
-  let prompt = "";
-
-  if (destinationPickerNewAIModelLDFlag?.model?.modelId.includes("cohere")) {
-    prompt =
-      "give me three recommendations of places to travel based on popular travel destinations, consider best air fare prices and places tourists / travelers are visiting currently and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time.";
-  }
-
-  if (destinationPickerNewAIModelLDFlag?.model?.modelId.includes("anthropic")) {
-    prompt =
-      "give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Limit your responses to 50 characters or less";
-  }
 
   async function getDestinations() {
     try {
@@ -45,7 +33,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
       setLoading(true);
       const response = await fetch("/api/destination-picker", {
         method: "POST",
-        body: JSON.stringify({ prompt: prompt }),
+        body: JSON.stringify({ prompt: destinationPickerNewAIModelLDFlag?.messages[0].content }),
       });
       const data = await response.json();
    
@@ -83,10 +71,10 @@ export default function DestinationPicker({ children }: { children: ReactElement
             </AlertDialogTitle>
             <p className="flex w-full justify-center text-base text-zinc-600 font-sohnelight">
               powered by&nbsp;
-              {destinationPickerNewAIModelLDFlag?.model?.modelId.includes("cohere") && (
+              {destinationPickerNewAIModelLDFlag?.model?.id.includes("cohere") && (
                 <span className="text-cohereColor"> Cohere Command </span>
               )} 
-              {destinationPickerNewAIModelLDFlag?.model?.modelId.includes("anthropic") && (
+              {destinationPickerNewAIModelLDFlag?.model?.id.includes("anthropic") && (
                 <span className="text-anthropicColor">Anthropic Claude </span>
               )}
               &nbsp;with&nbsp;
