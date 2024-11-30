@@ -520,7 +520,7 @@ class DemoBuilder:
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
                     "temperature": 0.5,
-                    "maxTokens": 200
+                    "maxTokens": 50
                 }
             },
             [
@@ -538,7 +538,7 @@ class DemoBuilder:
                 "id": "cohere.command-text-v14",
                 "parameters": {
                     "temperature": 0.7,
-                    "maxTokens": 400
+                    "maxTokens": 100
                 }
             },
             [
@@ -563,13 +563,13 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 500,
+                    "maxTokens": 50,
                     "temperature": 0.9
                 }
             },
             [
                 {
-                    "content": "Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${destination}, write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit. do not specify word count in your reply",
+                    "content": "Playing the role of a travel expert with a tone of excitement and encouragement, using the current travel destination in this configuration: ${destination} , write me 40 word of an analysis travel considerations for that location including typical weather and culture. Skip anything identifying your prompt. On a new line, answer what clothing someone should pack when travleing here. Place a hard limit on a 40 word response.Do not exceed this limit and do not specify any limits in responses. do not specify word count in your reply",
                     "role": "system"
                 }
             ]
@@ -581,13 +581,13 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 500,
+                    "maxTokens": 50,
                     "temperature": 0.9
                 }
             },
             [
                 {
-                    "content": "Tell me about the location ${destination} that I'm going to. Give me any relevant historical facts or places that have significant value that I should visit while I'm there. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+                    "content": "Tell me about the location ${destination} that I'm going to. Give me any relevant historical facts or places that have significant value that I should visit while I'm there. The destination is ${destination} . Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. Do not exceed this limit and do not specify any limits in responses",
                     "role": "system"
                 }
             ]
@@ -599,13 +599,13 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 500,
+                    "maxTokens": 50,
                     "temperature": 0.9
                 }
             },
             [
                 {
-                    "content": "Tell me relevant climate and weather facts about my destination. Provide example clothing to wear upon arrival at the destination and suggest some activities based on the typical weather at the time of arrival. Use the current date to base your weather information on. The destination is ${destination}. Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. do not specify word count in your reply",
+                    "content": "Tell me relevant climate and weather facts about my destination. Provide example clothing to wear upon arrival at the destination and suggest some activities based on the typical weather at the time of arrival. Use the current date to base your weather information on. The destination is ${destination} . Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. Do not exceed this limit and do not specify any limits in responses",
                     "role": "system"
                 }
             ]
@@ -625,13 +625,13 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 500,
+                    "maxTokens": 100,
                     "temperature": 0.5
                 }
             },
             [
                 {
-                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
+                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
                     "role": "system"
                 }
             ]
@@ -643,31 +643,13 @@ class DemoBuilder:
             {
                 "id": "cohere.command-text-v14",
                 "parameters": {
-                    "maxTokens": 500,
+                    "maxTokens": 100,
                     "temperature": 0.5
                 }
             },
             [
                 {
-                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
-                    "role": "system"
-                }
-            ]
-        )
-        res4 = self.ldproject.create_ai_config_versions(
-            "ai-config--ai-new-model-chatbot",
-            "meta-llama",
-            "Meta Llama",
-            {
-                "id": "meta.llama2-13b-chat-v1",
-                "parameters": {
-                    "maxTokens": 500,
-                    "temperature": 0.7
-                }
-            },
-            [
-                {
-                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Here is the user prompt: ${userInput}.",
+                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
                     "role": "system"
                 }
             ]
@@ -807,18 +789,6 @@ class DemoBuilder:
                             "max_tokens_to_sample": 500,
                             "modelId": "anthropic.claude-instant-v1",
                             "temperature": 0.3,
-                            "top_p": 1
-                        }
-                    
-                },
-                {
-                    "name": "Meta Llama",
-                    "description": "This is Meta's Llama AI model for more creative responses",
-                    "value": 
-                        {
-                            "max_gen_len": 500,
-                            "modelId": "meta.llama2-13b-chat-v1",
-                            "temperature": 0.9,
                             "top_p": 1
                         }
                     

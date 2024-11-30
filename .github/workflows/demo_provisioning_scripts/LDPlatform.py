@@ -64,7 +64,14 @@ class LDPlatform:
         self.project_key = project_key
         if self.project_exists(project_key):
             return
-        payload = {"key": project_key, "name": project_name}
+        payload = {
+            "key": project_key,
+            "name": project_name, 
+            "defaultClientSideAvailability": {
+                "usingEnvironmentId": True,
+                "usingMobileKey": True,
+            },
+        }
 
         response = self.getrequest(
             "POST",

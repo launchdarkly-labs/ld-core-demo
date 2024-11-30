@@ -21,9 +21,9 @@ export default function Chatbot() {
   const client = useLDClient();
   const { toast } = useToast();
   const aiNewModelChatbotFlag =
-    useFlags()["ai-new-model-chatbot"] == undefined
+    useFlags()["ai-config--ai-new-model-chatbot"] == undefined
       ? DEFAULT_AI_MODEL
-      : useFlags()["ai-new-model-chatbot"];
+      : useFlags()["ai-config--ai-new-model-chatbot"];
   const { userObject } = useContext(LoginContext);
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
@@ -49,13 +49,7 @@ export default function Chatbot() {
 
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify(`
-      As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. 
-      Act as customer representative. 
-      Only answer queries related to traveling and airlines.
-      Remove quotation in response.  
-      Limit response to 100 characters. 
-      Here is the user prompt: ${userInput}.`),
+      body: aiNewModelChatbotFlag?.messages[0]?.content,
     });
 
     const data = await response.json();
@@ -100,9 +94,9 @@ export default function Chatbot() {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiNewModelChatbotFlag?.model?.modelId?.includes(COHERE)) {
+    if (aiNewModelChatbotFlag?.model?.id?.includes(COHERE)) {
       return "Cohere Command";
-    } else if (aiNewModelChatbotFlag?.model?.modelId?.includes(META)) {
+    } else if (aiNewModelChatbotFlag?.model?.id?.includes(META)) {
       return "Meta Llama";
     } else {
       return "Anthropic Claude";
@@ -150,17 +144,17 @@ export default function Chatbot() {
                     Powered by{" "}
                     <span
                       className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.modelId.includes(COHERE)
+                        aiNewModelChatbotFlag?.model?.id.includes(COHERE)
                           ? "!text-cohereColor"
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.modelId.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.id.includes(CLAUDE)
                           ? "!text-anthropicColor"
                           : ""
                       }
                              ${
-                               aiNewModelChatbotFlag?.model?.modelId.includes(META)
+                               aiNewModelChatbotFlag?.model?.id.includes(META)
                                  ? "!text-metaColor"
                                  : ""
                              }

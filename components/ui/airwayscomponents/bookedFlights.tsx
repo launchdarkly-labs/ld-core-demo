@@ -9,14 +9,15 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
 import { DEFAULT_AI_TRAVEL_PROMPT } from "@/utils/constants";
+import c from "@/pages/_app";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { userObject } = useContext(LoginContext);
   const aiTravelPromptText =
-    useFlags()["ai-travel-prompt-text"] == undefined
+    useFlags()["ai-config--ai-travel-prompt-text"] == undefined
       ? DEFAULT_AI_TRAVEL_PROMPT
-      : useFlags()["ai-travel-prompt-text"];
+      : useFlags()["ai-config--ai-travel-prompt-text"];
   const [status, setStatus] = useState("Economy");
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
@@ -26,10 +27,11 @@ export default function BookedFlights() {
     try {
       const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`;
 
+      console.log(JSON.stringify(aiTravelPromptText?.messages[0].content));
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
-        body: JSON.stringify({ prompt: prompt }),
+        body: JSON.stringify({ prompt: aiTravelPromptText?.messages[0].content }),
       });
 
       if (!response.ok) {
@@ -74,9 +76,8 @@ export default function BookedFlights() {
   async function submitQuery(airport: any) {
     try {
       const prompt: string =
-        aiTravelPromptText?.prompt[0]?.content?.replace("${destination}", airport) +
+        aiTravelPromptText?.messages[0]?.content?.replace("${destination}", airport) +
         ". Limit responses to 40 words only";
-
       setLoading(true);
       const response = await fetch("/api/bedrock", {
         method: "POST",
@@ -329,7 +330,7 @@ export default function BookedFlights() {
                         </button>
                       )}
 
-                      {aiTravelPromptText?.enabled !== false && (
+                      {aiTravelPromptText?._ldMeta.enabled !== false && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights
