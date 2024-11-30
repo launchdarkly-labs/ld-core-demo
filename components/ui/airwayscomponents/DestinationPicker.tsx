@@ -36,7 +36,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
         body: JSON.stringify({ prompt: destinationPickerNewAIModelLDFlag?.messages[0].content }),
       });
       const data = await response.json();
-   
+
       setDestinations(data);
     } catch {
       console.error(new Error("there was a problem with the API"));
@@ -57,11 +57,11 @@ export default function DestinationPicker({ children }: { children: ReactElement
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       {recsGiven ? (
-        <AlertDialogContent>
-          <AlertDialogHeader className="flex flex-col items-center text-2xl">
+        <AlertDialogContent className="max-h-full  overflow-auto sm:max-w-md md:max-w-lg lg:max-w-xl">
+          <AlertDialogHeader className="flex flex-col items-center text-2xl ">
             <Image
               src="/airline/launch-airways.svg"
-              className=" pb-4"
+              className="pb-4"
               height={100}
               width={100}
               alt="Launch Airways"
@@ -73,7 +73,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
               powered by&nbsp;
               {destinationPickerNewAIModelLDFlag?.model?.id.includes("cohere") && (
                 <span className="text-cohereColor"> Cohere Command </span>
-              )} 
+              )}
               {destinationPickerNewAIModelLDFlag?.model?.id.includes("anthropic") && (
                 <span className="text-anthropicColor">Anthropic Claude </span>
               )}
@@ -88,7 +88,6 @@ export default function DestinationPicker({ children }: { children: ReactElement
           ) : (
             <>
               {destinations.length > 0 ? (
-                // destinations.map((destination) => (
                 <ReactMarkdown className="markdown font-sohnelight w-full h-full">{destinations}</ReactMarkdown>
               ) : (
                 <p className="text-zinc-300">No response generated yet.</p>
@@ -96,7 +95,7 @@ export default function DestinationPicker({ children }: { children: ReactElement
             </>
           )}
 
-          <AlertDialogFooter className="flex  items-center align-center sm:!justify-center !sm:space-x-1">
+          <AlertDialogFooter className="flex items-center align-center sm:!justify-center !sm:space-x-1">
             <AlertDialogAction
               onClick={resetDestinations}
               className={`flex bg-gradient-airways text-white hover:bg-zinc-100 rounded-full h-full 
@@ -107,10 +106,10 @@ export default function DestinationPicker({ children }: { children: ReactElement
           </AlertDialogFooter>
         </AlertDialogContent>
       ) : (
-        <AlertDialogContent>
+        <AlertDialogContent className=" max-h-full m-4 overflow-auto ">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-sohne">
-              <div className="flex flex-col w-full">
+            <AlertDialogTitle className="text-xl font-sohne ">
+              <div className="flex flex-col w-full ">
                 <div className="flex justify-center pb-6">
                   <div className="flex w-full justify-center pb-2">
                     <Image
