@@ -54,7 +54,7 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
             ]
         }
     ]
-    console.log(JSON.stringify(ai_config_version?.model?.parameters?.maxTokens))
+
     const command = new ConverseCommand({
         modelId: ai_config_version?.model?.id, 
         messages: messages,
