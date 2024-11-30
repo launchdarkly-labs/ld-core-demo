@@ -7,6 +7,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ldClient } from "@/utils/ld-server/serverClient";
 import { getCookie } from "cookies-next";
 import getServerClient from "@/utils/ld-server/serverClient";
+import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
+import { UserContextInterface } from "@/utils/apiTypesInterface";
 
 
 export default async function bedrockCall(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +18,9 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     } });
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const prompt = req.body
-    const context: any = getCookie("ld-context") || { "kind": "user", "name": "anonymous", "key": "abc-123" };
+    const context:UserContextInterface = JSON.parse(
+        getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
+      );
 
     // const model = await ldClient.variation("destination-picker-ai-model", context, {
     //     "anthropic_version": "bedrock-2023-05-31",
