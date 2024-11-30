@@ -38,10 +38,6 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
             },
             id: "cohere.command-text-v14"
         },
-        _ldMeta: {
-            versionKey: "aedbe7e5-d275-40d7-93e6-d18862145713",
-            enabled: true
-        }
     })    
 
     const messages = [
