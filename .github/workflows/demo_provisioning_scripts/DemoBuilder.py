@@ -520,12 +520,12 @@ class DemoBuilder:
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
                     "temperature": 0.5,
-                    "maxTokens": 50
+                    "maxTokens": 150
                 }
             },
             [
                 {
-                    "content": "give me three recommendations of places to travel based on popular travel destinations, strongly consider weather conditions at the time of the request, and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Limit your responses to 25 words or less",
+                    "content": "Provide three travel destination recommendations considering current weather and unique characteristics. Be creative and choose tourist spots. Ensure all responses fit within 25 words total. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time.  Use available tokens efficiently.",
                     "role": "system"
                 }
             ]
@@ -538,12 +538,12 @@ class DemoBuilder:
                 "id": "cohere.command-text-v14",
                 "parameters": {
                     "temperature": 0.7,
-                    "maxTokens": 200
+                    "maxTokens": 250
                 }
             },
             [
                 {
-                    "content": "give me three recommendations of places to travel based on popular travel destinations, consider best air fare prices and places tourists / travelers are visiting currently and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Please limit your responses to 75 words or less",
+                     "content": "Provide three travel destination recommendations considering frequent travellers and airways club members who travel frequently. Be creative and choose tourist spots. Ensure all responses fit within 50 words total. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Use available tokens efficiently. ",
                     "role": "system"
                 }
             ]
@@ -563,7 +563,7 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 50,
+                    "maxTokens": 200,
                     "temperature": 0.9
                 }
             },
@@ -581,7 +581,7 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 50,
+                    "maxTokens": 200,
                     "temperature": 0.9
                 }
             },
@@ -599,7 +599,7 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 50,
+                    "maxTokens": 200,
                     "temperature": 0.9
                 }
             },
@@ -625,13 +625,13 @@ class DemoBuilder:
             {
                 "id": "anthropic.claude-instant-v1",
                 "parameters": {
-                    "maxTokens": 100,
+                    "maxTokens": 200,
                     "temperature": 0.5
                 }
             },
             [
                 {
-                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
+                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 20 words. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
                     "role": "system"
                 }
             ]
@@ -643,13 +643,13 @@ class DemoBuilder:
             {
                 "id": "cohere.command-text-v14",
                 "parameters": {
-                    "maxTokens": 100,
+                    "maxTokens": 200,
                     "temperature": 0.5
                 }
             },
             [
                 {
-                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 100 characters. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
+                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 20 words. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
                     "role": "system"
                 }
             ]

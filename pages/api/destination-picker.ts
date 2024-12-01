@@ -18,7 +18,11 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     } });
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const prompt = req.body
-    const context:UserContextInterface = JSON.parse(
+    // let context:UserContextInterface = JSON.parse(
+    //     getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
+    //   );
+
+    let clientSideContext: UserContextInterface = JSON.parse(
         getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
       );
 
@@ -29,7 +33,7 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     //     "name": "claude-haiku"
     // })
 
-    const ai_config_version = await ldClient.variation("ai-config--destination-picker-new-ai-model", context, {
+    const ai_config_version = await ldClient.variation("ai-config--destination-picker-new-ai-model", clientSideContext, {
         messages: [
             {
                 content: "give me three recommendations of places to travel based on popular travel destinations, consider best air fare prices and places tourists / travelers are visiting currently and any unique characteristics that would appeal to the average traveler. Try to be creative and choose different spots that you don't think the users would pick. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. ",
@@ -38,7 +42,8 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
         ],
         model: {
             parameters: {
-                temperature: 0.7
+                temperature: 0.7,
+                maxTokens: 200
             },
             id: "cohere.command-text-v14"
         },
@@ -49,7 +54,7 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
             role: "user" as ConversationRole,
             content: [
                 {
-                    text: ai_config_version?.messages[0].content || ""
+                    text: prompt || ""
                 }
             ]
         }
