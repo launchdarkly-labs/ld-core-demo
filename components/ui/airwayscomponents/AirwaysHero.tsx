@@ -39,7 +39,7 @@ const AirwaysHero = () => {
   });
 
   const flags = useFlags();
-  const destinationPickerNewAIModelLDFlag = flags["destination-picker-new-ai-model"];
+  const destinationPickerNewAIModelLDFlag = flags["ai-config--destination-picker-new-ai-model"];
 
   function bookTrip() {
     const startDate = `${date!.from.getMonth() + 1
@@ -96,11 +96,11 @@ const AirwaysHero = () => {
 
         <div
           className="py-14 sm:py-[4rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
-        flex flex-col md:flex-row justify-center items-center"
+        flex flex-col md:flex-row justify-center items-center "
         >
           <div
             className="grid grid-cols-2 md:flex flex-row md:flex-col
-      text-airlineblack w-full md:w-1/2 pr-10 md:mb-0 gap-y-10 z-10"
+      text-airlineblack w-full md:w-1/2 pr-10 md:mb-0 gap-y-10 z-10 "
           >
             <h1
               className="text-6xl xl:text-[70px] font-audimat col-span-2 sm:col-span-0 
@@ -113,7 +113,7 @@ const AirwaysHero = () => {
               risk, and ship your travel dreams faster than ever before
             </h2> */}
 
-            {destinationPickerNewAIModelLDFlag?.enabled !== false && (
+            {destinationPickerNewAIModelLDFlag?._ldMeta.enabled !== false && (
               <DestinationPicker>
                 <Button className="bg-airlinedarkblue shadow-xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
                   <span>
@@ -125,8 +125,8 @@ const AirwaysHero = () => {
             )}
           </div>
 
-          <div className="w-full shadow-2xl  md:w-[25rem] z-10">
-            <div className={` py-10 lg:py-10 px-10 bg-white rounded-3xl `}>
+          <div className="w-full   md:w-[25rem] z-10 ">
+            <div className={` py-10 lg:py-10 px-10 bg-white rounded-3xl shadow-xl `}>
               <div className="grid lg:flex lg:flex-col items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-6">
                 <AirlineDestination
                   setActiveField={setActiveField}
@@ -176,7 +176,7 @@ const AirwaysHero = () => {
                       className={`text-sm shadow-2xl items-center border-2 ${isLoggedIn
                           ? "border-airlinedarkblue text-airlinedarkblue"
                           : "border-airlinegray text-airlinegray"
-                        } rounded-3xl py-2 px-4 shadow-xl`}
+                        } rounded-3xl py-2 px-4 shadow-xl hover:text-white hover:bg-airlinedarkblue hover:border-airlinedarkblue`}
                     >
                       <p>{isLoggedIn ? "Book Your Trip" : "Sign In to Finish Booking"}</p>
                     </motion.button>

@@ -106,6 +106,7 @@ export const LoginProvider = ({ children }) => {
       kind: "multi",
       user: {
         anonymous: true,
+        key: uuidv4().slice(0, 10),
       },
       device: {
         key: device,
