@@ -30,5 +30,6 @@ jobs:
         uses: launchdarkly/find-code-references@v2.12.0
         with:
           accessToken: ${{ env.LD_API_KEY }}
-          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          projKey: ${{ env.LD_PROJECT_KEY }}
+          repoName: main
     
