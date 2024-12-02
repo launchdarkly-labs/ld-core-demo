@@ -11,7 +11,7 @@ on:
         required: true
 
 env:
-  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+  LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
 
 
 jobs:
