@@ -14,11 +14,10 @@ import { CSNav } from "@/components/ui/csnav";
 import { HOMEPAGE_CARDS } from "@/utils/constants";
 import { useState, useEffect } from "react";
 import { CSNAV_ITEMS } from "@/utils/constants";
-import arrow from '@/public/sidenav/arrow.svg'
+import arrow from "@/public/sidenav/arrow.svg";
 import { CSCard } from "@/components/ui/ldcscard";
 
-
-
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -95,18 +94,22 @@ export default function Home() {
 
   gtag('config', 'G-2ZW2MJ75NL');`}
       </Script>
+      <Head>
+        <link rel="preload" href={"@/public/banking/backgrounds/bank-homepage-background-right.svg"} as="image" />
+        <link rel="preload" href={"@/public/banking/backgrounds/bank-homepage-background-left.svg"} as="image" />
+      </Head>
       <AnimatePresence>
         <main className="min-h-screen flex-col items-center justify-center bg-ldblack ">
           <div className="w-full text-white flex h-20 shadow-2xl">
-          <NavWrapper>
-            <>
-              <CSNavWrapper>
+            <NavWrapper>
+              <>
+                <CSNavWrapper>
                   <CSNav />
-              </CSNavWrapper>
+                </CSNavWrapper>
 
-              <NavLogo />
-            </>
-          </NavWrapper>
+                <NavLogo />
+              </>
+            </NavWrapper>
           </div>
 
           <header className="relative banner mx-auto w-full sm:w-1/3 sm:h-[24rem] flex items-center bg-ldblack justify-center z-0">
@@ -146,10 +149,15 @@ export default function Home() {
                     className="transition-opacity duration-300 hover:opacity-0 rounded-3xl"
                   />
                   <div className="absolute inset-0 mx-10 mt-10 justify-center transition-opacity duration-300 hover:opacity-0 z-10">
-                    <span className="text-white lg:text-3xl sm:text-sm font-sohne">{card.name}</span>
+                    <span className="text-white lg:text-3xl sm:text-sm font-sohne">
+                      {card.name}
+                    </span>
                   </div>
 
-                  <div onClick={() => goToVertical(card.link)} className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100">
+                  <div
+                    onClick={() => goToVertical(card.link)}
+                    className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100"
+                  >
                     <Image
                       src={card.desktopHoveringImage}
                       alt={`${card.name} Card Hover`}
@@ -158,19 +166,23 @@ export default function Home() {
                       className="rounded-3xl"
                     />
                     <div className="absolute inset-0 flex flex-col overflow-auto z-40">
-                      <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">{card.name}</span>
-                      <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">{card.description}</span>
-                      <span className="text-white text-2xl absolute bottom-10 right-10">&#8594;</span>
+                      <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">
+                        {card.name}
+                      </span>
+                      <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">
+                        {card.description}
+                      </span>
+                      <span className="text-white text-2xl absolute bottom-10 right-10">
+                        &#8594;
+                      </span>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </section>
           ) : (
-
             <div className="grid gap-4 py-4 mx-10">
               <div className="grid items-center gap-4">
-
                 {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
                   if (item.type === "usecase") {
                     return (
@@ -182,7 +194,10 @@ export default function Home() {
                         transition={{ delay: 0.05, duration: 0.2 }}
                         className="cursor-pointer"
                       >
-                        <div onClick={() => router.push(item.link)} className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}>
+                        <div
+                          onClick={() => router.push(item.link)}
+                          className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}
+                        >
                           <CSCard
                             className="cursor-pointer"
                             cardTitle={item.title}
@@ -197,13 +212,11 @@ export default function Home() {
                   }
                   return null;
                 })}
-
               </div>
             </div>
-
           )}
         </main>
-      </AnimatePresence >
+      </AnimatePresence>
     </>
   );
 }
