@@ -7,6 +7,7 @@ import NavBar from "@/components/ui/navbar";
 import Script from "next/script";
 import HomePageImage from "@/public/homepage/homepage-title.svg";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
 import { CSNav } from "@/components/ui/csnav";
@@ -16,6 +17,7 @@ import { useState, useEffect } from "react";
 import { CSNAV_ITEMS } from "@/utils/constants";
 import arrow from "@/public/sidenav/arrow.svg";
 import { CSCard } from "@/components/ui/ldcscard";
+import QRCodeImage from "@/components/ui/QRCodeImage";
 
 import Head from "next/head";
 
@@ -95,8 +97,16 @@ export default function Home() {
   gtag('config', 'G-2ZW2MJ75NL');`}
       </Script>
       <Head>
-        <link rel="preload" href={"@/public/banking/backgrounds/bank-homepage-background-right.svg"} as="image" />
-        <link rel="preload" href={"@/public/banking/backgrounds/bank-homepage-background-left.svg"} as="image" />
+        <link
+          rel="preload"
+          href={"@/public/banking/backgrounds/bank-homepage-background-right.svg"}
+          as="image"
+        />
+        <link
+          rel="preload"
+          href={"@/public/banking/backgrounds/bank-homepage-background-left.svg"}
+          as="image"
+        />
       </Head>
       <AnimatePresence>
         <main className="min-h-screen flex-col items-center justify-center bg-ldblack ">
@@ -109,6 +119,11 @@ export default function Home() {
 
                 <NavLogo />
               </>
+
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <QRCodeImage textColor="text-white" />
+              </NavbarRightSideWrapper>
             </NavWrapper>
           </div>
 
