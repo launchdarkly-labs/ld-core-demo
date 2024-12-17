@@ -71,10 +71,10 @@ export default function DestinationPicker({ children }: { children: ReactElement
             </AlertDialogTitle>
             <p className="flex w-full justify-center text-base text-zinc-600 font-sohnelight">
               powered by&nbsp;
-              {destinationPickerNewAIModelLDFlag?.model?.id.includes("cohere") && (
+              {destinationPickerNewAIModelLDFlag?.model?.name.includes("cohere") && (
                 <span className="text-cohereColor"> Cohere Command </span>
               )}
-              {destinationPickerNewAIModelLDFlag?.model?.id.includes("anthropic") && (
+              {destinationPickerNewAIModelLDFlag?.model?.name.includes("anthropic") && (
                 <span className="text-anthropicColor">Anthropic Claude </span>
               )}
               &nbsp;with&nbsp;
