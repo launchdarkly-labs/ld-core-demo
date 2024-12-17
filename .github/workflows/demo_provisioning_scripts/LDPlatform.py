@@ -289,7 +289,7 @@ class LDPlatform:
 
         response = self.getrequest(
             "POST",
-            "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/ai-configs/" + ai_config_key + "/versions",
+            "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/ai-configs/" + ai_config_key + "/variations",
             json=payload,
             headers=headers,
         )
