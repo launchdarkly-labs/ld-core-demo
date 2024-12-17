@@ -328,6 +328,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("ai-config--destination-picker-new-ai-model", "launch-airways-all-members", "production")
+        
                 
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
@@ -517,7 +519,7 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                "id": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-instant-v1",
                 "parameters": {
                     "temperature": 0.5,
                     "maxTokens": 150
@@ -535,7 +537,7 @@ class DemoBuilder:
             "cohere-text",
             "Cohere Text",
             {
-                "id": "cohere.command-text-v14",
+                "modelName": "cohere.command-text-v14",
                 "parameters": {
                     "temperature": 0.7,
                     "maxTokens": 250
@@ -561,7 +563,7 @@ class DemoBuilder:
             "general-travel",
             "General Travel",
             {
-                "id": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-instant-v1",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -579,7 +581,7 @@ class DemoBuilder:
             "historical-focus",
             "Historical Focus",
             {
-                "id": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-instant-v1",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -597,7 +599,7 @@ class DemoBuilder:
             "weather-focus",
             "Weather Focus",
             {
-                "id": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-instant-v1",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -623,7 +625,7 @@ class DemoBuilder:
             "claude-haiku",
             "Claude Haiku",
             {
-                "id": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-instant-v1",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -641,7 +643,7 @@ class DemoBuilder:
             "cohere-coral",
             "Cohere Coral",
             {
-                "id": "cohere.command-text-v14",
+                "modelName": "cohere.command-text-v14",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -1178,6 +1180,7 @@ class DemoBuilder:
         self.ldproject.copy_flag_settings("ai-chatbot", "production", "template-env")
         self.ldproject.copy_flag_settings("storeAttentionCallout", "production", "template-env")
         self.ldproject.copy_flag_settings("cartSuggestedItems", "production", "template-env")
+        self.ldproject.copy_flag_settings("ai-config--destination-picker-new-ai-model", "production", "template-env")
         
         print("Done")
     
