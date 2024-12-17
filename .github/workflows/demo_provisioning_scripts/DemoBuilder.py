@@ -328,7 +328,6 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("ai-config--destination-picker-new-ai-model", "launch-airways-all-members", "production")
         
                 
     def toggle_flags(self):
