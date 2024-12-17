@@ -113,7 +113,7 @@ const AirwaysHero = () => {
               risk, and ship your travel dreams faster than ever before
             </h2> */}
 
-            {destinationPickerNewAIModelLDFlag?._ldMeta.enabled !== false && (
+            {destinationPickerNewAIModelLDFlag?._ldMeta?.enabled !== false && (
               <DestinationPicker>
                 <Button className="bg-airlinedarkblue shadow-xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
                   <span>

@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 
 //Change QRURL to the URL where you'll be hosting this app
 
-const QRCodeImage = () => {
+const QRCodeImage = ({ textColor="text-black" }: { textColor: string }) => {
   const url = new URL(window.location.href);
   const QRURL = url.href;
   const qrCodeRef = useRef();
@@ -75,17 +75,15 @@ const QRCodeImage = () => {
 
     <>
       <Dialog>
-        <DialogTrigger asChild>
-          <QrCode className="w-full h-full text-black" />
+        <DialogTrigger asChild className="cursor-pointer">
+          <QrCode className={`w-full h-full ${textColor}`} />
         </DialogTrigger>
         <DialogContent>
           <div className="flex flex-col gap-y-4 items-center">
             <h1 className="text-slate-900 text-center text-3xl sm:text-4xl 2xl:text-5xl font-semibold">
               Scan me!
             </h1>
-            <div
-              className="w-full h-full lg:w-[80%] 2xl:w-[100%] p-4 border-2 border-black rounded-md"
-            >
+            <div className="w-full h-full lg:w-[80%] 2xl:w-[100%] p-4 border-2 border-black rounded-md">
               <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}

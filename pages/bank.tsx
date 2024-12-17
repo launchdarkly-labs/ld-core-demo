@@ -25,12 +25,12 @@ export default function Bank() {
           <>
             <Image
               src={bankHomePageBackgroundRight}
-              className="fixed right-0 bottom-0 m-h-screen"
+              className="fixed right-0 bottom-0 min-h-screen"
               alt="Bank Home Page Background"
             />
             <Image
               src={bankHomePageBackgroundLeft}
-              className="fixed left-0 bottom-0 m-h-screen"
+              className="fixed left-0 bottom-0 min-h-screen"
               alt="Bank Home Page Background"
             />
             <BankHomePage />

@@ -119,10 +119,10 @@ export default function Chatbot() {
           onClick={() => setIsOpen((prevState) => !prevState)}
         >
           {isOpen && <XIcon className="h-8 w-8" />}
-          {!isOpen && aiNewModelChatbotFlag?._ldMeta.enabled !== false && (
+          {!isOpen && aiNewModelChatbotFlag?._ldMeta?.enabled !== false && (
             <MessageCircleIcon className="h-8 w-8" />
           )}
-          {!isOpen && aiNewModelChatbotFlag?._ldMeta.enabled === false && (
+          {!isOpen && aiNewModelChatbotFlag?._ldMeta?.enabled === false && (
             <BatteryCharging className="h-8 w-8" />
           )}
           <span className="sr-only">Open Chatbot</span>
@@ -144,17 +144,17 @@ export default function Chatbot() {
                     Powered by{" "}
                     <span
                       className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.id.includes(COHERE)
+                        aiNewModelChatbotFlag?.model?.name.includes(COHERE)
                           ? "!text-cohereColor"
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.id.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name.includes(CLAUDE)
                           ? "!text-anthropicColor"
                           : ""
                       }
                              ${
-                               aiNewModelChatbotFlag?.model?.id.includes(META)
+                               aiNewModelChatbotFlag?.model?.name.includes(META)
                                  ? "!text-metaColor"
                                  : ""
                              }
@@ -259,7 +259,7 @@ export default function Chatbot() {
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => e.preventDefault()}
               >
-                {aiNewModelChatbotFlag?._ldMeta.enabled === false ? (
+                {aiNewModelChatbotFlag?._ldMeta?.enabled === false ? (
                   <p className="text-airlinegray">
                     We are offline for today. Please return next time!
                   </p>

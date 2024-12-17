@@ -330,7 +330,7 @@ export default function BookedFlights() {
                         </button>
                       )}
 
-                      {aiTravelPromptText?._ldMeta.enabled !== false && (
+                      {aiTravelPromptText?._ldMeta?.enabled !== false && (
                         <Popover>
                           <PopoverTrigger className="relative bg-gradient-airways-red text-white font-bold py-3 px-4 w-full animate-pulse hover:animate-none rounded-xl">
                             AI Travel Insights

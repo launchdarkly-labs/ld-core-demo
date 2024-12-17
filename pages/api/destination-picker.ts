@@ -45,9 +45,11 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
                 temperature: 0.7,
                 maxTokens: 200
             },
-            id: "cohere.command-text-v14"
+            name: "cohere.command-text-v14"
         },
     })    
+
+    console.log(ai_config_version)
 
     const messages = [
         {
@@ -61,7 +63,7 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
     ]
 
     const command = new ConverseCommand({
-        modelId: ai_config_version?.model?.id, 
+        modelId: ai_config_version?.model?.name, 
         messages: messages,
         inferenceConfig: {
                 maxTokens: ai_config_version?.model?.parameters?.maxTokens || 100,

@@ -52,10 +52,10 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
 
   const objWithoutModelId2 = Object.keys(ai_config_version?.model.parameters)
   .reduce((newObj: any, key) => {
-    if (key === "maxTokens" && ai_config_version?.model.id.includes("cohere")) {
+    if (key === "maxTokens" && ai_config_version?.model.name.includes("cohere")) {
       newObj["max_tokens"] = ai_config_version.model.parameters[key];
     }
-    if (key === "maxTokens" && ai_config_version?.model.id.includes("anthropic")) {
+    if (key === "maxTokens" && ai_config_version?.model.name.includes("anthropic")) {
       newObj["max_tokens_to_sample"] = ai_config_version.model.parameters[key];
     }
     if (key !== "maxTokens") {
@@ -66,7 +66,7 @@ export default async function chatResponse(req: NextApiRequest, res: NextApiResp
 
 
   const chatBotModelInput = new InvokeModelCommand({
-    modelId: ai_config_version.model.id,
+    modelId: ai_config_version.model.name,
     // modelId: model.modelId,
     contentType: "application/json",
     accept: "application/json",
