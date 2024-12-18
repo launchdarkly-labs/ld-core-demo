@@ -144,17 +144,17 @@ export default function Chatbot() {
                     Powered by{" "}
                     <span
                       className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.name.includes(COHERE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(COHERE)
                           ? "!text-cohereColor"
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.name.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(CLAUDE)
                           ? "!text-anthropicColor"
                           : ""
                       }
                              ${
-                               aiNewModelChatbotFlag?.model?.name.includes(META)
+                               aiNewModelChatbotFlag?.model?.name?.includes(META)
                                  ? "!text-metaColor"
                                  : ""
                              }
