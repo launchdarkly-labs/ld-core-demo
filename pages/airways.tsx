@@ -40,7 +40,7 @@ export default function Airways() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className={`  min-w-screen min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
+          className={`  w-full min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
         >
           <NavWrapper>
             <>

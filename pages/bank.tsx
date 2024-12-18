@@ -15,7 +15,7 @@ export default function Bank() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`  min-w-screen min-h-screen  bg-cover bg-center bg-no-repeat pb-10`}
+        className={` w-full min-h-screen  bg-cover bg-center bg-no-repeat pb-10`}
       >
 
 

@@ -47,7 +47,7 @@ export default function Investment() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`flex h-full flex-col  bg-investment-graident-background`}
+            className={`flex h-full w-full flex-col  bg-investment-graident-background`}
           >
             <NavWrapper>
               <>
