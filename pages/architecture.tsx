@@ -12,7 +12,7 @@ import {
 
 export default function ArchitecturePage() {
   return (
-    <main className="min-h-screen flex-col items-center justify-center bg-ldblack">
+    <main className="w-full min-h-screen flex-col items-center justify-center bg-ldblack px-4">
       <div className="w-full text-white flex h-20 shadow-2xl">
       <NavWrapper>
         <>
