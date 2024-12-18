@@ -109,7 +109,7 @@ export default function Home() {
         />
       </Head>
       <AnimatePresence>
-        <main className="min-h-screen flex-col items-center justify-center bg-ldblack ">
+        <motion.main className="min-h-screen w-full flex-col items-center justify-center bg-ldblack ">
           <div className="w-full text-white flex h-20 shadow-2xl">
             <NavWrapper>
               <>
@@ -147,7 +147,7 @@ export default function Home() {
             </div>
           </header>
           {isLargeScreen ? (
-            <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 bottom-20 fixed left-0 right-0 ">
+            <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 ">
               {Object.entries(HOMEPAGE_CARDS).map(([key, card], index) => (
                 <motion.div
                   key={index}
@@ -230,7 +230,7 @@ export default function Home() {
               </div>
             </div>
           )}
-        </main>
+        </motion.main>
       </AnimatePresence>
     </>
   );
