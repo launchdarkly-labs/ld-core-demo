@@ -33,8 +33,8 @@ if (typeof window !== "undefined") {
               <SidebarProvider
                 defaultOpen={false}
                 style={{
-                  "--sidebar-width": "30vw",
-                  "--sidebar-width-mobile": "20rem",
+                  "--sidebar-width": "40vw",
+                  "--sidebar-width-mobile": "100vw",
                 }}
               >
                 <LoginProvider>
