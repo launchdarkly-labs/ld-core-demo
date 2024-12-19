@@ -27,16 +27,16 @@ if (typeof window !== "undefined") {
   c = ({ Component, pageProps }: AppProps) => {
     return (
       <NoSSRWrapper>
-        <LiveLogsProvider>
-          <SidebarProvider
-            defaultOpen={false}
-            style={{
-              "--sidebar-width": "20rem",
-              "--sidebar-width-mobile": "20rem",
-            }}
-          >
-            <DynamicContextProvider>
-              <DynamicTelemetryProvider>
+        <DynamicContextProvider>
+          <DynamicTelemetryProvider>
+            <LiveLogsProvider>
+              <SidebarProvider
+                defaultOpen={false}
+                style={{
+                  "--sidebar-width": "30vw",
+                  "--sidebar-width-mobile": "20rem",
+                }}
+              >
                 <LoginProvider>
                   <QuickCommandDialog>
                     <TripsProvider>
@@ -58,10 +58,10 @@ if (typeof window !== "undefined") {
                     </TripsProvider>
                   </QuickCommandDialog>
                 </LoginProvider>
-              </DynamicTelemetryProvider>
-            </DynamicContextProvider>
-          </SidebarProvider>
-        </LiveLogsProvider>
+              </SidebarProvider>
+            </LiveLogsProvider>
+          </DynamicTelemetryProvider>
+        </DynamicContextProvider>
       </NoSSRWrapper>
     );
   };
