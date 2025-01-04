@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { useFlags } from "launchdarkly-react-client-sdk";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import Prism from "prismjs";
+
 const LiveLogsContext = createContext();
 
 export default LiveLogsContext;
@@ -7,12 +9,32 @@ export default LiveLogsContext;
 export const LiveLogsProvider = ({ children }) => {
   const [liveLogs, setLiveLogs] = useState([]);
   const [currentLDFlagEnvValues, setCurrentLDFlagEnvValues] = useState([]);
-  const aiNewModelChatbotFlag = useFlags();
-  console.log("aiNewModelChatbotFlag", Object.entries(aiNewModelChatbotFlag));
+  const allLDFlags = useFlags();
+  const client = useLDClient();
 
   useEffect(() => {
-    setCurrentLDFlagEnvValues(Object.entries(aiNewModelChatbotFlag));
+    Prism.highlightAll();
   }, []);
+
+  useEffect(() => {
+    setCurrentLDFlagEnvValues(Object.entries(allLDFlags));
+  }, [allLDFlags]);
+
+  useEffect(() => {
+    client.on("change", (settings) => {
+      const time = new Date();
+
+      setLiveLogs((prevLogs) => {
+        return [
+          ...prevLogs,
+          {
+            date: time,
+            log: settings,
+          },
+        ];
+      });
+    });
+  }, [client]);
 
   return (
     <LiveLogsContext.Provider value={{ liveLogs, currentLDFlagEnvValues }}>

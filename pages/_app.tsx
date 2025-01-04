@@ -33,7 +33,7 @@ if (typeof window !== "undefined") {
               <SidebarProvider
                 defaultOpen={false}
                 style={{
-                  "--sidebar-width": "40vw",
+                  "--sidebar-width": "30vw",
                   "--sidebar-width-mobile": "100vw",
                 }}
               >
@@ -53,7 +53,7 @@ if (typeof window !== "undefined") {
                       <Component {...pageProps} />
                       <AppSidebar />
 
-                      <SidebarTrigger className="bg-green-500 absolute bottom-4 left-4" />
+                      <SidebarTrigger className="bg-green-500 fixed bottom-4 left-4" />
                       {/* <LiveLogsPopUp /> */}
                     </TripsProvider>
                   </QuickCommandDialog>
