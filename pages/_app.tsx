@@ -53,7 +53,7 @@ if (typeof window !== "undefined") {
                       <Component {...pageProps} />
                       <AppSidebar />
 
-                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12" />
+                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue" />
                       {/* <LiveLogsPopUp /> */}
                     </TripsProvider>
                   </QuickCommandDialog>
