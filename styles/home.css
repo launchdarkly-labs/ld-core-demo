@@ -67,8 +67,3 @@ linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
     font-weight: 400;
     line-height: 150%; /* 24px */
 }
-
-/* Toggled State */
-input[type=checkbox]:checked ~ #something {
-    background: red;
- }
