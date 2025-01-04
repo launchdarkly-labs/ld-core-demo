@@ -46,9 +46,9 @@ export function AppSidebar() {
       {/* <SidebarHeader /> */}
       <SidebarContent className="bg-white flex flex-col p-4" id="sidebar-content">
         <Tabs defaultValue="account" className="">
-          <TabsList>
-            <TabsTrigger value="account">Current Values in your Environment</TabsTrigger>
-            <TabsTrigger value="password">Live Logs</TabsTrigger>
+          <TabsList className="w-full grid  grid-cols-1 lg:grid-cols-1 mb-4 h-[5rem]">
+            <TabsTrigger value="account" className="text-wrap truncate">Current Values in your Environment</TabsTrigger>
+            <TabsTrigger value="password" className="">Live Logs</TabsTrigger>
           </TabsList>
           <TabsContent value="account">
             <div className="border-[1px] border-slate-500 rounded-lg p-2">
@@ -76,16 +76,16 @@ export function AppSidebar() {
             </div>
           </TabsContent>
           <TabsContent value="password">
-            <div className="flex  bg-gray-200 w-full rounded-md items-center gap-x-2 p-1 mb-4">
+            <div className="flex  bg-gray-200 w-max rounded-md items-center gap-x-2 py-1 px-2 mb-4">
               <h2 className="text-xs">Monitoring Events </h2>
-              <PulseLoader className="h-4" size={8} speedMultiplier={0.5} color={"gray"} />
+              <PulseLoader className="" size={6} speedMultiplier={0.5} color={"gray"} />
             </div>
 
-            {liveLogs.map((log: any, index: number) => {
+            {liveLogs.toReversed().map((log: any, index: number) => {
               return (
                 <Card className="mb-2" key={index}>
                   <CardContent className="p-4 w-full overflow-x-auto">
-                    <div className="bg-gray-200 rounded-md p-1 w-full mb-10 text-xs">
+                    <div className="bg-gray-200 rounded-md py-1 px-2 w-max mb-10 text-xs">
                       New Flag Change Event Received
                     </div>
                     <div className="flex justify-between items-center mb-4  text-xs text-gray-500">
@@ -120,12 +120,9 @@ export function AppSidebar() {
                         <span>
                           <Clock className="h-5 w-5" />
                         </span>
-                        {log.date.getMonth() +
-                          1 +
-                          "/" +
-                          log.date.getDate() +
-                          "/" +
-                          log.date.getFullYear()}
+                        {`${
+                          log.date.getMonth() + 1
+                        }/${log.date.getDate()}/${log.date.getFullYear()} ${log.date.getHours()}:${log.date.getMinutes()}:${log.date.getSeconds()}`}
                       </div>
                     </div>
                     {/* @ts-ignore */}
@@ -137,12 +134,19 @@ export function AppSidebar() {
                           language="tsx"
                         >
                           {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                            <pre style={style} className="w-full overflow-x-auto p-4 text-wrap rounded-lg  shadow-lg ">
+                            <pre
+                              style={style}
+                              className="w-full overflow-x-auto p-4 text-wrap rounded-lg  shadow-lg "
+                            >
                               {tokens.map((line, i) => (
                                 <div key={i} {...getLineProps({ line })}>
                                   <span className="mr-2">{i + 1}</span>
                                   {line.map((token, key) => (
-                                    <span key={key} {...getTokenProps({ token })} className={className} />
+                                    <span
+                                      key={key}
+                                      {...getTokenProps({ token })}
+                                      className={className}
+                                    />
                                   ))}
                                 </div>
                               ))}

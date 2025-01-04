@@ -391,7 +391,7 @@ export default function Marketplace() {
               </div>
             </section>
 
-            <section className="mx-8 sm:mx-12 xl:mx-auto pt-14 ">
+            <section className="mx-8 sm:mx-12 xl:mx-auto pt-14 flex flex-col gap-y-10 ">
               <section>
                 {/* Popular Shops heading and row */}
 
