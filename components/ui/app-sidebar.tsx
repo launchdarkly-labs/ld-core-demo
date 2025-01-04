@@ -82,7 +82,6 @@ export function AppSidebar() {
             </div>
 
             {liveLogs.map((log: any, index: number) => {
-
               return (
                 <Card className="mb-2" key={index}>
                   <CardContent className="p-4 w-full overflow-x-auto">
@@ -92,7 +91,6 @@ export function AppSidebar() {
                     <div className="flex justify-between items-center mb-4  text-xs text-gray-500">
                       <div
                         onClick={() => {
-
                           setToggleCodeBoxObj((prevState) => {
                             //@ts-ignore
                             return { ...prevState, [index]: !toggleCodeBoxObj[index] };
@@ -101,9 +99,20 @@ export function AppSidebar() {
                       >
                         {/* @ts-ignore */}
                         {toggleCodeBoxObj[index] ? (
-                          <Eye className="h-5 w-5 cursor-pointer" />
+                          <p className="flex gap-x-2 items-center cursor-pointer">
+                            <span>
+                              {" "}
+                              <EyeOff className="h-5 w-5 " />
+                            </span>{" "}
+                            Collapse
+                          </p>
                         ) : (
-                          <EyeOff className="h-5 w-5 cursor-pointer" />
+                          <p className="flex gap-x-2 items-center cursor-pointer">
+                            <span>
+                              <Eye className="h-5 w-5" />
+                            </span>{" "}
+                            Details
+                          </p>
                         )}
                       </div>
 
@@ -121,19 +130,19 @@ export function AppSidebar() {
                     </div>
                     {/* @ts-ignore */}
                     {toggleCodeBoxObj[index] ? (
-                      <div className="w-[10rem]">
+                      <div className="w-full ">
                         <Highlight
                           theme={themes.shadesOfPurple}
                           code={JSON.stringify(log.log, null, 4)}
                           language="tsx"
                         >
                           {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                            <pre style={style} className="w-max p-4 text-wrap">
+                            <pre style={style} className="w-full overflow-x-auto p-4 text-wrap rounded-lg  shadow-lg ">
                               {tokens.map((line, i) => (
                                 <div key={i} {...getLineProps({ line })}>
                                   <span className="mr-2">{i + 1}</span>
                                   {line.map((token, key) => (
-                                    <span key={key} {...getTokenProps({ token })} />
+                                    <span key={key} {...getTokenProps({ token })} className={className} />
                                   ))}
                                 </div>
                               ))}
