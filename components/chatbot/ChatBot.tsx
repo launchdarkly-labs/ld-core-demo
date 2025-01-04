@@ -111,7 +111,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="absolute bottom-4 right-4 z-50">
         <Button
           variant="ghost"
           size="icon"
@@ -130,7 +130,7 @@ export default function Chatbot() {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
+        <div className="absolute inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">

@@ -40,7 +40,7 @@ export default function Airways() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className={`  w-full min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
+          className={`relative  w-full min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
         >
           <NavWrapper>
             <>
@@ -48,10 +48,7 @@ export default function Airways() {
                 <CSNav />
               </CSNavWrapper>
 
-              <NavLogo
-                srcHref={NAV_ELEMENTS_VARIANT[AIRLINES]?.logoImg?.src}
-                altText={AIRLINES}
-              />
+              <NavLogo srcHref={NAV_ELEMENTS_VARIANT[AIRLINES]?.logoImg?.src} altText={AIRLINES} />
 
               {isLoggedIn && (
                 <NavbarDropdownMenu>
@@ -170,10 +167,9 @@ export default function Airways() {
               </div>
             </motion.section>
           )}
+          <Chatbot />
         </motion.main>
       </AnimatePresence>
-
-      <Chatbot />
     </>
   );
 }
