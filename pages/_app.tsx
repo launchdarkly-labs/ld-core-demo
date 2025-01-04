@@ -10,7 +10,6 @@ import KeyboardNavigation from "@/components/KeyboardNavigation";
 import Head from "next/head";
 import { QuickCommandDialog } from "@/components/quickcommand";
 import { LiveLogsProvider } from "@/utils/contexts/LiveLogsContext";
-import LiveLogsPopUp from "@/components/ui/LiveLogsPopUp";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 let c;
@@ -53,8 +52,7 @@ if (typeof window !== "undefined") {
                       <Component {...pageProps} />
                       <AppSidebar />
 
-                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue" />
-                      {/* <LiveLogsPopUp /> */}
+                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue" title= "Click to open sidebar to show server side calls" />
                     </TripsProvider>
                   </QuickCommandDialog>
                 </LoginProvider>
