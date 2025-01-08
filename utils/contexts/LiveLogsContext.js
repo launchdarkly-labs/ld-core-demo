@@ -1,6 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import Prism from "prismjs";
+import LoginContext from "@/utils/contexts/login";
+import ContextProvider from "@/components/ContextProvider";
 
 const LiveLogsContext = createContext();
 
@@ -11,6 +13,8 @@ export const LiveLogsProvider = ({ children }) => {
   const [currentLDFlagEnvValues, setCurrentLDFlagEnvValues] = useState([]);
   const allLDFlags = useFlags();
   const client = useLDClient();
+  const { appMultiContext } = useContext(LoginContext);
+  
 
   useEffect(() => {
     Prism.highlightAll();
@@ -30,11 +34,27 @@ export const LiveLogsProvider = ({ children }) => {
           {
             date: time,
             log: settings,
+            type: "New Flag Change Event Received"
           },
         ];
       });
     });
   }, [client]);
+
+  useEffect(() => {
+    const time = new Date();
+
+    setLiveLogs((prevLogs) => {
+      return [
+        ...prevLogs,
+        {
+          date: time,
+          log: appMultiContext,
+          type:"New LD Context Change Event Sent"
+        },
+      ];
+    });
+  }, [appMultiContext]);
 
   return (
     <LiveLogsContext.Provider value={{ liveLogs, currentLDFlagEnvValues }}>

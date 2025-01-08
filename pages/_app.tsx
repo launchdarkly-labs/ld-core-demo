@@ -28,17 +28,17 @@ if (typeof window !== "undefined") {
       <NoSSRWrapper>
         <DynamicContextProvider>
           <DynamicTelemetryProvider>
-            <LiveLogsProvider>
-              <SidebarProvider
-                defaultOpen={false}
-                style={{
-                  "--sidebar-width": "30vw",
-                  "--sidebar-width-mobile": "100vw",
-                }}
-              >
-                <LoginProvider>
-                  <QuickCommandDialog>
-                    <TripsProvider>
+            <LoginProvider>
+              <TripsProvider>
+                <LiveLogsProvider>
+                  <SidebarProvider
+                    defaultOpen={false}
+                    style={{
+                      "--sidebar-width": "30vw",
+                      "--sidebar-width-mobile": "100vw",
+                    }}
+                  >
+                    <QuickCommandDialog>
                       <KeyboardNavigation />
 
                       <Head>
@@ -48,16 +48,17 @@ if (typeof window !== "undefined") {
                         />
                         <link rel="apple-touch-icon" href="/apple-icon.png" />
                       </Head>
-
                       <Component {...pageProps} />
                       <AppSidebar />
-
-                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue z-10" title= "Click to open sidebar to show server side calls" />
-                    </TripsProvider>
-                  </QuickCommandDialog>
-                </LoginProvider>
-              </SidebarProvider>
-            </LiveLogsProvider>
+                      <SidebarTrigger
+                        className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue z-10"
+                        title="Click to open sidebar to show server side calls"
+                      />
+                    </QuickCommandDialog>
+                  </SidebarProvider>
+                </LiveLogsProvider>
+              </TripsProvider>
+            </LoginProvider>
           </DynamicTelemetryProvider>
         </DynamicContextProvider>
       </NoSSRWrapper>

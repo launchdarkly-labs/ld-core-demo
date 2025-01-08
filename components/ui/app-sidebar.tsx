@@ -87,7 +87,7 @@ export function AppSidebar() {
                 <Card className="mb-2" key={index}>
                   <CardContent className="p-4 w-full overflow-x-auto">
                     <div className="bg-gray-200 rounded-md py-1 px-2 w-max mb-10 text-xs">
-                      New Flag Change Event Received
+                      {log.type}
                     </div>
                     <div className="flex justify-between items-center mb-4  text-xs text-gray-500">
                       <div

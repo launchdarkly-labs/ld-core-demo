@@ -27,6 +27,7 @@ export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObject, setUserObject] = useState({});
+  const [appMultiContext, setAppMultiContext] = useState({});
   const [allUsers, setAllUsers] = useState(STARTER_PERSONAS);
 
   const hashEmail = async (email) => {
@@ -72,9 +73,9 @@ export const LoginProvider = ({ children }) => {
     context.audience.key = existingAudienceKey;
     context.location = await getLocation();
     context.user.launchclub = foundPersona.personalaunchclubstatus;
+    setAppMultiContext(context)
     await client?.identify(context);
     console.log("loginUser", context);
-    console.log(foundPersona.personaname, foundPersona.personaemail, foundPersona.personarole);
 
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     setIsLoggedIn(true);
@@ -84,6 +85,8 @@ export const LoginProvider = ({ children }) => {
     const context = await client?.getContext();
     console.log("updateAudienceContext", context);
     context.audience.key = uuidv4().slice(0, 10);
+    setAppMultiContext(context);
+    setCookie(LD_CONTEXT_COOKIE_KEY, context);
     await client?.identify(context);
   };
 
@@ -91,6 +94,8 @@ export const LoginProvider = ({ children }) => {
     const context = await client?.getContext();
     console.log("updateUserContext", context);
     context.user.key = uuidv4().slice(0, 10);
+    setAppMultiContext(context);
+    setCookie(LD_CONTEXT_COOKIE_KEY, context);
     await client?.identify(context);
   };
 
@@ -130,10 +135,11 @@ export const LoginProvider = ({ children }) => {
       },
     };
     const context = createAnonymousContext;
+    setAppMultiContext(context);
     await client?.identify(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     console.log("Anonymous User", context);
-    setCookie("ldcontext", context);
+
   };
 
   // const setPlaneContext = async (plane) => {
@@ -150,7 +156,9 @@ export const LoginProvider = ({ children }) => {
     setUserObject((prevObj) => ({ ...prevObj, personalaunchclubstatus: LAUNCH_CLUB_PLATINUM }));
     context.user.launchclub = LAUNCH_CLUB_PLATINUM;
     console.log("User upgraded to " + LAUNCH_CLUB_PLATINUM + " status");
+    setAppMultiContext(context);
     client.identify(context);
+    setCookie(LD_CONTEXT_COOKIE_KEY, context);
   };
 
   const enrollInLaunchClub = () => {
@@ -171,6 +179,7 @@ export const LoginProvider = ({ children }) => {
         loginUser,
         logoutUser,
         allUsers,
+        appMultiContext
       }}
     >
       {children}
