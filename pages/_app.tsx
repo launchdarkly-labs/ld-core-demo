@@ -52,7 +52,7 @@ if (typeof window !== "undefined") {
                       <Component {...pageProps} />
                       <AppSidebar />
 
-                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue" title= "Click to open sidebar to show server side calls" />
+                      <SidebarTrigger className="bg-airlinedarkblue fixed bottom-4 left-4 h-12 w-12 hover:bg-airlinedarkblue z-10" title= "Click to open sidebar to show server side calls" />
                     </TripsProvider>
                   </QuickCommandDialog>
                 </LoginProvider>

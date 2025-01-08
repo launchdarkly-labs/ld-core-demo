@@ -111,7 +111,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="absolute bottom-4 right-4 z-50">
+      <div className="fixed sm:absolute bottom-4 right-4 z-10">
         <Button
           variant="ghost"
           size="icon"

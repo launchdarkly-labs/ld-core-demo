@@ -5,6 +5,7 @@ import {
   SidebarGroup,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetClose } from "@/components/ui/sheet";
 import { PulseLoader } from "react-spinners";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -42,15 +43,15 @@ export function AppSidebar() {
   `;
 
   return (
-    <Sidebar side={"right"} variant={"inset"} collapsible={"offcanvas"}>
+    <Sidebar side={"right"} variant={"sidebar"} collapsible={"offcanvas"}>
       {/* <SidebarHeader /> */}
       <SidebarContent className="bg-white flex flex-col p-4" id="sidebar-content">
-        <Tabs defaultValue="account" className="">
+        <Tabs defaultValue="env_values" className="">
           <TabsList className="w-full grid  grid-cols-1 lg:grid-cols-1 mb-4 h-[5rem]">
-            <TabsTrigger value="account" className="text-wrap truncate">Current Values in your Environment</TabsTrigger>
-            <TabsTrigger value="password" className="">Live Logs</TabsTrigger>
+            <TabsTrigger value="env_values" className="text-wrap truncate">Current Values in your Environment</TabsTrigger>
+            <TabsTrigger value="live_logs" className="">Live Logs</TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
+          <TabsContent value="env_values">
             <div className="border-[1px] border-slate-500 rounded-lg p-2">
               <Table className="">
                 {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
@@ -75,7 +76,7 @@ export function AppSidebar() {
               </Table>
             </div>
           </TabsContent>
-          <TabsContent value="password">
+          <TabsContent value="live_logs">
             <div className="flex  bg-gray-200 w-max rounded-md items-center gap-x-2 py-1 px-2 mb-4">
               <h2 className="text-xs">Monitoring Events </h2>
               <PulseLoader className="" size={6} speedMultiplier={0.5} color={"gray"} />
