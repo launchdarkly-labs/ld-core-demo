@@ -40,7 +40,7 @@ const RecentTradesCard = () => {
 
   useEffect(() => {
     if (tableRef.current) {
-      tableRef.current.parentNode.style["overflow-y"] = "hidden";
+      tableRef.current.parentNode.style["overflow-y"] = "auto";
     }
   }, []);
 
@@ -157,8 +157,9 @@ const RecentTradesCard = () => {
           {/* <TableCaption>Your Items</TableCaption> */}
           <TableHeader>
             <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Trade Amount ($)</TableHead>
+              <TableHead >Symbol</TableHead>
+              <TableHead ></TableHead>
+              <TableHead >Trade Amount ($)</TableHead>
               <TableHead>Shares</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
@@ -167,7 +168,7 @@ const RecentTradesCard = () => {
             {recentTrades?.map((stock, index) => {
               return (
                 <TableRow key={index}>
-                  <TableCell className="">
+                  <TableCell className="" colSpan={2}>
                     <div
                       className="text-left stock-icon-group flex items-center gap-x-2"
                       data-testid={`stock-card-column-icon-${index}-modal-mobile-test-id`}
