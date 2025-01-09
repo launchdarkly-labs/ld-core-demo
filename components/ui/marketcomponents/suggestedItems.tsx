@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import vrgame from "@/public/marketplace/vrgalaxy_image/vrgame.svg";
 import vrcamera from "@/public/marketplace/vrgalaxy_image/vrcamera.svg";
 import vrheadset from "@/public/marketplace/vrgalaxy_image/vrheadset.svg";
@@ -13,12 +13,13 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import galaxyMarketLogo from '@/public/market.png'
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { InventoryItem } from "@/utils/typesInterface";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: any }) {
 
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const LDClient = useLDClient();
-
+    const { logLDMetricSent } = useContext(LiveLogsContext);
 
     const totalCost = (cart || []).reduce(
         (total: number, item: InventoryItem) => total + Number(item.cost),
@@ -28,6 +29,7 @@ export default function SuggestedItems({ cart, setCart }: { cart: any, setCart: 
     const addedSuggestedItemToCart = (item: InventoryItem) => {
         setCart([...cart, item]);
         LDClient?.track("upsell-tracking", LDClient.getContext());
+        logLDMetricSent("upsell-tracking");
     }
 
     useEffect(() => {

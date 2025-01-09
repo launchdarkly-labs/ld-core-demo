@@ -31,6 +31,7 @@ import {
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import { StoreCart } from "@/components/ui/marketcomponents/stores/storecart";
 import { MARKET } from "@/utils/constants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -39,6 +40,7 @@ export default function Marketplace() {
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
   const { isLoggedIn } = useContext(LoginContext);
+  const { logLDMetricSent } = useContext(LiveLogsContext);
 
   {
     /* Step 1 code block */
@@ -55,12 +57,13 @@ export default function Marketplace() {
 
   const addToCart = (item: any) => {
     LDClient?.track("item-added", LDClient.getContext(), 1);
-
+    logLDMetricSent("item-added");
     setCart([...cart, item]);
   };
 
   const storeAccessed = () => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
+    logLDMetricSent("item-accessed");
   };
 
   useEffect(() => {

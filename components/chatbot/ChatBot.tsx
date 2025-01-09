@@ -10,6 +10,7 @@ import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
 import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -24,10 +25,14 @@ export default function Chatbot() {
     useFlags()["ai-config--ai-new-model-chatbot"] == undefined
       ? DEFAULT_AI_MODEL
       : useFlags()["ai-config--ai-new-model-chatbot"];
+
   const { userObject } = useContext(LoginContext);
+  const { logLDMetricSent } = useContext(LiveLogsContext);
+
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
   };
+  
 
   async function submitQuery() {
     const userInput = input;
@@ -84,6 +89,7 @@ export default function Chatbot() {
 
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
+    logLDMetricSent(surveyResponse)
     client?.flush();
     toast({
       title: `Thank you for your response!`,

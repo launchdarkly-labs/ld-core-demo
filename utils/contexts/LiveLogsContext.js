@@ -2,7 +2,6 @@ import { createContext, useEffect, useState, useContext } from "react";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import Prism from "prismjs";
 import LoginContext from "@/utils/contexts/login";
-import ContextProvider from "@/components/ContextProvider";
 
 const LiveLogsContext = createContext();
 
@@ -14,7 +13,6 @@ export const LiveLogsProvider = ({ children }) => {
   const allLDFlags = useFlags();
   const client = useLDClient();
   const { appMultiContext } = useContext(LoginContext);
-  
 
   useEffect(() => {
     Prism.highlightAll();
@@ -33,8 +31,9 @@ export const LiveLogsProvider = ({ children }) => {
           ...prevLogs,
           {
             date: time,
-            log: settings,
-            type: "New Flag Change Event Received"
+            log: JSON.stringify(settings, null, 4),
+            type: "New Flag Change Event Received",
+            color: "text-white bg-airlinedarkblue",
           },
         ];
       });
@@ -49,15 +48,33 @@ export const LiveLogsProvider = ({ children }) => {
         ...prevLogs,
         {
           date: time,
-          log: appMultiContext,
-          type:"New LD Context Change Event Sent"
+          log: JSON.stringify(appMultiContext, null, 4),
+          type: "New LD Context Change Event Sent",
+          color: "text-black bg-gray-200",
         },
       ];
     });
   }, [appMultiContext]);
 
+  const logLDMetricSent = ( metricKey, metricValue ) => {
+    const time = new Date();
+    setLiveLogs((prevLogs) => {
+      return [
+        ...prevLogs,
+        {
+          date: time,
+          log: `client?.track(${metricKey}, client.getContext() ${
+            metricValue !== undefined ? `, ${metricValue}` : ""
+          });`,
+          type: "New LD Metric Sent",
+          color: "text-white bg-purple-500",
+        },
+      ];
+    });
+  };
+
   return (
-    <LiveLogsContext.Provider value={{ liveLogs, currentLDFlagEnvValues }}>
+    <LiveLogsContext.Provider value={{ liveLogs, currentLDFlagEnvValues, logLDMetricSent }}>
       {children}
     </LiveLogsContext.Provider>
   );

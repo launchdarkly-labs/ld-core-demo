@@ -5,7 +5,6 @@ import {
   SidebarGroup,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetClose } from "@/components/ui/sheet";
 import { PulseLoader } from "react-spinners";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -20,10 +19,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 import { Clock, Eye, EyeOff } from "lucide-react";
@@ -86,7 +81,7 @@ export function AppSidebar() {
               return (
                 <Card className="mb-2" key={index}>
                   <CardContent className="p-4 w-full overflow-x-auto">
-                    <div className="bg-gray-200 rounded-md py-1 px-2 w-max mb-10 text-xs">
+                    <div className={` ${log.color} rounded-md py-1 px-2 w-max mb-10 text-xs`}>
                       {log.type}
                     </div>
                     <div className="flex justify-between items-center mb-4  text-xs text-gray-500">
@@ -131,7 +126,7 @@ export function AppSidebar() {
                       <div className="w-full ">
                         <Highlight
                           theme={themes.shadesOfPurple}
-                          code={JSON.stringify(log.log, null, 4)}
+                          code={log.log}
                           language="tsx"
                         >
                           {({ className, style, tokens, getLineProps, getTokenProps }) => (
