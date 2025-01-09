@@ -16,10 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { Clock, Eye, EyeOff } from "lucide-react";
 
@@ -43,10 +40,21 @@ export function AppSidebar() {
       <SidebarContent className="bg-white flex flex-col p-4" id="sidebar-content">
         <Tabs defaultValue="env_values" className="">
           <TabsList className="w-full grid  grid-cols-1 lg:grid-cols-1 mb-4 h-[5rem]">
-            <TabsTrigger value="env_values" className="text-wrap truncate">Current Values in your Environment</TabsTrigger>
-            <TabsTrigger value="live_logs" className="">Live Logs</TabsTrigger>
+            <TabsTrigger value="env_values" className="text-wrap truncate">
+              Current Values in your Environment
+            </TabsTrigger>
+            <TabsTrigger value="live_logs" className="">
+              Live Logs
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="env_values">
+            <div className="mb-4 text-center border-[1px] border-slate-500 rounded-lg p-2 flex items-center justify-center gap-x-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              <h2>Connected to LaunchDarkly</h2>
+            </div>
             <div className="border-[1px] border-slate-500 rounded-lg p-2">
               <Table className="">
                 {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
@@ -124,11 +132,7 @@ export function AppSidebar() {
                     {/* @ts-ignore */}
                     {toggleCodeBoxObj[index] ? (
                       <div className="w-full ">
-                        <Highlight
-                          theme={themes.shadesOfPurple}
-                          code={log.log}
-                          language="tsx"
-                        >
+                        <Highlight theme={themes.shadesOfPurple} code={log.log} language="tsx">
                           {({ className, style, tokens, getLineProps, getTokenProps }) => (
                             <pre
                               style={style}
