@@ -32,7 +32,7 @@ export const LiveLogsProvider = ({ children }) => {
           {
             date: time,
             log: JSON.stringify(settings, null, 4),
-            type: "New Flag Change Event Received",
+            type: "New LD Flag Change Event Received",
             color: "text-white bg-airlinedarkblue",
           },
         ];
