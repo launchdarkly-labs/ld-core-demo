@@ -28,12 +28,6 @@ export function AppSidebar() {
   const { currentLDFlagEnvValues, liveLogs } = useContext(LiveLogsContext);
   const [toggleCodeBoxObj, setToggleCodeBoxObj] = useState({});
 
-  const x = `
-    client.on('change:flag-key-123abc', (value, previous) => {
-        console.log('flag-key-123abc changed:', value, '(' + previous + ')');
-    });
-  `;
-
   return (
     <Sidebar side={"right"} variant={"sidebar"} collapsible={"offcanvas"}>
       {/* <SidebarHeader /> */}
