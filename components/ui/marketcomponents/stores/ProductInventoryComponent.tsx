@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -25,6 +26,7 @@ import { useLDClient } from "launchdarkly-react-client-sdk";
 import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from '@/public/market.png'
 import { InventoryItem } from "@/utils/typesInterface";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 const ProductInventoryComponent = ({
   setOpen,
@@ -49,9 +51,10 @@ const ProductInventoryComponent = ({
 }) => {
   const LDClient = useLDClient();
   const { toast } = useToast();
-
+  const { logLDMetricSent } = useContext(LiveLogsContext);
   async function storeOpened() {
     LDClient?.track("store-accessed", LDClient.getContext(), 1);
+    logLDMetricSent("store-accessed");
   }
 
   return (

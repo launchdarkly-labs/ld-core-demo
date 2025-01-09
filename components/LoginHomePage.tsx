@@ -45,7 +45,7 @@ export default function LoginHomePage({ variant, name, ...props }: LoginHomePage
         }`}
       >
         <div
-          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
+          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-4 xl:mx-auto flex flex-col sm:flex-row justify-between
              items-center"
         >
           <div

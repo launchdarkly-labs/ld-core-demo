@@ -25,6 +25,7 @@ import { useToast } from "@/components/ui/use-toast";
 import galaxyMarketLogo from "@/public/market.png";
 import SuggestedItems from "../suggestedItems";
 import { InventoryItem } from "@/utils/typesInterface";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 // @ts-nocheck
 export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
@@ -32,6 +33,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const { isLoggedIn } = useContext(LoginContext);
   const LDClient = useLDClient();
   const { cartSuggestedItems } = useFlags();
+  const { logLDMetricSent } = useContext(LiveLogsContext);
 
   const totalCost = (cart || []).reduce(
     (total: number, item: InventoryItem) => total + Number(item.cost),
@@ -43,6 +45,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
 
   const cartClick = () => {
     LDClient?.track("cart-accessed", LDClient.getContext(), 1);
+    logLDMetricSent("cart-accessed");
   };
 
   const checkOut = () => {
@@ -57,13 +60,15 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
 
   const continueShopping = () => {
     LDClient?.track("upsell-tracking", LDClient.getContext());
-
+    logLDMetricSent("upsell-tracking");
     router.push("/marketplace");
   };
 
   const checkOutTracking = () => {
     LDClient?.track("customer-checkout", LDClient.getContext(), 1);
+    logLDMetricSent("customer-checkout");
     LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
+    logLDMetricSent("in-cart-total-price", totalCost);
   };
 
   return (

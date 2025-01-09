@@ -10,6 +10,7 @@ import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
 import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
@@ -24,10 +25,14 @@ export default function Chatbot() {
     useFlags()["ai-config--ai-new-model-chatbot"] == undefined
       ? DEFAULT_AI_MODEL
       : useFlags()["ai-config--ai-new-model-chatbot"];
+
   const { userObject } = useContext(LoginContext);
+  const { logLDMetricSent } = useContext(LiveLogsContext);
+
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
   };
+  
 
   async function submitQuery() {
     const userInput = input;
@@ -84,6 +89,7 @@ export default function Chatbot() {
 
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
+    logLDMetricSent(surveyResponse)
     client?.flush();
     toast({
       title: `Thank you for your response!`,
@@ -111,7 +117,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed sm:absolute bottom-4 right-4 z-10">
         <Button
           variant="ghost"
           size="icon"
@@ -130,7 +136,7 @@ export default function Chatbot() {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
+        <div className="absolute inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
@@ -144,17 +150,17 @@ export default function Chatbot() {
                     Powered by{" "}
                     <span
                       className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.name.includes(COHERE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(COHERE)
                           ? "!text-cohereColor"
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.name.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(CLAUDE)
                           ? "!text-anthropicColor"
                           : ""
                       }
                              ${
-                               aiNewModelChatbotFlag?.model?.name.includes(META)
+                               aiNewModelChatbotFlag?.model?.name?.includes(META)
                                  ? "!text-metaColor"
                                  : ""
                              }

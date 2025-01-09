@@ -31,6 +31,7 @@ import {
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import { StoreCart } from "@/components/ui/marketcomponents/stores/storecart";
 import { MARKET } from "@/utils/constants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 export default function Marketplace() {
   const [headerLabel, setHeaderLabel] = useState<string>("");
@@ -39,6 +40,7 @@ export default function Marketplace() {
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
   const { isLoggedIn } = useContext(LoginContext);
+  const { logLDMetricSent } = useContext(LiveLogsContext);
 
   {
     /* Step 1 code block */
@@ -55,12 +57,13 @@ export default function Marketplace() {
 
   const addToCart = (item: any) => {
     LDClient?.track("item-added", LDClient.getContext(), 1);
-
+    logLDMetricSent("item-added");
     setCart([...cart, item]);
   };
 
   const storeAccessed = () => {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
+    logLDMetricSent("item-accessed");
   };
 
   useEffect(() => {
@@ -288,7 +291,7 @@ export default function Marketplace() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-ldblack"
+          className="bg-ldblack w-full"
         >
           <NavWrapper>
             <>
@@ -391,7 +394,7 @@ export default function Marketplace() {
               </div>
             </section>
 
-            <section className="mx-8 sm:mx-12 xl:mx-auto pt-14 ">
+            <section className="mx-8 sm:mx-12 xl:mx-auto pt-14 flex flex-col gap-y-10 px-10">
               <section>
                 {/* Popular Shops heading and row */}
 

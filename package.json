@@ -1,6 +1,6 @@
 {
   "name": "multi-industry-demo",
-  "version": "2.0.0",
+  "version": "2.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^0.0.18",
+    "@ai-sdk/openai": "^1.0.14",
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@drizzle/react-plugin": "^1.5.3",
     "@hookform/resolvers": "^3.3.2",
@@ -27,9 +27,11 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-separator": "^1.1.1",
     "@radix-ui/react-slot": "^1.0.2",
-    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@radix-ui/react-tooltip": "^1.1.6",
     "@tanstack/react-table": "^8.10.7",
     "chart.js": "^4.4.1",
     "class-variance-authority": "^0.7.0",
@@ -51,6 +53,7 @@
     "pg": "^8.11.3",
     "playwright": "^1.39.0",
     "postgres": "^3.4.3",
+    "prism-react-renderer": "^2.4.1",
     "prismjs": "^1.29.0",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
