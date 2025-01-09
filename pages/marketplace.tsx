@@ -292,6 +292,7 @@ export default function Marketplace() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="bg-ldblack w-full"
+          id="marketplace-main-body"
         >
           <NavWrapper>
             <>
