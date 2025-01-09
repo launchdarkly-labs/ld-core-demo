@@ -27,7 +27,9 @@ export const LoginProvider = ({ children }) => {
   const client = useLDClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObject, setUserObject] = useState({});
-  const [appMultiContext, setAppMultiContext] = useState({});
+  const [appMultiContext, setAppMultiContext] = useState({
+    ...client?.getContext(),
+  });
   const [allUsers, setAllUsers] = useState(STARTER_PERSONAS);
 
   const hashEmail = async (email) => {
@@ -73,7 +75,7 @@ export const LoginProvider = ({ children }) => {
     context.audience.key = existingAudienceKey;
     context.location = await getLocation();
     context.user.launchclub = foundPersona.personalaunchclubstatus;
-    setAppMultiContext(context)
+    setAppMultiContext(context);
     await client?.identify(context);
     console.log("loginUser", context);
 
@@ -139,7 +141,6 @@ export const LoginProvider = ({ children }) => {
     await client?.identify(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
     console.log("Anonymous User", context);
-
   };
 
   // const setPlaneContext = async (plane) => {
@@ -179,7 +180,7 @@ export const LoginProvider = ({ children }) => {
         loginUser,
         logoutUser,
         allUsers,
-        appMultiContext
+        appMultiContext,
       }}
     >
       {children}
