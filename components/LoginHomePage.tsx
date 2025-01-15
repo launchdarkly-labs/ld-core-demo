@@ -1,22 +1,39 @@
 import { useContext } from "react";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import NavBar from "@/components/ui/navbar";
+=======
+import LoginContext from "@/utils/contexts/login";
+>>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
 import { LoginComponent } from "@/components/ui/logincomponent";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
-import Image from "next/image";
 import investmentCardImg1 from "@/public/investment/investment_image1.png";
 import investmentCardImg2 from "@/public/investment/investment_image2.jpeg";
 import investmentCardImg3 from "@/public/investment/investment_image3.jpeg";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
 
+<<<<<<< HEAD
 import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
 import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function LoginHomePage({ variant, ...props }: VariantInterface) {
 
+=======
+import { CSNav } from "@/components/ui/csnav";
+
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import {  BANK } from "@/utils/constants";
+
+interface LoginHomePageProps {
+  variant: "bank" | "airlines" | "market" | "investment";
+  name?: string;
+}
+
+export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
+>>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}
@@ -24,35 +41,23 @@ export default function LoginHomePage({ variant, ...props }: VariantInterface) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <NavBar variant={variant} />
+      <NavWrapper>
+        <>
+          <CSNavWrapper>
+            <CSNav />
+          </CSNavWrapper>
 
-      <header
+          <NavLogo srcHref={NAV_ELEMENTS_VARIANT[variant]?.logoImg?.src} altText={variant} />
+        </>
+      </NavWrapper>
+
+      <section
         className={`w-full relative ${
           variant ? homePageVariants[variant]?.gradiantColor : "bg-gradient-bank"
         }`}
       >
-        {variant?.includes("market") && (
-          <div>
-            <img src="elipse.png" alt="Market" className="absolute right-0 top-0" />
-            <img src="union.png" className="absolute left-0 bottom-0" />
-          </div>
-        )}
-
-        {variant?.includes("airline") ? (
-          <>
-            <Image
-              src={homePageVariants[variant]?.heroImg["imageA"]}
-              alt={homePageVariants[variant]?.industryMessages}
-              layout="fill"
-              className="object-cover"
-              quality={100}
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-[#21212100] to-[#212121ff]"></div>{" "}
-          </>
-        ) : null}
-
         <div
-          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between
+          className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-4 xl:mx-auto flex flex-col sm:flex-row justify-between
              items-center"
         >
           <div
@@ -71,9 +76,9 @@ export default function LoginHomePage({ variant, ...props }: VariantInterface) {
             <LoginComponent variant={variant} />
           </div>
         </div>
-      </header>
+      </section>
 
-      {variant?.includes("bank") && (
+      {variant?.includes(BANK) && (
         <section
           className="w-3/4 grid grid-cols-2 sm:flex sm:flex-row font-sohnelight text-center justify-center mx-auto gap-y-8 
             sm:gap-y-0 gap-x-8
@@ -162,35 +167,35 @@ const homePageVariants: any = {
       },
     ],
   },
-  airlines: {
-    name: "Launch Airways",
-    industryMessages:
-      "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
-    gradiantColor: "bg-gradient-airways ",
-    heroImg: {
-      imageA: airlineLoginHeroBackground.src,
-      imageB: airlineLoginHeroBackground.src,
-      imageC: airlineLoginHeroBackground.src,
-    },
-    cards: [
-      {
-        titleText: "Wheels up",
-        subtitleText:
-          "You deserve to arrive refreshed, stretch out in one of our luxurious cabins.",
-        imgSrc: airplaneImg.src,
-      },
-      {
-        titleText: "Ready for an adventure",
-        subtitleText: "The world is open for travel. Plan your next adventure.",
-        imgSrc: hotAirBalloonImg.src,
-      },
-      {
-        titleText: "Experience luxury",
-        subtitleText: "Choose Launch Platinum. Select on longer flights.",
-        imgSrc: airplaneDining.src,
-      },
-    ],
-  },
+  // airlines: {
+  //   name: "Launch Airways",
+  //   industryMessages:
+  //     "Launch into the skies. In the air in milliseconds, reach your destination without risk, and ship your travel dreams faster than ever before",
+  //   gradiantColor: "bg-gradient-airways ",
+  //   heroImg: {
+  //     imageA: airlineLoginHeroBackground.src,
+  //     imageB: airlineLoginHeroBackground.src,
+  //     imageC: airlineLoginHeroBackground.src,
+  //   },
+  //   cards: [
+  //     {
+  //       titleText: "Wheels up",
+  //       subtitleText:
+  //         "You deserve to arrive refreshed, stretch out in one of our luxurious cabins.",
+  //       imgSrc: airplaneImg.src,
+  //     },
+  //     {
+  //       titleText: "Ready for an adventure",
+  //       subtitleText: "The world is open for travel. Plan your next adventure.",
+  //       imgSrc: hotAirBalloonImg.src,
+  //     },
+  //     {
+  //       titleText: "Experience luxury",
+  //       subtitleText: "Choose Launch Platinum. Select on longer flights.",
+  //       imgSrc: airplaneDining.src,
+  //     },
+  //   ],
+  // },
   // market: {
   //   industryMessages: "Shop for the latest tech gadgets and more.",
   //   gradiantColor: " bg-market-header grid items-center justify-center",

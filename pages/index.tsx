@@ -2,20 +2,49 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Globe } from "lucide-react";
 import { useRouter } from "next/router";
-import { CSNav } from "@/components/ui/csnav";
 import NavBar from "@/components/ui/navbar";
 import Script from "next/script";
+import HomePageImage from "@/public/homepage/homepage-title.svg";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import { CSNav } from "@/components/ui/csnav";
+
+import { HOMEPAGE_CARDS } from "@/utils/constants";
+import { useState, useEffect } from "react";
+import { CSNAV_ITEMS } from "@/utils/constants";
+import arrow from "@/public/sidenav/arrow.svg";
+import { CSCard } from "@/components/ui/ldcscard";
+import QRCodeImage from "@/components/ui/QRCodeImage";
+
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter();
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1024);
 
   const goToBank = () => {
     router.push("/bank");
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth > 1024);
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up event listener
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const goToNext = () => {
     router.push("/devs");
@@ -48,6 +77,10 @@ export default function Home() {
     duration: 0.5,
   };
 
+  function goToVertical(link: string) {
+    router.push(link);
+  }
+
   return (
     <>
       {/* <!-- Google tag (gtag.js) --> */}
@@ -63,113 +96,142 @@ export default function Home() {
 
   gtag('config', 'G-2ZW2MJ75NL');`}
       </Script>
-      <main className="min-h-screen flex-col items-center justify-center bg-ldblack ">
-        <div className="w-full text-white flex h-20 shadow-2xl">
-          <NavBar />
-        </div>
+      <Head>
+        <link
+          rel="preload"
+          href={"@/public/banking/backgrounds/bank-homepage-background-right.svg"}
+          as="image"
+        />
+        <link
+          rel="preload"
+          href={"@/public/banking/backgrounds/bank-homepage-background-left.svg"}
+          as="image"
+        />
+      </Head>
+      <AnimatePresence>
+        <motion.main className="min-h-screen w-full flex-col items-center justify-center bg-ldblack ">
+          <div className="w-full text-white flex h-20 shadow-2xl">
+            <NavWrapper>
+              <>
+                <CSNavWrapper>
+                  <CSNav />
+                </CSNavWrapper>
 
-        <header className="relative banner mx-auto w-full sm:w-1/3 h-[30rem] flex items-center justify-center z-0">
-          <div className="absolute z-50">
-            <h1 className="sm:w-2/3 mx-8 sm:mx-auto">Ship faster, safer, and smarter</h1>
-            <p className="w-3/5 text-center mx-auto">
-              LaunchDarkly enables high velocity teams to release, monitor, and optimize software in production.
-            </p>
-          </div>
-          <div className="hidden sm:block absolute top-16 left-40 z-10">
-            <img src="/hero/Vector 965.png" />
-          </div>
-          <div className="hidden sm:block absolute top-0 right-24 z-10">
-            <img src="/hero/Group 481368.png" />
-          </div>
-          <div className="blur-sm sm:blur-none absolute top-20 right-0 z-10">
-            <img src="/hero/Group 481352.png" />
-          </div>
-          <div className="blur-sm sm:blur-none absolute bottom-0 left-0 z-10">
-            <img src="/hero/graphs.png" className="bottom-0 left-0 z-20" />
-          </div>
-          <div className="blur-sm sm:blur-none absolute bottom-[-40px] left-0 z-10">
-            <img src="/hero/Group 481364.png" className="bottom-0 left-0" />
-          </div>
-          <div className="hidden xl:block absolute bottom-[160px] right-56 z-10">
-            <img src="/hero/Rectangle 3467774.png" />
-          </div>
-          <div className="hidden xl:block absolute bottom-[165px] right-[68px] z-10">
-            <img src="/hero/Rectangle 3467775.png" />
-          </div>
-          <div className="blur-sm sm:blur-none absolute bottom-20 right-10 z-10">
-            <img src="/hero/Group 481309.png" />
-          </div>
-          <div className="blur-sm lg:blur-none absolute bottom-28 left-64 z-30">
-            <img src="/hero/Group 481366.png" />
-          </div>
-          <div className="hidden lg:block absolute bottom-62 left-32 z-10">
-            <img src="/hero/Group 481365.png" />
-          </div>
-          <div className="hidden lg:block absolute bottom-62 left-32 z-10">
-            <img src="/hero/Group 481365.png" />
-          </div>
-        </header>
-        <section className="py-8 bg-ldblack h-full">
-          <div className="flex flex-col mx-8 xl:mx-[25%]">
-            <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0 mb-8">
-              <div className="w-full sm:w-1/2 home-card">
-                <a href="/bank">
-                  <img width="44" height="44" src="release-icon.svg" />
+                <NavLogo />
+              </>
 
-                  <h2>Automate Releases</h2>
-                  <ul className="list-disc list-inside">
-                    <li>Release Best Practice Workflows</li>
-                    <li>Sophisticated User Targeting</li>
-                    <li>Real-Time Feature Changes</li>
-                  </ul>
-                </a>
-              </div>
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <QRCodeImage textColor="text-white" />
+              </NavbarRightSideWrapper>
+            </NavWrapper>
+          </div>
 
-              <div className="w-full sm:w-1/2 home-card">
-                <a href="investment">
-                  <img width="44" height="44" src="remediate-icon.svg" />
+          <header className="relative banner mx-auto w-full sm:w-1/3 sm:h-[24rem] flex items-center bg-ldblack justify-center z-0">
+            <div className="">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Image
+                  src={HomePageImage}
+                  alt="Homepage Image"
+                  layout="fixed"
+                  objectFit="fill"
+                  width={700}
+                  height={800}
+                  className="rounded-3xl"
+                />
+              </motion.div>
+            </div>
+          </header>
+          {isLargeScreen ? (
+            <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 ">
+              {Object.entries(HOMEPAGE_CARDS).map(([key, card], index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative rounded-3xl w-full lg:w-1/4 h-32 lg:h-96 overflow-hidden transition-transform duration-300 hover:-translate-y-16"
+                >
+                  <Image
+                    src={card.desktopNoHoveringImage}
+                    alt={`${card.name} Card`}
+                    layout="fill"
+                    objectFit="cover"
+                    className="transition-opacity duration-300 hover:opacity-0 rounded-3xl"
+                  />
+                  <div className="absolute inset-0 mx-10 mt-10 justify-center transition-opacity duration-300 hover:opacity-0 z-10">
+                    <span className="text-white lg:text-3xl sm:text-sm font-sohne">
+                      {card.name}
+                    </span>
+                  </div>
 
-                  <h2>Monitor Features</h2>
-                  <ul className="list-disc list-inside">
-                    <li>Runtime Event Monitoring</li>
-                    <li>Regression Auto-Remediation</li>
-                    <li>Metric Driven Progressive Delivery</li>
-                  </ul>
-                </a>
+                  <div
+                    onClick={() => goToVertical(card.link)}
+                    className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100"
+                  >
+                    <Image
+                      src={card.desktopHoveringImage}
+                      alt={`${card.name} Card Hover`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-3xl"
+                    />
+                    <div className="absolute inset-0 flex flex-col overflow-auto z-40">
+                      <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">
+                        {card.name}
+                      </span>
+                      <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">
+                        {card.description}
+                      </span>
+                      <span className="text-white text-2xl absolute bottom-10 right-10">
+                        &#8594;
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </section>
+          ) : (
+            <div className="grid gap-4 py-4 mx-10">
+              <div className="grid items-center gap-4">
+                {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
+                  if (item.type === "usecase") {
+                    return (
+                      <motion.div
+                        key={key}
+                        initial={{ x: -100, opacity: 0 }}
+                        whileHover={{ scale: 1.05 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.05, duration: 0.2 }}
+                        className="cursor-pointer"
+                      >
+                        <div
+                          onClick={() => router.push(item.link)}
+                          className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}
+                        >
+                          <CSCard
+                            className="cursor-pointer"
+                            cardTitle={item.title}
+                            icon={item.icon}
+                            iconHover={item.iconHover}
+                            hoverBackground={item.hoverBackground}
+                            noHoverBackground={item.noHoverBackground}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  }
+                  return null;
+                })}
               </div>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-x-0 gap-y-8 sm:gap-x-8 sm:gap-y-0">
-              <div className="w-full sm:w-1/2 home-card">
-                <a href="/airways">
-                  <img width="44" height="24" src="ai-icon.svg" />
-                  <h2>Accelerate AI</h2>
-                  <ul className="list-disc list-inside">
-                    <li>Runtime Configurations Controls</li>
-                    <li>Targeted AI Experiences</li>
-                    <li>Optimize Performance & Cost</li>
-                  </ul>
-                </a>
-              </div>
-
-              <div className="w-full sm:w-1/2 home-card">
-                <a href="/marketplace">
-                  <img width="44" height="44" src="experiment-icon.svg" />
-
-                  <h2>Experiment Everywhere</h2>
-                  <ul className="list-disc list-inside">
-                    <li>Experimentation For Everyone</li>
-                    <li>Advanced Statistics</li>
-                    <li>Measure Any Metric</li>
-                  </ul>
-                </a>
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-      </main>
+          )}
+        </motion.main>
+      </AnimatePresence>
     </>
   );
 }

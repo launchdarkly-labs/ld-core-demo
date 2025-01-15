@@ -11,6 +11,7 @@ env:
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
   LD_API_KEY: ${{ secrets.LD_API_KEY }}
+  LD_EAP_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
 jobs:
   deploy-to-pods:
@@ -18,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        environment: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,7 +40,7 @@ jobs:
           echo "var2=$(python ./.github/workflows/ld_api/get_ld_values.py | sed -n '2p')" >> $GITHUB_ENV
         env:
           LD_ENV_KEY: demo-${{ matrix.environment }}
-          LD_API_KEY: ${{ secrets.LD_API_KEY }}
+          LD_EAP_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
       - name: Create .env file
         run: |
@@ -50,7 +51,8 @@ jobs:
           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
           echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
           echo PROJECT_KEY=ld-core-demo >> ./.env.production
-
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -90,13 +92,6 @@ jobs:
         with:
           args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n demo${{ matrix.environment }}
 
-      - name: Restart Pods
-        uses: kodermax/kubectl-aws-eks@master
-        env:
-          RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:ld-demo${{ matrix.environment }}-${{ github.run_number }}
-        with:
-          args: set image deployment/ld-core-demo-deployment ld-core-demo=${{ env.RELEASE_IMAGE }} -n demo${{ matrix.environment }}
-
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
 
@@ -110,6 +105,6 @@ jobs:
       - name: LaunchDarkly Code References
         uses: launchdarkly/find-code-references@v2.12.0
         with:
-          accessToken: ${{ secrets.LD_API_KEY }}
-          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          accessToken: ${{ secrets.LD_EAP_API_KEY }}
+          projKey: ld-core-demo-app-reinvent-24
           repoName: main

@@ -9,17 +9,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
 
+<<<<<<< HEAD
 export default function LaunchSignUp() {
+=======
+export default function LaunchSignUp({ children }: { children: ReactElement }) {
+  const client = useLDClient();
+>>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
 
-  const {
-    userObject,
-    enrollInLaunchClub
-  } = useContext(LoginContext);
-
+  const { userObject, enrollInLaunchClub } = useContext(LoginContext);
 
   const perks = [
     {
@@ -70,11 +71,12 @@ export default function LaunchSignUp() {
   return (
     <Sheet>
       <SheetTrigger className="text-white z-50" asChild>
-        <Button className="bg-gradient-airways-grey rounded-none mx-auto text-3xl p-6 h-full  animate-pulse hover:animate-none">
+        {/* <Button className="bg-gradient-airways-grey rounded-none mx-auto text-3xl p-6 h-full  animate-pulse hover:animate-none">
           Join Launch Club
-        </Button>
+        </Button> */}
+        {children}
       </SheetTrigger>
-      {!userObject.personaEnrolledInLaunchClub ? (
+      {!userObject.personaEnrolledInLaunchClub && (
         <SheetContent
           className="w-full lg:w-2/3 xl:w-1/2 overflow-y-scroll bg-white grid items-center "
           side="right"
@@ -82,8 +84,8 @@ export default function LaunchSignUp() {
           <SheetHeader>
             <SheetTitle className="font-sohne text-3xl flex items-center justify-center"></SheetTitle>
             <div className="font-sohnelight flex flex-col items-center justify-center text-center">
-              <div className="flex flex-row items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="175" className="pr-2">
+              <div className="flex flex-row items-center gap-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="175" className="">
                   <image
                     href="/airline/launch-airways.svg"
                     height="100"
@@ -91,9 +93,9 @@ export default function LaunchSignUp() {
                     alt="Launch Airways"
                   />
                 </svg>
-                <p className="text-black text-4xl">Launch Club Loyalty Program</p>
+                <p className="bg-transparent bg-gradient-airways-2 text-transparent bg-clip-text text-4xl font-audimat">Launch Club Loyalty Program</p>
               </div>
-              <div className="flex text-xl my-4  text-black text-center lg:mx-40 sm:mx-auto">
+              <div className="flex text-xl my-4  text-black text-center">
                 Introducing our the new Launch Airways loyalty program. Join now for exclusive
                 member perks that increase the more you fly!
               </div>
@@ -102,10 +104,16 @@ export default function LaunchSignUp() {
                   <Card
                     key={index}
                     className="flex flex-col items-center justify-center h-auto w-full
-                    align-items-center drop-shadow-2xl p-4 gap-y-2"
+                    align-items-center drop-shadow-2xl p-4 gap-y-2 !rounded-xl"
                   >
                     <CardHeader className="!p-0">
-                      <img src={perks.img} height={100} width={100} alt="image" className="h-20 w-20"/>
+                      <img
+                        src={perks.img}
+                        height={100}
+                        width={100}
+                        alt="image"
+                        className="h-20 w-20"
+                      />
                     </CardHeader>
                     <CardTitle className="text-lg font-shone font-normal ">{perks.name}</CardTitle>
                     <CardContent className="text-normal font-shone text-center font-light !p-2 mx-10 sm:mx-2">
@@ -116,11 +124,11 @@ export default function LaunchSignUp() {
               </div>
               <div className="flex flex-col">
                 <SheetTrigger
-                  aschild = "true"
+                  aschild="true"
                   onClick={() => {
                     enrollInLaunchClub();
                   }}
-                  className="bg-[#405BFF] text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone cursor-default rounded-none "
+                  className="bg-gradient-airways shadow-2xl text-white text-lg h-full w-full py-4 mt-4 px-10 font-shone !cursor-pointer rounded-[2rem] animate-pulse hover:animate-none "
                 >
                   Enroll Today!
                 </SheetTrigger>
@@ -135,7 +143,9 @@ export default function LaunchSignUp() {
             animate="show"
           ></motion.div>
         </SheetContent>
-      ) : (
+      )}
+
+      {userObject.personaEnrolledInLaunchClub && (
         <SheetContent className="w-1/2 overflow-y-scroll bg-white" side="right">
           <SheetHeader>
             <SheetTitle className="font-sohnelight text-3xl flex items-center justify-center">

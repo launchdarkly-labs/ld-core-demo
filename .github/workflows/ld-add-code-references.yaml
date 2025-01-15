@@ -6,10 +6,12 @@ on:
       name:
         description: 'User alias or LD env key'
         required: true
+      type:
+        description: 'Type of environment to provision (eap or production)'
+        required: true
 
 env:
-  LD_API_KEY: ${{ secrets.LD_API_KEY }} 
-  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+  LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
 
 
 jobs:
@@ -20,10 +22,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 11
+      
+      - name: Set LD_API_KEY
+        run: echo "LD_API_KEY=$(if [ '${{ github.event.inputs.type }}' == 'production' ]; then echo '${{ secrets.LD_API_KEY }}'; elif [ '${{ github.event.inputs.type }}' == 'eap' ]; then echo '${{ secrets.LD_EAP_API_KEY }}'; else echo '${{ secrets.LD_API_KEY }}'; fi)" >> $GITHUB_ENV
 
       - name: LaunchDarkly Code References
         uses: launchdarkly/find-code-references@v2.12.0
         with:
-          accessToken: ${{ secrets.LD_API_KEY }}
-          projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
+          accessToken: ${{ env.LD_API_KEY }}
+          projKey: ${{ env.LD_PROJECT_KEY }}
+          repoName: main
     

@@ -1,5 +1,8 @@
 import React from "react";
-import NavBar from "@/components/ui/navbar";
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import { CSNav } from "@/components/ui/csnav";
 import {
   Accordion,
   AccordionContent,
@@ -9,9 +12,17 @@ import {
 
 export default function ArchitecturePage() {
   return (
-    <main className="min-h-screen flex-col items-center justify-center bg-ldblack">
+    <main className="w-full min-h-screen flex-col items-center justify-center bg-ldblack px-4">
       <div className="w-full text-white flex h-20 shadow-2xl">
-        <NavBar />
+      <NavWrapper>
+        <>
+          <CSNavWrapper>
+              <CSNav />
+          </CSNavWrapper>
+
+          <NavLogo />
+        </>
+      </NavWrapper>
       </div>
       <div className="text-white w-full max-w-7xl mx-auto space-y-2 py-5 px-8 xl:px-0">
         <h1 className="text-4xl font-bold my-3.5 font-['Audimat']">

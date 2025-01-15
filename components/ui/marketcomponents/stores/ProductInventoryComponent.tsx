@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -26,6 +27,7 @@ import galaxyMarketLogo from "@/public/market.png";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
 import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceIndustry";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 const ProductInventoryComponent = ({
   setOpen,
@@ -52,11 +54,12 @@ const ProductInventoryComponent = ({
     "release-new-shorten-collections-page"
   ]?.includes("new-shorten-collections-page");
   const { toast } = useToast();
+  const { logLDMetricSent } = useContext(LiveLogsContext);
   const [showAllItems, setShowAllItems] = useState<boolean>(false);
 
   async function storeOpened():Promise<void> {
-    setShowAllItems(false);
-    isVisibleStoreHeaders ? LDClient?.track("store-accessed", LDClient.getContext(), 1) : null;
+    LDClient?.track("store-accessed", LDClient.getContext(), 1);
+    logLDMetricSent("store-accessed");
   }
 
   return (
@@ -119,7 +122,7 @@ const ProductInventoryComponent = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {inventory.map((item: InventoryItem, index: number) => {
+            {inventory?.map((item: InventoryItem, index: number) => {
               if (index > 2 && showAllItems === false && releaseNewShortenCollectionsPage)
                 return null;
               return (

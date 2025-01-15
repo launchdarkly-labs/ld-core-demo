@@ -19,51 +19,53 @@ export default function FederatedAccountModule() {
   };
 
   return (
-    <section className="h-full w-full xl:w-[40%]  font-sohne rounded-xl  shadow-xl">
+    <section className="h-full w-full xl:w-[40%]  font-sohne rounded-xl  ">
       <motion.div
         initial="hidden"
         animate="visible"
         exit="exit"
         variants={accountvariant}
-        className=" p-6 gap-4 w-full bg-zinc-100 h-full rounded-xl border bg-zinc-200"
+        className=" p-6 gap-4 w-full h-full rounded-xl borde"
       >
         <p className="text-black font-sohne mb-6 text-[24px]">
           Federated account access
         </p>
         <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 justify-start">
           {!federatedAccountOne ? (
-            <div
+            <motion.div
               onClick={() => setFederatedAccountOne(true)}
-              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
+              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
+              whileHover={{ scale: 1.1 }}
             >
               <PlusSquare size={96} className="text-gray-400 mx-auto" />
-            </div>
+            </motion.div>
           ) : (
             <motion.div
               initial="hidden"
               animate="visible"
               variants={variants}
-              transition={{ duration: 0.5 }}
-              className="p-4 h-[300px] w-full sm:w-1/2 bg-white "
+              whileHover={{ scale: 1.1 }}
+              className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCheckingAccount />
             </motion.div>
           )}
 
           {!federatedAccountTwo ? (
-            <div
+            <motion.div
               onClick={() => setFederatedAccountTwo(true)}
-              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center "
+              className="flex p-4 h-[300px] w-full sm:w-1/2 bg-white items-center rounded-xl shadow-xl"
+              whileHover={{ scale: 1.1 }}
             >
               <PlusSquare size={96} className="text-gray-400 mx-auto" />
-            </div>
+            </motion.div>
           ) : (
             <motion.div
               initial="hidden"
               animate="visible"
               variants={variants}
-              transition={{ duration: 0.5 }}
-              className="p-4 h-[300px] w-full sm:w-1/2 bg-white"
+              whileHover={{ scale: 1.1 }}
+              className="p-4 h-[300px] w-full sm:w-1/2 bg-white shadow-xl rounded-xl cursor-pointer"
             >
               <FederatedCreditAccount />
             </motion.div>

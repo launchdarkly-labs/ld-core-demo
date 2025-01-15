@@ -1,186 +1,175 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { motion } from "framer-motion";
-import TripsContext from "@/utils/contexts/TripContext";
-import { useToast } from "@/components/ui/use-toast";
-import NavBar from "@/components/ui/navbar";
-import airplaneImg from "@/assets/img/airways/airplane.jpg";
-import hotAirBalloonImg from "@/assets/img/airways/hotairBalloon.jpg";
-import airplaneDining from "@/assets/img/airways/airplaneDining.jpg";
-import { FlightCalendar } from "@/components/ui/airwayscomponents/flightCalendar";
 import { AnimatePresence } from "framer-motion";
-import LoginHomePage from "@/components/LoginHomePage";
 import { Toaster } from "@/components/ui/toaster";
-import HomePageInfoCard from "@/components/ui/HomePageInfoCard";
-import HomePageCardWrapper from "@/components/ui/HomePageCardWrapper";
-
-import AirlineHero from "@/components/ui/airwayscomponents/airlineHero";
-import AirlineDestination from "@/components/ui/airwayscomponents/airlineDestination";
 import LoginContext from "@/utils/contexts/login";
-import { addDays } from "date-fns";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
 import Chatbot from "@/components/chatbot/ChatBot";
 // import IndexPage from "@/components/chatbot/(chat)/page";
-
+import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
+import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
+import NavLogo from "@/components/ui/NavComponent/NavLogo";
+import NavbarLeftSideWrapper from "@/components/ui/NavComponent/NavbarLeftSideWrapper";
+import NavLinkButton from "@/components/ui/NavComponent/NavLinkButton";
+import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
+import NavbarLogin from "@/components/ui/NavComponent/NavbarLogin";
+import NavbarDropdownMenu from "@/components/ui/NavComponent/NavbarDropdownMenu";
+import NavbarDropdownMenuItemWrapper from "@/components/ui/NavComponent/NavbarDropdownMenuItemWrapper";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { CSNav } from "@/components/ui/csnav";
+import NavbarLeftSideLinkWrapper from "@/components/ui/NavComponent/NavbarLeftSideLinkWrapper";
+import NavbarRightSideLinkWrapper from "@/components/ui/NavComponent/NavbarRightSideLinkWrapper";
+import {
+  NavbarSignInButton,
+  NavbarSignUpButton,
+} from "@/components/ui/NavComponent/NavbarSignUpInButton";
+import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import LaunchClubStatus from "@/components/ui/airwayscomponents/launchClubStatus";
+import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
+import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
+import LaunchSignUp from "@/components/ui/airwayscomponents/launchSignup";
+import { AIRLINES } from "@/utils/constants";
 
 export default function Airways() {
-
-  const { toast } = useToast();
-  const [fromLocation, setFromLocation] = useState("From");
-  const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("");
-  const [toLocation, setToLocation] = useState("To");
-  const [showSearch, setShowSearch] = useState(false);
-  const [activeField, setActiveField] = useState<"from" | "to" | null>(null);
-  const { bookedTrips, setBookedTrips } = useContext(TripsContext);
-  const [date, setDate] = useState<{ from: Date; to: Date } | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
-  });
-
-  const { isLoggedIn } = useContext(LoginContext);
-
-
-  function bookTrip() {
-    const startDate = `${
-      date!.from.getMonth() + 1
-    }/${date!.from.getDate()}/${date!.from.getFullYear()}`;
-    const returnDate = `${date!.to.getMonth() + 1}/${date!.to.getDate()}/${date!.to.getFullYear()}`;
-    const tripIdOutbound = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for outbound trip
-    const tripIdReturn = Math.floor(Math.random() * 900) + 100; // Generate a random 3 digit number for return trip
-
-    const outboundTrip = {
-      id: tripIdOutbound,
-      fromCity: fromCity,
-      from: fromLocation,
-      to: toLocation,
-      toCity: toCity,
-      depart: startDate,
-      airplane: "a380",
-      type: "Outbound",
-    };
-    const returnTrip = {
-      id: tripIdReturn,
-      from: toLocation,
-      fromCity: toCity,
-      to: fromLocation,
-      toCity: fromCity,
-      depart: returnDate,
-      airplane: "a330",
-      type: "Return",
-    };
-
-    setBookedTrips([...bookedTrips, outboundTrip, returnTrip]);
-
-    toast({
-      title: "Flight booked",
-      description: `Your round trip from ${fromLocation} to ${toLocation} and back has been booked.`,
-    });
-  }
+  const { isLoggedIn, userObject } = useContext(LoginContext);
 
   return (
     <>
       <Toaster />
       <AnimatePresence mode="wait">
-        {!isLoggedIn ? (
-          <LoginHomePage variant="airlines" />
-        ) : (
-          <motion.main
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className={`flex h-screen text-white flex-col font-audimat`}
-          >
-            <NavBar
-              variant="airlines"
-            />
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className={`relative  w-full min-h-screen bg-[url('/airline/airwaysHomePageBG2.svg')] bg-cover bg-center bg-no-repeat pb-10`}
+        >
+          <NavWrapper>
+            <>
+              <CSNavWrapper>
+                <CSNav />
+              </CSNavWrapper>
 
-            <header className={` py-10 lg:py-20 bg-gradient-airways`}>
-              <div className="lg:mx-auto max-w-7xl px-2 sm:px-8 xl:px-0">
-                <div className="grid lg:flex lg:flex-row items-start lg:items-center lg:justify-around gap-y-6 lg:gap-y-0 lg:space-x-4">
-                  <AirlineDestination
-                    setActiveField={setActiveField}
-                    setShowSearch={setShowSearch}
-                    fromLocation={fromLocation}
-                    setFromCity={setFromCity}
-                    toLocation={toLocation}
-                    showSearch={showSearch}
-                    activeField={activeField}
-                    setToLocation={setToLocation}
-                    setToCity={setToCity}
-                    setFromLocation={setFromLocation}
-                  />
+              <NavLogo srcHref={NAV_ELEMENTS_VARIANT[AIRLINES]?.logoImg?.src} altText={AIRLINES} />
 
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl lg:text-3xl xl:text-4xl px-4 pb-12 items-center text-center justify-center">
-                    <Select defaultValue="Round Trip">
-                      <SelectTrigger className="text-white">
-                        <SelectValue placeholder="Select trip type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Round Trip">Round Trip</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {isLoggedIn && (
+                <NavbarDropdownMenu>
+                  <>
+                    {NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinks.map((navLink, index) => {
+                      return (
+                        <DropdownMenuItem href={navLink?.href} key={index}>
+                          {navLink?.text}
+                        </DropdownMenuItem>
+                      );
+                    })}
 
-                  <div
-                    className={`items-center text-xl font-audimat border-b-2 pb-2 border-white/40 ${
-                      showSearch ? "" : ""
-                    }`}
-                  >
-                    <FlightCalendar date={date} setDate={setDate} className="font-audimat" />
-                  </div>
-                  <div className="grid h-10 border-b-2 border-white/40 text-4xl md:text-3xl  pb-12 lg:text-2xl xl:text-4xl px-4 items-center text-center justify-center">
-                    <Select defaultValue="1 Passenger">
-                      <SelectTrigger className="text-white">
-                        <SelectValue placeholder="Select Passengers" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1 Passenger">1 Passenger</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex mx-auto">
-                    {fromLocation !== "From" && toLocation !== "To" && (
-                      <motion.button
-                        whileTap={{ scale: 0.5 }}
-                        onClick={() => bookTrip()}
-                        className={` items-center `}
-                      >
-                        <img src="ArrowButton.png" width={60} className="" />
-                      </motion.button>
+                    {userObject.personaEnrolledInLaunchClub && (
+                      <NavbarDropdownMenuItemWrapper>
+                        <LaunchClubStatus />
+                      </NavbarDropdownMenuItemWrapper>
                     )}
-                  </div>
+
+                    <NavbarDropdownMenuItemWrapper>
+                      <BookedFlights />
+                    </NavbarDropdownMenuItemWrapper>
+                  </>
+                </NavbarDropdownMenu>
+              )}
+
+              {/* left side navbar template */}
+              {isLoggedIn && (
+                <NavbarLeftSideWrapper>
+                  <>
+                    {NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinks.map((navLink, index) => {
+                      return (
+                        <NavLinkButton
+                          text={navLink?.text}
+                          href={navLink?.href}
+                          navLinkColor={NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinkColor}
+                          index={index}
+                          key={index}
+                        />
+                      );
+                    })}
+
+                    <NavbarLeftSideLinkWrapper>
+                      <BookedFlights />
+                    </NavbarLeftSideLinkWrapper>
+                  </>
+                </NavbarLeftSideWrapper>
+              )}
+
+              {/* right side navbar template */}
+              <NavbarRightSideWrapper>
+                <>
+                  {isLoggedIn && (
+                    <>
+                      {userObject.personaEnrolledInLaunchClub && (
+                        <NavbarRightSideLinkWrapper>
+                          <LaunchClubStatus />
+                        </NavbarRightSideLinkWrapper>
+                      )}
+
+                      <NavbarRightSideLinkWrapper customCSS="lg:hidden">
+                        <BookedFlights />
+                      </NavbarRightSideLinkWrapper>
+                    </>
+                  )}
+
+                  {!isLoggedIn && (
+                    <>
+                      <NavbarSignUpButton backgroundColor="bg-gradient-airways" />
+
+                      {/* <NavbarSignInButton
+                        borderColor="border-airlinedarkblue"
+                        backgroundColor="bg-gradient-airways-darker-blue"
+                      /> */}
+                    </>
+                  )}
+
+                  <NavbarLogin variant={AIRLINES} />
+                </>
+              </NavbarRightSideWrapper>
+            </>
+          </NavWrapper>
+
+          <AirwaysHero />
+
+          {isLoggedIn && !userObject.personaEnrolledInLaunchClub && (
+            <motion.section
+              initial={{ x: 300 }}
+              animate={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 50 }}
+              className=" bg-transparent flex items-center mx-auto w-full max-w-7xl rounded-3xl px-4 font-sohnelight"
+            >
+              <div
+                className="py-8 shadow-xl sm:py-[2rem] px-6 sm:px-8 gap-y-4 md:gap-y-0  
+        flex flex-col md:flex-row justify-center items-center w-full bg-white rounded-3xl "
+              >
+                <div
+                  className="flex-col md:flex md:flex-col
+      text-airlineblack w-full pr-0 md:pr-10 md:mb-0 gap-y-2 "
+                >
+                  <h2 className="text-airlinedarkblue text-3xl font-audimat">
+                    Closer to the sky and perks
+                  </h2>
+                  <p className="">
+                    Join LaunchClub for exclusive access to flights, rewards, and much more. See
+                    details within.
+                  </p>
+                </div>
+
+                <div className="">
+                  <LaunchSignUp>
+                    <NavbarSignUpButton
+                      className={`rounded-3xl w-[6rem] bg-gradient-airways animate-pulse hover:animate-none cursor-pointer`}
+                    />
+                  </LaunchSignUp>
                 </div>
               </div>
-            </header>
-
-            <AirlineHero showSearch={showSearch} />
-
-            <HomePageCardWrapper>
-              <HomePageInfoCard
-                imgSrc={airplaneImg.src}
-                headerTitleText="Wheels up"
-                subtitleText="You deserve to arrive refreshed, stretch out in one of our luxurious cabins."
-                key={1}
-              />
-              <HomePageInfoCard
-                imgSrc={hotAirBalloonImg.src}
-                headerTitleText="Ready for an adventure"
-                subtitleText="The world is open for travel. Plan your next adventure."
-                key={2}
-              />
-              <HomePageInfoCard
-                imgSrc={airplaneDining.src}
-                headerTitleText="Experience luxury"
-                subtitleText="Choose Launch Platinum. Select on longer flights."
-                key={3}
-              />
-            </HomePageCardWrapper>
-          </motion.main>
-        )}
+            </motion.section>
+          )}
+          <Chatbot />
+        </motion.main>
       </AnimatePresence>
-
-      <Chatbot/>
     </>
   );
 }
