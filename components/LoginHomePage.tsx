@@ -1,10 +1,4 @@
-import { useContext } from "react";
 import { motion } from "framer-motion";
-<<<<<<< HEAD
-import NavBar from "@/components/ui/navbar";
-=======
-import LoginContext from "@/utils/contexts/login";
->>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
 import { LoginComponent } from "@/components/ui/logincomponent";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
@@ -15,13 +9,6 @@ import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
 
-<<<<<<< HEAD
-import airlineLoginHeroBackground from "@/assets/img/airways/airline-login-hero-background.jpeg";
-import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
-
-export default function LoginHomePage({ variant, ...props }: VariantInterface) {
-
-=======
 import { CSNav } from "@/components/ui/csnav";
 
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
@@ -33,7 +20,6 @@ interface LoginHomePageProps {
 }
 
 export default function LoginHomePage({ variant, name, ...props }: LoginHomePageProps) {
->>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
   return (
     <motion.main
       className={`relative w-full h-screen font-audimat`}

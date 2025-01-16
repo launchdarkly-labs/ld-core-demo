@@ -11,9 +11,9 @@ import toggleBankVerticalLogo from "@/public/banking/toggleBank_logo_vertical.sv
 import frontierCapitalVerticalLogo from "@/public/investment/frontier_capital_logo_vertical.svg";
 import launchAirwaysVerticalLogo from "@/public/airline/launch_airways_logo_vertical.svg";
 import galaxyMarketplaceVerticalLogo from "@/public/marketplace/galaxy_marketplace_logo_vertical.svg";
-import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal.svg";
-import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal.svg";
-import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal.svg";
+import toggleBankHorizontalLogo from "@/public/banking/toggleBank_logo_horizontal_black.svg";
+import frontierCapitalHorizontalLogo from "@/public/investment/frontier_capital_logo_horitzonal_black.svg";
+import launchAirwaysHorizontalLogo from "@/public/airline/launch_airways_logo_horizontal_black.svg";
 import galaxyMarketplaceHorizontalLogo from "@/public/marketplace/galaxy_marketplace_logo_horizontal.svg";
 import vrgame from "@/public/marketplace/vrgalaxy_image/vrgame.svg";
 import vrcamera from "@/public/marketplace/vrgalaxy_image/vrcamera.svg";
