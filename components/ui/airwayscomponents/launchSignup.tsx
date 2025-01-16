@@ -13,12 +13,8 @@ import { ReactElement, useContext } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
 
-<<<<<<< HEAD
-export default function LaunchSignUp() {
-=======
 export default function LaunchSignUp({ children }: { children: ReactElement }) {
   const client = useLDClient();
->>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
 
   const { userObject, enrollInLaunchClub } = useContext(LoginContext);
 

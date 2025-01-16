@@ -8,21 +8,12 @@ import { ArrowRight, PersonStanding, Star, PlaneIcon, Wifi, Plane, TicketIcon } 
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
-<<<<<<< HEAD
-import { BookedTrips } from "@/utils/typescriptTypesInterfaceIndustry";
-=======
 import { DEFAULT_AI_TRAVEL_PROMPT } from "@/utils/constants";
-import c from "@/pages/_app";
->>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
+import { BookedTrips } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
   const { userObject } = useContext(LoginContext);
-<<<<<<< HEAD
-  const {  aiTravelInsights, aiTravelPromptText } = useFlags();
-  const [aiResponse, setAIResponse] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-=======
   const aiTravelPromptText =
     useFlags()["ai-config--ai-travel-prompt-text"] == undefined
       ? DEFAULT_AI_TRAVEL_PROMPT
@@ -31,7 +22,6 @@ export default function BookedFlights() {
   const [aiResponse, setAIResponse] = useState("");
   const [toAirport, setToAirport] = useState("");
   const [loading, setLoading] = useState(false);
->>>>>>> fa8a8f1745db0be07fae77ac310daa7aaa065e3c
 
   async function travelLocationsInfo(start: string, end: string) {
     try {
