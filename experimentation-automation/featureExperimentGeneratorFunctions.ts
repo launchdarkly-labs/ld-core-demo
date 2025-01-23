@@ -1,20 +1,22 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
-
+import { useLDClientError } from "launchdarkly-react-client-sdk";
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,
   updateContext,
   setProgress,
   setExpGenerator,
+  numOfRuns,
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+  numOfRuns:number
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < numOfRuns; i++) {
     const aiModelVariation: {
       max_tokens_to_sample: number;
       modelId: string;
@@ -25,30 +27,30 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       '{ "max_tokens_to_sample": 500, "modelId": "anthropic.claude-instant-v1", "temperature": 0.3, "top_p": 1 }'
     );
 
-    if (aiModelVariation.modelId === "meta.llama2-13b-chat-v1") {
+    if (aiModelVariation.modelId.includes("meta")) {
       let probablity = Math.random() * 100;
-      if (probablity < 40) {
+      if (probablity < 30) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
-    } else if (aiModelVariation.modelId === "anthropic.claude-instant-v1") {
+    } else if (aiModelVariation.modelId.includes("anthropic")) {
       let probablity = Math.random() * 100;
-      if (probablity < 70) {
+      if (probablity < 50) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
-    } else {
+    } else { //cohere
       let probablity = Math.random() * 100;
-      if (probablity < 60) {
+      if (probablity < 80) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -60,16 +62,18 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
+  numOfRuns
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+  numOfRuns:number
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < numOfRuns; i++) {
     const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
     if (cartSuggestedItems) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
@@ -87,7 +91,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -99,16 +103,18 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
+  numOfRuns
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+  numOfRuns:number
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < numOfRuns; i++) {
     const newSearchEngineFeatureFlag: string = client?.variation(
       "release-new-search-engine",
       "old-search-engine"
@@ -129,7 +135,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / 500) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }

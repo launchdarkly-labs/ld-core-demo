@@ -20,6 +20,8 @@ import {
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
 } from "@/experimentation-automation/experimentationConstants";
+import { useLDClientError } from "launchdarkly-react-client-sdk";
+import { capitalizeFirstLetter } from "@/utils/utils";
 
 export default function ExperimentGenerator({
   title,
@@ -28,10 +30,11 @@ export default function ExperimentGenerator({
   title: string;
   experimentationKey: string;
 }) {
-  const client:LDClient | undefined = useLDClient();
+  const client: LDClient | undefined = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [experimentTypeObj, setExperimentTypeObj] = useState<{experimentType:string, numOfRuns:number}>({experimentType:"",numOfRuns:0});
 
   const updateContext = async (): Promise<void> => {
     updateAudienceContext();
@@ -39,6 +42,7 @@ export default function ExperimentGenerator({
 
   useEffect(() => {
     if (expGenerator) {
+      
       switch (experimentationKey) {
         case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
           generateSuggestedItemsFeatureExperimentResults({
@@ -46,6 +50,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
+            numOfRuns: experimentTypeObj.numOfRuns,
           });
           break;
         case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
@@ -54,6 +59,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
+            numOfRuns: experimentTypeObj.numOfRuns,
           });
           break;
         case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
@@ -62,6 +68,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
+            numOfRuns: experimentTypeObj.numOfRuns,
           });
           break;
         case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
@@ -70,6 +77,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
+            numOfRuns: experimentTypeObj.numOfRuns,
           });
           break;
         case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
@@ -78,13 +86,17 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
+            numOfRuns: experimentTypeObj.numOfRuns,
           });
           break;
         default:
           alert("No function exist for feature experimentation");
       }
+      setExperimentTypeObj({experimentType:"",numOfRuns:0});
     }
   }, [expGenerator]);
+  const x = useLDClientError();
+  console.log("useLDClientError",x)
 
   return (
     <>
@@ -98,28 +110,42 @@ export default function ExperimentGenerator({
           <p className="font-bold font-sohnelight text-lg">{title}</p>
         </DialogTrigger>
         <DialogContent>
-          {expGenerator ? (
+          {expGenerator && experimentTypeObj.experimentType !== '' ? (
             <div className="flex justify-center items-center h-52">
-              <div className=" font-bold font-sohne justify-center items-center text-xl">
-                Generating Data
+              <div className=" font-bold font-sohne justify-center items-center text-xl text-center">
+                Generating Data {capitalizeFirstLetter(experimentTypeObj.experimentType)} Experimentation
+                <br />
+                Running {experimentTypeObj.numOfRuns} runs...
                 <br />
                 <div className="flex items-center mt-2 justify-center">
-                  <p>{progress.toFixed(0)}% Complete</p>
+                  <p>{progress.toFixed(2)}% Complete</p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex justify-center text-xl font-bold items-center h-full">
-              <button
-                onClick={() => setExpGenerator(true)}
-                className={`mt-2 ${
-                  experimentationKey.includes("airlines")
-                    ? "bg-gradient-airways"
-                    : "bg-gradient-experimentation"
-                } p-2 rounded-sm hover:brightness-125 text-white`}
-              >
-                Generate {title}
-              </button>
+            <div className="flex flex-col justify-center text-xl font-bold items-center h-full gap-y-4">
+              <h2>{title}</h2>
+              <div className="flex gap-x-4">
+                <button
+                  onClick={() => {
+                    setExpGenerator(true);
+                    setExperimentTypeObj({experimentType:"bayesian", numOfRuns:500});
+                  }}
+                  className={`mt-2 ${"bg-gradient-airways"} p-2 rounded-sm hover:brightness-125 text-white`}
+                >
+                  Bayesian Experimentation
+                </button>
+
+                <button
+                  onClick={() => {
+                    setExpGenerator(true);
+                    setExperimentTypeObj({experimentType:"frequentist", numOfRuns:10000});
+                  }}
+                  className={`mt-2 ${"bg-gradient-experimentation"} p-2 rounded-sm hover:brightness-125 text-white`}
+                >
+                  Frequentist Experimentation
+                </button>
+              </div>
             </div>
           )}
         </DialogContent>
