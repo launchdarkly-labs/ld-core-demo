@@ -6,13 +6,13 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-  numOfRuns
+  experimentTypeObj
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
-  numOfRuns:number
+  experimentTypeObj:{experimentType:string, numOfRuns:number}
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
@@ -22,7 +22,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
   let metric3 = 0;
   let metric4 = 0;
 
-  for (let i = 0; i < numOfRuns; i++) {
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const flagVariation: string = client?.variation("storeAttentionCallout", "New Items");
 
     if (flagVariation === "Final Hours!") {
@@ -69,7 +69,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
       }
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -81,13 +81,13 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-  numOfRuns
+  experimentTypeObj
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
-  numOfRuns:number
+  experimentTypeObj:{experimentType:string, numOfRuns:number}
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
@@ -96,7 +96,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   let metric2 = 0;
   let metric3 = 0;
 
-  for (let i = 0; i < numOfRuns; i++) {
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const flagVariation: string = client?.variation(
       "release-new-shorten-collections-page",
       "old-long-collections-page"
@@ -132,7 +132,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
       }
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }

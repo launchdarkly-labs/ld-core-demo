@@ -104,6 +104,18 @@ export function QuickCommandDialog({ children }: { children: any }) {
             </CommandItem>
             <CommandItem>
               <ExperimentGenerator
+                title={"[Marketplace] Feature Experiment Results Generator for Suggested Items"}
+                experimentationKey={MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY}
+              />
+            </CommandItem>
+            <CommandItem>
+              <ExperimentGenerator
+                title={"[Marketplace] Feature Experiment Results Generator for New Search Engine"}
+                experimentationKey={MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY}
+              />
+            </CommandItem>
+            <CommandItem>
+              <ExperimentGenerator
                 title={"[Marketplace] Funnel Experiment Results Generator for Store Header"}
                 experimentationKey={MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY}
               />
@@ -114,18 +126,6 @@ export function QuickCommandDialog({ children }: { children: any }) {
                   "[Marketplace] Funnel Experiment Results Generator for Shorten Collections Page"
                 }
                 experimentationKey={MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY}
-              />
-            </CommandItem>
-            <CommandItem>
-              <ExperimentGenerator
-                title={"[Marketplace] Feature Experiment Results Generator for Suggested Items"}
-                experimentationKey={MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY}
-              />
-            </CommandItem>
-            <CommandItem>
-              <ExperimentGenerator
-                title={"[Marketplace] Feature Experiment Results Generator for New Search Engine"}
-                experimentationKey={MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY}
               />
             </CommandItem>
           </CommandGroup>

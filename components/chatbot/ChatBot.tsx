@@ -9,7 +9,7 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
-import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
+import { PERSONA_ROLE_DEVELOPER, COHERE, ANTHROPIC, META, DEFAULT_AI_MODEL } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 interface Message {
@@ -169,7 +169,7 @@ export default function Chatbot() {
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.name?.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(ANTHROPIC)
                           ? "!text-anthropicColor"
                           : ""
                       }

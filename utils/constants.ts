@@ -89,7 +89,7 @@ export const MARKET = "market";
 export const AIRLINES = "airlines";
 export const BANK = "bank";
 
-export const CLAUDE = "claude";
+export const ANTHROPIC = "anthropic";
 export const COHERE = "cohere";
 export const META = "meta";
 

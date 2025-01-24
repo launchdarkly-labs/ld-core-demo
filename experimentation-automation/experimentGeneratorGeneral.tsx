@@ -35,14 +35,18 @@ export default function ExperimentGenerator({
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [experimentTypeObj, setExperimentTypeObj] = useState<{experimentType:string, numOfRuns:number}>({experimentType:"",numOfRuns:0});
+  const ldClientError = useLDClientError();
 
+  if(ldClientError) {
+    alert("Error in LaunchDarkly Client");
+  }
+ 
   const updateContext = async (): Promise<void> => {
     updateAudienceContext();
   };
 
   useEffect(() => {
     if (expGenerator) {
-      
       switch (experimentationKey) {
         case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
           generateSuggestedItemsFeatureExperimentResults({
@@ -50,7 +54,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
-            numOfRuns: experimentTypeObj.numOfRuns,
+            experimentTypeObj: experimentTypeObj,
           });
           break;
         case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
@@ -59,7 +63,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
-            numOfRuns: experimentTypeObj.numOfRuns,
+            experimentTypeObj: experimentTypeObj,
           });
           break;
         case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
@@ -68,7 +72,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
-            numOfRuns: experimentTypeObj.numOfRuns,
+            experimentTypeObj: experimentTypeObj,
           });
           break;
         case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
@@ -77,7 +81,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
-            numOfRuns: experimentTypeObj.numOfRuns,
+            experimentTypeObj: experimentTypeObj,
           });
           break;
         case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
@@ -86,7 +90,7 @@ export default function ExperimentGenerator({
             updateContext: updateContext,
             setProgress: setProgress,
             setExpGenerator: setExpGenerator,
-            numOfRuns: experimentTypeObj.numOfRuns,
+            experimentTypeObj: experimentTypeObj,
           });
           break;
         default:
@@ -95,8 +99,8 @@ export default function ExperimentGenerator({
       setExperimentTypeObj({experimentType:"",numOfRuns:0});
     }
   }, [expGenerator]);
-  const x = useLDClientError();
-  console.log("useLDClientError",x)
+ 
+
 
   return (
     <>

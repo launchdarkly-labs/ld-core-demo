@@ -1,22 +1,28 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
-import { useLDClientError } from "launchdarkly-react-client-sdk";
+import { META, COHERE, ANTHROPIC } from "@/utils/constants";
+
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,
   updateContext,
   setProgress,
   setExpGenerator,
-  numOfRuns,
+  experimentTypeObj,
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
-  numOfRuns:number
+  experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
-  for (let i = 0; i < numOfRuns; i++) {
+  const probablityExperimentType = {
+    ["bayesian"]: { [META]: 30, [ANTHROPIC]: 50, [COHERE]: 80 },
+    ["frequentist"]: { [META]: 40, [ANTHROPIC]: 50, [COHERE]: 60 },
+  };
+  const experimentType: string = experimentTypeObj.experimentType;
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const aiModelVariation: {
       max_tokens_to_sample: number;
       modelId: string;
@@ -27,30 +33,40 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       '{ "max_tokens_to_sample": 500, "modelId": "anthropic.claude-instant-v1", "temperature": 0.3, "top_p": 1 }'
     );
 
-    if (aiModelVariation.modelId.includes("meta")) {
+    if (aiModelVariation.modelId.includes(META)) {
       let probablity = Math.random() * 100;
-      if (probablity < 30) {
+      if (
+        probablity <
+        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][META]
+      ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
-    } else if (aiModelVariation.modelId.includes("anthropic")) {
+    } else if (aiModelVariation.modelId.includes(ANTHROPIC)) {
       let probablity = Math.random() * 100;
-      if (probablity < 50) {
+      if (
+        probablity <
+        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][ANTHROPIC]
+      ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
-    } else { //cohere
+    } else {
+      //cohere
       let probablity = Math.random() * 100;
-      if (probablity < 80) {
+      if (
+        probablity <
+        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][COHERE]
+      ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
         client?.track("AI Chatbot Bad Service", client.getContext());
       }
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -62,36 +78,53 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-  numOfRuns
+  experimentTypeObj,
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
-  numOfRuns:number
+  experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
-  for (let i = 0; i < numOfRuns; i++) {
+
+  const probablityExperimentType = {
+    ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
+    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 52 },
+  };
+  const experimentType: string = experimentTypeObj.experimentType;
+
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
     if (cartSuggestedItems) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
-      if (probablity < 60) {
+      if (
+        probablity <
+        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
+          "trueProbablity"
+        ]
+      ) {
         client?.track("upsell-tracking", client.getContext());
       }
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     } else {
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
       let probablity = Math.random() * 100;
-      if (probablity < 40) {
+      if (
+        probablity <
+        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
+          "falseProbablity"
+        ]
+      ) {
         client?.track("upsell-tracking", client.getContext());
       }
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
@@ -103,18 +136,18 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   updateContext,
   setProgress,
   setExpGenerator,
-  numOfRuns
+  experimentTypeObj,
 }: {
   client: LDClient | undefined;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
-  numOfRuns:number
+  experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
-  for (let i = 0; i < numOfRuns; i++) {
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const newSearchEngineFeatureFlag: string = client?.variation(
       "release-new-search-engine",
       "old-search-engine"
@@ -135,7 +168,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     }
     await client?.flush();
-    setProgress((prevProgress: number) => prevProgress + (1 / numOfRuns) * 100);
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updateContext();
   }
