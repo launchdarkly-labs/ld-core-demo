@@ -1,5 +1,6 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
+import {wait} from "@/utils/utils";
 
 export const generateStoreHeaderFunnelExperimentResults = async ({
   client,
@@ -70,7 +71,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await wait(1);
     await updateContext();
   }
   setExpGenerator(false);
@@ -133,7 +134,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await wait(1);
     await updateContext();
   }
   setExpGenerator(false);

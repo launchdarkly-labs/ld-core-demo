@@ -1,6 +1,7 @@
 import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import { META, COHERE, ANTHROPIC } from "@/utils/constants";
+import { wait } from "@/utils/utils";
 
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,
@@ -19,7 +20,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   setExpGenerator(true);
   const probablityExperimentType = {
     ["bayesian"]: { [META]: 30, [ANTHROPIC]: 50, [COHERE]: 80 },
-    ["frequentist"]: { [META]: 40, [ANTHROPIC]: 50, [COHERE]: 60 },
+    ["frequentist"]: { [META]: 47, [ANTHROPIC]: 50, [COHERE]: 58 },
   };
   const experimentType: string = experimentTypeObj.experimentType;
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
@@ -67,7 +68,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await wait(1);
     await updateContext();
   }
   setExpGenerator(false);
@@ -92,7 +93,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
 
   const probablityExperimentType = {
     ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
-    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 52 },
+    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 54 },
   };
   const experimentType: string = experimentTypeObj.experimentType;
 
@@ -125,7 +126,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await wait(1)
     await updateContext();
   }
   setExpGenerator(false);
@@ -149,7 +150,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   let totalPrice = 0;
   const probablityExperimentType = {
     ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
-    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 52 },
+    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 54 },
   };
   const experimentType: string = experimentTypeObj.experimentType;
 
@@ -179,7 +180,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await wait(1)
     await updateContext();
   }
   setExpGenerator(false);
