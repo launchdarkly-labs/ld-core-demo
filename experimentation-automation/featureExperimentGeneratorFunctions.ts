@@ -147,6 +147,12 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
+  const probablityExperimentType = {
+    ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
+    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 52 },
+  };
+  const experimentType: string = experimentTypeObj.experimentType;
+
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const newSearchEngineFeatureFlag: string = client?.variation(
       "release-new-search-engine",
@@ -155,14 +161,18 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
     if (newSearchEngineFeatureFlag?.includes("new-search-engine")) {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
-      if (probablity < 60) {
+      if (probablity < probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
+        "trueProbablity"
+      ]) {
         client?.track("search-engine-add-to-cart", client.getContext());
       }
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
     } else {
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
       let probablity = Math.random() * 100;
-      if (probablity < 40) {
+      if (probablity < probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
+        "falseProbablity"
+      ]) {
         client?.track("search-engine-add-to-cart", client.getContext());
       }
       client?.track("in-cart-total-price", client.getContext(), totalPrice);

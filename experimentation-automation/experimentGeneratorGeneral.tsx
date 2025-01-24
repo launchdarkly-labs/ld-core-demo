@@ -34,13 +34,16 @@ export default function ExperimentGenerator({
   const { updateAudienceContext } = useContext(LoginContext);
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
-  const [experimentTypeObj, setExperimentTypeObj] = useState<{experimentType:string, numOfRuns:number}>({experimentType:"",numOfRuns:0});
+  const [experimentTypeObj, setExperimentTypeObj] = useState<{
+    experimentType: string;
+    numOfRuns: number;
+  }>({ experimentType: "", numOfRuns: 0 });
   const ldClientError = useLDClientError();
 
-  if(ldClientError) {
+  if (ldClientError) {
     alert("Error in LaunchDarkly Client");
   }
- 
+
   const updateContext = async (): Promise<void> => {
     updateAudienceContext();
   };
@@ -96,11 +99,12 @@ export default function ExperimentGenerator({
         default:
           alert("No function exist for feature experimentation");
       }
-      setExperimentTypeObj({experimentType:"",numOfRuns:0});
     }
-  }, [expGenerator]);
- 
 
+    return () => {
+      setExperimentTypeObj({ experimentType: "", numOfRuns: 0 });
+    };
+  }, [expGenerator]);
 
   return (
     <>
@@ -114,10 +118,11 @@ export default function ExperimentGenerator({
           <p className="font-bold font-sohnelight text-lg">{title}</p>
         </DialogTrigger>
         <DialogContent>
-          {expGenerator && experimentTypeObj.experimentType !== '' ? (
+          {expGenerator && experimentTypeObj.experimentType !== "" ? (
             <div className="flex justify-center items-center h-52">
               <div className=" font-bold font-sohne justify-center items-center text-xl text-center">
-                Generating Data {capitalizeFirstLetter(experimentTypeObj.experimentType)} Experimentation
+                Generating Data {capitalizeFirstLetter(experimentTypeObj.experimentType)}{" "}
+                Experimentation
                 <br />
                 Running {experimentTypeObj.numOfRuns} runs...
                 <br />
@@ -131,9 +136,10 @@ export default function ExperimentGenerator({
               <h2>{title}</h2>
               <div className="flex gap-x-4">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    setExperimentTypeObj({ experimentType: "bayesian", numOfRuns: 500 });
+
                     setExpGenerator(true);
-                    setExperimentTypeObj({experimentType:"bayesian", numOfRuns:500});
                   }}
                   className={`mt-2 ${"bg-gradient-airways"} p-2 rounded-sm hover:brightness-125 text-white`}
                 >
@@ -141,9 +147,10 @@ export default function ExperimentGenerator({
                 </button>
 
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    setExperimentTypeObj({ experimentType: "frequentist", numOfRuns: 10000 });
+
                     setExpGenerator(true);
-                    setExperimentTypeObj({experimentType:"frequentist", numOfRuns:10000});
                   }}
                   className={`mt-2 ${"bg-gradient-experimentation"} p-2 rounded-sm hover:brightness-125 text-white`}
                 >
