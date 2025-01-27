@@ -3,6 +3,18 @@ import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndu
 import { META, COHERE, ANTHROPIC } from "@/utils/constants";
 import { wait } from "@/utils/utils";
 
+const waitTime = .5;
+
+const probablityExperimentTypeAI = {
+  ["bayesian"]: { [META]: 30, [ANTHROPIC]: 50, [COHERE]: 80 },
+  ["frequentist"]: { [META]: 47, [ANTHROPIC]: 50, [COHERE]: 58 },
+};
+
+const probablityExperimentType = {
+  ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
+  ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 52 },
+};
+
 export const generateAIChatBotFeatureExperimentResults = async ({
   client,
   updateContext,
@@ -18,10 +30,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 }): Promise<void> => {
   setProgress(0);
   setExpGenerator(true);
-  const probablityExperimentType = {
-    ["bayesian"]: { [META]: 30, [ANTHROPIC]: 50, [COHERE]: 80 },
-    ["frequentist"]: { [META]: 47, [ANTHROPIC]: 50, [COHERE]: 58 },
-  };
+
   const experimentType: string = experimentTypeObj.experimentType;
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const aiModelVariation: {
@@ -38,7 +47,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       let probablity = Math.random() * 100;
       if (
         probablity <
-        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][META]
+        probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][META]
       ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
@@ -48,7 +57,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       let probablity = Math.random() * 100;
       if (
         probablity <
-        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][ANTHROPIC]
+        probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][ANTHROPIC]
       ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
@@ -59,7 +68,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
       let probablity = Math.random() * 100;
       if (
         probablity <
-        probablityExperimentType[experimentType as keyof typeof probablityExperimentType][COHERE]
+        probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][COHERE]
       ) {
         client?.track("AI chatbot good service", client.getContext());
       } else {
@@ -68,7 +77,7 @@ export const generateAIChatBotFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await wait(1);
+    await wait(waitTime);
     await updateContext();
   }
   setExpGenerator(false);
@@ -91,10 +100,6 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   setExpGenerator(true);
   let totalPrice = 0;
 
-  const probablityExperimentType = {
-    ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
-    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 54 },
-  };
   const experimentType: string = experimentTypeObj.experimentType;
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
@@ -126,7 +131,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await wait(1)
+    await wait(waitTime)
     await updateContext();
   }
   setExpGenerator(false);
@@ -148,10 +153,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   setProgress(0);
   setExpGenerator(true);
   let totalPrice = 0;
-  const probablityExperimentType = {
-    ["bayesian"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 30 },
-    ["frequentist"]: { ["trueProbablity"]: 60, ["falseProbablity"]: 54 },
-  };
+
   const experimentType: string = experimentTypeObj.experimentType;
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
@@ -180,7 +182,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
     }
     await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
-    await wait(1)
+    await wait(waitTime)
     await updateContext();
   }
   setExpGenerator(false);
