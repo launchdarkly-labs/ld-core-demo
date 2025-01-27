@@ -29,7 +29,6 @@ export const generateAIChatBotFeatureExperimentResults = async ({
   experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
-  setExpGenerator(true);
 
   const experimentType: string = experimentTypeObj.experimentType;
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
@@ -97,7 +96,6 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
   experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
-  setExpGenerator(true);
   let totalPrice = 0;
 
   const experimentType: string = experimentTypeObj.experimentType;
@@ -151,7 +149,6 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
-  setExpGenerator(true);
   let totalPrice = 0;
 
   const experimentType: string = experimentTypeObj.experimentType;

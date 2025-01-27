@@ -24,6 +24,16 @@ import {
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
 } from "@/experimentation-automation/experimentationConstants";
 
+import {
+  generateSuggestedItemsFeatureExperimentResults,
+  generateAIChatBotFeatureExperimentResults,
+  generateNewSearchEngineFeatureExperimentResults,
+} from "@/experimentation-automation/featureExperimentGeneratorFunctions";
+import {
+  generateStoreHeaderFunnelExperimentResults,
+  generateShortenCollectionsPageFunnelExperimentResults,
+} from "@/experimentation-automation/funnelExperimentGeneratorFunctions";
+
 export function QuickCommandDialog({ children }: { children: any }) {
   const [open, setOpen] = React.useState(false);
   const location = useRouter();
@@ -100,24 +110,28 @@ export function QuickCommandDialog({ children }: { children: any }) {
               <ExperimentGenerator
                 title={"[Airlines] Feature Experiment Results Generator for AI Chatbot"}
                 experimentationKey={AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY}
+                functionGenerator={generateAIChatBotFeatureExperimentResults}
               />
             </CommandItem>
             <CommandItem>
               <ExperimentGenerator
                 title={"[Marketplace] Feature Experiment Results Generator for Suggested Items"}
                 experimentationKey={MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY}
+                functionGenerator={generateSuggestedItemsFeatureExperimentResults}
               />
             </CommandItem>
             <CommandItem>
               <ExperimentGenerator
                 title={"[Marketplace] Feature Experiment Results Generator for New Search Engine"}
                 experimentationKey={MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY}
+                functionGenerator={generateNewSearchEngineFeatureExperimentResults}
               />
             </CommandItem>
             <CommandItem>
               <ExperimentGenerator
                 title={"[Marketplace] Funnel Experiment Results Generator for Store Header"}
                 experimentationKey={MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY}
+                functionGenerator={generateStoreHeaderFunnelExperimentResults}
               />
             </CommandItem>
             <CommandItem>
@@ -126,6 +140,7 @@ export function QuickCommandDialog({ children }: { children: any }) {
                   "[Marketplace] Funnel Experiment Results Generator for Shorten Collections Page"
                 }
                 experimentationKey={MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY}
+                functionGenerator={generateShortenCollectionsPageFunnelExperimentResults}
               />
             </CommandItem>
           </CommandGroup>

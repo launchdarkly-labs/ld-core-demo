@@ -26,9 +26,11 @@ import { capitalizeFirstLetter } from "@/utils/utils";
 export default function ExperimentGenerator({
   title,
   experimentationKey,
+  functionGenerator,
 }: {
   title: string;
   experimentationKey: string;
+  functionGenerator: void;
 }) {
   const client: LDClient | undefined = useLDClient();
   const { updateAudienceContext } = useContext(LoginContext);

@@ -94,7 +94,6 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
   experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
-  setExpGenerator(true);
   let totalPrice = 0;
 
   const experimentType: string = experimentTypeObj.experimentType;
@@ -160,7 +159,6 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   experimentTypeObj: { experimentType: string; numOfRuns: number };
 }): Promise<void> => {
   setProgress(0);
-  setExpGenerator(true);
   let totalPrice = 0;
 
   const experimentType: string = experimentTypeObj.experimentType;
