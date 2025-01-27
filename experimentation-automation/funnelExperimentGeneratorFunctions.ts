@@ -95,12 +95,11 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
 }): Promise<void> => {
   setProgress(0);
   let totalPrice = 0;
-
   const experimentType: string = experimentTypeObj.experimentType;
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const flagVariation: string = client?.variation("storeAttentionCallout", "New Items");
-
+    
     if (flagVariation === "Final Hours!") {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
     }

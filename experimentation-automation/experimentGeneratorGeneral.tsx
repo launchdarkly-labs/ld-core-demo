@@ -50,63 +50,118 @@ export default function ExperimentGenerator({
     updateAudienceContext();
   };
 
-  useEffect(() => {
-    if (expGenerator) {
-      switch (experimentationKey) {
-        case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
-          generateSuggestedItemsFeatureExperimentResults({
-            client: client,
-            updateContext: updateContext,
-            setProgress: setProgress,
-            setExpGenerator: setExpGenerator,
-            experimentTypeObj: experimentTypeObj,
-          });
-          break;
-        case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
-          generateAIChatBotFeatureExperimentResults({
-            client: client,
-            updateContext: updateContext,
-            setProgress: setProgress,
-            setExpGenerator: setExpGenerator,
-            experimentTypeObj: experimentTypeObj,
-          });
-          break;
-        case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
-          generateNewSearchEngineFeatureExperimentResults({
-            client: client,
-            updateContext: updateContext,
-            setProgress: setProgress,
-            setExpGenerator: setExpGenerator,
-            experimentTypeObj: experimentTypeObj,
-          });
-          break;
-        case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
-          generateStoreHeaderFunnelExperimentResults({
-            client: client,
-            updateContext: updateContext,
-            setProgress: setProgress,
-            setExpGenerator: setExpGenerator,
-            experimentTypeObj: experimentTypeObj,
-          });
-          break;
-        case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
-          generateShortenCollectionsPageFunnelExperimentResults({
-            client: client,
-            updateContext: updateContext,
-            setProgress: setProgress,
-            setExpGenerator: setExpGenerator,
-            experimentTypeObj: experimentTypeObj,
-          });
-          break;
-        default:
-          alert("No function exist for feature experimentation");
-      }
-    }
+  const generatorFunction = (experimentationKey:string,experimentTypeObj:any)=>{
 
-    return () => {
-      setExperimentTypeObj({ experimentType: "", numOfRuns: 0 });
-    };
-  }, [expGenerator]);
+    console.log(experimentationKey)
+    switch (experimentationKey) {
+      case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
+        generateSuggestedItemsFeatureExperimentResults({
+          client: client,
+          updateContext: updateContext,
+          setProgress: setProgress,
+          setExpGenerator: setExpGenerator,
+          experimentTypeObj: experimentTypeObj,
+        });
+        break;
+      case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
+        generateAIChatBotFeatureExperimentResults({
+          client: client,
+          updateContext: updateContext,
+          setProgress: setProgress,
+          setExpGenerator: setExpGenerator,
+          experimentTypeObj: experimentTypeObj,
+        });
+        break;
+      case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
+        generateNewSearchEngineFeatureExperimentResults({
+          client: client,
+          updateContext: updateContext,
+          setProgress: setProgress,
+          setExpGenerator: setExpGenerator,
+          experimentTypeObj: experimentTypeObj,
+        });
+        break;
+      case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
+        generateStoreHeaderFunnelExperimentResults({
+          client: client,
+          updateContext: updateContext,
+          setProgress: setProgress,
+          setExpGenerator: setExpGenerator,
+          experimentTypeObj: experimentTypeObj,
+        });
+        break;
+      case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
+        generateShortenCollectionsPageFunnelExperimentResults({
+          client: client,
+          updateContext: updateContext,
+          setProgress: setProgress,
+          setExpGenerator: setExpGenerator,
+          experimentTypeObj: experimentTypeObj,
+        });
+        break;
+      default:
+        alert("No function exist for feature experimentation");
+    }
+    //setExperimentTypeObj({ experimentType: "", numOfRuns: 0 });
+  }
+
+  // useEffect(() => {
+  //   if (expGenerator) {
+  //     switch (experimentationKey) {
+  //       case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
+  //         generateSuggestedItemsFeatureExperimentResults({
+  //           client: client,
+  //           updateContext: updateContext,
+  //           setProgress: setProgress,
+  //           setExpGenerator: setExpGenerator,
+  //           experimentTypeObj: experimentTypeObj,
+  //         });
+  //         break;
+  //       case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
+  //         generateAIChatBotFeatureExperimentResults({
+  //           client: client,
+  //           updateContext: updateContext,
+  //           setProgress: setProgress,
+  //           setExpGenerator: setExpGenerator,
+  //           experimentTypeObj: experimentTypeObj,
+  //         });
+  //         break;
+  //       case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
+  //         generateNewSearchEngineFeatureExperimentResults({
+  //           client: client,
+  //           updateContext: updateContext,
+  //           setProgress: setProgress,
+  //           setExpGenerator: setExpGenerator,
+  //           experimentTypeObj: experimentTypeObj,
+  //         });
+  //         break;
+  //       case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
+  //         generateStoreHeaderFunnelExperimentResults({
+  //           client: client,
+  //           updateContext: updateContext,
+  //           setProgress: setProgress,
+  //           setExpGenerator: setExpGenerator,
+  //           experimentTypeObj: experimentTypeObj,
+  //         });
+  //         break;
+  //       case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
+  //         generateShortenCollectionsPageFunnelExperimentResults({
+  //           client: client,
+  //           updateContext: updateContext,
+  //           setProgress: setProgress,
+  //           setExpGenerator: setExpGenerator,
+  //           experimentTypeObj: experimentTypeObj,
+  //         });
+  //         break;
+  //       default:
+  //         alert("No function exist for feature experimentation");
+  //     }
+  //   }
+
+  //   return () => {
+  //     setExperimentTypeObj({ experimentType: "", numOfRuns: 0 });
+  //   };
+  // }, [expGenerator]);
 
   return (
     <>
@@ -120,7 +175,7 @@ export default function ExperimentGenerator({
           <p className="font-bold font-sohnelight text-lg">{title}</p>
         </DialogTrigger>
         <DialogContent>
-          {expGenerator && experimentTypeObj.experimentType !== "" ? (
+          {experimentTypeObj.experimentType !== "" ? (
             <div className="flex justify-center items-center h-52">
               <div className=" font-bold font-sohne justify-center items-center text-xl text-center">
                 Generating Data {capitalizeFirstLetter(experimentTypeObj.experimentType)}{" "}
@@ -139,9 +194,12 @@ export default function ExperimentGenerator({
               <div className="flex gap-x-4">
                 <button
                   onClick={async () => {
-                    setExperimentTypeObj({ experimentType: "bayesian", numOfRuns: 500 });
 
-                    setExpGenerator(true);
+                    const bayesianExperimentTypeObj = { experimentType: "bayesian", numOfRuns: 500 };
+                    setExperimentTypeObj(bayesianExperimentTypeObj);
+                    generatorFunction(experimentationKey,bayesianExperimentTypeObj );
+                    
+          
                   }}
                   className={`mt-2 ${"bg-gradient-airways"} p-2 rounded-sm hover:brightness-125 text-white`}
                 >
@@ -150,9 +208,10 @@ export default function ExperimentGenerator({
 
                 <button
                   onClick={async () => {
+                    const frequentistExperimentTypeObj = { experimentType: "frequentist", numOfRuns: 10000 };
                     setExperimentTypeObj({ experimentType: "frequentist", numOfRuns: 10000 });
+                    generatorFunction(experimentationKey,frequentistExperimentTypeObj );
 
-                    setExpGenerator(true);
                   }}
                   className={`mt-2 ${"bg-gradient-experimentation"} p-2 rounded-sm hover:brightness-125 text-white`}
                 >
