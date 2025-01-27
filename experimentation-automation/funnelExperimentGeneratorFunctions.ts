@@ -6,43 +6,47 @@ const waitTime = 0.5;
 
 const probablityExperimentTypeStoreHeader = {
   ["bayesian"]: {
-    ["Final Hours!"]: {
+    ["New Items"]: {
+      //control
+      metric1: 60,
+      metric2: 50,
+      metric3: 40,
+      metric4: 30,
+    },
+    ["Sale"]: {
+      // winner
       metric1: 70,
       metric2: 60,
       metric3: 50,
-      metric4: 20,
+      metric4: 40,
     },
-    ["Sale"]: {
-      metric1: 70,
-      metric2: 60,
-      metric3: 60,
-      metric4: 25,
-    },
-    ["New Items"]: { //control
-      metric1: 70,
-      metric2: 60,
+    ["Final Hours!"]: {
+      metric1: 50,
+      metric2: 40,
       metric3: 30,
       metric4: 20,
     },
   },
   ["frequentist"]: {
-    ["Final Hours!"]: {
-      metric1: 70,
-      metric2: 60,
-      metric3: 60,
-      metric4: 20,
+    ["New Items"]: {
+      //control
+      metric1: 66,
+      metric2: 56,
+      metric3: 46,
+      metric4: 36,
     },
     ["Sale"]: {
+      // winner
       metric1: 70,
       metric2: 60,
       metric3: 50,
-      metric4: 25,
+      metric4: 40,
     },
-    ["New Items"]: {
-      metric1: 70,
-      metric2: 60,
-      metric3: 30,
-      metric4: 20,
+    ["Final Hours!"]: {
+      metric1: 64,
+      metric2: 54,
+      metric3: 44,
+      metric4: 34,
     },
   },
 };
@@ -50,6 +54,7 @@ const probablityExperimentTypeStoreHeader = {
 const probablityExperimentTypeShortenCollection = {
   ["bayesian"]: {
     ["old-long-collections-page"]: {
+      //winner
       metric1: 70,
       metric2: 60,
       metric3: 30,
@@ -62,14 +67,15 @@ const probablityExperimentTypeShortenCollection = {
   },
   ["frequentist"]: {
     ["old-long-collections-page"]: {
-      metric1: 70,
-      metric2: 60,
-      metric3: 60,
+      //winner
+      metric1: 50,
+      metric2: 40,
+      metric3: 30,
     },
     ["new-shorten-collections-page"]: {
-      metric1: 70,
-      metric2: 60,
-      metric3: 50,
+      metric1: 47,
+      metric2: 37,
+      metric3: 27,
     },
   },
 };
