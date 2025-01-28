@@ -132,7 +132,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               <p className="pb-4 font-sohne">Total:</p>
               <p className="pb-4 font-sohne">${totalCost.toFixed(2)}</p>
             </div>
-            <SheetTrigger onClick={isLoggedIn ? checkOut : null} asChild>
+            <SheetTrigger onClick={isLoggedIn ? checkOut : null} asChild className="shopping-cart-trigger">
               <Button
                 onClick={isLoggedIn ? checkOutTracking : null}
                 className={`w-full ${

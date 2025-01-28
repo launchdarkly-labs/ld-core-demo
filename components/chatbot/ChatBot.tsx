@@ -9,15 +9,20 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
-import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
+import { PERSONA_ROLE_DEVELOPER, COHERE, ANTHROPIC, META, DEFAULT_AI_MODEL } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+
+interface Message {
+  role: string;
+  content: string;
+  id: string;
+}
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const startArray: object[] = [];
-  const [messages, setMessages] = useState(startArray);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
@@ -29,22 +34,22 @@ export default function Chatbot() {
   const { userObject } = useContext(LoginContext);
   const { logLDMetricSent } = useContext(LiveLogsContext);
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: any): void => {
     setInput(e.target.value);
   };
   
 
-  async function submitQuery() {
+  async function submitQuery(): Promise<void> {
     const userInput = input;
     setInput("");
     setIsLoading(true);
-    const userMessage = {
+    const userMessage: Message = {
       role: "user",
       content: userInput,
       id: uuidv4().slice(0, 4),
     };
 
-    const loadingMessage = {
+    const loadingMessage: Message = {
       role: "loader",
       content: "loading",
       id: uuidv4().slice(0, 4),
@@ -57,7 +62,16 @@ export default function Chatbot() {
       body: aiNewModelChatbotFlag?.messages[0]?.content,
     });
 
-    const data = await response.json();
+    const data: {
+      generation: string;
+      generations: [{ text: string }];
+      completion: string;
+      stop: string;
+      type: string;
+      generation_token_count: number;
+      prompt_token_count: number;
+      prompt: string;
+    } = await response.json();
 
     let aiAnswer: string;
 
@@ -69,7 +83,7 @@ export default function Chatbot() {
       aiAnswer = data?.completion; //claude
     }
 
-    let assistantMessage = {
+    let assistantMessage: Message = {
       role: "assistant",
       content: aiAnswer,
       id: uuidv4().slice(0, 4),
@@ -87,7 +101,7 @@ export default function Chatbot() {
     setIsLoading(false);
   }
 
-  const surveyResponseNotification = (surveyResponse: string) => {
+  const surveyResponseNotification = (surveyResponse: string): void => {
     client?.track(surveyResponse, client.getContext());
     logLDMetricSent(surveyResponse)
     client?.flush();
@@ -155,7 +169,7 @@ export default function Chatbot() {
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.name?.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(ANTHROPIC)
                           ? "!text-anthropicColor"
                           : ""
                       }

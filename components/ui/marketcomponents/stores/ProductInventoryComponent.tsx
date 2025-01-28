@@ -21,11 +21,12 @@ import {
 } from "../../table";
 
 import { motion } from "framer-motion";
-
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import galaxyMarketLogo from '@/public/market.png'
-import { InventoryItem } from "@/utils/typesInterface";
+import galaxyMarketLogo from "@/public/market.png";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
+import type { AddToCartFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 const ProductInventoryComponent = ({
@@ -33,26 +34,30 @@ const ProductInventoryComponent = ({
   open,
   addToCart,
   sheetTitle,
-  tableCaption,
   inventory,
   mainImg,
   isVisibleStoreHeaders,
   headerLabel,
 }: {
-  setOpen: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean;
-  addToCart: any;
+  addToCart: AddToCartFunction;
   sheetTitle?: string;
   tableCaption?: string;
-  inventory: any;
-  mainImg: any;
+  inventory: InventoryItem[];
+  mainImg: { imgSrc: string; alt: string };
   isVisibleStoreHeaders?: boolean;
   headerLabel?: string;
 }) => {
   const LDClient = useLDClient();
+  const releaseNewShortenCollectionsPage:string = useFlags()[
+    "release-new-shorten-collections-page"
+  ]?.includes("new-shorten-collections-page");
   const { toast } = useToast();
   const { logLDMetricSent } = useContext(LiveLogsContext);
-  async function storeOpened() {
+  const [showAllItems, setShowAllItems] = useState<boolean>(false);
+
+  async function storeOpened():Promise<void> {
     LDClient?.track("store-accessed", LDClient.getContext(), 1);
     logLDMetricSent("store-accessed");
   }
@@ -62,7 +67,7 @@ const ProductInventoryComponent = ({
       <SheetTrigger
         asChild
         onClick={() => {
-          isVisibleStoreHeaders ? storeOpened() : null;
+          storeOpened();
         }}
       >
         <div className="relative flex items-center justify-center">
@@ -76,10 +81,12 @@ const ProductInventoryComponent = ({
                 damping: 20,
                 duration: 1.5,
               }}
-              className="flex justify-center absolute top-[10px] right-[20px] z-10 bg-[#EBFF38] px-4 pt-2 pb-[2rem] h-auto marketplace-item-banner-cutout"
+              className="flex justify-center absolute top-[10px] right-[20px] z-[1] bg-[#EBFF38] px-4 pt-2 pb-[2rem] h-auto marketplace-item-banner-cutout"
             >
               <p className="flex font-sohne uppercase text-xs text-black text-center flex-col justify-around mb-1.5 w-full">
-                {headerLabel?.split("").map((char, index) =>
+                {headerLabel
+                  ?.split("")
+                  .map((char, index) =>
                     char === " " ? <span key={index}>&nbsp;</span> : <span key={index}>{char}</span>
                   )}
               </p>
@@ -100,7 +107,12 @@ const ProductInventoryComponent = ({
           </SheetTitle>
         </SheetHeader>
         <Table className="">
-          <TableCaption className="bg-gradient-experimentation text-transparent bg-clip-text font-bold text-base">{tableCaption}</TableCaption>
+          <TableCaption
+            className="bg-gradient-experimentation text-transparent bg-clip-text font-bold text-base cursor-pointer hover:brightness-125"
+            onClick={() => setShowAllItems((prev) => !prev)}
+          >
+            {showAllItems === false ? "Show More" : "Show Less"}
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Image</TableHead>
@@ -110,36 +122,46 @@ const ProductInventoryComponent = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {inventory.map((item: InventoryItem, index: number) => (
-              <TableRow key={`${item.id}-${index}`}>
-                <TableCell>
-                  {<img src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`} alt={item.item} className="h-10 w-10 sm:h-20 sm:w-20" />}
-                </TableCell>
-                <TableCell>{item.item}</TableCell>
-                <TableCell>${item.cost}</TableCell>
-                <TableCell>
-                  <div>
-                    <Button
-                      className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto"
-                      onClick={() => {
-                        toast({
-                          title: `${item.item} has been added to your cart!`,
-                          wrapperStyle: "bg-gradient-experimentation text-white !text-medium font-bold font-sohne"
-                        });
-                        addToCart(item);
-                      }}
-                    >
-                      Add To Cart
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {inventory?.map((item: InventoryItem, index: number) => {
+              if (index > 2 && showAllItems === false && releaseNewShortenCollectionsPage)
+                return null;
+              return (
+                <TableRow key={`${item.id}-${index}`}>
+                  <TableCell>
+                    {
+                      <img
+                        src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`}
+                        alt={item.item}
+                        className="h-10 w-10 sm:h-20 sm:w-20"
+                      />
+                    }
+                  </TableCell>
+                  <TableCell>{item.item}</TableCell>
+                  <TableCell>${item.cost}</TableCell>
+                  <TableCell>
+                    <div>
+                      <Button
+                        className="rounded-none bg-gradient-experimentation font-sohne hover:brightness-[120%] h-auto"
+                        onClick={() => {
+                          toast({
+                            title: `${item.item} has been added to your cart!`,
+                            wrapperStyle:
+                              "bg-gradient-experimentation text-white !text-medium font-bold font-sohne",
+                          });
+                          addToCart(item);
+                        }}
+                      >
+                        Add To Cart
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
 
-        <SheetFooter>
-        </SheetFooter>
+        <SheetFooter></SheetFooter>
       </SheetContent>
     </Sheet>
   );
