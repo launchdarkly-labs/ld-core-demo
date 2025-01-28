@@ -54,28 +54,29 @@ const probablityExperimentTypeStoreHeader = {
 const probablityExperimentTypeShortenCollection = {
   ["bayesian"]: {
     ["old-long-collections-page"]: {
+      metric1: 50,
+      metric2: 40,
+      metric3: 20,
+    },
+    ["new-shorten-collections-page"]: {
       //winner
       metric1: 70,
       metric2: 60,
       metric3: 30,
     },
-    ["new-shorten-collections-page"]: {
-      metric1: 50,
-      metric2: 40,
-      metric3: 20,
-    },
   },
   ["frequentist"]: {
     ["old-long-collections-page"]: {
+
+      metric1: 47,
+      metric2: 37,
+      metric3: 27,
+    },
+    ["new-shorten-collections-page"]: {
       //winner
       metric1: 50,
       metric2: 40,
       metric3: 30,
-    },
-    ["new-shorten-collections-page"]: {
-      metric1: 47,
-      metric2: 37,
-      metric3: 27,
     },
   },
 };
@@ -99,7 +100,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const flagVariation: string = client?.variation("storeAttentionCallout", "New Items");
-    
+
     if (flagVariation === "Final Hours!") {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
     }
