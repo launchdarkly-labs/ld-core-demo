@@ -107,7 +107,7 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
-    if (cartSuggestedItems) {
+    if (cartSuggestedItems) { //winner
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
       if (
@@ -164,7 +164,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
       "old-search-engine"
     );
     if (newSearchEngineFeatureFlag?.includes("new-search-engine")) {
-      totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
+      totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
       let probablity = Math.random() * 100;
       if (probablity < probablityExperimentTypeSearchEngine[experimentType as keyof typeof probablityExperimentTypeSearchEngine][
         "trueProbablity"
@@ -172,8 +172,8 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
         client?.track("search-engine-add-to-cart", client.getContext());
       }
       client?.track("in-cart-total-price", client.getContext(), totalPrice);
-    } else {
-      totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
+    } else { //winner is old search engine
+      totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
       let probablity = Math.random() * 100;
       if (probablity < probablityExperimentTypeSearchEngine[experimentType as keyof typeof probablityExperimentTypeSearchEngine][
         "falseProbablity"

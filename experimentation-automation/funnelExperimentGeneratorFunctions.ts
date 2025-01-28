@@ -67,7 +67,6 @@ const probablityExperimentTypeShortenCollection = {
   },
   ["frequentist"]: {
     ["old-long-collections-page"]: {
-
       metric1: 47,
       metric2: 37,
       metric3: 27,
@@ -100,14 +99,14 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const flagVariation: string = client?.variation("storeAttentionCallout", "New Items");
-
-    if (flagVariation === "Final Hours!") {
-      totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
-    }
-    if (flagVariation === "Sale") {
+    if (flagVariation === "New Items") {
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
     }
-    if (flagVariation === "New Items") {
+
+    if (flagVariation === "Sale") { //winner
+      totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
+    }
+    if (flagVariation === "Final Hours!") {
       totalPrice = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
     }
 
