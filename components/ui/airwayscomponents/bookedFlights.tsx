@@ -9,7 +9,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BounceLoader } from "react-spinners";
 import { DEFAULT_AI_TRAVEL_PROMPT } from "@/utils/constants";
-import c from "@/pages/_app";
+import { BookedTrips } from "@/utils/typescriptTypesInterfaceIndustry";
 
 export default function BookedFlights() {
   const { bookedTrips, setBookedTrips, cancelTrip } = useContext(TripsContext);
@@ -23,7 +23,7 @@ export default function BookedFlights() {
   const [toAirport, setToAirport] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function travelLocationsInfo(start: any, end: any) {
+  async function travelLocationsInfo(start: string, end: string) {
     try {
       const prompt: string = `Provide estimated flight time details for traveling between these locations. Additionally provide example clothing to wear upon arrival at the destination. Finally, provide 1 sightseeing recommendation at the destination location. The source is ${start} and the end is ${end}. Limit your responses to an estimated 50 characters. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration.`;
 
@@ -48,7 +48,7 @@ export default function BookedFlights() {
     }
   }
 
-  async function planeDetails(airplane: any) {
+  async function planeDetails(airplane: string) {
     try {
       const prompt: string = `Provide me a 40 character informational description for the ${airplane} indicated at the end of this. The advertisement should make the customer excited to fly on it. Provide details on the manufacturer and size of the aircraft, and typical cruising altitude and speed. Do not show anything that would indicate a prompt response.`;
 
@@ -68,7 +68,6 @@ export default function BookedFlights() {
     } catch (error) {
       console.error("An error occurred:", error);
     } finally {
-      setToAirport("");
       setLoading(false);
     }
   }
@@ -94,7 +93,6 @@ export default function BookedFlights() {
     } catch (error) {
       console.error("An error occurred:", error);
     } finally {
-      setToAirport("");
       setLoading(false);
     }
   }
@@ -169,17 +167,7 @@ export default function BookedFlights() {
           <AnimatePresence>
             {bookedTrips.map(
               (
-                trip: {
-                  id: number;
-                  from: string;
-                  fromCity: string;
-                  toCity: string;
-                  to: string;
-                  type: string;
-                  airplane: string;
-                  depart: string;
-                  flightNumber: string;
-                },
+                trip: BookedTrips,
                 index: number
               ) => (
                 <motion.div

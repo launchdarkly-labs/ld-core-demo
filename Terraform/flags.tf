@@ -367,4 +367,64 @@ resource "launchdarkly_feature_flag" "cartSuggestedItems" {
   ]
 }
 
+resource "launchdarkly_feature_flag" "release-new-shorten-collections-page" {
+  project_key = var.project_key
+  key         = "release-new-shorten-collections-page"
+  name        = "Release New Shorten Collections Page"
+  description = "In Marketplace, after you click on a collection, you would now see a New Shorten Collections Page."
+
+  variation_type = "string"
+  variations {
+    value = "old-long-collections-page"
+    name  = "Old Long Collections Page"
+  }
+  variations {
+    value = "new-shorten-collections-page"
+    name  = "New Shorten Collections Page"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 0
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "experiment"
+  ]
+}
+
+resource "launchdarkly_feature_flag" "release-new-search-engine" {
+  project_key = var.project_key
+  key         = "release-new-search-engine"
+  name        = "Release New Search Engine"
+  description = "In Marketplace, you get a new search engine that has an add to cart button."
+
+  variation_type = "string"
+  variations {
+    value = "old-search-engine"
+    name  = "Old Search Engine"
+  }
+  variations {
+    value = "new-search-engine"
+    name  = "New Search Engine"
+  }
+
+  defaults {
+    on_variation  = 0
+    off_variation = 0
+  }
+
+  client_side_availability {
+    using_environment_id = true
+  }
+
+  tags = [
+    "experiment"
+  ]
+}
+
 

@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { motion } from "framer-motion";
-import LoginContext from "@/utils/contexts/login";
 import { LoginComponent } from "@/components/ui/logincomponent";
 import HomePageInfoCard from "./ui/HomePageInfoCard";
 import HomePageCardWrapper from "./ui/HomePageCardWrapper";
