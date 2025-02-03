@@ -50,14 +50,14 @@ resource "launchdarkly_metric" "customer-checkout" {
   tags           = ["checkout"]
 }
 
-resource "launchdarkly_metric" "stock-api-latency" {
+resource "launchdarkly_metric" "stocks-api-latency" {
   project_key    = var.project_key
-  key            = "stock-api-latency"
+  key            = "stocks-api-latency"
   name           = "Stocks API Latency"
   description    = "Checking API Latency for Stocks"
   kind           = "custom"
   is_numeric     = true
-  event_key      = "stock-api-latency"
+  event_key      = "stocks-api-latency"
   success_criteria = "LowerThanBaseline"
   randomization_units = ["audience"]
   unit           = "ms"

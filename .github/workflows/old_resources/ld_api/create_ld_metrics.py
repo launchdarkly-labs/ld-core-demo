@@ -156,10 +156,10 @@ def createStockAPILatencyMetric(ld_api_key, createMetricURL):
     
     metricPayload = {
         "name": "Stock API Latency",
-        "eventKey": "stock-api-latency",
+        "eventKey": "stocks-api-latency",
         "Description": "Checking API Latency for Stocks",
         "isNumeric": True,
-        "key": "stock-api-latency",
+        "key": "stocks-api-latency",
         "kind": "custom",
         "successCriteria": "LowerThanBaseline",
         "randomizationUnits": ["audience"],

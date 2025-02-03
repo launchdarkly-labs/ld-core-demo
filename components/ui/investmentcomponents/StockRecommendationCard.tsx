@@ -91,7 +91,7 @@ const StockRecommendationCard = () => {
               await client.flush();
             }
             dynamicValue1 = Math.floor(Math.random() * (21)) + 600;
-            await client.track("stock-api-latency", undefined, dynamicValue1);
+            await client.track("stocks-api-latency", undefined, dynamicValue1);
             dynamicValue1 = 0;
             await client.flush();
           } else {
@@ -101,7 +101,7 @@ const StockRecommendationCard = () => {
               await client.flush();
             }
             dynamicValue2 = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
-            await client.track("stock-api-latency", undefined, dynamicValue2);
+            await client.track("stocks-api-latency", undefined, dynamicValue2);
             dynamicValue2 = 0;
             await client.flush();
           }

@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { BounceLoader } from "react-spinners";
+import { useAnimation } from "framer-motion";
 import {
   Sheet,
   SheetClose,
@@ -37,6 +38,15 @@ const WealthManagementSheet = ({
     hidden: { scaleY: 0, originY: 1 },
     visible: { scaleY: 1, originY: 1 },
     exit: { x: "100%" },
+  };
+
+  const controls = useAnimation();
+
+  const shakeAnimation = {
+    shake: {
+      x: [-10, 10, -10, 10, -10, 10, 0],
+      transition: { duration: 0.5 },
+    },
   };
 
   return (
@@ -74,7 +84,9 @@ const WealthManagementSheet = ({
           <div className={`w-full h-full font-sohne rounded-2xl`}>
             <div className="p-6 bg-gradient-bank  w-full rounded-2xl shadow-xl text-black">
               <div className="justify-center xl:justify-start">
-                <p className="font-sohne mb-6 text-[24px] text-white ">Wealth Management</p>
+                <p className="font-sohne mb-6 text-[24px] text-white ">
+                  Wealth Management
+                </p>
 
                 <div className="flex flex-col lg:flex-row gap-y-4 sm:gap-x-4 accounttext">
                   <div className="px-6 pt-6 w-full lg:w-1/3  bg-white rounded-2xl">
@@ -153,7 +165,64 @@ const WealthManagementSheet = ({
                       </div>
                     </div>
 
-                    <div className="pt-40">
+                    <motion.button
+                      className="bg-blue-500 text-white shadow-md rounded-2xl font-sohnelight w-1/2 transition-all duration-500 flex justify-center items-center px-4 py-2 mt-4"
+                      onClick={async (e) => {
+                        const button = e.currentTarget;
+                        button.textContent = "Error";
+                        button.classList.add("bg-red-500"); 
+                        await controls.start("shake"); 
+                        throw new Error("Error Loading Brokerage Account Details. API failed to respond");
+                        setTimeout(() => {
+                          button.textContent = "View Account Details";
+                          button.classList.remove("bg-red-500");
+                        }, 2000);
+                      }}
+                      animate={controls}
+                      initial={false} // Ensure the initial state is not applied
+                      variants={shakeAnimation}
+                    >
+                      View Account Details
+                    </motion.button>
+
+                    <div className="space-y-2 mt-4">
+                      <div className="">
+                        <p className="font-sohnelight text-base">
+                          <strong className="font-sohne">
+                            {" "}
+                            Brokerage Account{" "}
+                          </strong>
+                          (***7553)
+                        </p>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      className="bg-blue-500 text-white shadow-md rounded-2xl font-sohnelight w-1/2 transition-all duration-500 flex justify-center items-center px-4 py-2 mt-4"
+                      onClick={async (e) => {
+                        const button = e.currentTarget;
+                        button.textContent = "Error";
+                        button.classList.add("bg-red-500"); 
+                        try {
+                          await controls.start("shake"); 
+                          throw new Error("Error Loading Brokerage Account Details. API failed to respond");
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setTimeout(() => {
+                            button.textContent = "View Account Details";
+                            button.classList.remove("bg-red-500");
+                          }, 2000);
+                        }
+                      }}
+                      animate={controls}
+                      initial={false} // Ensure the initial state is not applied
+                      variants={shakeAnimation}
+                    >
+                      View Account Details
+                    </motion.button>
+
+                    {/* <div className="pt-40">
                       <div className="text-base font-sohnelight pb-2 text-zinc-500">
                         Total investment balance:{" "}
                       </div>
@@ -163,7 +232,7 @@ const WealthManagementSheet = ({
                       <div className=" text-sm font-sohnelight text-zinc-500">
                         Over lifetime of account
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="p-4  w-full lg:w-1/3 bg-white rounded-2xl">
                     <StocksComponent />

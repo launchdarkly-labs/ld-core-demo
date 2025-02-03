@@ -47,7 +47,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const router = useRouter();
 
-  const { financialDBMigration } = useFlags();
+  const { financialDBMigration, togglebankDBGuardedRelease } = useFlags();
 
   async function getTransactions() {
     const response = await fetch("/api/checkingdata");
@@ -76,6 +76,10 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   useEffect(() => {
     getTransactions();
   }, [financialDBMigration]);
+
+  useEffect(() => {
+    getTransactions();
+  }, [togglebankDBGuardedRelease]);
 
   return (
     <Sheet>
@@ -113,7 +117,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
           <SheetTitle className="font-sohne text-2xl">
             <div className="flex-col">
               <div className="flex">Checking Account</div>
-              {financialDBMigration === "complete" ? (
+              {financialDBMigration === "complete" || togglebankDBGuardedRelease ? (
                 <div className="flex text-center items-center justify-center my-6 bg-green-200 text-zinc-500 font-sohnebuch font-extralight text-base py-2">
                   Retrieving data from DynamoDB
                 </div>
