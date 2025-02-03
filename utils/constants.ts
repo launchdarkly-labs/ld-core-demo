@@ -365,6 +365,8 @@ export const DEFAULT_AI_TRAVEL_PROMPT = {
   ],
 };
 
+
+
 export const CSNAV_ITEMS = {
   arrow: arrowIconCSNAV,
   codeexamples: {
@@ -390,7 +392,7 @@ export const CSNAV_ITEMS = {
     iconHover: releaseIconHover,
     type: "usecase",
     link: "/bank",
-    title: "Automate Releases",
+    title: "ToggleBank",
   },
   monitor: {
     icon: monitorIcon,
@@ -399,7 +401,7 @@ export const CSNAV_ITEMS = {
     iconHover: monitorIconHover,
     type: "usecase",
     link: "/investment",
-    title: "De-Risk Releases",
+    title: "FrontierCapital",
   },
   ai: {
     icon: aiIcon,
@@ -408,7 +410,7 @@ export const CSNAV_ITEMS = {
     iconHover: aiIconHover,
     type: "usecase",
     link: "/airways",
-    title: "Accelerate AI",
+    title: "LaunchAirways",
   },
   experiment: {
     icon: experimentIcon,
@@ -417,7 +419,7 @@ export const CSNAV_ITEMS = {
     iconHover: experimentIconHover,
     type: "usecase",
     link: "/marketplace",
-    title: "Optimize Experiences",
+    title: "GalaxyMarketplace",
   },
 };
 
