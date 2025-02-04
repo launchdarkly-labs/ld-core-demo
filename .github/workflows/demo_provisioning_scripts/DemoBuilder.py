@@ -253,12 +253,11 @@ class DemoBuilder:
     # Create all the experiments    
     
     def create_and_run_experiments(self):
-        self.run_ecommerce_funnel_experiment()
-        self.run_ecommerce_feature_experiment()
+        self.run_ecommerce_collection_banner_funnel_experiment()
+        self.run_ecommerce_upsell_component_feature_experiment()
         self.run_togglebank_ai_config_experiment()
         
-        
-    def run_ecommerce_funnel_experiment(self):
+    def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
             print("Error: Metric groups not created")
             return
@@ -270,12 +269,12 @@ class DemoBuilder:
             "Turn on flag for experiment",
         )
         print(" - 09 - Funnel Experiment: Promotion Banner ")
-        self.create_ecommerce_funnel_experiment()
+        self.create_ecommerce_collection_banner_funnel_experiment()
         self.ldproject.start_exp_iteration("grow-engagement-with-promotion-banner", "production")
         print("Done")
         self.experiment_created = True
         
-    def create_ecommerce_funnel_experiment(self):
+    def create_ecommerce_collection_banner_funnel_experiment(self):
         metrics = [
             self.ldproject.exp_metric("store-purchases", True),
             self.ldproject.exp_metric("in-cart-total-price", False)
@@ -290,7 +289,7 @@ class DemoBuilder:
             primary_key="store-purchases",
         )   
         
-    def run_ecommerce_feature_experiment(self):
+    def run_ecommerce_upsell_component_feature_experiment(self):
         if not self.metrics_created:
             print("Error: Metric not created")
             return
@@ -302,12 +301,12 @@ class DemoBuilder:
             "Turn on flag for experiment",
         )
         print(" - 10 - Feature Experiment: Suggested Items Carousel")
-        self.create_ecommerce_feature_experiment()
+        self.create_ecommerce_upsell_component_feature_experiment()
         self.ldproject.start_exp_iteration("upsell-tracking-experiment", "production")
         print("Done")
         self.experiment_created = True
         
-    def create_ecommerce_feature_experiment(self):
+    def create_ecommerce_upsell_component_feature_experiment(self):
         metrics = [
             self.ldproject.exp_metric("upsell-tracking", False),
             self.ldproject.exp_metric("in-cart-total-price", False)
