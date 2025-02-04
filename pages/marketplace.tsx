@@ -46,8 +46,6 @@ const badgesText = [
 ];
 
 export default function Marketplace() {
-  const [headerLabel, setHeaderLabel] = useState<string>("");
-  const [products, setProducts] = useState<InventoryItem[]>([]);
   const [openVRGalaxy, setOpenVRGalaxy] = useState(false);
   const [openMacroCenter, setOpenMacroCenter] = useState(false);
   const [openBoominBox, setOpenBoominBox] = useState(false);
@@ -78,11 +76,6 @@ export default function Marketplace() {
     LDClient?.track("item-accessed", LDClient.getContext(), 1);
     logLDMetricSent("item-accessed");
   };
-
-
-  useEffect(() => {
-    setHeaderLabel(storeAttentionCallout);
-  }, [storeAttentionCallout]);
 
   const handleOnSelect = (item: InventoryItem) => {
     let openShoppingCart: HTMLElement = document?.querySelector(
