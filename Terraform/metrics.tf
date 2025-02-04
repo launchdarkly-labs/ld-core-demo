@@ -50,14 +50,14 @@ resource "launchdarkly_metric" "customer-checkout" {
   tags           = ["checkout"]
 }
 
-resource "launchdarkly_metric" "stock-api-latency" {
+resource "launchdarkly_metric" "stocks-api-latency" {
   project_key    = var.project_key
-  key            = "stock-api-latency"
+  key            = "stocks-api-latency"
   name           = "Stocks API Latency"
   description    = "Checking API Latency for Stocks"
   kind           = "custom"
   is_numeric     = true
-  event_key      = "stock-api-latency"
+  event_key      = "stocks-api-latency"
   success_criteria = "LowerThanBaseline"
   randomization_units = ["audience"]
   unit           = "ms"
@@ -126,6 +126,19 @@ resource "launchdarkly_metric" "in-cart-total-price" {
   is_numeric     = true
   unit           = "$"
   event_key      = "in-cart-total-price"
+  success_criteria = "HigherThanBaseline"
+  randomization_units = ["audience", "user"]
+  tags           = ["experiment"]
+}
+
+resource "launchdarkly_metric" "search-engine-add-to-cart" {
+  project_key    = var.project_key
+  key            = "search-engine-add-to-cart"
+  name           = "Search Engine Add to Cart"
+  description    = "Track to see if Add to Cart button in Search Engine"
+  kind           = "custom"
+  is_numeric     = false
+  event_key      = "search-engine-add-to-cart"
   success_criteria = "HigherThanBaseline"
   randomization_units = ["audience", "user"]
   tags           = ["experiment"]

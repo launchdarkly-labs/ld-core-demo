@@ -1,6 +1,11 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState, useRef, useContext, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import LoginContext from "@/utils/contexts/login";
@@ -9,11 +14,23 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { BatteryCharging } from "lucide-react";
-import { PERSONA_ROLE_DEVELOPER, COHERE, CLAUDE, META, DEFAULT_AI_MODEL } from "@/utils/constants";
+import {
+  PERSONA_ROLE_DEVELOPER,
+  COHERE,
+  CLAUDE,
+  META,
+  DEFAULT_AI_MODEL,
+} from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
+type ApiResponse = {
+  response: string;
+  modelName: string;
+  enabled: boolean;
+};
+
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
-export default function Chatbot() {
+export default function Chatbot({ vertical }: { vertical: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const startArray: object[] = [];
@@ -21,18 +38,68 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
-  const aiNewModelChatbotFlag =
-    useFlags()["ai-config--ai-new-model-chatbot"] == undefined
-      ? DEFAULT_AI_MODEL
-      : useFlags()["ai-config--ai-new-model-chatbot"];
+  let aiConfigKey = "";
+  let aiNewModelChatbotFlag;
+  const cardRef = useRef<HTMLDivElement>(null);
+
+
+  async function sendChatbotFeedback(feedback: string) {
+    const response = await fetch("/api/chatbotfeedback", {
+      method: "POST",
+      body: JSON.stringify({
+        feedback,
+        aiConfigKey,
+      }),
+    });
+    const data = await response.json();
+  }
+
+
+  if (vertical === "airways") {
+    aiConfigKey = "ai-config--ai-new-model-chatbot";
+    aiNewModelChatbotFlag =
+      useFlags()["ai-config--ai-new-model-chatbot"] == undefined
+        ? DEFAULT_AI_MODEL
+        : useFlags()["ai-config--ai-new-model-chatbot"];
+  }
+  if (vertical === "banking") {
+    aiConfigKey = "ai-config--togglebot";
+    aiNewModelChatbotFlag =
+      useFlags()["ai-config--togglebot"] == undefined
+        ? DEFAULT_AI_MODEL
+        : useFlags()["ai-config--togglebot"];
+  }
+  
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const { userObject } = useContext(LoginContext);
   const { logLDMetricSent } = useContext(LiveLogsContext);
+  let apiResponse: ApiResponse = {
+    response: "",
+    modelName: "",
+    enabled: false,
+  };
 
   const handleInputChange = (e: any) => {
     setInput(e.target.value);
   };
-  
 
   async function submitQuery() {
     const userInput = input;
@@ -54,20 +121,17 @@ export default function Chatbot() {
 
     const response = await fetch("/api/chat", {
       method: "POST",
-      body: aiNewModelChatbotFlag?.messages[0]?.content,
+      body: JSON.stringify({
+        aiConfigKey,
+        userInput,
+      }),
     });
 
+    //Data includes {response: "", "modelName": ""}
     const data = await response.json();
+    apiResponse = data;
 
-    let aiAnswer: string;
-
-    if (data?.generation) {
-      aiAnswer = data?.generation; //llama
-    } else if (data?.generations?.length > 0) {
-      aiAnswer = data?.generations[0]?.text; //cohere
-    } else {
-      aiAnswer = data?.completion; //claude
-    }
+    let aiAnswer = data.response || "I'm sorry. Please try again.";
 
     let assistantMessage = {
       role: "assistant",
@@ -75,10 +139,16 @@ export default function Chatbot() {
       id: uuidv4().slice(0, 4),
     };
 
-    if (aiAnswer === undefined && !userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)) {
+    if (
+      aiAnswer === undefined &&
+      !userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)
+    ) {
       assistantMessage.content = "I'm sorry. Please try again.";
       setMessages([...messages, userMessage, assistantMessage]);
-    } else if (aiAnswer === undefined && userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)) {
+    } else if (
+      aiAnswer === undefined &&
+      userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)
+    ) {
       assistantMessage.content = data; //error message
       setMessages([...messages, userMessage, assistantMessage]);
     } else {
@@ -89,7 +159,9 @@ export default function Chatbot() {
 
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
-    logLDMetricSent(surveyResponse)
+
+    sendChatbotFeedback(surveyResponse);
+    logLDMetricSent(surveyResponse);
     client?.flush();
     toast({
       title: `Thank you for your response!`,
@@ -100,10 +172,8 @@ export default function Chatbot() {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiNewModelChatbotFlag?.model?.id?.includes(COHERE)) {
+    if (aiNewModelChatbotFlag?.model?.name?.includes("cohere")) {
       return "Cohere Command";
-    } else if (aiNewModelChatbotFlag?.model?.id?.includes(META)) {
-      return "Meta Llama";
     } else {
       return "Anthropic Claude";
     }
@@ -117,7 +187,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed sm:absolute bottom-4 right-4 z-10">
+      <div className="fixed bottom-4 right-4 z-10">
         <Button
           variant="ghost"
           size="icon"
@@ -136,16 +206,28 @@ export default function Chatbot() {
       </div>
 
       {isOpen && (
-        <div className="absolute inset-0 z-50 flex items-end justify-end p-4 sm:p-6 bottom-[50px]">
+        <div
+          ref={cardRef}
+          className="fixed bottom-16 right-4 z-50 flex items-end justify-end p-4 sm:p-6"
+        >
           <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
-                  <img src="/airline/launch-airways.svg" alt="Chatbot Avatar" />
+                  <img
+                    src={
+                      vertical === "airways"
+                        ? "/airline/launch-airways.svg"
+                        : "/banking/bankLogo.svg"
+                    }
+                    alt="Chatbot Avatar"
+                  />{" "}
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium leading-none">Chatbot Assistant</p>
+                  <p className="text-sm font-medium leading-none">
+                    Chatbot Assistant
+                  </p>
                   <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
@@ -159,16 +241,15 @@ export default function Chatbot() {
                           ? "!text-anthropicColor"
                           : ""
                       }
-                             ${
-                               aiNewModelChatbotFlag?.model?.name?.includes(META)
-                                 ? "!text-metaColor"
-                                 : ""
-                             }
                       `}
                     >
                       {aiModelName()}
                     </span>{" "}
-                    with <span className="text-amazonColor font-bold"> Amazon Bedrock </span>
+                    with{" "}
+                    <span className="text-amazonColor font-bold">
+                      {" "}
+                      Amazon Bedrock{" "}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -221,7 +302,10 @@ export default function Chatbot() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="h-[400px] overflow-y-auto" ref={chatContentRef}>
+            <CardContent
+              className="h-[400px] overflow-y-auto"
+              ref={chatContentRef}
+            >
               <div className="space-y-4">
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
@@ -401,25 +485,3 @@ function FrownIcon(props) {
     </svg>
   );
 }
-
-// function MehIcon(props) {
-//   return (
-//     <svg
-//       {...props}
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       stroke="currentColor"
-//       strokeWidth="2"
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//     >
-//       <circle cx="12" cy="12" r="10" />
-//       <line x1="8" x2="16" y1="15" y2="15" />
-//       <line x1="9" x2="9.01" y1="9" y2="9" />
-//       <line x1="15" x2="15.01" y1="9" y2="9" />
-//     </svg>
-//   );
-// }

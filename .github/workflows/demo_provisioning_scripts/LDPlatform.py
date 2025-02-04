@@ -150,6 +150,7 @@ class LDPlatform:
         tags=[],
         migration_stages=0,
         prerequisites=[],
+        temporary=False,
     ):
         if self.flag_exists(flag_key):
             return
@@ -162,6 +163,7 @@ class LDPlatform:
                 "usingEnvironmentId": True,
                 "usingMobileKey": True,
             },
+            "temporary": temporary,
         }
 
         if len(variations) > 0:
@@ -201,6 +203,28 @@ class LDPlatform:
         if "message" in data:
             print("Error creating flag: " + data["message"])
         return response
+    
+    ##################################################
+    # Update a flag
+    ##################################################
+    def update_flag_client_side_availability(self, flag_key):
+
+        payload = {
+            "instructions": [ 
+                { 
+                    "kind": "turnOnClientSideAvailability", "value": "usingEnvironmentId" 
+                } 
+            ]
+        }
+        
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+        }
+                                             
+        url = "https://app.launchdarkly.com/api/v2/flags/" + self.project_key + "/" + flag_key
+        res = self.getrequest("PATCH", url, headers=headers, json=payload)        
+        return res
 
     ##################################################
     # Copy a flag
@@ -262,7 +286,6 @@ class LDPlatform:
             headers=headers,
         )
         data = json.loads(response.text)
-        print(response.text)
         if "message" in data:
             print("Error creating AI Config: " + data["message"])
         return response
@@ -272,13 +295,14 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_config_version_name, model, messages):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages):
         
         payload = {
             "key": ai_config_version_key,
             "name": ai_config_version_name,
             "messages": messages,
-            "model": model
+            "model": model,
+            "modelConfigKey": ai_model_config_key
         }
 
         headers = {
@@ -615,6 +639,14 @@ class LDPlatform:
         return response
 
     ##################################################
+    # Create a holdout
+    ##################################################
+
+    ##################################################
+    # Create a layer
+    ##################################################
+
+    ##################################################
     # Create a release pipeline
     ##################################################
     def create_release_pipeline(self, pipeline_key, pipeline_name):
@@ -692,18 +724,24 @@ class LDPlatform:
             print("Error creating release pipeline: " + data["message"])
         return response
 
-    def create_shortcut(self):
+    def create_shortcut(self, name, key, icon, tags, env_key, sort_by="name"):
         payload = {
-            "name": "another",
-            "key": "another",
-            "icon": "bolt",
+            "name": name,
+            "key": key,
+            "icon": icon,
             "type": "flags",
             "context": {
                 "projectKey": self.project_key,
-                "environmentKeys": ["production", "test"],
-                "selectedEnvironmentKey": "production",
+                "environmentKeys": ["production"],
+                "selectedEnvironmentKey": env_key,
             },
-            "filters": {"filter": {"tags": ["AI"]}},
+            "filters": {
+                "filter": {
+                    "tags": tags
+                    },
+                    "state": "live",
+                    "sort": sort_by
+                },
             "visibility": "me",
         }
         headers = {
@@ -735,7 +773,7 @@ class LDPlatform:
     def get_user_id(self, email):
         if email is None:
             return None
-
+        
         filter = "email:" + email
         if email == "":
             filter = "role:owner"
@@ -1029,11 +1067,16 @@ class LDPlatform:
         rollback=True,
         weight=50000,
         notify=True,
+        days=1,
     ):
         vars, defaults = self.get_flag_variation_values(flag_key)
 
         control_var = ""
         test_var = ""
+        stagesWindow = 17280000
+
+        if days == 7:
+            stagesWindow = 120960000
 
         for v in vars:
             if v["value"] == False:
@@ -1051,14 +1094,16 @@ class LDPlatform:
         headers = {
             "Authorization": self.api_key,
             "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
-            "LD-API-Version": "beta",
         }
         payload = {
             "comment": "",
             "environmentKey": env_key,
             "instructions": [
                 {
-                    "kind": "updateFallthroughWithMeasuredRollout",
+                    "kind": "turnFlagOn"
+                },
+                {
+                    "kind": "updateFallthroughWithMeasuredRolloutV2",
                     "testVariationId": test_var,
                     "controlVariationId": control_var,
                     "randomizationUnit": "user",
@@ -1066,6 +1111,131 @@ class LDPlatform:
                     "onProgression": {"notify": notify, "rollForward": True},
                     "monitoringWindowMilliseconds": timeout,
                     "rolloutWeight": weight,
+                    "stages": [
+                            {
+                                "rolloutWeight": 1000,
+                                "monitoringWindowMilliseconds": stagesWindow
+                            },
+                            {
+                                "rolloutWeight": 5000,
+                                "monitoringWindowMilliseconds": stagesWindow
+                            },
+                            {
+                                "rolloutWeight": 10000,
+                                "monitoringWindowMilliseconds": stagesWindow
+                            },
+                            {
+                                "rolloutWeight": 25000,
+                                "monitoringWindowMilliseconds": stagesWindow
+                            },
+                            {
+                                "rolloutWeight": 50000,
+                                "monitoringWindowMilliseconds": stagesWindow
+                            },         
+                    ]
+                }
+            ],
+        }
+        res = self.getrequest("PATCH", url, headers=headers, json=payload)
+        return res
+    
+    ##################################################
+    # Add a guarded rollout to a flag
+    ##################################################
+    def add_progressive_rollout(
+        self,
+        flag_key,
+        env_key,
+        timeout=604800000,
+        rollback=True,
+        weight=50000,
+        notify=True,
+    ):
+        vars, defaults = self.get_flag_variation_values(flag_key)
+
+        control_var = ""
+        end_var = ""
+
+        for v in vars:
+            if v["value"] == False:
+                control_var = v["id"]
+            else:
+                end_var = v["id"]
+
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+            + "?ignoreConflicts=true"
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+        }
+        payload = {
+            "comment": "",
+            "environmentKey": env_key,
+            "instructions": [
+                {
+                    "kind": "turnFlagOn"
+                },
+                {
+                    "kind": "updateFallthroughVariationOrRollout",
+                    "rolloutContextKind": "user",
+                    "progressiveRolloutConfiguration": {
+                        "controlVariationId": control_var,
+                        "endVariationId": end_var,
+                        "stages": [
+                            {
+                                "displayUnit": "day",
+                                "durationMs": timeout,
+                                "rollout": {
+                                    end_var: 1000,
+                                    control_var: 99000,
+                                }
+                            },
+                            {
+                                "displayUnit": "day",
+                                "durationMs": timeout,
+                                "rollout": {
+                                    end_var: 5000,
+                                    control_var: 95000,
+                                }
+                            },
+                            {
+                                "displayUnit": "day",
+                                "durationMs": timeout,
+                                "rollout": {
+                                    end_var: 10000,
+                                    control_var: 90000,
+                                }
+                            },
+                            {
+                                "displayUnit": "day",
+                                "durationMs": timeout,
+                                "rollout": {
+                                    end_var: 25000,
+                                    control_var: 75000,
+                                }
+                            },
+                            {
+                                "displayUnit": "day",
+                                "durationMs": timeout,
+                                "rollout": {
+                                    end_var: 50000,
+                                    control_var: 50000,
+                                }
+                            },
+                            {
+                                "displayUnit": "day",
+                                "rollout": {
+                                    end_var: 100000,
+                                    control_var: 0,
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
         }

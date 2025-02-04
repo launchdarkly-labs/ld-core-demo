@@ -167,7 +167,7 @@ export default function Airways() {
               </div>
             </motion.section>
           )}
-          <Chatbot />
+          <Chatbot vertical="airways"/>
         </motion.main>
       </AnimatePresence>
     </>

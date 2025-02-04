@@ -81,6 +81,10 @@ export default function Home() {
     router.push(link);
   }
 
+  useEffect(() => {
+    router.push('/bank');
+  }, []);
+
   return (
     <>
       {/* <!-- Google tag (gtag.js) --> */}
@@ -108,6 +112,9 @@ export default function Home() {
           as="image"
         />
       </Head>
+
+      
+      {/* This is hidden for now, remove useEffect router.push('/bank') to see */}
       <AnimatePresence>
         <motion.main className="min-h-screen w-full flex-col items-center justify-center bg-ldblack ">
           <div className="w-full text-white flex h-20 shadow-2xl">
@@ -232,6 +239,7 @@ export default function Home() {
           )}
         </motion.main>
       </AnimatePresence>
+      
     </>
   );
 }

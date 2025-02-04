@@ -19,7 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { get } from "lodash";
 
 type Transaction = {
   id: number;
@@ -32,7 +33,7 @@ type Transaction = {
 };
 
 export function CreditAccount() {
-  const { financialDBMigration } = useFlags();
+  const { financialDBMigration, togglebankDBGuardedRelease } = useFlags();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   async function getTransactions() {
@@ -63,6 +64,10 @@ export function CreditAccount() {
     getTransactions();
   }, [financialDBMigration]);
 
+  useEffect(() => {
+    getTransactions();
+  }, [togglebankDBGuardedRelease]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -91,7 +96,7 @@ export function CreditAccount() {
             </div>
             <div>
               <p className="text-bankdarkblue pt-4 text-xs">
-                Next Due: January 15th, 2025
+                Next Due: March 15th, 2025
               </p>
             </div>
           </div>
@@ -102,7 +107,7 @@ export function CreditAccount() {
           <SheetTitle className="font-sohne text-2xl">
             <div className="flex-col">
               <div className="flex">GSF Platinum Credit Account</div>
-              {financialDBMigration === "complete" ? (
+              {financialDBMigration === "complete" || togglebankDBGuardedRelease? (
                 <div className="flex text-center items-center justify-center my-6 bg-green-200 text-zinc-500 font-sohnebuch font-extralight text-base py-2">
                   Retrieving data from DynamoDB
                 </div>

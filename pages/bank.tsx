@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import BankHomePage from "@/components/ui/bankcomponents/bankHomePage";
+import Chatbot from "@/components/chatbot/ChatBot";
 import BankUserDashboard from "@/components/ui/bankcomponents/bankUserDashboard";
 import bankHomePageBackgroundRight from "@/public/banking/backgrounds/bank-homepage-background-right.svg";
 import bankHomePageBackgroundLeft from "@/public/banking/backgrounds/bank-homepage-background-left.svg";
@@ -17,10 +18,6 @@ export default function Bank() {
         transition={{ duration: 0.5 }}
         className={` w-full min-h-screen  bg-cover bg-center bg-no-repeat pb-10`}
       >
-
-
-        {/* <div className=" min-h-screen  "> */}
-
         {!isLoggedIn ? (
           <>
             <Image
@@ -41,7 +38,7 @@ export default function Bank() {
             <BankUserDashboard />
           </>
         )}
-        {/* </div> */}
+        <Chatbot vertical="banking"/>
       </motion.main>
     </>
   );

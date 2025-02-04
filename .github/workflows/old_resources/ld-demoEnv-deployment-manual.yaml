@@ -1,15 +1,11 @@
-### Offline for now, this will be updated post CKO-2025
-
-
-# name: "Deploy to Test Environment"
+# name: (Provisioning App - Manual Workflow) Deploy Demo Environment
 
 # on:
-#   pull_request:
-#     branches: [main]
-
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-#   cancel-in-progress: true
+#   workflow_dispatch:
+#     inputs:
+#       name:
+#         description: 'User alias or LD env key'
+#         required: true
 
 # env:
 #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -18,12 +14,11 @@
 #   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
 #   ECR_REPOSITORY: ld-core-demo
 #   KUBECTL_VERSION: "v1.23.0"
-#   LD_API_KEY: ${{ secrets.LD_API_KEY }}
-#   DEMO_NAMESPACE: coredemotest
-
+#   LD_API_KEY: ${{ contains(github.event.inputs.name, 'eaptest') && secrets.LD_EAP_API_KEY || secrets.LD_API_KEY }}
+#   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 # jobs:
-#   deploy-to-test: 
+#   deploy-to-demoenv: 
 #     runs-on: ubuntu-latest
     
 #     steps:
@@ -34,28 +29,16 @@
 #         uses: actions/setup-python@v2
 #         with:
 #           python-version: "3.9"
-      
-#       - name: Install LaunchDarkly CLI
-#         run: npm install -g @launchdarkly/ldcli
-
-#       - name: Set LaunchDarkly CLI Config
-#         run: |
-#           echo "Setting up LaunchDarkly CLI"
-#           ldcli config --set access-token ${{ secrets.LD_API_KEY }}
 
 #       - name: Install dependencies
 #         run: |
 #           python -m pip install --upgrade pip
 #           pip install -r ./.github/workflows/requirements.txt
 
-#       - name: Delete Test LD Project
-#         run: |
-#           ldcli projects delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo
-
-#       - name: Create LD Project
+#       - name: Create LD Project for User
 #         id: create_ld_project
 #         env:
-#           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+#           LD_API_KEY: ${{ env.LD_API_KEY }}
 #           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
 #         run: |
 #           echo "Creating LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
@@ -65,7 +48,7 @@
 #         id: create_feature_flag_in_LD
 #         if: env.PROJECT_EXISTS == 'false'
 #         env:
-#           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+#           LD_API_KEY: ${{ env.LD_API_KEY }}
 #           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
 #         run: |
 #           echo "Creating feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
@@ -75,7 +58,7 @@
 #         id: create_metric_group_in_LD
 #         if: env.PROJECT_EXISTS == 'false'
 #         env:
-#           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+#           LD_API_KEY: ${{ env.LD_API_KEY }}
 #           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
 #         run: |
 #           echo "Creating metrics in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
@@ -85,7 +68,7 @@
 #         id: create_experiment_in_LD
 #         if: env.PROJECT_EXISTS == 'false'
 #         env:
-#           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+#           LD_API_KEY: ${{ env.LD_API_KEY }}
 #           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
 #         run: |
 #           echo "Creating experiment in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
@@ -95,7 +78,7 @@
 #         id: create_migration_FF_in_LD
 #         if: env.PROJECT_EXISTS == 'false'
 #         env:
-#           LD_API_KEY: ${{ secrets.LD_API_KEY }}
+#           LD_API_KEY: ${{ env.LD_API_KEY }}
 #           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
 #         run: |
 #           echo "Creating migration feature flag in LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
@@ -107,9 +90,11 @@
 #           echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
 #           echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
 #           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
-#           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
+#           echo LD_API_KEY=${{ env.LD_API_KEY }} >> ./.env.production
 #           echo DESTINATIONENV=${{ env.DEMO_NAMESPACE }} >> ./.env.production
 #           echo PROJECT_KEY=${{ env.DEMO_NAMESPACE }}-ld-demo >> ./.env.production
+#           echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
+#           echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
   
 #       - name: Login to Amazon ECR
 #         id: login-ecr
@@ -190,6 +175,6 @@
 #       - name: LaunchDarkly Code References
 #         uses: launchdarkly/find-code-references@v2.12.0
 #         with:
-#           accessToken: ${{ secrets.LD_API_KEY }}
+#           accessToken: ${{ env.LD_API_KEY }}
 #           projKey: ${{ env.DEMO_NAMESPACE }}-ld-demo
 #           repoName: main

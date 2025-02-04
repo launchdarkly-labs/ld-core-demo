@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CSNAV_ITEMS } from "@/utils/constants";
 
-export function CSNav(color: string) {
+export function CSNav() {
   const router = useRouter();
 
   function goHome() {
