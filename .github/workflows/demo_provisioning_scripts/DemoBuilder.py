@@ -146,6 +146,10 @@ class DemoBuilder:
         self.flag_exp_promotion_banner()
         print("  - D2 - Feature Experiment: Suggested Items Carousel")
         self.flag_exp_suggestions_carousel()
+        print("  - D3 - Funnel Experiment: New Shorten Collection Page")
+        self.flag_exp_shorten_collections_page()
+        print("  - D4 - Feature Experiment: New Search Engine")
+        self.flag_exp_new_search_engine()
         print("  - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
@@ -253,12 +257,13 @@ class DemoBuilder:
     # Create all the experiments    
     
     def create_and_run_experiments(self):
-        self.run_ecommerce_funnel_experiment()
-        self.run_ecommerce_feature_experiment()
+        self.run_ecommerce_collection_banner_funnel_experiment()
+        self.run_ecommerce_upsell_component_feature_experiment()
+        self.run_ecommerce_shorten_collection_funnel_experiment()
+        self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
         
-        
-    def run_ecommerce_funnel_experiment(self):
+    def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
             print("Error: Metric groups not created")
             return
@@ -269,28 +274,28 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 09 - Funnel Experiment: Promotion Banner ")
-        self.create_ecommerce_funnel_experiment()
-        self.ldproject.start_exp_iteration("grow-engagement-with-promotion-banner", "production")
+        print(" - 09 - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
+        self.create_ecommerce_collection_banner_funnel_experiment()
+        self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done")
         self.experiment_created = True
         
-    def create_ecommerce_funnel_experiment(self):
+    def create_ecommerce_collection_banner_funnel_experiment(self):
         metrics = [
             self.ldproject.exp_metric("store-purchases", True),
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
-            "grow-engagement-with-promotion-banner",
-            "Grow engagement with promotion banner",
+            "new-collection-promotion-banner",
+            "(Bayesian) Funnel Experiment: New Collection Promotion Banner",
             "production",
             "storeAttentionCallout",
             "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
             metrics=metrics,
             primary_key="store-purchases",
         )   
-        
-    def run_ecommerce_feature_experiment(self):
+    
+    def run_ecommerce_upsell_component_feature_experiment(self):
         if not self.metrics_created:
             print("Error: Metric not created")
             return
@@ -301,27 +306,91 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 10 - Feature Experiment: Suggested Items Carousel")
-        self.create_ecommerce_feature_experiment()
-        self.ldproject.start_exp_iteration("upsell-tracking-experiment", "production")
+        print(" - 10 - (Bayesian) Feature Experiment: Suggested Items Carousel")
+        self.create_ecommerce_upsell_component_feature_experiment()
+        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
         print("Done")
         self.experiment_created = True
         
-    def create_ecommerce_feature_experiment(self):
+    def create_ecommerce_upsell_component_feature_experiment(self):
         metrics = [
             self.ldproject.exp_metric("in-cart-total-items", False),
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
-            "upsell-tracking-experiment",
-            "Upsell Tracking Experiment",
+            "suggested-items-carousel",
+            "(Bayesian) Feature Experiment: Suggested Items Carousel",
             "production",
             "cartSuggestedItems",
             "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
             metrics=metrics,
             primary_key="in-cart-total-items",
         )  
+    #####
+    def run_ecommerce_shorten_collection_funnel_experiment(self):
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "release-new-shorten-collections-page",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - 11 - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
+        self.create_ecommerce_shorten_collection_funnel_experiment()
+        self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
+        print("Done")
+        self.experiment_created = True
     
+    def create_ecommerce_shorten_collection_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("shorten-collection-page-increase-conversation-metric-group", True), #TODO: need to get metric key for metric group for shorten collection
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "new-shorten-collection-pages",
+            "(Frequentist) Funnel Experiment: New Shorten Collection Pages",
+            "production",
+            "release-new-shorten-collections-page",
+            "We would want to reduce the collection page to the top three items to reduce customer decision fatigue in order to increase checkout and overall revenue.",
+            metrics=metrics,
+            primary_key="store-purchases",
+        )   
+
+    def run_ecommerce_new_search_engine_feature_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "release-new-search-engine",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - 12 - (Frequentist) Feature Experiment: New Search Engine")
+        self.create_ecommerce_new_search_engine_feature_experiment()
+        self.ldproject.start_exp_iteration("new-search-engine", "production")
+        print("Done")
+        self.experiment_created = True
+        
+    def create_ecommerce_new_search_engine_feature_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("search-engine-add-to-cart", False),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "new-search-engine",
+            "(Frequentist) Feature Experiment: New Search Engine",
+            "production",
+            "release-new-search-engine",
+            "We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
+            metrics=metrics,
+            primary_key="search-engine-add-to-cart",
+        )  
+        
     def run_togglebank_ai_config_experiment(self):
         if not self.metrics_created:
             print("Error: Metric not created")
@@ -352,7 +421,41 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
         )
-        
+
+############################################################################################################
+
+    ##################################################
+    # Holdout Definitions
+    # ----------------
+    # Each holdout is defined in its own function below
+    
+    ##################################################
+    # Create all the experiment holdouts   
+
+    # def create_and_run_experiments(self):
+    #     self.run_ecommerce_collection_banner_funnel_experiment()
+    #     self.run_ecommerce_upsell_component_feature_experiment()
+    #     self.run_ecommerce_shorten_collection_funnel_experiment()
+    #     self.run_ecommerce_new_search_engine_feature_experiment()
+    #     self.run_togglebank_ai_config_experiment()
+
+############################################################################################################
+
+    ##################################################
+    # Layers Definitions
+    # ----------------
+    # Each layer is defined in its own function below
+    
+    ##################################################
+    # Create all the experiment layers 
+
+    # def create_and_run_experiments(self):
+    #     self.run_ecommerce_collection_banner_funnel_experiment()
+    #     self.run_ecommerce_upsell_component_feature_experiment()
+    #     self.run_ecommerce_shorten_collection_funnel_experiment()
+    #     self.run_ecommerce_new_search_engine_feature_experiment()
+    #     self.run_togglebank_ai_config_experiment()
+
 # ############################################################################################################
 
     # Add user id to flags    
@@ -1050,11 +1153,11 @@ class DemoBuilder:
         res = self.ldproject.create_flag(
             "storeAttentionCallout",
             "D1 - Funnel Experiment: Promotion Banner",
-            "Promotion Banner for the Galaxy Marketplace",
+            "Releasing New Collection Promotion Banner for the Galaxy Marketplace",
             [
                 {
                     "value": "New Items",
-                    "name": "Control"
+                    "name": "(Control) New Items"
                 },
                 {
                     "value": "Sale",
@@ -1074,15 +1177,15 @@ class DemoBuilder:
         res = self.ldproject.create_flag(
             "cartSuggestedItems",
             "D2 - Feature Experiment: Suggested Items Carousel",
-            "Suggested Items Carousel for the cart component in Galaxy Marketplace",
+            "Releasing New Suggested Items Carousel Component for the cart component in Galaxy Marketplace",
             [
                 {
                     "value": True,
-                    "name": "Suggested Items Carousel"
+                    "name": "New Suggested Items Carousel"
                 },
                 {
                     "value": False,
-                    "name": "Continue Shopping Button"
+                    "name": "Old Continue Shopping Button"
                 }
             ],
             tags=["experiment", "ecommerce"],
@@ -1090,6 +1193,47 @@ class DemoBuilder:
             off_variation=1,
         )
 
+    def flag_exp_shorten_collections_page(self):
+        res = self.ldproject.create_flag(
+            "release-new-shorten-collections-page",
+            "D4 - Funnel Experiment: New Shorten Collection Pages",
+            "Release New Shorten Collections Page in Galaxy Marketplace",
+            [
+                {
+                    "value": True,
+                    "name": "New Shorten Collections Page"
+                },
+                {
+                    "value": False,
+                    "name": "Old Longer Collections Page"
+                }
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_exp_new_search_engine(self):
+        res = self.ldproject.create_flag(
+            "release-new-search-engine",
+            "D3 - Feature Experiment: New Search Engine",
+            "Release New Search Engine in Galaxy Marketplace",
+            [
+                {
+                    "value": "old-search-engine",
+                    "name": "Old Search Engine"
+                },
+                {
+                    "value": "new-search-engine",
+                    "name": "New Search Engine"
+                }
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+  
 ############################################################################################################
 ############################################################################################################
 
