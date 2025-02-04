@@ -85,8 +85,8 @@ class DemoBuilder:
         self.metric_chatbot_negative()
         print(" - In-Cart Total Price")
         self.metric_in_cart_total_price()
-        print(" - In-Cart Up-Sell")
-        self.metric_in_cart_upsell()
+        print(" - In-Cart Total Items")
+        self.metric_in_cart_total_items()
         print(" - Database Error Rates")
         self.metric_database_error_rates()
         print(" - Database Latency")
@@ -309,7 +309,7 @@ class DemoBuilder:
         
     def create_ecommerce_feature_experiment(self):
         metrics = [
-            self.ldproject.exp_metric("upsell-tracking", False),
+            self.ldproject.exp_metric("in-cart-total-items", False),
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
@@ -319,7 +319,7 @@ class DemoBuilder:
             "cartSuggestedItems",
             "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
             metrics=metrics,
-            primary_key="upsell-tracking",
+            primary_key="in-cart-total-items",
         )  
     
     def run_togglebank_ai_config_experiment(self):
@@ -527,11 +527,11 @@ class DemoBuilder:
             tags=["experiment"]
         )
     
-    def metric_in_cart_upsell(self):
+    def metric_in_cart_total_items(self):
         res = self.ldproject.create_metric(
-            "upsell-tracking",
-            "In-Cart Up-Sell",
-            "upsell-tracking",
+            "in-cart-total-items",
+            "In-Cart Total Items",
+            "in-cart-total-items",
             metric_description="This metric will track the number of up-sell items in the cart.",
             numeric=False,
             unit="",

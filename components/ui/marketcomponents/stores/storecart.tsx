@@ -35,9 +35,12 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   const { cartSuggestedItems } = useFlags();
   const { logLDMetricSent } = useContext(LiveLogsContext);
 
-  const totalCost = (cart || []).reduce(
-    (total: number, item: InventoryItem) => total + Number(item.cost),
-    0
+  const { totalCost, totalItems } = (cart || []).reduce(
+    (acc: { totalCost: number; totalItems: number }, item: InventoryItem) => ({
+      totalCost: acc.totalCost + Number(item.cost),
+      totalItems: acc.totalItems + 1,
+    }),
+    { totalCost: 0, totalItems: 0 }
   );
 
   const cartNumOfItems = cart.length;
@@ -49,6 +52,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   };
 
   const checkOut = () => {
+
     toast({
       title: `Checkout is successful! Enjoy your purchase!`,
       wrapperStyle: "bg-gradient-experimentation text-white font-sohne text-base",
@@ -59,16 +63,21 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
   };
 
   const continueShopping = () => {
-    LDClient?.track("upsell-tracking", LDClient.getContext());
-    logLDMetricSent("upsell-tracking");
     router.push("/marketplace");
   };
 
   const checkOutTracking = () => {
-    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
-    logLDMetricSent("customer-checkout");
+
+    LDClient?.track("in-cart-total-items", LDClient.getContext(), totalItems);
+    logLDMetricSent("in-cart-total-items", totalItems);
+
+    
     LDClient?.track("in-cart-total-price", LDClient.getContext(), totalCost);
     logLDMetricSent("in-cart-total-price", totalCost);
+
+    LDClient?.track("customer-checkout", LDClient.getContext(), 1);
+    logLDMetricSent("customer-checkout");
+    
   };
 
   return (
