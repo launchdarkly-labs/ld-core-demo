@@ -192,6 +192,18 @@ class DemoBuilder:
         self.virtual_card_issuance()
         print(" - F19 - API Support for Third-Party Applications")
         self.api_support_for_third_party_applications()
+        
+        # Temporary Feature Flags
+        print(" - T1 - Beta Dark Mode")
+        self.beta_dark_mode()
+        print(" - T2 - Experimental Payment Gateway")
+        self.experimental_payment_gateway()
+        print(" - T3 - Limited Time Offer Banner")
+        self.limited_time_offer_banner()
+        print(" - T4 - Early Access Feature Toggle")
+        self.early_access_feature_toggle()
+        print(" - T5 - Debugging Mode for Developers")
+        self.debugging_mode_for_developers()
 
         print("Done")
         self.flags_created = True
@@ -274,7 +286,7 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 09 - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
+        print(" - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
         self.create_ecommerce_collection_banner_funnel_experiment()
         self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done")
@@ -306,7 +318,7 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 10 - (Bayesian) Feature Experiment: Suggested Items Carousel")
+        print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
         self.create_ecommerce_upsell_component_feature_experiment()
         self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
         print("Done")
@@ -338,7 +350,7 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 11 - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
+        print(" - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
         self.create_ecommerce_shorten_collection_funnel_experiment()
         self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
         print("Done")
@@ -370,7 +382,7 @@ class DemoBuilder:
             "production",
             "Turn on flag for experiment",
         )
-        print(" - 12 - (Frequentist) Feature Experiment: New Search Engine")
+        print(" - (Frequentist) Feature Experiment: New Search Engine")
         self.create_ecommerce_new_search_engine_feature_experiment()
         self.ldproject.start_exp_iteration("new-search-engine", "production")
         print("Done")
@@ -501,6 +513,11 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("merchantRewardsIntegration")
         res = self.ldproject.add_maintainer_to_flag("virtualCardIssuance")
         res = self.ldproject.add_maintainer_to_flag("apiSupportForThirdPartyApplications")
+        res = self.ldproject.add_maintainer_to_flag("betaDarkMode")
+        res = self.ldproject.add_maintainer_to_flag("experimentalPaymentGateway")
+        res = self.ldproject.add_maintainer_to_flag("limitedTimeOfferBanner")
+        res = self.ldproject.add_maintainer_to_flag("earlyAccessFeatureToggle")
+        res = self.ldproject.add_maintainer_to_flag("debuggingModeForDevelopers")
         
 # ############################################################################################################
 
@@ -1620,6 +1637,117 @@ class DemoBuilder:
             tags=["release", "release-pipeline", "utils"],
             on_variation=0,
             off_variation=1,
+        )
+        
+############################################################################################################
+############################################################################################################
+
+    ## Creating Temporary Feature Flags for the demo
+    ## These flags are not used in the demo
+    
+    def beta_dark_mode(self):
+        res = self.ldproject.create_flag(
+            "betaDarkMode",
+            "T1 - Beta: Dark Mode",
+            "This feature flag will enable dark mode in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Dark Mode"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Dark Mode"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def experimental_payment_gateway(self):
+        res = self.ldproject.create_flag(
+            "experimentalPaymentGateway",
+            "T2 - Experimental Payment Gateway",
+            "This feature flag will enable experimental payment gateway in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Experimental Payment Gateway"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Experimental Payment Gateway"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def limited_time_offer_banner(self):
+        res = self.ldproject.create_flag(
+            "limitedTimeOfferBanner",
+            "T3 - Limited Time Offer Banner",
+            "This feature flag will enable limited time offer banner in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Limited Time Offer Banner"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Limited Time Offer Banner"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def early_access_feature_toggle(self):
+        res = self.ldproject.create_flag(
+            "earlyAccessFeatureToggle",
+            "T4 - Early Access Feature Toggle",
+            "This feature flag will enable early access feature toggle in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Early Access Feature Toggle"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Early Access Feature Toggle"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+    
+    def debugging_mode_for_developers(self):
+        res = self.ldproject.create_flag(
+            "debuggingModeForDevelopers",
+            "T5 - Debugging Mode for Developers",
+            "This feature flag will enable debugging mode for developers in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Debugging Mode for Developers"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Debugging Mode for Developers"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
         )
 
 ############################################################################################################

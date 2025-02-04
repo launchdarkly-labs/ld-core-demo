@@ -72,11 +72,6 @@ export default function Marketplace() {
     setCart([...cart, item]);
   };
 
-  const storeAccessed = () => {
-    LDClient?.track("item-accessed", LDClient.getContext(), 1);
-    logLDMetricSent("item-accessed");
-  };
-
   const handleOnSelect = (item: InventoryItem) => {
     let openShoppingCart: HTMLElement = document?.querySelector(
       ".shopping-cart-trigger"
@@ -117,12 +112,6 @@ export default function Marketplace() {
       </div>
     );
   };
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      storeAccessed();
-    }
-  }, [isLoggedIn]);
 
   return (
     <>

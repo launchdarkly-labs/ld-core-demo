@@ -128,7 +128,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               })
             ) : (
               <TableRow key={1}>
-                <TableCell className="">Add an Item!</TableCell>
+                <TableCell className="text-md font-bold text-lg">No Items in Cart</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -141,16 +141,12 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
               <p className="pb-4 font-sohne">Total:</p>
               <p className="pb-4 font-sohne">${totalCost.toFixed(2)}</p>
             </div>
-            <SheetTrigger onClick={isLoggedIn ? checkOut : null} asChild className="shopping-cart-trigger">
+            <SheetTrigger onClick={checkOut} asChild className="shopping-cart-trigger">
               <Button
-                onClick={isLoggedIn ? checkOutTracking : null}
-                className={`w-full ${
-                  isLoggedIn
-                    ? "bg-gradient-experimentation"
-                    : "text-marketgray border-2 border-marketgray bg-transparent hover:bg-transparent"
-                } hover:brightness-[120%] rounded-none`}
+                onClick={checkOutTracking}
+                className={`w-full bg-gradient-experimentation`}
               >
-                {isLoggedIn ? "Checkout" : "Login to Continue Checkout"}
+                "Checkout"
               </Button>
             </SheetTrigger>
             {cartSuggestedItems ? (

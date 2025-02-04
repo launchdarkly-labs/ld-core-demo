@@ -150,6 +150,7 @@ class LDPlatform:
         tags=[],
         migration_stages=0,
         prerequisites=[],
+        temporary=False,
     ):
         if self.flag_exists(flag_key):
             return
@@ -162,6 +163,7 @@ class LDPlatform:
                 "usingEnvironmentId": True,
                 "usingMobileKey": True,
             },
+            "temporary": temporary,
         }
 
         if len(variations) > 0:
@@ -722,18 +724,24 @@ class LDPlatform:
             print("Error creating release pipeline: " + data["message"])
         return response
 
-    def create_shortcut(self):
+    def create_shortcut(self, name, key, icon, tags, env_key, sort_by="name"):
         payload = {
-            "name": "another",
-            "key": "another",
-            "icon": "bolt",
+            "name": name,
+            "key": key,
+            "icon": icon,
             "type": "flags",
             "context": {
                 "projectKey": self.project_key,
-                "environmentKeys": ["production", "test"],
-                "selectedEnvironmentKey": "production",
+                "environmentKeys": ["production"],
+                "selectedEnvironmentKey": env_key,
             },
-            "filters": {"filter": {"tags": ["AI"]}},
+            "filters": {
+                "filter": {
+                    "tags": tags
+                    },
+                    "state": "live",
+                    "sort": sort_by
+                },
             "visibility": "me",
         }
         headers = {
