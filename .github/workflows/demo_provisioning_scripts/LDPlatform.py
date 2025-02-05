@@ -686,6 +686,8 @@ class LDPlatform:
         )
 
         data = json.loads(response.text)
+        print("data holdout: ", data)
+        print("response holdout: ", response)
         if "message" in data:
             print("Error creating holdout: " + data["message"])
         return response
@@ -724,7 +726,7 @@ class LDPlatform:
 
         data = json.loads(response.text)
         if "message" in data:
-            print("Error creating holdout: " + data["message"])
+            print("Error creating layer: " + data["message"])
         return response
 
 

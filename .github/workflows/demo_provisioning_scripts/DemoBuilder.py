@@ -484,6 +484,7 @@ class DemoBuilder:
     # Create all the experiment layers 
 
     def create_and_run_layer(self):
+        print("Creating layer: ")
         self.run_checkout_experiment_layer()
 
     def run_checkout_experiment_layer(self):
