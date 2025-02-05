@@ -462,7 +462,6 @@ class DemoBuilder:
                 }
             ]
         res = self.ldproject.create_holdout(
-            self=self,
             holdout_key= "q-4-increase-average-total-in-cart-price",
             holdout_name="Q4 Increase Average Total Incart Price",
             holdout_env_key="production",
@@ -779,7 +778,6 @@ class DemoBuilder:
 
     def metric_search_engine(self):
         res = self.ldproject.create_metric(
-            self=self,
             metric_key="search-engine-add-to-cart",
             metric_name="New Search Engine Add To Cart is Clicked",
             event_key="search-engine-add-to-cart",
