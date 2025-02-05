@@ -36,10 +36,11 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
-        self.update_add_userid_to_flags()
+        # self.update_add_userid_to_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
         self.create_and_run_holdout()  
+        self.create_and_run_layer()
         self.create_and_run_experiments()   
         self.project_settings()
         self.setup_template_environment()  
@@ -482,13 +483,15 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment layers 
 
-    # def create_and_run_layer(self):
-    #     self.run_ecommerce_collection_banner_funnel_experiment()
-    #     self.run_ecommerce_upsell_component_feature_experiment()
-    #     self.run_ecommerce_shorten_collection_funnel_experiment()
-    #     self.run_ecommerce_new_search_engine_feature_experiment()
-    #     self.run_togglebank_ai_config_experiment()
+    def create_and_run_layer(self):
+        self.run_checkout_experiment_layer()
 
+    def run_checkout_experiment_layer(self):
+        res = self.ldproject.create_layer(
+            layer_key= "checkout-experiment-layer",
+            layer_name="Checkout Experiment Layer",
+            description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
+        )
 # ############################################################################################################
 
     # Add user id to flags    

@@ -665,6 +665,7 @@ class LDPlatform:
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
             "prerequisiteflagkey": prerequisiteflagkey,
+
         }
 
         headers = {
@@ -692,6 +693,42 @@ class LDPlatform:
     ##################################################
     # Create a layer
     ##################################################
+
+    def create_layer(
+        self,
+        layer_key,
+        layer_name,
+        description,
+    ):
+
+        payload = {
+            "name": layer_name,
+            "key": layer_key,
+            "description": description,
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/layers/",
+            json=payload,
+            headers=headers,
+        )
+
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating holdout: " + data["message"])
+        return response
+
+
+
 
     ##################################################
     # Create a release pipeline
