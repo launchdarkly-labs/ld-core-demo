@@ -1260,11 +1260,11 @@ class DemoBuilder:
             "Release New Shorten Collections Page in Galaxy Marketplace",
             [
                 {
-                    "value": True,
+                    "value": "new-shorten-collections-page",
                     "name": "New Shorten Collections Page"
                 },
                 {
-                    "value": False,
+                    "value": "old-long-collections-page",
                     "name": "Old Longer Collections Page"
                 }
             ],

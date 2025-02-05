@@ -52,7 +52,7 @@ const ProductInventoryComponent = ({
   const LDClient = useLDClient();
   const releaseNewShortenCollectionsPage:string = useFlags()[
     "release-new-shorten-collections-page"
-  ]?.includes("new-shorten-collections-page");
+  ]?.includes("new-shorten-collections-page") || "";
   const { toast } = useToast();
   const { logLDMetricSent } = useContext(LiveLogsContext);
   const [showAllItems, setShowAllItems] = useState<boolean>(false);
