@@ -756,6 +756,18 @@ class DemoBuilder:
             success_criteria="HigherThanBaseline",
             tags=["experiment"]
         )
+
+    def metric_search_engine(self):
+        res = self.ldproject.create_metric(
+            "search-engine-add-to-cart",
+            "New Search Engine Add To Cart is Clicked",
+            "search-engine-add-to-cart",
+            "This metric will track the number of times the new add to cart button within the new search engine is clicked.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
         
 ############################################################################################################
 

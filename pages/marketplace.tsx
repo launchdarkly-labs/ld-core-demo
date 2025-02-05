@@ -60,9 +60,7 @@ export default function Marketplace() {
   }
 
   const LDClient = useLDClient();
-  const { storeAttentionCallout } = useFlags();
   const releaseNewSearchEngine = useFlags()["release-new-search-engine"]?.includes("new-search-engine");
-  
 
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
@@ -81,6 +79,7 @@ export default function Marketplace() {
     if (releaseNewSearchEngine) {
       addToCart(item);
       LDClient?.track("search-engine-add-to-cart", LDClient.getContext());
+      logLDMetricSent("search-engine-add-to-cart");
       toast({
         title: `${item.item} has been added to your cart!`,
         wrapperStyle: "bg-gradient-experimentation text-white !text-medium font-bold font-sohne",
@@ -98,6 +97,9 @@ export default function Marketplace() {
     if (item.vendor === "boominbox") {
       setOpenBoominBox(true);
     }
+
+    LDClient?.track("search-engine-add-to-cart", LDClient.getContext());
+    logLDMetricSent("search-engine-add-to-cart");
   };
 
   const formatResult = (item: InventoryItem) => {
