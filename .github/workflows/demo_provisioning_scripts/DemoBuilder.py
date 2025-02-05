@@ -117,6 +117,8 @@ class DemoBuilder:
         print("Creating metric groups:")
         print("  - Store Purchases Metric Group")
         self.metgroup_store_purchases()
+        print("  - Shorten Collection Page Metric Group")
+        self.metgroup_shorten_collection_page()
         print("Done")
         self.metric_groups_created = True
         
@@ -142,14 +144,14 @@ class DemoBuilder:
         self.flag_api_guarded_release()
         #print("  - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
+        print("  - D1 - Feature Experiment: Suggested Items Carousel")
+        self.flag_exp_suggestions_carousel()
         print("  - D1 - Funnel Experiment: Promotion Banner")
         self.flag_exp_promotion_banner()
-        print("  - D2 - Feature Experiment: Suggested Items Carousel")
-        self.flag_exp_suggestions_carousel()
-        print("  - D3 - Funnel Experiment: New Shorten Collection Page")
-        self.flag_exp_shorten_collections_page()
-        print("  - D4 - Feature Experiment: New Search Engine")
+        print("  - D3 - Feature Experiment: New Search Engine")
         self.flag_exp_new_search_engine()
+        print("  - D4 - Funnel Experiment: New Shorten Collection Page")
+        self.flag_exp_shorten_collections_page()
         print("  - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
@@ -358,7 +360,7 @@ class DemoBuilder:
     
     def create_ecommerce_shorten_collection_funnel_experiment(self):
         metrics = [
-            self.ldproject.exp_metric("shorten-collection-page-increase-conversation-metric-group", True), #TODO: need to get metric key for metric group for shorten collection
+            self.ldproject.exp_metric("shorten-collection-page-metric-group", True), 
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
@@ -444,13 +446,29 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment holdouts   
 
-    # def create_and_run_experiments(self):
-    #     self.run_ecommerce_collection_banner_funnel_experiment()
-    #     self.run_ecommerce_upsell_component_feature_experiment()
-    #     self.run_ecommerce_shorten_collection_funnel_experiment()
-    #     self.run_ecommerce_new_search_engine_feature_experiment()
-    #     self.run_togglebank_ai_config_experiment()
-
+    def create_and_run_holdout(self):
+        self.run_q4_increase_incart_price_holdout()
+     
+    def run_q4_increase_incart_price_holdout(self):
+        metrics = [
+                {
+                "key": "in-cart-total-price",
+                "isGroup": False,
+                "primary": True
+                }
+            ]
+        res = self.ldproject.create_holdout(
+            self=self,
+            holdout_key= "q-4-increase-average-total-in-cart-price",
+            holdout_name="Q4 Increase Average Total Incart Price",
+            holdout_env_key="production",
+            description="This holdout is to see if the new experiments will increase average total cart price and overall revenue.",
+            metrics= metrics,
+            primary_metric_key= "in-cart-total-price",
+            randomization_unit="users",
+            attributes=["tier"],
+            prerequisiteflagkey="release-new-search-engine"
+        )
 ############################################################################################################
 
     ##################################################
@@ -461,7 +479,7 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment layers 
 
-    # def create_and_run_experiments(self):
+    # def create_and_run_layer(self):
     #     self.run_ecommerce_collection_banner_funnel_experiment()
     #     self.run_ecommerce_upsell_component_feature_experiment()
     #     self.run_ecommerce_shorten_collection_funnel_experiment()
@@ -756,6 +774,18 @@ class DemoBuilder:
             success_criteria="HigherThanBaseline",
             tags=["experiment"]
         )
+
+    def metric_search_engine(self):
+        res = self.ldproject.create_metric(
+            "search-engine-add-to-cart",
+            "New Search Engine Add To Cart is Clicked",
+            "search-engine-add-to-cart",
+            "This metric will track the number of times the new add to cart button within the new search engine is clicked.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
         
 ############################################################################################################
 
@@ -991,6 +1021,19 @@ class DemoBuilder:
             description="This metric group will track the store purchases",
         )
            
+    def metgroup_shorten_collection_page(self):
+        res = self.ldproject.create_metric_group(
+            "shorten-collection-page-metric-group",
+            "Shorten Collection Page Metric Group",
+            [
+                {"key": "item-added", "nameInGroup": "1"},
+                {"key": "cart-accessed", "nameInGroup": "2"},
+                {"key": "customer-checkout", "nameInGroup": "3"},
+            ],
+            kind="funnel",
+            description="This metric group will track the store purchases relating to the new shorten collection page.",
+        )
+           
         
 ############################################################################################################
 
@@ -1172,7 +1215,7 @@ class DemoBuilder:
     def flag_exp_promotion_banner(self):
         res = self.ldproject.create_flag(
             "storeAttentionCallout",
-            "D1 - Funnel Experiment: Promotion Banner",
+            "D2 - Funnel Experiment: Promotion Banner",
             "Releasing New Collection Promotion Banner for the Galaxy Marketplace",
             [
                 {
@@ -1196,7 +1239,7 @@ class DemoBuilder:
     def flag_exp_suggestions_carousel(self):
         res = self.ldproject.create_flag(
             "cartSuggestedItems",
-            "D2 - Feature Experiment: Suggested Items Carousel",
+            "D1 - Feature Experiment: Suggested Items Carousel",
             "Releasing New Suggested Items Carousel Component for the cart component in Galaxy Marketplace",
             [
                 {
