@@ -1293,6 +1293,7 @@ class DemoBuilder:
                 }
             ],
             tags=["experiment", "ecommerce"],
+            purpose="holdout",
             on_variation=0,
             off_variation=1,
         )
