@@ -539,6 +539,8 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("limitedTimeOfferBanner")
         res = self.ldproject.add_maintainer_to_flag("earlyAccessFeatureToggle")
         res = self.ldproject.add_maintainer_to_flag("debuggingModeForDevelopers")
+        res = self.ldproject.add_maintainer_to_flag("release-new-search-engine")
+        res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
         
 # ############################################################################################################
 
@@ -1133,7 +1135,8 @@ class DemoBuilder:
             "This feature flag will trigger the database migration tool in LaunchAirways",
             purpose="migration",
             migration_stages=6,
-            tags=["release", "migration-assistant", "optional"]
+            tags=["release", "migration-assistant", "optional"],
+            temporary=True
         )
             
     def flag_database_guarded_release(self):
@@ -2263,7 +2266,6 @@ class DemoBuilder:
         self.ldproject.copy_flag_settings("financialDBMigration", "production", "template-env")
         self.ldproject.copy_flag_settings("investment-recent-trade-db", "production", "template-env")
         self.ldproject.copy_flag_settings("release-new-investment-stock-api", "production", "template-env")
-        self.ldproject.copy_flag_settings("ai-chatbot", "production", "template-env")
         self.ldproject.copy_flag_settings("storeAttentionCallout", "production", "template-env")
         self.ldproject.copy_flag_settings("cartSuggestedItems", "production", "template-env")        
         print("Done")

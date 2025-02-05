@@ -17,7 +17,7 @@ import { BatteryCharging } from "lucide-react";
 import {
   PERSONA_ROLE_DEVELOPER,
   COHERE,
-  CLAUDE,
+  ANTHROPIC,
   META,
   DEFAULT_AI_MODEL,
 } from "@/utils/constants";
@@ -237,7 +237,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.name?.includes(CLAUDE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(ANTHROPIC)
                           ? "!text-anthropicColor"
                           : ""
                       }
