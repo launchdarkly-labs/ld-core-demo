@@ -142,14 +142,14 @@ class DemoBuilder:
         self.flag_api_guarded_release()
         #print("  - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
+        print("  - D1 - Feature Experiment: Suggested Items Carousel")
+        self.flag_exp_suggestions_carousel()
         print("  - D1 - Funnel Experiment: Promotion Banner")
         self.flag_exp_promotion_banner()
-        print("  - D2 - Feature Experiment: Suggested Items Carousel")
-        self.flag_exp_suggestions_carousel()
-        print("  - D3 - Funnel Experiment: New Shorten Collection Page")
-        self.flag_exp_shorten_collections_page()
-        print("  - D4 - Feature Experiment: New Search Engine")
+        print("  - D3 - Feature Experiment: New Search Engine")
         self.flag_exp_new_search_engine()
+        print("  - D4 - Funnel Experiment: New Shorten Collection Page")
+        self.flag_exp_shorten_collections_page()
         print("  - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
@@ -1169,7 +1169,7 @@ class DemoBuilder:
     def flag_exp_promotion_banner(self):
         res = self.ldproject.create_flag(
             "storeAttentionCallout",
-            "D1 - Funnel Experiment: Promotion Banner",
+            "D2 - Funnel Experiment: Promotion Banner",
             "Releasing New Collection Promotion Banner for the Galaxy Marketplace",
             [
                 {
@@ -1193,7 +1193,7 @@ class DemoBuilder:
     def flag_exp_suggestions_carousel(self):
         res = self.ldproject.create_flag(
             "cartSuggestedItems",
-            "D2 - Feature Experiment: Suggested Items Carousel",
+            "D1 - Feature Experiment: Suggested Items Carousel",
             "Releasing New Suggested Items Carousel Component for the cart component in Galaxy Marketplace",
             [
                 {
