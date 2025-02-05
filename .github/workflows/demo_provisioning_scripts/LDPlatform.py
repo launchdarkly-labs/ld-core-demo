@@ -669,6 +669,7 @@ class LDPlatform:
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.api_key,
+            "LD-API-Version": "beta",
         }
 
         response = self.getrequest(
