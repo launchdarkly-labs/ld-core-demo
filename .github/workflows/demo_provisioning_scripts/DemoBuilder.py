@@ -117,6 +117,8 @@ class DemoBuilder:
         print("Creating metric groups:")
         print("  - Store Purchases Metric Group")
         self.metgroup_store_purchases()
+        print("  - Shorten Collection Page Metric Group")
+        self.metgroup_shorten_collection_page()
         print("Done")
         self.metric_groups_created = True
         
@@ -358,7 +360,7 @@ class DemoBuilder:
     
     def create_ecommerce_shorten_collection_funnel_experiment(self):
         metrics = [
-            self.ldproject.exp_metric("shorten-collection-page-increase-conversation-metric-group", True), #TODO: need to get metric key for metric group for shorten collection
+            self.ldproject.exp_metric("shorten-collection-page-metric-group", True), 
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
@@ -987,6 +989,19 @@ class DemoBuilder:
             ],
             kind="funnel",
             description="This metric group will track the store purchases",
+        )
+           
+    def metgroup_shorten_collection_page(self):
+        res = self.ldproject.create_metric_group(
+            "shorten-collection-page-metric-group",
+            "Shorten Collection Page Metric Group",
+            [
+                {"key": "item-added", "nameInGroup": "1"},
+                {"key": "cart-accessed", "nameInGroup": "2"},
+                {"key": "customer-checkout", "nameInGroup": "3"},
+            ],
+            kind="funnel",
+            description="This metric group will track the store purchases relating to the new shorten collection page.",
         )
            
         
