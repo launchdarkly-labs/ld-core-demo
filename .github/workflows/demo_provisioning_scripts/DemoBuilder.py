@@ -1286,14 +1286,14 @@ class DemoBuilder:
             "D3 - Feature Experiment: New Search Engine",
             "Release New Search Engine in Galaxy Marketplace",
             [
+                 {
+                    "value": True,
+                    "name": "New Search Engine"
+                },
                 {
                     "value": False,
                     "name": "Old Search Engine"
                 },
-                {
-                    "value": True,
-                    "name": "New Search Engine"
-                }
             ],
             tags=["experiment", "ecommerce"],
             purpose="holdout",
