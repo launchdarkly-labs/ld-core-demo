@@ -38,8 +38,8 @@ class DemoBuilder:
         self.create_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
-        self.create_and_run_experiments()   
         self.create_and_run_holdout()  
+        self.create_and_run_experiments()   
         self.project_settings()
         self.setup_template_environment()  
         self.update_add_userid_to_flags()
@@ -458,7 +458,7 @@ class DemoBuilder:
                 {
                 "key": "in-cart-total-price",
                 "isGroup": False,
-                "primary": True
+                "primarySingleMetricKey": True
                 }
             ]
         res = self.ldproject.create_holdout(
