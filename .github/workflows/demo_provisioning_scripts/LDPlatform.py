@@ -164,7 +164,7 @@ class LDPlatform:
                 "usingMobileKey": True,
             },
             "temporary": temporary,
-            "maintainerId":self.user_id
+            "maintainerId": self.user_id
         }
 
         if len(variations) > 0:
@@ -664,7 +664,8 @@ class LDPlatform:
             "holdoutamount": "10",
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
-            "prerequisiteflagkey": prerequisiteflagkey
+            "prerequisiteflagkey": prerequisiteflagkey,
+            "maintainerId":self.user_id,
         }
 
         headers = {
@@ -831,7 +832,6 @@ class LDPlatform:
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
         data = json.loads(res.text)
-        print("get_user_id data",  data)
         if data["totalCount"] == 0:
             return self.get_user_id("aqadri@launchdarkly.com")
 

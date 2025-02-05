@@ -2280,8 +2280,6 @@ if __name__ == "__main__":
     LD_API_KEY_USER = os.getenv("LD_API_KEY_USER")
     LD_PROJECT_KEY = os.getenv("LD_PROJECT_KEY")
     email = os.getenv('DEMO_NAMESPACE') + "@launchdarkly.com"
-    print("os.getenv('DEMO_NAMESPACE')",  os.getenv('DEMO_NAMESPACE'))
-    print("email",  email)
     LD_PROJECT_NAME = f"LD Core Demo - {os.getenv('DEMO_NAMESPACE')}"
 
     demo = DemoBuilder(
