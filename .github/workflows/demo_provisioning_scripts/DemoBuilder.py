@@ -38,7 +38,8 @@ class DemoBuilder:
         self.create_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
-        self.create_and_run_experiments()     
+        self.create_and_run_experiments()   
+        self.create_and_run_holdout()  
         self.project_settings()
         self.setup_template_environment()  
         self.update_add_userid_to_flags()
@@ -103,6 +104,8 @@ class DemoBuilder:
         self.metric_cart_accessed()
         print(" - Store Checkout Completed")
         self.metric_store_checkout_completed()
+        print(" - New Search Engine")
+        self.metric_search_engine()
         
         print("Done")
         self.metrics_created = True
@@ -370,7 +373,7 @@ class DemoBuilder:
             "release-new-shorten-collections-page",
             "We would want to reduce the collection page to the top three items to reduce customer decision fatigue in order to increase checkout and overall revenue.",
             metrics=metrics,
-            primary_key="store-purchases",
+            primary_key="shorten-collection-page-metric-group",
         )   
 
     def run_ecommerce_new_search_engine_feature_experiment(self):
@@ -396,11 +399,11 @@ class DemoBuilder:
             self.ldproject.exp_metric("in-cart-total-price", False)
         ]
         res = self.ldproject.create_experiment(
-            "new-search-engine",
-            "(Frequentist) Feature Experiment: New Search Engine",
-            "production",
-            "release-new-search-engine",
-            "We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
+            exp_key="new-search-engine",
+            exp_name="(Frequentist) Feature Experiment: New Search Engine",
+            exp_env="production",
+            flag_key="release-new-search-engine",
+            hypothesis="We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
             metrics=metrics,
             primary_key="search-engine-add-to-cart",
         )  
@@ -447,6 +450,7 @@ class DemoBuilder:
     # Create all the experiment holdouts   
 
     def create_and_run_holdout(self):
+        print("Creating holdout: ")
         self.run_q4_increase_incart_price_holdout()
      
     def run_q4_increase_incart_price_holdout(self):
@@ -458,7 +462,6 @@ class DemoBuilder:
                 }
             ]
         res = self.ldproject.create_holdout(
-            self=self,
             holdout_key= "q-4-increase-average-total-in-cart-price",
             holdout_name="Q4 Increase Average Total Incart Price",
             holdout_env_key="production",
@@ -775,13 +778,14 @@ class DemoBuilder:
 
     def metric_search_engine(self):
         res = self.ldproject.create_metric(
-            "search-engine-add-to-cart",
-            "New Search Engine Add To Cart is Clicked",
-            "search-engine-add-to-cart",
-            "This metric will track the number of times the new add to cart button within the new search engine is clicked.",
+            metric_key="search-engine-add-to-cart",
+            metric_name="New Search Engine Add To Cart is Clicked",
+            event_key="search-engine-add-to-cart",
+            metric_description="This metric will track the number of times the new add to cart button within the new search engine is clicked.",
             numeric=False,
             unit="",
             success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
             tags=["experiment"]
         )
         
@@ -1260,11 +1264,11 @@ class DemoBuilder:
             "Release New Shorten Collections Page in Galaxy Marketplace",
             [
                 {
-                    "value": True,
+                    "value": "new-shorten-collections-page",
                     "name": "New Shorten Collections Page"
                 },
                 {
-                    "value": False,
+                    "value": "old-long-collections-page",
                     "name": "Old Longer Collections Page"
                 }
             ],
