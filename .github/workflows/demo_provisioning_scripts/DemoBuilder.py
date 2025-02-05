@@ -43,7 +43,7 @@ class DemoBuilder:
         self.create_and_run_experiments()   
         self.project_settings()
         self.setup_template_environment()  
-        
+
         ## Not required
         #self.create_contexts()
      
@@ -1836,7 +1836,7 @@ class DemoBuilder:
         self.ldproject.attach_metric_to_flag("automatedSavingsGoals",["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("automatedSavingsGoals", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("automatedSavingsGoals", "Active", self.phase_ids["test"])
 
 
     def rp_multi_currency_support(self):
@@ -1844,35 +1844,35 @@ class DemoBuilder:
         self.ldproject.attach_metric_to_flag("multiCurrencySupport", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("multiCurrencySupport", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("multiCurrencySupport", "Active", self.phase_ids["test"])
 
     def rp_peer_to_peer_payment_transfers(self):
         res = self.ldproject.add_pipeline_flag("peerToPeerPaymentTransfers", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("peerToPeerPaymentTransfers", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("peerToPeerPaymentTransfers", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("peerToPeerPaymentTransfers", "Active", self.phase_ids["test"])
 
     def rp_credit_score_monitoring_tool(self):
         res = self.ldproject.add_pipeline_flag("creditScoreMonitoringTool", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("creditScoreMonitoringTool", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("creditScoreMonitoringTool", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("creditScoreMonitoringTool", "Active", self.phase_ids["test"])
 
     def rp_voice_command_banking_assistant(self):
         res = self.ldproject.add_pipeline_flag("voiceCommandBankingAssistant", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("voiceCommandBankingAssistant", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("voiceCommandBankingAssistant", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("voiceCommandBankingAssistant", "Active", self.phase_ids["test"])
 
     def rp_loan_application_tracker(self):
         res = self.ldproject.add_pipeline_flag("loanApplicationTracker", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("loanApplicationTracker", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("loanApplicationTracker", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("loanApplicationTracker", "Active", self.phase_ids["test"])
 
     ## GA Release
     def rp_detailed_spending_insights_reports(self):
@@ -1880,50 +1880,50 @@ class DemoBuilder:
         self.ldproject.attach_metric_to_flag("detailedSpendingInsightsReports", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"])
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["ga"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "Active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "Active", self.phase_ids["ga"])
 
     def rp_scheduled_bill_payments(self):
         res = self.ldproject.add_pipeline_flag("scheduledBillPayments", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("scheduledBillPayments", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"])
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["ga"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "Active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "Active", self.phase_ids["ga"])
 
     def rp_cross_border_payment_simplification(self):
         res = self.ldproject.add_pipeline_flag("crossBorderPaymentSimplification", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("crossBorderPaymentSimplification", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "Active", self.phase_ids["guard"])
 
     def rp_merchant_rewards_integration(self):
         res = self.ldproject.add_pipeline_flag("merchantRewardsIntegration", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("merchantRewardsIntegration", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "Active", self.phase_ids["guard"])
 
     def rp_virtual_card_issuance(self):
         res = self.ldproject.add_pipeline_flag("virtualCardIssuance", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("virtualCardIssuance", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "Active", self.phase_ids["guard"])
 
     def rp_api_support_for_third_party_applications(self):
         res = self.ldproject.add_pipeline_flag("apiSupportForThirdPartyApplications", "togglebank-v2-pipeline")
         self.ldproject.attach_metric_to_flag("apiSupportForThirdPartyApplications", ["stocks-api-latency","stocks-api-error-rates"])
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
-        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "Active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "Active", self.phase_ids["guard"])
 
 ############################################################################################################
 
