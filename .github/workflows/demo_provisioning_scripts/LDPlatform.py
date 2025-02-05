@@ -726,7 +726,7 @@ class LDPlatform:
                                 "releaseStrategy": "monitored-release",
                                 "requireApproval": False,
                                 "releaseGuardianConfiguration": {
-                                    "monitoringWindowMilliseconds": 3000,
+                                    "monitoringWindowMilliseconds": 1000,
                                     "rolloutWeight": 50000,
                                     "rollbackOnRegression": True,
                                 },
@@ -1578,6 +1578,6 @@ class LDPlatform:
             if status_code != 200:
                 data = json.loads(response.text)
                 print("Error advancing flag phase: " + data["message"])
-                time.sleep(2)
+                time.sleep(3)
 
         return response
