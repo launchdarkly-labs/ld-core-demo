@@ -833,7 +833,7 @@ class LDPlatform:
         data = json.loads(res.text)
         print("get_user_id data",  data)
         if data["totalCount"] == 0:
-            return "6320e9313293af11fa8a847f"
+            return self.get_user_id("aqadri")
 
         self.user_id = data["items"][0]["_id"]
         return self.user_id
