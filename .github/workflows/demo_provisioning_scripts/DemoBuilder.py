@@ -36,13 +36,13 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
+        self.update_add_userid_to_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
         self.create_and_run_holdout()  
         self.create_and_run_experiments()   
         self.project_settings()
         self.setup_template_environment()  
-        self.update_add_userid_to_flags()
         
         ## Not required
         #self.create_contexts()
