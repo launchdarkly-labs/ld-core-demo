@@ -1284,11 +1284,11 @@ class DemoBuilder:
             "Release New Search Engine in Galaxy Marketplace",
             [
                 {
-                    "value": "old-search-engine",
+                    "value": False,
                     "name": "Old Search Engine"
                 },
                 {
-                    "value": "new-search-engine",
+                    "value": True,
                     "name": "New Search Engine"
                 }
             ],

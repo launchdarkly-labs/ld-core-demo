@@ -60,7 +60,7 @@ export default function Marketplace() {
   }
 
   const LDClient = useLDClient();
-  const releaseNewSearchEngine = useFlags()["release-new-search-engine"]?.includes("new-search-engine") || "";
+  const releaseNewSearchEngine = useFlags()["release-new-search-engine"];
 
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
