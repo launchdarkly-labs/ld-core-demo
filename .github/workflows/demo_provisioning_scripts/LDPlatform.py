@@ -641,6 +641,51 @@ class LDPlatform:
     ##################################################
     # Create a holdout
     ##################################################
+    def create_holdout(
+        self,
+        holdout_key,
+        holdout_name,
+        holdout_env_key,   
+        description,
+        metrics,
+        primary_metric_key,
+        randomization_unit="users",
+        attributes=None,
+        prerequisiteflagkey=""
+    ):
+
+        payload = {
+            "name": holdout_name,
+            "key": holdout_key,
+            "description": description,
+            "randomizationunit": randomization_unit,
+            "attributes": attributes,
+            "holdoutamount": "10",
+            "primarymetrickey": primary_metric_key,
+            "metrics": metrics,
+            "prerequisiteflagkey": prerequisiteflagkey
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/environments/"
+            + holdout_env_key
+            + "/holdouts",
+            json=payload,
+            headers=headers,
+        )
+
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating holdout: " + data["message"])
+        return response
 
     ##################################################
     # Create a layer
