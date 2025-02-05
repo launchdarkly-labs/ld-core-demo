@@ -665,7 +665,6 @@ class LDPlatform:
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
             "prerequisiteflagkey": prerequisiteflagkey,
-            "maintainerId":self.user_id,
         }
 
         headers = {
