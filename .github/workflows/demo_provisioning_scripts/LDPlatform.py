@@ -831,6 +831,7 @@ class LDPlatform:
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
         data = json.loads(res.text)
+        print("get_user_id data",  data)
         if data["totalCount"] == 0:
             return "6320e9313293af11fa8a847f"
 
