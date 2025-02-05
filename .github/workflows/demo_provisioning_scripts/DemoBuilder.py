@@ -446,13 +446,29 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment holdouts   
 
-    # def create_and_run_experiments(self):
-    #     self.run_ecommerce_collection_banner_funnel_experiment()
-    #     self.run_ecommerce_upsell_component_feature_experiment()
-    #     self.run_ecommerce_shorten_collection_funnel_experiment()
-    #     self.run_ecommerce_new_search_engine_feature_experiment()
-    #     self.run_togglebank_ai_config_experiment()
-
+    def create_and_run_holdout(self):
+        self.run_q4_increase_incart_price_holdout()
+     
+    def run_q4_increase_incart_price_holdout(self):
+        metrics = [
+                {
+                "key": "in-cart-total-price",
+                "isGroup": False,
+                "primary": True
+                }
+            ]
+        res = self.ldproject.create_holdout(
+            self=self,
+            holdout_key= "q-4-increase-average-total-in-cart-price",
+            holdout_name="Q4 Increase Average Total Incart Price",
+            holdout_env_key="production",
+            description="This holdout is to see if the new experiments will increase average total cart price and overall revenue.",
+            metrics= metrics,
+            primary_metric_key= "in-cart-total-price",
+            randomization_unit="users",
+            attributes=["tier"],
+            prerequisiteflagkey="release-new-search-engine"
+        )
 ############################################################################################################
 
     ##################################################
@@ -463,7 +479,7 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment layers 
 
-    # def create_and_run_experiments(self):
+    # def create_and_run_layer(self):
     #     self.run_ecommerce_collection_banner_funnel_experiment()
     #     self.run_ecommerce_upsell_component_feature_experiment()
     #     self.run_ecommerce_shorten_collection_funnel_experiment()
