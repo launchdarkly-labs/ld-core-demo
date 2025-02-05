@@ -151,6 +151,7 @@ class LDPlatform:
         migration_stages=0,
         prerequisites=[],
         temporary=False,
+        maintainerId=""
     ):
         if self.flag_exists(flag_key):
             return
@@ -164,6 +165,7 @@ class LDPlatform:
                 "usingMobileKey": True,
             },
             "temporary": temporary,
+            "maintainerId":maintainerId
         }
 
         if len(variations) > 0:
