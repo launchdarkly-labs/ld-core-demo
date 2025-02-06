@@ -494,6 +494,12 @@ class DemoBuilder:
             layer_name="Checkout Experiment Layer",
             description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
         )
+
+        self.ldproject.update_layer(
+            layer_key= "checkout-experiment-layer",
+            layer_name="Checkout Experiment Layer",
+        )
+
 # ############################################################################################################
 
     # Add user id to flags    
