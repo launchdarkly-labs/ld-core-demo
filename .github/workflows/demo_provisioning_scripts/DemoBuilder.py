@@ -38,13 +38,14 @@ class DemoBuilder:
         self.create_flags()
         self.update_add_userid_to_flags()
         self.create_ai_config()
+        self.enable_csa_shadow_ai_feature_flags()
         self.create_ai_config_experiment()
-        self.setup_release_pipeline()
         self.create_and_run_experiments() 
         self.create_and_run_layer()
         self.create_and_run_holdout()
         self.project_settings()
         self.setup_template_environment()
+        self.setup_release_pipeline()
         
         ## Not required
         #self.create_contexts()
@@ -592,13 +593,11 @@ class DemoBuilder:
     # Update project settings
     def project_settings(self):
         print("Updating project settings:")
-        
         print("  - Toggling flags")
         self.toggle_flags()
         print("  - Add targeting")
         self.add_targeting_rules()
-        print(" - Enabling ClientSideAvailability for Shadow AI Feature Flags")
-        self.enable_csa_shadow_ai_feature_flags()
+        
         
     def add_targeting_rules(self):
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "beta-users", "production")

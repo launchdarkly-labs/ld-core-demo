@@ -50,6 +50,7 @@ export default async function chatResponse(
     };
 
     const aiConfig = await aiClient.config(aiConfigKey, context, {}, {});
+    console.log("AI Config:", aiConfig);
     if (!aiConfig.enabled) {
       throw new Error("AI config is disabled");
     } else {
