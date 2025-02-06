@@ -609,9 +609,9 @@ class LDPlatform:
                     },
                 },
                 "randomizationUnit": randomization_unit,
-                "methodology": methodology,
-                "analysisConfig": analysisConfig,
             },
+            "methodology": methodology,
+            "analysisConfig": analysisConfig,
         }
 
         if self.metric_group_exists(primary_key):
