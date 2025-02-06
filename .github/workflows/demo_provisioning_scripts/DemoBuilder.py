@@ -36,9 +36,10 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
+        self.create_ai_config()
+        self.create_ai_config_experiment()
         self.update_add_userid_to_flags()
         self.setup_release_pipeline()
-        self.create_ai_config()
         self.create_and_run_experiments()   
         self.create_and_run_layer()
         self.create_and_run_holdout()  
@@ -274,14 +275,17 @@ class DemoBuilder:
     # Each experiment is defined in its own function below
     
     ##################################################
-    # Create all the experiments    
+    # Create all the experiments 
+    
+    
+    def create_ai_config_experiment(self):
+        self.run_togglebank_ai_config_experiment()
     
     def create_and_run_experiments(self):
         self.run_ecommerce_collection_banner_funnel_experiment()
         self.run_ecommerce_upsell_component_feature_experiment()
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
-        self.run_togglebank_ai_config_experiment()
         
     def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
