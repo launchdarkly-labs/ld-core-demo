@@ -704,8 +704,8 @@ class LDPlatform:
     ):
 
         payload = {
-            "name": layer_name,
-            "key": layer_key,
+            "name": "Checkout Experiment Layer",
+            "key": "checkout-experiment-layer",
             "description": description,
         }
 
@@ -718,7 +718,7 @@ class LDPlatform:
             "POST",
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
-            + "/layers/",
+            + "/layers",
             json=payload,
             headers=headers,
         )
