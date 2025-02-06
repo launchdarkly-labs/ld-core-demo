@@ -736,11 +736,13 @@ class LDPlatform:
     def update_layer(
         self,
         layer_key,
-        layer_name,
+        environmentKey,
+        instructions = [],
     ):
         payload = {
-            "name": layer_name,
-            "key": layer_key,
+        "comment": "Example comment describing the update",
+        "environmentKey": environmentKey,
+        "instructions": instructions
         }
 
         headers = {
@@ -749,37 +751,22 @@ class LDPlatform:
             "LD-API-Version": "beta",
         }
 
-
-        responseFetch = self.getrequest(
-            "GET",
+        response = self.getrequest(
+            "PATCH",
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
-            + "/layers/",
+            + "/layers/"
+            + layer_key,
+            json=payload,
             headers=headers,
         )
 
-        dataFetch = json.loads(responseFetch.text)
-        print("dataFetch layer", dataFetch)
-        print("responseFetch layer", responseFetch)
-        if "message" in dataFetch:
-            print("Error creating layer: " + dataFetch["message"])
-        return responseFetch
-        # response = self.getrequest(
-        #     "PATCH",
-        #     "https://app.launchdarkly.com/api/v2/projects/"
-        #     + self.project_key
-        #     + "/layers/",
-        #     json=payload,
-        #     headers=headers,
-        # )
-
-        # data = json.loads(response.text)
-        # print("self.project_key layer", self.project_key)
-        # print("data layer", data)
-        # print("response layer", response)
-        # if "message" in data:
-        #     print("Error creating layer: " + data["message"])
-        # return response
+        data = json.loads(response.text)
+        print("data update_layer", data)
+        print("response update_layer", response)
+        if "message" in data:
+            print("Error updating layer: " + data["message"])
+        return response
 
 
 

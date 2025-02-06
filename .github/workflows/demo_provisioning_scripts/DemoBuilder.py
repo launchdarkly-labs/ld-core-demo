@@ -81,9 +81,9 @@ class DemoBuilder:
     # Create all the metrics
     def create_metrics(self):
         print("Creating metrics:")
-        print("  - AI Chatbot Positive Feedback")
+        print(" - AI Chatbot Positive Feedback")
         self.metric_chatbot_positive()
-        print("  - AI Chatbot Negative Feedback")
+        print(" - AI Chatbot Negative Feedback")
         self.metric_chatbot_negative()
         print(" - In-Cart Total Price")
         self.metric_in_cart_total_price()
@@ -134,29 +134,29 @@ class DemoBuilder:
             print("Error: Project not created")
             return
         print("Creating flags:")
-        print("  - A1 - Release: Wealth Management Component")
+        print(" - A1 - Release: Wealth Management Component")
         self.flag_wealth_management()
-        print("  - A2 - Release: Federated Account Component")
+        print(" - A2 - Release: Federated Account Component")
         self.flag_federated_account()
-        print("  - A3 - Release: Add New Database (Guarded Release) - ToggleBank")
+        print(" - A3 - Release: Add New Database (Guarded Release) - ToggleBank")
         self.flag_togglebank_database_guarded_release()
-        print("  - A4 - Release: New API (Guarded Release) - ToggleBank")
+        print(" - A4 - Release: New API (Guarded Release) - ToggleBank")
         self.flag_togglebank_api_guarded_release()
-        print("  - B1 - Release: New Database (Guarded Release)")
+        print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
-        print("  - B2 -  Release: New API (Guarded Release)")
+        print(" - B2 -  Release: New API (Guarded Release)")
         self.flag_api_guarded_release()
-        #print("  - C1 - Experiment: AI Models for Chatbot")
+        #print(" - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
-        print("  - D1 - Feature Experiment: Suggested Items Carousel")
+        print(" - D1 - Feature Experiment: Suggested Items Carousel")
         self.flag_exp_suggestions_carousel()
-        print("  - D1 - Funnel Experiment: Promotion Banner")
+        print(" - D1 - Funnel Experiment: Promotion Banner")
         self.flag_exp_promotion_banner()
-        print("  - D3 - Feature Experiment: New Search Engine")
+        print(" - D3 - Feature Experiment: New Search Engine")
         self.flag_exp_new_search_engine()
-        print("  - D4 - Funnel Experiment: New Shorten Collection Page")
+        print(" - D4 - Funnel Experiment: New Shorten Collection Page")
         self.flag_exp_shorten_collections_page()
-        print("  - E1 - Migration: Database (Migration Tool)")
+        print(" - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
         #Feature Flags for Release Pipeline
@@ -494,10 +494,22 @@ class DemoBuilder:
             layer_name="Checkout Experiment Layer",
             description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
         )
-
-        self.ldproject.update_layer(
+        instructionsLayer = [
+                {
+                    "experimentKey": "suggested-items-carousel",
+                    "kind": "updateExperimentReservation",
+                    "reservationPercent": 50
+                },
+                {
+                    "experimentKey": "new-collection-promotion-banner",
+                    "kind": "updateExperimentReservation",
+                    "reservationPercent": 50
+                }
+        ]
+        res2 = self.ldproject.update_layer(
             layer_key= "checkout-experiment-layer",
-            layer_name="Checkout Experiment Layer",
+            environmentKey="production",
+            instructions=instructionsLayer
         )
 
 # ############################################################################################################
