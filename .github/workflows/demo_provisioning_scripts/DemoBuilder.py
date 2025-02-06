@@ -39,9 +39,9 @@ class DemoBuilder:
         # self.update_add_userid_to_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
-        self.create_and_run_holdout()  
         self.create_and_run_experiments()   
         self.create_and_run_layer()
+        self.create_and_run_holdout()  
         self.project_settings()
         self.setup_template_environment()  
         
@@ -356,7 +356,7 @@ class DemoBuilder:
         )
         print(" - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
         self.create_ecommerce_shorten_collection_funnel_experiment()
-        self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
+        # self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
         print("Done")
         self.experiment_created = True
     
@@ -388,7 +388,7 @@ class DemoBuilder:
         )
         print(" - (Frequentist) Feature Experiment: New Search Engine")
         self.create_ecommerce_new_search_engine_feature_experiment()
-        self.ldproject.start_exp_iteration("new-search-engine", "production")
+        # self.ldproject.start_exp_iteration("new-search-engine", "production")
         print("Done")
         self.experiment_created = True
         
@@ -470,7 +470,7 @@ class DemoBuilder:
             primary_metric_key= "in-cart-total-price",
             randomization_unit="users",
             attributes=["tier"],
-            prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
+            prerequisiteflagkey="release-new-search-engine"
         )
 ############################################################################################################
 
