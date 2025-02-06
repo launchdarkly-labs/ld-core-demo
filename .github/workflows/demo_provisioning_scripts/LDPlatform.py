@@ -585,6 +585,8 @@ class LDPlatform:
         attributes=None,
         randomization_unit="user",
         custom_treatment_names=None,
+        methodology="bayesian",
+        analysisConfig={"bayesianThreshold": "95"}
     ):
         if self.experiment_exists(exp_key, exp_env):
             return
@@ -607,6 +609,8 @@ class LDPlatform:
                     },
                 },
                 "randomizationUnit": randomization_unit,
+                "methodology": methodology,
+                "analysisConfig": analysisConfig,
             },
         }
 

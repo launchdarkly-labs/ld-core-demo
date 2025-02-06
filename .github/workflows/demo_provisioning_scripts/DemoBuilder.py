@@ -373,6 +373,8 @@ class DemoBuilder:
             "We would want to reduce the collection page to the top three items to reduce customer decision fatigue in order to increase checkout and overall revenue.",
             metrics=metrics,
             primary_key="shorten-collection-page-metric-group",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"}
         )   
 
     def run_ecommerce_new_search_engine_feature_experiment(self):
@@ -405,6 +407,8 @@ class DemoBuilder:
             hypothesis="We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
             metrics=metrics,
             primary_key="search-engine-add-to-cart",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"}
         )  
         
     def run_togglebank_ai_config_experiment(self):
