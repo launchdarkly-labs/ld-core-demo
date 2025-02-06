@@ -481,7 +481,7 @@ class DemoBuilder:
     # Each layer is defined in its own function below
     
     ##################################################
-    # Create all the experiment layers 
+    # Create all the experiment layers     
 
     def create_and_run_layer(self):
         print("Creating checkout_experiment layer: ")
