@@ -316,7 +316,8 @@ class DemoBuilder:
             "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
             metrics=metrics,
             primary_key="store-purchases",
-            attributes=["device", "location", "tier", "operating_system"]
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )   
     
     def run_ecommerce_upsell_component_feature_experiment(self):
@@ -347,7 +348,8 @@ class DemoBuilder:
             "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
             metrics=metrics,
             primary_key="in-cart-total-items",
-            attributes=["device", "location", "tier", "operating_system"]
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )  
     
     def run_ecommerce_shorten_collection_funnel_experiment(self):
@@ -382,7 +384,8 @@ class DemoBuilder:
             primary_key="shorten-collection-page-metric-group",
             methodology="frequentist",
             analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
-            attributes=["device", "location", "tier", "operating_system"]
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )   
 
     def run_ecommerce_new_search_engine_feature_experiment(self):
@@ -416,7 +419,8 @@ class DemoBuilder:
             primary_key="search-engine-add-to-cart",
             methodology="frequentist",
             analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
-            attributes=["device", "location", "tier", "operating_system"]
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )  
         
     def run_togglebank_ai_config_experiment(self):
@@ -447,7 +451,7 @@ class DemoBuilder:
             "Which AI Models are providing best experiences to customers and delivering best responses",
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
-            attributes=["device", "location", "tier", "operating_system"]
+            attributes=["device", "location", "tier", "operating_system"],
         )
 
 ############################################################################################################

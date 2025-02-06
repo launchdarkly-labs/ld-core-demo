@@ -587,7 +587,8 @@ class LDPlatform:
         randomization_unit="user",
         custom_treatment_names=None,
         methodology="bayesian",
-        analysisConfig={"bayesianThreshold": "95"}
+        analysisConfig={"bayesianThreshold": "95"},
+        flagConfigVersion=1,
     ):
         if self.experiment_exists(exp_key, exp_env):
             return
@@ -606,7 +607,7 @@ class LDPlatform:
                 "flags": {
                     flag_key: {
                         "ruleId": "fallthrough",
-                        "flagConfigVersion": 2,
+                        "flagConfigVersion": flagConfigVersion,
                     },
                 },
                 "randomizationUnit": randomization_unit,
