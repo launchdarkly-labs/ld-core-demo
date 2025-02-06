@@ -156,6 +156,8 @@ class DemoBuilder:
         self.flag_exp_new_search_engine()
         print(" - D4 - Funnel Experiment: New Shorten Collection Page")
         self.flag_exp_shorten_collections_page()
+        print(" - Flag to Create Q4 Increase Total Price Holdout")
+        self.flag_holdout_q4_increase_incart_price()
         print(" - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
@@ -474,7 +476,7 @@ class DemoBuilder:
             primary_metric_key= "in-cart-total-price",
             randomization_unit="users",
             attributes=["tier"],
-            prerequisiteflagkey="release-new-search-engine"
+            prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
         )
 ############################################################################################################
 
@@ -1330,6 +1332,25 @@ class DemoBuilder:
                 },
             ],
             tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_holdout_q4_increase_incart_price(self):
+        res = self.ldproject.create_flag(
+            "q-4-increase-average-total-in-cart-price-ld-holdout",
+            "Flag to Create Q4 Increase Total Price Holdout",
+            "Description: Flag to create holdout for q4 increase incart price",
+            [
+                 {
+                    "value": True,
+                    "name": "In holdout"
+                },
+                {
+                    "value": False,
+                    "name": "Not In holdout"
+                },
+            ],
             purpose="holdout",
             on_variation=0,
             off_variation=1,
