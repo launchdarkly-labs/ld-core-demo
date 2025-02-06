@@ -32,18 +32,11 @@ export default async function chatResponse(
     const clientSideContext = JSON.parse(
       getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
     );
-    const extractedClientSideAudienceKey = clientSideContext?.audience?.key;
-
-    const clientSideAudienceContext = {
-      kind: "audience",
-      key: extractedClientSideAudienceKey,
-    };
-
+    
     function mapPromptToConversation(
       prompt: { role: 'user' | 'assistant' | 'system'; content: string }[],
     ): Message[] {
       return prompt.map((item) => ({
-        // Bedrock doesn't support systems in the converse command.
         role: item.role !== 'system' ? item.role : 'user',
         content: [{ text: item.content.replace('${userInput}', userInput) }],
       }));
@@ -51,7 +44,7 @@ export default async function chatResponse(
 
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const aiClient = initAi(ldClient);
-    const context: any = clientSideAudienceContext || {
+    const context: any = clientSideContext || {
       kind: "user",
       key: uuidv4(),
     };
@@ -89,9 +82,11 @@ export default async function chatResponse(
           modelName: aiConfig?.model?.name,
           enabled: aiConfig.enabled,
         };
+        tracker.trackSuccess();
         res.status(200).json(data);
       } catch (error: any) {
         console.error("Error sending request to Bedrock:", error);
+        tracker.trackError();
         res.status(500).json({ error: "Internal Server Error" });
       }
     }

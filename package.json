@@ -15,7 +15,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@launchdarkly/browser-telemetry": "^0.0.9",
     "@launchdarkly/node-server-sdk": "^9.0.3",
-    "@launchdarkly/server-sdk-ai": "^0.7.1",
+    "@launchdarkly/server-sdk-ai": "^0.8.2",
     "@playwright/test": "^1.39.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",

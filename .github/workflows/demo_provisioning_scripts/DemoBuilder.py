@@ -43,7 +43,7 @@ class DemoBuilder:
         self.project_settings()
         self.setup_template_environment()  
         self.update_add_userid_to_flags()
-        
+                
         ## Not required
         #self.create_contexts()
      
@@ -1914,6 +1914,7 @@ class DemoBuilder:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
 
     def rp_api_support_for_third_party_applications(self):
         res = self.ldproject.add_pipeline_flag("apiSupportForThirdPartyApplications", "togglebank-v2-pipeline")
@@ -1922,6 +1923,7 @@ class DemoBuilder:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
 
 ############################################################################################################
 

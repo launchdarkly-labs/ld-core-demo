@@ -729,6 +729,7 @@ class LDPlatform:
                                     "monitoringWindowMilliseconds": 1000,
                                     "rolloutWeight": 50000,
                                     "rollbackOnRegression": True,
+                                    "randomization": "user",
                                 },
                             },
                         }
