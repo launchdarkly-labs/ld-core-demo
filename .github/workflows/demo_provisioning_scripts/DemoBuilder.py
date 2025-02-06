@@ -227,7 +227,7 @@ class DemoBuilder:
         self.create_destination_recommendation_ai_config()
         print("AI Prompts: Travel Insights")
         self.create_travel_insights_ai_config()
-        print("AI Models: AI Chatbot")
+        print("AI Config: LaunchAirways AI Chatbot")
         self.create_ai_chatbot_ai_config()
         print("AI Config: ToggleBot")
         self.create_togglebot_ai_config()
@@ -668,7 +668,6 @@ class DemoBuilder:
         
     def enable_csa_shadow_ai_feature_flags(self):
         
-        res = self.ldproject.update_flag_client_side_availability("ai-chatbot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--destination-picker-new-ai-model")
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-travel-prompt-text")
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot")
@@ -957,8 +956,8 @@ class DemoBuilder:
     def create_togglebot_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--togglebot",
-            "AI Models: ToggleBot",
-            "This ai config will provide ai models to the ToggleBot component in ToggleBank",
+            "ToggleBot - AI Chatbot",
+            "This ai config will provide ai models / prompts to the ToggleBot component in ToggleBank",
             ["ai-models","ai-config"]
         )
         res2 = self.ldproject.create_ai_config_versions(
@@ -1004,7 +1003,7 @@ class DemoBuilder:
     def create_ai_chatbot_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--ai-new-model-chatbot",
-            "AI Prompts: Chatbot",
+            "LaunchAirways AI Chatbot",
             "This ai config will provide ai prompts to the chatbot component in LaunchAirways",
             ["ai-models","ai-config"]
         )
