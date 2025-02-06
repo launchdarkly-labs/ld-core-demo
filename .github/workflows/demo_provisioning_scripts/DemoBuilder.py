@@ -328,7 +328,6 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
         self.create_ecommerce_upsell_component_feature_experiment()
-        print("Done creating experiment")
         self.experiment_created = True
         
     def create_ecommerce_upsell_component_feature_experiment(self):
@@ -396,7 +395,6 @@ class DemoBuilder:
         print(" - (Frequentist) Feature Experiment: New Search Engine")
         self.create_ecommerce_new_search_engine_feature_experiment()
         self.ldproject.start_exp_iteration("new-search-engine", "production")
-        print("Done")
         self.experiment_created = True
         
     def create_ecommerce_new_search_engine_feature_experiment(self):
@@ -430,7 +428,6 @@ class DemoBuilder:
         )
         self.create_togglebank_ai_config_experiment()
         self.ldproject.start_exp_iteration("ai-config-experiment", "production")
-        print("Done")
         self.experiment_created = True
         
     def create_togglebank_ai_config_experiment(self):
@@ -460,9 +457,8 @@ class DemoBuilder:
     # Create all the experiment holdouts   
 
     def create_and_run_holdout(self):
-        print("Creating holdout: ")
+        print(" - Creating holdout: ")
         self.run_q4_increase_incart_price_holdout()
-        print("Done Creating holdout")
      
     def run_q4_increase_incart_price_holdout(self):
         metrics = [
@@ -494,14 +490,14 @@ class DemoBuilder:
     # Create all the experiment layers     
 
     def create_and_run_layer(self):
-        print("Creating checkout_experiment layer: ")
+        print(" - Creating checkout_experiment layer: ")
         self.run_checkout_experiment_layer()
-        print("Updating checkout_experiment layer with experiments: ")
+        print(" - Updating checkout_experiment layer with experiments: ")
         self.update_checkout_experiment_layer()
-        print("Done updating layer")
-        print("Start running suggested-items-carousel experiment: ")
+        print(" - Done updating layer")
+        print(" - Start running suggested-items-carousel experiment: ")
         self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
-        print("Start running new-collection-promotion-banner: ")
+        print(" - Start running new-collection-promotion-banner: ")
         self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done")
 
@@ -543,45 +539,45 @@ class DemoBuilder:
     ##################################################
 
     def add_userid_to_flags(self):
-        # res = self.ldproject.add_maintainer_to_flag("wealthManagement")
-        # res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
-        # res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")
-        # res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")
-        # res = self.ldproject.add_maintainer_to_flag("financialDBMigration")
-        # res = self.ldproject.add_maintainer_to_flag("investment-recent-trade-db")
-        # res = self.ldproject.add_maintainer_to_flag("release-new-investment-stock-api")
-        # res = self.ldproject.add_maintainer_to_flag("ai-config--destination-picker-new-ai-model")
-        # res = self.ldproject.add_maintainer_to_flag("ai-config--ai-travel-prompt-text")
-        # res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot")
-        # res = self.ldproject.add_maintainer_to_flag("ai-config--ai-new-model-chatbot")
-        # res = self.ldproject.add_maintainer_to_flag("storeAttentionCallout")
-        # res = self.ldproject.add_maintainer_to_flag("cartSuggestedItems")
-        # res = self.ldproject.add_maintainer_to_flag("enhancedUserAuthentication")
-        # res = self.ldproject.add_maintainer_to_flag("biometricLoginSupport")
-        # res = self.ldproject.add_maintainer_to_flag("customizableAccountDashboards")
-        # res = self.ldproject.add_maintainer_to_flag("realTimeTransactionAlerts")
-        # res = self.ldproject.add_maintainer_to_flag("aiPoweredExpenseCategorization")
-        # res = self.ldproject.add_maintainer_to_flag("fraudDetectionAlerts")
-        # res = self.ldproject.add_maintainer_to_flag("darkModeInterfaceOption")
-        # res = self.ldproject.add_maintainer_to_flag("automatedSavingsGoals")
-        # res = self.ldproject.add_maintainer_to_flag("multiCurrencySupport")
-        # res = self.ldproject.add_maintainer_to_flag("peerToPeerPaymentTransfers")
-        # res = self.ldproject.add_maintainer_to_flag("creditScoreMonitoringTool")
-        # res = self.ldproject.add_maintainer_to_flag("voiceCommandBankingAssistant")
-        # res = self.ldproject.add_maintainer_to_flag("loanApplicationTracker")
-        # res = self.ldproject.add_maintainer_to_flag("detailedSpendingInsightsReports")
-        # res = self.ldproject.add_maintainer_to_flag("scheduledBillPayments")
-        # res = self.ldproject.add_maintainer_to_flag("crossBorderPaymentSimplification")
-        # res = self.ldproject.add_maintainer_to_flag("merchantRewardsIntegration")
-        # res = self.ldproject.add_maintainer_to_flag("virtualCardIssuance")
-        # res = self.ldproject.add_maintainer_to_flag("apiSupportForThirdPartyApplications")
-        # res = self.ldproject.add_maintainer_to_flag("betaDarkMode")
-        # res = self.ldproject.add_maintainer_to_flag("experimentalPaymentGateway")
-        # res = self.ldproject.add_maintainer_to_flag("limitedTimeOfferBanner")
-        # res = self.ldproject.add_maintainer_to_flag("earlyAccessFeatureToggle")
-        # res = self.ldproject.add_maintainer_to_flag("debuggingModeForDevelopers")
-        # res = self.ldproject.add_maintainer_to_flag("release-new-search-engine")
-        # res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
+        res = self.ldproject.add_maintainer_to_flag("wealthManagement")
+        res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
+        res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")
+        res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")
+        res = self.ldproject.add_maintainer_to_flag("financialDBMigration")
+        res = self.ldproject.add_maintainer_to_flag("investment-recent-trade-db")
+        res = self.ldproject.add_maintainer_to_flag("release-new-investment-stock-api")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--destination-picker-new-ai-model")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--ai-travel-prompt-text")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--ai-new-model-chatbot")
+        res = self.ldproject.add_maintainer_to_flag("storeAttentionCallout")
+        res = self.ldproject.add_maintainer_to_flag("cartSuggestedItems")
+        res = self.ldproject.add_maintainer_to_flag("enhancedUserAuthentication")
+        res = self.ldproject.add_maintainer_to_flag("biometricLoginSupport")
+        res = self.ldproject.add_maintainer_to_flag("customizableAccountDashboards")
+        res = self.ldproject.add_maintainer_to_flag("realTimeTransactionAlerts")
+        res = self.ldproject.add_maintainer_to_flag("aiPoweredExpenseCategorization")
+        res = self.ldproject.add_maintainer_to_flag("fraudDetectionAlerts")
+        res = self.ldproject.add_maintainer_to_flag("darkModeInterfaceOption")
+        res = self.ldproject.add_maintainer_to_flag("automatedSavingsGoals")
+        res = self.ldproject.add_maintainer_to_flag("multiCurrencySupport")
+        res = self.ldproject.add_maintainer_to_flag("peerToPeerPaymentTransfers")
+        res = self.ldproject.add_maintainer_to_flag("creditScoreMonitoringTool")
+        res = self.ldproject.add_maintainer_to_flag("voiceCommandBankingAssistant")
+        res = self.ldproject.add_maintainer_to_flag("loanApplicationTracker")
+        res = self.ldproject.add_maintainer_to_flag("detailedSpendingInsightsReports")
+        res = self.ldproject.add_maintainer_to_flag("scheduledBillPayments")
+        res = self.ldproject.add_maintainer_to_flag("crossBorderPaymentSimplification")
+        res = self.ldproject.add_maintainer_to_flag("merchantRewardsIntegration")
+        res = self.ldproject.add_maintainer_to_flag("virtualCardIssuance")
+        res = self.ldproject.add_maintainer_to_flag("apiSupportForThirdPartyApplications")
+        res = self.ldproject.add_maintainer_to_flag("betaDarkMode")
+        res = self.ldproject.add_maintainer_to_flag("experimentalPaymentGateway")
+        res = self.ldproject.add_maintainer_to_flag("limitedTimeOfferBanner")
+        res = self.ldproject.add_maintainer_to_flag("earlyAccessFeatureToggle")
+        res = self.ldproject.add_maintainer_to_flag("debuggingModeForDevelopers")
+        res = self.ldproject.add_maintainer_to_flag("release-new-search-engine")
+        res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
         res = self.ldproject.add_maintainer_to_flag("q-4-increase-average-total-in-cart-price-ld-holdout")
 # ############################################################################################################
 
