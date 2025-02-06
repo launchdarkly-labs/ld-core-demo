@@ -585,6 +585,8 @@ class LDPlatform:
         attributes=None,
         randomization_unit="user",
         custom_treatment_names=None,
+        methodology="bayesian",
+        analysisConfig={"bayesianThreshold": "95"}
     ):
         if self.experiment_exists(exp_key, exp_env):
             return
@@ -608,6 +610,8 @@ class LDPlatform:
                 },
                 "randomizationUnit": randomization_unit,
             },
+            "methodology": methodology,
+            "analysisConfig": analysisConfig,
         }
 
         if self.metric_group_exists(primary_key):
@@ -661,11 +665,12 @@ class LDPlatform:
             "description": description,
             "randomizationunit": randomization_unit,
             "attributes": attributes,
-            "holdoutamount": "10",
+            "holdoutamount": "5",
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
             "prerequisiteflagkey": prerequisiteflagkey,
-
+            "analysisConfig": {"significanceThreshold": "5", "testDirection": "two-sided"},
+            "methodology": "frequentist"
         }
 
         headers = {
@@ -696,8 +701,8 @@ class LDPlatform:
 
     def create_layer(
         self,
-        layer_key,
-        layer_name,
+        # layer_key,
+        # layer_name,
         description,
     ):
 
