@@ -161,7 +161,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
     const newSearchEngineFeatureFlag: string = client?.variation(
       "release-new-search-engine",
-      "old-search-engine"
+      false,
     );
     if (newSearchEngineFeatureFlag?.includes("new-search-engine")) {
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
