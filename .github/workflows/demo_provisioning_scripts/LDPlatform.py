@@ -724,9 +724,6 @@ class LDPlatform:
         )
 
         data = json.loads(response.text)
-        print("self.project_key layer", self.project_key)
-        print("data layer", data)
-        print("response layer", response)
         if "message" in data:
             print("Error creating layer: " + data["message"])
         return response
@@ -760,8 +757,6 @@ class LDPlatform:
         )
 
         data = json.loads(response.text)
-        print("data update_layer", data)
-        print("response update_layer", response)
         if "message" in data:
             print("Error updating layer: " + data["message"])
         return response

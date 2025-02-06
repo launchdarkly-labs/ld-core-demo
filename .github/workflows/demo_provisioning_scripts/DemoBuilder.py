@@ -294,7 +294,6 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
         self.create_ecommerce_collection_banner_funnel_experiment()
-        # self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done creating experiment")
         self.experiment_created = True
         
@@ -326,7 +325,6 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
         self.create_ecommerce_upsell_component_feature_experiment()
-        # self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
         print("Done creating experiment")
         self.experiment_created = True
         
@@ -344,7 +342,7 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="in-cart-total-items",
         )  
-    #####
+    
     def run_ecommerce_shorten_collection_funnel_experiment(self):
         if not self.metric_groups_created:
             print("Error: Metric groups not created")
