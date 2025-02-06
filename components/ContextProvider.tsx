@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 import { setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
+import { platform } from 'os';
 
 const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [LDProvider, setLDProvider] = useState<any>(null);
@@ -19,6 +20,9 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
         user: {
           anonymous: true,
           key: uuidv4().slice(0, 10),
+          device: device,
+          operating_system: operatingSystem,
+          location: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         device: {
           key: device,

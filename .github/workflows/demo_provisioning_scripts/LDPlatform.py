@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+import uuid
 
 
 class LDPlatform:
@@ -1624,9 +1625,10 @@ class LDPlatform:
     ##################################################
     # Advance a flag to the next phase
     ##################################################
-    def advance_flag_phase(self, flag_key, status, pipeline_phase_id):
+    def advance_flag_phase(self, flag_key, status, pipeline_phase_id, guarded=False):
         counter = 0
         status_code = 0
+        payload = {}
         while status_code != 200:
             counter += 1
             url = (
@@ -1637,14 +1639,30 @@ class LDPlatform:
                 + "/release/phases/"
                 + pipeline_phase_id
             )
-
+            
+            if guarded == True:
+                payload = {
+                    "status": status,
+                    "audiences": [
+						{
+							"audienceId": str(uuid.uuid4()),
+							"releaseGuardianConfiguration": {
+								"randomizationUnit": "user"
+							}
+						}
+					]
+                }
+                
+            else:
+                payload = {
+                    "status": status,
+                }
+    
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": self.api_key,
                 "LD-API-Version": "beta",
             }
-
-            payload = {"status": status}
 
             response = requests.put(url, json=payload, headers=headers)
             status_code = response.status_code

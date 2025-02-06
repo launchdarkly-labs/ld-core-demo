@@ -144,7 +144,7 @@ class DemoBuilder:
         self.flag_togglebank_api_guarded_release()
         print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
-        print(" - B2 -  Release: New API (Guarded Release)")
+        print(" - B2 - Release: New API (Guarded Release)")
         self.flag_api_guarded_release()
         #print(" - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
@@ -310,6 +310,7 @@ class DemoBuilder:
             "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
             metrics=metrics,
             primary_key="store-purchases",
+            attributes=["device", "location", "tier", "operating_system"]
         )   
     
     def run_ecommerce_upsell_component_feature_experiment(self):
@@ -341,6 +342,7 @@ class DemoBuilder:
             "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
             metrics=metrics,
             primary_key="in-cart-total-items",
+            attributes=["device", "location", "tier", "operating_system"]
         )  
     
     def run_ecommerce_shorten_collection_funnel_experiment(self):
@@ -374,7 +376,8 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="shorten-collection-page-metric-group",
             methodology="frequentist",
-            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"}
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"]
         )   
 
     def run_ecommerce_new_search_engine_feature_experiment(self):
@@ -408,7 +411,8 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="search-engine-add-to-cart",
             methodology="frequentist",
-            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"}
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"]
         )  
         
     def run_togglebank_ai_config_experiment(self):
@@ -440,6 +444,7 @@ class DemoBuilder:
             "Which AI Models are providing best experiences to customers and delivering best responses",
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
+            attributes=["device", "location", "tier", "operating_system"]
         )
 
 ############################################################################################################
@@ -1914,7 +1919,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["ga"])
 
     def rp_scheduled_bill_payments(self):
@@ -1923,7 +1928,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["ga"])
 
     def rp_cross_border_payment_simplification(self):
@@ -1932,7 +1937,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"], guarded=True)
 
     def rp_merchant_rewards_integration(self):
         res = self.ldproject.add_pipeline_flag("merchantRewardsIntegration", "togglebank-v2-pipeline")
@@ -1940,7 +1945,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"], guarded=True)
 
     def rp_virtual_card_issuance(self):
         res = self.ldproject.add_pipeline_flag("virtualCardIssuance", "togglebank-v2-pipeline")
@@ -1948,7 +1953,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
 
     def rp_api_support_for_third_party_applications(self):
@@ -1957,7 +1962,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
 
 ############################################################################################################
