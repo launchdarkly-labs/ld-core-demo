@@ -652,7 +652,7 @@ class LDPlatform:
         primary_metric_key,
         randomization_unit="users",
         attributes=None,
-        prerequisiteflagkey=""
+        # prerequisiteflagkey=""
     ):
 
         payload = {
@@ -661,11 +661,12 @@ class LDPlatform:
             "description": description,
             "randomizationunit": randomization_unit,
             "attributes": attributes,
-            "holdoutamount": "10",
+            "holdoutamount": "5",
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
-            "prerequisiteflagkey": prerequisiteflagkey,
-
+            # "prerequisiteflagkey": prerequisiteflagkey,
+            "analysisConfig": {"significanceThreshold": "5", "testDirection": "two-sided"},
+            "methodology": "frequentist"
         }
 
         headers = {

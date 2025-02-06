@@ -451,13 +451,14 @@ class DemoBuilder:
     def create_and_run_holdout(self):
         print("Creating holdout: ")
         self.run_q4_increase_incart_price_holdout()
+        print("Done Creating holdout")
      
     def run_q4_increase_incart_price_holdout(self):
         metrics = [
                 {
                 "key": "in-cart-total-price",
                 "isGroup": False,
-                "primarySingleMetricKey": True
+                "primary": True
                 }
             ]
         res = self.ldproject.create_holdout(
@@ -469,7 +470,7 @@ class DemoBuilder:
             primary_metric_key= "in-cart-total-price",
             randomization_unit="users",
             attributes=["tier"],
-            prerequisiteflagkey="release-new-search-engine"
+            prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
         )
 ############################################################################################################
 
@@ -1328,7 +1329,6 @@ class DemoBuilder:
             purpose="holdout",
             on_variation=0,
             off_variation=1,
-            # maintainerId=self.user_id
         )
 
   
