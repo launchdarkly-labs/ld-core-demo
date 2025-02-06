@@ -64,7 +64,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   }
   if (vertical === "banking") {
     aiConfigKey = "ai-config--togglebot";
-
     aiNewModelChatbotFlag =
       useFlags()["ai-config--togglebot"] == undefined
         ? DEFAULT_AI_MODEL
@@ -173,7 +172,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiNewModelChatbotFlag?.model?.id?.includes("cohere")) {
+    if (aiNewModelChatbotFlag?.model?.name?.includes("cohere")) {
       return "Cohere Command";
     } else {
       return "Anthropic Claude";
@@ -233,12 +232,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     Powered by{" "}
                     <span
                       className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.id?.includes(COHERE)
+                        aiNewModelChatbotFlag?.model?.name?.includes(COHERE)
                           ? "!text-cohereColor"
                           : ""
                       } 
                       ${
-                        aiNewModelChatbotFlag?.model?.id?.includes(ANTHROPIC)
+                        aiNewModelChatbotFlag?.model?.name?.includes(ANTHROPIC)
                           ? "!text-anthropicColor"
                           : ""
                       }
