@@ -294,8 +294,8 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
         self.create_ecommerce_collection_banner_funnel_experiment()
-        self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
-        print("Done")
+        # self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
+        print("Done creating experiment")
         self.experiment_created = True
         
     def create_ecommerce_collection_banner_funnel_experiment(self):
@@ -326,8 +326,8 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
         self.create_ecommerce_upsell_component_feature_experiment()
-        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
-        print("Done")
+        # self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
+        print("Done creating experiment")
         self.experiment_created = True
         
     def create_ecommerce_upsell_component_feature_experiment(self):
@@ -488,6 +488,11 @@ class DemoBuilder:
         self.run_checkout_experiment_layer()
         print("Updating checkout_experiment layer with experiments: ")
         self.update_checkout_experiment_layer()
+        print("Done updating layer")
+        print("Start running suggested-items-carousel experiment: ")
+        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
+        print("Start running new-collection-promotion-banner: ")
+        self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done")
 
     def run_checkout_experiment_layer(self):
@@ -1189,7 +1194,7 @@ class DemoBuilder:
     def flag_api_guarded_release(self):
         res = self.ldproject.create_flag(
             "release-new-investment-stock-api",
-            "B2 -  Release: New API (Guarded Release) - Investment",
+            "B2 - Release: New API (Guarded Release) - Investment",
             "Release new API for stocks component",
             [
                 {
