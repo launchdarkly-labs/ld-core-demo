@@ -740,9 +740,9 @@ class LDPlatform:
         instructions = [],
     ):
         payload = {
-        "comment": "Example comment describing the update",
-        "environmentKey": environmentKey,
-        "instructions": instructions
+            "comment": "Example comment describing the update",
+            "environmentKey": environmentKey,
+            "instructions": instructions
         }
 
         headers = {

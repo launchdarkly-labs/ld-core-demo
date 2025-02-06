@@ -486,6 +486,8 @@ class DemoBuilder:
     def create_and_run_layer(self):
         print("Creating checkout_experiment layer: ")
         self.run_checkout_experiment_layer()
+        print("Updating checkout_experiment layer with experiments: ")
+        self.update_checkout_experiment_layer()
         print("Done")
 
     def run_checkout_experiment_layer(self):
@@ -494,6 +496,8 @@ class DemoBuilder:
             layer_name="Checkout Experiment Layer",
             description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
         )
+
+    def update_checkout_experiment_layer(self):
         instructionsLayer = [
                 {
                     "experimentKey": "suggested-items-carousel",
@@ -506,12 +510,11 @@ class DemoBuilder:
                     "reservationPercent": 50
                 }
         ]
-        res2 = self.ldproject.update_layer(
+        res  = self.ldproject.update_layer(
             layer_key= "checkout-experiment-layer",
             environmentKey="production",
             instructions=instructionsLayer
         )
-
 # ############################################################################################################
 
     # Add user id to flags    
