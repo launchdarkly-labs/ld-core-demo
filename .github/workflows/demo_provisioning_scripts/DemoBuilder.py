@@ -39,9 +39,9 @@ class DemoBuilder:
         self.update_add_userid_to_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
-        self.create_and_run_holdout()  
-        self.create_and_run_layer()
         self.create_and_run_experiments()   
+        self.create_and_run_layer()
+        self.create_and_run_holdout()  
         self.project_settings()
         self.setup_template_environment()  
         
@@ -144,7 +144,7 @@ class DemoBuilder:
         self.flag_togglebank_api_guarded_release()
         print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
-        print(" - B2 -  Release: New API (Guarded Release)")
+        print(" - B2 - Release: New API (Guarded Release)")
         self.flag_api_guarded_release()
         #print(" - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
@@ -156,6 +156,8 @@ class DemoBuilder:
         self.flag_exp_new_search_engine()
         print(" - D4 - Funnel Experiment: New Shorten Collection Page")
         self.flag_exp_shorten_collections_page()
+        print(" - Flag to Create Q4 Increase Total Price Holdout")
+        self.flag_holdout_q4_increase_incart_price()
         print(" - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
@@ -294,8 +296,7 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
         self.create_ecommerce_collection_banner_funnel_experiment()
-        self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
-        print("Done")
+        print("Done creating experiment")
         self.experiment_created = True
         
     def create_ecommerce_collection_banner_funnel_experiment(self):
@@ -311,6 +312,7 @@ class DemoBuilder:
             "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
             metrics=metrics,
             primary_key="store-purchases",
+            attributes=["device", "location", "tier", "operating_system"]
         )   
     
     def run_ecommerce_upsell_component_feature_experiment(self):
@@ -326,8 +328,6 @@ class DemoBuilder:
         )
         print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
         self.create_ecommerce_upsell_component_feature_experiment()
-        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
-        print("Done")
         self.experiment_created = True
         
     def create_ecommerce_upsell_component_feature_experiment(self):
@@ -343,8 +343,9 @@ class DemoBuilder:
             "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
             metrics=metrics,
             primary_key="in-cart-total-items",
+            attributes=["device", "location", "tier", "operating_system"]
         )  
-    #####
+    
     def run_ecommerce_shorten_collection_funnel_experiment(self):
         if not self.metric_groups_created:
             print("Error: Metric groups not created")
@@ -375,6 +376,9 @@ class DemoBuilder:
             "We would want to reduce the collection page to the top three items to reduce customer decision fatigue in order to increase checkout and overall revenue.",
             metrics=metrics,
             primary_key="shorten-collection-page-metric-group",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"]
         )   
 
     def run_ecommerce_new_search_engine_feature_experiment(self):
@@ -391,7 +395,6 @@ class DemoBuilder:
         print(" - (Frequentist) Feature Experiment: New Search Engine")
         self.create_ecommerce_new_search_engine_feature_experiment()
         self.ldproject.start_exp_iteration("new-search-engine", "production")
-        print("Done")
         self.experiment_created = True
         
     def create_ecommerce_new_search_engine_feature_experiment(self):
@@ -407,6 +410,9 @@ class DemoBuilder:
             hypothesis="We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
             metrics=metrics,
             primary_key="search-engine-add-to-cart",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"]
         )  
         
     def run_togglebank_ai_config_experiment(self):
@@ -422,7 +428,6 @@ class DemoBuilder:
         )
         self.create_togglebank_ai_config_experiment()
         self.ldproject.start_exp_iteration("ai-config-experiment", "production")
-        print("Done")
         self.experiment_created = True
         
     def create_togglebank_ai_config_experiment(self):
@@ -438,6 +443,7 @@ class DemoBuilder:
             "Which AI Models are providing best experiences to customers and delivering best responses",
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
+            attributes=["device", "location", "tier", "operating_system"]
         )
 
 ############################################################################################################
@@ -451,7 +457,7 @@ class DemoBuilder:
     # Create all the experiment holdouts   
 
     def create_and_run_holdout(self):
-        print("Creating holdout: ")
+        print(" - Creating holdout: ")
         self.run_q4_increase_incart_price_holdout()
      
     def run_q4_increase_incart_price_holdout(self):
@@ -459,7 +465,7 @@ class DemoBuilder:
                 {
                 "key": "in-cart-total-price",
                 "isGroup": False,
-                "primarySingleMetricKey": True
+                "primary": True
                 }
             ]
         res = self.ldproject.create_holdout(
@@ -471,7 +477,7 @@ class DemoBuilder:
             primary_metric_key= "in-cart-total-price",
             randomization_unit="users",
             attributes=["tier"],
-            prerequisiteflagkey="release-new-search-engine"
+            prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
         )
 ############################################################################################################
 
@@ -481,19 +487,24 @@ class DemoBuilder:
     # Each layer is defined in its own function below
     
     ##################################################
-    # Create all the experiment layers 
+    # Create all the experiment layers     
 
     def create_and_run_layer(self):
-        print("Creating checkout_experiment layer: ")
+        print(" - Creating checkout_experiment layer: ")
         self.run_checkout_experiment_layer()
-        print("Updating checkout_experiment layer with experiments: ")
+        print(" - Updating checkout_experiment layer with experiments: ")
         self.update_checkout_experiment_layer()
+        print(" - Done updating layer")
+        print(" - Start running suggested-items-carousel experiment: ")
+        self.ldproject.start_exp_iteration("suggested-items-carousel", "production")
+        print(" - Start running new-collection-promotion-banner: ")
+        self.ldproject.start_exp_iteration("new-collection-promotion-banner", "production")
         print("Done")
 
     def run_checkout_experiment_layer(self):
         res = self.ldproject.create_layer(
-            layer_key= "checkout-experiment-layer",
-            layer_name="Checkout Experiment Layer",
+            # layer_key= "checkout-experiment-layer",
+            # layer_name="Checkout Experiment Layer",
             description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
         )
 
@@ -567,7 +578,7 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("debuggingModeForDevelopers")
         res = self.ldproject.add_maintainer_to_flag("release-new-search-engine")
         res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
-        
+        res = self.ldproject.add_maintainer_to_flag("q-4-increase-average-total-in-cart-price-ld-holdout")
 # ############################################################################################################
 
     # Update project settings
@@ -1189,7 +1200,7 @@ class DemoBuilder:
     def flag_api_guarded_release(self):
         res = self.ldproject.create_flag(
             "release-new-investment-stock-api",
-            "B2 -  Release: New API (Guarded Release) - Investment",
+            "B2 - Release: New API (Guarded Release) - Investment",
             "Release new API for stocks component",
             [
                 {
@@ -1322,10 +1333,28 @@ class DemoBuilder:
                 },
             ],
             tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_holdout_q4_increase_incart_price(self):
+        res = self.ldproject.create_flag(
+            "q-4-increase-average-total-in-cart-price-ld-holdout",
+            "Flag to Create Q4 Increase Total Price Holdout",
+            "Description: Flag to create holdout for q4 increase incart price",
+            [
+                 {
+                    "value": True,
+                    "name": "In holdout"
+                },
+                {
+                    "value": False,
+                    "name": "Not In holdout"
+                },
+            ],
             purpose="holdout",
             on_variation=0,
             off_variation=1,
-            # maintainerId=self.user_id
         )
 
   
@@ -1907,7 +1936,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["ga"])
 
     def rp_scheduled_bill_payments(self):
@@ -1916,7 +1945,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["ga"])
 
     def rp_cross_border_payment_simplification(self):
@@ -1925,7 +1954,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"], guarded=True)
 
     def rp_merchant_rewards_integration(self):
         res = self.ldproject.add_pipeline_flag("merchantRewardsIntegration", "togglebank-v2-pipeline")
@@ -1933,7 +1962,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"], guarded=True)
 
     def rp_virtual_card_issuance(self):
         res = self.ldproject.add_pipeline_flag("virtualCardIssuance", "togglebank-v2-pipeline")
@@ -1941,7 +1970,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
 
     def rp_api_support_for_third_party_applications(self):
@@ -1950,7 +1979,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"], guarded=True)
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
 
 ############################################################################################################

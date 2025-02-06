@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+import uuid
 
 
 class LDPlatform:
@@ -585,6 +586,8 @@ class LDPlatform:
         attributes=None,
         randomization_unit="user",
         custom_treatment_names=None,
+        methodology="bayesian",
+        analysisConfig={"bayesianThreshold": "95"}
     ):
         if self.experiment_exists(exp_key, exp_env):
             return
@@ -608,6 +611,8 @@ class LDPlatform:
                 },
                 "randomizationUnit": randomization_unit,
             },
+            "methodology": methodology,
+            "analysisConfig": analysisConfig,
         }
 
         if self.metric_group_exists(primary_key):
@@ -661,11 +666,12 @@ class LDPlatform:
             "description": description,
             "randomizationunit": randomization_unit,
             "attributes": attributes,
-            "holdoutamount": "10",
+            "holdoutamount": "5",
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
             "prerequisiteflagkey": prerequisiteflagkey,
-
+            "analysisConfig": {"significanceThreshold": "5", "testDirection": "two-sided"},
+            "methodology": "frequentist"
         }
 
         headers = {
@@ -696,8 +702,8 @@ class LDPlatform:
 
     def create_layer(
         self,
-        layer_key,
-        layer_name,
+        # layer_key,
+        # layer_name,
         description,
     ):
 
@@ -1619,9 +1625,10 @@ class LDPlatform:
     ##################################################
     # Advance a flag to the next phase
     ##################################################
-    def advance_flag_phase(self, flag_key, status, pipeline_phase_id):
+    def advance_flag_phase(self, flag_key, status, pipeline_phase_id, guarded=False):
         counter = 0
         status_code = 0
+        payload = {}
         while status_code != 200:
             counter += 1
             url = (
@@ -1632,14 +1639,30 @@ class LDPlatform:
                 + "/release/phases/"
                 + pipeline_phase_id
             )
-
+            
+            if guarded == True:
+                payload = {
+                    "status": status,
+                    "audiences": [
+						{
+							"audienceId": str(uuid.uuid4()),
+							"releaseGuardianConfiguration": {
+								"randomizationUnit": "user"
+							}
+						}
+					]
+                }
+                
+            else:
+                payload = {
+                    "status": status,
+                }
+    
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": self.api_key,
                 "LD-API-Version": "beta",
             }
-
-            payload = {"status": status}
 
             response = requests.put(url, json=payload, headers=headers)
             status_code = response.status_code
