@@ -358,7 +358,7 @@ class DemoBuilder:
         )
         print(" - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
         self.create_ecommerce_shorten_collection_funnel_experiment()
-        # self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
+        self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
         print("Done")
         self.experiment_created = True
     
@@ -392,7 +392,7 @@ class DemoBuilder:
         )
         print(" - (Frequentist) Feature Experiment: New Search Engine")
         self.create_ecommerce_new_search_engine_feature_experiment()
-        # self.ldproject.start_exp_iteration("new-search-engine", "production")
+        self.ldproject.start_exp_iteration("new-search-engine", "production")
         print("Done")
         self.experiment_created = True
         
