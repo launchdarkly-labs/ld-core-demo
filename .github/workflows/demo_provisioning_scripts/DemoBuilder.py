@@ -36,13 +36,14 @@ class DemoBuilder:
         self.create_metrics()
         self.create_metric_groups()
         self.create_flags()
+        self.update_add_userid_to_flags()
         self.setup_release_pipeline()
         self.create_ai_config()
-        self.create_and_run_experiments()   
         self.create_and_run_holdout()  
+        self.create_and_run_layer()
+        self.create_and_run_experiments()   
         self.project_settings()
         self.setup_template_environment()  
-        self.update_add_userid_to_flags()
         
         ## Not required
         #self.create_contexts()
@@ -80,9 +81,9 @@ class DemoBuilder:
     # Create all the metrics
     def create_metrics(self):
         print("Creating metrics:")
-        print("  - AI Chatbot Positive Feedback")
+        print(" - AI Chatbot Positive Feedback")
         self.metric_chatbot_positive()
-        print("  - AI Chatbot Negative Feedback")
+        print(" - AI Chatbot Negative Feedback")
         self.metric_chatbot_negative()
         print(" - In-Cart Total Price")
         self.metric_in_cart_total_price()
@@ -133,29 +134,29 @@ class DemoBuilder:
             print("Error: Project not created")
             return
         print("Creating flags:")
-        print("  - A1 - Release: Wealth Management Component")
+        print(" - A1 - Release: Wealth Management Component")
         self.flag_wealth_management()
-        print("  - A2 - Release: Federated Account Component")
+        print(" - A2 - Release: Federated Account Component")
         self.flag_federated_account()
-        print("  - A3 - Release: Add New Database (Guarded Release) - ToggleBank")
+        print(" - A3 - Release: Add New Database (Guarded Release) - ToggleBank")
         self.flag_togglebank_database_guarded_release()
-        print("  - A4 - Release: New API (Guarded Release) - ToggleBank")
+        print(" - A4 - Release: New API (Guarded Release) - ToggleBank")
         self.flag_togglebank_api_guarded_release()
-        print("  - B1 - Release: New Database (Guarded Release)")
+        print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
-        print("  - B2 -  Release: New API (Guarded Release)")
+        print(" - B2 -  Release: New API (Guarded Release)")
         self.flag_api_guarded_release()
-        #print("  - C1 - Experiment: AI Models for Chatbot")
+        #print(" - C1 - Experiment: AI Models for Chatbot")
         #self.flag_exp_chatbot_ai_models()
-        print("  - D1 - Feature Experiment: Suggested Items Carousel")
+        print(" - D1 - Feature Experiment: Suggested Items Carousel")
         self.flag_exp_suggestions_carousel()
-        print("  - D1 - Funnel Experiment: Promotion Banner")
+        print(" - D1 - Funnel Experiment: Promotion Banner")
         self.flag_exp_promotion_banner()
-        print("  - D3 - Feature Experiment: New Search Engine")
+        print(" - D3 - Feature Experiment: New Search Engine")
         self.flag_exp_new_search_engine()
-        print("  - D4 - Funnel Experiment: New Shorten Collection Page")
+        print(" - D4 - Funnel Experiment: New Shorten Collection Page")
         self.flag_exp_shorten_collections_page()
-        print("  - E1 - Migration: Database (Migration Tool)")
+        print(" - E1 - Migration: Database (Migration Tool)")
         self.flag_database_migration()
         
         #Feature Flags for Release Pipeline
@@ -458,7 +459,7 @@ class DemoBuilder:
                 {
                 "key": "in-cart-total-price",
                 "isGroup": False,
-                "primary": True
+                "primarySingleMetricKey": True
                 }
             ]
         res = self.ldproject.create_holdout(
@@ -482,13 +483,38 @@ class DemoBuilder:
     ##################################################
     # Create all the experiment layers 
 
-    # def create_and_run_layer(self):
-    #     self.run_ecommerce_collection_banner_funnel_experiment()
-    #     self.run_ecommerce_upsell_component_feature_experiment()
-    #     self.run_ecommerce_shorten_collection_funnel_experiment()
-    #     self.run_ecommerce_new_search_engine_feature_experiment()
-    #     self.run_togglebank_ai_config_experiment()
+    def create_and_run_layer(self):
+        print("Creating checkout_experiment layer: ")
+        self.run_checkout_experiment_layer()
+        print("Updating checkout_experiment layer with experiments: ")
+        self.update_checkout_experiment_layer()
+        print("Done")
 
+    def run_checkout_experiment_layer(self):
+        res = self.ldproject.create_layer(
+            layer_key= "checkout-experiment-layer",
+            layer_name="Checkout Experiment Layer",
+            description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
+        )
+
+    def update_checkout_experiment_layer(self):
+        instructionsLayer = [
+                {
+                    "experimentKey": "suggested-items-carousel",
+                    "kind": "updateExperimentReservation",
+                    "reservationPercent": 50
+                },
+                {
+                    "experimentKey": "new-collection-promotion-banner",
+                    "kind": "updateExperimentReservation",
+                    "reservationPercent": 50
+                }
+        ]
+        res  = self.ldproject.update_layer(
+            layer_key= "checkout-experiment-layer",
+            environmentKey="production",
+            instructions=instructionsLayer
+        )
 # ############################################################################################################
 
     # Add user id to flags    
@@ -1286,18 +1312,20 @@ class DemoBuilder:
             "D3 - Feature Experiment: New Search Engine",
             "Release New Search Engine in Galaxy Marketplace",
             [
-                {
-                    "value": "old-search-engine",
-                    "name": "Old Search Engine"
+                 {
+                    "value": True,
+                    "name": "New Search Engine"
                 },
                 {
-                    "value": "new-search-engine",
-                    "name": "New Search Engine"
-                }
+                    "value": False,
+                    "name": "Old Search Engine"
+                },
             ],
             tags=["experiment", "ecommerce"],
+            purpose="holdout",
             on_variation=0,
             off_variation=1,
+            # maintainerId=self.user_id
         )
 
   
@@ -1914,6 +1942,7 @@ class DemoBuilder:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
 
     def rp_api_support_for_third_party_applications(self):
         res = self.ldproject.add_pipeline_flag("apiSupportForThirdPartyApplications", "togglebank-v2-pipeline")
@@ -1922,6 +1951,7 @@ class DemoBuilder:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
 
 ############################################################################################################
 

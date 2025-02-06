@@ -164,6 +164,7 @@ class LDPlatform:
                 "usingMobileKey": True,
             },
             "temporary": temporary,
+            "maintainerId": self.user_id
         }
 
         if len(variations) > 0:
@@ -663,7 +664,8 @@ class LDPlatform:
             "holdoutamount": "10",
             "primarymetrickey": primary_metric_key,
             "metrics": metrics,
-            "prerequisiteflagkey": prerequisiteflagkey
+            "prerequisiteflagkey": prerequisiteflagkey,
+
         }
 
         headers = {
@@ -691,6 +693,73 @@ class LDPlatform:
     ##################################################
     # Create a layer
     ##################################################
+
+    def create_layer(
+        self,
+        layer_key,
+        layer_name,
+        description,
+    ):
+
+        payload = {
+            "name": "Checkout Experiment Layer",
+            "key": "checkout-experiment-layer",
+            "description": description,
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/layers",
+            json=payload,
+            headers=headers,
+        )
+
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating layer: " + data["message"])
+        return response
+
+
+    def update_layer(
+        self,
+        layer_key,
+        environmentKey,
+        instructions = [],
+    ):
+        payload = {
+            "comment": "Example comment describing the update",
+            "environmentKey": environmentKey,
+            "instructions": instructions
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+
+        response = self.getrequest(
+            "PATCH",
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/layers/"
+            + layer_key,
+            json=payload,
+            headers=headers,
+        )
+
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error updating layer: " + data["message"])
+        return response
+
+
 
     ##################################################
     # Create a release pipeline
@@ -729,6 +798,7 @@ class LDPlatform:
                                     "monitoringWindowMilliseconds": 1000,
                                     "rolloutWeight": 50000,
                                     "rollbackOnRegression": True,
+                                    "randomization": "user",
                                 },
                             },
                         }
@@ -831,7 +901,7 @@ class LDPlatform:
         )
         data = json.loads(res.text)
         if data["totalCount"] == 0:
-            return "6320e9313293af11fa8a847f"
+            return self.get_user_id("aqadri@launchdarkly.com")
 
         self.user_id = data["items"][0]["_id"]
         return self.user_id
