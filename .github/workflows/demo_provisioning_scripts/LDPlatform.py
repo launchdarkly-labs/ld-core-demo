@@ -698,8 +698,8 @@ class LDPlatform:
 
     def create_layer(
         self,
-        layer_key,
-        layer_name,
+        # layer_key,
+        # layer_name,
         description,
     ):
 

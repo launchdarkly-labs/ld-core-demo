@@ -40,8 +40,8 @@ class DemoBuilder:
         self.setup_release_pipeline()
         self.create_ai_config()
         self.create_and_run_holdout()  
-        self.create_and_run_layer()
         self.create_and_run_experiments()   
+        self.create_and_run_layer()
         self.project_settings()
         self.setup_template_environment()  
         
