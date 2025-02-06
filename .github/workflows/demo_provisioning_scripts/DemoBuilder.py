@@ -492,8 +492,8 @@ class DemoBuilder:
 
     def run_checkout_experiment_layer(self):
         res = self.ldproject.create_layer(
-            layer_key= "checkout-experiment-layer",
-            layer_name="Checkout Experiment Layer",
+            # layer_key= "checkout-experiment-layer",
+            # layer_name="Checkout Experiment Layer",
             description="This layer is to allow having two experiments that affect the checkout cart running at the same time.",
         )
 
