@@ -907,7 +907,7 @@ class LDPlatform:
         )
         data = json.loads(res.text)
         if data["totalCount"] == 0:
-            return self.get_user_id("aqadri@launchdarkly.com")
+            return self.get_user_id("demoengineering@launchdarkly.com")
 
         self.user_id = data["items"][0]["_id"]
         return self.user_id
