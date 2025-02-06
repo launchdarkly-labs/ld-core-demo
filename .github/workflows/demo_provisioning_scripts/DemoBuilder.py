@@ -484,8 +484,9 @@ class DemoBuilder:
     # Create all the experiment layers 
 
     def create_and_run_layer(self):
-        print("Creating layer: ")
+        print("Creating checkout_experiment layer: ")
         self.run_checkout_experiment_layer()
+        print("Done")
 
     def run_checkout_experiment_layer(self):
         res = self.ldproject.create_layer(
