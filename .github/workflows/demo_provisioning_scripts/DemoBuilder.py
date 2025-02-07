@@ -31,21 +31,21 @@ class DemoBuilder:
         
     
     def build(self):
-        self.create_project()
-        self.create_segments()
-        self.create_metrics()
-        self.create_metric_groups()
-        self.create_flags()
-        self.update_add_userid_to_flags()
-        self.create_ai_config()
-        self.enable_csa_shadow_ai_feature_flags()
+        # self.create_project()
+        # self.create_segments()
+        # self.create_metrics()
+        # self.create_metric_groups()
+        # self.create_flags()
+        # self.update_add_userid_to_flags()
+        # self.create_ai_config()
+        # self.enable_csa_shadow_ai_feature_flags()
         self.create_ai_config_experiment()
-        self.create_and_run_experiments() 
-        self.create_and_run_layer()
-        self.create_and_run_holdout()
-        self.project_settings()
-        self.setup_template_environment()
-        self.setup_release_pipeline()
+        # self.create_and_run_experiments() 
+        # self.create_and_run_layer()
+        # self.create_and_run_holdout()
+        # self.project_settings()
+        # self.setup_template_environment()
+        # self.setup_release_pipeline()
         
         ## Not required
         #self.create_contexts()
@@ -425,9 +425,9 @@ class DemoBuilder:
         )  
         
     def run_togglebank_ai_config_experiment(self):
-        if not self.metrics_created:
-            print("Error: Metric not created")
-            return
+        # if not self.metrics_created:
+        #     print("Error: Metric not created")
+        #     return
         print("Creating experiment: ")
         self.ldproject.toggle_flag(
             "ai-config--togglebot",
@@ -453,6 +453,7 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
             attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )
 
 ############################################################################################################
