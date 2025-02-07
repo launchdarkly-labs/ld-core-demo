@@ -39,7 +39,6 @@ class DemoBuilder:
         self.update_add_userid_to_flags()
         self.create_ai_config()
         self.enable_csa_shadow_ai_feature_flags()
-        self.create_ai_config_experiment()
         self.create_and_run_experiments() 
         self.create_and_run_layer()
         self.create_and_run_holdout()
@@ -276,17 +275,14 @@ class DemoBuilder:
     # Each experiment is defined in its own function below
     
     ##################################################
-    # Create all the experiments 
-    
-    
-    def create_ai_config_experiment(self):
-        self.run_togglebank_ai_config_experiment()
+    # Create all the experiments         
     
     def create_and_run_experiments(self):
         self.run_ecommerce_collection_banner_funnel_experiment()
         self.run_ecommerce_upsell_component_feature_experiment()
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
+        self.run_togglebank_ai_config_experiment()
         
     def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
@@ -453,6 +449,7 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
             attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )
 
 ############################################################################################################
