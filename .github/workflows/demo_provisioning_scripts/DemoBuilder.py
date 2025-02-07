@@ -845,7 +845,7 @@ class DemoBuilder:
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--destination-picker-new-ai-model",
-            "AI Models: Destination Recommendations",
+            "LaunchAirways Destination Recommendations",
             "This ai config will provide ai models to the destination recommendations component in LaunchAirways",
             ["ai-models", "ai-config"]
         )
@@ -891,7 +891,7 @@ class DemoBuilder:
     def create_travel_insights_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--ai-travel-prompt-text",
-            "AI Prompts: Travel Insights",
+            "LaunchAirways Travel Insights",
             "This ai config will provide ai prompts to the travel insights component in LaunchAirways",
             ["ai-prompts","ai-config"]
         )
@@ -1004,7 +1004,7 @@ class DemoBuilder:
         res = self.ldproject.create_ai_config(
             "ai-config--ai-new-model-chatbot",
             "LaunchAirways AI Chatbot",
-            "This ai config will provide ai prompts to the chatbot component in LaunchAirways",
+            "This ai config will provide ai models / prompts to the chatbot component in LaunchAirways",
             ["ai-models","ai-config"]
         )
         res2 = self.ldproject.create_ai_config_versions(
