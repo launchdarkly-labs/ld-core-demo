@@ -15,24 +15,25 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { toast } from "./ui/use-toast";
-import ExperimentGenerator from "@/experimentation-automation/experimentGeneratorGeneral";
+import ExperimentGenerator from "@/components/generators/experimentation-automation/experimentGeneratorGeneral";
 import {
-  AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY,
+  TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY,
   MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY,
   MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY,
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
-} from "@/experimentation-automation/experimentationConstants";
+} from "@/components/generators/experimentation-automation/experimentationConstants";
 
 import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
   generateNewSearchEngineFeatureExperimentResults,
-} from "@/experimentation-automation/featureExperimentGeneratorFunctions";
+} from "@/components/generators/experimentation-automation/featureExperimentGeneratorFunctions";
 import {
   generateStoreHeaderFunnelExperimentResults,
   generateShortenCollectionsPageFunnelExperimentResults,
-} from "@/experimentation-automation/funnelExperimentGeneratorFunctions";
+} from "@/components/generators/experimentation-automation/funnelExperimentGeneratorFunctions";
+import GuardedReleaseGenerator from "@/components/generators/guarded-release-generator/guardedReleaseGenerator";
 
 export function QuickCommandDialog({ children }: { children: any }) {
   const [open, setOpen] = React.useState(false);
@@ -103,10 +104,11 @@ export function QuickCommandDialog({ children }: { children: any }) {
                 <p>Resetting in {timer}</p>
               ) : (
                 <div
+                onClick={resetFeatureFlags}
                   onMouseEnter={() => setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
                 >
-                  <p onClick={resetFeatureFlags} className="font-bold font-sohnelight text-lg">
+                  <p  className="font-bold font-sohnelight text-lg">
                     Reset Feature Flags
                   </p>
                   {showTooltip && (
@@ -122,9 +124,15 @@ export function QuickCommandDialog({ children }: { children: any }) {
               )}
             </CommandItem>
             <CommandItem>
+              <GuardedReleaseGenerator flagKey={"togglebankAPIGuardedRelease"} title={"[ToggleBank] API Guarded Release Generator (Rollback)"}/>
+            </CommandItem>
+            <CommandItem>
+              <GuardedReleaseGenerator flagKey={"togglebankDBGuardedRelease"} title={"[ToggleBank] Database Guarded Release Generator (No Rollback)"}/>
+            </CommandItem>
+            <CommandItem>
               <ExperimentGenerator
-                title={"[Airlines] Feature Experiment Results Generator for AI Chatbot"}
-                experimentationKey={AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY}
+                title={"[ToggleBank] Feature Experiment Results Generator for AI Chatbot"}
+                experimentationKey={TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY}
                 functionGenerator={generateAIChatBotFeatureExperimentResults}
               />
             </CommandItem>
