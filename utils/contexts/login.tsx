@@ -27,6 +27,7 @@ const LoginContext = createContext<LoginContextType>({
   // async setPlaneContext(),
   async enrollInLaunchClub() {},
   async updateAudienceContext() {},
+  async updateUserContext() {},
   async loginUser() {},
   async logoutUser() {},
   allUsers: [],
@@ -124,12 +125,18 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     await client?.identify(context);
   };
 
-  const updateUserContext = async () => {
+  const updateUserContext = async (): Promise<void> => {
     const context = await client?.getContext();
-    console.log("updateUserContext", context);
-    context.user.key = uuidv4().slice(0, 10);
+    context.user.key = uuidv4();
+    context.user.device = Math.random() < 0.5 ? "Mobile" : "Desktop";
+    const osOptions = ["iOS", "Android", "macOS", "Windows"];
+    context.user.operating_system = osOptions[Math.floor(Math.random() * osOptions.length)];
+    context.user.location = `America/${["New_York", "Chicago", "Los_Angeles", "Denver"][Math.floor(Math.random() * 4)]}`;
+    context.user.tier = ["Gold", "Silver", "Platinum"][Math.floor(Math.random() * 3)];
+    context.user.anonymous = false;
     setAppMultiContext(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
+    console.log("updateUserContext", context);
     await client?.identify(context);
   };
 
@@ -213,7 +220,6 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
         userObject,
         isLoggedIn,
         upgradeLaunchClubStatus,
-        // setPlaneContext,
         enrollInLaunchClub,
         updateAudienceContext,
         updateUserContext,

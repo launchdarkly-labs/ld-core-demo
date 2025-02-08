@@ -2,27 +2,25 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React, { useState, useEffect, useContext } from "react";
 import LoginContext from "@/utils/contexts/login";
 import { useLDClient } from "launchdarkly-react-client-sdk";
-import { LDClient } from "launchdarkly-js-client-sdk";
 import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
   generateNewSearchEngineFeatureExperimentResults,
-} from "@/experimentation-automation/featureExperimentGeneratorFunctions";
+} from "@/components/generators/experimentation-automation/featureExperimentGeneratorFunctions";
 import {
   generateStoreHeaderFunnelExperimentResults,
   generateShortenCollectionsPageFunnelExperimentResults,
-} from "@/experimentation-automation/funnelExperimentGeneratorFunctions";
+} from "@/components/generators/experimentation-automation/funnelExperimentGeneratorFunctions";
 import { Beaker, FlaskConical } from "lucide-react";
 import {
-  AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY,
+  TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY,
   MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY,
   MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY,
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
   MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY,
-} from "@/experimentation-automation/experimentationConstants";
+} from "@/components/generators/experimentation-automation/experimentationConstants";
 import { useLDClientError } from "launchdarkly-react-client-sdk";
 import { capitalizeFirstLetter } from "@/utils/utils";
-import { set } from "lodash";
 
 export default function ExperimentGenerator({
   title,
@@ -33,8 +31,8 @@ export default function ExperimentGenerator({
   experimentationKey: string;
   functionGenerator: void;
 }) {
-  const client: LDClient | undefined = useLDClient();
-  const { updateAudienceContext } = useContext(LoginContext);
+  const client = useLDClient();
+  const { updateUserContext } = useContext(LoginContext);
   const [expGenerator, setExpGenerator] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [experimentTypeObj, setExperimentTypeObj] = useState<{
@@ -48,62 +46,9 @@ export default function ExperimentGenerator({
   }
 
   const updateContext = async (): Promise<void> => {
-    updateAudienceContext();
+    console.log("Updating Context");
+    updateUserContext();
   };
-
-  // const generatorFunction = (experimentationKey:string,experimentTypeObj:any)=>{
-  //   console.log(experimentationKey)
-  //   switch (experimentationKey) {
-  //     case MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY:
-  //       generateSuggestedItemsFeatureExperimentResults({
-  //         client: client,
-  //         updateContext: updateContext,
-  //         setProgress: setProgress,
-  //         setExpGenerator: setExpGenerator,
-  //         experimentTypeObj: experimentTypeObj,
-  //       });
-  //       break;
-  //     case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
-  //       generateAIChatBotFeatureExperimentResults({
-  //         client: client,
-  //         updateContext: updateContext,
-  //         setProgress: setProgress,
-  //         setExpGenerator: setExpGenerator,
-  //         experimentTypeObj: experimentTypeObj,
-  //       });
-  //       break;
-  //     case MARKETPLACE_NEW_SEARCH_ENGINE_EXPERIMENTATION_KEY:
-  //       generateNewSearchEngineFeatureExperimentResults({
-  //         client: client,
-  //         updateContext: updateContext,
-  //         setProgress: setProgress,
-  //         setExpGenerator: setExpGenerator,
-  //         experimentTypeObj: experimentTypeObj,
-  //       });
-  //       break;
-  //     case MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY:
-  //       generateStoreHeaderFunnelExperimentResults({
-  //         client: client,
-  //         updateContext: updateContext,
-  //         setProgress: setProgress,
-  //         setExpGenerator: setExpGenerator,
-  //         experimentTypeObj: experimentTypeObj,
-  //       });
-  //       break;
-  //     case MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY:
-  //       generateShortenCollectionsPageFunnelExperimentResults({
-  //         client: client,
-  //         updateContext: updateContext,
-  //         setProgress: setProgress,
-  //         setExpGenerator: setExpGenerator,
-  //         experimentTypeObj: experimentTypeObj,
-  //       });
-  //       break;
-  //     default:
-  //       alert("No function exist for feature experimentation");
-  //   }
-  //   //setExperimentTypeObj({ experimentType: "", numOfRuns: 0 });
-  // }
 
   useEffect(() => {
     if (expGenerator) {
@@ -117,7 +62,7 @@ export default function ExperimentGenerator({
             experimentTypeObj: experimentTypeObj,
           });
           break;
-        case AIRWAYS_CHATBOT_AI_EXPERIMENTATION_KEY:
+        case TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY:
           generateAIChatBotFeatureExperimentResults({
             client: client,
             updateContext: updateContext,

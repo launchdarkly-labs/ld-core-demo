@@ -81,8 +81,8 @@ const StockRecommendationCard = () => {
       }, 100);
 
       errorInterval = setInterval(async () => {
-        let dynamicValue1;
-        let dynamicValue2;
+        let dynamicValue1 = 0;
+        let dynamicValue2 = 0;
         if (client) {
           if (releaseNewInvestmentStockApi) {
             //75% chance of hitting errors
@@ -90,8 +90,10 @@ const StockRecommendationCard = () => {
               await client.track("stocks-api-error-rates");
               await client.flush();
             }
-            dynamicValue1 = Math.floor(Math.random() * (21)) + 600;
+            dynamicValue1 = Math.floor(Math.random() * (101)) + 600;
+            console.log("Latency value (high): ", dynamicValue1);
             await client.track("stocks-api-latency", undefined, dynamicValue1);
+            await wait(0.1);
             dynamicValue1 = 0;
             await client.flush();
           } else {
@@ -100,8 +102,8 @@ const StockRecommendationCard = () => {
               await client.track("stocks-api-error-rates");
               await client.flush();
             }
-            dynamicValue2 = Math.floor(Math.random() * (60 - 50 + 1)) + 50;
-            await client.track("stocks-api-latency", undefined, dynamicValue2);
+            dynamicValue2 = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+            await client.track("stocks-api-latency", { latency: dynamicValue2 });
             dynamicValue2 = 0;
             await client.flush();
           }

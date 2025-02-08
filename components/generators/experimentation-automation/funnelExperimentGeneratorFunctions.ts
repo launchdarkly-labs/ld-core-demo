@@ -1,4 +1,3 @@
-import { LDClient } from "launchdarkly-js-client-sdk";
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import { wait } from "@/utils/utils";
 
@@ -87,7 +86,7 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
   setExpGenerator,
   experimentTypeObj,
 }: {
-  client: LDClient | undefined;
+  client: any;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -118,25 +117,29 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
       ];
     const metricProbablity = metricProbablityObj[flagVariation as keyof typeof metricProbablityObj];
     if (stage1metric < metricProbablity.metric1) {
-      client?.track("store-accessed", client.getContext());
+      await client?.track("store-accessed");
+      await client?.flush();
       let stage2metric = Math.random() * 100;
 
       if (stage2metric < metricProbablity.metric2) {
-        client?.track("item-added", client.getContext());
+        await client?.track("item-added");
+        await client?.flush();
         let stage3metric = Math.random() * 100;
 
         if (stage3metric < metricProbablity.metric3) {
-          client?.track("cart-accessed", client.getContext());
+          await client?.track("cart-accessed");
+          await client?.flush();
           let stage4metric = Math.random() * 100;
 
           if (stage4metric < metricProbablity.metric4) {
-            client?.track("customer-checkout", client.getContext());
-            client?.track("in-cart-total-price", client.getContext(), totalPrice);
+            await client?.track("customer-checkout");
+            await client?.flush();
+            await client?.track("in-cart-total-price", undefined, totalPrice);
+            await client?.flush();
           }
         }
       }
     }
-    await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await wait(waitTime);
     await updateContext();
@@ -151,7 +154,7 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   setExpGenerator,
   experimentTypeObj,
 }: {
-  client: LDClient | undefined;
+  client: any;
   updateContext: UpdateContextFunction;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
@@ -184,20 +187,22 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
     let stage1metric = Math.random() * 100;
 
     if (stage1metric < metricProbablity.metric1) {
-      client?.track("item-added", client.getContext());
+      await client?.track("item-added");
+      await client?.flush();
       let stage2metric = Math.random() * 100;
 
       if (stage2metric < metricProbablity.metric2) {
-        client?.track("cart-accessed", client.getContext());
+        await client?.track("cart-accessed");
+        await client?.flush();
         let stage3metric = Math.random() * 100;
 
         if (stage3metric < metricProbablity.metric3) {
-          client?.track("customer-checkout", client.getContext());
-          client?.track("in-cart-total-price", client.getContext(), totalPrice);
+          await client?.track("customer-checkout");
+          await client?.flush();
+          client?.track("in-cart-total-price", undefined, totalPrice);
         }
       }
     }
-    await client?.flush();
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await wait(waitTime);
     await updateContext();
