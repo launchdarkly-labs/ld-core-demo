@@ -46,7 +46,6 @@ export default function ExperimentGenerator({
   }
 
   const updateContext = async (): Promise<void> => {
-    console.log("Updating Context");
     updateUserContext();
   };
 
