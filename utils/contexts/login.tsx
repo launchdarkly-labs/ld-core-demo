@@ -129,7 +129,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     const context = await client?.getContext();
     context.user.key = uuidv4();
     context.user.device = Math.random() < 0.5 ? "Mobile" : "Desktop";
-    const osOptions = ["iOS", "Android", "macOS", "Windows"];
+    const osOptions = context.user.device === "Mobile" ? ["iOS", "Android"] : ["macOS", "Windows"];
     context.user.operating_system = osOptions[Math.floor(Math.random() * osOptions.length)];
     context.user.location = `America/${["New_York", "Chicago", "Los_Angeles", "Denver"][Math.floor(Math.random() * 4)]}`;
     context.user.tier = ["Gold", "Silver", "Platinum"][Math.floor(Math.random() * 3)];
