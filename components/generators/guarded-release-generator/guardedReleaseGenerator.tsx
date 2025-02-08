@@ -80,13 +80,13 @@ const GuardedReleaseGenerator = ({ flagKey, title }) => {
 			errorMetric = "recent-trades-db-errors";
 			latencyMetric = "recent-trades-db-latency";
 			latency = isEnabled ? randomLatency(100, 130) : randomLatency(120, 140);
-			errorRate = isEnabled ? 75 : 25;
+			errorRate = isEnabled ? 15 : 15;
 		}
 
 		client.track(latencyMetric, undefined, latency);
 
 		await client.flush();
-		if (Math.random() < errorRate) {
+		if (Math.random() * 100 < errorRate) {
 			client.track(errorMetric);
 			await client.flush();
 		}
