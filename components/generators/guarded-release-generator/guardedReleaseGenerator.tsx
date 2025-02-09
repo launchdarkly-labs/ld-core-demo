@@ -79,7 +79,7 @@ const GuardedReleaseGenerator = ({ flagKey, title }) => {
 		if(flagKey === "togglebankDBGuardedRelease"){
 			errorMetric = "recent-trades-db-errors";
 			latencyMetric = "recent-trades-db-latency";
-			latency = isEnabled ? randomLatency(100, 130) : randomLatency(120, 140);
+			latency = isEnabled ? randomLatency(30, 45) : randomLatency(34, 43);
 			errorRate = isEnabled ? 15 : 15;
 		}
 
