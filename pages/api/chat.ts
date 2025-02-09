@@ -38,7 +38,7 @@ export default async function chatResponse(
     ): Message[] {
       return prompt.map((item) => ({
         role: item.role !== 'system' ? item.role : 'user',
-        content: [{ text: item.content.replace('${userInput}', userInput) }],
+        content: [{ text: item.content }],
       }));
     }    
 
@@ -49,8 +49,7 @@ export default async function chatResponse(
       key: uuidv4(),
     };
 
-    const aiConfig = await aiClient.config(aiConfigKey, context, {}, {});
-    console.log("AI Config:", aiConfig);
+    const aiConfig = await aiClient.config(aiConfigKey, context, {}, {userInput: userInput});
     if (!aiConfig.enabled) {
       throw new Error("AI config is disabled");
     } else {

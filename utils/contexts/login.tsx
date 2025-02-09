@@ -132,7 +132,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     const osOptions = context.user.device === "Mobile" ? ["iOS", "Android"] : ["macOS", "Windows"];
     context.user.operating_system = osOptions[Math.floor(Math.random() * osOptions.length)];
     context.user.location = `America/${["New_York", "Chicago", "Los_Angeles", "Denver"][Math.floor(Math.random() * 4)]}`;
-    context.user.tier = ["Gold", "Silver", "Platinum"][Math.floor(Math.random() * 3)];
+    context.user.tier = ["Gold", "Silver", "Platinum", "Standard"][Math.floor(Math.random() * 3)];
     context.user.anonymous = false;
     setAppMultiContext(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
