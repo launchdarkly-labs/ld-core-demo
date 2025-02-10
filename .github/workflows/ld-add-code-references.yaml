@@ -1,33 +1,32 @@
 name: Manually Add Code References to LaunchDarkly Project
 
 on:
-	workflow_dispatch:
-		inputs:
-			name:
-				description: 'User alias or LD env key'
-				required: true
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'User alias or LD env key'
+        required: true
 
 env:
-	LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
+  LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
   LD_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
-
 jobs:
-	add-code-references:
-		runs-on: ubuntu-latest
+  add-code-references:
+    runs-on: ubuntu-latest
 
-		steps:
-			- uses: actions/checkout@v4
-				with:
-					fetch-depth: 11
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
 
-			- name: Set LD_API_KEY
-				run: echo "LD_API_KEY=$(if [ '${{ github.event.inputs.type }}' == 'production' ]; then echo '${{ secrets.LD_API_KEY }}'; elif [ '${{ github.event.inputs.type }}' == 'eap' ]; then echo '${{ secrets.LD_EAP_API_KEY }}'; else echo '${{ secrets.LD_API_KEY }}'; fi)" >> $GITHUB_ENV
+      - name: Set LD_API_KEY
+        run: echo "LD_API_KEY=$(if [ '${{ github.event.inputs.type }}' == 'production' ]; then echo '${{ secrets.LD_API_KEY }}'; elif [ '${{ github.event.inputs.type }}' == 'eap' ]; then echo '${{ secrets.LD_EAP_API_KEY }}'; else echo '${{ secrets.LD_API_KEY }}'; fi)" >> $GITHUB_ENV
 
-			- name: LaunchDarkly Code References
-				uses: launchdarkly/find-code-references@v2.12.0
-				with:
-					accessToken: ${{ env.LD_API_KEY }}
-					projKey: ${{ env.LD_PROJECT_KEY }}
-					repoName: main
-
+      - name: LaunchDarkly Code References
+        uses: launchdarkly/find-code-references@v2.12.0
+        with:
+          accessToken: ${{ env.LD_API_KEY }}
+          projKey: ${{ env.LD_PROJECT_KEY }}
+          repoName: main
