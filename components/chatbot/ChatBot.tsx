@@ -206,11 +206,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       </div>
 
       {isOpen && (
-        <div
+         <div
           ref={cardRef}
-          className="fixed bottom-16 right-4 z-50 flex items-end justify-end p-4 sm:p-6"
+          className="fixed bottom-16 right-0 z-50 flex items-end justify-end p-4 sm:p-6 max-w-full"
         >
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md mx-auto">
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -266,19 +266,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   <SmileIcon className="h-6 w-6" />
                   <span className="sr-only">Good</span>
                 </Button>
-                {/* <Button
-                  variant="ghost"
-                  size="icon"
-                  title="How was our service today?"
-                  className="rounded-full bg-[#ffeaa7] text-gray-900 hover:bg-[#fdcb6e] dark:bg-[#ffeaa7] dark:text-gray-900 dark:hover:bg-[#fdcb6e]"
-                  onClick={(e) => {
-                    surveyResponseNotification("AI Chatbot Netural Service");
-                    // client?.track("ai-chatbot-neutral-service", client.getContext());
-                  }}
-                >
-                  <MehIcon className="h-6 w-6" />
-                  <span className="sr-only">Neutral</span>
-                </Button> */}
                 <Button
                   variant="ghost"
                   size="icon"
