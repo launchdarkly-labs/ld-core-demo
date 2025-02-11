@@ -10,7 +10,7 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: version,
-    NEXT_PUBLIC_LAST_ACCESSED: new Date().toISOString(),
+    NEXT_PUBLIC_CREATED_DATE: new Date().toISOString(),
   }
 }
 
