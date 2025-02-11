@@ -7,7 +7,7 @@ type ResponseData = {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   const data = {
-    lastAccessedDate: process.env.NEXT_PUBLIC_LAST_ACCESSED,
+    lastAccessedDate: process.env.NEXT_PUBLIC_CREATED_DATE,
     appVersion: process.env.NEXT_PUBLIC_APP_VERSION,
   };
 
