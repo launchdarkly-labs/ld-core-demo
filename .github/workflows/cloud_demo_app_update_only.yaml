@@ -45,7 +45,7 @@ jobs:
         id: ld_project_setup
         run: |
           echo "Getting LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          ldcli environments get --project ${{ env.LD_PROJECT_KEY }} --env production -o json > ld_project.json
+          ldcli environments get --project ${{ env.LD_PROJECT_KEY }} --environment production -o json > ld_project.json
 
       - name: Parse LaunchDarkly Project JSON
         id: parse_ld_project
