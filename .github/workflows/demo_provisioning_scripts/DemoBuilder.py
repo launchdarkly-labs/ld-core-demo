@@ -202,6 +202,10 @@ class DemoBuilder:
         print(" - F19 - API Support for Third-Party Applications")
         self.api_support_for_third_party_applications()
         
+        #For Demo Engineering Team Use
+        print(" - X1 - Demo Mode (Demo Engineering team Use Only)")
+        self.demo_mode()
+        
         # Temporary Feature Flags
         print(" - T1 - Beta Dark Mode")
         self.beta_dark_mode()
@@ -585,6 +589,7 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("release-new-search-engine")
         res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
         res = self.ldproject.add_maintainer_to_flag("q-4-increase-average-total-in-cart-price-ld-holdout")
+        res = self.ldproject.add_maintainer_to_flag("demoMode")
 # ############################################################################################################
 
     # Update project settings
@@ -1745,6 +1750,32 @@ class DemoBuilder:
                 }
             ],
             tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+        
+############################################################################################################
+############################################################################################################
+
+    ## Creating feature flags for Demo Engineering Use Case
+    ## These flags are for internal use only by Demo team
+    
+    def demo_mode(self):
+        res = self.ldproject.create_flag(
+            "demoMode",
+            "X1 - Demo Mode (Demo Engineering Team Use Only)",
+            "This feature flag is used to determine whether an environment is for demo purposes for events",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Demo Mode"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Demo Mode"
+                }
+            ],
+            tags=["demo", "events", "demoengineering"],
             on_variation=0,
             off_variation=1,
         )

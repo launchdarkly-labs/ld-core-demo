@@ -1105,11 +1105,12 @@ class LDPlatform:
         res = self.getrequest("GET", url, headers=headers)
         data = json.loads(res.text)
         for var in data["variations"]:
-            if filter is not None:
-                if var["value"] == filter:
+            if var["name"] != "disabled":
+                if filter is not None:
+                    if var["value"] == filter:
+                        var_ids.append(var["_id"])
+                else:
                     var_ids.append(var["_id"])
-            else:
-                var_ids.append(var["_id"])
         return var_ids
 
     ##################################################

@@ -58,7 +58,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           application: {
             id: "launch-investments",
           },
-          eventCapacity: 500,
+          eventCapacity: 1000,
           privateAttributes: ['email', 'name']
         },
         context: context

@@ -38,8 +38,6 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 	for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
 		const aiModelVariation = await client?.variation(
 			"ai-config--togglebot", {});
-      await client?.flush();
-
 			if(aiModelVariation._ldMeta.enabled){
 				if (aiModelVariation.model.name.includes(ANTHROPIC)) {
 					let probablity = Math.random() * 100;
@@ -48,10 +46,13 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 						probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][ANTHROPIC]
 					) {
 						await client?.track("AI chatbot good service");
-            await client?.flush();
+						await client?.flush();
+
+
 					} else {
 						await client?.track("AI Chatbot Bad Service");
-            await client?.flush();
+						await client?.flush();
+
 					}
 				} else {
 					//cohere
@@ -61,16 +62,19 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 						probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][COHERE]
 					) {
 						await client?.track("AI chatbot good service");
-            await client?.flush();
+						await client?.flush();
+
 					} else {
 						await client?.track("AI Chatbot Bad Service");
-            await client?.flush();
+						await client?.flush();
 					}
 				}
 				setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
 				await wait(waitTime);
-        await client?.flush();
 				await updateContext();
+			}
+			else{
+				await client?.flush()
 			}
 		}
 	setExpGenerator(false);
@@ -93,40 +97,22 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
 	let totalPrice = 0;
 	let totalItems = 0;
 
-	const experimentType: string = experimentTypeObj.experimentType;
-
 	for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
 		const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
 		if (cartSuggestedItems) { //winner
 			totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
 			totalItems = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-			let probablity = Math.random() * 100;
-			if (
-				probablity <
-				probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
-					"trueProbablity"
-				]
-			) {
-				await client?.track("in-cart-total-items", undefined, totalItems);
-					await client?.flush();
-			}
+			await client?.track("in-cart-total-items", undefined, totalItems);
+			await client?.flush();
 			await client?.track("in-cart-total-price", undefined, totalPrice);
-				await client?.flush();
+			await client?.flush();
 		} else {
 			totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
 			totalItems = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
-			let probablity = Math.random() * 100;
-			if (
-				probablity <
-				probablityExperimentType[experimentType as keyof typeof probablityExperimentType][
-					"falseProbablity"
-				]
-			) {
-				await client?.track("in-cart-total-items", undefined, totalItems);
-					await client?.flush();
-			}
+			await client?.track("in-cart-total-items", undefined, totalItems);
+			await client?.flush();
 			await client?.track("in-cart-total-price", undefined, totalPrice);
-				await client?.flush();
+			await client?.flush();
 		}
 		await client?.flush();
 		setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);

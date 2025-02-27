@@ -11,11 +11,12 @@ import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSide
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
 import { CSNav } from "@/components/ui/csnav";
-
+import { useFlags } from "launchdarkly-react-client-sdk";
 import { HOMEPAGE_CARDS } from "@/utils/constants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { CSNAV_ITEMS } from "@/utils/constants";
 import arrow from "@/public/sidenav/arrow.svg";
+import LaunchDarklyLogo from "@/public/ld-logo.svg";
 import { CSCard } from "@/components/ui/ldcscard";
 import QRCodeImage from "@/components/ui/QRCodeImage";
 
@@ -25,6 +26,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter();
+  const { demoMode } = useFlags();
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1024);
 
   const goToBank = () => {
@@ -82,7 +84,12 @@ export default function Home() {
   }
 
   useEffect(() => {
-    router.push('/bank');
+    if(demoMode){
+      router.push('/');
+    }
+    else{
+      router.push('/bank');
+    }
   }, []);
 
   return (
@@ -142,7 +149,7 @@ export default function Home() {
                 transition={{ duration: 0.3 }}
               >
                 <Image
-                  src={HomePageImage}
+                  src={LaunchDarklyLogo}
                   alt="Homepage Image"
                   layout="fixed"
                   objectFit="fill"
