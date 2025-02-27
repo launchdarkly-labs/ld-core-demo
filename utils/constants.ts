@@ -313,7 +313,7 @@ export const HOMEPAGE_CARDS = {
       "With LaunchDarkly, you can Guard your releases by progressively rolling out features, monitoring critical metrics in real-time, and instantly rolling back changes if needed, taking the risk out of every release.",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
-    link: "/investment",
+    link: "/bank",
   },
   ai: {
     name: "AI Configurations",
@@ -321,7 +321,7 @@ export const HOMEPAGE_CARDS = {
       "Use LaunchDarkly to bring great AI products to market faster. Iterate quickly on system prompts and model configurations to build the ideal customer experience, all without redeploying. Test and experiment with different configurations to deliver the right experience to the right audience, and preserve your end-user experience when issues occur with kill switches and model fallbacks.",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
-    link: "/airways",
+    link: "/bank",
   },
   experiment: {
     name: "Experimentation",
