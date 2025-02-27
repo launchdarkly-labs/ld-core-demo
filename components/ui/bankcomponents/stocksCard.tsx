@@ -92,25 +92,25 @@ export const StocksComponent: React.FC = () => {
     {
       ticker: "LD",
       name: "LaunchDarkly",
-      data: generateInitialData(1025),
+      data: generateInitialData(100),
       image: "ld.png",
     },
     {
       ticker: "AAPL",
       name: "Apple Inc.",
-      data: generateInitialData(190),
+      data: generateInitialData(180),
       image: "apple.png",
     },
     {
       ticker: "TSLA",
       name: "Tesla",
-      data: generateInitialData(205),
+      data: generateInitialData(195),
       image: "tesla.png",
     },
     {
       ticker: "NVDA",
       name: "Nvidia",
-      data: generateInitialData(612),
+      data: generateInitialData(592),
       image: "nvidia.png",
     },
   ]);
@@ -150,7 +150,7 @@ export const StocksComponent: React.FC = () => {
           newValue = Math.floor(Math.random() * (185 - 196 + 1)) + 190;
         }
         if (stock.ticker == "LD") {
-          newValue = Math.floor(Math.random() * (1000 - 1050 + 1)) + 1025;
+          newValue = Math.floor(Math.random() * (100 - 150 + 1)) + 500; 
         }
         if (stock.ticker == "NVDA") {
           newValue = Math.floor(Math.random() * (600 - 620 + 1)) + 612;

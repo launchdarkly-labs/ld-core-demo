@@ -307,37 +307,37 @@ export const MACROCENTER_DATA: InventoryItem[] = [
 
 
 export const HOMEPAGE_CARDS = {
-  release: {
-    name: "Automate Releases",
-    description:
-      "Increase developer productivity by using repeatable pipelines & workflows and  advanced targeting for canary testing",
-    desktopNoHoveringImage: releaseNoHoverImage,
-    desktopHoveringImage: releaseHoverImage,
-    link: "/bank",
-  },
   monitor: {
-    name: "De-Risk releases",
+    name: "Guarded Releases",
     description:
-      "Monitor critical metrics like errors and latency in real-time, instantly recover with auto-rollbacks and progressively rollout changes to target cohorts",
+      "With LaunchDarkly, you can Guard your releases by progressively rolling out features, monitoring critical metrics in real-time, and instantly rolling back changes if needed, taking the risk out of every release.",
     desktopNoHoveringImage: monitorNoHoverImage,
     desktopHoveringImage: monitorHoverImage,
     link: "/investment",
   },
   ai: {
-    name: "Accelerate AI",
+    name: "AI Configurations",
     description:
-      "Pivot to new models and configurations at runtime and roll back instantly when problems occur Measure the effectiveness of new GenAI features by rapidly experimenting with different prompts",
+      "Use LaunchDarkly to bring great AI products to market faster. Iterate quickly on system prompts and model configurations to build the ideal customer experience, all without redeploying. Test and experiment with different configurations to deliver the right experience to the right audience, and preserve your end-user experience when issues occur with kill switches and model fallbacks.",
     desktopNoHoveringImage: aiNoHoverImage,
     desktopHoveringImage: aiHoverImage,
     link: "/airways",
   },
   experiment: {
-    name: "Optimize Experiences",
+    name: "Experimentation",
     description:
-      "Seamlessly integrate experimentation into the SDLC. Ship winning experiment variations in real-time without code changes",
+      "LaunchDarkly empowers engineering, product, and data teams to seamlessly unify feature delivery and experimentation. By leveraging the same feature flags engineers rely on, engineering teams can run experiments that deliver real-time insights for product managers to act on and statistical rigor that data scientists trust, providing the data needed to make informed decisions and optimize business outcomes.",
     desktopNoHoveringImage: experimentNoHoverImage,
     desktopHoveringImage: experimentHoverImage,
     link: "/marketplace",
+  },
+  release: {
+    name: "Developer Productivity",
+    description:
+      "Improve developer productivity and accelerate your release velocity by implementing standardized release pipelines and leveraging automated flag clean-up recommendations and team-level release health insights to ensure consistent release processes across every team.",
+    desktopNoHoveringImage: releaseNoHoverImage,
+    desktopHoveringImage: releaseHoverImage,
+    link: "/bank",
   },
 };
 

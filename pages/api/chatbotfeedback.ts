@@ -18,16 +18,11 @@ export default async function handler(
     const clientSideContext = JSON.parse(
       getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
     );
-    const extractedClientSideAudienceKey = clientSideContext?.audience?.key;
-    const clientSideAudienceContext = {
-      kind: "audience",
-      key: extractedClientSideAudienceKey,
-    };
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const aiClient = initAi(ldClient);
-    const context: any = clientSideAudienceContext || {
-      kind: "audience",
-      key: uuidv4().slice(0, 6),
+    const context: any = clientSideContext || {
+      kind: "user",
+      key: uuidv4(),
     };
     const body = JSON.parse(req.body);
     const feedback = body?.feedback;
