@@ -1,7 +1,7 @@
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import { wait } from "@/utils/utils";
 
-const waitTime = 0.5;
+const waitTime = 0.0005;
 
 const probablityExperimentTypeStoreHeader = {
   ["bayesian"]: {
