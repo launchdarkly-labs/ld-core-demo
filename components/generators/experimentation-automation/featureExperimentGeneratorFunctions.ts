@@ -2,7 +2,7 @@ import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndu
 import { COHERE, ANTHROPIC } from "@/utils/constants";
 import { wait } from "@/utils/utils";
 
-const waitTime = .5;
+const waitTime = .0005;
 
 const probablityExperimentTypeAI = {
 	["bayesian"]: { [ANTHROPIC]: 50, [COHERE]: 80 },
@@ -100,8 +100,8 @@ export const generateSuggestedItemsFeatureExperimentResults = async ({
 	for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
 		const cartSuggestedItems: boolean = client?.variation("cartSuggestedItems", false);
 		if (cartSuggestedItems) { //winner
-			totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
-			totalItems = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+			totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 700;
+			totalItems = Math.floor(Math.random() * (7 - 3 + 1)) + 4;
 			await client?.track("in-cart-total-items", undefined, totalItems);
 			await client?.flush();
 			await client?.track("in-cart-total-price", undefined, totalPrice);
@@ -169,6 +169,7 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
 				await client?.flush();
 		}
 		setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
+		await client?.flush();
 		await wait(waitTime)
 		await updateContext();
 	}
