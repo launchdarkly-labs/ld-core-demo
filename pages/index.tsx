@@ -32,7 +32,7 @@ export default function Home() {
   const goToBank = () => {
     router.push("/bank");
   };
-
+  
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth > 1024);
