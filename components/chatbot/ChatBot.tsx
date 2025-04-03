@@ -110,51 +110,101 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       content: userInput,
       id: uuidv4().slice(0, 4),
     };
-
-    const loadingMessage = {
-      role: "loader",
-      content: "loading",
-      id: uuidv4().slice(0, 4),
-    };
-
-    setMessages([...messages, userMessage, loadingMessage]);
-
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({
-        aiConfigKey,
-        userInput,
-      }),
-    });
-
-    //Data includes {response: "", "modelName": ""}
-    const data = await response.json();
-    apiResponse = data;
-
-    let aiAnswer = data.response || "I'm sorry. Please try again.";
-
-    let assistantMessage = {
+  
+    // Create a message placeholder that will be updated incrementally
+    const assistantMessageId = uuidv4().slice(0, 4);
+    const assistantMessage = {
       role: "assistant",
-      content: aiAnswer,
-      id: uuidv4().slice(0, 4),
+      content: "",
+      id: assistantMessageId,
     };
-
-    if (
-      aiAnswer === undefined &&
-      !userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)
-    ) {
-      assistantMessage.content = "I'm sorry. Please try again.";
-      setMessages([...messages, userMessage, assistantMessage]);
-    } else if (
-      aiAnswer === undefined &&
-      userObject.personarole?.includes(PERSONA_ROLE_DEVELOPER)
-    ) {
-      assistantMessage.content = data; //error message
-      setMessages([...messages, userMessage, assistantMessage]);
-    } else {
-      setMessages([...messages, userMessage, assistantMessage]);
+  
+    // Add user message and assistant placeholder to the UI
+    setMessages([...messages, userMessage, assistantMessage]);
+  
+    try {
+      // Make streaming fetch request
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          aiConfigKey,
+          userInput,
+        }),
+      });
+  
+      // Initialize a new ReadableStream reader
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("Response body reader is null");
+      }
+  
+      // Process the stream
+      let accumulatedResponse = "";
+      let streamedContent = "";
+  
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+  
+        // Convert the chunk to text
+        const text = new TextDecoder().decode(value);
+        
+        // Split the text by event stream format (data: {...}\n\n)
+        const events = text.split('\n\n');
+        
+        for (let event of events) {
+          // Skip empty events
+          if (!event.trim() || !event.startsWith('data:')) continue;
+          
+          // Extract the JSON part
+          const jsonStr = event.replace(/^data:\s/, '');
+          
+          try {
+            const data = JSON.parse(jsonStr);
+            
+            // Handle intermediate chunks
+            if (!data.done && data.chunk) {
+              streamedContent += data.chunk;
+              accumulatedResponse += data.chunk;
+              
+              // Update the assistant message in real-time
+              setMessages(prevMessages => {
+                return prevMessages.map(msg => {
+                  if (msg.id === assistantMessageId) {
+                    return { ...msg, content: streamedContent };
+                  }
+                  return msg;
+                });
+              });
+            }
+            // Handle final response
+            else if (data.done) {
+              apiResponse = {
+                response: data.response,
+                modelName: data.modelName,
+                enabled: data.enabled
+              };
+            }
+          } catch (err) {
+            console.error('Error parsing SSE data:', err, jsonStr);
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error in chat request:", error);
+      // Update the assistant message with an error
+      setMessages(prevMessages => {
+        return prevMessages.map(msg => {
+          if (msg.id === assistantMessageId) {
+            return { ...msg, content: "I'm sorry, there was an error processing your request." };
+          }
+          return msg;
+        });
+      });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   const surveyResponseNotification = (surveyResponse: string) => {
