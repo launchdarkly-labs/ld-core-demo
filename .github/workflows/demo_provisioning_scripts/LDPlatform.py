@@ -908,7 +908,8 @@ class LDPlatform:
         )
         data = json.loads(res.text)
         if data["totalCount"] == 0:
-            return self.get_user_id("demoengineering@launchdarkly.com")
+            self.create_user(email)
+            self.get_user_id(email)
 
         self.user_id = data["items"][0]["_id"]
         return self.user_id
@@ -927,6 +928,34 @@ class LDPlatform:
         if "message" in data:
             return False
         return True
+    
+    ##################################################
+    # Create a user
+    ##################################################
+    def create_user(self, email):
+        
+        payload = [
+            { 
+                "email": email,
+                "role": "admin",
+            }
+        ]
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/members",
+            json=payload,
+            headers=headers,
+        )
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating user: " + data["message"])
+            return "demoengineering@launchdarkly.com"
+        return response
 
     ##################################################
     # Check if a flag exists

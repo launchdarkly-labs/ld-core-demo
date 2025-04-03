@@ -39,7 +39,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const client = useLDClient();
   const { toast } = useToast();
   let aiConfigKey = "";
-  let aiNewModelChatbotFlag;
+  let aiNewModelChatbotFlag = "";
   const cardRef = useRef<HTMLDivElement>(null);
 
 

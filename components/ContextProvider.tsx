@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { asyncWithLDProvider } from "launchdarkly-react-client-sdk";
+import { asyncWithLDProvider, useLDClient } from "launchdarkly-react-client-sdk";
+import { initTelemetry, register, inspectors } from "@launchdarkly/browser-telemetry";
 import { v4 as uuidv4 } from "uuid";
-import CryptoJS from 'crypto-js';
 import { setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
-import { platform } from 'os';
 
 const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [LDProvider, setLDProvider] = useState<any>(null);
@@ -14,6 +13,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
     const initializeLDProvider = async () => {
       const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
       const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
+      
 
       const context = {
         kind: "multi",
@@ -58,6 +58,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           application: {
             id: "launch-investments",
           },
+          inspectors: inspectors(),
           eventCapacity: 1000,
           privateAttributes: ['email', 'name']
         },
@@ -66,7 +67,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
 
       setLDProvider(() => Provider);
     };
-
+    initTelemetry();
     initializeLDProvider();
   }, []);
 

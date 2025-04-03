@@ -6,6 +6,9 @@ on:
       name:
         description: 'Username'
         required: true
+      is_external:
+        description: 'Is External User'
+        required: false
        
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -36,9 +39,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/demo_provisioning_scripts/requirements.txt
-
-      # - name: Set LD_API_KEY
-      #   run: echo "LD_API_KEY=$(if [ '${{ github.event.inputs.type }}' == 'production' ]; then echo '${{ secrets.LD_API_KEY }}'; elif [ '${{ github.event.inputs.type }}' == 'eap' ]; then echo '${{ secrets.LD_EAP_API_KEY }}'; else echo '${{ secrets.LD_API_KEY }}'; fi)" >> $GITHUB_ENV
 
       - name: Create / Setup LaunchDarkly Project
         id: ld_project_setup
@@ -74,6 +74,7 @@ jobs:
         run: python ./.github/workflows/update_k8s_deploy_file.py
         env:
           NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          IS_EXTERNAL: ${{ github.event.inputs.is_external == 'true' && 'true' || (github.event.inputs.is_external == '' && 'false' || 'false') }}
           URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
 
