@@ -7,7 +7,7 @@ import {
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerClient } from "@/utils/ld-server";
 import { getCookie } from "cookies-next";
-import { initAi } from "@launchdarkly/server-sdk-ai";
+import { initAi, LDTokenUsage } from "@launchdarkly/server-sdk-ai";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 
@@ -84,14 +84,17 @@ export default async function chatResponse(
 					},
 				});
 
-				tracker.trackBedrockConverseMetrics(streamCommand);
 				const streamResponse = await bedrockClient.send(streamCommand);
-        let fullResponse = '';
-        let timeToFirstToken = 0;
-        let firstTokenReceived = false;
-        const startTime = Date.now();
+				let fullResponse = '';
+				let timeToFirstToken = 0;
+				let firstTokenReceived = false;
+				const startTime = Date.now(); // Start time for total duration
 
 				// Process the stream
+				let totalInputTokens = 0;
+				let totalOutputTokens = 0;
+				let totalTokens = 0;
+
 				for await (const chunk of streamResponse.stream ?? []) {
 					if (chunk.contentBlockDelta?.delta?.text) {
 						// If this is the first token/chunk
@@ -111,7 +114,25 @@ export default async function chatResponse(
 							done: false 
 						})}\n\n`);
 					}
+					if (chunk.metadata?.usage) {
+						const usage = chunk.metadata.usage;
+						totalInputTokens += usage.inputTokens ?? 0;
+						totalOutputTokens += usage.outputTokens ?? 0;
+						totalTokens += usage.totalTokens ?? 0;
+					}
 				}
+
+				// After the loop, send the total token usage
+				const tokens: LDTokenUsage = {
+					input: totalInputTokens,
+					output: totalOutputTokens,
+					total: totalTokens,
+				};
+				tracker.trackTokens?.(tokens);
+
+				// Calculate total generation time
+				const totalTime = Date.now() - startTime;
+				tracker.trackDuration?.(totalTime);
 
 				// Send the final response with timing information
 				const data = {
@@ -120,6 +141,7 @@ export default async function chatResponse(
 					enabled: aiConfig.enabled,
 					timing: {
 						timeToFirstToken: timeToFirstToken,
+						totalTime: totalTime, // Optionally include in response
 					},
 					done: true
 				};
