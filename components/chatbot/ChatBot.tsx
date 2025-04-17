@@ -222,11 +222,118 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const chatContentRef = useRef(null);
 
   const aiModelName = () => {
-    if (aiNewModelChatbotFlag?.model?.name?.includes("cohere")) {
-      return "Cohere Command";
-    } else {
-      return "Anthropic Claude";
+    // Extract model name from the full model ID
+    if (aiNewModelChatbotFlag?.model?.name) {
+      const modelId = aiNewModelChatbotFlag.model.name;
+      
+      // Map of model IDs to friendly names
+      // Model name mapping, recognizes both with and without 'us.' prefix
+      const modelNameMap = {
+        // Amazon Bedrock Models
+        'amazon.nova-pro-v1:0': 'Amazon Nova Pro',
+        'us.amazon.nova-pro-v1:0': 'Amazon Nova Pro',
+        'amazon.titan-text-express-v1': 'Titan Text Express',
+        'us.amazon.titan-text-express-v1': 'Titan Text Express',
+        'amazon.titan-text-lite-v1': 'Titan Text Lite',
+        'us.amazon.titan-text-lite-v1': 'Titan Text Lite',
+        'amazon.titan-text-g1-lite-v1': 'Titan Text G1 Lite',
+        'us.amazon.titan-text-g1-lite-v1': 'Titan Text G1 Lite',
+        'amazon.titan-text-g1-express-v1': 'Titan Text G1 Express',
+        'us.amazon.titan-text-g1-express-v1': 'Titan Text G1 Express',
+        'amazon.titan-embed-text-v1': 'Titan Embed Text',
+        'us.amazon.titan-embed-text-v1': 'Titan Embed Text',
+        'amazon.titan-image-generator-v1': 'Titan Image Generator',
+        'us.amazon.titan-image-generator-v1': 'Titan Image Generator',
+        'amazon.titan-text-davinci:001': 'Titan Text Davinci',
+        'us.amazon.titan-text-davinci:001': 'Titan Text Davinci',
+        'amazon.titan-code-davinci:001': 'Titan Code Davinci',
+        'us.amazon.titan-code-davinci:001': 'Titan Code Davinci',
+
+        // Anthropic Claude Models
+        'anthropic.claude-instant-v1': 'Claude Instant',
+        'us.anthropic.claude-instant-v1': 'Claude Instant',
+        'anthropic.claude-v2': 'Claude 2',
+        'us.anthropic.claude-v2': 'Claude 2',
+        'anthropic.claude-v2:1': 'Claude 2.1',
+        'us.anthropic.claude-v2:1': 'Claude 2.1',
+        'anthropic.claude-3-sonnet-20240229-v1:0': 'Claude 3 Sonnet',
+        'us.anthropic.claude-3-sonnet-20240229-v1:0': 'Claude 3 Sonnet',
+        'anthropic.claude-3-haiku-20240307-v1:0': 'Claude 3 Haiku',
+        'us.anthropic.claude-3-haiku-20240307-v1:0': 'Claude 3 Haiku',
+        'anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
+        'us.anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
+        'anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
+        'us.anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
+
+        // Meta Llama Models
+        'meta.llama2-7b-chat-v1': 'Llama 2 7B',
+        'us.meta.llama2-7b-chat-v1': 'Llama 2 7B',
+        'meta.llama2-13b-chat-v1': 'Llama 2 13B',
+        'us.meta.llama2-13b-chat-v1': 'Llama 2 13B',
+        'meta.llama2-70b-chat-v1': 'Llama 2 70B',
+        'us.meta.llama2-70b-chat-v1': 'Llama 2 70B',
+        'meta.llama3-8b-instruct-v1:0': 'Llama 3 8B Instruct',
+        'us.meta.llama3-8b-instruct-v1:0': 'Llama 3 8B Instruct',
+        'meta.llama3-70b-instruct-v1:0': 'Llama 3 70B Instruct',
+        'us.meta.llama3-70b-instruct-v1:0': 'Llama 3 70B Instruct',
+
+        // Cohere Models
+        'cohere.command-text-v14': 'Cohere Command',
+        'us.cohere.command-text-v14': 'Cohere Command',
+        'cohere.command-r-v1:0': 'Cohere Command R',
+        'us.cohere.command-r-v1:0': 'Cohere Command R',
+        'cohere.command-r-plus-v1:0': 'Cohere Command R+',
+        'us.cohere.command-r-plus-v1:0': 'Cohere Command R+',
+        'cohere.embed-english-v3': 'Cohere Embed English v3',
+        'us.cohere.embed-english-v3': 'Cohere Embed English v3',
+        'cohere.embed-multilingual-v3': 'Cohere Embed Multilingual v3',
+        'us.cohere.embed-multilingual-v3': 'Cohere Embed Multilingual v3',
+
+        // AI21 Labs Jurassic Models
+        'ai21.jurassic-2': 'Jurassic 2',
+        'us.ai21.jurassic-2': 'Jurassic 2',
+        'ai21.j2-ultra-v1': 'Jurassic-2 Ultra',
+        'us.ai21.j2-ultra-v1': 'Jurassic-2 Ultra',
+        'ai21.j2-mid-v1': 'Jurassic-2 Mid',
+        'us.ai21.j2-mid-v1': 'Jurassic-2 Mid',
+
+        // Stability AI
+        'stability.stable-diffusion-xl-v1': 'Stable Diffusion XL',
+        'us.stability.stable-diffusion-xl-v1': 'Stable Diffusion XL',
+        'stability.stable-diffusion-xl-v0': 'Stable Diffusion XL v0',
+        'us.stability.stable-diffusion-xl-v0': 'Stable Diffusion XL v0',
+
+        // Mistral AI
+        'mistral.mistral-7b-instruct-v0:2': 'Mistral 7B Instruct',
+        'us.mistral.mistral-7b-instruct-v0:2': 'Mistral 7B Instruct',
+        'mistral.mistral-large-2402-v1:0': 'Mistral Large',
+        'us.mistral.mistral-large-2402-v1:0': 'Mistral Large',
+        'mistral.mixtral-8x7b-instruct-v0:1': 'Mixtral 8x7B Instruct',
+        'us.mistral.mixtral-8x7b-instruct-v0:1': 'Mixtral 8x7B Instruct',
+
+        // DeepSeek
+        'deepseek.deepseek-coder-v1.5': 'DeepSeek Coder v1.5',
+        'us.deepseek.deepseek-coder-v1.5': 'DeepSeek Coder v1.5',
+        'deepseek.deepseek-llm-v1.3b-chat': 'DeepSeek LLM 1.3B Chat',
+        'us.deepseek.deepseek-llm-v1.3b-chat': 'DeepSeek LLM 1.3B Chat',
+        'deepseek.deepseek-llm-v1.3b-base': 'DeepSeek LLM 1.3B Base',
+        'us.deepseek.deepseek-llm-v1.3b-base': 'DeepSeek LLM 1.3B Base',
+        'deepseek.deepseek-llm-v1.7b-chat': 'DeepSeek LLM 1.7B Chat',
+        'us.deepseek.deepseek-llm-v1.7b-chat': 'DeepSeek LLM 1.7B Chat',
+        'deepseek.deepseek-llm-v1.7b-base': 'DeepSeek LLM 1.7B Base',
+        'us.deepseek.deepseek-llm-v1.7b-base': 'DeepSeek LLM 1.7B Base',
+        'deepseek.deepseek-llm-v1.67b-chat': 'DeepSeek LLM 67B Chat',
+        'us.deepseek.deepseek-llm-v1.67b-chat': 'DeepSeek LLM 67B Chat',
+        'deepseek.deepseek-llm-v1.67b-base': 'DeepSeek LLM 67B Base',
+        'us.deepseek.deepseek-llm-v1.67b-base': 'DeepSeek LLM 67B Base',
+      };
+      
+      // Return the friendly name if available, otherwise use the model ID
+      return modelNameMap[modelId] || modelId.split(':')[0].split('.').pop() || modelId;
     }
+    
+    return 'AI Assistant';
+    
   };
 
   useEffect(() => {
@@ -281,16 +388,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
-                      className={`font-bold text-white ${
-                        aiNewModelChatbotFlag?.model?.name?.includes(COHERE)
-                          ? "!text-cohereColor"
-                          : ""
-                      } 
-                      ${
-                        aiNewModelChatbotFlag?.model?.name?.includes(ANTHROPIC)
-                          ? "!text-anthropicColor"
-                          : ""
-                      }
+                      className={`font-bold text-orange-600
                       `}
                     >
                       {aiModelName()}
