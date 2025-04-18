@@ -19,6 +19,9 @@ const TelemetryWrapper = ({ children }: { children: React.ReactNode }) => {
 				projectId={process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID}
 				serviceName="launch-investments"
 				tracingOrigins
+        inlineImages={true}
+        inlineVideos={true}
+        inlineStylesheet={true}
 				networkRecording={{
 					enabled: true,
 					recordHeadersAndBody: true,
