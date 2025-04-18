@@ -65,6 +65,9 @@ export default function Marketplace() {
   const [cart, setCart] = useState<InventoryItem[]>([]);
 
   const addToCart = (item: any) => {
+    if (Math.random() > 0.5) {
+      throw new Error("Failed to add item to cart!")
+    }
     LDClient?.track("item-added", LDClient.getContext(), 1);
     logLDMetricSent("item-added");
     setCart([...cart, item]);

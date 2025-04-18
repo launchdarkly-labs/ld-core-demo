@@ -88,7 +88,7 @@ export default function Home() {
       router.push('/');
     }
     else{
-      router.push('/bank');
+      router.push('/marketplace');
     }
   }, []);
 
