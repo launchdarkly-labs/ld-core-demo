@@ -45,7 +45,7 @@
     "drizzle-orm": "^0.29.0",
     "flatted": "^3.3.2",
     "framer-motion": "^10.16.4",
-    "launchdarkly-js-client-sdk": "^3.7.0-beta.1",
+    "launchdarkly-js-client-sdk": "^3.6.0-beta.3",
     "launchdarkly-react-client-sdk": "^3.7.0-beta.1",
     "ldrs": "^1.0.1",
     "lodash": "^4.17.21",
