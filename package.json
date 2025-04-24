@@ -1,6 +1,6 @@
 {
   "name": "multi-industry-demo",
-  "version": "2.4",
+  "version": "2.6",
   "private": true,
   "scripts": {
     "dev": "next dev",
