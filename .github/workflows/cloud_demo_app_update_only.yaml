@@ -105,18 +105,20 @@ jobs:
           
       - name: Install Nginx Ingress Controller
         if: env.ingress_exists == 'false'
-        run: |
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          helm install ingress-nginx ingress-nginx/ingress-nginx \
-            --namespace ingress-nginx \
-            --create-namespace \
-            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="nlb" \
-            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert"="arn:aws:acm:us-east-1:955116512041:certificate/fa29cb5d-f635-40df-89cc-70db82c93845" \
-            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-ports"="https" \
-            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-backend-protocol"="ssl" \
-            --set controller.service.ports.https=443 \
-            --set controller.ingressClassResource.default=true
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: |
+            helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
+            helm repo update && \
+            helm install ingress-nginx ingress-nginx/ingress-nginx \
+              --namespace ingress-nginx \
+              --create-namespace \
+              --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="nlb" \
+              --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert"="arn:aws:acm:us-east-1:955116512041:certificate/fa29cb5d-f635-40df-89cc-70db82c93845" \
+              --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-ports"="https" \
+              --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-backend-protocol"="ssl" \
+              --set controller.service.ports.https=443 \
+              --set controller.ingressClassResource.default=true
 
       - name: Check if cert-manager is installed
         id: check-cert-manager
@@ -126,31 +128,44 @@ jobs:
 
       - name: Install cert-manager
         if: env.cert_manager_exists == 'false'
-        run: |
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo update
-          helm install cert-manager jetstack/cert-manager \
-            --namespace cert-manager \
-            --create-namespace \
-            --set installCRDs=true
-          
-          # Create a ClusterIssuer for Let's Encrypt
-          cat <<EOF | kubectl apply -f -
-          apiVersion: cert-manager.io/v1
-          kind: ClusterIssuer
-          metadata:
-            name: letsencrypt-prod
-          spec:
-            acme:
-              server: https://acme-v02.api.letsencrypt.org/directory
-              email: admin@launchdarklydemos.com
-              privateKeySecretRef:
-                name: letsencrypt-prod
-              solvers:
-              - http01:
-                  ingress:
-                    class: nginx
-          EOF
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: |
+            helm repo add jetstack https://charts.jetstack.io && \
+            helm repo update && \
+            helm install cert-manager jetstack/cert-manager \
+              --namespace cert-manager \
+              --create-namespace \
+              --set installCRDs=true
+
+      - name: Create ClusterIssuer for Let's Encrypt
+        if: env.cert_manager_exists == 'false'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: |
+            # Wait for cert-manager to be ready
+            sleep 30
+            
+            # Create temporary file for ClusterIssuer
+            cat > /tmp/clusterissuer.yaml << 'EOF'
+            apiVersion: cert-manager.io/v1
+            kind: ClusterIssuer
+            metadata:
+              name: letsencrypt-prod
+            spec:
+              acme:
+                server: https://acme-v02.api.letsencrypt.org/directory
+                email: admin@launchdarklydemos.com
+                privateKeySecretRef:
+                  name: letsencrypt-prod
+                solvers:
+                - http01:
+                    ingress:
+                      class: nginx
+            EOF
+            
+            # Apply the ClusterIssuer
+            kubectl apply -f /tmp/clusterissuer.yaml
 
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
@@ -173,7 +188,13 @@ jobs:
       - name: Extract Nginx Ingress Controller Load Balancer Hostname
         id: extract-nginx-lb
         run: |
-          NGINX_LB_HOSTNAME=$(cat nginx-lb.txt)
+          if [ -s nginx-lb.txt ]; then
+            NGINX_LB_HOSTNAME=$(cat nginx-lb.txt)
+            echo "Found Nginx Ingress Controller hostname: $NGINX_LB_HOSTNAME"
+          else
+            echo "Nginx Ingress Controller hostname not found, using fallback"
+            NGINX_LB_HOSTNAME="k8s-ldcoredemolb-93af62c3af-1176236694.us-east-1.elb.amazonaws.com"
+          fi
           echo "NGINX_LB_HOSTNAME=$NGINX_LB_HOSTNAME" >> $GITHUB_ENV
           echo "Using Nginx Ingress Controller at $NGINX_LB_HOSTNAME"
 
