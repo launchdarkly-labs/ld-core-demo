@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
 	Sheet,
 	SheetContent,
@@ -11,9 +10,7 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/router";
 import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { CSNAV_ITEMS } from "@/utils/constants";
-import QuickCommandDialog from "@/components/quickcommand"; // Add this import
 
 
 export function CSNav() {
