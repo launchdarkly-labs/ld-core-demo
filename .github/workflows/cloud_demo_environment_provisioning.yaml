@@ -40,11 +40,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./.github/workflows/demo_provisioning_scripts/requirements.txt
 
-      - name: Create / Setup LaunchDarkly Project
-        id: ld_project_setup
-        run: |
-          echo "Creating and Setting up LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
-          python ./.github/workflows/demo_provisioning_scripts/DemoBuilder.py
+      # - name: Create / Setup LaunchDarkly Project
+      #   id: ld_project_setup
+      #   run: |
+      #     echo "Creating and Setting up LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+      #     python ./.github/workflows/demo_provisioning_scripts/DemoBuilder.py
 
       - name: Create .env file for demo pod
         run: |
