@@ -34,7 +34,7 @@ Benefits:
 
 ### Automated Migration
 
-We've created a GitHub workflow to automate the migration:
+We've created a GitHub workflow to automate the migration. This must be run through GitHub Actions, not locally:
 
 1. **Migrate One Environment (Test First)**
 
@@ -43,6 +43,8 @@ Navigate to GitHub Actions in the repository, select the "Migrate to Nginx Ingre
 
 Once you've verified the planned changes look correct, run again with:
    - Set "dryrun" to "false" to apply the changes
+
+**Important**: The migration runs in the GitHub Actions environment where it has access to the Kubernetes cluster via configured secrets. Do not attempt to run the migration commands locally.
 
 2. **Verify Migration**
 
