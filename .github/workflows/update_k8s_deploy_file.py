@@ -9,31 +9,29 @@ import time
 import subprocess
 
 def main():
-
     update_deploy_files()
 
 def update_deploy_files():
-
-	namespace = os.getenv('NAMESPACE')
-	url = "{0}.launchdarklydemos.com".format(namespace)
-	image_url = os.getenv('IMAGE')
-	is_external = os.getenv('IS_EXTERNAL')
-	alb = "ld-core-demo-external-lb" if is_external == 'true' else "ld-core-demo-lb"
-
-	sed_command = ["sed -i 's|placeholder1|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(namespace)]
-	subprocess.run(sed_command, shell=True)
-
-	sed_command = ["sed -i 's|placeholder2|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(url)]
-	subprocess.run(sed_command, shell=True)
-
-	sed_command = ["sed -i 's|placeholder3|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(namespace)]
-	subprocess.run(sed_command, shell=True)
-
-	sed_command = ["sed -i 's|placeholder4|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(image_url)]
-	subprocess.run(sed_command, shell=True)	
-	
-	sed_command = ["sed -i 's|placeholder5|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(alb)]
-	subprocess.run(sed_command, shell=True)
+    namespace = os.getenv('NAMESPACE')
+    url = "{0}.launchdarklydemos.com".format(namespace)
+    image_url = os.getenv('IMAGE')
+    
+    # Replace placeholders in the deploy file
+    # Service name
+    sed_command = ["sed -i 's|placeholder1|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(namespace)]
+    subprocess.run(sed_command, shell=True)
+    
+    # Host URL
+    sed_command = ["sed -i 's|placeholder2|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(url)]
+    subprocess.run(sed_command, shell=True)
+    
+    # Service name for backend
+    sed_command = ["sed -i 's|placeholder3|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(namespace)]
+    subprocess.run(sed_command, shell=True)
+    
+    # Container image
+    sed_command = ["sed -i 's|placeholder4|{0}|g' ./.github/workflows/deploy_files/deploy.yaml".format(image_url)]
+    subprocess.run(sed_command, shell=True)
 
 if __name__ == "__main__":
-	main()
+    main()

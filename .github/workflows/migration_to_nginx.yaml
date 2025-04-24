@@ -1,0 +1,229 @@
+name: Migrate to Nginx Ingress Controller
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryrun:
+        description: 'Run in dry-run mode (no changes applied)'
+        required: true
+        default: 'true'
+        type: boolean
+
+env:
+  AWS_REGION: us-east-1
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+
+jobs:
+  migrate_to_nginx:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Install Nginx Ingress Controller
+        if: ${{ github.event.inputs.dryrun == 'false' }}
+        run: |
+          echo "Installing Nginx Ingress Controller..."
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          helm install ingress-nginx ingress-nginx/ingress-nginx \
+            --namespace ingress-nginx \
+            --create-namespace \
+            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="nlb" \
+            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert"="arn:aws:acm:us-east-1:955116512041:certificate/fa29cb5d-f635-40df-89cc-70db82c93845" \
+            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-ssl-ports"="https" \
+            --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-backend-protocol"="ssl" \
+            --set controller.service.ports.https=443 \
+            --set controller.ingressClassResource.default=true
+        
+      - name: Install cert-manager
+        if: ${{ github.event.inputs.dryrun == 'false' }}
+        run: |
+          echo "Installing cert-manager..."
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          helm install cert-manager jetstack/cert-manager \
+            --namespace cert-manager \
+            --create-namespace \
+            --set installCRDs=true
+          
+          echo "Creating ClusterIssuer for Let's Encrypt..."
+          cat <<EOF | kubectl apply -f -
+          apiVersion: cert-manager.io/v1
+          kind: ClusterIssuer
+          metadata:
+            name: letsencrypt-prod
+          spec:
+            acme:
+              server: https://acme-v02.api.letsencrypt.org/directory
+              email: admin@launchdarklydemos.com
+              privateKeySecretRef:
+                name: letsencrypt-prod
+              solvers:
+              - http01:
+                  ingress:
+                    class: nginx
+          EOF
+
+      - name: Get Nginx Ingress Controller Hostname
+        id: get-nginx-lb
+        run: |
+          if [ "${{ github.event.inputs.dryrun }}" == "false" ]; then
+            echo "Waiting for Nginx Ingress Controller to get external IP..."
+            sleep 60
+            
+            ATTEMPTS=0
+            while [ $ATTEMPTS -lt 10 ]; do
+              NGINX_LB_HOSTNAME=$(kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+              if [ ! -z "$NGINX_LB_HOSTNAME" ]; then
+                break
+              fi
+              echo "Waiting for load balancer hostname... (attempt $ATTEMPTS)"
+              sleep 30
+              ATTEMPTS=$((ATTEMPTS + 1))
+            done
+            
+            if [ -z "$NGINX_LB_HOSTNAME" ]; then
+              echo "Failed to get Nginx Ingress Controller hostname"
+              exit 1
+            fi
+            
+            echo "NGINX_LB_HOSTNAME=$NGINX_LB_HOSTNAME" >> $GITHUB_ENV
+            echo "Nginx Ingress Controller hostname: $NGINX_LB_HOSTNAME"
+          else
+            echo "Dry run mode - skipping actual hostname lookup"
+            echo "NGINX_LB_HOSTNAME=dryrun.example.com" >> $GITHUB_ENV
+          fi
+
+      - name: List all namespaces
+        id: list-namespaces
+        run: |
+          kubectl get namespaces -o json | jq -r '.items[] | select(.metadata.name | test("^(?!kube-|default$|ingress-nginx$|cert-manager$).*")).metadata.name' > namespaces.txt
+          cat namespaces.txt
+          echo "Found $(wc -l < namespaces.txt) namespaces to migrate"
+
+      - name: Create migration script
+        run: |
+          cat <<'EOF' > migrate_namespace.sh
+          #!/bin/bash
+          set -e
+          
+          NAMESPACE=$1
+          NGINX_LB_HOSTNAME=$2
+          DRY_RUN=$3
+          
+          echo "Processing namespace: $NAMESPACE"
+          
+          # Get the current ingress configuration
+          if kubectl get ingress -n $NAMESPACE ld-core-demo-ingress 2>/dev/null; then
+            echo "Found existing ingress in namespace $NAMESPACE"
+            
+            # Create the new ingress yaml
+            cat <<INGRESSYAML > new-ingress.yaml
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            name: ld-core-demo-ingress
+            namespace: $NAMESPACE
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              nginx.ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/use-regex: "true"
+              nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+              nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
+              cert-manager.io/cluster-issuer: "letsencrypt-prod"
+          spec:
+            tls:
+            - hosts:
+              - $NAMESPACE.launchdarklydemos.com
+              secretName: $NAMESPACE-tls
+            rules:
+              - host: $NAMESPACE.launchdarklydemos.com
+                http:
+                  paths:
+                    - path: /
+                      pathType: Prefix
+                      backend:
+                        service:
+                          name: $NAMESPACE
+                          port:
+                            number: 443
+          INGRESSYAML
+            
+            # Update the service type if needed
+            if kubectl get service -n $NAMESPACE $NAMESPACE 2>/dev/null; then
+              echo "Found service $NAMESPACE in namespace $NAMESPACE"
+              
+              SERVICE_TYPE=$(kubectl get service -n $NAMESPACE $NAMESPACE -o jsonpath='{.spec.type}')
+              if [ "$SERVICE_TYPE" == "NodePort" ]; then
+                echo "Updating service from NodePort to ClusterIP"
+                
+                if [ "$DRY_RUN" == "false" ]; then
+                  kubectl patch service -n $NAMESPACE $NAMESPACE -p '{"spec":{"type":"ClusterIP"}}'
+                else
+                  echo "DRY RUN: Would update service $NAMESPACE from NodePort to ClusterIP"
+                fi
+              fi
+            else
+              echo "Service $NAMESPACE not found in namespace $NAMESPACE"
+            fi
+            
+            # Apply the new ingress configuration
+            if [ "$DRY_RUN" == "false" ]; then
+              kubectl apply -f new-ingress.yaml
+              echo "Updated ingress for namespace $NAMESPACE"
+            else
+              echo "DRY RUN: Would apply the following ingress:"
+              cat new-ingress.yaml
+            fi
+            
+            # Update DNS record
+            if [ "$DRY_RUN" == "false" ]; then
+              HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+              RECORD_SET_JSON='{
+                "Comment": "Updating Alias record to point to Nginx Ingress Controller",
+                "Changes": [
+                  {
+                    "Action": "UPSERT",
+                    "ResourceRecordSet": {
+                      "Name": "'$NAMESPACE'.launchdarklydemos.com",
+                      "Type": "A",
+                      "AliasTarget": {
+                        "HostedZoneId": "Z35SXDOTRQ7X7K",
+                        "DNSName": "'$NGINX_LB_HOSTNAME'",
+                        "EvaluateTargetHealth": false
+                      }
+                    }
+                  }
+                ]
+              }'
+              aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch "$RECORD_SET_JSON"
+              echo "Updated DNS for $NAMESPACE.launchdarklydemos.com to point to $NGINX_LB_HOSTNAME"
+            else
+              echo "DRY RUN: Would update DNS for $NAMESPACE.launchdarklydemos.com to point to $NGINX_LB_HOSTNAME"
+            fi
+          else
+            echo "No ingress found in namespace $NAMESPACE, skipping..."
+          fi
+          EOF
+          
+          chmod +x migrate_namespace.sh
+
+      - name: Execute migration for each namespace
+        run: |
+          while read NAMESPACE; do
+            ./migrate_namespace.sh "$NAMESPACE" "${{ env.NGINX_LB_HOSTNAME }}" "${{ github.event.inputs.dryrun }}"
+          done < namespaces.txt
