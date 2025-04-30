@@ -101,11 +101,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Get NGINX Ingress Controller Load Balancer IP
+        id: get-nginx-lb
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+
       - name: Add Route 53 Record
         run: |
           HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+          NGINX_LB_HOSTNAME="${{ steps.get-nginx-lb.outputs.result }}"
           RECORD_SET_JSON='{
-            "Comment": "Creating Alias record that points to ALB",
+            "Comment": "Creating Alias record that points to NGINX Ingress Controller LB",
             "Changes": [
               {
                 "Action": "UPSERT",
@@ -114,7 +121,7 @@ jobs:
                   "Type": "A",
                   "AliasTarget": {
                     "HostedZoneId": "Z35SXDOTRQ7X7K",
-                    "DNSName": "k8s-ldcoredemolb-93af62c3af-1176236694.us-east-1.elb.amazonaws.com",
+                    "DNSName": "'"$NGINX_LB_HOSTNAME"'",
                     "EvaluateTargetHealth": false
                   }
                 }
