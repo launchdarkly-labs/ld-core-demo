@@ -111,22 +111,20 @@ jobs:
           HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
           NGINX_LB_HOSTNAME="${{ steps.get-nginx-lb.outputs.result }}"
 
-          # Lookup ELB's hosted zone ID dynamically
-          ELB_ZONE_ID=$(aws elb describe-load-balancers --query "LoadBalancerDescriptions[?DNSName=='$NGINX_LB_HOSTNAME'].CanonicalHostedZoneNameID" --output text)
-
           RECORD_SET_JSON='{
-            "Comment": "Creating Alias record that points to NGINX Ingress Controller LB",
+            "Comment": "Creating CNAME record that points to NGINX Ingress Controller LB",
             "Changes": [
               {
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
                   "Name": "'${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com'",
-                  "Type": "A",
-                  "AliasTarget": {
-                    "HostedZoneId": "'"$ELB_ZONE_ID"'",
-                    "DNSName": "'"$NGINX_LB_HOSTNAME"'",
-                    "EvaluateTargetHealth": false
-                  }
+                  "Type": "CNAME",
+                  "TTL": 300,
+                  "ResourceRecords": [
+                    {
+                      "Value": "'$NGINX_LB_HOSTNAME'"
+                    }
+                  ]
                 }
               }
             ]
