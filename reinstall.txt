@@ -1,0 +1,17 @@
+# Ingress-Nginx Reinstallation Instructions
+
+# Clean up all existing resources
+kubectl delete validatingwebhookconfiguration ingress-nginx-admission || true 
+kubectl delete ingressclass nginx || true
+kubectl delete clusterrolebinding ingress-nginx || true
+kubectl delete clusterrole ingress-nginx || true
+kubectl delete namespace ingress-nginx || true
+
+# Install from Helm chart
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --create-namespace --namespace ingress-nginx
+
+# Verify installation 
+kubectl get pods -n ingress-nginx
+kubectl get svc -n ingress-nginx
