@@ -104,7 +104,7 @@ jobs:
         id: get-nginx-lb
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+          args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' | tee >(echo "NGINX_LB_HOSTNAME=$(cat)" >> $GITHUB_ENV)
 
       - name: Add Route 53 Record
         run: |
@@ -122,7 +122,7 @@ jobs:
                   "TTL": 300,
                   "ResourceRecords": [
                     {
-                      "Value": "'$NGINX_LB_HOSTNAME'"
+                      "Value": "'${{ env.NGINX_LB_HOSTNAME }}'"
                     }
                   ]
                 }
