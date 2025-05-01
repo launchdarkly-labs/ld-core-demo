@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
 import { ReactElement, useContext } from "react";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import { Card, CardHeader, CardTitle, CardContent } from "../card";
 import LoginContext from "@/utils/contexts/login";
 

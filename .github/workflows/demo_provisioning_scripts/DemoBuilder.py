@@ -613,12 +613,6 @@ class DemoBuilder:
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
-            "wealthManagement",
-            "on",
-            "production",
-            "Turn on flag for wealth management",
-        )
-        res = self.ldproject.toggle_flag(
             "financialDBMigration",
             "on",
             "production",

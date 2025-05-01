@@ -52,3 +52,5 @@ insertScript.js
 secrets.yaml
 trustpolicy.json
 
+
+**/.claude/settings.local.json
