@@ -118,58 +118,15 @@ jobs:
       - name: Add Route 53 Record
         run: |
           HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
-          RECORD_NAME="${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com"
+          NGINX_LB_HOSTNAME="${{ steps.get-nginx-lb.outputs.result }}"
 
-          # Check if the record exists
-          echo "Checking if DNS record exists for $RECORD_NAME..."
-          RECORD_EXISTS=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --query "ResourceRecordSets[?Name=='$RECORD_NAME.']" --output text)
-          
-          if [ -n "$RECORD_EXISTS" ]; then
-            echo "Record exists. Deleting existing record..."
-            # Get current record details and set as GitHub environment variables
-            echo "CURRENT_VALUE=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --query "ResourceRecordSets[?Name=='$RECORD_NAME.'].ResourceRecords[0].Value" --output text)" >> $GITHUB_ENV
-            echo "CURRENT_TTL=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --query "ResourceRecordSets[?Name=='$RECORD_NAME.'].TTL" --output text || echo 300)" >> $GITHUB_ENV
-            echo "CURRENT_TYPE=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --query "ResourceRecordSets[?Name=='$RECORD_NAME.'].Type" --output text || echo 'CNAME')" >> $GITHUB_ENV
-            echo "RECORD_NAME=$RECORD_NAME" >> $GITHUB_ENV
-            echo "HOSTED_ZONE_ID=$HOSTED_ZONE_ID" >> $GITHUB_ENV
-            
-            # Create deletion JSON with GitHub environment variables
-            DELETE_JSON='{
-              "Comment": "Deleting existing record",
-              "Changes": [
-                {
-                  "Action": "DELETE",
-                  "ResourceRecordSet": {
-                    "Name": "'${{ env.RECORD_NAME }}'",
-                    "Type": "'${{ env.CURRENT_TYPE }}'",
-                    "TTL": '${{ env.CURRENT_TTL || 300 }}',
-                    "ResourceRecords": [
-                      {
-                        "Value": "'${{ env.CURRENT_VALUE || 'dummy-value' }}'"
-                      }
-                    ]
-                  }
-                }
-              ]
-            }'
-            
-            echo "Deleting record with: $DELETE_JSON"
-            aws route53 change-resource-record-sets \
-              --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} \
-              --change-batch "$DELETE_JSON"
-            
-            echo "Existing record deleted."
-          fi
-
-          # Create new record
-          echo "Creating new CNAME record..."
-          CREATE_JSON='{
+          RECORD_SET_JSON='{
             "Comment": "Creating CNAME record that points to NGINX Ingress Controller LB",
             "Changes": [
               {
-                "Action": "CREATE",
+                "Action": "UPSERT",
                 "ResourceRecordSet": {
-                  "Name": "'$RECORD_NAME'",
+                  "Name": "'${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com'",
                   "Type": "CNAME",
                   "TTL": 300,
                   "ResourceRecords": [
@@ -182,10 +139,9 @@ jobs:
             ]
           }'
 
-          echo "Creating new DNS record"
           aws route53 change-resource-record-sets \
             --hosted-zone-id $HOSTED_ZONE_ID \
-            --change-batch "$CREATE_JSON"
+            --change-batch "$RECORD_SET_JSON"
         env:
           AWS_REGION: 'us-east-1'
 
