@@ -116,6 +116,44 @@ jobs:
         with:
           args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' > hostname.txt && echo "NGINX_LB_HOSTNAME=$(cat hostname.txt)" >> $GITHUB_ENV
 
+      - name: Delete Route 53 CNAME Record for NGINX Ingress
+        run: |
+          echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
+            --dns-name "${{ env.ROOT_DOMAIN }}." \
+            --query "HostedZones[0].Id" \
+            --output text)
+
+          echo "Building delete JSON for DNS: ${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}"
+          echo "{
+            \"Comment\": \"Delete CNAME record for NGINX Ingress\",
+            \"Changes\": [
+              {
+                \"Action\": \"DELETE\",
+                \"ResourceRecordSet\": {
+                  \"Name\": \"${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}\",
+                  \"Type\": \"CNAME\",
+                  \"TTL\": 300,
+                  \"ResourceRecords\": [
+                    {
+                      \"Value\": \"${{ env.NGINX_LB_HOSTNAME }}\"
+                    }
+                  ]
+                }
+              }
+            ]
+          }" > delete-batch.json
+
+          echo "Deleting record..."
+          aws route53 change-resource-record-sets \
+            --hosted-zone-id "$HOSTED_ZONE_ID" \
+            --change-batch file://delete-batch.json
+        env:
+          AWS_REGION: us-east-1
+          ROOT_DOMAIN: launchdarklydemos.com
+          DEMO_NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          NGINX_LB_HOSTNAME: ${{ env.NGINX_LB_HOSTNAME }}
+
       - name: Add Route 53 CNAME Record for NGINX Ingress
         run: |
           echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
