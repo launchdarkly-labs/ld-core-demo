@@ -110,19 +110,32 @@ jobs:
         run: |
           HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
           NGINX_LB_HOSTNAME="${{ steps.get-nginx-lb.outputs.result }}"
+          RECORD_NAME="${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com"
+
+          # Check if the record exists
+          echo "Checking if DNS record exists for $RECORD_NAME..."
+          RECORD_EXISTS=$(aws route53 list-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --query "ResourceRecordSets[?Name=='$RECORD_NAME.']" --output text)
+          
+          if [ -z "$RECORD_EXISTS" ]; then
+            echo "Record does not exist. Creating new CNAME record..."
+            ACTION="CREATE"
+          else
+            echo "Record exists. Updating existing record to point to NGINX Ingress Controller..."
+            ACTION="UPSERT"
+          fi
 
           RECORD_SET_JSON='{
-            "Comment": "Creating CNAME record that points to NGINX Ingress Controller LB",
+            "Comment": "Creating or updating CNAME record that points to NGINX Ingress Controller LB",
             "Changes": [
               {
-                "Action": "UPSERT",
+                "Action": "'$ACTION'",
                 "ResourceRecordSet": {
-                  "Name": "'${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com'",
+                  "Name": "'$RECORD_NAME'",
                   "Type": "CNAME",
                   "TTL": 300,
                   "ResourceRecords": [
                     {
-                      "Value": "'${{ env.NGINX_LB_HOSTNAME }}'"
+                      "Value": "'$NGINX_LB_HOSTNAME'"
                     }
                   ]
                 }
@@ -130,6 +143,7 @@ jobs:
             ]
           }'
 
+          echo "Executing DNS change with action: $ACTION"
           aws route53 change-resource-record-sets \
             --hosted-zone-id $HOSTED_ZONE_ID \
             --change-batch "$RECORD_SET_JSON"
