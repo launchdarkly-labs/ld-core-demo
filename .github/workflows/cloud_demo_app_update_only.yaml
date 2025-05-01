@@ -110,68 +110,54 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Get NGINX Ingress Controller Load Balancer IP
+      - name: Get NGINX Ingress Controller Load Balancer Hostname
         id: get-nginx-lb
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' > hostname.txt && echo "NGINX_LB_HOSTNAME=$(cat hostname.txt)" >> $GITHUB_ENV
 
-      - name: Delete existing Route 53 Record
+      - name: Add Route 53 CNAME Record for NGINX Ingress
         run: |
-          echo "DEMO_NAMESPACE=${{ env.DEMO_NAMESPACE }}" >> $GITHUB_ENV
-          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
-          echo "HOSTED_ZONE_ID=$HOSTED_ZONE_ID" >> $GITHUB_ENV
-          RECORD_NAME="${DEMO_NAMESPACE}.launchdarklydemos.com"
-          echo "RECORD_NAME=$RECORD_NAME" >> $GITHUB_ENV
-
-          # Check if record exists
-          RECORD_EXISTS=$(aws route53 list-resource-record-sets --hosted-zone-id "$HOSTED_ZONE_ID" --query "ResourceRecordSets[?Name=='${RECORD_NAME}.']" --output text)
-
-          if [ -n "$RECORD_EXISTS" ]; then
-            echo "Existing record found. Getting details for deletion..."
-
-            # Get the record details using jq
-            aws route53 list-resource-record-sets --hosted-zone-id "$HOSTED_ZONE_ID" \
-              --query "ResourceRecordSets[?Name=='${RECORD_NAME}.']" --output json > record.json
-
-            RECORD_TYPE=$(jq -r '.[0].Type' record.json)
-            RECORD_TTL=$(jq -r '.[0].TTL // 300' record.json)
-            RECORD_VALUE=$(jq -r '.[0].ResourceRecords[0].Value' record.json)
-            echo "RECORD_TYPE=$RECORD_TYPE" >> $GITHUB_ENV
-            echo "RECORD_TTL=$RECORD_TTL" >> $GITHUB_ENV
-            echo "RECORD_VALUE=$RECORD_VALUE" >> $GITHUB_ENV
-
-            # Use external JSON template
-            envsubst < .github/workflows/route53_json/delete_record.json > delete_record_filled.json
-            
-            echo "Deleting DNS record: $RECORD_NAME"
-            aws route53 change-resource-record-sets \
-              --hosted-zone-id "$HOSTED_ZONE_ID" \
-              --change-batch file://delete_record_filled.json
-
-            echo "Record deletion completed"
-          else
-            echo "No existing record found for $RECORD_NAME"
-          fi
-        env:
-          AWS_REGION: us-east-1
-
-      - name: Add Route 53 Record
-        run: |
-          # Use GitHub env for variables
-          echo "DEMO_NAMESPACE=${{ env.DEMO_NAMESPACE }}" >> $GITHUB_ENV
-          echo "NGINX_LB_HOSTNAME=${{ env.NGINX_LB_HOSTNAME }}" >> $GITHUB_ENV
-          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "launchdarklydemos.com." --query "HostedZones[0].Id" --output text)
+          echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
+            --dns-name "${{ env.ROOT_DOMAIN }}." \
+            --query "HostedZones[0].Id" \
+            --output text)
           echo "HOSTED_ZONE_ID=$HOSTED_ZONE_ID" >> $GITHUB_ENV
 
-          # Use external JSON template
-          envsubst < .github/workflows/route53_json/add_record.json > add_record_filled.json
+          echo "Creating CNAME record: ${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }} → ${{ env.NGINX_LB_HOSTNAME }}"
+
+          cat > change-batch.json <<EOF
+          {
+            "Comment": "Create or update CNAME record for NGINX Ingress",
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}",
+                  "Type": "CNAME",
+                  "TTL": 300,
+                  "ResourceRecords": [
+                    {
+                      "Value": "${{ env.NGINX_LB_HOSTNAME }}"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+          EOF
 
           aws route53 change-resource-record-sets \
             --hosted-zone-id "$HOSTED_ZONE_ID" \
-            --change-batch file://add_record_filled.json
+            --change-batch file://change-batch.json
         env:
           AWS_REGION: us-east-1
+          ROOT_DOMAIN: launchdarklydemos.com
+          DEMO_NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          NGINX_LB_HOSTNAME: ${{ env.NGINX_LB_HOSTNAME }}
+
+
 
       - name: Delete the deploy file
         run: rm -rf ./.github/workflows/deploy_files
