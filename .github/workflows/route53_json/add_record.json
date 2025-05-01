@@ -1,0 +1,18 @@
+{
+  "Comment": "Creating CNAME record that points to NGINX Ingress Controller LB",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "${DEMO_NAMESPACE}.launchdarklydemos.com",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "${NGINX_LB_HOSTNAME}"
+          }
+        ]
+      }
+    }
+  ]
+}
