@@ -46,4 +46,53 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: delete namespace ${{ env.DEMO_NAMESPACE }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Delete any existing Route53 records
+        run: |
+          echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
+            --dns-name "${{ env.ROOT_DOMAIN }}." \
+            --query "HostedZones[0].Id" \
+            --output text)
+
+          RECORD_NAME="${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}"
+          echo "Looking for existing record: $RECORD_NAME"
+
+          # Fetch matching records
+          MATCHED=$(aws route53 list-resource-record-sets \
+            --hosted-zone-id "$HOSTED_ZONE_ID" \
+            --query "ResourceRecordSets[?Name == '$RECORD_NAME.']" \
+            --output json)
+
+          # Delete if found
+          if [[ "$MATCHED" != "[]" ]]; then
+            echo "Deleting existing records for $RECORD_NAME..."
+            echo "$MATCHED" | jq -c '.[]' | while read -r record; do
+              # Wrap in full change batch
+              echo "{
+                \"Comment\": \"Deleting old record\",
+                \"Changes\": [
+                  {
+                    \"Action\": \"DELETE\",
+                    \"ResourceRecordSet\": $record
+                  }
+                ]
+              }" > delete-record.json
+
+              aws route53 change-resource-record-sets \
+                --hosted-zone-id "$HOSTED_ZONE_ID" \
+                --change-batch file://delete-record.json
+            done
+          else
+            echo "No existing record found for $RECORD_NAME."
+          fi
+        env:
+          AWS_REGION: 'us-east-1'
           
