@@ -144,7 +144,7 @@ jobs:
                   "TTL": 300,
                   "ResourceRecords": [
                     {
-                      "Value": "'$NGINX_LB_HOSTNAME'"
+                      "Value": "'${{ env.NGINX_LB_HOSTNAME }}'"
                     }
                   ]
                 }
