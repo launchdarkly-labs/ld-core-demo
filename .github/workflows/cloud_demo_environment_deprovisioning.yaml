@@ -95,4 +95,5 @@ jobs:
           fi
         env:
           AWS_REGION: 'us-east-1'
+          ROOT_DOMAIN: launchdarklydemos.com
           
