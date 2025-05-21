@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import { register } from "@launchdarkly/browser-telemetry";
-import { HighlightInit, H } from '@highlight-run/next/client'
-
+import Observability from "@launchdarkly/observability";
+import SessionReplay from "@launchdarkly/session-replay";
 const TelemetryWrapper = ({ children }: { children: React.ReactNode }) => {
   const client = useLDClient();
 
@@ -10,24 +10,27 @@ const TelemetryWrapper = ({ children }: { children: React.ReactNode }) => {
 
     if (client) {
       register(client);
-      H.registerLD(client);
+      client.addHook(new Observability(process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID, {
+        serviceName: "launch-investments",
+        tracingOrigins: true,
+        networkRecording: {
+          enabled: true,
+          recordHeadersAndBody: true,
+          urlBlocklist: [],
+        }
+      }));
+      client.addHook(new SessionReplay(process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID, {
+        serviceName: "launch-investments",
+        tracingOrigins: true,
+        inlineImages: true,
+        inlineVideos: true,
+        inlineStylesheet: true
+      }));
     }
   }, [client]);
 
-  return <>
-    <HighlightInit
-				projectId={process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID}
-				serviceName="launch-investments"
-				tracingOrigins
-        inlineImages={true}
-        inlineVideos={true}
-        inlineStylesheet={true}
-				networkRecording={{
-					enabled: true,
-					recordHeadersAndBody: true,
-					urlBlocklist: [],
-				}}
-			/>
+
+return <>
     {children}
   </>;
 };
