@@ -67,6 +67,8 @@ jobs:
           echo PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
           echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
           echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
+          echo NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID="evy8v360" >> ./.env.production
+          echo NEXT_PUBLIC_PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
 
       - name: Login to Amazon ECR
         id: login-ecr
