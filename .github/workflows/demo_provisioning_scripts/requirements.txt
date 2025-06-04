@@ -1,6 +1,4 @@
 randomname==0.2.1
 Requests==2.32.3
-python-dotenv==1.0.0
-PyYAML==6.0
-ruamel.yaml==0.17.21
-ruamel.yaml.clib==0.2.6
+launchdarkly-server-sdk-ai
+launchdarkly-server-sdk

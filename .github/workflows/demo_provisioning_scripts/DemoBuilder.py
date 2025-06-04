@@ -2,6 +2,7 @@ import LDPlatform
 import time
 import os
 from dotenv import load_dotenv
+import subprocess
 # Load environment variables from .env file
 load_dotenv()
 
@@ -44,10 +45,22 @@ class DemoBuilder:
         self.create_and_run_holdout()
         self.project_settings()
         self.setup_template_environment()
-        self.setup_release_pipeline()
         
-        ## Not required
-        #self.create_contexts()
+        # Prepare environment variables for the subprocess
+        env = os.environ.copy()
+        env["LD_PROJECT_KEY"] = self.project_key
+        env["LD_API_KEY"] = self.api_key
+        env["LD_SDK_KEY"] = self.sdk_key
+        env["LD_CLIENT_KEY"] = self.client_id
+        # Add any other required variables here
+        
+        # Run LDGeneratorsRunner.py in parallel as a subprocess
+        proc = subprocess.Popen([
+            "python", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
+        ], env=env)
+        
+        self.setup_release_pipeline()
+        proc.wait()
      
 ############################################################################################################
    
@@ -453,7 +466,7 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
             attributes=["device", "location", "tier", "operating_system"],
-            flagConfigVersion=2
+            flagConfigVersion=1
         )
 
 ############################################################################################################
@@ -485,7 +498,7 @@ class DemoBuilder:
             description="This holdout is to see if the new experiments will increase average total cart price and overall revenue.",
             metrics= metrics,
             primary_metric_key= "in-cart-total-price",
-            randomization_unit="users",
+            randomization_unit="user",
             attributes=["tier"],
             prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
         )
@@ -681,7 +694,7 @@ class DemoBuilder:
         res = self.ldproject.create_metric(
             "ai-chatbot-positive-feedback",
             "AI Chatbot Positive Feedback",
-            "AI chatbot good service",
+            "ai-chatbot-positive-feedback",
             "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
             success_criteria="HigherThanBaseline",
             tags=["experiment"]
@@ -691,7 +704,7 @@ class DemoBuilder:
         res = self.ldproject.create_metric(
             "ai-chatbot-negative-feedback",
             "AI Chatbot Negative Feedback",
-            "AI Chatbot Bad Service",
+            "ai-chatbot-negative-feedback",
             "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
             success_criteria="LowerThanBaseline",
             tags=["experiment"]
@@ -726,7 +739,7 @@ class DemoBuilder:
             "recent-trades-db-errors",
             "Database Error Rates",
             "recent-trades-db-errors",
-            "This metric will track the error rates in the new database.",
+            "This metric will track the error rates in the database",
             numeric=False,
             unit="",
             success_criteria="LowerThanBaseline",
@@ -738,7 +751,7 @@ class DemoBuilder:
             "recent-trades-db-latency",
             "Database Latency",
             "recent-trades-db-latency",
-            "This metric will track the latency in the new database.",
+            "This metric will track the latency in the database",
             numeric=True,
             unit="ms",
             success_criteria="LowerThanBaseline",
@@ -750,7 +763,7 @@ class DemoBuilder:
             "stocks-api-error-rates",
             "API Error Rates",
             "stocks-api-error-rates",
-            "This metric will track the error rates in the new API.",
+            "This metric will track the error rates in the API",
             numeric=False,
             unit="",
             success_criteria="LowerThanBaseline",
@@ -762,7 +775,7 @@ class DemoBuilder:
             "stocks-api-latency",
             "API Latency",
             "stocks-api-latency",
-            "This metric will track the latency in the new API.",
+            "This metric will track the latency in the API",
             numeric=True,
             unit="ms",
             success_criteria="LowerThanBaseline",
@@ -1143,8 +1156,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank"],
             on_variation=1,
         )
-        res = self.ldproject.attach_metric_to_flag("togglebankDBGuardedRelease",["recent-trades-db-latency","recent-trades-db-errors"])
-        res = self.ldproject.add_guarded_rollout("togglebankDBGuardedRelease", "production", days=7)
+        res = self.ldproject.add_guarded_rollout("togglebankDBGuardedRelease", "production", metrics=["recent-trades-db-latency","recent-trades-db-errors"], days=7)
     
     def flag_togglebank_api_guarded_release(self):
         res = self.ldproject.create_flag(
@@ -1162,10 +1174,9 @@ class DemoBuilder:
                 }
             ],
             tags=["guarded-release", "bank"],
-            on_variation=1,
+            on_variation=0,
         )
-        res = self.ldproject.attach_metric_to_flag("togglebankAPIGuardedRelease",["stocks-api-latency","stocks-api-error-rates"])
-        res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", days=1)
+        res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
@@ -1964,7 +1975,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"])
         self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["ga"])
 
     def rp_scheduled_bill_payments(self):
@@ -1973,7 +1984,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"])
         self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["ga"])
 
     def rp_cross_border_payment_simplification(self):
@@ -1982,7 +1993,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"])
 
     def rp_merchant_rewards_integration(self):
         res = self.ldproject.add_pipeline_flag("merchantRewardsIntegration", "togglebank-v2-pipeline")
@@ -1990,7 +2001,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"])
 
     def rp_virtual_card_issuance(self):
         res = self.ldproject.add_pipeline_flag("virtualCardIssuance", "togglebank-v2-pipeline")
@@ -1998,7 +2009,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
         self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
 
     def rp_api_support_for_third_party_applications(self):
@@ -2007,7 +2018,7 @@ class DemoBuilder:
         if not self.phase_ids:
             self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
-        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"], guarded=True)
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
         self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
 
 ############################################################################################################

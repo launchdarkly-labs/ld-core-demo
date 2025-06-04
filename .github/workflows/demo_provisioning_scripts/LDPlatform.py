@@ -672,7 +672,8 @@ class LDPlatform:
             "metrics": metrics,
             "prerequisiteflagkey": prerequisiteflagkey,
             "analysisConfig": {"significanceThreshold": "5", "testDirection": "two-sided"},
-            "methodology": "frequentist"
+            "methodology": "frequentist",
+            "maintainerId": self.user_id,
         }
 
         headers = {
@@ -799,18 +800,12 @@ class LDPlatform:
                             "environmentKey": "production",
                             "name": "everyone",
                             "configuration": {
-                                "releaseStrategy": "monitored-release",
+                                "releaseStrategy": "immediate-rollout",
                                 "requireApproval": False,
-                                "releaseGuardianConfiguration": {
-                                    "monitoringWindowMilliseconds": 1000,
-                                    "rolloutWeight": 50000,
-                                    "rollbackOnRegression": True,
-                                    "randomization": "user",
-                                },
                             },
                         }
                     ],
-                    "name": "Guarded Releases",
+                    "name": "QA Phase",
                 },
                 {
                     "audiences": [
@@ -1220,12 +1215,13 @@ class LDPlatform:
         weight=50000,
         notify=True,
         days=1,
+        metrics=[],
     ):
         vars, defaults = self.get_flag_variation_values(flag_key)
 
         control_var = ""
         test_var = ""
-        stagesWindow = 17280000
+        stagesWindow = 120000
 
         if days == 7:
             stagesWindow = 120960000
@@ -1257,12 +1253,23 @@ class LDPlatform:
                 {
                     "kind": "updateFallthroughWithMeasuredRolloutV2",
                     "testVariationId": test_var,
+                    "metrics": [
+                        {
+                            "metricKey": metric,
+                            "regressionThreshold": 0,
+                            "onRegression": {
+                                "rollback": True,
+                                "notify": True
+                            }
+                        } for metric in metrics
+                    ],
                     "controlVariationId": control_var,
                     "randomizationUnit": "user",
                     "onRegression": {"notify": notify, "rollback": rollback},
                     "onProgression": {"notify": notify, "rollForward": True},
                     "monitoringWindowMilliseconds": timeout,
                     "rolloutWeight": weight,
+                    "metricKeys": metrics,
                     "stages": [
                             {
                                 "rolloutWeight": 1000,
