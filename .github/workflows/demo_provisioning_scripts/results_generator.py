@@ -194,7 +194,8 @@ def ai_configs_monitoring_results_generator(client):
 
 def experiment_results_generator(client):
     LD_FEATURE_FLAG_KEY = "cartSuggestedItems"
-    LD_METRIC_KEY = "in-cart-total-items"  # This is the primary metric for the experiment in DemoBuilder.py
+    LD_PRIMARYMETRIC_KEY = "in-cart-total-items"
+    LD_SECONDARYMETRIC_KEY = "in-cart-total-price"
     NUM_USERS = 2500
 
     logging.info("Starting experiment results generation for cartSuggestedItems...")
@@ -207,7 +208,10 @@ def experiment_results_generator(client):
             engagement_probability = 0.6 if variation is True else 0.4
             is_engaged = random.random() < engagement_probability
             if is_engaged:
-                client.track(LD_METRIC_KEY, user_context)
+                random_value = random.randint(2, 10)
+                client.track(LD_PRIMARYMETRIC_KEY, user_context, None, random_value)
+                random_value = random.randint(100, 1000)
+                client.track(LD_SECONDARYMETRIC_KEY, user_context, None, random_value)
                 logging.info(f"User {user_context.key} engaged with {variation} variation")
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for experiment results")
