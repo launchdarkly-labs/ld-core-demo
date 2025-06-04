@@ -34,10 +34,10 @@ export default async function handler(
 
     console.log("Received feedback:", feedback);
     let feedbackKind;
-    if (feedback === "AI Chatbot Bad Service") {
+    if (feedback === "ai-chatbot-negative-feedback") {
       feedbackKind = { kind: LDFeedbackKind.Negative };
     }
-    if (feedback === "AI chatbot good service") {
+    if (feedback === "ai-chatbot-positive-feedback") {
       feedbackKind = { kind: LDFeedbackKind.Positive };
     }
 

@@ -45,12 +45,12 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 						probablity <
 						probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][ANTHROPIC]
 					) {
-						await client?.track("AI chatbot good service");
+						await client?.track("ai-chatbot-positive-feedback");
 						await client?.flush();
 
 
 					} else {
-						await client?.track("AI Chatbot Bad Service");
+						await client?.track("ai-chatbot-negative-feedback");
 						await client?.flush();
 
 					}
@@ -61,11 +61,11 @@ export const generateAIChatBotFeatureExperimentResults = async ({
 						probablity <
 						probablityExperimentTypeAI[experimentType as keyof typeof probablityExperimentTypeAI][COHERE]
 					) {
-						await client?.track("AI chatbot good service");
+						await client?.track("ai-chatbot-positive-feedback");
 						await client?.flush();
 
 					} else {
-						await client?.track("AI Chatbot Bad Service");
+						await client?.track("ai-chatbot-negative-feedback");
 						await client?.flush();
 					}
 				}
