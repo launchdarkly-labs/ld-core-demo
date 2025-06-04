@@ -1,6 +1,6 @@
 {
     "name": "AI Chatbot Positive Feedback",
-    "eventKey": "AI chatbot good service",
+    "eventKey": "ai-chatbot-positive-feedback",
     "Description": "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
     "isNumeric": false,
     "key": "ai-chatbot-good-service",

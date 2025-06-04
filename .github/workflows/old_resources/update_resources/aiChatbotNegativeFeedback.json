@@ -1,6 +1,6 @@
 {
     "name": "AI Chatbot Negative Feedback",
-    "eventKey": "AI Chatbot Bad Service",
+    "eventKey": "ai-chatbot-negative-feedback",
     "Description": "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
     "isNumeric": false,
     "key": "ai-chatbot-bad-service",

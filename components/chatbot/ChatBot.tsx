@@ -408,7 +408,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   title="How was our service today?"
                   className="rounded-full bg-[#55efc4] text-gray-900 hover:bg-[#00b894] dark:bg-[#55efc4] dark:text-gray-900 dark:hover:bg-[#00b894]"
                   onClick={() => {
-                    surveyResponseNotification("AI chatbot good service");
+                    surveyResponseNotification("ai-chatbot-positive-feedback");
                   }}
                 >
                   <SmileIcon className="h-6 w-6" />
@@ -420,7 +420,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   title="How was our service today?"
                   className="rounded-full bg-[#ff7675] text-gray-50 hover:bg-[#d63031] dark:bg-[#ff7675] dark:text-gray-50 dark:hover:bg-[#d63031]"
                   onClick={() => {
-                    surveyResponseNotification("AI Chatbot Bad Service");
+                    surveyResponseNotification("ai-chatbot-negative-feedback");
                   }}
                 >
                   <FrownIcon className="h-6 w-6" />
