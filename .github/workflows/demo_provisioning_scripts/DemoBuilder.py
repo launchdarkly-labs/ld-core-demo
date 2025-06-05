@@ -971,11 +971,11 @@ class DemoBuilder:
         )
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
-            "claude-haiku",
-            "anthropic.claude-instant-v1",
-            "Claude Haiku",
+            "claude-anthropic",
+            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Claude 3.7 Sonnet",
             {
-                "modelName": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
                 "parameters": {
                     "maxTokens": 100,
                     "temperature": 0.7
@@ -990,11 +990,11 @@ class DemoBuilder:
         )
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
-            "cohere-coral",
-            "cohere.command-text-v14",
-            "Cohere Coral",
+            "amazon-nova-pro",
+            "amazon.nova-pro-v1:0",
+            "AWS Nova Pro",
             {
-                "modelName": "cohere.command-text-v14",
+                "modelName": "amazon.nova-pro-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -1115,7 +1115,7 @@ class DemoBuilder:
                 }
             ],
             tags=["release", "bank"],
-            on_variation=0,
+            on_variation=1,
         )
 
     def flag_federated_account(self):
