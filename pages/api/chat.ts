@@ -72,11 +72,15 @@ export default async function chatResponse(
 					'Connection': 'keep-alive',
 				});
 
-
+				// Get the model ID from AI Configs
+				let modelId = aiConfig.model.name;
+				if (!modelId.startsWith('us.')) {
+					modelId = 'us.' + modelId;
+				}
 
 				// Use streaming API
 				const streamCommand = new ConverseStreamCommand({
-					modelId: aiConfig.model.name,
+					modelId: modelId,
 					messages: mapPromptToConversation(aiConfig.messages ?? []),
 					inferenceConfig: {
 						temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
