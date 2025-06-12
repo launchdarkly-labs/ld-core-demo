@@ -75,6 +75,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
             }),
             new SessionReplay({
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
+              privacySetting: 'none',
               tracingOrigins: true,
               inlineImages: true,
               inlineVideos: true,
