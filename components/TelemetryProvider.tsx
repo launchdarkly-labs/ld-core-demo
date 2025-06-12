@@ -10,7 +10,7 @@ const TelemetryWrapper = ({ children }: { children: React.ReactNode }) => {
 
     if (client) {
       register(client);
-      client.addHook(new Observability(process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID, {
+      client.addHook(new Observability({
         serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
         tracingOrigins: true,
         networkRecording: {
@@ -19,7 +19,7 @@ const TelemetryWrapper = ({ children }: { children: React.ReactNode }) => {
           urlBlocklist: [],
         }
       }));
-      client.addHook(new SessionReplay(process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID, {
+      client.addHook(new SessionReplay({
         serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
         tracingOrigins: true,
         inlineImages: true,
