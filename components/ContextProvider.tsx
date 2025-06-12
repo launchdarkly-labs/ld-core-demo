@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { asyncWithLDProvider, useLDClient } from "launchdarkly-react-client-sdk";
-import { initTelemetry, register, inspectors } from "@launchdarkly/browser-telemetry";
+import { asyncWithLDProvider } from "launchdarkly-react-client-sdk";
+import { initTelemetry, inspectors } from "@launchdarkly/browser-telemetry";
+import Observability from "@launchdarkly/observability";
+import SessionReplay from "@launchdarkly/session-replay";
 import { v4 as uuidv4 } from "uuid";
 import { setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
@@ -60,7 +62,25 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           },
           inspectors: inspectors(),
           eventCapacity: 1000,
-          privateAttributes: ['email', 'name']
+          privateAttributes: ['email', 'name'],
+          plugins: [
+            new Observability({
+              serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
+              tracingOrigins: true,
+              networkRecording: {
+                enabled: true,
+                recordHeadersAndBody: true,
+                urlBlocklist: [],
+              }
+            }),
+            new SessionReplay({
+              serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
+              tracingOrigins: true,
+              inlineImages: true,
+              inlineVideos: true,
+              inlineStylesheet: true
+            })
+          ]
         },
         context: context
       });
