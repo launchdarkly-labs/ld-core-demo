@@ -19,15 +19,10 @@ if (typeof window !== "undefined") {
     ssr: false,
   });
 
-  const DynamicTelemetryProvider = dynamic(() => import("@/components/TelemetryProvider"), {
-    ssr: false,
-  });
-
   c = ({ Component, pageProps }: AppProps) => {
     return (
       <NoSSRWrapper>
         <DynamicContextProvider>
-          <DynamicTelemetryProvider>
             <LoginProvider>
               <TripsProvider>
                 <LiveLogsProvider>
@@ -59,7 +54,6 @@ if (typeof window !== "undefined") {
                 </LiveLogsProvider>
               </TripsProvider>
             </LoginProvider>
-          </DynamicTelemetryProvider>
         </DynamicContextProvider>
       </NoSSRWrapper>
     );
