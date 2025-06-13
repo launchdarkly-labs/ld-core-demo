@@ -239,13 +239,18 @@ class DemoBuilder:
     #Create AI Config
     def create_ai_config(self):
         print("Creating AI Config:")
-        print("AI Models: Destination Recommendations")
-        self.create_destination_recommendation_ai_config()
-        print("AI Prompts: Travel Insights")
-        self.create_travel_insights_ai_config()
-        print("AI Config: LaunchAirways AI Chatbot")
-        self.create_ai_chatbot_ai_config()
-        print("AI Config: ToggleBot")
+        
+        ############# FUTURE UPDATE  ######################
+         
+        # print("AI Models: Destination Recommendations")
+        # self.create_destination_recommendation_ai_config()
+        # print("AI Prompts: Travel Insights")
+        # self.create_travel_insights_ai_config()
+        # print("AI Config: LaunchAirways AI Chatbot")
+        # self.create_ai_chatbot_ai_config()
+        # print("AI Config: ToggleBot")
+        
+        ##################################################
         self.create_togglebot_ai_config()
         print("Done")
         self.ai_config_created = True
@@ -859,7 +864,7 @@ class DemoBuilder:
             ["ai-models", "ai-config"]
         )
         # Claude 3.7 Sonnet
-        res2 = self.ldproject.create_ai_config_variation(
+        res2 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
             "claude-3-7-sonnet",
             "anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -879,7 +884,7 @@ class DemoBuilder:
             ]
         )
         # AWS Nova Pro
-        res3 = self.ldproject.create_ai_config_variation(
+        res3 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
             "amazon-nova-pro",
             "amazon.nova-pro-v1:0",
@@ -907,7 +912,7 @@ class DemoBuilder:
             ["ai-prompts","ai-config"]
         )
         # Claude 3.7 Sonnet
-        res2 = self.ldproject.create_ai_config_variation(
+        res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
             "claude-3-7-sonnet",
             "anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -927,7 +932,7 @@ class DemoBuilder:
             ]
         )
         # AWS Nova Pro
-        res3 = self.ldproject.create_ai_config_variation(
+        res3 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
             "amazon-nova-pro",
             "amazon.nova-pro-v1:0",
@@ -955,7 +960,7 @@ class DemoBuilder:
             ["ai-models","ai-config"]
         )
         # Claude 3.7 Sonnet
-        res2 = self.ldproject.create_ai_config_variation(
+        res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
             "claude-3-7-sonnet",
             "anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -975,10 +980,10 @@ class DemoBuilder:
             ]
         )
         # AWS Nova Pro
-        res3 = self.ldproject.create_ai_config_variation(
+        res3 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
             "amazon-nova-pro",
-            "amazon.nova-pro-v1:0",
+            "Bedrock.amazon.nova-pro-v1:0",
             "AWS Nova Pro",
             {
                 "modelName": "amazon.nova-pro-v1:0",
@@ -1003,10 +1008,10 @@ class DemoBuilder:
             ["ai-models","ai-config"]
         )
         # Claude 3.7 Sonnet
-        res2 = self.ldproject.create_ai_config_variation(
+        res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
             "claude-3-7-sonnet",
-            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
             "Claude 3.7 Sonnet",
             {
                 "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -1023,7 +1028,7 @@ class DemoBuilder:
             ]
         )
         # AWS Nova Pro
-        res3 = self.ldproject.create_ai_config_variation(
+        res3 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
             "amazon-nova-pro",
             "amazon.nova-pro-v1:0",
