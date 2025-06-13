@@ -239,13 +239,18 @@ class DemoBuilder:
     #Create AI Config
     def create_ai_config(self):
         print("Creating AI Config:")
-        print("AI Models: Destination Recommendations")
-        self.create_destination_recommendation_ai_config()
-        print("AI Prompts: Travel Insights")
-        self.create_travel_insights_ai_config()
-        print("AI Config: LaunchAirways AI Chatbot")
-        self.create_ai_chatbot_ai_config()
-        print("AI Config: ToggleBot")
+        
+        ############# FUTURE UPDATE  ######################
+         
+        # print("AI Models: Destination Recommendations")
+        # self.create_destination_recommendation_ai_config()
+        # print("AI Prompts: Travel Insights")
+        # self.create_travel_insights_ai_config()
+        # print("AI Config: LaunchAirways AI Chatbot")
+        # self.create_ai_chatbot_ai_config()
+        # print("AI Config: ToggleBot")
+        
+        ##################################################
         self.create_togglebot_ai_config()
         print("Done")
         self.ai_config_created = True
@@ -850,7 +855,7 @@ class DemoBuilder:
     # ----------------
     # Each AI Config and its versions is defined in its own function below
     ##################################################        
-    
+
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--destination-picker-new-ai-model",
@@ -858,13 +863,14 @@ class DemoBuilder:
             "This ai config will provide ai models to the destination recommendations component in LaunchAirways",
             ["ai-models", "ai-config"]
         )
+        # Claude 3.7 Sonnet
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
-            "claude-haiku",
-            "anthropic.claude-instant-v1",
-            "Claude Haiku",
+            "claude-3-7-sonnet",
+            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Claude 3.7 Sonnet",
             {
-                "modelName": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
                 "parameters": {
                     "temperature": 0.5,
                     "maxTokens": 150
@@ -877,13 +883,14 @@ class DemoBuilder:
                 }
             ]
         )
+        # AWS Nova Pro
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
-            "cohere-text",
-            "cohere.command-text-v14",
-            "Cohere Text",
+            "amazon-nova-pro",
+            "amazon.nova-pro-v1:0",
+            "AWS Nova Pro",
             {
-                "modelName": "cohere.command-text-v14",
+                "modelName": "amazon.nova-pro-v1:0",
                 "parameters": {
                     "temperature": 0.7,
                     "maxTokens": 250
@@ -891,12 +898,12 @@ class DemoBuilder:
             },
             [
                 {
-                     "content": "Provide three travel destination recommendations considering frequent travellers and airways club members who travel frequently. Be creative and choose tourist spots. Ensure all responses fit within 50 words total. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Use available tokens efficiently. ",
+                    "content": "Provide three travel destination recommendations considering frequent travellers and airways club members who travel frequently. Be creative and choose tourist spots. Ensure all responses fit within 50 words total. Return the results in markdown with the destination name sized ##, the subsequent reason for why they should go there listed below it, and finally add a line break before the next destination. I only want the destinations and a singe reason, do not add extra copy and do not alter the markdown instructions, I want it formatted the same way every time. Use available tokens efficiently.",
                     "role": "system"
                 }
             ]
-        ) 
-        
+        )
+
     def create_travel_insights_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--ai-travel-prompt-text",
@@ -904,13 +911,14 @@ class DemoBuilder:
             "This ai config will provide ai prompts to the travel insights component in LaunchAirways",
             ["ai-prompts","ai-config"]
         )
+        # Claude 3.7 Sonnet
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
-            "general-travel",
-            "anthropic.claude-instant-v1",
-            "General Travel",
+            "claude-3-7-sonnet",
+            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Claude 3.7 Sonnet",
             {
-                "modelName": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -923,13 +931,14 @@ class DemoBuilder:
                 }
             ]
         )
+        # AWS Nova Pro
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
-            "historical-focus",
-            "anthropic.claude-instant-v1",
-            "Historical Focus",
+            "amazon-nova-pro",
+            "amazon.nova-pro-v1:0",
+            "AWS Nova Pro",
             {
-                "modelName": "anthropic.claude-instant-v1",
+                "modelName": "amazon.nova-pro-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -942,25 +951,6 @@ class DemoBuilder:
                 }
             ]
         )
-        res4 = self.ldproject.create_ai_config_versions(
-            "ai-config--ai-travel-prompt-text",
-            "weather-focus",
-            "anthropic.claude-instant-v1",
-            "Weather Focus",
-            {
-                "modelName": "anthropic.claude-instant-v1",
-                "parameters": {
-                    "maxTokens": 200,
-                    "temperature": 0.9
-                }
-            },
-            [
-                {
-                    "content": "Tell me relevant climate and weather facts about my destination. Provide example clothing to wear upon arrival at the destination and suggest some activities based on the typical weather at the time of arrival. Use the current date to base your weather information on. The destination is ${destination} . Limit your responses to an estimated 40 words. Answer in a friendly tone. Indicate your timing responses as estimates and that travel conditions may impact the duration. Do not exceed this limit and do not specify any limits in responses",
-                    "role": "system"
-                }
-            ]
-        )
 
     def create_togglebot_ai_config(self):
         res = self.ldproject.create_ai_config(
@@ -969,10 +959,11 @@ class DemoBuilder:
             "This ai config will provide ai models / prompts to the ToggleBot component in ToggleBank",
             ["ai-models","ai-config"]
         )
+        # Claude 3.7 Sonnet
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
-            "claude-anthropic",
-            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "claude-3-7-sonnet",
+            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
             "Claude 3.7 Sonnet",
             {
                 "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -988,10 +979,11 @@ class DemoBuilder:
                 }
             ]
         )
+        # AWS Nova Pro
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
             "amazon-nova-pro",
-            "amazon.nova-pro-v1:0",
+            "Bedrock.amazon.nova-pro-v1:0",
             "AWS Nova Pro",
             {
                 "modelName": "amazon.nova-pro-v1:0",
@@ -1008,7 +1000,6 @@ class DemoBuilder:
             ]
         )
 
-    
     def create_ai_chatbot_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--ai-new-model-chatbot",
@@ -1016,13 +1007,14 @@ class DemoBuilder:
             "This ai config will provide ai models / prompts to the chatbot component in LaunchAirways",
             ["ai-models","ai-config"]
         )
+        # Claude 3.7 Sonnet
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
-            "claude-haiku",
-            "anthropic.claude-instant-v1",
-            "Claude Haiku",
+            "claude-3-7-sonnet",
+            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Claude 3.7 Sonnet",
             {
-                "modelName": "anthropic.claude-instant-v1",
+                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -1035,13 +1027,14 @@ class DemoBuilder:
                 }
             ]
         )
+        # AWS Nova Pro
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
-            "cohere-coral",
-            "cohere.command-text-v14",
-            "Cohere Coral",
+            "amazon-nova-pro",
+            "amazon.nova-pro-v1:0",
+            "AWS Nova Pro",
             {
-                "modelName": "cohere.command-text-v14",
+                "modelName": "amazon.nova-pro-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -1054,7 +1047,6 @@ class DemoBuilder:
                 }
             ]
         )
-        
 ############################################################################################################
 
     ##################################################
