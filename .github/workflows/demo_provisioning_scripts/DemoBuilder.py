@@ -963,7 +963,7 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
             "claude-3-7-sonnet",
-            "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
             "Claude 3.7 Sonnet",
             {
                 "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
