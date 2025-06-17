@@ -131,3 +131,35 @@ jobs:
           AWS_REGION: 'us-east-1'
           ROOT_DOMAIN: launchdarklydemos.com
           
+  notify-completion:
+    runs-on: ubuntu-latest
+    needs: [delete-demo-environment]
+    if: ${{ always() && inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Completed
+        run: |
+          echo "Notifying webhook of delete workflow completion..."
+          
+          # Determine the conclusion based on the previous job
+          if [ "${{ needs.delete-environment.result }}" == "success" ]; then
+            CONCLUSION="success"
+            STATUS="completed"
+          else
+            CONCLUSION="failure"
+            STATUS="completed"
+          fi
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_completed",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "delete",
+              "status": "'$STATUS'",
+              "conclusion": "'$CONCLUSION'",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed" 
+            
