@@ -218,3 +218,35 @@ jobs:
 
       - name: Remove .env file
         run: rm ./.env.production
+
+  notify-completion:
+    runs-on: ubuntu-latest
+    needs: [provisioning_demo_environment]
+    if: ${{ always() && inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Completed
+        run: |
+          echo "Notifying webhook of workflow completion..."
+          
+          # Determine the conclusion based on the previous job
+          if [ "${{ needs.create-environment.result }}" == "success" ]; then
+            CONCLUSION="success"
+            STATUS="completed"
+          else
+            CONCLUSION="failure"
+            STATUS="completed"
+          fi
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_completed",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "create",
+              "status": "'$STATUS'",
+              "conclusion": "'$CONCLUSION'",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed"
