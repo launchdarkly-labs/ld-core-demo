@@ -10,6 +10,10 @@ on:
       is_external:
         description: 'Is External User'
         required: false
+      webhook_url:
+        description: 'Webhook URL'
+        required: false
+        type: string
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -23,6 +27,32 @@ env:
   LD_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
 jobs:
+
+  notify-start:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Started
+        run: |
+          echo "Notifying webhook of workflow start..."
+          echo "Webhook URL: ${{ inputs.webhook_url }}"
+          echo "Webhook ID: ${{ inputs.webhook_id }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Environment: ${{ inputs.name }}"
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_started",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "create",
+              "status": "in_progress",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed, continuing anyway..."
+            
   provisioning_demo_environment:
     runs-on: ubuntu-latest
 
