@@ -7,6 +7,14 @@ on:
       name:
         description: 'Username'
         required: true
+      webhook_url:
+        description: 'Webhook URL'
+        required: false
+        type: string
+      webhook_id:
+        description: 'Webhook ID for tracking'
+        required: false
+        type: string
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -20,7 +28,33 @@ env:
   LD_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
 
 jobs:
-  provisioning_demo_environment:
+
+  notify-start:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Started
+        run: |
+          echo "Notifying webhook of update workflow start..."
+          echo "Webhook URL: ${{ inputs.webhook_url }}"
+          echo "Webhook ID: ${{ inputs.webhook_id }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Environment: ${{ inputs.name }}"
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_started",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "update",
+              "status": "in_progress",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed, continuing anyway..."
+            
+  updating_demo_environment:
     runs-on: ubuntu-latest
 
     steps:
@@ -196,3 +230,35 @@ jobs:
 
       - name: Remove .env file
         run: rm ./.env.production
+
+  notify-completion:
+    runs-on: ubuntu-latest
+    needs: [updating_demo_environment]
+    if: ${{ always() && inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Completed
+        run: |
+          echo "Notifying webhook of update workflow completion..."
+          
+          # Determine the conclusion based on the previous job
+          if [ "${{ needs.update-environment.result }}" == "success" ]; then
+            CONCLUSION="success"
+            STATUS="completed"
+          else
+            CONCLUSION="failure"
+            STATUS="completed"
+          fi
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_completed",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "update",
+              "status": "'$STATUS'",
+              "conclusion": "'$CONCLUSION'",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed" 
