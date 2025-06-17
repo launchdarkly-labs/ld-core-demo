@@ -1,4 +1,5 @@
 name: Cloud Demo App Update Only
+run-name: Update Environment for ${{ github.event.inputs.name }}
 
 on:
   workflow_dispatch:
