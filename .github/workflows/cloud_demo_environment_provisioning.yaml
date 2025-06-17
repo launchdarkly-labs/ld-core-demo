@@ -1,4 +1,5 @@
 name: Cloud Demo Environment Provisioning
+run-name: Demo Environment for ${{ github.event.inputs.name }}
 
 on:
   workflow_dispatch:
