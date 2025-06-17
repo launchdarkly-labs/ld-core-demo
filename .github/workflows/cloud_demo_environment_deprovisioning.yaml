@@ -18,7 +18,7 @@ env:
   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
 
 jobs:
-  deploy-to-demoenv: 
+  delete-demo-environment: 
     runs-on: ubuntu-latest
     
     steps:
