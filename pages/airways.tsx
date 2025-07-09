@@ -28,9 +28,11 @@ import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
 import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
 import LaunchSignUp from "@/components/ui/airwayscomponents/launchSignup";
 import { AIRLINES } from "@/utils/constants";
+import { useRouter } from "next/router";
 
 export default function Airways() {
   const { isLoggedIn, userObject } = useContext(LoginContext);
+  const router = useRouter();
 
   return (
     <>
@@ -55,7 +57,7 @@ export default function Airways() {
                   <>
                     {NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinks.map((navLink, index) => {
                       return (
-                        <DropdownMenuItem href={navLink?.href} key={index}>
+                        <DropdownMenuItem key={index} onClick={() => router.push(navLink?.href)}>
                           {navLink?.text}
                         </DropdownMenuItem>
                       );
@@ -82,7 +84,7 @@ export default function Airways() {
                       return (
                         <NavLinkButton
                           text={navLink?.text}
-                          href={navLink?.href}
+                          navlinkHref={navLink?.href}
                           navLinkColor={NAV_ELEMENTS_VARIANT[AIRLINES]?.navLinkColor}
                           index={index}
                           key={index}
