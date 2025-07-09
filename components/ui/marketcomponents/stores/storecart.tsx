@@ -116,7 +116,7 @@ export function StoreCart({ cart, setCart }: { cart: any; setCart: any }) {
                     <TableCell>
                       {" "}
                       <img
-                        src={`${item.image ? item.image?.src : galaxyMarketLogo.src}`}
+                        src={item.image && typeof item.image === 'object' && 'src' in item.image ? item.image.src : (item.image || galaxyMarketLogo.src)}
                         alt={item.item}
                         className="h-10 w-10 sm:h-20 sm:w-20"
                       />
