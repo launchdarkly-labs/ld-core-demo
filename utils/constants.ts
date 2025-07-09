@@ -55,6 +55,11 @@ import releaseIcon from "@/public/sidenav/illo-release.svg";
 import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
 import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
+// Temporary government icons - replace with actual government icons later
+import governmentIcon from "@/public/sidenav/architecture-icon.svg";
+import governmentIconHover from "@/public/sidenav/architecture-icon.svg";
+import governmentHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture-hover.svg";
+import governmentNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture.svg";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -420,6 +425,15 @@ export const CSNAV_ITEMS = {
     type: "usecase",
     link: "/marketplace",
     title: "GalaxyMarketplace",
+  },
+  government: {
+    icon: governmentIcon,
+    hoverBackground: governmentHoverCSNAV,
+    noHoverBackground: governmentNoHoverCSNAV,
+    iconHover: governmentIconHover,
+    type: "usecase",
+    link: "/government",
+    title: "Government",
   },
 };
 
