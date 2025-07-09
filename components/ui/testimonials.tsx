@@ -1,5 +1,19 @@
 import { motion } from "framer-motion";
 
+interface Testimonial {
+  id: number;
+  img: string;
+  name: string;
+  title: string;
+  info: string;
+}
+
+interface TestimonialListProps {
+  list: Testimonial[];
+  reverse?: boolean;
+  duration?: number;
+}
+
 const ScrollingTestimonials = () => {
   return (
     <div className="py-12 font-audimat">
@@ -30,7 +44,7 @@ const ScrollingTestimonials = () => {
   );
 };
 
-const TestimonialList = ({ list, reverse = false, duration = 50 }) => {
+const TestimonialList = ({ list, reverse = false, duration = 50 }: TestimonialListProps) => {
   return (
     <motion.div
       initial={{ translateX: reverse ? "-100%" : "0%" }}
@@ -38,7 +52,7 @@ const TestimonialList = ({ list, reverse = false, duration = 50 }) => {
       transition={{ duration, repeat: Infinity, ease: "linear" }}
       className="flex gap-4 px-2"
     >
-      {list.map((t: any) => {
+      {list.map((t: Testimonial) => {
         return (
           <div
             key={t.id}

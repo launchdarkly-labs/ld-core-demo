@@ -12,8 +12,12 @@ import { CSCard } from "./ldcscard";
 import { motion } from "framer-motion";
 import { CSNAV_ITEMS } from "@/utils/constants";
 
+interface CSNavProps {
+	color?: string;
+	className?: string;
+}
 
-export function CSNav() {
+export function CSNav({ color, className }: CSNavProps) {
 	const router = useRouter();
 
 	function goHome() {
@@ -23,7 +27,7 @@ export function CSNav() {
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
-				<Menu size={24} className="text-navlink cursor-pointer" />
+				<Menu size={24} className={`text-navlink cursor-pointer ${color ? `text-${color}` : ''} ${className || ''}`} />
 			</SheetTrigger>
 			<SheetContent className="overflow-y-scroll w-full" side="left">
 				<SheetHeader className="">

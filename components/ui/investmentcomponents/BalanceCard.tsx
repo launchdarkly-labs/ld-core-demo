@@ -9,6 +9,13 @@ import gold from "@/public/investment/graphs/gold.png";
 import diamond from "@/public/investment/graphs/diamond.png";
 import { wait, randomLatency } from "@/utils/utils";
 
+type PositionType = keyof typeof investmentColors;
+
+const getInvestmentColor = (position: string | undefined): string => {
+  if (!position) return investmentColors.neutral;
+  return investmentColors[position as PositionType] || investmentColors.neutral;
+};
+
 const BalanceCard = () => {
   const [loadingStocksTable, setStocksTable] = useState(false);
 
@@ -62,7 +69,7 @@ const BalanceCard = () => {
           >
             ${renderedData?.balance}
           </h4>
-          <p className={`text-sm mb-4 ${investmentColors[renderedData?.position]} ${errorUI}`}>
+          <p className={`text-sm mb-4 ${getInvestmentColor(renderedData?.position)} ${errorUI}`}>
             {renderedData?.position.includes("positive") ? "+" : "-"}$
             {renderedData?.dailyPriceChange} ({renderedData?.dailyPercentageChange}%) today
           </p>
@@ -70,7 +77,7 @@ const BalanceCard = () => {
             {window?.location?.ancestorOrigins?.item(0)?.includes("reprise") ||
             window?.location?.hostname?.includes("reprise") ? (
               <img
-                src={imgGraph[userTierStatus]}
+                src={imgGraph[userTierStatus].src}
                 alt={userTierStatus}
                 className="w-full h-full object-contain"
               />
@@ -80,7 +87,7 @@ const BalanceCard = () => {
           </div>
           <p
             className={`text-sm mb-4 text-center ${
-              investmentColors[renderedData?.position]
+              getInvestmentColor(renderedData?.position)
             } ${errorUI}`}
           >
             {renderedData?.position.includes("positive") ? "+" : "-"}$

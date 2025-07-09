@@ -1,9 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import ReactDOM from "react-dom";
 import { motion } from "framer-motion";
 import { XIcon } from "lucide-react";
 
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  additionButtonOnTop?: ReactNode;
+  modalClassOverride?: string;
+  modalWrapperClassOverride?: string;
+}
 
 export default function Modal({
   open,
@@ -12,7 +20,7 @@ export default function Modal({
   additionButtonOnTop,
   modalClassOverride = "",
   modalWrapperClassOverride = "",
-}) {
+}: ModalProps) {
 
    function insertModalRoot() {
     let modalRoot = document.getElementById("modal-root");
@@ -53,7 +61,7 @@ export default function Modal({
             type="button"
             title="Close Modal"
             onClick={onClose}
-            dataTestId={"close-button-test-id"}
+            data-testid="close-button-test-id"
           >
             <XIcon aria-hidden="true" />
           </Button>
@@ -61,6 +69,6 @@ export default function Modal({
         {children}
       </motion.div>
     </>,
-    document.getElementById("modal-root")
+    document.getElementById("modal-root") as Element
   );
 }
