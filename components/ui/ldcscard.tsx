@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import arrow from '@/public/sidenav/arrow.svg'
 
-export const CSCard = ({ className, cardTitle, icon, iconHover, hoverBackground, noHoverBackground }: { className: string, cardTitle: string, cardSubtitle: string, icon: any, iconHover: any, hoverBackground: any, noHoverBackground: any }) => {
+export const CSCard = ({ className, cardTitle, icon, iconHover, hoverBackground, noHoverBackground }: { className: string, cardTitle: string, cardSubtitle?: string, icon: any, iconHover: any, hoverBackground: any, noHoverBackground: any }) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
