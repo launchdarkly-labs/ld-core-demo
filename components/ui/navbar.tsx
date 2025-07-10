@@ -18,10 +18,10 @@ import {
 } from "./dropdown-menu";
 import LaunchClubStatus from "./airwayscomponents/launchClubStatus";
 import QRCodeImage from "./QRCodeImage";
-import { QuickLoginDialog } from "../quicklogindialog";
+import { QuickLoginDialog } from "./quicklogindialog";
 import { capitalizeFirstLetter } from "@/utils/utils";
 import { LoginComponent } from "./logincomponent";
-import { COMPANY_LOGOS } from "@/utils/constants";
+import { COMPANY_LOGOS, GOVERNMENT } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
@@ -260,6 +260,16 @@ const navElementsVariant: any = {
     navLinkColor: "gradient-airline-buttons",
     popoverMessage: "Thank you for flying with us, ",
     logoImg: COMPANY_LOGOS["airlines"].horizontal,
+  },
+  government: {
+    navLinks: [
+      { text: "Submissions", href: "/government" },
+      { text: "About Us", href: "/government" },
+      { text: "Contact Us", href: "/government" },
+    ],
+    navLinkColor: "gradient-bank",
+    popoverMessage: "Thank you for your service, ",
+    logoImg: COMPANY_LOGOS["government"].horizontal,
   },
 };
 

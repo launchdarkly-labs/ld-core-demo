@@ -55,7 +55,10 @@ import releaseIcon from "@/public/sidenav/illo-release.svg";
 import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
 import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
-
+// Government logo imports
+import governmentVerticalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
+import governmentHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
+// Temporary government sidebar icons - replace with actual government icons later
 import governmentIcon from "@/public/sidenav/architecture-icon.svg";
 import governmentIconHover from "@/public/sidenav/architecture-icon.svg";
 import governmentHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture-hover.svg";
@@ -93,6 +96,7 @@ export const INVESTMENT = "investment";
 export const MARKET = "market";
 export const AIRLINES = "airlines";
 export const BANK = "bank";
+export const GOVERNMENT = "government";
 
 export const ANTHROPIC = "anthropic";
 export const COHERE = "cohere";
@@ -115,6 +119,10 @@ export const COMPANY_LOGOS = {
   market: {
     vertical: galaxyMarketplaceVerticalLogo,
     horizontal: galaxyMarketplaceHorizontalLogo,
+  },
+  government: {
+    vertical: governmentVerticalLogo,
+    horizontal: governmentHorizontalLogo,
   },
 };
 
@@ -485,5 +493,15 @@ export const NAV_ELEMENTS_VARIANT = {
     navLinkColor: "gradient-airline-buttons",
     popoverMessage: "Thank you for flying with us, ",
     logoImg: COMPANY_LOGOS["airlines"].horizontal,
+  },
+  government: {
+    navLinks: [
+      { text: "Submissions", href: "/government" },
+      { text: "About Us", href: "/government" },
+      { text: "Contact Us", href: "/government" },
+    ],
+    navLinkColor: "gradient-bank",
+    popoverMessage: "Thank you for your service, ",
+    logoImg: COMPANY_LOGOS["government"].horizontal,
   },
 };
