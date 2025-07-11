@@ -55,10 +55,8 @@ import releaseIcon from "@/public/sidenav/illo-release.svg";
 import monitorIconHover from "@/public/sidenav/illo-monitor-hover.svg";
 import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
-// Government logo imports
 import governmentVerticalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 import governmentHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
-// Temporary government sidebar icons - replace with actual government icons later
 import governmentIcon from "@/public/sidenav/architecture-icon.svg";
 import governmentIconHover from "@/public/sidenav/architecture-icon.svg";
 import governmentHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture-hover.svg";
