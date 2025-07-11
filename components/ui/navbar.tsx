@@ -33,7 +33,7 @@ interface NavBarProps {
 }
 
 const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) => {
-  const { isLoggedIn, userObject, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn, userObject, logoutUser, loginUser } = useContext(LoginContext);
 
   const homePageLocation = useRouter()?.pathname === "/";
 
@@ -133,7 +133,7 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
               </div>
             ) : null}
 
-            {!isLoggedIn && !variant?.includes("market") ? null : (
+            {!isLoggedIn && !variant?.includes("market") && !variant?.includes("government") ? null : (
               <div
                 className="flex space-x-3 sm:space-x-6 ml-auto mr-0 sm:mr-4 items-center"
                 id="nav-login-group"
@@ -152,9 +152,11 @@ const NavBar = ({ cart, setCart, className, variant, ...props } : NavBarProps) =
                     <BookedFlights />
                   </div>
                 )}
-                <div className="cursor-pointer hidden sm:block text-white">
-                  <QRCodeImage className="" />
-                </div>
+                {!variant?.includes("government") && (
+                  <div className="cursor-pointer hidden sm:block text-white">
+                    <QRCodeImage className="" />
+                  </div>
+                )}
 
                 <Popover>
                   <PopoverTrigger>
