@@ -56,11 +56,15 @@ function ImageWithContentHero({
                       // href={customizedStyleState["CUSTOM__salient-hero"]?.button?.href}
                       className="bg-gradient-airways rounded-none  py-[1.5rem] px-[4rem] text-white text-base"
                       onClick={() => {
+                        // Temporarily disabled to prevent login errors
+                        // Uncomment the code below once LaunchDarkly setup is complete:
+                        /*
                         if (variant?.includes("government")) {
                           client?.track("signup clicked", client.getContext());
                           client?.flush();
                         }
                         loginUser("user@launchmail.io");
+                        */
                       }}
                     >
                       Get Started Today
