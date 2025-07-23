@@ -13,8 +13,8 @@ function ImageWithContentHero({
   homePageContent: any;
 }) {
   const { isLoggedIn, loginUser, logoutUser } = useContext(LoginContext);
-  const showHeroRedesignFlag = (useFlags()["show-hero-redesign"] || "").includes("text-left");
-  const flagValue = useFlags()["show-different-hero-image-string"];
+  const showHeroRedesignFlag = (useFlags()["showHeroRedesign"] || "").includes("text-left");
+  const flagValue = useFlags()["showDifferentHeroImageString"];
   const validImageKeys = ["imageA", "imageB", "imageC"];
   const showDifferentHeroImageFlag = variant?.includes("government")
     ? (flagValue && validImageKeys.includes(flagValue) ? flagValue : "imageA")
@@ -56,8 +56,7 @@ function ImageWithContentHero({
                       // href={customizedStyleState["CUSTOM__salient-hero"]?.button?.href}
                       className="bg-gradient-airways rounded-none  py-[1.5rem] px-[4rem] text-white text-base"
                       onClick={() => {
-                        // Temporarily disabled to prevent login errors
-                        // Uncomment the code below once LaunchDarkly setup is complete:
+                        // temporarily disabled to prevent login errors
                         /*
                         if (variant?.includes("government")) {
                           client?.track("signup clicked", client.getContext());
