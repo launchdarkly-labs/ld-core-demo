@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext, use } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,17 +29,23 @@ type ApiResponse = {
   enabled: boolean;
 };
 
+interface Message {
+  role: string;
+  content: string;
+  id: string;
+}
+
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot({ vertical }: { vertical: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const startArray: object[] = [];
-  const [messages, setMessages] = useState(startArray);
+  const startArray: Message[] = [];
+  const [messages, setMessages] = useState<Message[]>(startArray);
   const [isLoading, setIsLoading] = useState(false);
   const client = useLDClient();
   const { toast } = useToast();
   let aiConfigKey = "";
-  let aiNewModelChatbotFlag = "";
+  let aiNewModelChatbotFlag: any = "";
   const cardRef = useRef<HTMLDivElement>(null);
 
 
@@ -69,7 +75,13 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         ? DEFAULT_AI_MODEL
         : useFlags()["ai-config--togglebot"];
   }
-  
+  if (vertical === "government") {
+    aiConfigKey = "ai-config--publicbot";
+    aiNewModelChatbotFlag =
+      useFlags()["ai-config--publicbot"] == undefined
+        ? DEFAULT_AI_MODEL
+        : useFlags()["ai-config--publicbot"];
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -375,7 +387,9 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     src={
                       vertical === "airways"
                         ? "/airline/launch-airways.svg"
-                        : "/banking/bankLogo.svg"
+                        : vertical === "banking"
+                        ? "/banking/bankLogo.svg"
+                        : "/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg"
                     }
                     alt="Chatbot Avatar"
                   />{" "}
@@ -518,7 +532,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   );
 }
 
-function MessageCircleIcon(props) {
+function MessageCircleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -537,7 +551,7 @@ function MessageCircleIcon(props) {
   );
 }
 
-function SendIcon(props) {
+function SendIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -557,7 +571,7 @@ function SendIcon(props) {
   );
 }
 
-function XIcon(props) {
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -577,7 +591,7 @@ function XIcon(props) {
   );
 }
 
-function SmileIcon(props) {
+function SmileIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -599,7 +613,7 @@ function SmileIcon(props) {
   );
 }
 
-function FrownIcon(props) {
+function FrownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
