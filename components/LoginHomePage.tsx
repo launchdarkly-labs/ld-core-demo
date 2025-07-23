@@ -31,10 +31,10 @@ import { FaMedal } from "react-icons/fa";
 import { VariantInterface } from "@/utils/typescriptTypesInterfaceLogin";
 
 export default function LoginHomePage({ variant }: VariantInterface) {
-  const showCardsSectionComponentFlag = useFlags()["show-cards-section-component"];
-  const patchShowCardsSectionComponentFlag = useFlags()["patch-show-cards-section-component"];
+  const showCardsSectionComponentFlag = useFlags()["showCardsSectionComponent"];
+  const patchShowCardsSectionComponentFlag = useFlags()["patchShowCardsSectionComponent"];
   const showDifferentHeroImageFlag = variant?.includes("government")
-    ? useFlags()["show-different-hero-image-string"]
+    ? useFlags()["showDifferentHeroImageString"]
     : "imageA";
 
   return (
