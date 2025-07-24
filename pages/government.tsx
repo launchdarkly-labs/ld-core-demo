@@ -12,7 +12,7 @@ export default function Government() {
       <AnimatePresence mode="wait">
         <LoginHomePage variant="government"/>
       </AnimatePresence>
-      <Chatbot variant="government"/>
+      <Chatbot vertical="government"/>
     </>
   );
 }
