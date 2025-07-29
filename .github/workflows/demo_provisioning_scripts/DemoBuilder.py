@@ -121,6 +121,8 @@ class DemoBuilder:
         self.metric_store_checkout_completed()
         print(" - New Search Engine")
         self.metric_search_engine()
+        print(" - Signup Click in Home Page - Public Sector")
+        self.metric_government_signup_click()
         
         print("Done")
         self.metrics_created = True
@@ -215,6 +217,16 @@ class DemoBuilder:
         print(" - F19 - API Support for Third-Party Applications")
         self.api_support_for_third_party_applications()
         
+        #Government Demo Flags
+        print(" - P1 - Release: Show Cards Section Component - Public Sector")
+        self.flag_government_show_cards_component()
+        print(" - P2 - Release: Patch Show Cards Section Component - Public Sector")
+        self.flag_government_patch_show_cards_component()
+        print(" - P3 - Feature Experiment: Show Hero Redesign - Public Sector")
+        self.flag_government_show_hero_redesign()
+        print(" - P4 - Feature Experiment: Show Different Hero Image - Public Sector")
+        self.flag_government_show_different_hero_image_string()
+        
         #For Demo Engineering Team Use
         print(" - X1 - Demo Mode (Demo Engineering team Use Only)")
         self.demo_mode()
@@ -252,6 +264,8 @@ class DemoBuilder:
         
         ##################################################
         self.create_togglebot_ai_config()
+        print("AI Config: Public Sector - AI Chatbot")
+        self.create_government_publicbot_ai_config()
         print("Done")
         self.ai_config_created = True
         
@@ -305,6 +319,7 @@ class DemoBuilder:
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
+        self.run_government_hero_redesign_experiment()
         
     def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
@@ -474,6 +489,38 @@ class DemoBuilder:
             flagConfigVersion=1
         )
 
+    def run_government_hero_redesign_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showHeroRedesign",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: Show Hero Redesign")
+        self.create_government_hero_redesign_experiment()
+        self.ldproject.start_exp_iteration("government-hero-redesign", "production")
+        self.experiment_created = True
+        
+    def create_government_hero_redesign_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-clicked", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "government-hero-redesign",
+            "(Bayesian) Feature Experiment: Show Hero Redesign",
+            "production",
+            "showHeroRedesign",
+            "Testing whether the new hero design leads to increased signup conversion on the government demo page",
+            metrics=metrics,
+            primary_key="signup-clicked",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
 ############################################################################################################
 
     ##################################################
@@ -608,6 +655,11 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("release-new-shorten-collections-page")
         res = self.ldproject.add_maintainer_to_flag("q-4-increase-average-total-in-cart-price-ld-holdout")
         res = self.ldproject.add_maintainer_to_flag("demoMode")
+        res = self.ldproject.add_maintainer_to_flag("showCardsSectionComponent")
+        res = self.ldproject.add_maintainer_to_flag("patchShowCardsSectionComponent")
+        res = self.ldproject.add_maintainer_to_flag("showHeroRedesign")
+        res = self.ldproject.add_maintainer_to_flag("showDifferentHeroImageString")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--publicbot")
 # ############################################################################################################
 
     # Update project settings
@@ -628,6 +680,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("investment-recent-trade-db", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
@@ -686,6 +740,7 @@ class DemoBuilder:
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-travel-prompt-text")
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-new-model-chatbot")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--publicbot")
         
 ############################################################################################################
 
@@ -846,6 +901,19 @@ class DemoBuilder:
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
             tags=["experiment"]
+        )
+
+    def metric_government_signup_click(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-clicked",
+            metric_name="Signup Click in Home Page - Public Sector",
+            event_key="signup clicked",
+            metric_description="This metric will track signup button clicks on the government home page for the Public Sector demo.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["public-sector"]
         )
         
 ############################################################################################################
@@ -1047,6 +1115,55 @@ class DemoBuilder:
                 }
             ]
         )
+
+    def create_government_publicbot_ai_config(self):
+        res = self.ldproject.create_ai_config(
+            "ai-config--publicbot",
+            "Public Sector - AI Chatbot",
+            "This ai config will provide ai models / prompts to the PublicBot component for the Government demo",
+            ["ai-models","ai-config","public-sector"]
+        )
+        # Claude 3.7 Sonnet
+        res2 = self.ldproject.create_ai_config_versions(
+            "ai-config--publicbot",
+            "claude-3-7-sonnet",
+            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "Claude 3.7 Sonnet",
+            {
+                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "parameters": {
+                    "maxTokens": 100,
+                    "temperature": 0.7
+                }
+            },
+            [
+                {
+                    "content": "You are an AI assistant for a public sector agency, providing expert guidance on government services and programs. Act as a professional public service representative. Only respond to government-related queries.\n\n- Response Format:\n- Keep answers concise (maximum 20 words).\n- Do not include quotations in responses.\n- Avoid mentioning response limitations.\n\nUser Context:\n- City: {{ ldctx.location }}\n- Account Tier: {{ ldctx.user.tier }}\n- User Name: {{ ldctx.user.name }}\n\nUser Query: {{ userInput }}",
+                    "role": "system"
+                }
+            ]
+        )
+        # AWS Nova Pro
+        res3 = self.ldproject.create_ai_config_versions(
+            "ai-config--publicbot",
+            "amazon-nova-pro",
+            "Bedrock.amazon.nova-pro-v1:0",
+            "AWS Nova Pro",
+            {
+                "modelName": "amazon.nova-pro-v1:0",
+                "parameters": {
+                    "maxTokens": 200,
+                    "temperature": 0.5
+                }
+            },
+            [
+                {
+                    "content": "You are an AI assistant for a public sector agency, providing expert guidance on government services and programs. Act as a professional public service representative. Only respond to government-related queries.\n\n- Response Format:\n- Keep answers concise (maximum 20 words).\n- Do not include quotations in responses.\n- Avoid mentioning response limitations.\n\nUser Context:\n- City: {{ ldctx.location }}\n- Account Tier: {{ ldctx.user.tier }}\n- User Name: {{ ldctx.user.name }}\n\nUser Query: {{ userInput }}",
+                    "role": "system"
+                }
+            ]
+        )
+
 ############################################################################################################
 
     ##################################################
@@ -1886,6 +2003,93 @@ class DemoBuilder:
             on_variation=0,
             off_variation=1,
             temporary=True
+        )
+
+############################################################################################################
+############################################################################################################
+
+    ## Government Demo Flags
+
+    def flag_government_show_cards_component(self):
+        res = self.ldproject.create_flag(
+            "showCardsSectionComponent",
+            "P1 - Release: Show Cards Section Component - Public Sector",
+            "This feature flag controls the visibility of service cards on the government demo page",
+            [
+                {
+                    "value": True,
+                    "name": "Show Card Section"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Card Section"
+                }
+            ],
+            tags=["public-sector", "release"],
+            on_variation=1,
+        )
+
+    def flag_government_patch_show_cards_component(self):
+        res = self.ldproject.create_flag(
+            "patchShowCardsSectionComponent",
+            "P2 - Release: Patch Show Cards Section Component - Public Sector",
+            "Controls patch behavior for the first news card in the government cards section.",
+            [
+                {
+                    "value": True,
+                    "name": "Apply Patch"
+                },
+                {
+                    "value": False,
+                    "name": "Not Apply Patch"
+                }
+            ],
+            tags=["public-sector", "release"],
+            on_variation=1,
+        )
+
+    def flag_government_show_hero_redesign(self):
+        res = self.ldproject.create_flag(
+            "showHeroRedesign",
+            "P3 - Feature Experiment: Show Hero Redesign - Public Sector",
+            "This feature flag enables the hero redesign experiment for the government demo page",
+            [
+                {
+                    "value": "text-left",
+                    "name": "Show Text Left In Hero Component"
+                },
+                {
+                    "value": "text-right",
+                    "name": "Show Text Right In Hero Component"
+                }
+            ],
+            tags=["Experimentation", "public-sector"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_government_show_different_hero_image_string(self):
+        res = self.ldproject.create_flag(
+            "showDifferentHeroImageString",
+            "P4 - Feature Experiment: Show Different Hero Image - Public Sector",
+            "This feature flag controls which hero image variant is displayed on the government demo page",
+            [
+                {
+                    "value": "imageA",
+                    "name": "imageA"
+                },
+                {
+                    "value": "imageB", 
+                    "name": "imageB"
+                },
+                {
+                    "value": "imageC",
+                    "name": "imageC"
+                }
+            ],
+            tags=["Experimentation", "public-sector"],
+            on_variation=0,
+            off_variation=1,
         )
 
 ############################################################################################################
