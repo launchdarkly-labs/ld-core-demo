@@ -123,6 +123,14 @@ class DemoBuilder:
         self.metric_search_engine()
         print(" - Signup Click in Home Page - Public Sector")
         self.metric_government_signup_click()
+        print(" - Risk Management Database Latency - Public Sector")
+        self.metric_government_rm_db_latency()
+        print(" - Risk Management Database Errors - Public Sector")
+        self.metric_government_rm_db_errors()
+        print(" - Risk Management API Latency - Public Sector")
+        self.metric_government_rm_api_latency()
+        print(" - Risk Management API Errors - Public Sector")
+        self.metric_government_rm_api_errors()
         
         print("Done")
         self.metrics_created = True
@@ -226,6 +234,10 @@ class DemoBuilder:
         self.flag_government_show_hero_redesign()
         print(" - P4 - Feature Experiment: Show Different Hero Image - Public Sector")
         self.flag_government_show_different_hero_image_string()
+        print(" - P5 - Release: Add New Database (Guarded Release) - Public Sector")
+        self.flag_government_rm_database_guarded_release()
+        print(" - P6 - Release: API v2.0 (Guarded Release) - Public Sector")
+        self.flag_government_rm_api_guarded_release()
         
         #For Demo Engineering Team Use
         print(" - X1 - Demo Mode (Demo Engineering team Use Only)")
@@ -659,6 +671,8 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("patchShowCardsSectionComponent")
         res = self.ldproject.add_maintainer_to_flag("showHeroRedesign")
         res = self.ldproject.add_maintainer_to_flag("showDifferentHeroImageString")
+        res = self.ldproject.add_maintainer_to_flag("riskmgmtbureauDBGuardedRelease")
+        res = self.ldproject.add_maintainer_to_flag("riskmgmtbureauAPIGuardedRelease")
         res = self.ldproject.add_maintainer_to_flag("ai-config--publicbot")
 # ############################################################################################################
 
@@ -682,6 +696,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "beta-users", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
@@ -914,6 +930,58 @@ class DemoBuilder:
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
             tags=["public-sector"]
+        )
+
+    def metric_government_rm_db_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-db-latency",
+            metric_name="Risk Management Database Latency - Public Sector",
+            event_key="rm-db-latency",
+            metric_description="This metric will track database latency for the Risk Management Database in the Public Sector demo.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_db_errors(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-db-errors",
+            metric_name="Risk Management Database Errors - Public Sector",
+            event_key="rm-db-errors",
+            metric_description="This metric will track database errors for the Risk Management Database in the Public Sector demo.",
+            numeric=True,
+            unit="errors",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_api_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-api-latency",
+            metric_name="Risk Management API Latency - Public Sector",
+            event_key="rm-api-latency",
+            metric_description="This metric will track API latency for the Risk Management API in the Public Sector demo.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_api_errors(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-api-errors",
+            metric_name="Risk Management API Errors - Public Sector",
+            event_key="rm-api-errors",
+            metric_description="This metric will track API errors for the Risk Management API in the Public Sector demo.",
+            numeric=True,
+            unit="errors",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
         )
         
 ############################################################################################################
@@ -2091,6 +2159,46 @@ class DemoBuilder:
             on_variation=0,
             off_variation=1,
         )
+
+    def flag_government_rm_database_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "riskmgmtbureauDBGuardedRelease",
+            "P5 - Release: Add New Database (Guarded Release) - Public Sector",
+            "Release new Risk Management Database for Public Sector demo",
+            [
+                {
+                    "value": True,
+                    "name": "Added Risk Management Database"
+                },
+                {
+                    "value": False,
+                    "name": "Removed Risk Management Database"
+                }
+            ],
+            tags=["guarded-release", "public-sector"],
+            on_variation=1,
+        )
+        res = self.ldproject.add_guarded_rollout("riskmgmtbureauDBGuardedRelease", "production", metrics=["rm-db-latency","rm-db-errors"], days=7)
+
+    def flag_government_rm_api_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "riskmgmtbureauAPIGuardedRelease",
+            "P6 - Release: API v2.0 (Guarded Release) - Public Sector",
+            "Release new Risk Management API v2.0 for Public Sector demo",
+            [
+                {
+                    "value": True,
+                    "name": "Release Risk Management API v2.0"
+                },
+                {
+                    "value": False,
+                    "name": "Rollback to Risk Management API v1.0"
+                }
+            ],
+            tags=["guarded-release", "public-sector"],
+            on_variation=0,
+        )
+        res = self.ldproject.add_guarded_rollout("riskmgmtbureauAPIGuardedRelease", "production", metrics=["rm-api-latency","rm-api-errors"], days=1)
 
 ############################################################################################################
 ############################################################################################################
