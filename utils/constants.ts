@@ -439,7 +439,7 @@ export const CSNAV_ITEMS = {
     iconHover: governmentIconHover,
     type: "usecase",
     link: "/government",
-    title: "Public Sector",
+    title: "PublicSector",
   },
 };
 
