@@ -1,8 +1,8 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<!-- shield with gradient (moved up) -->
+<!-- shield with gradient -->
 <path d="M17.77 8.44C17.77 13.41 14.42 18.07 9.89 19.23C9.84 19.24 9.79 19.24 9.75 19.23C5.22 18.07 1.87 13.41 1.87 8.44V3.21C1.87 3.1 1.92 3.01 2 2.97L9.7 -0.52C9.78 -0.54 9.87 -0.54 9.95 -0.52L17.65 2.97C17.73 3.01 17.78 3.1 17.78 3.21V8.44Z" fill="url(#paint0_linear_gov)"/>
 
-<!-- star with gradient (moved up) -->
+<!-- star with gradient -->
 <path d="M9.82 4.2L11.3 8L15.5 8L12.2 10.5L13.3 14.7L9.82 12L6.3 14.7L7.4 10.5L4.1 8L8.3 8L9.82 4.2Z" fill="url(#paint1_radial_gov)"/>
 
 <defs>
