@@ -65,7 +65,7 @@ import governmentNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architect
 
 // New custom government icons (blue theme)
 import governmentIconCustom from "@/public/sidenav/government-icon-custom.svg";
-import governmentIconCustomHover from "@/public/sidenav/government-icon-custom.svg";
+import governmentIconCustomHover from "@/public/sidenav/government-icon-custom-hover.svg";
 import governmentHoverCSNAVCustom from "@/public/sidenav/card-demo-sidenav-government-custom-hover.svg";
 import governmentNoHoverCSNAVCustom from "@/public/sidenav/card-demo-sidenav-government-custom.svg";
 

@@ -1,8 +1,21 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="mask0_163_9279" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-<rect width="24" height="24" fill="#D9D9D9"/>
-</mask>
-<g mask="url(#mask0_163_9279)">
-<path d="M12.5 14.0909L0.5 7.54545L12.5 1L24.5 7.54545L12.5 14.0909ZM12.5 18.4545L1.12727 12.2636L3.41818 11.0091L12.5 15.9727L21.5818 11.0091L23.8727 12.2636L12.5 18.4545ZM12.5 22.8182L1.12727 16.6273L3.41818 15.3727L12.5 20.3364L21.5818 15.3727L23.8727 16.6273L12.5 22.8182Z" fill="#1d4ed8"/>
-</g>
+<!-- shield with gradient (FrontierCapital exact proportions scaled) -->
+<path d="M17.77 10.94C17.77 15.91 14.42 20.57 9.89 21.73C9.84 21.74 9.79 21.74 9.75 21.73C5.22 20.57 1.87 15.91 1.87 10.94V5.71C1.87 5.6 1.92 5.51 2 5.47L9.7 1.98C9.78 1.96 9.87 1.96 9.95 1.98L17.65 5.47C17.73 5.51 17.78 5.6 17.78 5.71V10.94Z" fill="url(#paint0_linear_gov)"/>
+
+<!-- star with gradient (moved up teeny bit more) -->
+<path d="M9.82 6.2L11.3 10L15.5 10L12.2 12.5L13.3 16.7L9.82 14L6.3 16.7L7.4 12.5L4.1 10L8.3 10L9.82 6.2Z" fill="url(#paint1_radial_gov)"/>
+
+<defs>
+<!-- Government blue linear gradient (shield) -->
+<linearGradient id="paint0_linear_gov" x1="24" y1="1" x2="0" y2="25" gradientUnits="userSpaceOnUse">
+<stop offset="0.123144" stop-color="#60a5fa"/>
+<stop offset="1" stop-color="#1e40af"/>
+</linearGradient>
+
+<!-- Subtle radial gradient for star -->
+<radialGradient id="paint1_radial_gov" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12.5 11.8) rotate(45) scale(8 8)">
+<stop offset="0" stop-color="white"/>
+<stop offset="1" stop-color="#e0f2fe" stop-opacity="0.9"/>
+</radialGradient>
+</defs>
 </svg> 
