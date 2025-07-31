@@ -11,13 +11,13 @@
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur_172_10804"/>
 </filter>
-<linearGradient id="governmentGradientHover" x1="0" y1="0" x2="360" y2="75" gradientUnits="userSpaceOnUse">
-<stop stop-color="#2563eb"/>
-<stop offset="1" stop-color="#1e3a8a"/>
+<linearGradient id="governmentGradientHover" x1="0" y1="0" x2="360" y2="0" gradientUnits="userSpaceOnUse">
+<stop stop-color="#60a5fa"/>
+<stop offset="1" stop-color="#1e40af"/>
 </linearGradient>
 <linearGradient id="paint0_linear_172_10804" x1="268.983" y1="327.922" x2="629.234" y2="541.778" gradientUnits="userSpaceOnUse">
-<stop stop-color="#93c5fd"/>
-<stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
+<stop stop-color="#bfdbfe"/>
+<stop offset="1" stop-color="#60a5fa" stop-opacity="0"/>
 </linearGradient>
 <clipPath id="clip0_172_10804">
 <rect x="0.5" y="0.40625" width="360" height="75" rx="20" fill="white"/>
