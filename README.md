@@ -8,7 +8,7 @@ This demo focuses on covering the 4 core use cases across...
 - Mobile Release Optimization
 
 
-Throughout this demo, you'll explore `Toggle Bank`, `Launch Airways`, and `Galaxy Marketplace`. 
+Throughout this demo, you'll explore `Toggle Bank`, `Frontier Capital`, `Launch Airways`, `Galaxy Marketplace`, and `Risk Management Bureau`. 
 
 
 ## Setup Info
