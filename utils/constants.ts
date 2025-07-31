@@ -57,10 +57,17 @@ import monitorIcon from "@/public/sidenav/illo-monitor.svg";
 import arrowIconCSNAV from "@/public/sidenav/arrow.svg";
 import governmentVerticalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_Black_Vertical.svg";
 import governmentHorizontalLogo from "@/public/government/Bureau_of_Risk_Reduction_Logo_White_Horizontal.svg";
+// Original architecture icons (currently used)
 import governmentIcon from "@/public/sidenav/architecture-icon.svg";
 import governmentIconHover from "@/public/sidenav/architecture-icon.svg";
 import governmentHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture-hover.svg";
 import governmentNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-architecture.svg";
+
+// New custom government icons (blue theme)
+import governmentIconCustom from "@/public/sidenav/government-icon-custom.svg";
+import governmentIconCustomHover from "@/public/sidenav/government-icon-custom.svg";
+import governmentHoverCSNAVCustom from "@/public/sidenav/card-demo-sidenav-government-custom-hover.svg";
+import governmentNoHoverCSNAVCustom from "@/public/sidenav/card-demo-sidenav-government-custom.svg";
 
 export const STOCK_LOGO_IMAGE = {
   TSLA: teslaLogo,
@@ -433,10 +440,10 @@ export const CSNAV_ITEMS = {
     title: "GalaxyMarketplace",
   },
   government: {
-    icon: governmentIcon,
-    hoverBackground: governmentHoverCSNAV,
-    noHoverBackground: governmentNoHoverCSNAV,
-    iconHover: governmentIconHover,
+    icon: governmentIconCustom,
+    hoverBackground: governmentHoverCSNAVCustom,
+    noHoverBackground: governmentNoHoverCSNAVCustom,
+    iconHover: governmentIconCustomHover,
     type: "usecase",
     link: "/government",
     title: "RiskMgmtBureau",

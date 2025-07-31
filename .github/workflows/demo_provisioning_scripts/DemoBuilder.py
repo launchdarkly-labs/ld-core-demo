@@ -332,6 +332,7 @@ class DemoBuilder:
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
+        self.run_government_show_different_hero_image_experiment()
         
     def run_ecommerce_collection_banner_funnel_experiment(self):
         if not self.metric_groups_created:
@@ -529,6 +530,40 @@ class DemoBuilder:
             "Testing whether the new hero design leads to increased signup conversion on the government demo page",
             metrics=metrics,
             primary_key="signup-clicked",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+        
+    def run_government_show_different_hero_image_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showDifferentHeroImageString",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Frequentist) Feature Experiment: Show Different Hero Image")
+        self.create_government_show_different_hero_image_experiment()
+        self.ldproject.start_exp_iteration("government-show-different-hero-image", "production")
+        self.experiment_created = True
+        
+    def create_government_show_different_hero_image_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-clicked", False)
+        ]
+        res = self.ldproject.create_experiment(
+            exp_key="government-show-different-hero-image",
+            exp_name="(Frequentist) Feature Experiment: Show Different Hero Image",
+            exp_env="production",
+            flag_key="showDifferentHeroImageString",
+            hypothesis="Testing different hero images to see which leads to increased signup conversion on the government demo page",
+            metrics=metrics,
+            primary_key="signup-clicked",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=2
         )
