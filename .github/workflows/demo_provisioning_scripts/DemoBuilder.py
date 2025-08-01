@@ -1012,10 +1012,9 @@ class DemoBuilder:
             metric_name="Risk Management API Errors - Public Sector",
             event_key="rm-api-errors",
             metric_description="This metric will track API errors for the Risk Management API in the Public Sector demo.",
-            numeric=True,
-            unit="errors",
+            numeric=False,
+            unit="",
             success_criteria="LowerThanBaseline",
-            randomization_units=["user"],
             tags=["guarded-release", "public-sector"]
         )
         
