@@ -46,11 +46,15 @@ next-env.d.ts
 .vscode
 .env
 
+# Python virtual environments
+venv/
+.venv/
+__pycache__/
+
 Archive.zip
 deployment.yaml
 insertScript.js
 secrets.yaml
 trustpolicy.json
-
 
 **/.claude/settings.local.json

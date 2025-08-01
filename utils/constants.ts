@@ -446,7 +446,7 @@ export const CSNAV_ITEMS = {
     iconHover: governmentIconCustomHover,
     type: "usecase",
     link: "/government",
-    title: "RiskMgmtBureau",
+    title: "Public Sector",
   },
 };
 

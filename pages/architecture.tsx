@@ -137,7 +137,7 @@ export default function ArchitecturePage() {
             </AccordionTrigger>
             <AccordionContent>
               <h3 className="text-2xl font-bold my-3.5">
-                20 Trillion Feature Flags Daily
+                40 Trillion Feature Flags Daily
               </h3>
               <p>
                 Architect and build platforms that operate globally. Build at
