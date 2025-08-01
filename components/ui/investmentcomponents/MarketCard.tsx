@@ -1,8 +1,14 @@
-import { investmentColors } from "@/utils/styleUtils";
 import React, { useEffect, useState } from "react";
-
+import { investmentColors } from "@/utils/styleUtils";
 import { BounceLoader } from "react-spinners";
 import { wait, randomLatency } from "@/utils/utils";
+
+type PositionType = keyof typeof investmentColors;
+
+const getInvestmentColor = (position: string | undefined): string => {
+  if (!position) return investmentColors.neutral;
+  return investmentColors[position as PositionType] || investmentColors.neutral;
+};
 
 const dummyData = [
   {
@@ -28,7 +34,7 @@ const dummyData = [
   },
 ];
 
-const MarketCard = () => {
+const MarketCard = ({ cardData, title }: { cardData: any; title: string }) => {
   const renderedData = dummyData;
 
   const [loadingStocksTable, setStocksTable] = useState(false);
@@ -56,10 +62,10 @@ const MarketCard = () => {
               return (
                 <div className="" key={datum.name}>
                   <p className="mb-1">{datum.name}</p>
-                  <p className={` ${investmentColors[datum.position]}`}>
+                  <p className={` ${getInvestmentColor(datum.position)}`}>
                     {datum.position.includes("positive") ? "+" : "-"}${datum.priceChange}
                   </p>
-                  <p className={`${investmentColors[datum.position]}`}>
+                  <p className={`${getInvestmentColor(datum.position)}`}>
                     ({datum.position.includes("positive") ? "+" : "-"}
                     {datum.percentageChange}%)
                   </p>

@@ -6,10 +6,20 @@ const statusStyles = {
   failed: "bg-gray-100 text-gray-800",
 };
 
-const StatusBubble = ({ status }: { status: string }) => {
+type StatusType = keyof typeof statusStyles;
+
+const getStatusStyle = (status: string): string => {
+  return statusStyles[status as StatusType] || statusStyles.failed;
+};
+
+interface StatusBubbleProps {
+  status: string;
+}
+
+const StatusBubble = ({ status }: StatusBubbleProps) => {
   return (
     <span
-      className={` ${statusStyles[status]} inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize`}
+      className={` ${getStatusStyle(status)} inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize`}
     >
       {status}
     </span>

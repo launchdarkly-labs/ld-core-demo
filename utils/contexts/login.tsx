@@ -89,7 +89,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
       ]);
     }
 
-    const context: LDContext | undefined = await client?.getContext();
+    const context: any = await client?.getContext();
     //don't know how to fix this without using undefined
     const foundPersona: Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)
