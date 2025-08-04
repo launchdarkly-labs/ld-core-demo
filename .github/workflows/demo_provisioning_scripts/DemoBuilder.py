@@ -331,6 +331,7 @@ class DemoBuilder:
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
+        self.run_government_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
         self.run_government_show_different_hero_image_experiment()
         
@@ -496,6 +497,39 @@ class DemoBuilder:
             "production",
             "ai-config--togglebot",
             "Which AI Models are providing best experiences to customers and delivering best responses",
+            metrics=metrics,
+            primary_key="ai-chatbot-positive-feedback",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=1
+        )
+
+    def run_government_ai_config_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "ai-config--publicbot",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - AI Config: PublicBot Experiment")
+        self.create_government_ai_config_experiment()
+        self.ldproject.start_exp_iteration("government-ai-config-experiment", "production")
+        self.experiment_created = True
+        
+    def create_government_ai_config_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-chatbot-positive-feedback", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "government-ai-config-experiment",
+            "AI Config: PublicBot Experiment - Public Sector",
+            "production",
+            "ai-config--publicbot",
+            "Which AI Models are providing best experiences to users and delivering best responses for government services",
             metrics=metrics,
             primary_key="ai-chatbot-positive-feedback",
             attributes=["device", "location", "tier", "operating_system"],
