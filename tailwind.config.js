@@ -151,6 +151,7 @@ module.exports = {
         },
         //V2 Update List Below
         bankhomepagebuttonblue: '#405BFF',
+        governmentBlue: '#1F2937',
       },
 
       borderRadius: {
