@@ -199,7 +199,7 @@ const RiskAssessmentDashboard = () => {
           </div>
         </div>
 
-            {/* Footer */}
+            {/* footer */}
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg">
               <div className="flex items-center justify-between text-sm text-gray-600">
                 <span>
