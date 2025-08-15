@@ -24,6 +24,8 @@ import FourColumnFooter from "./ui/govcomponents/FourColumnFooter";
 import ImageWithContentHero from "./ui/govcomponents/ImageWithContentHero";
 import ServiceCards from "./ui/govcomponents/ServiceCards";
 import NewsCards from "./ui/govcomponents/NewsCards";
+import RiskAssessmentDashboard from "./ui/govcomponents/RiskAssessmentDashboard";
+import RiskAlertsPanel from "./ui/govcomponents/RiskAlertsPanel";
 import { IoShieldCheckmark } from "react-icons/io5";
 import { BsArrowsExpandVertical } from "react-icons/bs";
 import { FaHandsHelping } from "react-icons/fa";
@@ -152,6 +154,8 @@ export default function LoginHomePage({ variant }: VariantInterface) {
         </HomePageCardWrapper>
       )}
 
+      {variant?.includes("government") && <RiskAssessmentDashboard />}
+      {variant?.includes("government") && <RiskAlertsPanel />}
       {variant?.includes("government") && <FourColumnFooter variant={variant} homePageContent={homePageVariants[variant]}/>}
     </motion.main>
   );
