@@ -142,9 +142,9 @@ export default function SignUpPage() {
 								Sign Up
 							</button>
 							<Link
-								href="/"
+								href="/bank"
 								className="mt-4 text-sm text-gray-500 hover:text-gray-700"
-								title="Go Home"
+								title="Go Back to ToggleBank"
 							>
 								Back
 							</Link>
@@ -154,7 +154,7 @@ export default function SignUpPage() {
 					{/* Login link */}
 					<div className="mt-6 text-center text-sm">
 						Already have an account?{" "}
-						<Link href="/" className="text-blue-600 hover:underline">
+						<Link href="/bank" className="text-blue-600 hover:underline">
 							Log in
 						</Link>
 					</div>
