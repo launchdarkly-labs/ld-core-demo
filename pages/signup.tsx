@@ -83,7 +83,7 @@ export default function SignUpPage() {
 					</h1>
 
 									{/* Form */}
-				<form onSubmit={handleSubmit} className="space-y-4 w-full">
+				<form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
 						{error && (
 							<div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
 								{error}
