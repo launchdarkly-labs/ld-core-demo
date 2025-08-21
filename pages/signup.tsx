@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useSignup } from "@/components/SignUpProvider";
 import { COMPANY_LOGOS, BANK, RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
 import Image from "next/image";
+import WrapperMain from "@/components/ui/WrapperMain";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import { INITIAL_SIGN_UP_COMPLETED } from "@/components/generators/experimentation-automation/experimentationConstants";
 
@@ -44,7 +45,7 @@ export default function SignUpPage() {
 	};
 
 	return (
-		<main className={`flex flex-col px-0 min-h-screen`}>
+		<WrapperMain className={`flex flex-col px-0`}>
 			{/* Mobile banner */}
 			<div className="w-full block sm:hidden text-center bg-gradient-to-r from-white via-[#E2E6FF] to-[#CCD3FF] text-blue-600 p-3">
 				<span className="text-sm">
@@ -81,8 +82,8 @@ export default function SignUpPage() {
 						Start banking in less than five minutes
 					</h1>
 
-					{/* Form */}
-					<form onSubmit={handleSubmit} className="space-y-4">
+									{/* Form */}
+				<form onSubmit={handleSubmit} className="space-y-4 w-full">
 						{error && (
 							<div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
 								{error}
@@ -196,6 +197,6 @@ export default function SignUpPage() {
 					</div>
 				)}
 			</div>
-		</main>
+		</WrapperMain>
 	);
 } 

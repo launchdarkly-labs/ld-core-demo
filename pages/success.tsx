@@ -8,6 +8,7 @@ import { STARTER_PERSONAS } from "@/utils/contexts/StarterUserPersonas";
 import { wait } from "@/utils/utils";
 import { COMPANY_LOGOS, BANK } from "@/utils/constants";
 import Image from "next/image";
+import WrapperMain from "@/components/ui/WrapperMain";
 import LoginContext from "@/utils/contexts/login";
 
 export default function SuccessPage() {
@@ -15,8 +16,8 @@ export default function SuccessPage() {
     const { isLoggedIn, loginUser } = useContext(LoginContext);
 
 	return (
-		<main className="flex flex-col items-center justify-center py-4 min-h-screen">
-			<div className="flex flex-col items-center justify-center space-y-4 text-center">
+		<WrapperMain className="flex flex-col items-center justify-center py-4">
+			<div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl w-full">
 				<Link
 					href="/"
 					title="Go Home"
@@ -77,6 +78,6 @@ export default function SuccessPage() {
 					Go to Dashboard
 				</Link>
 			</div>
-		</main>
+		</WrapperMain>
 	);
 } 

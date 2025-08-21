@@ -9,6 +9,7 @@ import { useSignup } from "@/components/SignUpProvider";
 import SignUpProgressIndicator from "@/components/ui/bankcomponents/SignUpProgressIndicator";
 import { COMPANY_LOGOS, BANK } from "@/utils/constants";
 import Image from "next/image";
+import WrapperMain from "@/components/ui/WrapperMain";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import { SIGN_UP_SERVICES_COMPLETED } from "@/components/generators/experimentation-automation/experimentationConstants";
 
@@ -52,7 +53,7 @@ export default function ServicesPage() {
 	};
 
 	return (
-		<main className="flex flex-col items-center justify-center py-4 min-h-screen">
+		<WrapperMain className="flex flex-col items-center justify-center py-4">
 			<Link href="/" title="Go Home">
 				<Image
 					src={COMPANY_LOGOS[BANK].horizontal}
@@ -77,8 +78,8 @@ export default function ServicesPage() {
 				</p>
 			</div>
 
-			{/* Form */}
-			<form onSubmit={handleSubmit} className="space-y-4 w-full lg:w-[60%]">
+					{/* Form */}
+		<form onSubmit={handleSubmit} className="space-y-4 w-full max-w-2xl">
 				{/* Services Grid */}
 				<div className="grid gap-4 grid-cols-1 md:grid-cols-3 mb-8">
 					{services.map((service) => (
@@ -113,6 +114,6 @@ export default function ServicesPage() {
 					</Link>
 				</div>
 			</form>
-		</main>
+		</WrapperMain>
 	);
 } 
