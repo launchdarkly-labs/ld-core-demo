@@ -19,3 +19,22 @@ export interface BookedTrips  {
   toCity: string,
   type: string,
 }
+
+export interface UserDataType {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  ssn: string;
+  phone: string;
+  address: string;
+  apt: string;
+  zip: string;
+  selectedServices: string[];
+}
+
+export interface WealthManagementGraphDataType {
+  month: string;
+  balance: number;
+}

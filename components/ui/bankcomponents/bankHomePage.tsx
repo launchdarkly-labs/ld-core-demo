@@ -32,12 +32,24 @@ import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import Image from "next/image";
 import { BANK } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
-
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useRouter } from "next/router";
+import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automation/experimentationConstants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 
 export default function BankHomePage() {
 
     const { isLoggedIn } = useContext(LoginContext);
+    const ldClient = useLDClient();
+    const { logLDMetricSent } = useContext(LiveLogsContext);
+    const router = useRouter();
+
+    const handleJoinNowClick = () => {
+        ldClient?.track(SIGN_UP_STARTED);
+        logLDMetricSent({ metricKey: SIGN_UP_STARTED });
+        router.push("/signup");
+    };
 
 
     return (
@@ -62,7 +74,7 @@ export default function BankHomePage() {
                         <>
                             {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
                                 return (
-                                    <DropdownMenuItem href={navLink?.href} key={index}>
+                                    <DropdownMenuItem key={index}>
                                         {navLink?.text}
                                     </DropdownMenuItem>
                                 );
@@ -78,7 +90,7 @@ export default function BankHomePage() {
                                 return (
                                     <NavLinkButton
                                         text={navLink?.text}
-                                        href={navLink?.href}
+                                        navlinkHref={navLink?.href}
                                         navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
                                         index={index}
                                         key={index}
@@ -93,7 +105,7 @@ export default function BankHomePage() {
                         <>
                             {!isLoggedIn && (
                                 <>
-                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
+                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" onClick={handleJoinNowClick} />
                                 </>
                             )}
 
@@ -117,7 +129,10 @@ export default function BankHomePage() {
                             {bankHomePageValues?.industryMessages}
                         </h2>
                         <div className="flex space-x-4 px-6 sm:px-2 md:px-4 lg:px-6 xl:px-8">
-                            <button className="shadow-2xl bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
+                            <button 
+                                onClick={handleJoinNowClick}
+                                className="shadow-2xl bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl"
+                            >
                                 Join Now
                             </button>
                             <button className="shadow-2xl border hover:bg-bank-gradient-text-color border-blue-800 hover:border-bankhomepagebuttonblue hover:text-white text-blue-800  rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
