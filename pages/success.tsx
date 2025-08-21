@@ -67,7 +67,7 @@ export default function SuccessPage() {
 				</p>
 
 				<Link
-					href="/"
+					href="/bank"
 					className="mt-4 w-full rounded-full bg-blue-500 py-3 text-center font-medium text-white transition-colors hover:bg-blue-600"
 					onClick={async () => {
 						!isLoggedIn && loginUser(STARTER_PERSONAS[0].personaemail);
