@@ -1,12 +1,12 @@
 "use client";
 
 import type React from "react";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import { useState, useContext } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { useSignup } from "@/components/SignUpProvider";
-import { COMPANY_LOGOS, BANK, RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
+import { COMPANY_LOGOS, BANK } from "@/utils/constants";
 import Image from "next/image";
 import WrapperMain from "@/components/ui/WrapperMain";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
@@ -16,15 +16,11 @@ export default function SignUpPage() {
 	const router = useRouter();
 	const ldClient = useLDClient();
 	const { userData, updateUserData } = useSignup();
-	const [email, setEmail] = useState(userData.email || "user@launchmail.io");
+	const [email, setEmail] = useState(userData.email || "christine.wilson@email.com");
 	const [password, setPassword] = useState(userData.password || "password123");
 	const [acceptedTerms, setAcceptedTerms] = useState(true);
 	const [error, setError] = useState("");
-	const releaseNewSignUpPromoLDFlag = useFlags()[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
 	const { logLDMetricSent } = useContext(LiveLogsContext);
-	const currentDatePlus30 = new Date(
-		new Date().setDate(new Date().getDate() + 30)
-	).toLocaleDateString();
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -46,25 +42,10 @@ export default function SignUpPage() {
 
 	return (
 		<WrapperMain className={`flex flex-col px-0`}>
-			{/* Mobile banner */}
-			<div className="w-full block sm:hidden text-center bg-gradient-to-r from-white via-[#E2E6FF] to-[#CCD3FF] text-blue-600 p-3">
-				<span className="text-sm">
-					Sign up for an account today to receive 50,000 reward points. Offer ends on {currentDatePlus30}
-				</span>
-			</div>
-			
-			<div
-				className={`flex px-4 sm:px-0 h-full ${
-					releaseNewSignUpPromoLDFlag ? " p-0" : " items-center justify-center"
-				}`}
-			>
-				{/* Left side - Sign up form */}
-				<div
-					className={`flex items-center justify-center w-full flex-col p-8  ${
-						releaseNewSignUpPromoLDFlag && "md:w-7/12 md:p-12"
-					}`}
-				>
-					<Link href="/" title="Go Home">
+			<div className="flex px-4 sm:px-0 h-full items-center justify-center">
+				{/* sign up form */}
+				<div className="flex items-center justify-center w-full flex-col p-8 max-w-md">
+					<Link href="/bank" title="Go Home">
 						<Image
 							src={COMPANY_LOGOS[BANK].horizontal}
 							alt="ToggleBank Logo"
@@ -82,8 +63,8 @@ export default function SignUpPage() {
 						Start banking in less than five minutes
 					</h1>
 
-									{/* Form */}
-				<form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
+					{/* form */}
+					<form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
 						{error && (
 							<div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
 								{error}
@@ -144,7 +125,7 @@ export default function SignUpPage() {
 							<Link
 								href="/bank"
 								className="mt-4 text-sm text-gray-500 hover:text-gray-700"
-								title="Redirect to ToggleBank"
+								title="Go Home"
 							>
 								Back
 							</Link>
@@ -159,43 +140,6 @@ export default function SignUpPage() {
 						</Link>
 					</div>
 				</div>
-
-				{/* Right side - Promo */}
-				{releaseNewSignUpPromoLDFlag && (
-					<div className={`relative  w-5/12 h-[100vh] hidden sm:block `}>
-						<div className="w-full aspect-[9/16] bg-gradient-to-br from-white via-[#E2E6FF] to-[#CCD3FF] h-full p-4 shadow-lg">
-							<div className="flex items-start justify-center h-full">
-								<div className="absolute bottom-[50%] left-[3rem]  text-start z-10">
-									<h2 className="text-3xl text-blue-600">
-										Sign up for an account today to receive
-									</h2>
-									<p className="text-3xl font-semibold text-purple-600">
-										50,000 reward points
-									</p>
-									<p className="mt-6 text-sm text-gray-600">
-										Offer ends {currentDatePlus30}
-									</p>
-								</div>
-								<Image
-									src={"/banking/offerBanner/bankCard.svg"}
-									alt="Banking Offer Banner"
-									width={100}
-									height={100}
-									priority
-									className={` absolute bottom-[10%] lg:bottom-[5%] left-0 w-[80%]`}
-								/>
-								<Image
-									src={"/banking/offerBanner/bankCircle.svg"}
-									alt="Banking Offer Banner"
-									width={100}
-									height={100}
-									priority
-									className={`absolute bottom-[18%] lg:bottom-[18%] left-[40%] lg:left-[40%] w-[60%]`}
-								/>
-							</div>
-						</div>
-					</div>
-				)}
 			</div>
 		</WrapperMain>
 	);
