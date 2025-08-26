@@ -19,6 +19,19 @@ const probablityExperimentTypeSearchEngine = {
 	["frequentist"]: { ["trueProbablity"]: 52, ["falseProbablity"]: 60 },
 };
 
+const probablityExperimentTypeSpecialOffers = {
+	["bayesian"]: { 
+		["offerA"]: 45, // control: credit card offer
+		["offerB"]: 65, // winner: car loan offer  
+		["offerC"]: 55  // treatment: platinum rewards
+	},
+	["frequentist"]: { 
+		["offerA"]: 47, // control: credit card offer
+		["offerB"]: 62, // winner: car loan offer
+		["offerC"]: 53  // treatment: platinum rewards
+	},
+};
+
 export const generateAIChatBotFeatureExperimentResults = async ({
 	client,
 	updateContext,
@@ -171,6 +184,51 @@ export const generateNewSearchEngineFeatureExperimentResults = async ({
 		setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
 		await client?.flush();
 		await wait(waitTime)
+		await updateContext();
+	}
+	setExpGenerator(false);
+};
+
+export const generateToggleBankSpecialOffersFeatureExperimentResults = async ({
+	client,
+	updateContext,
+	setProgress,
+	setExpGenerator,
+	experimentTypeObj,
+}: {
+	client: any;
+	updateContext: UpdateContextFunction;
+	setProgress: React.Dispatch<React.SetStateAction<number>>;
+	setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+	experimentTypeObj: { experimentType: string; numOfRuns: number };
+}): Promise<void> => {
+	setProgress(0);
+
+	const experimentType: string = experimentTypeObj.experimentType;
+
+	for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
+		const specialOfferVariation: string = client?.variation(
+			"showDifferentSpecialOfferString",
+			"offerA",
+		);
+
+		// track that special offer was viewed
+		await client?.track("special-offer-viewed");
+		await client?.flush();
+
+		// simulate clicks
+		const clickProbability = Math.random() * 100;
+		const offerKey = ["offerA", "offerB", "offerC"].includes(specialOfferVariation) 
+			? specialOfferVariation 
+			: "offerA";
+
+		if (clickProbability < probablityExperimentTypeSpecialOffers[experimentType as keyof typeof probablityExperimentTypeSpecialOffers][offerKey as keyof typeof probablityExperimentTypeSpecialOffers["bayesian"]]) {
+			await client?.track("special-offer-clicked");
+			await client?.flush();
+		}
+
+		setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
+		await wait(waitTime);
 		await updateContext();
 	}
 	setExpGenerator(false);

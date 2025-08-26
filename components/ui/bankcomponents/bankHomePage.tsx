@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import iconBackground from "@/public/banking/icons/icon-background.svg";
 import heroBackgroundCreditcard from "@/public/banking/backgrounds/bank-hero-background-creditcard.svg";
@@ -15,6 +15,8 @@ import savings from "@/public/banking/icons/savings.svg";
 import savingsOnHover from "@/public/banking/icons/savings-on-hover.svg";
 import retirmentBackground from "@/public/banking/backgrounds/bank-homepage-retirment-card-background.svg";
 import specialOfferBackground from "@/public/banking/backgrounds/bank-homepage-specialoffer-background.svg";
+import specialOfferCarLoan from "@/public/banking/SpecialOffer-CarLoan.svg";
+import specialOfferCC from "@/public/banking/SpecialOffer-CC.svg";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
@@ -35,6 +37,7 @@ import LoginContext from "@/utils/contexts/login";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { useRouter } from "next/router";
 import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automation/experimentationConstants";
+import { RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 export default function BankHomePage() {
@@ -43,12 +46,43 @@ export default function BankHomePage() {
     const ldClient = useLDClient();
     const { logLDMetricSent } = useContext(LiveLogsContext);
     const router = useRouter();
+    const flags = useFlags();
 
     const handleJoinNowClick = () => {
-        ldClient?.track(SIGN_UP_STARTED);
-        logLDMetricSent({ metricKey: SIGN_UP_STARTED });
-        router.push("/signup");
+        const releaseNewSignupPromoFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
+        
+        if (releaseNewSignupPromoFlag) {
+            // new: multi-step signup flow
+            ldClient?.track(SIGN_UP_STARTED);
+            logLDMetricSent({ metricKey: SIGN_UP_STARTED });
+            router.push("/signup");
+        }
+        // old: do nothing (decorative button)
     };
+
+    // special offers experiment
+    const flagValue = flags["showDifferentSpecialOfferString"];
+    const validOfferKeys = ["offerA", "offerB", "offerC"] as const;
+    const selectedOffer: "offerA" | "offerB" | "offerC" = flagValue && validOfferKeys.includes(flagValue) ? flagValue : "offerA";
+
+    // variations
+    const specialOffers = {
+        offerA: {
+            title: "Take advantage",
+            description: "Exclusive credit card offer with premium service from Toggle Bank. Terms apply.",
+            image: specialOfferBackground
+        },
+        offerB: {
+            title: "Drive your dreams",
+            description: "Get pre-approved for an auto loan with competitive rates. Perfect for your next vehicle purchase.",
+            image: specialOfferCarLoan
+        },
+        offerC: {
+            title: "Platinum rewards",
+            description: "Earn unlimited cashback on every purchase with our premium credit card. No annual fee.",
+            image: specialOfferCC
+        }
+    } as const;
 
 
     return (
@@ -215,15 +249,15 @@ export default function BankHomePage() {
                                     SPECIAL OFFER
                                 </div>
                                 <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
-                                    Take advantage
+                                    {specialOffers[selectedOffer].title}
                                 </div>
                                 <div className="text-black mx-8 mb-4 font-sohne text-md">
-                                    Exclusive credit card offer with premium service from Toggle Bank. Terms apply.
+                                    {specialOffers[selectedOffer].description}
                                 </div>
                             </div>
                         </div>
                         <div className="w-full hidden sm:block mt-4 sm:mt-0 sm:w-2/3 bg-purple-500 p-4 rounded-2xl relative">
-                            <Image src={specialOfferBackground} className='rounded-r-2xl' layout="fill" objectFit="cover" alt="Retirement Background" />
+                            <Image src={specialOffers[selectedOffer].image} className='rounded-r-2xl' layout="fill" objectFit="cover" alt="Special Offer Background" />
                         </div>
                     </div>
                 </div>

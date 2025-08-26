@@ -133,6 +133,10 @@ class DemoBuilder:
         self.metric_togglebank_services_completed()
         print(" - ToggleBank Full Signup Flow Completed")
         self.metric_togglebank_signup_flow_completed()
+        print(" - ToggleBank Special Offer Viewed")
+        self.metric_togglebank_special_offer_viewed()
+        print(" - ToggleBank Special Offer Clicked")
+        self.metric_togglebank_special_offer_clicked()
         print(" - Risk Management Database Latency - Public Sector")
         self.metric_government_rm_db_latency()
         print(" - Risk Management Database Errors - Public Sector")
@@ -176,6 +180,10 @@ class DemoBuilder:
         self.flag_togglebank_database_guarded_release()
         print(" - A4 - Release: New API (Guarded Release) - ToggleBank")
         self.flag_togglebank_api_guarded_release()
+        print(" - A5 - Feature Experiment: Show Different Special Offer - ToggleBank")
+        self.flag_togglebank_show_different_special_offer_string()
+        print(" - A6 - Funnel Experiment: New Signup Flow - ToggleBank")
+        self.flag_togglebank_release_new_signup_promo()
         print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
         print(" - B2 - Release: New API (Guarded Release)")
@@ -342,6 +350,7 @@ class DemoBuilder:
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
         self.run_togglebank_signup_funnel_experiment()
+        self.run_togglebank_special_offers_experiment()
         self.run_government_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
         self.run_government_show_different_hero_image_experiment()
@@ -546,6 +555,39 @@ class DemoBuilder:
             "Testing whether the new multi-step signup flow improves conversion rates compared to the old single-page signup in ToggleBank.",
             metrics=metrics,
             primary_key="signup-flow-completed",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_special_offers_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showDifferentSpecialOfferString",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Special Offers")
+        self.create_togglebank_special_offers_experiment()
+        self.ldproject.start_exp_iteration("togglebank-special-offers-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_special_offers_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("special-offer-viewed", False),
+            self.ldproject.exp_metric("special-offer-clicked", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-special-offers-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Special Offers Rotation",
+            "production",
+            "showDifferentSpecialOfferString",
+            "Testing which special offer variation (credit card, car loan, or platinum rewards) generates more clicks and engagement.",
+            metrics=metrics,
+            primary_key="special-offer-clicked",
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=2
         )
@@ -1058,7 +1100,7 @@ class DemoBuilder:
             unit="",
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
-            tags=["togglebank", "signup-funnel"]
+            tags=["bank", "signup-funnel"]
         )
 
     def metric_togglebank_initial_signup_completed(self):
@@ -1071,7 +1113,7 @@ class DemoBuilder:
             unit="",
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
-            tags=["togglebank", "signup-funnel"]
+            tags=["bank", "signup-funnel"]
         )
 
     def metric_togglebank_personal_details_completed(self):
@@ -1084,7 +1126,7 @@ class DemoBuilder:
             unit="",
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
-            tags=["togglebank", "signup-funnel"]
+            tags=["bank", "signup-funnel"]
         )
 
     def metric_togglebank_services_completed(self):
@@ -1097,7 +1139,7 @@ class DemoBuilder:
             unit="",
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
-            tags=["togglebank", "signup-funnel"]
+            tags=["bank", "signup-funnel"]
         )
 
     def metric_togglebank_signup_flow_completed(self):
@@ -1110,7 +1152,33 @@ class DemoBuilder:
             unit="",
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
-            tags=["togglebank", "signup-funnel"]
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_special_offer_viewed(self):
+        res = self.ldproject.create_metric(
+            "special-offer-viewed",
+            "ToggleBank Special Offer Viewed",
+            "special-offer-viewed",
+            "This metric tracks when users view the special offer on the ToggleBank signup page.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "special-offers"]
+        )
+
+    def metric_togglebank_special_offer_clicked(self):
+        res = self.ldproject.create_metric(
+            "special-offer-clicked",
+            "ToggleBank Special Offer Clicked",
+            "special-offer-clicked",
+            "This metric tracks when users click the special offer on the ToggleBank signup page.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "special-offers"]
         )
 
     def metric_government_rm_db_latency(self):
@@ -2379,6 +2447,40 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("riskmgmtbureauAPIGuardedRelease", "production", metrics=["rm-api-latency","rm-api-errors"], days=1)
+
+    def flag_togglebank_show_different_special_offer_string(self):
+        res = self.ldproject.create_flag(
+            "showDifferentSpecialOfferString",
+            "A5 - Feature Experiment: Show Different Special Offer - ToggleBank",
+            "This feature flag controls which special offer variant is displayed on the ToggleBank home page",
+            [
+                {
+                    "value": "offerA",
+                    "name": "offerA"
+                },
+                {
+                    "value": "offerB", 
+                    "name": "offerB"
+                },
+                {
+                    "value": "offerC",
+                    "name": "offerC"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_togglebank_release_new_signup_promo(self):
+        res = self.ldproject.create_flag(
+            "releaseNewSignupPromo",
+            "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
+            "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
 
 ############################################################################################################
 ############################################################################################################

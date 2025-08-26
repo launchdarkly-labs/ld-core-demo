@@ -19,6 +19,7 @@ import ExperimentGenerator from "@/components/generators/experimentation-automat
 import {
   TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY,
   TOGGLEBANK_SIGNUP_FUNNEL_EXPERIMENTATION_KEY,
+  TOGGLEBANK_SPECIAL_OFFERS_EXPERIMENTATION_KEY,
   MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY,
   MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY,
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
@@ -29,6 +30,7 @@ import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
   generateNewSearchEngineFeatureExperimentResults,
+  generateToggleBankSpecialOffersFeatureExperimentResults,
 } from "@/components/generators/experimentation-automation/featureExperimentGeneratorFunctions";
 import {
   generateStoreHeaderFunnelExperimentResults,
@@ -143,6 +145,13 @@ export function QuickCommandDialog({ children }: { children: any }) {
                 title={"[ToggleBank] Funnel Experiment Results Generator for Signup Flow"}
                 experimentationKey={TOGGLEBANK_SIGNUP_FUNNEL_EXPERIMENTATION_KEY}
                 functionGenerator={generateToggleBankSignupFunnelExperimentResults}
+              />
+            </CommandItem>
+            <CommandItem>
+              <ExperimentGenerator
+                title={"[ToggleBank] Feature Experiment Results Generator for Special Offers"}
+                experimentationKey={TOGGLEBANK_SPECIAL_OFFERS_EXPERIMENTATION_KEY}
+                functionGenerator={generateToggleBankSpecialOffersFeatureExperimentResults}
               />
             </CommandItem>
             <CommandItem>
