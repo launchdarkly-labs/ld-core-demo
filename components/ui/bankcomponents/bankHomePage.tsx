@@ -37,7 +37,6 @@ import { useRouter } from "next/router";
 import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automation/experimentationConstants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
-
 export default function BankHomePage() {
 
     const { isLoggedIn } = useContext(LoginContext);

@@ -15,7 +15,7 @@ import { SIGN_UP_SERVICES_COMPLETED } from "@/components/generators/experimentat
 
 export default function ServicesPage() {
 	const router = useRouter();
-	const { userData, updateUserData, toggleService } = useSignup();
+	const { userData, updateUserData } = useSignup();
 	const ldClient = useLDClient();
 	const { logLDMetricSent } = useContext(LiveLogsContext);
 

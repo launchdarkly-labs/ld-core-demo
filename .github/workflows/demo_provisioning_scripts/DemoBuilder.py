@@ -123,6 +123,16 @@ class DemoBuilder:
         self.metric_search_engine()
         print(" - Signup Click in Home Page - Public Sector")
         self.metric_government_signup_click()
+        print(" - ToggleBank Signup Started")
+        self.metric_togglebank_signup_started()
+        print(" - ToggleBank Initial Signup Completed") 
+        self.metric_togglebank_initial_signup_completed()
+        print(" - ToggleBank Personal Details Completed")
+        self.metric_togglebank_personal_details_completed()
+        print(" - ToggleBank Services Selection Completed")
+        self.metric_togglebank_services_completed()
+        print(" - ToggleBank Full Signup Flow Completed")
+        self.metric_togglebank_signup_flow_completed()
         print(" - Risk Management Database Latency - Public Sector")
         self.metric_government_rm_db_latency()
         print(" - Risk Management Database Errors - Public Sector")
@@ -331,6 +341,7 @@ class DemoBuilder:
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
+        self.run_togglebank_signup_funnel_experiment()
         self.run_government_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
         self.run_government_show_different_hero_image_experiment()
@@ -501,6 +512,42 @@ class DemoBuilder:
             primary_key="ai-chatbot-positive-feedback",
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=1
+        )
+
+    def run_togglebank_signup_funnel_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "releaseNewSignupPromo",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Funnel Experiment: ToggleBank Signup Flow")
+        self.create_togglebank_signup_funnel_experiment()
+        self.ldproject.start_exp_iteration("togglebank-signup-funnel-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_signup_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False),
+            self.ldproject.exp_metric("initial-signup-completed", False),
+            self.ldproject.exp_metric("signup-personal-details-completed", False),
+            self.ldproject.exp_metric("signup-services-completed", False),
+            self.ldproject.exp_metric("signup-flow-completed", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-signup-funnel-experiment",
+            "(Bayesian) Funnel Experiment: ToggleBank Multi-Step Signup Flow",
+            "production",
+            "releaseNewSignupPromo",
+            "Testing whether the new multi-step signup flow improves conversion rates compared to the old single-page signup in ToggleBank.",
+            metrics=metrics,
+            primary_key="signup-flow-completed",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
         )
 
     def run_government_ai_config_experiment(self):
@@ -999,6 +1046,71 @@ class DemoBuilder:
             success_criteria="HigherThanBaseline",
             randomization_units=["user"],
             tags=["public-sector"]
+        )
+
+    def metric_togglebank_signup_started(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-started",
+            metric_name="ToggleBank Signup Started",
+            event_key="signup-started",
+            metric_description="This metric tracks when users click Join Now to start the signup process in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["togglebank", "signup-funnel"]
+        )
+
+    def metric_togglebank_initial_signup_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="initial-signup-completed",
+            metric_name="ToggleBank Initial Signup Completed",
+            event_key="initial-signup-completed", 
+            metric_description="This metric tracks when users complete the first signup step (email/password) in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["togglebank", "signup-funnel"]
+        )
+
+    def metric_togglebank_personal_details_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-personal-details-completed",
+            metric_name="ToggleBank Personal Details Completed",
+            event_key="signup-personal-details-completed",
+            metric_description="This metric tracks when users complete the personal details step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["togglebank", "signup-funnel"]
+        )
+
+    def metric_togglebank_services_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-services-completed",
+            metric_name="ToggleBank Services Selection Completed",
+            event_key="signup-services-completed",
+            metric_description="This metric tracks when users complete the services selection step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["togglebank", "signup-funnel"]
+        )
+
+    def metric_togglebank_signup_flow_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-flow-completed",
+            metric_name="ToggleBank Full Signup Flow Completed", 
+            event_key="signup-flow-completed",
+            metric_description="This metric tracks when users complete the entire ToggleBank signup flow and are logged in.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["togglebank", "signup-funnel"]
         )
 
     def metric_government_rm_db_latency(self):

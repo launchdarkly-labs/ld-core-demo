@@ -19,7 +19,7 @@ export default function SuccessPage() {
 		<WrapperMain className="flex flex-col items-center justify-center py-4">
 			<div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl w-full">
 				<Link
-					href="/"
+					href="/bank"
 					title="Go Home"
 					onClick={async () => {
 						await wait(0.5);

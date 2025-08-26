@@ -525,5 +525,5 @@ export const INITIAL_USER_SIGNUP_DATA = {
   selectedServices: ["Checking Accounts"],
 };
 
-// ToggleBank Feature Flag Constants
+// togglebank sign up feature flag
 export const RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY = "releaseNewSignupPromo";
