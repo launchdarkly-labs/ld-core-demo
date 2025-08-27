@@ -2485,6 +2485,16 @@ class DemoBuilder:
             "releaseNewSignupPromo",
             "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
             "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            [
+                {
+                    "value": True,
+                    "name": "New Multi-Step Signup Flow"
+                },
+                {
+                    "value": False,
+                    "name": "Old Decorative Button"
+                }
+            ],
             tags=["Experimentation", "bank"],
             on_variation=0,
             off_variation=1,
@@ -2495,6 +2505,16 @@ class DemoBuilder:
             "swapWidgetPositions",
             "A7 - Feature Experiment: Widget Position Swap - ToggleBank",
             "This feature flag controls whether the mortgage and retirement widgets are swapped on the ToggleBank home page",
+            [
+                {
+                    "value": True,
+                    "name": "Retirement Left, Mortgage Right"
+                },
+                {
+                    "value": False,
+                    "name": "Mortgage Left, Retirement Right"
+                }
+            ],
             tags=["Experimentation", "bank"],
             on_variation=0,
             off_variation=1,
