@@ -212,18 +212,56 @@ export const generateToggleBankSpecialOffersFeatureExperimentResults = async ({
 			"offerA",
 		);
 
-		// track that special offer was viewed
-		await client?.track("special-offer-viewed");
-		await client?.flush();
-
-		// simulate clicks
-		const clickProbability = Math.random() * 100;
+		// simulate signup conversions based on special offer variation
+		const signupProbability = Math.random() * 100;
 		const offerKey = ["offerA", "offerB", "offerC"].includes(specialOfferVariation) 
 			? specialOfferVariation 
 			: "offerA";
 
-		if (clickProbability < probablityExperimentTypeSpecialOffers[experimentType as keyof typeof probablityExperimentTypeSpecialOffers][offerKey as keyof typeof probablityExperimentTypeSpecialOffers["bayesian"]]) {
-			await client?.track("special-offer-clicked");
+		// simulate signup flow if special offer influences signup decision
+		if (signupProbability < probablityExperimentTypeSpecialOffers[experimentType as keyof typeof probablityExperimentTypeSpecialOffers][offerKey as keyof typeof probablityExperimentTypeSpecialOffers["bayesian"]]) {
+			await client?.track("signup-started");
+			await client?.flush();
+		}
+
+		setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
+		await wait(waitTime);
+		await updateContext();
+	}
+	setExpGenerator(false);
+};
+
+// widget position experiment probabilities
+const probablityExperimentTypeWidgetPosition = {
+	["bayesian"]: {
+		["false"]: 35, // control: mortgage left, retirement right
+		["true"]: 42   // treatment: retirement left, mortgage right
+	},
+	["frequentist"]: {
+		["false"]: 38, // control: mortgage left, retirement right
+		["true"]: 44   // treatment: retirement left, mortgage right
+	},
+};
+
+export const generateToggleBankWidgetPositionFeatureExperimentResults = async ({
+	client, updateContext, setProgress, setExpGenerator, experimentTypeObj,
+}: {
+	client: any; updateContext: UpdateContextFunction; setProgress: React.Dispatch<React.SetStateAction<number>>; setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>; experimentTypeObj: { experimentType: string; numOfRuns: number };
+}): Promise<void> => {
+	setProgress(0);
+	const experimentType: string = experimentTypeObj.experimentType;
+	for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
+		const widgetPosition: boolean = client?.variation("swapWidgetPositions", false);
+		
+		// simulate signup conversions based on widget position
+		const signupProbability = Math.random() * 100;
+		
+		const positionKey = widgetPosition ? "true" : "false";
+		const signupThreshold = probablityExperimentTypeWidgetPosition[experimentType as keyof typeof probablityExperimentTypeWidgetPosition][positionKey as keyof typeof probablityExperimentTypeWidgetPosition["bayesian"]];
+		
+		// simulate signup flow if widget position influences signup decision
+		if (signupProbability < signupThreshold) {
+			await client?.track("signup-started");
 			await client?.flush();
 		}
 

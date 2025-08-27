@@ -133,10 +133,6 @@ class DemoBuilder:
         self.metric_togglebank_services_completed()
         print(" - ToggleBank Full Signup Flow Completed")
         self.metric_togglebank_signup_flow_completed()
-        print(" - ToggleBank Special Offer Viewed")
-        self.metric_togglebank_special_offer_viewed()
-        print(" - ToggleBank Special Offer Clicked")
-        self.metric_togglebank_special_offer_clicked()
         print(" - Risk Management Database Latency - Public Sector")
         self.metric_government_rm_db_latency()
         print(" - Risk Management Database Errors - Public Sector")
@@ -184,6 +180,8 @@ class DemoBuilder:
         self.flag_togglebank_show_different_special_offer_string()
         print(" - A6 - Funnel Experiment: New Signup Flow - ToggleBank")
         self.flag_togglebank_release_new_signup_promo()
+        print(" - A7 - Feature Experiment: Widget Position Swap - ToggleBank")
+        self.flag_togglebank_swap_widget_positions()
         print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
         print(" - B2 - Release: New API (Guarded Release)")
@@ -351,6 +349,7 @@ class DemoBuilder:
         self.run_togglebank_ai_config_experiment()
         self.run_togglebank_signup_funnel_experiment()
         self.run_togglebank_special_offers_experiment()
+        self.run_togglebank_widget_position_experiment()
         self.run_government_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
         self.run_government_show_different_hero_image_experiment()
@@ -577,17 +576,48 @@ class DemoBuilder:
         
     def create_togglebank_special_offers_experiment(self):
         metrics = [
-            self.ldproject.exp_metric("special-offer-viewed", False),
-            self.ldproject.exp_metric("special-offer-clicked", False)
+            self.ldproject.exp_metric("signup-started", False)
         ]
         res = self.ldproject.create_experiment(
             "togglebank-special-offers-experiment",
             "(Bayesian) Feature Experiment: ToggleBank Special Offers Rotation",
             "production",
             "showDifferentSpecialOfferString",
-            "Testing which special offer variation (credit card, car loan, or platinum rewards) generates more clicks and engagement.",
+            "Testing which special offer variation (credit card, car loan, or platinum rewards) generates more signup conversions.",
             metrics=metrics,
-            primary_key="special-offer-clicked",
+            primary_key="signup-started",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_widget_position_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "swapWidgetPositions",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Widget Position")
+        self.create_togglebank_widget_position_experiment()
+        self.ldproject.start_exp_iteration("togglebank-widget-position-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_widget_position_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-widget-position-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Widget Position Swap",
+            "production",
+            "swapWidgetPositions",
+            "Testing whether swapping the positions of mortgage and retirement widgets improves signup conversion rates.",
+            metrics=metrics,
+            primary_key="signup-started",
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=2
         )
@@ -1155,31 +1185,9 @@ class DemoBuilder:
             tags=["bank", "signup-funnel"]
         )
 
-    def metric_togglebank_special_offer_viewed(self):
-        res = self.ldproject.create_metric(
-            "special-offer-viewed",
-            "ToggleBank Special Offer Viewed",
-            "special-offer-viewed",
-            "This metric tracks when users view the special offer on the ToggleBank signup page.",
-            numeric=False,
-            unit="",
-            success_criteria="HigherThanBaseline",
-            randomization_units=["user"],
-            tags=["bank", "special-offers"]
-        )
 
-    def metric_togglebank_special_offer_clicked(self):
-        res = self.ldproject.create_metric(
-            "special-offer-clicked",
-            "ToggleBank Special Offer Clicked",
-            "special-offer-clicked",
-            "This metric tracks when users click the special offer on the ToggleBank signup page.",
-            numeric=False,
-            unit="",
-            success_criteria="HigherThanBaseline",
-            randomization_units=["user"],
-            tags=["bank", "special-offers"]
-        )
+
+
 
     def metric_government_rm_db_latency(self):
         res = self.ldproject.create_metric(
@@ -2477,6 +2485,16 @@ class DemoBuilder:
             "releaseNewSignupPromo",
             "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
             "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_togglebank_swap_widget_positions(self):
+        res = self.ldproject.create_flag(
+            "swapWidgetPositions",
+            "A7 - Feature Experiment: Widget Position Swap - ToggleBank",
+            "This feature flag controls whether the mortgage and retirement widgets are swapped on the ToggleBank home page",
             tags=["Experimentation", "bank"],
             on_variation=0,
             off_variation=1,

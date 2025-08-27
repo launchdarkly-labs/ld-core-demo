@@ -84,6 +84,10 @@ export default function BankHomePage() {
         }
     } as const;
 
+    // widget position experiment
+    const widgetPositionFlag = flags["swapWidgetPositions"];
+    const shouldSwapWidgets = widgetPositionFlag === true;
+
 
     return (
         <motion.main
@@ -210,35 +214,75 @@ export default function BankHomePage() {
 
             <div className="container mx-auto my-10 p-4">
                 <div className="flex flex-col sm:flex-row mb-4 gap-x-8 p-4 mx-10 sm:mx-20 sm:pb-8 gap-y-10 sm:gap-y-0">
-                    <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
-                        <div className="flex flex-col gap-y-6 mt-4 ">
-                            <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
-                                MORTGAGE
+                    {shouldSwapWidgets ? (
+                        <>
+                            {/* retirement widget (left when swapped) */}
+                            <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
+                                <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
+                                    <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
+                                        RETIREMENT
+                                    </div>
+                                    <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
+                                        Prepare for retirement
+                                    </div>
+                                    <div className="text-black mx-8 mb-4 font-sohne text-md">
+                                        Plan for the future by using our Retirement Planning Calculator.
+                                    </div>
+                                </div>
+                                <div className="w-1/2 items-center justify-center hidden sm:flex">
+                                    <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
+                                </div>
                             </div>
-                            <div className="mx-8 mt-4 text-white font-sohne text-xl">
-                                Set down new roots
+                            {/* mortgage widget (right when swapped) */}
+                            <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
+                                <div className="flex flex-col gap-y-6 mt-4 ">
+                                    <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
+                                        MORTGAGE
+                                    </div>
+                                    <div className="mx-8 mt-4 text-white font-sohne text-xl">
+                                        Set down new roots
+                                    </div>
+                                    <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
+                                        From finding your new place to getting the keys – we're here to help.
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
-                                From finding your new place to getting the keys – we're here to help.
+                        </>
+                    ) : (
+                        <>
+                            {/* mortgage widget (default) */}
+                            <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
+                                <div className="flex flex-col gap-y-6 mt-4 ">
+                                    <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
+                                        MORTGAGE
+                                    </div>
+                                    <div className="mx-8 mt-4 text-white font-sohne text-xl">
+                                        Set down new roots
+                                    </div>
+                                    <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
+                                        From finding your new place to getting the keys – we're here to help.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
-                        <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
-                            <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
-                                RETIREMENT
+                            {/* retirement widget (default) */}
+                            <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
+                                <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
+                                    <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
+                                        RETIREMENT
+                                    </div>
+                                    <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
+                                        Prepare for retirement
+                                    </div>
+                                    <div className="text-black mx-8 mb-4 font-sohne text-md">
+                                        Plan for the future by using our Retirement Planning Calculator.
+                                    </div>
+                                </div>
+                                <div className="w-1/2 items-center justify-center hidden sm:flex">
+                                    <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
+                                </div>
                             </div>
-                            <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
-                                Prepare for retirement
-                            </div>
-                            <div className="text-black mx-8 mb-4 font-sohne text-md">
-                                Plan for the future by using our Retirement Planning Calculator.
-                            </div>
-                        </div>
-                        <div className="w-1/2 items-center justify-center hidden sm:flex">
-                            <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </div>
                 				{/* second row */}
                 <div className="p-4 mx-10 sm:mx-20 sm:pb-20">

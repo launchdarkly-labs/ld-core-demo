@@ -16,6 +16,7 @@ export const SIGN_UP_PERSONAL_DETAIL_COMPLETED = "signup-personal-details-comple
 export const SIGN_UP_SERVICES_COMPLETED = "signup-services-completed"
 export const SIGN_UP_FLOW_COMPLETED = "signup-flow-completed"
 
-// togglebank special offers metrics
-export const SPECIAL_OFFER_VIEWED = "special-offer-viewed"
-export const SPECIAL_OFFER_CLICKED = "special-offer-clicked"
+
+
+// togglebank widget position experimentation
+export const TOGGLEBANK_WIDGET_POSITION_EXPERIMENTATION_KEY = "togglebank-widget-position-feature-experiment"
