@@ -1,5 +1,12 @@
 import type { UpdateContextFunction } from "@/utils/typescriptTypesInterfaceIndustry";
 import { wait } from "@/utils/utils";
+import {
+  SIGN_UP_STARTED,
+  INITIAL_SIGN_UP_COMPLETED,
+  SIGN_UP_PERSONAL_DETAIL_COMPLETED,
+  SIGN_UP_SERVICES_COMPLETED,
+  SIGN_UP_FLOW_COMPLETED,
+} from "./experimentationConstants";
 
 const waitTime = 0.0005;
 
@@ -79,6 +86,46 @@ const probablityExperimentTypeShortenCollection = {
   },
 };
 
+// togglebank signup funnel experiment probabilities
+const probablityExperimentTypeToggleBankSignup = {
+  ["bayesian"]: {
+    ["old-signup"]: {
+      // control - current single-page signup
+      signupStarted: 85,
+      initialCompleted: 45,
+      personalDetailsCompleted: 35,
+      servicesCompleted: 30,
+      flowCompleted: 25,
+    },
+    ["new-signup-flow"]: {
+      // winner - new multi-step signup
+      signupStarted: 90,
+      initialCompleted: 60,
+      personalDetailsCompleted: 55,
+      servicesCompleted: 50,
+      flowCompleted: 45,
+    },
+  },
+  ["frequentist"]: {
+    ["old-signup"]: {
+      // control - current single-page signup
+      signupStarted: 83,
+      initialCompleted: 43,
+      personalDetailsCompleted: 33,
+      servicesCompleted: 28,
+      flowCompleted: 23,
+    },
+    ["new-signup-flow"]: {
+      // winner - new multi-step signup  
+      signupStarted: 88,
+      initialCompleted: 58,
+      personalDetailsCompleted: 53,
+      servicesCompleted: 48,
+      flowCompleted: 43,
+    },
+  },
+};
+
 export const generateStoreHeaderFunnelExperimentResults = async ({
   client,
   updateContext,
@@ -140,6 +187,77 @@ export const generateStoreHeaderFunnelExperimentResults = async ({
         }
       }
     }
+    setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
+    await wait(waitTime);
+    await updateContext();
+  }
+  setExpGenerator(false);
+};
+
+export const generateToggleBankSignupFunnelExperimentResults = async ({
+  client,
+  updateContext,
+  setProgress,
+  setExpGenerator,
+  experimentTypeObj,
+}: {
+  client: any;
+  updateContext: UpdateContextFunction;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setExpGenerator: React.Dispatch<React.SetStateAction<boolean>>;
+  experimentTypeObj: { experimentType: string; numOfRuns: number };
+}): Promise<void> => {
+  setProgress(0);
+
+  const experimentType: string = experimentTypeObj.experimentType;
+
+  for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
+    const flagVariation: string = client?.variation(
+      "releaseNewSignupPromo",
+      "old-signup"
+    );
+
+    const metricProbablityObj =
+      probablityExperimentTypeToggleBankSignup[
+        experimentType as keyof typeof probablityExperimentTypeToggleBankSignup
+      ];
+    const metricProbablity = metricProbablityObj[flagVariation as keyof typeof metricProbablityObj];
+
+    // step 1: signup started (user clicks join now)
+    let signupStartedMetric = Math.random() * 100;
+    if (signupStartedMetric < metricProbablity.signupStarted) {
+      await client?.track(SIGN_UP_STARTED);
+      await client?.flush();
+
+      // step 2: initial signup completed (email/password entered)
+      let initialCompletedMetric = Math.random() * 100;
+      if (initialCompletedMetric < metricProbablity.initialCompleted) {
+        await client?.track(INITIAL_SIGN_UP_COMPLETED);
+        await client?.flush();
+
+        // step 3: personal details completed
+        let personalDetailsMetric = Math.random() * 100;
+        if (personalDetailsMetric < metricProbablity.personalDetailsCompleted) {
+          await client?.track(SIGN_UP_PERSONAL_DETAIL_COMPLETED);
+          await client?.flush();
+
+          // step 4: services selection completed
+          let servicesMetric = Math.random() * 100;
+          if (servicesMetric < metricProbablity.servicesCompleted) {
+            await client?.track(SIGN_UP_SERVICES_COMPLETED);
+            await client?.flush();
+
+            // step 5: full signup flow completed (logged in)
+            let flowCompletedMetric = Math.random() * 100;
+            if (flowCompletedMetric < metricProbablity.flowCompleted) {
+              await client?.track(SIGN_UP_FLOW_COMPLETED);
+              await client?.flush();
+            }
+          }
+        }
+      }
+    }
+
     setProgress((prevProgress: number) => prevProgress + (1 / experimentTypeObj.numOfRuns) * 100);
     await wait(waitTime);
     await updateContext();

@@ -6,14 +6,20 @@ import {
   generateSuggestedItemsFeatureExperimentResults,
   generateAIChatBotFeatureExperimentResults,
   generateNewSearchEngineFeatureExperimentResults,
+  generateToggleBankSpecialOffersFeatureExperimentResults,
+  generateToggleBankWidgetPositionFeatureExperimentResults,
 } from "@/components/generators/experimentation-automation/featureExperimentGeneratorFunctions";
 import {
   generateStoreHeaderFunnelExperimentResults,
   generateShortenCollectionsPageFunnelExperimentResults,
+  generateToggleBankSignupFunnelExperimentResults,
 } from "@/components/generators/experimentation-automation/funnelExperimentGeneratorFunctions";
 import { Beaker, FlaskConical } from "lucide-react";
 import {
   TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY,
+  TOGGLEBANK_SIGNUP_FUNNEL_EXPERIMENTATION_KEY,
+  TOGGLEBANK_SPECIAL_OFFERS_EXPERIMENTATION_KEY,
+  TOGGLEBANK_WIDGET_POSITION_EXPERIMENTATION_KEY,
   MARKETPLACE_STORE_HEADER_EXPERIMENTATION_KEY,
   MARKETPLACE_SHORTEN_COLLECTIONS_PAGE_EXPERIMENTATION_KEY,
   MARKETPLACE_SUGGESTED_ITEMS_EXPERIMENTATION_KEY,
@@ -63,6 +69,33 @@ export default function ExperimentGenerator({
           break;
         case TOGGLEBANK_CHATBOT_AI_EXPERIMENTATION_KEY:
           generateAIChatBotFeatureExperimentResults({
+            client: client,
+            updateContext: updateContext,
+            setProgress: setProgress,
+            setExpGenerator: setExpGenerator,
+            experimentTypeObj: experimentTypeObj,
+          });
+          break;
+        case TOGGLEBANK_SIGNUP_FUNNEL_EXPERIMENTATION_KEY:
+          generateToggleBankSignupFunnelExperimentResults({
+            client: client,
+            updateContext: updateContext,
+            setProgress: setProgress,
+            setExpGenerator: setExpGenerator,
+            experimentTypeObj: experimentTypeObj,
+          });
+          break;
+        case TOGGLEBANK_SPECIAL_OFFERS_EXPERIMENTATION_KEY:
+          generateToggleBankSpecialOffersFeatureExperimentResults({
+            client: client,
+            updateContext: updateContext,
+            setProgress: setProgress,
+            setExpGenerator: setExpGenerator,
+            experimentTypeObj: experimentTypeObj,
+          });
+          break;
+        case TOGGLEBANK_WIDGET_POSITION_EXPERIMENTATION_KEY:
+          generateToggleBankWidgetPositionFeatureExperimentResults({
             client: client,
             updateContext: updateContext,
             setProgress: setProgress,

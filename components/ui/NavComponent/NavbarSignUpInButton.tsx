@@ -4,14 +4,21 @@ import { Button } from "@/components/ui/button";
 export const NavbarSignUpButton = ({
   backgroundColor,
   textColor,
+  onClick,
   ...props
 }: {
   backgroundColor?: string;
   textColor?: string;
-  className?: string
+  className?: string;
+  onClick?: () => void;
 }) => {
   return (
-    <Button className={`rounded-3xl w-[6rem] ${backgroundColor} ${textColor} cursor-auto`} style={{ boxShadow: '0 14px 16px rgba(0, 0, 0, 0.1)' }} {...props}>
+    <Button 
+      className={`rounded-3xl w-[6rem] ${backgroundColor} ${textColor} cursor-pointer`} 
+      style={{ boxShadow: '0 14px 16px rgba(0, 0, 0, 0.1)' }} 
+      onClick={onClick}
+      {...props}
+    >
       Join Now
     </Button>
   );
