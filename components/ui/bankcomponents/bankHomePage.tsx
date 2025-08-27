@@ -240,7 +240,7 @@ export default function BankHomePage() {
                         </div>
                     </div>
                 </div>
-                {/* Second Row */}
+                				{/* second row */}
                 <div className="p-4 mx-10 sm:mx-20 sm:pb-20">
                     <div className="flex flex-col sm:flex-row shadow-2xl p-y-10 sm:p-y-0 rounded-2xl sm:rounded-2xl ">
                         <div className="w-full sm:w-1/3 bg-white p-4 rounded-2xl sm:rounded-r-none">

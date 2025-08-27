@@ -58,12 +58,9 @@ export default function SignUpPage() {
 						/>
 					</Link>
 
-					{/* Heading */}
 					<h1 className="mb-8 text-2xl text-center font-bold text-gray-800 md:text-3xl">
 						Start banking in less than five minutes
 					</h1>
-
-					{/* form */}
 					<form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
 						{error && (
 							<div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
@@ -132,7 +129,7 @@ export default function SignUpPage() {
 						</div>
 					</form>
 
-					{/* Login link */}
+					{/* login link */}
 					<div className="mt-6 text-center text-sm">
 						Already have an account?{" "}
 						<Link href="/bank" className="text-blue-600 hover:underline">

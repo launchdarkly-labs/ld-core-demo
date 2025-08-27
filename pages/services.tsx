@@ -66,9 +66,7 @@ export default function ServicesPage() {
 					}}
 				/>
 			</Link>
-			{/* Progress indicator */}
 			<SignUpProgressIndicator pageNumber={3} />
-			{/* Heading */}
 			<div className="mb-8 text-center">
 				<h1 className="mb-2 text-2xl font-bold text-gray-800">
 					What services can we help you with?
@@ -78,9 +76,7 @@ export default function ServicesPage() {
 				</p>
 			</div>
 
-					{/* Form */}
 		<form onSubmit={handleSubmit} className="space-y-4 w-full max-w-2xl">
-				{/* Services Grid */}
 				<div className="grid gap-4 grid-cols-1 md:grid-cols-3 mb-8">
 					{services.map((service) => (
 						<button
@@ -98,7 +94,7 @@ export default function ServicesPage() {
 					))}
 				</div>
 
-				{/* Submit Button */}
+
 				<div className="flex flex-col items-center space-y-4 pt-6">
 					<button
 						type="submit"
