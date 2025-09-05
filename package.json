@@ -80,7 +80,8 @@
     "uuid": "^9.0.1",
     "uuid4": "^2.0.3",
     "uuidv4": "^6.2.13",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "autoprefixer": "^10.4.19"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
@@ -91,7 +92,6 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.7",
-    "autoprefixer": "^10.4.19",
     "drizzle-kit": "^0.31.1",
     "postcss": "^8",
     "postcss-cli": "^9.1.0",
