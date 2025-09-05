@@ -26,20 +26,26 @@ import {
 } from "../table";
 import { MdHome } from "react-icons/md";
 
-const payments = [
-  { month: "11/2023", amount: 4123, status: "cleared" },
-  { month: "10/2023", amount: 4123, status: "cleared" },
-  { month: "09/2023", amount: 4123, status: "cleared" },
-  { month: "08/2023", amount: 4123, status: "cleared" },
-  { month: "07/2023", amount: 4123, status: "cleared" },
-  { month: "06/2023", amount: 4123, status: "cleared" },
-  { month: "05/2023", amount: 4123, status: "cleared" },
-  { month: "04/2023", amount: 4123, status: "cleared" },
-  { month: "03/2023", amount: 4123, status: "cleared" },
-  { month: "02/2023", amount: 4123, status: "cleared" },
-  { month: "01/2023", amount: 4123, status: "cleared" },
-  { month: "12/2022", amount: 4123, status: "cleared" },
-];
+type MortgagePayment = { month: string; amount: number; status: string };
+
+function formatMonth(date: Date): string {
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = date.getFullYear();
+  return `${m}/${y}`;
+}
+
+function generateRecentMortgagePayments(count: number = 6): MortgagePayment[] {
+  const now = new Date();
+  return Array.from({ length: count }).map((_, idx) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() - Math.floor(Math.random() * 14));
+    return {
+      month: formatMonth(d),
+      amount: Number((Math.random() * 1500 + 2500).toFixed(0)),
+      status: Math.random() < 0.9 ? "cleared" : "processing",
+    };
+  });
+}
 
 export function MorgtgageAccount() {
   const router = useRouter();
@@ -96,7 +102,7 @@ export function MorgtgageAccount() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {payments.map((invoice, i) => (
+            {generateRecentMortgagePayments(8).map((invoice, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{invoice.month}</TableCell>
                 <TableCell>{invoice.status}</TableCell>

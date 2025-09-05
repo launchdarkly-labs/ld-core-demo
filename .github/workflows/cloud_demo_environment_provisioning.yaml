@@ -29,6 +29,8 @@ env:
   DEMO_NAMESPACE: ${{ github.event.inputs.name }}
   LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
   LD_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
+  BEDROCK_GUARDRAIL_ID: ${{ secrets.BEDROCK_GUARDRAIL_ID }}
+  BEDROCK_KNOWLEDGE_ID: ${{ secrets.BEDROCK_KNOWLEDGE_ID }}
 
 jobs:
 
@@ -85,13 +87,14 @@ jobs:
           touch ./.env.production
           echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
           echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
-          echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
           echo LD_API_KEY=${{ env.LD_API_KEY }} >> ./.env.production
           echo DESTINATIONENV=production >> ./.env.production
           echo PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
           echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
           echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
           echo NEXT_PUBLIC_PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
+          echo BEDROCK_GUARDRAIL_ID=${{ env.BEDROCK_GUARDRAIL_ID }} >> ./.env.production
+          echo BEDROCK_KNOWLEDGE_ID=${{ env.BEDROCK_KNOWLEDGE_ID }} >> ./.env.production
           
 
       - name: Login to Amazon ECR

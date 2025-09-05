@@ -22,11 +22,31 @@ import {
   DEFAULT_AI_MODEL,
 } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type ApiResponse = {
   response: string;
   modelName: string;
   enabled: boolean;
+};
+
+type StreamTiming = {
+  timeToFirstToken?: number;
+  totalTime?: number;
+};
+
+type StreamTokens = {
+  input?: number;
+  output?: number;
+  total?: number;
+};
+
+type StreamMetrics = {
+  sourceFidelity?: number;
+  relevance?: number;
+  accuracy?: number;
+  judge?: any;
+  sourcePassageCount?: number;
 };
 
 interface Message {
@@ -42,6 +62,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const startArray: Message[] = [];
   const [messages, setMessages] = useState<Message[]>(startArray);
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'generating' | 'validating'>('idle');
+  const [timing, setTiming] = useState<StreamTiming | null>(null);
+  const [tokens, setTokens] = useState<StreamTokens | null>(null);
+  const [metrics, setMetrics] = useState<StreamMetrics | null>(null);
   const client = useLDClient();
   const { toast } = useToast();
   let aiConfigKey = "";
@@ -116,7 +140,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   async function submitQuery() {
     const userInput = input;
     setInput("");
+    setTiming(null);
+    setTokens(null);
+    setMetrics(null);
     setIsLoading(true);
+    setStatus('generating');
     const userMessage = {
       role: "user",
       content: userInput,
@@ -189,6 +217,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 });
               });
             }
+            else if (!data.done && data.status) {
+              // status: 'validating' or future statuses
+              setStatus(data.status);
+            }
             // Handle final response
             else if (data.done) {
               apiResponse = {
@@ -196,6 +228,9 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 modelName: data.modelName,
                 enabled: data.enabled
               };
+              if (data?.timing) setTiming(data.timing);
+              if (data?.tokens) setTokens(data.tokens);
+              if (data?.metrics) setMetrics(data.metrics);
             }
           } catch (err) {
             console.error('Error parsing SSE data:', err, jsonStr);
@@ -216,6 +251,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       });
     } finally {
       setIsLoading(false);
+      if (status !== 'idle') setStatus('idle');
     }
   }
 
@@ -231,7 +267,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
     });
   };
 
-  const chatContentRef = useRef(null);
+  const chatContentRef = useRef<HTMLDivElement | null>(null);
 
   const aiModelName = () => {
     // Extract model name from the full model ID
@@ -340,8 +376,9 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.deepseek.deepseek-llm-v1.67b-base': 'DeepSeek LLM 67B Base',
       };
       
+      const mapped = (modelNameMap as Record<string, string>)[modelId as string];
       // Return the friendly name if available, otherwise use the model ID
-      return modelNameMap[modelId] || modelId.split(':')[0].split('.').pop() || modelId;
+      return mapped || modelId.split(':')[0].split('.').pop() || modelId;
     }
     
     return 'AI Assistant';
@@ -456,6 +493,69 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               ref={chatContentRef}
             >
               <div className="space-y-4">
+                <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
+                  <Accordion type="single" collapsible defaultValue="metrics">
+                    <AccordionItem value="metrics">
+                      <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
+                      <AccordionContent>
+                        <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Accuracy:</span>
+                              <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Source Fidelity:</span>
+                              <span>{(metrics?.sourceFidelity ?? 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Relevance:</span>
+                              <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                            </div>
+                            {tokens && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">Tokens:</span>
+                                <span>{tokens.total ?? 0} (in {(tokens.input ?? 0)}, out {(tokens.output ?? 0)})</span>
+                              </div>
+                            )}
+                            {timing && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">Timing:</span>
+                                <span>TTFT {(timing.timeToFirstToken ?? 0)}ms, Total {(timing.totalTime ?? 0)}ms</span>
+                              </div>
+                            )}
+                          </div>
+                          {metrics?.judge && (
+                            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <div className="font-semibold mb-1">Accurate claims</div>
+                                <ul className="list-disc pl-5 space-y-1">
+                                  {(metrics.judge.accurate_claims ?? []).map((c: string, idx: number) => (
+                                    <li key={`acc-${idx}`}>{c}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <div className="font-semibold mb-1">Inaccurate/unsupported claims</div>
+                                <ul className="list-disc pl-5 space-y-1">
+                                  {(metrics.judge.inaccurate_claims ?? []).map((c: string, idx: number) => (
+                                    <li key={`inacc-${idx}`}>{c}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                  {isLoading && (
+                    <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
+                      <PulseLoader size={6} color="#6b7280" />
+                      <span>Generating and Validating Response…</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
                   Hello! How can I assist you today?
                 </div>

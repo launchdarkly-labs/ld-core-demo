@@ -297,7 +297,7 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages, custom=None):
         
         payload = {
             "key": ai_config_version_key,
@@ -306,6 +306,8 @@ class LDPlatform:
             "model": model,
             "modelConfigKey": ai_model_config_key
         }
+        if custom is not None:
+            payload["custom"] = custom
 
         headers = {
             "Content-Type": "application/json",
@@ -1113,7 +1115,7 @@ class LDPlatform:
     ##################################################
     # Get the flag variation IDs, returns a list
     ##################################################
-    def get_flag_variations(self, flag_key, filter=None):
+    def get_flag_variations(self, flag_key, filter=None, segment=False):
         var_ids = []
         url = (
             "https://app.launchdarkly.com/api/v2/flags/"
@@ -1127,8 +1129,12 @@ class LDPlatform:
         }
         res = self.getrequest("GET", url, headers=headers)
         data = json.loads(res.text)
+        if "variations" not in data:
+            return []
         for var in data["variations"]:
-            if var["name"] != "disabled":
+            # If segment is True, include all variations (including "disabled")
+            # If segment is False, exclude "disabled" as before
+            if segment or var["name"] != "disabled":
                 if filter is not None:
                     if var["value"] == filter:
                         var_ids.append(var["_id"])
@@ -1484,7 +1490,7 @@ class LDPlatform:
     # Add segment to flag
     ##################################################
 
-    def add_segment_to_flag(self, flag_key, segment_key, env_key, variation=True):
+    def add_segment_to_flag(self, flag_key, segment_key, env_key, variation=True, segment=False):
         url = (
             "https://app.launchdarkly.com/api/v2/flags/"
             + self.project_key
@@ -1495,7 +1501,8 @@ class LDPlatform:
             "Authorization": self.api_key,
             "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
         }
-        var_id = self.get_flag_variations(flag_key, variation)[0]
+        var_id = self.get_flag_variations(flag_key, None, segment)[0]
+        print(var_id)
         payload = {
             "environmentKey": env_key,
             "instructions": [

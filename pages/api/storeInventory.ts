@@ -1,47 +1,57 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { eq } from "drizzle-orm";
-import postgres from "postgres";
-import { galaxymarketplace } from "@/schema/schema";
-// @ts-ignore
 
-type Data = {
+type InventoryItem = {
   id: number;
-  item: string | null;
-  vendor: string | null;
-  cost: number | null;
-}[];
+  item: string;
+  vendor: string;
+  cost: string; // keep string to match UI expectations
+  dateAdded: string; // within last 14 days
+};
 
-export default async function handler(
+function formatISODate(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+function generateInventory(vendor: string, count: number = 6): InventoryItem[] {
+  const items = [
+    "VR Headset",
+    "Gaming Monitor",
+    "Wireless Controller",
+    "GPU",
+    "Laptop",
+    "Headphones",
+    "Mechanical Keyboard",
+    "Smart Speaker",
+  ];
+  const now = new Date();
+  return Array.from({ length: count }).map((_, idx) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() - Math.floor(Math.random() * 14));
+    return {
+      id: idx + 1,
+      item: items[Math.floor(Math.random() * items.length)],
+      vendor,
+      cost: (Math.random() * 900 + 20).toFixed(2),
+      dateAdded: formatISODate(d),
+    };
+  });
+}
+
+export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data[] | { error: string }>
+  res: NextApiResponse<InventoryItem[] | { error: string }>
 ) {
-
   const { storename } = req.query;
   if (typeof storename !== "string") {
     res.status(400).json({ error: "Invalid storename" });
     return;
   }
 
-  const connectionString = process.env.DB_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is not set");
-  }
-  const client = postgres(connectionString);
-  const db = drizzle(client);
-  // @ts-ignore
-
-  let storeInventory;
   if (storename === "all") {
-    storeInventory = await db.select().from(galaxymarketplace);
+    const vendors = ["vrgalaxy", "macrocenter", "boominbox"];
+    const all = vendors.flatMap((v) => generateInventory(v, 4));
+    res.status(200).json(all);
   } else {
-    storeInventory = await db
-      .select()
-      .from(galaxymarketplace)
-      .where(eq(galaxymarketplace.vendor, storename));
+    res.status(200).json(generateInventory(storename, 6));
   }
-  // @ts-ignore
-
-
-  res.status(200).json(storeInventory);
 }
