@@ -34,6 +34,8 @@ export default function BankUserDashboard() {
 	const [aiResponse, setAIResponse] = useState<string>("");
 	const { isLoggedIn } = useContext(LoginContext);
 	const { wealthManagement, federatedAccounts } = useFlags();
+		console.log("useFlags()", useFlags());
+	console.log("Wealth Management Flag:", wealthManagement);
 	const money = JSON.stringify(oldCheckingData);
 	const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
 	const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'

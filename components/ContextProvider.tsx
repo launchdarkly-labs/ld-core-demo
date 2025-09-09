@@ -15,8 +15,6 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
     const initializeLDProvider = async () => {
       const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
       const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
-      
-
       const context = {
         kind: "multi",
         user: {
@@ -47,10 +45,8 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           key: uuidv4().slice(0, 10),
         }
       };
-
       setCookie(LD_CONTEXT_COOKIE_KEY, context);
       console.log(context);
-
       const Provider = await asyncWithLDProvider({
         clientSideID: process.env.NEXT_PUBLIC_LD_CLIENT_KEY || "",
         reactOptions: {
@@ -60,6 +56,9 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           application: {
             id: "launch-investments",
           },
+          baseUrl: "https://ld-stg.launchdarkly.com", // Add this line to specify the staging endpoint
+          streamUrl: "https://stream-stg.launchdarkly.com",
+          eventsUrl: "https://events-stg.launchdarkly.com",
           inspectors: inspectors(),
           eventCapacity: 1000,
           privateAttributes: ['email', 'name'],

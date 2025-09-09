@@ -1,5 +1,5 @@
 import {
-  PERSONA_TIER_STANARD,
+  PERSONA_TIER_STANDARD,
   PERSONA_ROLE_BETA,
   PERSONA_ROLE_DEVELOPER,
   PERSONA_TIER_PLATINUM,
@@ -13,7 +13,7 @@ import {Persona} from '@/utils/typescriptTypesInterfaceLogin'
 export const STARTER_PERSONAS: Persona[] = [
   {
     personaname: "Christine",
-    personatier: PERSONA_TIER_STANARD,
+    personatier: PERSONA_TIER_STANDARD,
     personaimage: "/personas/persona3.png",
     personaemail: "user@launchmail.io",
     personarole: PERSONA_ROLE_USER,
@@ -31,7 +31,7 @@ export const STARTER_PERSONAS: Persona[] = [
   },
   {
     personaname: "Alysha",
-    personatier: PERSONA_TIER_STANARD,
+    personatier: PERSONA_TIER_STANDARD,
     personaimage: "beta.png",
     personaemail: "alysha@launchmail.io",
     personarole: PERSONA_ROLE_BETA,
@@ -40,7 +40,7 @@ export const STARTER_PERSONAS: Persona[] = [
   },
   {
     personaname: "Jenn",
-    personatier: PERSONA_TIER_STANARD,
+    personatier: PERSONA_TIER_STANDARD,
     personaimage: "woman.png",
     personaemail: "jenn@launchmail.io",
     personarole: PERSONA_ROLE_DEVELOPER,
@@ -49,7 +49,7 @@ export const STARTER_PERSONAS: Persona[] = [
   },
   {
     personaname: "Cody",
-    personatier: PERSONA_TIER_STANARD,
+    personatier: PERSONA_TIER_STANDARD,
     personaimage: "standard.jpg",
     personaemail: "cody@launchmail.io",
     personarole: PERSONA_ROLE_USER,
