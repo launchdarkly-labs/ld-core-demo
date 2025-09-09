@@ -5,16 +5,6 @@ from dotenv import load_dotenv
 import subprocess
 # Load environment variables from .env file
 load_dotenv()
-# testing
-# hello
-# hello
-# hello
-# hello
-# hello
-# hello
-# hello
-# hello
-# hello
 
 class DemoBuilder:
     project_created = False
