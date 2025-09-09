@@ -63,10 +63,10 @@ const RiskAssessmentDashboard = () => {
   const userRole = context?.user?.role;
   const isLoggedIn = context?.user && !context?.user?.anonymous;
   
-  // only showing for beta users
-  const isBetaUser = isLoggedIn && userRole === "Beta";
+  // only show for developers/development
+  const isDeveloper = isLoggedIn && userRole === "Developer";
   
-  if (!isBetaUser) {
+  if (!isDeveloper) {
     return null;
   }
 
