@@ -49,21 +49,22 @@ export default function BankHomePage() {
     const flags = useFlags();
 
     const handleJoinNowClick = () => {
-        const releaseNewSignupPromoFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
-        
-        if (releaseNewSignupPromoFlag) {
-            // new: multi-step signup flow
-            ldClient?.track(SIGN_UP_STARTED);
-            logLDMetricSent({ metricKey: SIGN_UP_STARTED });
-            router.push("/signup");
-        }
-        // old: do nothing (decorative button)
+        // signup flow
+        ldClient?.track(SIGN_UP_STARTED);
+        logLDMetricSent({ metricKey: SIGN_UP_STARTED });
+        router.push("/signup");
     };
 
     // special offers experiment
     const flagValue = flags["showDifferentSpecialOfferString"];
     const validOfferKeys = ["offerA", "offerB", "offerC"] as const;
     const selectedOffer: "offerA" | "offerB" | "offerC" = flagValue && validOfferKeys.includes(flagValue) ? flagValue : "offerA";
+
+    // marketing banner experiment for A6
+    const marketingBannerFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
+    const validMarketingOfferKeys = ["creditCardOffer", "mortgageOffer", "cashbackOffer"] as const;
+    const selectedMarketingOffer: "creditCardOffer" | "mortgageOffer" | "cashbackOffer" = 
+        marketingBannerFlag && validMarketingOfferKeys.includes(marketingBannerFlag) ? marketingBannerFlag : "creditCardOffer";
 
     // variations
     const specialOffers = {
@@ -81,6 +82,25 @@ export default function BankHomePage() {
             title: "Platinum rewards",
             description: "Earn unlimited cashback on every purchase with our premium credit card. No annual fee.",
             image: specialOfferCC
+        }
+    } as const;
+
+    // marketing banner variations for A6
+    const marketingBannerOffers = {
+        creditCardOffer: {
+            title: "New credit card holders get 0% APR for 12 months",
+            description: "Apply now and enjoy 0% introductory APR for 12 months on purchases and balance transfers.",
+            cta: "Apply Now"
+        },
+        mortgageOffer: {
+            title: "Get 0.50% off 30 year mortgage loan",
+            description: "Lock in our best rate with 0.50% off our standard 30-year mortgage rate.",
+            cta: "Get Pre-approved"
+        },
+        cashbackOffer: {
+            title: "Get $200 cashback when you spend $2500 or more using checking accounts",
+            description: "Open a new checking account and earn $200 cashback when you spend $2500+ in the first 3 months.",
+            cta: "Open Account"
         }
     } as const;
 
