@@ -19,7 +19,7 @@ class DemoBuilder:
     client_id = ""
     sdk_key = ""
     phase_ids = {}
-       
+
     # InitializeDemoBuilder
     def __init__(self, api_key, email, api_key_user, project_key, project_name):
         self.api_key = api_key
