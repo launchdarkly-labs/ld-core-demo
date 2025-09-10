@@ -55,6 +55,21 @@ export default function BankHomePage() {
         router.push("/signup");
     };
 
+    const handleMarketingBannerClick = () => {
+        // track which marketing offer was clicked
+        ldClient?.track("marketing-banner-clicked", {
+            offerType: selectedMarketingOffer,
+            offerTitle: marketingBannerOffers[selectedMarketingOffer].title
+        });
+        logLDMetricSent({ 
+            metricKey: "marketing-banner-clicked",
+            metricValue: selectedMarketingOffer
+        });
+        
+        // proceed to the signup flow
+        handleJoinNowClick();
+    };
+
     // special offers experiment
     const flagValue = flags["showDifferentSpecialOfferString"];
     const validOfferKeys = ["offerA", "offerB", "offerC"] as const;
@@ -203,6 +218,28 @@ export default function BankHomePage() {
                     </div>
                 </div>
             </header>
+
+            {/* marketing banner (A6 experiment) */}
+            <div className="w-full bg-gradient-to-r from-blue-600 to-blue-800 py-6 px-4">
+                <div className="max-w-7xl mx-auto">
+                    <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
+                        <div className="text-center">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                {marketingBannerOffers[selectedMarketingOffer].title}
+                            </h3>
+                            <p className="text-gray-600 mb-4">
+                                {marketingBannerOffers[selectedMarketingOffer].description}
+                            </p>
+                            <button 
+                                onClick={handleMarketingBannerClick}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors duration-200"
+                            >
+                                {marketingBannerOffers[selectedMarketingOffer].cta}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div className="z-20 2xl:mt-20" >
                 <div className="flex justify-center mb-6 text-bankhomepagebuttonblue font-sohne tracking-widest">
