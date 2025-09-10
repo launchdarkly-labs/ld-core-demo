@@ -19,7 +19,7 @@ class DemoBuilder:
     client_id = ""
     sdk_key = ""
     phase_ids = {}
-    
+       
     # InitializeDemoBuilder
     def __init__(self, api_key, email, api_key_user, project_key, project_name):
         self.api_key = api_key
@@ -884,8 +884,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
-        res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
