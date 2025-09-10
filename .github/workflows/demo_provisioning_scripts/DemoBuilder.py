@@ -551,7 +551,7 @@ class DemoBuilder:
             "(Bayesian) Funnel Experiment: ToggleBank Multi-Step Signup Flow",
             "production",
             "releaseNewSignupPromo",
-            "Testing whether the new multi-step signup flow improves conversion rates compared to the old single-page signup in ToggleBank.",
+            "Testing which marketing banner offer (credit card, mortgage, or cashback) drives the most signup conversions in ToggleBank.",
             metrics=metrics,
             primary_key="signup-flow-completed",
             attributes=["device", "location", "tier", "operating_system"],
@@ -2484,20 +2484,24 @@ class DemoBuilder:
         res = self.ldproject.create_flag(
             "releaseNewSignupPromo",
             "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
-            "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            "This feature flag controls which promotional offer is displayed in the marketing banner to test which offer drives the most signup conversions",
             [
                 {
-                    "value": True,
-                    "name": "New Multi-Step Signup Flow"
+                    "value": "creditCardOffer",
+                    "name": "Credit Card: 0% APR for 12 months"
                 },
                 {
-                    "value": False,
-                    "name": "Old Decorative Button"
+                    "value": "mortgageOffer", 
+                    "name": "Mortgage: 0.50% off 30 year loan"
+                },
+                {
+                    "value": "cashbackOffer",
+                    "name": "Checking: $200 cashback when you spend $2500+"
                 }
             ],
             tags=["Experimentation", "bank"],
             on_variation=0,
-            off_variation=1,
+            off_variation=2,
         )
 
     def flag_togglebank_swap_widget_positions(self):
