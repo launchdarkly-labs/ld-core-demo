@@ -38,6 +38,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@tanstack/react-table": "^8.10.7",
+    "autoprefixer": "^10.4.19",
     "chart.js": "^4.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -80,8 +81,7 @@
     "uuid": "^9.0.1",
     "uuid4": "^2.0.3",
     "uuidv4": "^6.2.13",
-    "zod": "^3.22.4",
-    "autoprefixer": "^10.4.19"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

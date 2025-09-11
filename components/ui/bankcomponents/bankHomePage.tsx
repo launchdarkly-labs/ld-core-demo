@@ -187,6 +187,30 @@ export default function BankHomePage() {
                 </>
             </NavWrapper>
 
+            {/* sticky top marketing banner */}
+            <div className="sticky top-0 z-50 w-full bg-bank-gradient-blue-background shadow-lg">
+                <div className="max-w-7xl mx-auto px-4 py-3">
+                    <div className="flex items-center justify-between text-white">
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                                <span className="text-sm font-sohnelight tracking-widest">LIMITED TIME</span>
+                            </div>
+                            <div className="hidden sm:block w-px h-6 bg-white/30"></div>
+                            <div className="text-sm sm:text-base font-sohne">
+                                {marketingBannerOffers[selectedMarketingOffer].title}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={handleMarketingBannerClick}
+                            className="bg-bank-gradient-text-color hover:bg-white hover:text-bank-gradient-text-color text-white px-4 py-2 rounded-full text-sm font-sohnelight transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            {marketingBannerOffers[selectedMarketingOffer].cta}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <header className={`w-full relative `}>
                 <Image src={heroBackgroundCreditcard} className='absolute right-0 w-2/6 xl:w-2/6 min-w-lg max-w-lg' alt="Icon Background" />
                 <Image src={heroBackgroundDollarSign} className='absolute left-0 bottom-0 w-2/6 xl:w-2/6 max-w-lg' alt="Icon Background" />
@@ -218,28 +242,6 @@ export default function BankHomePage() {
                     </div>
                 </div>
             </header>
-
-            {/* marketing banner (A6 experiment) */}
-            <div className="w-full bg-gradient-to-r from-blue-600 to-blue-800 py-6 px-4">
-                <div className="max-w-7xl mx-auto">
-                    <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
-                        <div className="text-center">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                                {marketingBannerOffers[selectedMarketingOffer].title}
-                            </h3>
-                            <p className="text-gray-600 mb-4">
-                                {marketingBannerOffers[selectedMarketingOffer].description}
-                            </p>
-                            <button 
-                                onClick={handleMarketingBannerClick}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors duration-200"
-                            >
-                                {marketingBannerOffers[selectedMarketingOffer].cta}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div className="z-20 2xl:mt-20" >
                 <div className="flex justify-center mb-6 text-bankhomepagebuttonblue font-sohne tracking-widest">
@@ -363,15 +365,8 @@ export default function BankHomePage() {
                     </div>
                 </div>
             </div>
-
-
-
         </motion.main>
-
-
-
     );
-
 }
 
 const bankHomePageValues: any = {
