@@ -20,7 +20,7 @@ export default function SuccessPage() {
     const ldClient = useLDClient();
     const { logLDMetricSent } = useContext(LiveLogsContext);
 
-    // Track final conversion when page loads
+    // track final conversion when page loads
     useEffect(() => {
         ldClient?.track(SIGN_UP_FLOW_COMPLETED);
         logLDMetricSent({ metricKey: SIGN_UP_FLOW_COMPLETED });
