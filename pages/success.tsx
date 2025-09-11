@@ -1,5 +1,5 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import { useSignup } from "@/components/SignUpProvider";
@@ -10,10 +10,21 @@ import { COMPANY_LOGOS, BANK } from "@/utils/constants";
 import Image from "next/image";
 import WrapperMain from "@/components/ui/WrapperMain";
 import LoginContext from "@/utils/contexts/login";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+import { SIGN_UP_FLOW_COMPLETED } from "@/components/generators/experimentation-automation/experimentationConstants";
 
 export default function SuccessPage() {
 	const { userData, updateUserData } = useSignup();
     const { isLoggedIn, loginUser } = useContext(LoginContext);
+    const ldClient = useLDClient();
+    const { logLDMetricSent } = useContext(LiveLogsContext);
+
+    // Track final conversion when page loads
+    useEffect(() => {
+        ldClient?.track(SIGN_UP_FLOW_COMPLETED);
+        logLDMetricSent({ metricKey: SIGN_UP_FLOW_COMPLETED });
+    }, [ldClient, logLDMetricSent]);
 
 	return (
 		<WrapperMain className="flex flex-col items-center justify-center py-4">

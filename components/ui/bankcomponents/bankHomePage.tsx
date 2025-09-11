@@ -59,7 +59,9 @@ export default function BankHomePage() {
         // track which marketing offer was clicked
         ldClient?.track("marketing-banner-clicked", {
             offerType: selectedMarketingOffer,
-            offerTitle: marketingBannerOffers[selectedMarketingOffer].title
+            offerTitle: marketingBannerOffers[selectedMarketingOffer].title,
+            experimentKey: "togglebank-signup-funnel-experiment",
+            source: "sticky-banner"
         });
         logLDMetricSent({ 
             metricKey: "marketing-banner-clicked",
