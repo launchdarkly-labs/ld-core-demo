@@ -56,7 +56,7 @@ class DemoBuilder:
         
         # Run LDGeneratorsRunner.py in parallel as a subprocess
         proc = subprocess.Popen([
-            "python", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
+            "python3", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
         ], env=env)
         
         self.setup_release_pipeline()
