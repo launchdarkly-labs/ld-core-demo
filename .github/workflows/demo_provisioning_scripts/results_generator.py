@@ -149,7 +149,7 @@ def a4_guarded_release_generator(client, stop_event):
                     client.track(API_ERROR_RATE_KEY, user_context)
                 latency = random.randint(100, 200)
                 client.track(API_LATENCY_KEY, user_context, None, latency)
-            time.sleep(0.01)
+            time.sleep(0.05)  # Increased delay to prevent API overload
         except Exception as e:
             logging.error(f"Error during A4 guarded release simulation: {str(e)}")
             continue
@@ -181,7 +181,7 @@ def risk_mgmt_guarded_release_generator(client, stop_event):
                     client.track(RISK_API_ERROR_RATE_KEY, user_context)
                 latency = random.randint(80, 150)
                 client.track(RISK_API_LATENCY_KEY, user_context, None, latency)
-            time.sleep(0.01)
+            time.sleep(0.05)  # Increased delay to prevent API overload
         except Exception as e:
             logging.error(f"Error during Risk Management API guarded release simulation: {str(e)}")
             continue
@@ -235,7 +235,7 @@ def financial_advisor_agent_guarded_release_generator(client, stop_event):
                 
                 client.track(FINANCIAL_AGENT_ACCURACY_KEY, user_context, None, accuracy)
             
-            time.sleep(0.01)
+            time.sleep(0.05)  # Increased delay to prevent API overload
         except Exception as e:
             logging.error(f"Error during Financial Advisor Agent guarded release simulation: {str(e)}")
             continue
@@ -365,6 +365,7 @@ def experiment_results_generator(client):
                 logging.info(f"User {user_context.key} engaged with {variation} variation")
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for experiment results")
+                client.flush()  # Flush events every 100 users
         except Exception as e:
             logging.error(f"Error processing user {i}: {str(e)}")
             continue
@@ -389,6 +390,7 @@ def ai_configs_experiment_results_generator(client):
                 client.track(NEGATIVE_METRIC_KEY, user_context)
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for AI Configs experiment results")
+                client.flush()  # Flush events every 100 users
         except Exception as e:
             logging.error(f"Error processing user {i}: {str(e)}")
             continue
@@ -413,6 +415,7 @@ def hero_image_experiment_results_generator(client):
                 logging.info(f"User {user_context.key} engaged with {variation} variation")
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for experiment results")
+                client.flush()  # Flush events every 100 users
         except Exception as e:
             logging.error(f"Error processing user {i}: {str(e)}")
             continue
@@ -437,6 +440,7 @@ def hero_redesign_experiment_results_generator(client):
                 logging.info(f"User {user_context.key} engaged with {variation} variation")
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for experiment results")
+                client.flush()  # Flush events every 100 users
         except Exception as e:
             logging.error(f"Error processing user {i}: {str(e)}")
             continue
@@ -506,6 +510,7 @@ def hallucination_detection_experiment_results_generator(client):
             
             if (i + 1) % 100 == 0:
                 logging.info(f"Processed {i + 1} users for hallucination detection experiment results")
+                client.flush()  # Flush events every 100 users
         except Exception as e:
             logging.error(f"Error processing user {i}: {str(e)}")
             continue
@@ -515,7 +520,7 @@ def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
     sdk_key = os.getenv("LD_SDK_KEY")
     if sdk_key:
-        ldclient.set_config(Config(sdk_key=sdk_key))
+        ldclient.set_config(Config(sdk_key=sdk_key, events_max_pending=1000))
         client = ldclient.get()
         # Evaluate both bank and public-sector flags as part of the process
         evaluate_bank_and_public_sector_flags(client)
