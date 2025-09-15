@@ -19,7 +19,7 @@ class DemoBuilder:
     client_id = ""
     sdk_key = ""
     phase_ids = {}
-    
+
     # InitializeDemoBuilder
     def __init__(self, api_key, email, api_key_user, project_key, project_name):
         self.api_key = api_key
@@ -56,7 +56,7 @@ class DemoBuilder:
         
         # Run LDGeneratorsRunner.py in parallel as a subprocess
         proc = subprocess.Popen([
-            "python", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
+            "python3", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
         ], env=env)
         
         self.setup_release_pipeline()
@@ -485,7 +485,7 @@ class DemoBuilder:
             "(Bayesian) Funnel Experiment: ToggleBank Multi-Step Signup Flow",
             "production",
             "releaseNewSignupPromo",
-            "Testing whether the new multi-step signup flow improves conversion rates compared to the old single-page signup in ToggleBank.",
+            "Testing which marketing banner offer (credit card, mortgage, or cashback) drives the most signup conversions in ToggleBank.",
             metrics=metrics,
             primary_key="signup-flow-completed",
             attributes=["device", "location", "tier", "operating_system"],
@@ -818,8 +818,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
-        res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
@@ -2700,20 +2700,24 @@ class DemoBuilder:
         res = self.ldproject.create_flag(
             "releaseNewSignupPromo",
             "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
-            "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            "This feature flag controls which promotional offer is displayed in the marketing banner to test which offer drives the most signup conversions",
             [
                 {
-                    "value": True,
-                    "name": "New Multi-Step Signup Flow"
+                    "value": "creditCardOffer",
+                    "name": "Credit Card: 0% APR for 12 months"
                 },
                 {
-                    "value": False,
-                    "name": "Old Decorative Button"
+                    "value": "mortgageOffer", 
+                    "name": "Mortgage: 0.50% off 30 year loan"
+                },
+                {
+                    "value": "cashbackOffer",
+                    "name": "Checking: $200 cashback when you spend $2500+"
                 }
             ],
             tags=["Experimentation", "bank"],
             on_variation=0,
-            off_variation=1,
+            off_variation=2,
         )
 
     def flag_togglebank_swap_widget_positions(self):

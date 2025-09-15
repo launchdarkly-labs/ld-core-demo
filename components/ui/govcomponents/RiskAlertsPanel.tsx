@@ -154,10 +154,10 @@ const RiskAlertsPanel = () => {
   const userRole = context?.user?.role;
   const isLoggedIn = context?.user && !context?.user?.anonymous;
   
-  // only showing for beta users
-  const isBetaUser = isLoggedIn && userRole === "Beta";
+  /// only showing for developers/development team
+  const isDeveloper = isLoggedIn && userRole === "Developer";
   
-  if (!isBetaUser) {
+  if (!isDeveloper) {
     return null;
   }
 
@@ -287,4 +287,4 @@ const RiskAlertsPanel = () => {
   );
 };
 
-export default RiskAlertsPanel; 
+export default RiskAlertsPanel;

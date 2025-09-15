@@ -49,21 +49,39 @@ export default function BankHomePage() {
     const flags = useFlags();
 
     const handleJoinNowClick = () => {
-        const releaseNewSignupPromoFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
+        // signup flow
+        ldClient?.track(SIGN_UP_STARTED);
+        logLDMetricSent({ metricKey: SIGN_UP_STARTED });
+        router.push("/signup");
+    };
+
+    const handleMarketingBannerClick = () => {
+        // track which marketing offer was clicked
+        ldClient?.track("marketing-banner-clicked", {
+            offerType: selectedMarketingOffer,
+            offerTitle: marketingBannerOffers[selectedMarketingOffer].title,
+            experimentKey: "togglebank-signup-funnel-experiment",
+            source: "sticky-banner"
+        });
+        logLDMetricSent({ 
+            metricKey: "marketing-banner-clicked",
+            metricValue: selectedMarketingOffer
+        });
         
-        if (releaseNewSignupPromoFlag) {
-            // new: multi-step signup flow
-            ldClient?.track(SIGN_UP_STARTED);
-            logLDMetricSent({ metricKey: SIGN_UP_STARTED });
-            router.push("/signup");
-        }
-        // old: do nothing (decorative button)
+        // proceed to the signup flow
+        handleJoinNowClick();
     };
 
     // special offers experiment
     const flagValue = flags["showDifferentSpecialOfferString"];
     const validOfferKeys = ["offerA", "offerB", "offerC"] as const;
     const selectedOffer: "offerA" | "offerB" | "offerC" = flagValue && validOfferKeys.includes(flagValue) ? flagValue : "offerA";
+
+    // marketing banner experiment for A6
+    const marketingBannerFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
+    const validMarketingOfferKeys = ["creditCardOffer", "mortgageOffer", "cashbackOffer"] as const;
+    const selectedMarketingOffer: "creditCardOffer" | "mortgageOffer" | "cashbackOffer" = 
+        marketingBannerFlag && validMarketingOfferKeys.includes(marketingBannerFlag) ? marketingBannerFlag : "creditCardOffer";
 
     // variations
     const specialOffers = {
@@ -81,6 +99,25 @@ export default function BankHomePage() {
             title: "Platinum rewards",
             description: "Earn unlimited cashback on every purchase with our premium credit card. No annual fee.",
             image: specialOfferCC
+        }
+    } as const;
+
+    // marketing banner variations for A6
+    const marketingBannerOffers = {
+        creditCardOffer: {
+            title: "New credit card holders get 0% APR for 12 months",
+            description: "Apply now and enjoy 0% introductory APR for 12 months on purchases and balance transfers.",
+            cta: "Apply Now"
+        },
+        mortgageOffer: {
+            title: "Get 0.50% off 30 year mortgage loan",
+            description: "Lock in our best rate with 0.50% off our standard 30-year mortgage rate.",
+            cta: "Get Pre-approved"
+        },
+        cashbackOffer: {
+            title: "Get $200 cashback when you spend $2500 or more using checking accounts",
+            description: "Open a new checking account and earn $200 cashback when you spend $2500+ in the first 3 months.",
+            cta: "Open Account"
         }
     } as const;
 
@@ -151,6 +188,30 @@ export default function BankHomePage() {
                     </NavbarRightSideWrapper>
                 </>
             </NavWrapper>
+
+            {/* sticky top marketing banner */}
+            <div className="sticky top-0 z-50 w-full bg-bank-gradient-blue-background shadow-lg">
+                <div className="max-w-7xl mx-auto px-4 py-3">
+                    <div className="flex items-center justify-between text-white">
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                                <span className="text-sm font-sohnelight tracking-widest">LIMITED TIME</span>
+                            </div>
+                            <div className="hidden sm:block w-px h-6 bg-white/30"></div>
+                            <div className="text-sm sm:text-base font-sohne">
+                                {marketingBannerOffers[selectedMarketingOffer].title}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={handleMarketingBannerClick}
+                            className="bg-bank-gradient-text-color hover:bg-white hover:text-bank-gradient-text-color text-white px-4 py-2 rounded-full text-sm font-sohnelight transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            {marketingBannerOffers[selectedMarketingOffer].cta}
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <header className={`w-full relative `}>
                 <Image src={heroBackgroundCreditcard} className='absolute right-0 w-2/6 xl:w-2/6 min-w-lg max-w-lg' alt="Icon Background" />
@@ -306,15 +367,8 @@ export default function BankHomePage() {
                     </div>
                 </div>
             </div>
-
-
-
         </motion.main>
-
-
-
     );
-
 }
 
 const bankHomePageValues: any = {

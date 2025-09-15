@@ -1,6 +1,7 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { CheckCircle } from "lucide-react";
 import { useSignup } from "@/components/SignUpProvider";
 import { INITIAL_USER_SIGNUP_DATA } from "@/utils/constants";
@@ -10,10 +11,22 @@ import { COMPANY_LOGOS, BANK } from "@/utils/constants";
 import Image from "next/image";
 import WrapperMain from "@/components/ui/WrapperMain";
 import LoginContext from "@/utils/contexts/login";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+import { SIGN_UP_FLOW_COMPLETED } from "@/components/generators/experimentation-automation/experimentationConstants";
 
 export default function SuccessPage() {
 	const { userData, updateUserData } = useSignup();
     const { isLoggedIn, loginUser } = useContext(LoginContext);
+    const ldClient = useLDClient();
+    const { logLDMetricSent } = useContext(LiveLogsContext);
+    const router = useRouter();
+
+    // track final conversion when page loads
+    useEffect(() => {
+        ldClient?.track(SIGN_UP_FLOW_COMPLETED);
+        logLDMetricSent({ metricKey: SIGN_UP_FLOW_COMPLETED });
+    }, [ldClient]);
 
 	return (
 		<WrapperMain className="flex flex-col items-center justify-center py-4">
@@ -70,9 +83,8 @@ export default function SuccessPage() {
 					href="/bank"
 					className="mt-4 w-full rounded-full bg-blue-500 py-3 text-center font-medium text-white transition-colors hover:bg-blue-600"
 					onClick={async () => {
-						!isLoggedIn && loginUser(STARTER_PERSONAS[0].personaemail);
+						!isLoggedIn && loginUser("user@launchmail.io");
 						await wait(0.5);
-						updateUserData(INITIAL_USER_SIGNUP_DATA);
 					}}
 				>
 					Go to Dashboard
