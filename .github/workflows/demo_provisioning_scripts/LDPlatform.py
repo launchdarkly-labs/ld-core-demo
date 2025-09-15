@@ -281,6 +281,9 @@ class LDPlatform:
             "LD-API-Version": "beta",
         }
         
+        if self.user_id:
+            payload["maintainerId"] = self.user_id
+        
         response = self.getrequest(
             "POST",
             "https://app.launchdarkly.com/api/v2/projects/"+ self.project_key +"/ai-configs",
@@ -297,15 +300,19 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages, custom=None):
         
         payload = {
             "key": ai_config_version_key,
             "name": ai_config_version_name,
-            "messages": messages,
+            "messages": messages,  # Used for AI config versions
             "model": model,
-            "modelConfigKey": ai_model_config_key
+            "modelConfigKey": ai_model_config_key,
+            "tools": [],
+            "toolKeys": []
         }
+        if custom is not None:
+            payload["custom"] = custom
 
         headers = {
             "Content-Type": "application/json",
@@ -319,9 +326,165 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
+        
+        # Add better error handling for JSON parsing
+        if response.text.strip():  # Only try to parse if response is not empty
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error creating AI config version: " + data["message"])
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+        else:
+            print("Empty response received from AI config version API")
+            
+        return response
+    
+    ##################################################
+    # Create AI Agent
+    ##################################################
+    
+    def create_ai_agent(self, agent_key, agent_name, description, maintainer_id=None, maintainer_team_key=None, mode="agent", tags=None):
+        
+        payload = {
+            "key": agent_key,
+            "name": agent_name,
+            "description": description,
+            "mode": mode,
+            "tags": tags or []
+        }
+        
+        if maintainer_id:
+            payload["maintainerId"] = maintainer_id
+        if maintainer_team_key:
+            payload["maintainerTeamKey"] = maintainer_team_key
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/"+ self.project_key +"/ai-configs",
+            json=payload,
+            headers=headers,
+        )
         data = json.loads(response.text)
         if "message" in data:
-            print("Error creating AI config version: " + data["message"])
+            print("Error creating AI Agent: " + data["message"])
+        return response
+    
+    ##################################################
+    # Create AI Agent Variations (Bulk)
+    ##################################################
+    
+    def create_ai_agent_variations_bulk(self, agent_key, variations):
+        # Create variations one by one since bulk API might not be available
+        results = []
+        for variation in variations:
+            result = self.create_ai_agent_variation(agent_key, variation)
+            results.append(result)
+        return results
+    
+    def create_ai_agent_variation(self, agent_key, variation):
+        payload = {
+            "key": variation["key"],
+            "name": variation["name"],
+            "messages": [],  # Empty for AI agents
+            "instructions": variation["instructions"],
+            "model": variation["model"],
+            "modelConfigKey": variation["modelConfigKey"],
+            "tools": [],
+            "toolKeys": []
+        }
+        
+        # Add optional fields if present
+        if "comment" in variation:
+            payload["comment"] = variation["comment"]
+        if "description" in variation:
+            payload["description"] = variation["description"]
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/ai-configs/" + agent_key + "/variations",
+            json=payload,
+            headers=headers,
+        )
+        
+        # Add better error handling for JSON parsing
+        if response.text.strip():  # Only try to parse if response is not empty
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error creating AI Agent variation: " + data["message"])
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+        else:
+            print("Empty response received from AI agent variation API")
+            
+        return response
+    
+    ##################################################
+    # Create Custom Model Configuration
+    ##################################################
+    
+    def create_custom_model_config(self, model_key, model_name, provider="LD", cost_per_input_token=0.8, cost_per_output_token=6.0, params=None, custom_params=None, tags=None):
+        """
+        Create a custom model configuration for AI agents
+        """
+        payload = {
+            "name": model_name,
+            "key": model_key,
+            "id": model_key,
+            "icon": "🤖",
+            "provider": provider,
+            "params": params or {},
+            "customParams": custom_params or {},
+            "tags": tags or ["custom-model", "financial-ai"],
+            "costPerInputToken": cost_per_input_token,
+            "costPerOutputToken": cost_per_output_token
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest(
+            "POST",
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/ai-configs/model-configs",
+            json=payload,
+            headers=headers,
+        )
+        
+        # Add better error handling for JSON parsing
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print(f"Error creating custom model config {model_name}: {data['message']}")
+                else:
+                    print(f"Successfully created custom model config: {model_name}")
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error for model {model_name}: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+        else:
+            print(f"Empty response received for model config {model_name}")
+            
         return response
     
     
@@ -1113,7 +1276,7 @@ class LDPlatform:
     ##################################################
     # Get the flag variation IDs, returns a list
     ##################################################
-    def get_flag_variations(self, flag_key, filter=None):
+    def get_flag_variations(self, flag_key, filter=None, segment=False):
         var_ids = []
         url = (
             "https://app.launchdarkly.com/api/v2/flags/"
@@ -1127,8 +1290,12 @@ class LDPlatform:
         }
         res = self.getrequest("GET", url, headers=headers)
         data = json.loads(res.text)
+        if "variations" not in data:
+            return []
         for var in data["variations"]:
-            if var["name"] != "disabled":
+            # If segment is True, include all variations (including "disabled")
+            # If segment is False, exclude "disabled" as before
+            if segment or var["name"] != "disabled":
                 if filter is not None:
                     if var["value"] == filter:
                         var_ids.append(var["_id"])
@@ -1484,7 +1651,7 @@ class LDPlatform:
     # Add segment to flag
     ##################################################
 
-    def add_segment_to_flag(self, flag_key, segment_key, env_key, variation=True):
+    def add_segment_to_flag(self, flag_key, segment_key, env_key, variation=True, segment=False):
         url = (
             "https://app.launchdarkly.com/api/v2/flags/"
             + self.project_key
@@ -1495,7 +1662,7 @@ class LDPlatform:
             "Authorization": self.api_key,
             "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
         }
-        var_id = self.get_flag_variations(flag_key, variation)[0]
+        var_id = self.get_flag_variations(flag_key, None, segment)[0]
         payload = {
             "environmentKey": env_key,
             "instructions": [
@@ -1584,6 +1751,9 @@ class LDPlatform:
     ##################################################
     def add_pipeline_flag(self, flag_key, pipeline_key):
         var_ids = self.get_flag_variations(flag_key)
+        if not var_ids:
+            print(f"Warning: No variations found for flag {flag_key}, skipping pipeline addition")
+            return None
         var_id = var_ids[0]
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
@@ -1711,3 +1881,258 @@ class LDPlatform:
                 time.sleep(3)
 
         return response
+    
+    ##################################################
+    # Update AI Config Targeting
+    ##################################################
+    def update_ai_config_targeting(self, ai_config_key, environment_key, variation_id):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        payload = {
+            "environmentKey": environment_key,
+            "instructions": [
+                {
+                    "kind": "updateFallthroughVariationOrRollout",
+                    "variationId": variation_id
+                }
+            ]
+        }
+        
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error updating AI config targeting: " + data["message"])
+        return response
+    
+    ##################################################
+    # Toggle AI Config
+    ##################################################
+    def toggle_ai_config(self, ai_config_key, environment_key, state="on"):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        instruction_kind = "turnConfigOn" if state == "on" else "turnConfigOff"
+        
+        payload = {
+            "environmentKey": environment_key,
+            "instructions": [
+                {
+                    "kind": instruction_kind
+                }
+            ]
+        }
+        
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error toggling AI config: " + data["message"])
+        return response
+    
+    ##################################################
+    # Get AI Config Variation ID
+    ##################################################
+    def get_ai_config_variation_id(self, ai_config_key, variation_key):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest("GET", url, headers=headers)
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error getting AI config: " + data["message"])
+            return None
+            
+        # Find the variation with the matching key
+        for variation in data.get("variations", []):
+            if variation.get("key") == variation_key:
+                return variation.get("_id")
+        
+        print(f"Variation with key '{variation_key}' not found")
+        return None
+    
+    ##################################################
+    # Add guarded rollout to AI Agent
+    ##################################################
+    def add_ai_agent_guarded_rollout(
+        self,
+        ai_config_key,
+        env_key,
+        metrics=[],
+        timeout=600000,  # 10 minutes in milliseconds
+        rollback=True,
+        weight=50000,
+        notify=True,
+        days=1,
+    ):
+        # Get AI config variations (excluding disabled)
+        variations = self.get_ai_config_variations(ai_config_key)
+        
+        if len(variations) < 2:
+            print(f"Error: AI config {ai_config_key} needs at least 2 variations for guarded rollout")
+            return None
+        
+        # Use first two variations (excluding disabled)
+        control_var = variations[1]["_id"]
+        test_var = variations[0]["_id"]
+        
+        # Calculate stages window based on days
+        stages_window = 120000  # 2 minutes default
+        if days == 7:
+            stages_window = 120960000  # 7 days
+        elif days == 1:
+            stages_window = 720000  # 12 minutes for 1 day
+        
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+            "LD-API-Version": "beta",
+        }
+        
+        payload = {
+            "comment": f"Guarded rollout for AI Agent {ai_config_key}",
+            "environmentKey": env_key,
+            "instructions": [
+                {
+                    "kind": "updateFallthroughWithMeasuredRolloutV2",
+                    "testVariationId": test_var,
+                    "controlVariationId": control_var,
+                    "randomizationUnit": "user",
+                    "onRegression": {
+                        "notify": notify,
+                        "rollback": rollback
+                    },
+                    "onProgression": {
+                        "notify": notify,
+                        "rollForward": True
+                    },
+                    "monitoringWindowMilliseconds": timeout,
+                    "rolloutWeight": weight,
+                    "stages": [
+                        {
+                            "rolloutWeight": 1000,
+                            "monitoringWindowMilliseconds": stages_window
+                        },
+                        {
+                            "rolloutWeight": 5000,
+                            "monitoringWindowMilliseconds": stages_window
+                        },
+                        {
+                            "rolloutWeight": 10000,
+                            "monitoringWindowMilliseconds": stages_window
+                        },
+                        {
+                            "rolloutWeight": 25000,
+                            "monitoringWindowMilliseconds": stages_window
+                        },
+                        {
+                            "rolloutWeight": 50000,
+                            "monitoringWindowMilliseconds": stages_window
+                        }
+                    ],
+                    "metrics": [
+                        {
+                            "metricKey": metric,
+                            "regressionThreshold": 0,
+                            "onRegression": {
+                                "rollback": True,
+                                "notify": False
+                            }
+                        } for metric in metrics
+                    ],
+                    "metricSources": [
+                        {
+                            "key": metric,
+                            "isGroup": False
+                        } for metric in metrics
+                    ]
+                }
+            ]
+        }
+        
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        
+        # Add better error handling for JSON parsing
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error adding AI agent guarded rollout: " + data["message"])
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+        else:
+            print("Empty response received from AI agent guarded rollout API")
+            
+        return response
+    
+    ##################################################
+    # Get AI Config Variations (excluding disabled)
+    ##################################################
+    def get_ai_config_variations(self, ai_config_key):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest("GET", url, headers=headers)
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error getting AI config variations: " + data["message"])
+            return []
+            
+        # Filter out disabled variations
+        variations = []
+        for variation in data.get("variations", []):
+            if variation.get("name", "").lower() != "disabled":
+                variations.append(variation)
+        
+        return variations

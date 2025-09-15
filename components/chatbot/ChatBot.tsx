@@ -22,11 +22,31 @@ import {
   DEFAULT_AI_MODEL,
 } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type ApiResponse = {
   response: string;
   modelName: string;
   enabled: boolean;
+};
+
+type StreamTiming = {
+  timeToFirstToken?: number;
+  totalTime?: number;
+};
+
+type StreamTokens = {
+  input?: number;
+  output?: number;
+  total?: number;
+};
+
+type StreamMetrics = {
+  sourceFidelity?: number;
+  relevance?: number;
+  accuracy?: number;
+  judge?: any;
+  sourcePassageCount?: number;
 };
 
 interface Message {
@@ -40,8 +60,58 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const startArray: Message[] = [];
-  const [messages, setMessages] = useState<Message[]>(startArray);
+  // Pre-populated chat history for ToggleBank
+  const getPrePopulatedMessages = (): Message[] => {
+    if (vertical === "banking") {
+      return [
+        {
+          role: "assistant",
+          content: "Hello! Welcome to ToggleBank! I'm your AI assistant and I'm here to help you with all your banking needs. How can I assist you today?",
+          id: "pre-1"
+        },
+        {
+          role: "user", 
+          content: "What services does ToggleBank offer?",
+          id: "pre-2"
+        },
+        {
+          role: "assistant",
+          content: "ToggleBank offers a comprehensive range of financial services! I can help you with:\n\n• Account Management - Checking balances, viewing transaction history, and managing your accounts\n• Loans & Credit - Personal loans, home mortgages, auto loans, and credit card applications\n• Investment Services - Portfolio management, investment advice, and retirement planning\n• Digital Banking - Mobile app support, online transfers, and bill payments\n• Customer Support - Account inquiries, technical assistance, and general banking questions\n\nIs there a specific service you'd like to know more about?",
+          id: "pre-3"
+        }
+      ];
+    }
+    return startArray;
+  };
+
+  const [messages, setMessages] = useState<Message[]>(getPrePopulatedMessages());
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'generating' | 'validating'>('idle');
+  const [timing, setTiming] = useState<StreamTiming | null>(null);
+  const [tokens, setTokens] = useState<StreamTokens | null>(null);
+  const [metrics, setMetrics] = useState<StreamMetrics | null>(null);
+  const [modelType, setModelType] = useState<'bedrock' | 'openai' | null>(null);
+
+  // Function to determine model type from feature flag
+  const getModelTypeFromFlag = (): 'bedrock' | 'openai' => {
+    if (aiNewModelChatbotFlag?.model?.name) {
+      const modelId = aiNewModelChatbotFlag.model.name;
+      // Check if it's a Bedrock model based on model name patterns
+      const bedrockPatterns = [
+        'anthropic.claude',
+        'amazon.titan',
+        'amazon.nova',
+        'meta.llama',
+        'cohere.command',
+        'ai21.jurassic',
+        'stability.stable-diffusion',
+        'mistral.mistral',
+        'deepseek.deepseek'
+      ];
+      return bedrockPatterns.some(pattern => modelId.includes(pattern)) ? 'bedrock' : 'openai';
+    }
+    return 'bedrock'; // Default to bedrock if no model info
+  };
   const client = useLDClient();
   const { toast } = useToast();
   let aiConfigKey = "";
@@ -116,7 +186,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   async function submitQuery() {
     const userInput = input;
     setInput("");
+    setTiming(null);
+    setTokens(null);
+    setMetrics(null);
     setIsLoading(true);
+    setStatus('generating');
     const userMessage = {
       role: "user",
       content: userInput,
@@ -132,15 +206,17 @@ export default function Chatbot({ vertical }: { vertical: string }) {
     };
   
     // Add user message and assistant placeholder to the UI
-    setMessages([...messages, userMessage, assistantMessage]);
+    const updatedMessages = [...messages, userMessage, assistantMessage];
+    setMessages(updatedMessages);
   
     try {
-      // Make streaming fetch request
+      // Make streaming fetch request with full chat history
       const response = await fetch("/api/chat", {
         method: "POST",
         body: JSON.stringify({
           aiConfigKey,
           userInput,
+          chatHistory: updatedMessages.filter(msg => msg.role !== "assistant" || msg.id !== assistantMessageId), // Exclude the placeholder assistant message
         }),
       });
   
@@ -189,6 +265,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 });
               });
             }
+            else if (!data.done && data.status) {
+              // status: 'validating' or future statuses
+              setStatus(data.status);
+            }
             // Handle final response
             else if (data.done) {
               apiResponse = {
@@ -196,6 +276,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 modelName: data.modelName,
                 enabled: data.enabled
               };
+              if (data?.timing) setTiming(data.timing);
+              if (data?.tokens) setTokens(data.tokens);
+              if (data?.metrics) setMetrics(data.metrics);
+              if (data?.modelType) setModelType(data.modelType);
             }
           } catch (err) {
             console.error('Error parsing SSE data:', err, jsonStr);
@@ -216,6 +300,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       });
     } finally {
       setIsLoading(false);
+      if (status !== 'idle') setStatus('idle');
     }
   }
 
@@ -231,7 +316,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
     });
   };
 
-  const chatContentRef = useRef(null);
+  const chatContentRef = useRef<HTMLDivElement | null>(null);
 
   const aiModelName = () => {
     // Extract model name from the full model ID
@@ -338,10 +423,23 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.deepseek.deepseek-llm-v1.67b-chat': 'DeepSeek LLM 67B Chat',
         'deepseek.deepseek-llm-v1.67b-base': 'DeepSeek LLM 67B Base',
         'us.deepseek.deepseek-llm-v1.67b-base': 'DeepSeek LLM 67B Base',
+
+        // OpenAI Models
+        'gpt-3.5-turbo': 'GPT-3.5 Turbo',
+        'gpt-3.5-turbo-16k': 'GPT-3.5 Turbo 16K',
+        'gpt-4': 'GPT-4',
+        'gpt-4-turbo': 'GPT-4 Turbo',
+        'gpt-4-turbo-preview': 'GPT-4 Turbo Preview',
+        'gpt-4o': 'GPT-4o',
+        'gpt-4o-mini': 'GPT-4o Mini',
+        'gpt-5-nano': 'GPT-5 Nano',
+        'gpt-5-mini': 'GPT-5 Mini',
+        'gpt-5': 'GPT-5',
       };
       
+      const mapped = (modelNameMap as Record<string, string>)[modelId as string];
       // Return the friendly name if available, otherwise use the model ID
-      return modelNameMap[modelId] || modelId.split(':')[0].split('.').pop() || modelId;
+      return mapped || modelId.split(':')[0].split('.').pop() || modelId;
     }
     
     return 'AI Assistant';
@@ -397,21 +495,31 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium leading-none">
-                    Chatbot Assistant
+                    ToggleBot - AI Assistant
                   </p>
                   <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
-                      className={`font-bold text-orange-600
-                      `}
+                      className={`font-bold ${
+                        getModelTypeFromFlag() === 'openai' 
+                          ? 'text-black dark:text-white' 
+                          : 'text-orange-600'
+                      }`}
                     >
                       {aiModelName()}
                     </span>{" "}
-                    with{" "}
-                    <span className="text-amazonColor font-bold">
-                      {" "}
-                      Amazon Bedrock{" "}
-                    </span>
+                    {getModelTypeFromFlag() === 'openai' ? (
+                      <span className="text-black dark:text-white font-bold">
+                        OpenAI
+                      </span>
+                    ) : (
+                      <>
+                        with{" "}
+                        <span className="text-amazonColor font-bold">
+                          Amazon Bedrock
+                        </span>
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
@@ -456,8 +564,68 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               ref={chatContentRef}
             >
               <div className="space-y-4">
-                <div className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
-                  Hello! How can I assist you today?
+                <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
+                  <Accordion type="single" collapsible defaultValue="metrics">
+                    <AccordionItem value="metrics">
+                      <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
+                      <AccordionContent>
+                        <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Accuracy:</span>
+                              <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Source Fidelity:</span>
+                              <span>{(metrics?.sourceFidelity ?? 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-semibold">Relevance:</span>
+                              <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                            </div>
+                            {tokens && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">Tokens:</span>
+                                <span>{tokens.total ?? 0} (in {(tokens.input ?? 0)}, out {(tokens.output ?? 0)})</span>
+                              </div>
+                            )}
+                            {timing && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">Timing:</span>
+                                <span>TTFT {(timing.timeToFirstToken ?? 0)}ms, Total {(timing.totalTime ?? 0)}ms</span>
+                              </div>
+                            )}
+                          </div>
+                          {metrics?.judge && (
+                            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <div className="font-semibold mb-1">Accurate claims</div>
+                                <ul className="list-disc pl-5 space-y-1">
+                                  {(metrics.judge.accurate_claims ?? []).map((c: string, idx: number) => (
+                                    <li key={`acc-${idx}`}>{c}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <div className="font-semibold mb-1">Inaccurate/unsupported claims</div>
+                                <ul className="list-disc pl-5 space-y-1">
+                                  {(metrics.judge.inaccurate_claims ?? []).map((c: string, idx: number) => (
+                                    <li key={`inacc-${idx}`}>{c}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                  {isLoading && (
+                    <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
+                      <PulseLoader size={6} color="#6b7280" />
+                      <span>Generating and Validating Response…</span>
+                    </div>
+                  )}
                 </div>
                 {messages.map((m) => {
                   if (m?.role === "assistant") {
@@ -466,7 +634,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                         key={m?.id}
                         className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
                       >
-                        {m?.content}
+                        <div className="whitespace-pre-line">{m?.content}</div>
                       </div>
                     );
                   }
@@ -487,7 +655,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                       key={m?.id}
                       className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-airways text-white dark:bg-gray-50 dark:text-gray-900"
                     >
-                      {m?.content}
+                      <div className="whitespace-pre-line">{m?.content}</div>
                     </div>
                   );
                 })}

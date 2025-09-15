@@ -134,14 +134,6 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         </SheetHeader>
 
         <Table className="">
-          <TableCaption>
-            <Button
-              className="flex rounded-none bg-blue-700 text-lg font-sohnelight"
-              onClick={getTransactions}
-            >
-              Refresh Data
-            </Button>
-          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>

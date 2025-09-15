@@ -47,7 +47,6 @@
 #           touch ./.env.production
 #           echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.var2 }} >> ./.env.production
 #           echo LD_SDK_KEY=${{ env.var1 }} >> ./.env.production
-#           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
 #           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
 #           echo DESTINATIONENV=demo-${{ matrix.environment }} >> ./.env.production
 #           echo PROJECT_KEY=ld-core-demo >> ./.env.production

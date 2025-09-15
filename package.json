@@ -1,6 +1,6 @@
 {
   "name": "multi-industry-demo",
-  "version": "2.9.2",
+  "version": "2.9.7",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.14",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.873.0",
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@drizzle/react-plugin": "^1.5.3",
     "@hookform/resolvers": "^3.3.2",
@@ -55,6 +56,7 @@
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.292.0",
     "next": "^15.3.5",
+    "openai": "^5.20.1",
     "pg": "^8.11.3",
     "playwright": "^1.39.0",
     "postgres": "^3.4.3",

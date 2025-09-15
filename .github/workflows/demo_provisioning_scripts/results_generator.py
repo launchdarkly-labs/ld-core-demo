@@ -33,6 +33,10 @@ RISK_MGMT_FLAG_KEY = "riskmgmtbureauAPIGuardedRelease"
 RISK_API_ERROR_RATE_KEY = "rm-api-errors"
 RISK_API_LATENCY_KEY = "rm-api-latency"
 
+FINANCIAL_AGENT_FLAG_KEY = "ai-config--togglebank-financial-advisor-agent"
+FINANCIAL_AGENT_ACCURACY_KEY = "financial-agent-accuracy"
+FINANCIAL_AGENT_NEGATIVE_FEEDBACK_KEY = "financial-agent-negative-feedback"
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s'
@@ -183,6 +187,61 @@ def risk_mgmt_guarded_release_generator(client, stop_event):
             continue
     logging.info("Risk Management API guarded release rollback generator finished.")
 
+def financial_advisor_agent_guarded_release_generator(client, stop_event):
+    if not client.is_initialized():
+        logging.error("LaunchDarkly client is not initialized for Financial Advisor Agent")
+        return
+    logging.info("Starting guarded release rollback generator for Financial Advisor Agent...")
+
+    while True:
+        flag_details = get_flag_details(FINANCIAL_AGENT_FLAG_KEY)
+        if not flag_details or not is_measured_rollout(flag_details):
+            logging.info("Measured rollout is over or flag details unavailable. Exiting Financial Advisor Agent generator.")
+            stop_event.set()
+            break
+        
+        try:
+            user_context = generate_user_context()
+            variation = client.variation(FINANCIAL_AGENT_FLAG_KEY, user_context, None)
+            
+            # Get the model name to differentiate between different AI models
+            if variation and hasattr(variation, 'model') and variation.model:
+                model_name = variation.model.get('name', 'unknown')
+            else:
+                model_name = 'default'
+            
+            # Different performance characteristics based on AI model
+            if 'ld-ai-model-pro' in model_name.lower():
+                # Pro model - Excellent performance, wins the experiment
+                accuracy = random.uniform(85, 95)  # High accuracy
+                if random.random() < 0.05:  # Very low negative feedback rate
+                    client.track(FINANCIAL_AGENT_NEGATIVE_FEEDBACK_KEY, user_context)
+                
+                client.track(FINANCIAL_AGENT_ACCURACY_KEY, user_context, None, accuracy)
+                accuracy = 0
+            elif 'ld-ai-model-mini' in model_name.lower():
+                # Mini model - Extremely poor performance, fails the experiment
+                accuracy = random.uniform(5, 15)  # Extremely low accuracy
+                if random.random() < 0.90:  # Very high negative feedback rate
+                    client.track(FINANCIAL_AGENT_NEGATIVE_FEEDBACK_KEY, user_context)
+                
+                client.track(FINANCIAL_AGENT_ACCURACY_KEY, user_context, None, accuracy)
+                acurracy = 0
+            else:
+                # Default/unknown model - moderate performance
+                accuracy = random.uniform(50, 70)  # Moderate accuracy
+                if random.random() < 0.30:  # Moderate negative feedback rate
+                    client.track(FINANCIAL_AGENT_NEGATIVE_FEEDBACK_KEY, user_context)
+                
+                client.track(FINANCIAL_AGENT_ACCURACY_KEY, user_context, None, accuracy)
+            
+            time.sleep(0.01)
+        except Exception as e:
+            logging.error(f"Error during Financial Advisor Agent guarded release simulation: {str(e)}")
+            continue
+    
+    logging.info("Financial Advisor Agent guarded release rollback generator finished.")
+
 def ai_configs_monitoring_results_generator(client):
     LD_FLAG_KEY = "ai-config--togglebot"
     NUM_RUNS = 1000
@@ -207,7 +266,7 @@ def ai_configs_monitoring_results_generator(client):
     for i in range(NUM_RUNS):
         try:
             context = generate_user_context()
-            config, tracker = aiclient.config(LD_FLAG_KEY, context, fallback_value, { 'example_custom_variable': 'example_custom_value'})
+            config, tracker = aiclient.config(LD_FLAG_KEY, context, fallback_value)
             duration = random.randint(500, 2000)
             time_to_first_token = random.randint(50, duration)
             prompt_tokens = random.randint(20, 100)
@@ -231,6 +290,56 @@ def ai_configs_monitoring_results_generator(client):
             continue
 
     logging.info("AI Configs monitoring results generation completed")
+    # Do not flush or close client here; handled in generate_flags
+
+def financial_agent_monitoring_results_generator(client):
+    LD_FLAG_KEY = "ai-config--togglebank-financial-advisor-agent"
+    NUM_RUNS = 1000
+    aiclient = LDAIClient(client)
+
+    if not client.is_initialized():
+        logging.error("Failed to initialize LaunchDarkly client for Financial Agent monitoring")
+        return
+
+    logging.info("Starting Financial Agent monitoring results generation...")
+
+    fallback_value = AIConfig(
+        enabled=True,
+        model=ModelConfig(
+            name="default-model",
+            parameters={"temperature": 0.8},
+        ),
+        messages=[LDMessage(role="system", content="")],
+        provider=ProviderConfig(name="default-provider"),
+    )
+
+    for i in range(NUM_RUNS):
+        try:
+            context = generate_user_context()
+            config, tracker = aiclient.config(LD_FLAG_KEY, context, fallback_value)
+            duration = random.randint(500, 2000)
+            time_to_first_token = random.randint(50, duration)
+            prompt_tokens = random.randint(20, 100)
+            completion_tokens = random.randint(50, 500)
+            total_tokens = prompt_tokens + completion_tokens
+            tokens = TokenUsage(prompt_tokens, completion_tokens, total_tokens)
+            feedback_kind = FeedbackKind.Positive if random.random() < 0.5 else FeedbackKind.Negative
+            tracker.track_duration(duration)
+            tracker.track_tokens(tokens)
+            tracker.track_feedback({'kind': feedback_kind})
+            tracker.track_time_to_first_token(time_to_first_token)
+            if random.random() < 0.95:
+                tracker.track_success()
+            else:
+                tracker.track_error()
+            if (i + 1) % 100 == 0:
+                logging.info(f"Processed {i + 1} monitoring events")
+                client.flush()
+        except Exception as e:
+            logging.error(f"Error processing monitoring event {i}: {str(e)}")
+            continue
+
+    logging.info("Financial Agent monitoring results generation completed")
     # Do not flush or close client here; handled in generate_flags
 
 def experiment_results_generator(client):
@@ -333,6 +442,75 @@ def hero_redesign_experiment_results_generator(client):
             continue
     logging.info("Experiment results generation for showHeroRedesign completed")
 
+def hallucination_detection_experiment_results_generator(client):
+    LD_FEATURE_FLAG_KEY = "ai-config--togglebot"
+    AI_ACCURACY_KEY = "ai-accuracy"
+    AI_SOURCE_FIDELITY_KEY = "ai-source-fidelity"
+    AI_COST_KEY = "ai-cost"
+    AI_CHATBOT_NEGATIVE_FEEDBACK_KEY = "ai-chatbot-negative-feedback"
+    NUM_USERS = 7500
+
+    logging.info("Starting hallucination detection experiment results generation for ai-config--togglebot...")
+
+    for i in range(NUM_USERS):
+        try:
+            user_context = generate_user_context()
+            variation = client.variation(LD_FEATURE_FLAG_KEY, user_context, None)
+            
+            # Generate metrics with slight variations between different AI models
+            # but keep results competitive so no model drastically loses
+            
+            if variation and hasattr(variation, 'model') and variation.model:
+                model_name = variation.model.get('name', 'unknown')
+            else:
+                model_name = 'default'
+            
+            # AI Accuracy: 85-95% range with slight model variations
+            if 'claude' in model_name.lower():
+                accuracy = random.uniform(0.88, 0.94)
+            elif 'nova' in model_name.lower():
+                accuracy = random.uniform(0.86, 0.92)
+            elif 'gpt' in model_name.lower():
+                accuracy = random.uniform(0.87, 0.93)
+            else:
+                accuracy = random.uniform(0.85, 0.91)
+            
+            # AI Source Fidelity: 80-90% range with slight model variations
+            if 'claude' in model_name.lower():
+                source_fidelity = random.uniform(0.83, 0.89)
+            elif 'nova' in model_name.lower():
+                source_fidelity = random.uniform(0.81, 0.87)
+            elif 'gpt' in model_name.lower():
+                source_fidelity = random.uniform(0.82, 0.88)
+            else:
+                source_fidelity = random.uniform(0.80, 0.86)
+            
+            # AI Cost: $0.001-$0.005 range with slight model variations
+            if 'claude' in model_name.lower():
+                cost = random.uniform(0.002, 0.004)
+            elif 'nova' in model_name.lower():
+                cost = random.uniform(0.001, 0.003)
+            elif 'gpt' in model_name.lower():
+                cost = random.uniform(0.0015, 0.0035)
+            else:
+                cost = random.uniform(0.001, 0.002)
+            
+            # Track the metrics
+            client.track(AI_ACCURACY_KEY, user_context, None, accuracy)
+            client.track(AI_SOURCE_FIDELITY_KEY, user_context, None, source_fidelity)
+            client.track(AI_COST_KEY, user_context, None, cost)
+            
+            # AI Chatbot Negative Feedback: 5-15% range with slight model variations
+            if random.random() < 0.10:  # 10% chance of negative feedback
+                client.track(AI_CHATBOT_NEGATIVE_FEEDBACK_KEY, user_context)
+            
+            if (i + 1) % 100 == 0:
+                logging.info(f"Processed {i + 1} users for hallucination detection experiment results")
+        except Exception as e:
+            logging.error(f"Error processing user {i}: {str(e)}")
+            continue
+    logging.info("Hallucination detection experiment results generation for ai-config--togglebot completed")
+
 def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
     sdk_key = os.getenv("LD_SDK_KEY")
@@ -342,23 +520,30 @@ def generate_results(project_key, api_key):
         # Evaluate both bank and public-sector flags as part of the process
         evaluate_bank_and_public_sector_flags(client)
         ai_configs_monitoring_results_generator(client)
+        financial_agent_monitoring_results_generator(client)
         experiment_results_generator(client)
         ai_configs_experiment_results_generator(client)
         hero_image_experiment_results_generator(client)
         hero_redesign_experiment_results_generator(client)
+        hallucination_detection_experiment_results_generator(client)
         stop_event = threading.Event()
         risk_mgmt_stop_event = threading.Event()
+        financial_agent_stop_event = threading.Event()
         
         a4_thread = threading.Thread(target=a4_guarded_release_generator, args=(client, stop_event))
         risk_mgmt_thread = threading.Thread(target=risk_mgmt_guarded_release_generator, args=(client, risk_mgmt_stop_event))
+        financial_agent_thread = threading.Thread(target=financial_advisor_agent_guarded_release_generator, args=(client, financial_agent_stop_event))
         
         a4_thread.start()
         risk_mgmt_thread.start()
+        financial_agent_thread.start()
         time.sleep(5)
         stop_event.set()
         risk_mgmt_stop_event.set()
+        financial_agent_stop_event.set()
         a4_thread.join()
         risk_mgmt_thread.join()
+        financial_agent_thread.join()
         client.flush()
         client.close()
     else:

@@ -95,7 +95,6 @@
 #           touch ./.env.production
 #           echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
 #           echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
-#           echo DB_URL=${{ secrets.DB_URL }} >> ./.env.production
 #           echo LD_API_KEY=${{ secrets.LD_API_KEY }} >> ./.env.production
 #           echo DESTINATIONENV=${{ env.DEMO_NAMESPACE }} >> ./.env.production
 #           echo PROJECT_KEY=${{ env.DEMO_NAMESPACE }}-ld-demo >> ./.env.production
