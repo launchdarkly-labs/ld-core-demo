@@ -453,7 +453,7 @@ class DemoBuilder:
             metrics=metrics,
             primary_key="ai-accuracy",
             attributes=["device", "location", "tier", "operating_system"],
-            flagConfigVersion=1
+            flagConfigVersion=2
         )
 
     def run_togglebank_signup_funnel_experiment(self):
