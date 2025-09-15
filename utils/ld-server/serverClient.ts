@@ -1,9 +1,11 @@
 import { init, LDClient, LDOptions } from "@launchdarkly/node-server-sdk";
+import { Observability } from "@launchdarkly/observability-node";
 
 export let ldClient: LDClient;
 
 const getServerClient = async (sdkKey: string, options?: LDOptions) => {
     if (!ldClient) {
+<<<<<<< HEAD
         // Configure options to prevent connection pool warnings
         const defaultOptions: LDOptions = {
             // Reduce event flush frequency to minimize connection usage
@@ -21,6 +23,26 @@ const getServerClient = async (sdkKey: string, options?: LDOptions) => {
     }
     await ldClient.waitForInitialization();
     return ldClient;
+=======
+        const observabilityOptions = {
+            serviceName: 'ld-core-demo',
+            serviceVersion: process.env.npm_package_version || 'development',
+            environment: process.env.NODE_ENV || 'development'
+        };
+
+        const mergedOptions: LDOptions = {
+            ...options,
+            plugins: [
+                ...(options?.plugins || []),
+                new Observability(observabilityOptions)
+            ]
+        };
+
+        ldClient = await init(sdkKey, mergedOptions);
+      }
+  await ldClient.waitForInitialization();
+  return ldClient;
+>>>>>>> 8114ee42a2d4473936073c3f847fbf3a8449c446
 };
 
 export default getServerClient;

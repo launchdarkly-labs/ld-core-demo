@@ -510,3 +510,20 @@ export const NAV_ELEMENTS_VARIANT = {
     logoImg: COMPANY_LOGOS["government"].horizontal,
   },
 };
+
+export const INITIAL_USER_SIGNUP_DATA = {
+  email: "user@launchmail.io",
+  password: "password123",
+  firstName: "Christine",
+  lastName: "Wilson",
+  dob: "2/28/1998",
+  ssn: "***-**-****",
+  phone: "220-415-9634",
+  address: "390 Fort St",
+  apt: "245",
+  zip: "94572",
+  selectedServices: ["Checking Accounts"],
+};
+
+// togglebank sign up feature flag
+export const RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY = "releaseNewSignupPromo";

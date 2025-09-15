@@ -115,6 +115,17 @@ class DemoBuilder:
         self.metric_store_checkout_completed()
         self.metric_search_engine()
         self.metric_government_signup_click()
+        print(" - ToggleBank Signup Started")
+        self.metric_togglebank_signup_started()
+        print(" - ToggleBank Initial Signup Completed") 
+        self.metric_togglebank_initial_signup_completed()
+        print(" - ToggleBank Personal Details Completed")
+        self.metric_togglebank_personal_details_completed()
+        print(" - ToggleBank Services Selection Completed")
+        self.metric_togglebank_services_completed()
+        print(" - ToggleBank Full Signup Flow Completed")
+        self.metric_togglebank_signup_flow_completed()
+        print(" - Risk Management Database Latency - Public Sector")
         self.metric_government_rm_db_latency()
         self.metric_government_rm_db_errors()
         self.metric_government_rm_api_latency()
@@ -148,6 +159,13 @@ class DemoBuilder:
         self.flag_federated_account()
         self.flag_togglebank_database_guarded_release()
         self.flag_togglebank_api_guarded_release()
+        print(" - A5 - Feature Experiment: Show Different Special Offer - ToggleBank")
+        self.flag_togglebank_show_different_special_offer_string()
+        print(" - A6 - Funnel Experiment: New Signup Flow - ToggleBank")
+        self.flag_togglebank_release_new_signup_promo()
+        print(" - A7 - Feature Experiment: Widget Position Swap - ToggleBank")
+        self.flag_togglebank_swap_widget_positions()
+        print(" - B1 - Release: New Database (Guarded Release)")
         self.flag_database_guarded_release()
         self.flag_api_guarded_release()
         #print(" - C1 - Experiment: AI Models for Chatbot")
@@ -269,6 +287,9 @@ class DemoBuilder:
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
+        self.run_togglebank_signup_funnel_experiment()
+        self.run_togglebank_special_offers_experiment()
+        self.run_togglebank_widget_position_experiment()
         self.run_government_ai_config_experiment()
         self.run_government_hero_redesign_experiment()
         self.run_government_show_different_hero_image_experiment()
@@ -441,6 +462,106 @@ class DemoBuilder:
             "This experiment evaluates different AI models for their performance in preventing hallucinations and maintaining response quality. We measure accuracy, source fidelity, relevance, cost efficiency, and user feedback to determine which model configuration provides the most reliable and trustworthy responses while maintaining cost effectiveness.",
             metrics=metrics,
             primary_key="ai-accuracy",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=1
+        )
+
+    def run_togglebank_signup_funnel_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "releaseNewSignupPromo",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Funnel Experiment: ToggleBank Signup Flow")
+        self.create_togglebank_signup_funnel_experiment()
+        self.ldproject.start_exp_iteration("togglebank-signup-funnel-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_signup_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False),
+            self.ldproject.exp_metric("initial-signup-completed", False),
+            self.ldproject.exp_metric("signup-personal-details-completed", False),
+            self.ldproject.exp_metric("signup-services-completed", False),
+            self.ldproject.exp_metric("signup-flow-completed", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-signup-funnel-experiment",
+            "(Bayesian) Funnel Experiment: ToggleBank Multi-Step Signup Flow",
+            "production",
+            "releaseNewSignupPromo",
+            "Testing whether the new multi-step signup flow improves conversion rates compared to the old single-page signup in ToggleBank.",
+            metrics=metrics,
+            primary_key="signup-flow-completed",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_special_offers_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showDifferentSpecialOfferString",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Special Offers")
+        self.create_togglebank_special_offers_experiment()
+        self.ldproject.start_exp_iteration("togglebank-special-offers-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_special_offers_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-special-offers-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Special Offers Rotation",
+            "production",
+            "showDifferentSpecialOfferString",
+            "Testing which special offer variation (credit card, car loan, or platinum rewards) generates more signup conversions.",
+            metrics=metrics,
+            primary_key="signup-started",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_widget_position_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "swapWidgetPositions",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Widget Position")
+        self.create_togglebank_widget_position_experiment()
+        self.ldproject.start_exp_iteration("togglebank-widget-position-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_widget_position_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-widget-position-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Widget Position Swap",
+            "production",
+            "swapWidgetPositions",
+            "Testing whether swapping the positions of mortgage and retirement widgets improves signup conversion rates.",
+            metrics=metrics,
+            primary_key="signup-started",
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=2
         )
@@ -1012,6 +1133,75 @@ class DemoBuilder:
             randomization_units=["user"],
             tags=["public-sector"]
         )
+
+    def metric_togglebank_signup_started(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-started",
+            metric_name="ToggleBank Signup Started",
+            event_key="signup-started",
+            metric_description="This metric tracks when users click Join Now to start the signup process in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_initial_signup_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="initial-signup-completed",
+            metric_name="ToggleBank Initial Signup Completed",
+            event_key="initial-signup-completed", 
+            metric_description="This metric tracks when users complete the first signup step (email/password) in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_personal_details_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-personal-details-completed",
+            metric_name="ToggleBank Personal Details Completed",
+            event_key="signup-personal-details-completed",
+            metric_description="This metric tracks when users complete the personal details step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_services_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-services-completed",
+            metric_name="ToggleBank Services Selection Completed",
+            event_key="signup-services-completed",
+            metric_description="This metric tracks when users complete the services selection step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_signup_flow_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-flow-completed",
+            metric_name="ToggleBank Full Signup Flow Completed", 
+            event_key="signup-flow-completed",
+            metric_description="This metric tracks when users complete the entire ToggleBank signup flow and are logged in.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+
+
+
 
     def metric_government_rm_db_latency(self):
         res = self.ldproject.create_metric(
@@ -2491,6 +2681,70 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("riskmgmtbureauAPIGuardedRelease", "production", metrics=["rm-api-latency","rm-api-errors"], days=1)
+
+    def flag_togglebank_show_different_special_offer_string(self):
+        res = self.ldproject.create_flag(
+            "showDifferentSpecialOfferString",
+            "A5 - Feature Experiment: Show Different Special Offer - ToggleBank",
+            "This feature flag controls which special offer variant is displayed on the ToggleBank home page",
+            [
+                {
+                    "value": "offerA",
+                    "name": "offerA"
+                },
+                {
+                    "value": "offerB", 
+                    "name": "offerB"
+                },
+                {
+                    "value": "offerC",
+                    "name": "offerC"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_togglebank_release_new_signup_promo(self):
+        res = self.ldproject.create_flag(
+            "releaseNewSignupPromo",
+            "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
+            "This feature flag controls whether users see the new multi-step signup flow or the old decorative Join Now button",
+            [
+                {
+                    "value": True,
+                    "name": "New Multi-Step Signup Flow"
+                },
+                {
+                    "value": False,
+                    "name": "Old Decorative Button"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_togglebank_swap_widget_positions(self):
+        res = self.ldproject.create_flag(
+            "swapWidgetPositions",
+            "A7 - Feature Experiment: Widget Position Swap - ToggleBank",
+            "This feature flag controls whether the mortgage and retirement widgets are swapped on the ToggleBank home page",
+            [
+                {
+                    "value": True,
+                    "name": "Retirement Left, Mortgage Right"
+                },
+                {
+                    "value": False,
+                    "name": "Mortgage Left, Retirement Right"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
 
 ############################################################################################################
 ############################################################################################################

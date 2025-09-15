@@ -2,7 +2,6 @@
 const { version } = require('./package.json');
 
 const nextConfig = {
-  experimental: { instrumentationHook: true },
   reactStrictMode: false,
   output: 'standalone',
   typescript: {

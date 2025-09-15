@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import iconBackground from "@/public/banking/icons/icon-background.svg";
 import heroBackgroundCreditcard from "@/public/banking/backgrounds/bank-hero-background-creditcard.svg";
@@ -15,6 +15,8 @@ import savings from "@/public/banking/icons/savings.svg";
 import savingsOnHover from "@/public/banking/icons/savings-on-hover.svg";
 import retirmentBackground from "@/public/banking/backgrounds/bank-homepage-retirment-card-background.svg";
 import specialOfferBackground from "@/public/banking/backgrounds/bank-homepage-specialoffer-background.svg";
+import specialOfferCarLoan from "@/public/banking/SpecialOffer-CarLoan.svg";
+import specialOfferCC from "@/public/banking/SpecialOffer-CC.svg";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
 import NavLogo from "@/components/ui/NavComponent/NavLogo";
@@ -32,12 +34,59 @@ import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import Image from "next/image";
 import { BANK } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
-
-
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
+import { useRouter } from "next/router";
+import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automation/experimentationConstants";
+import { RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
+import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 
 export default function BankHomePage() {
 
     const { isLoggedIn } = useContext(LoginContext);
+    const ldClient = useLDClient();
+    const { logLDMetricSent } = useContext(LiveLogsContext);
+    const router = useRouter();
+    const flags = useFlags();
+
+    const handleJoinNowClick = () => {
+        const releaseNewSignupPromoFlag = flags[RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY];
+        
+        if (releaseNewSignupPromoFlag) {
+            // new: multi-step signup flow
+            ldClient?.track(SIGN_UP_STARTED);
+            logLDMetricSent({ metricKey: SIGN_UP_STARTED });
+            router.push("/signup");
+        }
+        // old: do nothing (decorative button)
+    };
+
+    // special offers experiment
+    const flagValue = flags["showDifferentSpecialOfferString"];
+    const validOfferKeys = ["offerA", "offerB", "offerC"] as const;
+    const selectedOffer: "offerA" | "offerB" | "offerC" = flagValue && validOfferKeys.includes(flagValue) ? flagValue : "offerA";
+
+    // variations
+    const specialOffers = {
+        offerA: {
+            title: "Take advantage",
+            description: "Exclusive credit card offer with premium service from Toggle Bank. Terms apply.",
+            image: specialOfferBackground
+        },
+        offerB: {
+            title: "Drive your dreams",
+            description: "Get pre-approved for an auto loan with competitive rates. Perfect for your next vehicle purchase.",
+            image: specialOfferCarLoan
+        },
+        offerC: {
+            title: "Platinum rewards",
+            description: "Earn unlimited cashback on every purchase with our premium credit card. No annual fee.",
+            image: specialOfferCC
+        }
+    } as const;
+
+    // widget position experiment
+    const widgetPositionFlag = flags["swapWidgetPositions"];
+    const shouldSwapWidgets = widgetPositionFlag === true;
 
 
     return (
@@ -62,7 +111,7 @@ export default function BankHomePage() {
                         <>
                             {NAV_ELEMENTS_VARIANT[BANK]?.navLinks.map((navLink, index) => {
                                 return (
-                                    <DropdownMenuItem href={navLink?.href} key={index}>
+                                    <DropdownMenuItem key={index}>
                                         {navLink?.text}
                                     </DropdownMenuItem>
                                 );
@@ -78,7 +127,7 @@ export default function BankHomePage() {
                                 return (
                                     <NavLinkButton
                                         text={navLink?.text}
-                                        href={navLink?.href}
+                                        navlinkHref={navLink?.href}
                                         navLinkColor={NAV_ELEMENTS_VARIANT[BANK]?.navLinkColor}
                                         index={index}
                                         key={index}
@@ -93,7 +142,7 @@ export default function BankHomePage() {
                         <>
                             {!isLoggedIn && (
                                 <>
-                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" />
+                                    <NavbarSignUpButton backgroundColor="bg-gradient-bank" onClick={handleJoinNowClick} />
                                 </>
                             )}
 
@@ -117,7 +166,10 @@ export default function BankHomePage() {
                             {bankHomePageValues?.industryMessages}
                         </h2>
                         <div className="flex space-x-4 px-6 sm:px-2 md:px-4 lg:px-6 xl:px-8">
-                            <button className="shadow-2xl bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
+                            <button 
+                                onClick={handleJoinNowClick}
+                                className="shadow-2xl bg-bank-gradient-blue-background hover:bg-bank-gradient-text-color hover:text-white text-white rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl"
+                            >
                                 Join Now
                             </button>
                             <button className="shadow-2xl border hover:bg-bank-gradient-text-color border-blue-800 hover:border-bankhomepagebuttonblue hover:text-white text-blue-800  rounded-3xl font-sohnelight w-28 h-10 sm:w-32 sm:h-11 md:w-36 md:h-12 lg:w-40 lg:h-14 xl:w-36 xl:h-12 text-xs sm:text-md md:text-lg lg:text-xl xl:text-xl">
@@ -162,37 +214,77 @@ export default function BankHomePage() {
 
             <div className="container mx-auto my-10 p-4">
                 <div className="flex flex-col sm:flex-row mb-4 gap-x-8 p-4 mx-10 sm:mx-20 sm:pb-8 gap-y-10 sm:gap-y-0">
-                    <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
-                        <div className="flex flex-col gap-y-6 mt-4 ">
-                            <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
-                                MORTGAGE
+                    {shouldSwapWidgets ? (
+                        <>
+                            {/* retirement widget (left when swapped) */}
+                            <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
+                                <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
+                                    <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
+                                        RETIREMENT
+                                    </div>
+                                    <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
+                                        Prepare for retirement
+                                    </div>
+                                    <div className="text-black mx-8 mb-4 font-sohne text-md">
+                                        Plan for the future by using our Retirement Planning Calculator.
+                                    </div>
+                                </div>
+                                <div className="w-1/2 items-center justify-center hidden sm:flex">
+                                    <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
+                                </div>
                             </div>
-                            <div className="mx-8 mt-4 text-white font-sohne text-xl">
-                                Set down new roots
+                            {/* mortgage widget (right when swapped) */}
+                            <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
+                                <div className="flex flex-col gap-y-6 mt-4 ">
+                                    <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
+                                        MORTGAGE
+                                    </div>
+                                    <div className="mx-8 mt-4 text-white font-sohne text-xl">
+                                        Set down new roots
+                                    </div>
+                                    <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
+                                        From finding your new place to getting the keys – we're here to help.
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
-                                From finding your new place to getting the keys – we're here to help.
+                        </>
+                    ) : (
+                        <>
+                            {/* mortgage widget (default) */}
+                            <div className="w-full sm:w-1/3 bg-blue-500 p-4 rounded-2xl bg-bank-gradient-blue-background shadow-2xl">
+                                <div className="flex flex-col gap-y-6 mt-4 ">
+                                    <div className="mx-8 text-sm text-gray-300 tracking-widest font-sohnelight">
+                                        MORTGAGE
+                                    </div>
+                                    <div className="mx-8 mt-4 text-white font-sohne text-xl">
+                                        Set down new roots
+                                    </div>
+                                    <div className="text-gray-300 mx-8 mb-4 font-sohne text-md">
+                                        From finding your new place to getting the keys – we're here to help.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
-                        <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
-                            <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
-                                RETIREMENT
+                            {/* retirement widget (default) */}
+                            <div className="w-full sm:w-2/3 bg-white p-4 rounded-2xl shadow-2xl flex">
+                                <div className="flex flex-col gap-y-6 mt-4 w-full sm:w-1/2">
+                                    <div className="mx-8 text-sm text-gray-400 tracking-widest font-sohnelight">
+                                        RETIREMENT
+                                    </div>
+                                    <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
+                                        Prepare for retirement
+                                    </div>
+                                    <div className="text-black mx-8 mb-4 font-sohne text-md">
+                                        Plan for the future by using our Retirement Planning Calculator.
+                                    </div>
+                                </div>
+                                <div className="w-1/2 items-center justify-center hidden sm:flex">
+                                    <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
+                                </div>
                             </div>
-                            <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
-                                Prepare for retirement
-                            </div>
-                            <div className="text-black mx-8 mb-4 font-sohne text-md">
-                                Plan for the future by using our Retirement Planning Calculator.
-                            </div>
-                        </div>
-                        <div className="w-1/2 items-center justify-center hidden sm:flex">
-                            <Image src={retirmentBackground} width={200} height={50} alt="Retirement Background" />
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </div>
-                {/* Second Row */}
+                				{/* second row */}
                 <div className="p-4 mx-10 sm:mx-20 sm:pb-20">
                     <div className="flex flex-col sm:flex-row shadow-2xl p-y-10 sm:p-y-0 rounded-2xl sm:rounded-2xl ">
                         <div className="w-full sm:w-1/3 bg-white p-4 rounded-2xl sm:rounded-r-none">
@@ -201,15 +293,15 @@ export default function BankHomePage() {
                                     SPECIAL OFFER
                                 </div>
                                 <div className="mx-8 mt-4 text-blue-600 font-sohne text-xl">
-                                    Take advantage
+                                    {specialOffers[selectedOffer].title}
                                 </div>
                                 <div className="text-black mx-8 mb-4 font-sohne text-md">
-                                    Exclusive credit card offer with premium service from Toggle Bank. Terms apply.
+                                    {specialOffers[selectedOffer].description}
                                 </div>
                             </div>
                         </div>
                         <div className="w-full hidden sm:block mt-4 sm:mt-0 sm:w-2/3 bg-purple-500 p-4 rounded-2xl relative">
-                            <Image src={specialOfferBackground} className='rounded-r-2xl' layout="fill" objectFit="cover" alt="Retirement Background" />
+                            <Image src={specialOffers[selectedOffer].image} className='rounded-r-2xl' layout="fill" objectFit="cover" alt="Special Offer Background" />
                         </div>
                     </div>
                 </div>
