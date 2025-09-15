@@ -166,21 +166,28 @@ export const generateShortenCollectionsPageFunnelExperimentResults = async ({
   const experimentType: string = experimentTypeObj.experimentType;
 
   for (let i = 0; i < experimentTypeObj.numOfRuns; i++) {
+    // const flagVariation: string = client?.variation(
+    //   "release-new-shorten-collections-page",
+    //   "old-long-collections-page"
+    // );
+
     const flagVariation: string = client?.variation(
       "release-new-shorten-collections-page",
-      "old-long-collections-page"
+      false
     );
+    
+    const flagVariationString = flagVariation ? "new-shorten-collections-page" : "old-long-collections-page";
 
     const metricProbablityObj =
       probablityExperimentTypeShortenCollection[
         experimentType as keyof typeof probablityExperimentTypeShortenCollection
       ];
-    const metricProbablity = metricProbablityObj[flagVariation as keyof typeof metricProbablityObj];
+    const metricProbablity = metricProbablityObj[flagVariationString as keyof typeof metricProbablityObj];
 
-    if (flagVariation === "old-long-collections-page") {
+    if (flagVariationString === "old-long-collections-page") {
       totalPrice = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
     }
-    if (flagVariation === "new-shorten-collections-page") {
+    if (flagVariationString === "new-shorten-collections-page") {
       totalPrice = Math.floor(Math.random() * (500 - 300 + 1)) + 300;
     }
 
