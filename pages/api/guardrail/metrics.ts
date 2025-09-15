@@ -5,6 +5,7 @@ type Metric = {
     sourceFidelity?: number;
     relevance?: number;
     accuracy?: number;
+    cost?: number;
     clamped?: boolean;
     trigger?: string;
     inputSnippet?: string;

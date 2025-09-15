@@ -3,7 +3,12 @@ import {
 	ConverseCommand,
 	ConverseStreamCommand,
 } from "@aws-sdk/client-bedrock-runtime";
-// KB retrieval not required per UX repo behavior
+import {
+	BedrockAgentRuntimeClient,
+	RetrieveCommand,
+} from "@aws-sdk/client-bedrock-agent-runtime";
+const OpenAI = require("openai");
+// KB retrieval implemented with user context filtering
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerClient } from "@/utils/ld-server";
 import { getCookie } from "cookies-next";
@@ -29,14 +34,31 @@ export default async function chatResponse(
 			},
 		});
 
-        // No Bedrock Agent Runtime client needed
+		// Initialize OpenAI client
+		const openai = new OpenAI({
+			apiKey: process.env.OPENAI_API_KEY,
+		});
+
+		// Initialize Bedrock Agent Runtime client for knowledge base retrieval
+		const bedrockAgentClient = new BedrockAgentRuntimeClient({
+			region,
+			credentials: {
+				accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
+				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+			},
+		});
 
 		if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
 			throw new Error("AWS credentials are not set");
 		}
+
+		if (!process.env.OPENAI_API_KEY) {
+			throw new Error("OpenAI API key is not set");
+		}
 		const body = JSON.parse(req.body);
 		const aiConfigKey = body?.aiConfigKey;
 		const userInput = body?.userInput;
+		const chatHistory = body?.chatHistory || [];
 		const clientSideContext = JSON.parse(
 			getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
 		);
@@ -50,7 +72,128 @@ export default async function chatResponse(
 			}));
 		}
 
-        // No KB retrieval needed
+		function mapChatHistoryToConversation(
+			chatHistory: { role: string; content: string; id: string }[],
+		): Message[] {
+			return chatHistory.map((item) => ({
+				role: item.role as 'user' | 'assistant',
+				content: [{ text: item.content }],
+			}));
+		}
+
+		function isBedrockModel(modelName: string): boolean {
+			// Check if model name contains Bedrock-specific patterns
+			const bedrockPatterns = [
+				'anthropic.claude',
+				'amazon.titan',
+				'amazon.nova',
+				'meta.llama',
+				'cohere.command',
+				'ai21.jurassic',
+				'stability.stable-diffusion',
+				'mistral.mistral',
+				'deepseek.deepseek'
+			];
+			return bedrockPatterns.some(pattern => modelName.includes(pattern));
+		}
+
+		function mapMessagesToOpenAIFormat(messages: Message[]): any[] {
+			return messages.map((msg) => ({
+				role: msg.role as 'user' | 'assistant' | 'system',
+				content: msg.content[0].text,
+			}));
+		}
+
+		async function getKbPassages(question: string, kbId: string, userContext: any): Promise<string> {
+			/**
+			 * Query AWS Bedrock Knowledge Base using vector search with customer-specific filtering
+			 */
+			try {
+				const response = await bedrockAgentClient.send(new RetrieveCommand({
+					knowledgeBaseId: kbId,
+					retrievalQuery: {
+						text: question
+					},
+					retrievalConfiguration: {
+						vectorSearchConfiguration: {
+							numberOfResults: 15 // Get more results for better filtering
+						}
+					}
+				}));
+
+				const passages: string[] = [];
+				const filteredPassages: string[] = [];
+
+				// Extract all passages first
+				for (const result of response.retrievalResults || []) {
+					const content = result.content?.text || '';
+					if (content) {
+						passages.push(content);
+					}
+				}
+
+				// Filter passages based on user context
+				if (userContext) {
+					const currentUserName = userContext.name || '';
+					const currentUserTier = (userContext.tier || '').toLowerCase();
+
+					for (const passage of passages) {
+						const passageLower = passage.toLowerCase();
+
+						// Skip passages that contain other customer profiles
+						if (passageLower.includes('name:') && !passageLower.includes(currentUserName.toLowerCase())) {
+							// This passage contains another customer's profile, skip it
+							continue;
+						}
+
+						// For tier-specific information, only include relevant tiers
+						const tierWords = ['diamond', 'platinum', 'gold', 'silver'];
+						if (tierWords.some(tierWord => passageLower.includes(tierWord))) {
+							// Keep only if it explicitly references the *current* tier or is a purely generic statement
+							const mentionsCurrentTier = currentUserTier && passageLower.includes(currentUserTier);
+							const mentionsOtherTiers = tierWords.some(
+								otherTier => otherTier !== currentUserTier && passageLower.includes(otherTier)
+							);
+
+							if (mentionsCurrentTier && !mentionsOtherTiers) {
+								filteredPassages.push(passage);
+							} else {
+								continue;
+							}
+						} else {
+							// Generic information, include it
+							filteredPassages.push(passage);
+						}
+					}
+				} else {
+					// No user context, return all passages
+					filteredPassages.push(...passages);
+				}
+
+				// Always include ToggleBank general information
+				const toggleBankInfo = `ToggleBank offers a comprehensive range of financial services! I can help you with:
+
+• Checking & Savings Accounts - Checking balances, viewing transaction history, and managing your accounts
+• Loans & Credit - Personal loans, home mortgages, auto loans, and credit card applications
+• Investment Services - Portfolio management, investment advice, and retirement planning
+• Digital Banking - Mobile app support, online transfers, and bill payments
+• Customer Support - Account inquiries, technical assistance, and general banking questions
+
+Is there a specific service you'd like to know more about?`;
+
+				if (filteredPassages.length > 0) {
+					// Add ToggleBank info to the beginning of the passages
+					filteredPassages.unshift(toggleBankInfo);
+					return filteredPassages.join('\n\n---\n\n');
+				} else {
+					// If no other passages found, return just the ToggleBank info
+					return toggleBankInfo;
+				}
+			} catch (error) {
+				console.error('Knowledge Base retrieval error:', error);
+				return "Error retrieving passages from knowledge base.";
+			}
+		}
 
 
 		// With no KB, source fidelity will be sourced from the judge (style/policy adherence)
@@ -59,15 +202,22 @@ export default async function chatResponse(
 			try {
 				const systemMsg = `You are a relevance scoring function. Read USER_QUERY and RESPONSE. Return JSON only with {"relevance_score": number between 0.0 and 1.0}. Focus on topical alignment and intent coverage. Do not explain.`;
 				const userMsg = `USER_QUERY: ${userQuery}\n\nRESPONSE: ${responseText}`;
-				if (!modelId.startsWith('us.')) modelId = 'us.' + modelId;
+				
+				// Judge always uses Bedrock - use the relevance model from environment or default
+				let relevanceModelId = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
+				if (!relevanceModelId.startsWith('us.')) {
+					relevanceModelId = 'us.' + relevanceModelId;
+				}
+				
 				const cmd = new ConverseCommand({
-					modelId,
+					modelId: relevanceModelId,
 					system: [ { text: systemMsg } ],
 					messages: [ { role: 'user', content: [ { text: userMsg } ] } ],
 					inferenceConfig: { temperature: 0.0, maxTokens: 200 },
 				});
 				const resp: any = await bedrockClient.send(cmd);
 				const text = resp?.output?.message?.content?.[0]?.text ?? '';
+				
 				const start = text.indexOf('{');
 				const end = text.lastIndexOf('}');
 				let parsed: any = {};
@@ -97,20 +247,26 @@ export default async function chatResponse(
 			userContext: any;
 			sourcePassages: string[];
 			responseText: string;
+			userQuestion: string;
 		}): Promise<{ accuracy: number; factual_claims?: string[]; accurate_claims?: string[]; inaccurate_claims?: string[] }> {
 			// Prefer using LD AI Config for judge if provided
-			const judgeKey = process.env.LAUNCHDARKLY_LLM_JUDGE_KEY;
+			const judgeKey = "llm-as-judge";
 			try {
 				if (judgeKey) {
-					const judgeConfig = await aiClient.config(judgeKey, params.userContext, {}, {
-						user_context: params.userContext,
+					// Pass the actual content as variables to LaunchDarkly for template replacement
+					// Include user context so judge knows WHO the response is about
+					const judgeVariables = {
 						source_passages: params.sourcePassages.join('\n---\n'),
 						response_text: params.responseText,
-					});
+						user_question: params.userQuestion, // Include the original user question
+						user_context: params.userContext.name || "Anonymous User" // Get from LaunchDarkly context
+					};
+					
+					
+					const judgeConfig = await aiClient.config(judgeKey, params.userContext, {}, judgeVariables);
 					if (!judgeConfig?.model) throw new Error('Judge AI Config missing model');
 					let modelId = judgeConfig.model.name;
 					if (!modelId.startsWith('us.')) modelId = 'us.' + modelId;
-					dlog('judge using LD model', modelId);
 					// Gather any system messages from the AI Config
 					let systemTexts: string[] = [];
 					(judgeConfig.messages || []).forEach((m: any) => {
@@ -119,18 +275,13 @@ export default async function chatResponse(
 					const userPayload = `USER CONTEXT: ${JSON.stringify(params.userContext)}\n\nRESPONSE TO CHECK:\n${params.responseText}`;
 					// Read guardrail custom params from judge config or environment
 					let grId: string | undefined, grVersion: string | undefined, grKnowledgeId: string | undefined;
-					const custom = (judgeConfig as any)?.custom;
-					if (custom && typeof custom === 'string') {
-						try {
-							const customObj = JSON.parse(custom);
-							grId = customObj.BEDROCK_GUARDRAIL_ID;
-							grVersion = customObj.BEDROCK_GUARDRAIL_VERSION;
-							grKnowledgeId = customObj.BEDROCK_KNOWLEDGE_ID;
-						} catch {}
+					const custom = judgeConfig.model?.custom;
+					if (custom && typeof custom === 'object') {
+						grId = (custom as any).BEDROCK_GUARDRAIL_ID ?? grId;
+						grVersion = (custom as any).BEDROCK_GUARDRAIL_VERSION ?? grVersion;
+						grKnowledgeId = (custom as any).BEDROCK_KNOWLEDGE_ID ?? grKnowledgeId;
 					}
-					grId = grId ?? (judgeConfig as any)?.gr_id ?? process.env.BEDROCK_GUARDRAIL_ID;
-					grVersion = "1";
-					grKnowledgeId = grKnowledgeId ?? (judgeConfig as any)?.BEDROCK_KNOWLEDGE_ID;
+				
 					const command = new ConverseCommand({
 						modelId,
 						...(systemTexts.length > 0 ? { system: systemTexts.map((t) => ({ text: t })) } : {}),
@@ -139,11 +290,17 @@ export default async function chatResponse(
 							temperature: (judgeConfig.model?.parameters?.temperature as number) ?? 0.9,
 							maxTokens: (judgeConfig.model?.parameters?.maxTokens as number) ?? 1000,
 						},
-						...(grId && grVersion ? { guardrailConfig: { guardrailIdentifier: grId, guardrailVersion: grVersion, trace: 'enabled' } } : {}),
+						...(grId && grVersion ? { 
+							guardrailConfig: { 
+								guardrailIdentifier: grId, 
+								guardrailVersion: grVersion, 
+								trace: 'enabled',
+								...(grKnowledgeId ? { knowledgeBaseId: grKnowledgeId } : {})
+							} 
+						} : {}),
 					});
 					const resp: any = await bedrockClient.send(command);
 					const text = resp?.output?.message?.content?.[0]?.text ?? '';
-					dlog('judge raw (first 300 chars)', text.slice(0, 300));
 					const start = text.indexOf('{');
 					const end = text.lastIndexOf('}');
 					let parsed: any = {};
@@ -151,8 +308,8 @@ export default async function chatResponse(
 						const maybe = text.slice(start, end + 1);
 						try { parsed = JSON.parse(maybe); } catch {}
 					}
-					dlog('judge parsed', parsed);
 					const accuracy = typeof parsed?.accuracy_score === 'number' ? parsed.accuracy_score : 0;
+					
 					return {
 						accuracy,
 						factual_claims: parsed?.factual_claims,
@@ -162,21 +319,25 @@ export default async function chatResponse(
 				}
 				// Fallback: static judge prompt and model
 				const fallbackModelId = process.env.JUDGE_MODEL_ID ?? 'us.anthropic.claude-3-5-sonnet-20241022-v2:0';
-				dlog('judge using fallback model', fallbackModelId);
 				const systemMessage = `You are a fact-checking expert. Compare the response against the source material and identify any factual errors.\n\nInstructions:\n1. Extract key factual claims from the response (names, numbers, dates, policies, requirements)\n2. Check each factual claim against the source material\n3. When the response uses "your", "you", or personal pronouns, match them to the specific user mentioned in USER CONTEXT\n4. Ignore tone, style, helpfulness - focus ONLY on factual accuracy\n5. Return a JSON with:\n   - "factual_claims": list of key facts claimed in response\n   - "accurate_claims": list of claims that are accurate per source\n   - "inaccurate_claims": list of claims that are wrong or unsupported\n   - "accuracy_score": decimal from 0.0 to 1.0\n\nResponse format: {"factual_claims": [...], "accurate_claims": [...], "inaccurate_claims": [...], "accuracy_score": 0.95}`;
-				const userPayload = `USER CONTEXT: ${JSON.stringify(params.userContext)}\n\nSOURCE MATERIAL:\n${params.sourcePassages.join('\n---\n')}\n\nRESPONSE TO CHECK:\n${params.responseText}`;
-				const envGrId = process.env.BEDROCK_GUARDRAIL_ID;
-				const envGrVersion = process.env.BEDROCK_GUARDRAIL_VERSION;
+				const userPayload = `USER CONTEXT: ${JSON.stringify(params.userContext)}\n\nUSER QUESTION: ${params.userQuestion}\n\nSOURCE MATERIAL:\n${params.sourcePassages.join('\n---\n')}\n\nRESPONSE TO CHECK:\n${params.responseText}`;
+				// Fallback judge always uses Bedrock
 				const command = new ConverseCommand({
 					modelId: fallbackModelId,
 					system: [ { text: systemMessage } ],
 					messages: [ { role: 'user', content: [ { text: userPayload } ] } ],
 					inferenceConfig: { temperature: 0.9, maxTokens: 1000 },
-					...(envGrId && envGrVersion ? { guardrailConfig: { guardrailIdentifier: envGrId, guardrailVersion: envGrVersion, trace: 'enabled' } } : {}),
+					...(envGrId && envGrVersion ? { 
+						guardrailConfig: { 
+							guardrailIdentifier: envGrId, 
+							guardrailVersion: envGrVersion, 
+							trace: 'enabled',
+							...(envKnowledgeId ? { knowledgeBaseId: envKnowledgeId } : {})
+						} 
+					} : {}),
 				});
 				const resp: any = await bedrockClient.send(command);
 				const text = resp?.output?.message?.content?.[0]?.text ?? '';
-				dlog('judge raw (first 300 chars)', text.slice(0, 300));
 				const start = text.indexOf('{');
 				const end = text.lastIndexOf('}');
 				let parsed: any = {};
@@ -184,7 +345,6 @@ export default async function chatResponse(
 					const maybe = text.slice(start, end + 1);
 					try { parsed = JSON.parse(maybe); } catch {}
 				}
-				dlog('judge parsed', parsed);
 				const accuracy = typeof parsed?.accuracy_score === 'number' ? parsed.accuracy_score : 0;
 				return {
 					accuracy,
@@ -193,7 +353,7 @@ export default async function chatResponse(
 					inaccurate_claims: parsed?.inaccurate_claims,
 				};
 			} catch (e) {
-				if (DEBUG) console.error('[AI DEBUG] Judge error', e);
+				console.error('Judge error', e);
 				return { accuracy: 0 };
 			}
 		}
@@ -205,7 +365,64 @@ export default async function chatResponse(
 			key: uuidv4(),
 		};
 
-		const aiConfig = await aiClient.config(aiConfigKey, context, {}, {userInput: userInput});
+		// Get initial AI config to extract knowledge base parameters
+		const initialAiConfig = await aiClient.config(aiConfigKey, context, {}, {userInput: userInput, chatHistory: chatHistory});
+		
+		// Extract knowledge base configuration from AI config custom parameters
+		const configDict = (initialAiConfig as any).to_dict?.() || {};
+		const modelConfig = configDict.model || {};
+		const customParams = modelConfig.custom || {};
+		const kbId = customParams.kb_id;
+		
+		// Enhanced RAG query strategy with user context and tier information
+		let enhancedQuery = userInput;
+		if (kbId) {
+			const userContextName = context.name || '';
+			const userTier = context.tier || '';
+			
+			// Check if this is a personal query
+			if (['my', 'i', 'me', 'mine'].some(word => userInput.toLowerCase().includes(word))) {
+				// Personal queries should include the user's name and tier for better RAG results
+				enhancedQuery = `${userContextName} ${userTier} tier ${userInput}`;
+			} else {
+				// Non-personal queries include tier for relevant policy information
+				enhancedQuery = `${userTier} tier ${userInput}`;
+			}
+		}
+		
+		// Retrieve knowledge base passages if KB ID is available
+		let sourcePassages: string[] = [];
+		if (kbId) {
+			const passages = await getKbPassages(enhancedQuery, kbId, context);
+			
+			// Validate that we have relevant passages for this user
+			if (!passages.includes("No relevant passages found") && !passages.includes("Error retrieving")) {
+				sourcePassages = passages.split('\n\n---\n\n').filter(p => p.trim().length > 0);
+			} else {
+				// Try a broader search without user context
+				const fallbackQuery = userInput;
+				const fallbackPassages = await getKbPassages(fallbackQuery, kbId, context);
+				
+				if (!fallbackPassages.includes("No relevant passages found") && !fallbackPassages.includes("Error retrieving")) {
+					sourcePassages = fallbackPassages.split('\n\n---\n\n').filter(p => p.trim().length > 0);
+				}
+			}
+		} else {
+			// Even without KB, include ToggleBank general information
+			const toggleBankInfo = `ToggleBank offers a comprehensive range of financial services! I can help you with:
+
+• Checking & Savings Accounts - Checking balances, viewing transaction history, and managing your accounts
+• Loans & Credit - Personal loans, home mortgages, auto loans, and credit card applications
+• Investment Services - Portfolio management, investment advice, and retirement planning
+• Digital Banking - Mobile app support, online transfers, and bill payments
+• Customer Support - Account inquiries, technical assistance, and general banking questions
+
+Is there a specific service you'd like to know more about?`;
+			
+			sourcePassages = [toggleBankInfo];
+		}
+
+		const aiConfig = initialAiConfig;
 		if (!aiConfig.enabled) {
 			throw new Error("AI config is disabled");
 		} else {
@@ -217,8 +434,6 @@ export default async function chatResponse(
 				throw new Error("AI config messages are undefined or empty");
 			}
 
-			dlog('aiConfig.model', aiConfig.model?.name);
-			dlog('aiConfig.messages', (aiConfig.messages));
 			const { tracker } = aiConfig;
 
 			try {
@@ -265,7 +480,6 @@ export default async function chatResponse(
 						if (hit) { matched = p; break; }
 					}
 				}
-				dlog('guardrail patterns', { count: patternList.length, sample: patternList.slice(0,5), matched });
 
 				// If any pattern matches, add user to Blocked Users segment
 				let blockTriggered = false;
@@ -307,59 +521,111 @@ export default async function chatResponse(
 
 				// Get the model ID from AI Configs
 				let modelId = aiConfig.model.name;
-				if (!modelId.startsWith('us.')) {
+				const isBedrock = isBedrockModel(modelId);
+				
+				if (isBedrock && !modelId.startsWith('us.')) {
 					modelId = 'us.' + modelId;
 				}
 
-				// Use streaming API
-				const streamCommand = new ConverseStreamCommand({
-					modelId: modelId,
-					messages: mapPromptToConversation(aiConfig.messages ?? []),
-					inferenceConfig: {
-						temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
-						maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 200,
-					},
-				});
+				// Combine AI config messages with chat history
+				const chatHistoryMessages = mapChatHistoryToConversation(chatHistory);
+				const allMessages = [...mapPromptToConversation(aiConfig.messages ?? []), ...chatHistoryMessages];
+				
 
-				const streamResponse = await bedrockClient.send(streamCommand);
 				let fullResponse = '';
 				let timeToFirstToken = 0;
 				let firstTokenReceived = false;
 				const startTime = Date.now(); // Start time for total duration
-
-				// Process the stream
 				let totalInputTokens = 0;
 				let totalOutputTokens = 0;
 				let totalTokens = 0;
 
-				for await (const chunk of streamResponse.stream ?? []) {
-					if (chunk.contentBlockDelta?.delta?.text) {
-						// If this is the first token/chunk
+				if (isBedrock) {
+					// Use Bedrock streaming API
+					const streamCommand = new ConverseStreamCommand({
+						modelId: modelId,
+						messages: allMessages,
+						inferenceConfig: {
+							temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
+							maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 200,
+						},
+					});
 
-						if (!firstTokenReceived) {
-							timeToFirstToken = Date.now() - startTime;
-							tracker.trackTimeToFirstToken(timeToFirstToken);
-							firstTokenReceived = true;
+					const streamResponse = await bedrockClient.send(streamCommand);
+
+					// Process the Bedrock stream
+					for await (const chunk of streamResponse.stream ?? []) {
+						if (chunk.contentBlockDelta?.delta?.text) {
+							// If this is the first token/chunk
+							if (!firstTokenReceived) {
+								timeToFirstToken = Date.now() - startTime;
+								tracker.trackTimeToFirstToken(timeToFirstToken);
+								firstTokenReceived = true;
+							}
+
+							const textChunk = chunk.contentBlockDelta.delta.text;
+							fullResponse += textChunk;
+
+							// Stream each chunk to the client using SSE format
+							res.write(`data: ${JSON.stringify({ 
+								chunk: textChunk,
+								done: false 
+							})}\n\n`);
 						}
-
-						const textChunk = chunk.contentBlockDelta.delta.text;
-						fullResponse += textChunk;
-
-						// Stream each chunk to the client using SSE format
-						res.write(`data: ${JSON.stringify({ 
-							chunk: textChunk,
-							done: false 
-						})}\n\n`);
+						if (chunk.metadata?.usage) {
+							const usage = chunk.metadata.usage;
+							totalInputTokens += usage.inputTokens ?? 0;
+							totalOutputTokens += usage.outputTokens ?? 0;
+							totalTokens += usage.totalTokens ?? 0;
+						}
 					}
-					if (chunk.metadata?.usage) {
-						const usage = chunk.metadata.usage;
-						totalInputTokens += usage.inputTokens ?? 0;
-						totalOutputTokens += usage.outputTokens ?? 0;
-						totalTokens += usage.totalTokens ?? 0;
+				} else {
+					// Use OpenAI non-streaming API
+					const openaiMessages = mapMessagesToOpenAIFormat(allMessages);
+					const response = await openai.chat.completions.create({
+						model: modelId,
+						messages: openaiMessages,
+						max_completion_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
+						response_format: { type: "text" }
+					});
+
+					// Get the full response - check multiple possible locations
+					const choice = response.choices[0];
+					fullResponse = choice?.message?.content ?? '';
+					
+					// If content is empty, check if there's reasoning or other content
+					if (!fullResponse && choice?.message) {
+						const message = choice.message;
+						
+						// Check for reasoning content or other possible content fields
+						if (message.reasoning) {
+							fullResponse = message.reasoning;
+						} else if (message.annotations && message.annotations.length > 0) {
+							fullResponse = message.annotations[0].content || '';
+						} else {
+							// If still no content, create a fallback response
+							fullResponse = "I apologize, but I'm having trouble generating a response at the moment. Please try again.";
+						}
 					}
+					
+					// Track timing
+					timeToFirstToken = Date.now() - startTime;
+					tracker.trackTimeToFirstToken(timeToFirstToken);
+					firstTokenReceived = true;
+
+					// Get actual token usage from OpenAI response
+					totalInputTokens = response.usage?.prompt_tokens ?? 0;
+					totalOutputTokens = response.usage?.completion_tokens ?? 0;
+					totalTokens = response.usage?.total_tokens ?? 0;
+
+					// Send the complete response as a single chunk
+					res.write(`data: ${JSON.stringify({ 
+						chunk: fullResponse,
+						done: false 
+					})}\n\n`);
 				}
 
-				// After the loop, send the total token usage
+				// After processing, send the total token usage
 				const tokens: LDTokenUsage = {
 					input: totalInputTokens,
 					output: totalOutputTokens,
@@ -367,11 +633,47 @@ export default async function chatResponse(
 				};
 				tracker.trackTokens?.(tokens);
 
-				// Calculate total generation time
-				const totalTime = Date.now() - startTime;
-				tracker.trackDuration?.(totalTime);
+		// Calculate total generation time
+		const totalTime = Date.now() - startTime;
+		tracker.trackDuration?.(totalTime);
 
-				// Notify client that validation is in progress
+		// Calculate cost based on model and token usage
+		function calculateModelCost(modelId: string, inputTokens: number, outputTokens: number): number {
+			// Pricing per 1000 tokens (as of early 2025)
+			const pricing: { [key: string]: { input: number; output: number } } = {
+				// Claude models
+				'claude-3-7-sonnet': { input: 0.003, output: 0.015 },
+				'claude-3-5-sonnet': { input: 0.003, output: 0.015 },
+				'claude-3-haiku': { input: 0.00025, output: 0.00125 },
+				// Nova models  
+				'nova-pro': { input: 0.0008, output: 0.0032 },
+				'nova-lite': { input: 0.0006, output: 0.0024 },
+				// OpenAI models
+				'gpt-4o': { input: 0.005, output: 0.015 },
+				'gpt-4o-mini': { input: 0.00015, output: 0.0006 },
+				'gpt-5-mini': { input: 0.0002, output: 0.0008 },
+				// Fallback pricing
+				'default': { input: 0.002, output: 0.008 }
+			};
+
+			// Find matching pricing by checking model name
+			let modelPricing = pricing.default;
+			for (const [key, value] of Object.entries(pricing)) {
+				if (modelId.toLowerCase().includes(key.toLowerCase())) {
+					modelPricing = value;
+					break;
+				}
+			}
+
+			// Calculate cost: (tokens / 1000) * price_per_1000_tokens
+			const inputCost = (inputTokens / 1000) * modelPricing.input;
+			const outputCost = (outputTokens / 1000) * modelPricing.output;
+			return Number((inputCost + outputCost).toFixed(6));
+		}
+
+		const responseCost = calculateModelCost(modelId, totalInputTokens, totalOutputTokens);
+
+		// Notify client that validation is in progress
 				try {
 					res.write(`data: ${JSON.stringify({ status: 'validating' })}\n\n`);
 					// Flush by sending a heartbeat event to nudge the stream
@@ -379,34 +681,36 @@ export default async function chatResponse(
 					await new Promise((r) => setTimeout(r, 30));
 				} catch {}
 
-				// Compute metrics (no KB): LLM-based relevance with Claude Sonnet 4, else jaccard; fidelity via judge
-				const judge = await judgeFactualAccuracy({ userContext: context, sourcePassages: [], responseText: fullResponse });
+				// Compute metrics with retrieved passages: LLM-based relevance with Claude Sonnet 4, else jaccard; fidelity via judge
+				const judge = await judgeFactualAccuracy({ 
+					userContext: context, 
+					sourcePassages: sourcePassages, 
+					responseText: fullResponse,
+					userQuestion: userInput
+				});
 				const relModel = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
 				let relevance: number | null = await computeRelevanceLLM(userInput, fullResponse, relModel);
 				if (relevance === null) relevance = computeRelevanceJaccard(userInput, fullResponse);
 				const sourceFidelity = (judge as any).sourceFidelity ?? judge.accuracy ?? 0;
-				dlog('metrics computed', { sourceFidelity, relevance, accuracy: (judge as any).accuracy });
 
-				// Track custom metrics in LaunchDarkly
+				// Track custom metrics in LaunchDarkly using the existing client
 				try {
-					const ld = await getServerClient(process.env.LD_SDK_KEY || "");
-					// @ts-ignore
-					ld.track?.('ai.source_fidelity', context, undefined, sourceFidelity);
-					// @ts-ignore
-					ld.track?.('ai.relevance', context, undefined, relevance);
-					// @ts-ignore
-					ld.track?.('ai.factual_accuracy', context, undefined, judge.accuracy);
+					ldClient.track?.('ai-source-fidelity', context, undefined, sourceFidelity);
+					ldClient.track?.('ai-relevance', context, undefined, relevance);
+					ldClient.track?.('ai-accuracy', context, undefined, judge.accuracy);
+					ldClient.track?.('ai-cost', context, undefined, responseCost);
 				} catch (e) {
 					console.warn('LD tracking failed', e);
 				}
 
 				// Push to local buffer for metrics endpoint
-				try { pushMetric({ ts: Date.now(), sourceFidelity, relevance, accuracy: judge.accuracy }); } catch {}
+				try { pushMetric({ ts: Date.now(), sourceFidelity, relevance, accuracy: judge.accuracy, cost: responseCost }); } catch {}
 
 				// Send the final response with timing information and metrics
 				const data = {
 					response: fullResponse,
 					modelName: aiConfig?.model?.name,
+					modelType: isBedrock ? 'bedrock' : 'openai',
 					enabled: aiConfig.enabled,
 					timing: {
 						timeToFirstToken: timeToFirstToken,
@@ -417,8 +721,9 @@ export default async function chatResponse(
 						sourceFidelity,
 						relevance,
 						accuracy: judge.accuracy,
+						cost: responseCost,
 						judge,
-						sourcePassageCount: 0,
+						sourcePassageCount: sourcePassages.length,
 					},
 					done: true
 				};
