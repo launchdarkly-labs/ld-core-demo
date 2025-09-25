@@ -1,0 +1,447 @@
+name: Cloud Demo Environment Recreate
+run-name: Recreate Environment for ${{ github.event.inputs.name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Username'
+        required: true
+      is_external:
+        description: 'Is External User'
+        required: false
+      webhook_url:
+        description: 'Webhook URL'
+        required: false
+        type: string
+      webhook_id:
+        description: 'Webhook ID for tracking'
+        required: false
+        type: string
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  ECR_REPOSITORY: ld-core-demo
+  KUBECTL_VERSION: "v1.23.0"
+  DEMO_NAMESPACE: ${{ github.event.inputs.name }}
+  LD_PROJECT_KEY: ${{ github.event.inputs.name }}-ld-demo
+  LD_API_KEY: ${{ secrets.LD_EAP_API_KEY }}
+  BEDROCK_GUARDRAIL_ID: ${{ secrets.BEDROCK_GUARDRAIL_ID }}
+  BEDROCK_KNOWLEDGE_ID: ${{ secrets.BEDROCK_KNOWLEDGE_ID }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  WORKFLOW_RECORDS_TABLE: ${{ secrets.WORKFLOW_RECORDS_TABLE }}
+  WORKFLOW_API_ENDPOINT: ${{ secrets.WORKFLOW_API_ENDPOINT }}
+
+jobs:
+
+  notify-start:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Started
+        run: |
+          echo "Notifying webhook of recreate workflow start..."
+          echo "Webhook URL: ${{ inputs.webhook_url }}"
+          echo "Webhook ID: ${{ inputs.webhook_id }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Environment: ${{ inputs.name }}"
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_started",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "recreate",
+              "status": "in_progress",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed, continuing anyway..."
+
+  create-workflow-record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Workflow Record in Database
+        run: |
+          echo "Creating workflow record in DynamoDB..."
+          echo "User: ${{ inputs.name }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Workflow Type: recreate"
+          
+          # Create the workflow record using AWS CLI
+          aws dynamodb put-item \
+            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
+            --item '{
+              "userKey": {"S": "${{ inputs.name }}"},
+              "runId": {"S": "${{ github.run_id }}"},
+              "workflowType": {"S": "recreate"},
+              "status": {"S": "pending"},
+              "eventType": {"S": "workflow_started"},
+              "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"},
+              "updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"},
+              "ttl": {"N": "'$(($(date +%s) + 2592000))'"},
+              "emailPrefix": {"S": "${{ inputs.name }}"},
+              "timestamp": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }' \
+            --region ${{ env.AWS_REGION }}
+          
+          echo "Workflow record created successfully"
+
+  delete-existing-environment:
+    runs-on: ubuntu-latest
+    needs: [create-workflow-record]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update Workflow Record Status to In Progress
+        run: |
+          echo "Updating workflow record status to in_progress..."
+          aws dynamodb update-item \
+            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
+            --key '{
+              "userKey": {"S": "${{ inputs.name }}"},
+              "runId": {"S": "${{ github.run_id }}"}
+            }' \
+            --update-expression "SET #status = :status, #eventType = :eventType, #updatedAt = :updatedAt" \
+            --expression-attribute-names '{
+              "#status": "status",
+              "#eventType": "eventType", 
+              "#updatedAt": "updatedAt"
+            }' \
+            --expression-attribute-values '{
+              ":status": {"S": "in_progress"},
+              ":eventType": {"S": "workflow_started"},
+              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }' \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Install LaunchDarkly CLI
+        run: npm install -g @launchdarkly/ldcli
+      
+      - name: Set LaunchDarkly Demo Engineering Account CLI Config
+        run: |
+          echo "Setting up LaunchDarkly CLI for Demo Engineering Account"
+          ldcli config --set access-token ${{ secrets.LD_EAP_API_KEY }}
+      
+      - name: Remove Demo Environment from Demo Engineering Account for ${{ env.DEMO_NAMESPACE }}
+        run: |
+          ldcli projects delete --project ${{ env.DEMO_NAMESPACE }}-ld-demo || echo "Project may not exist, continuing..."
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Delete Kubernetes Namespace
+        if: env.namespace_exists == 'true'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: delete namespace ${{ env.DEMO_NAMESPACE }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Delete any existing Route53 records
+        run: |
+          echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
+            --dns-name "${{ env.ROOT_DOMAIN }}." \
+            --query "HostedZones[0].Id" \
+            --output text)
+
+          RECORD_NAME="${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}"
+          echo "Looking for existing record: $RECORD_NAME"
+
+          # Fetch matching records
+          MATCHED=$(aws route53 list-resource-record-sets \
+            --hosted-zone-id "$HOSTED_ZONE_ID" \
+            --query "ResourceRecordSets[?Name == '$RECORD_NAME.']" \
+            --output json)
+
+          # Delete if found
+          if [[ "$MATCHED" != "[]" ]]; then
+            echo "Deleting existing records for $RECORD_NAME..."
+            echo "$MATCHED" | jq -c '.[]' | while read -r record; do
+              # Wrap in full change batch
+              echo "{
+                \"Comment\": \"Deleting old record\",
+                \"Changes\": [
+                  {
+                    \"Action\": \"DELETE\",
+                    \"ResourceRecordSet\": $record
+                  }
+                ]
+              }" > delete-record.json
+
+              aws route53 change-resource-record-sets \
+                --hosted-zone-id "$HOSTED_ZONE_ID" \
+                --change-batch file://delete-record.json
+            done
+          else
+            echo "No existing record found for $RECORD_NAME."
+          fi
+        env:
+          AWS_REGION: 'us-east-1'
+          ROOT_DOMAIN: launchdarklydemos.com
+
+  create-new-environment:
+    runs-on: ubuntu-latest
+    needs: [delete-existing-environment]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./.github/workflows/demo_provisioning_scripts/requirements.txt
+
+      - name: Create / Setup LaunchDarkly Project
+        id: ld_project_setup
+        run: |
+          echo "Creating and Setting up LaunchDarkly project for namespace: ${{ env.DEMO_NAMESPACE }}"
+          python ./.github/workflows/demo_provisioning_scripts/DemoBuilder.py
+
+      - name: Create .env file for demo pod
+        run: |
+          touch ./.env.production
+          echo NEXT_PUBLIC_LD_CLIENT_KEY=${{ env.LD_CLIENT_KEY }} >> ./.env.production
+          echo LD_SDK_KEY=${{ env.LD_SDK_KEY }} >> ./.env.production
+          echo LD_API_KEY=${{ env.LD_API_KEY }} >> ./.env.production
+          echo DESTINATIONENV=production >> ./.env.production
+          echo PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
+          echo NEXT_PUBLIC_PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
+          echo BEDROCK_GUARDRAIL_ID=${{ env.BEDROCK_GUARDRAIL_ID }} >> ./.env.production
+          echo BEDROCK_KNOWLEDGE_ID=${{ env.BEDROCK_KNOWLEDGE_ID }} >> ./.env.production
+          echo OPENAI_API_KEY=${{ env.OPENAI_API_KEY }} >> ./.env.production
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ld-core-demo
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
+
+      - name: Update K8s Deploy File
+        run: python ./.github/workflows/update_k8s_deploy_file.py
+        env:
+          NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          IS_EXTERNAL: ${{ github.event.inputs.is_external == 'true' && 'true' || (github.event.inputs.is_external == '' && 'false' || 'false') }}
+          URL: ${{ env.DEMO_NAMESPACE }}.launchdarklydemos.com
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/ld-core-demo:${{ env.DEMO_NAMESPACE }}-${{ github.run_id }}
+
+      - name: Check Namespace in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get namespace ${{ env.DEMO_NAMESPACE }} &>/dev/null && echo "namespace_exists=true" >> $GITHUB_ENV || echo "namespace_exists=false" >> $GITHUB_ENV
+
+      - name: Create Namespace In Kubernetes
+        if: env.namespace_exists == 'false'
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: create namespace ${{ env.DEMO_NAMESPACE }}
+
+      - name: Applying deploy file to Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Get NGINX Ingress Controller Load Balancer IP
+        id: get-nginx-lb
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' > hostname.txt && echo "NGINX_LB_HOSTNAME=$(cat hostname.txt)" >> $GITHUB_ENV
+
+      - name: Refresh Route 53 CNAME Record for NGINX Ingress
+        run: |
+          echo "Fetching Hosted Zone ID for ${{ env.ROOT_DOMAIN }}"
+          HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
+            --dns-name "${{ env.ROOT_DOMAIN }}." \
+            --query "HostedZones[0].Id" \
+            --output text)
+
+          RECORD_NAME="${{ env.DEMO_NAMESPACE }}.${{ env.ROOT_DOMAIN }}"
+          echo "Looking for existing record: $RECORD_NAME"
+
+          # Fetch matching records
+          MATCHED=$(aws route53 list-resource-record-sets \
+            --hosted-zone-id "$HOSTED_ZONE_ID" \
+            --query "ResourceRecordSets[?Name == '$RECORD_NAME.']" \
+            --output json)
+
+          # Delete if found
+          if [[ "$MATCHED" != "[]" ]]; then
+            echo "Deleting existing records for $RECORD_NAME..."
+            echo "$MATCHED" | jq -c '.[]' | while read -r record; do
+              # Wrap in full change batch
+              echo "{
+                \"Comment\": \"Deleting old record\",
+                \"Changes\": [
+                  {
+                    \"Action\": \"DELETE\",
+                    \"ResourceRecordSet\": $record
+                  }
+                ]
+              }" > delete-record.json
+
+              aws route53 change-resource-record-sets \
+                --hosted-zone-id "$HOSTED_ZONE_ID" \
+                --change-batch file://delete-record.json
+            done
+          else
+            echo "No existing record found for $RECORD_NAME."
+          fi
+
+          echo "Creating CNAME record for $RECORD_NAME → ${{ env.NGINX_LB_HOSTNAME }}"
+
+          echo "{
+            \"Comment\": \"Create CNAME for NGINX Ingress\",
+            \"Changes\": [
+              {
+                \"Action\": \"UPSERT\",
+                \"ResourceRecordSet\": {
+                  \"Name\": \"$RECORD_NAME\",
+                  \"Type\": \"CNAME\",
+                  \"TTL\": 300,
+                  \"ResourceRecords\": [
+                    {
+                      \"Value\": \"${{ env.NGINX_LB_HOSTNAME }}\"
+                    }
+                  ]
+                }
+              }
+            ]
+          }" > create-record.json
+
+          aws route53 change-resource-record-sets \
+            --hosted-zone-id "$HOSTED_ZONE_ID" \
+            --change-batch file://create-record.json
+        env:
+          AWS_REGION: us-east-1
+          ROOT_DOMAIN: launchdarklydemos.com
+          DEMO_NAMESPACE: ${{ env.DEMO_NAMESPACE }}
+          NGINX_LB_HOSTNAME: ${{ env.NGINX_LB_HOSTNAME }}
+
+      - name: Delete the deploy file
+        run: rm -rf ./.github/workflows/deploy_files
+
+      - name: Remove .env file
+        run: rm ./.env.production
+
+  update-workflow-record-success:
+    runs-on: ubuntu-latest
+    needs: [delete-existing-environment, create-new-environment]
+    if: ${{ always() && needs.create-new-environment.result == 'success' }}
+    steps:
+      - name: Update Workflow Record Status to Completed
+        run: |
+          echo "Updating workflow record status to completed..."
+          aws dynamodb update-item \
+            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
+            --key '{
+              "userKey": {"S": "${{ inputs.name }}"},
+              "runId": {"S": "${{ github.run_id }}"}
+            }' \
+            --update-expression "SET #status = :status, #eventType = :eventType, #conclusion = :conclusion, #updatedAt = :updatedAt" \
+            --expression-attribute-names '{
+              "#status": "status",
+              "#eventType": "eventType",
+              "#conclusion": "conclusion",
+              "#updatedAt": "updatedAt"
+            }' \
+            --expression-attribute-values '{
+              ":status": {"S": "completed"},
+              ":eventType": {"S": "workflow_completed"},
+              ":conclusion": {"S": "success"},
+              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }' \
+            --region ${{ env.AWS_REGION }}
+
+  update-workflow-record-failure:
+    runs-on: ubuntu-latest
+    needs: [delete-existing-environment, create-new-environment]
+    if: ${{ always() && needs.create-new-environment.result == 'failure' }}
+    steps:
+      - name: Update Workflow Record Status to Failed
+        run: |
+          echo "Updating workflow record status to failed..."
+          aws dynamodb update-item \
+            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
+            --key '{
+              "userKey": {"S": "${{ inputs.name }}"},
+              "runId": {"S": "${{ github.run_id }}"}
+            }' \
+            --update-expression "SET #status = :status, #eventType = :eventType, #conclusion = :conclusion, #updatedAt = :updatedAt" \
+            --expression-attribute-names '{
+              "#status": "status",
+              "#eventType": "eventType",
+              "#conclusion": "conclusion",
+              "#updatedAt": "updatedAt"
+            }' \
+            --expression-attribute-values '{
+              ":status": {"S": "failed"},
+              ":eventType": {"S": "workflow_failed"},
+              ":conclusion": {"S": "failure"},
+              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }' \
+            --region ${{ env.AWS_REGION }}
+
+  notify-completion:
+    runs-on: ubuntu-latest
+    needs: [delete-existing-environment, create-new-environment, update-workflow-record-success, update-workflow-record-failure]
+    if: ${{ always() && inputs.webhook_url != '' && inputs.webhook_id != '' }}
+    steps:
+      - name: Notify Workflow Completed
+        run: |
+          echo "Notifying webhook of recreate workflow completion..."
+          
+          # Determine the conclusion based on the previous jobs
+          if [ "${{ needs.create-new-environment.result }}" == "success" ]; then
+            CONCLUSION="success"
+            STATUS="completed"
+          else
+            CONCLUSION="failure"
+            STATUS="completed"
+          fi
+          
+          curl -X POST "${{ inputs.webhook_url }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions" \
+            -d '{
+              "event": "workflow_completed",
+              "run_id": "${{ github.run_id }}",
+              "workflow_type": "recreate",
+              "status": "'$STATUS'",
+              "conclusion": "'$CONCLUSION'",
+              "webhook_id": "${{ inputs.webhook_id }}",
+              "email_prefix": "${{ inputs.name }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || echo "Webhook notification failed"
