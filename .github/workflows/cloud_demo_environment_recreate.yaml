@@ -67,29 +67,24 @@ jobs:
     steps:
       - name: Create Workflow Record in Database
         run: |
-          echo "Creating workflow record in DynamoDB..."
+          echo "Creating workflow record via API..."
           echo "User: ${{ inputs.name }}"
           echo "Run ID: ${{ github.run_id }}"
           echo "Workflow Type: recreate"
           
-          # Create the workflow record using AWS CLI
-          aws dynamodb put-item \
-            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
-            --item '{
-              "userKey": {"S": "${{ inputs.name }}"},
-              "runId": {"S": "${{ github.run_id }}"},
-              "workflowType": {"S": "recreate"},
-              "status": {"S": "pending"},
-              "eventType": {"S": "workflow_started"},
-              "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"},
-              "updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"},
-              "ttl": {"N": "'$(($(date +%s) + 2592000))'"},
-              "emailPrefix": {"S": "${{ inputs.name }}"},
-              "timestamp": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-            }' \
-            --region ${{ env.AWS_REGION }}
+          # Create the workflow record using the API endpoint
+          curl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "userKey": "${{ inputs.name }}",
+              "runId": "${{ github.run_id }}",
+              "workflowType": "recreate",
+              "status": "pending",
+              "eventType": "workflow_started",
+              "emailPrefix": "${{ inputs.name }}"
+            }' || echo "Failed to create workflow record, continuing anyway..."
           
-          echo "Workflow record created successfully"
+          echo "Workflow record creation attempted"
 
   delete-existing-environment:
     runs-on: ubuntu-latest
@@ -101,24 +96,16 @@ jobs:
       - name: Update Workflow Record Status to In Progress
         run: |
           echo "Updating workflow record status to in_progress..."
-          aws dynamodb update-item \
-            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
-            --key '{
-              "userKey": {"S": "${{ inputs.name }}"},
-              "runId": {"S": "${{ github.run_id }}"}
-            }' \
-            --update-expression "SET #status = :status, #eventType = :eventType, #updatedAt = :updatedAt" \
-            --expression-attribute-names '{
-              "#status": "status",
-              "#eventType": "eventType", 
-              "#updatedAt": "updatedAt"
-            }' \
-            --expression-attribute-values '{
-              ":status": {"S": "in_progress"},
-              ":eventType": {"S": "workflow_started"},
-              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-            }' \
-            --region ${{ env.AWS_REGION }}
+          curl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "userKey": "${{ inputs.name }}",
+              "runId": "${{ github.run_id }}",
+              "workflowType": "recreate",
+              "status": "in_progress",
+              "eventType": "workflow_started",
+              "emailPrefix": "${{ inputs.name }}"
+            }' || echo "Failed to update workflow record, continuing anyway..."
 
       - name: Install LaunchDarkly CLI
         run: npm install -g @launchdarkly/ldcli
@@ -364,26 +351,17 @@ jobs:
       - name: Update Workflow Record Status to Completed
         run: |
           echo "Updating workflow record status to completed..."
-          aws dynamodb update-item \
-            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
-            --key '{
-              "userKey": {"S": "${{ inputs.name }}"},
-              "runId": {"S": "${{ github.run_id }}"}
-            }' \
-            --update-expression "SET #status = :status, #eventType = :eventType, #conclusion = :conclusion, #updatedAt = :updatedAt" \
-            --expression-attribute-names '{
-              "#status": "status",
-              "#eventType": "eventType",
-              "#conclusion": "conclusion",
-              "#updatedAt": "updatedAt"
-            }' \
-            --expression-attribute-values '{
-              ":status": {"S": "completed"},
-              ":eventType": {"S": "workflow_completed"},
-              ":conclusion": {"S": "success"},
-              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-            }' \
-            --region ${{ env.AWS_REGION }}
+          curl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "userKey": "${{ inputs.name }}",
+              "runId": "${{ github.run_id }}",
+              "workflowType": "recreate",
+              "status": "completed",
+              "eventType": "workflow_completed",
+              "conclusion": "success",
+              "emailPrefix": "${{ inputs.name }}"
+            }' || echo "Failed to update workflow record, continuing anyway..."
 
   update-workflow-record-failure:
     runs-on: ubuntu-latest
@@ -393,26 +371,17 @@ jobs:
       - name: Update Workflow Record Status to Failed
         run: |
           echo "Updating workflow record status to failed..."
-          aws dynamodb update-item \
-            --table-name ${{ env.WORKFLOW_RECORDS_TABLE }} \
-            --key '{
-              "userKey": {"S": "${{ inputs.name }}"},
-              "runId": {"S": "${{ github.run_id }}"}
-            }' \
-            --update-expression "SET #status = :status, #eventType = :eventType, #conclusion = :conclusion, #updatedAt = :updatedAt" \
-            --expression-attribute-names '{
-              "#status": "status",
-              "#eventType": "eventType",
-              "#conclusion": "conclusion",
-              "#updatedAt": "updatedAt"
-            }' \
-            --expression-attribute-values '{
-              ":status": {"S": "failed"},
-              ":eventType": {"S": "workflow_failed"},
-              ":conclusion": {"S": "failure"},
-              ":updatedAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-            }' \
-            --region ${{ env.AWS_REGION }}
+          curl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "userKey": "${{ inputs.name }}",
+              "runId": "${{ github.run_id }}",
+              "workflowType": "recreate",
+              "status": "failed",
+              "eventType": "workflow_failed",
+              "conclusion": "failure",
+              "emailPrefix": "${{ inputs.name }}"
+            }' || echo "Failed to update workflow record, continuing anyway..."
 
   notify-completion:
     runs-on: ubuntu-latest
