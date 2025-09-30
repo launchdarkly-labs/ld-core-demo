@@ -138,6 +138,7 @@ class DemoBuilder:
         print("Creating metric groups...")
         self.metgroup_store_purchases()
         self.metgroup_shorten_collection_page()
+        self.metgroup_togglebank_signup_funnel()
         print("Done")
         self.metric_groups_created = True
         
@@ -457,8 +458,8 @@ class DemoBuilder:
         )
 
     def run_togglebank_signup_funnel_experiment(self):
-        if not self.metrics_created:
-            print("Error: Metric not created")
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
             return
         print("Creating experiment: ")
         self.ldproject.toggle_flag(
@@ -474,11 +475,7 @@ class DemoBuilder:
         
     def create_togglebank_signup_funnel_experiment(self):
         metrics = [
-            self.ldproject.exp_metric("signup-started", False),
-            self.ldproject.exp_metric("initial-signup-completed", False),
-            self.ldproject.exp_metric("signup-personal-details-completed", False),
-            self.ldproject.exp_metric("signup-services-completed", False),
-            self.ldproject.exp_metric("signup-flow-completed", False)
+            self.ldproject.exp_metric("togglebank-signup-funnel", True)
         ]
         res = self.ldproject.create_experiment(
             "togglebank-signup-funnel-experiment",
@@ -1737,6 +1734,21 @@ class DemoBuilder:
             ],
             kind="funnel",
             description="This metric group will track the store purchases relating to the new shorten collection page.",
+        )
+           
+    def metgroup_togglebank_signup_funnel(self):
+        res = self.ldproject.create_metric_group(
+            "togglebank-signup-funnel",
+            "ToggleBank Signup Funnel",
+            [
+                {"key": "signup-started", "nameInGroup": "1"},
+                {"key": "initial-signup-completed", "nameInGroup": "2"},
+                {"key": "signup-personal-details-completed", "nameInGroup": "3"},
+                {"key": "signup-services-completed", "nameInGroup": "4"},
+                {"key": "signup-flow-completed", "nameInGroup": "5"},
+            ],
+            kind="funnel",
+            description="This metric group will track the ToggleBank signup funnel conversion flow.",
         )
            
         
