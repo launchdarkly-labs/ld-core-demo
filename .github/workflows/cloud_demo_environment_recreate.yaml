@@ -74,13 +74,6 @@ jobs:
             }' \
             --cli-binary-format raw-in-base64-out \
             /tmp/lambda-response.json || echo "Failed to update workflow record, continuing anyway..."
-              "userKey": "${{ inputs.name }}",
-              "runId": "${{ github.run_id }}",
-              "workflowType": "recreate",
-              "status": "in_progress",
-              "eventType": "workflow_started",
-              "emailPrefix": "${{ inputs.name }}"
-            }' || echo "Failed to update workflow record, continuing anyway..."
 
       - name: Install LaunchDarkly CLI
         run: npm install -g @launchdarkly/ldcli
