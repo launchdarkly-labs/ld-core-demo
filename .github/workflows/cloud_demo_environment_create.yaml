@@ -1,4 +1,4 @@
-name: Cloud Demo Environment Provisioning
+name: Core Demo Project Provisioning
 run-name: Demo Environment for ${{ github.event.inputs.name }}
 
 on:
