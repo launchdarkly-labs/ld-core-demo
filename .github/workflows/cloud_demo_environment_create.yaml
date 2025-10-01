@@ -48,7 +48,7 @@ jobs:
           
           # Create the workflow record using awscurl with IAM authentication
           # This will actually invoke the API and write to the database
-          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}" \
             -H "Content-Type: application/json" \
             -d '{
               "userKey": "${{ inputs.name }}",
