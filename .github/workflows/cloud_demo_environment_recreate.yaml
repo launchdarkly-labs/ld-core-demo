@@ -38,26 +38,20 @@ jobs:
 
       - name: Create Workflow Record in Database
         run: |
-          echo "Creating workflow record via API..."
+          echo "Creating workflow record via Lambda function..."
           echo "User: ${{ inputs.name }}"
           echo "Run ID: ${{ github.run_id }}"
           echo "Workflow Type: recreate"
           
-          # Install awscurl for making authenticated requests to API Gateway
-          pip install awscurl
-          
-          # Create the workflow record using awscurl with IAM authentication
-          # This will actually invoke the API and write to the database
-          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "userKey": "${{ inputs.name }}",
-              "runId": "${{ github.run_id }}",
-              "workflowType": "recreate",
-              "status": "pending",
-              "eventType": "workflow_started",
-              "emailPrefix": "${{ inputs.name }}"
-            }' || echo "Failed to create workflow record, continuing anyway..."
+          # Create the workflow record using AWS Lambda invoke
+          # This will directly invoke the Lambda function and write to the database
+          aws lambda invoke \
+            --function-name ${{ secrets.WORKFLOW_LAMBDA_FUNCTION_ARN }} \
+            --payload '{
+              "body": "{\"userKey\": \"${{ inputs.name }}\", \"runId\": \"${{ github.run_id }}\", \"workflowType\": \"recreate\", \"status\": \"pending\", \"eventType\": \"workflow_started\", \"emailPrefix\": \"${{ inputs.name }}\"}"
+            }' \
+            --cli-binary-format raw-in-base64-out \
+            /tmp/lambda-response.json || echo "Failed to create workflow record, continuing anyway..."
           
           echo "Workflow record creation attempted"
 
@@ -73,9 +67,13 @@ jobs:
           echo "Updating workflow record status to in_progress..."
           
           # Update the workflow record using awscurl with IAM authentication
-          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
-            -H "Content-Type: application/json" \
-            -d '{
+          aws lambda invoke \
+            --function-name ${{ secrets.WORKFLOW_LAMBDA_FUNCTION_ARN }} \
+            --payload '{
+              "body": "{\"userKey\": \"${{ inputs.name }}\", \"runId\": \"${{ github.run_id }}\", \"workflowType\": \"recreate\", \"status\": \"in_progress\", \"eventType\": \"workflow_started\", \"emailPrefix\": \"${{ inputs.name }}\"}"
+            }' \
+            --cli-binary-format raw-in-base64-out \
+            /tmp/lambda-response.json || echo "Failed to update workflow record, continuing anyway..."
               "userKey": "${{ inputs.name }}",
               "runId": "${{ github.run_id }}",
               "workflowType": "recreate",
@@ -330,17 +328,13 @@ jobs:
           echo "Updating workflow record status to completed..."
           
           # Update the workflow record using awscurl with IAM authentication
-          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "userKey": "${{ inputs.name }}",
-              "runId": "${{ github.run_id }}",
-              "workflowType": "recreate",
-              "status": "completed",
-              "eventType": "workflow_completed",
-              "conclusion": "success",
-              "emailPrefix": "${{ inputs.name }}"
-            }' || echo "Failed to update workflow record, continuing anyway..."
+          aws lambda invoke \
+            --function-name ${{ secrets.WORKFLOW_LAMBDA_FUNCTION_ARN }} \
+            --payload '{
+              "body": "{\"userKey\": \"${{ inputs.name }}\", \"runId\": \"${{ github.run_id }}\", \"workflowType\": \"recreate\", \"status\": \"completed\", \"eventType\": \"workflow_completed\", \"conclusion\": \"success\", \"emailPrefix\": \"${{ inputs.name }}\"}"
+            }' \
+            --cli-binary-format raw-in-base64-out \
+            /tmp/lambda-response.json || echo "Failed to update workflow record, continuing anyway..."
 
   update-workflow-record-failure:
     runs-on: ubuntu-latest
@@ -352,14 +346,10 @@ jobs:
           echo "Updating workflow record status to failed..."
           
           # Update the workflow record using awscurl with IAM authentication
-          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "userKey": "${{ inputs.name }}",
-              "runId": "${{ github.run_id }}",
-              "workflowType": "recreate",
-              "status": "failed",
-              "eventType": "workflow_failed",
-              "conclusion": "failure",
-              "emailPrefix": "${{ inputs.name }}"
-            }' || echo "Failed to update workflow record, continuing anyway..."
+          aws lambda invoke \
+            --function-name ${{ secrets.WORKFLOW_LAMBDA_FUNCTION_ARN }} \
+            --payload '{
+              "body": "{\"userKey\": \"${{ inputs.name }}\", \"runId\": \"${{ github.run_id }}\", \"workflowType\": \"recreate\", \"status\": \"failed\", \"eventType\": \"workflow_failed\", \"conclusion\": \"failure\", \"emailPrefix\": \"${{ inputs.name }}\"}"
+            }' \
+            --cli-binary-format raw-in-base64-out \
+            /tmp/lambda-response.json || echo "Failed to update workflow record, continuing anyway..."
