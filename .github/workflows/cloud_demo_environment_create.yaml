@@ -85,13 +85,6 @@ jobs:
             }' \
             --cli-binary-format raw-in-base64-out \
             /tmp/lambda-response.json || echo "Failed to update workflow record, continuing anyway..."
-              "userKey": "${{ inputs.name }}",
-              "runId": "${{ github.run_id }}",
-              "workflowType": "create",
-              "status": "in_progress",
-              "eventType": "workflow_started",
-              "emailPrefix": "${{ inputs.name }}"
-            }' || echo "Failed to update workflow record, continuing anyway..."
 
       - name: Create / Setup LaunchDarkly Project
         id: ld_project_setup
