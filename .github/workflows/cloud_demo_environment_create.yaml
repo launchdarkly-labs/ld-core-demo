@@ -43,23 +43,14 @@ jobs:
           echo "Run ID: ${{ github.run_id }}"
           echo "Workflow Type: create"
           
-          # Extract API Gateway ID from the endpoint URL
-          API_ID=$(echo "${{ env.WORKFLOW_API_ENDPOINT }}" | sed 's/.*\/\([^\/]*\)\.execute-api\..*/\1/')
-          echo "API Gateway ID: $API_ID"
+          # Install awscurl for making authenticated requests to API Gateway
+          pip install awscurl
           
-          # Get the resource ID for the upsert-workflow-record endpoint
-          RESOURCE_ID=$(aws apigateway get-resources \
-            --rest-api-id "$API_ID" \
-            --query 'items[?pathPart==`upsert-workflow-record`].id' \
-            --output text)
-          echo "Resource ID: $RESOURCE_ID"
-          
-          # Create the workflow record using AWS CLI with IAM authentication
-          aws apigateway test-invoke-method \
-            --rest-api-id "$API_ID" \
-            --resource-id "$RESOURCE_ID" \
-            --http-method POST \
-            --body '{
+          # Create the workflow record using awscurl with IAM authentication
+          # This will actually invoke the API and write to the database
+          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
               "userKey": "${{ inputs.name }}",
               "runId": "${{ github.run_id }}",
               "workflowType": "create",
@@ -92,21 +83,10 @@ jobs:
         run: |
           echo "Updating workflow record status to in_progress..."
           
-          # Extract API Gateway ID from the endpoint URL
-          API_ID=$(echo "${{ env.WORKFLOW_API_ENDPOINT }}" | sed 's/.*\/\([^\/]*\)\.execute-api\..*/\1/')
-          
-          # Get the resource ID for the upsert-workflow-record endpoint
-          RESOURCE_ID=$(aws apigateway get-resources \
-            --rest-api-id "$API_ID" \
-            --query 'items[?pathPart==`upsert-workflow-record`].id' \
-            --output text)
-          
-          # Update the workflow record using AWS CLI with IAM authentication
-          aws apigateway test-invoke-method \
-            --rest-api-id "$API_ID" \
-            --resource-id "$RESOURCE_ID" \
-            --http-method POST \
-            --body '{
+          # Update the workflow record using awscurl with IAM authentication
+          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
               "userKey": "${{ inputs.name }}",
               "runId": "${{ github.run_id }}",
               "workflowType": "create",
@@ -270,21 +250,10 @@ jobs:
         run: |
           echo "Updating workflow record status to completed..."
           
-          # Extract API Gateway ID from the endpoint URL
-          API_ID=$(echo "${{ env.WORKFLOW_API_ENDPOINT }}" | sed 's/.*\/\([^\/]*\)\.execute-api\..*/\1/')
-          
-          # Get the resource ID for the upsert-workflow-record endpoint
-          RESOURCE_ID=$(aws apigateway get-resources \
-            --rest-api-id "$API_ID" \
-            --query 'items[?pathPart==`upsert-workflow-record`].id' \
-            --output text)
-          
-          # Update the workflow record using AWS CLI with IAM authentication
-          aws apigateway test-invoke-method \
-            --rest-api-id "$API_ID" \
-            --resource-id "$RESOURCE_ID" \
-            --http-method POST \
-            --body '{
+          # Update the workflow record using awscurl with IAM authentication
+          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
               "userKey": "${{ inputs.name }}",
               "runId": "${{ github.run_id }}",
               "workflowType": "create",
@@ -303,21 +272,10 @@ jobs:
         run: |
           echo "Updating workflow record status to failed..."
           
-          # Extract API Gateway ID from the endpoint URL
-          API_ID=$(echo "${{ env.WORKFLOW_API_ENDPOINT }}" | sed 's/.*\/\([^\/]*\)\.execute-api\..*/\1/')
-          
-          # Get the resource ID for the upsert-workflow-record endpoint
-          RESOURCE_ID=$(aws apigateway get-resources \
-            --rest-api-id "$API_ID" \
-            --query 'items[?pathPart==`upsert-workflow-record`].id' \
-            --output text)
-          
-          # Update the workflow record using AWS CLI with IAM authentication
-          aws apigateway test-invoke-method \
-            --rest-api-id "$API_ID" \
-            --resource-id "$RESOURCE_ID" \
-            --http-method POST \
-            --body '{
+          # Update the workflow record using awscurl with IAM authentication
+          awscurl -X POST "${{ env.WORKFLOW_API_ENDPOINT }}/api/upsert-workflow-record" \
+            -H "Content-Type: application/json" \
+            -d '{
               "userKey": "${{ inputs.name }}",
               "runId": "${{ github.run_id }}",
               "workflowType": "create",
