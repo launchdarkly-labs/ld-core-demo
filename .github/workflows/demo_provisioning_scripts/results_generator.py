@@ -516,6 +516,66 @@ def hallucination_detection_experiment_results_generator(client):
             continue
     logging.info("Hallucination detection experiment results generation for ai-config--togglebot completed")
 
+def togglebank_signup_funnel_experiment_results_generator(client):
+    LD_FEATURE_FLAG_KEY = "releaseNewSignupPromo"
+    SIGNUP_STARTED_KEY = "signup-started"
+    INITIAL_SIGNUP_COMPLETED_KEY = "initial-signup-completed"
+    PERSONAL_DETAILS_COMPLETED_KEY = "signup-personal-details-completed"
+    SERVICES_COMPLETED_KEY = "signup-services-completed"
+    SIGNUP_FLOW_COMPLETED_KEY = "signup-flow-completed"
+    NUM_USERS = 3000
+
+    logging.info("Starting funnel experiment results generation for releaseNewSignupPromo...")
+
+    for i in range(NUM_USERS):
+        try:
+            user_context = generate_user_context()
+            variation = client.variation(LD_FEATURE_FLAG_KEY, user_context, "control")
+            
+            client.track(SIGNUP_STARTED_KEY, user_context)
+            
+            if variation == "credit-card-offer":
+                step2_rate = 0.70
+                step3_rate = 0.65
+                step4_rate = 0.55
+                step5_rate = 0.45
+            elif variation == "mortgage-offer":
+                step2_rate = 0.75
+                step3_rate = 0.70
+                step4_rate = 0.62
+                step5_rate = 0.52
+            elif variation == "cashback-offer":
+                step2_rate = 0.65
+                step3_rate = 0.58
+                step4_rate = 0.48
+                step5_rate = 0.38
+            else:
+                step2_rate = 0.68
+                step3_rate = 0.60
+                step4_rate = 0.50
+                step5_rate = 0.40
+            
+            if random.random() < step2_rate:
+                client.track(INITIAL_SIGNUP_COMPLETED_KEY, user_context)
+                
+                if random.random() < step3_rate:
+                    client.track(PERSONAL_DETAILS_COMPLETED_KEY, user_context)
+                    
+                    if random.random() < step4_rate:
+                        client.track(SERVICES_COMPLETED_KEY, user_context)
+                        
+                        if random.random() < step5_rate:
+                            client.track(SIGNUP_FLOW_COMPLETED_KEY, user_context)
+                            logging.info(f"User {user_context.key} completed full signup funnel with {variation} variation")
+            
+            if (i + 1) % 100 == 0:
+                logging.info(f"Processed {i + 1} users for ToggleBank signup funnel experiment results")
+                client.flush()
+        except Exception as e:
+            logging.error(f"Error processing user {i}: {str(e)}")
+            continue
+    logging.info("Funnel experiment results generation for releaseNewSignupPromo completed")
+
 def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
     sdk_key = os.getenv("LD_SDK_KEY")
@@ -531,6 +591,7 @@ def generate_results(project_key, api_key):
         hero_image_experiment_results_generator(client)
         hero_redesign_experiment_results_generator(client)
         hallucination_detection_experiment_results_generator(client)
+        togglebank_signup_funnel_experiment_results_generator(client)
         stop_event = threading.Event()
         risk_mgmt_stop_event = threading.Event()
         financial_agent_stop_event = threading.Event()
