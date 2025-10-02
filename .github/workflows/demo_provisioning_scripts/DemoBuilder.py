@@ -484,7 +484,7 @@ class DemoBuilder:
             "releaseNewSignupPromo",
             "Testing which marketing banner offer (credit card, mortgage, or cashback) drives the most signup conversions in ToggleBank.",
             metrics=metrics,
-            primary_key="signup-flow-completed",
+            primary_key="togglebank-signup-funnel",
             attributes=["device", "location", "tier", "operating_system"],
             flagConfigVersion=2
         )
