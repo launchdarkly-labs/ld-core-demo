@@ -7,6 +7,15 @@ import bankHomePageBackgroundRight from "@/public/banking/backgrounds/bank-homep
 import bankHomePageBackgroundLeft from "@/public/banking/backgrounds/bank-homepage-background-left.svg";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const LaunchDarklyToolbar = dynamic(
+  () =>
+    import("@launchdarkly/toolbar").then((mod) => ({
+      default: mod.LaunchDarklyToolbar,
+    })),
+  { ssr: false }
+);
 
 export default function Bank() {
   const { isLoggedIn } = useContext(LoginContext);
@@ -18,6 +27,7 @@ export default function Bank() {
         transition={{ duration: 0.5 }}
         className={` w-full min-h-screen  bg-cover bg-center bg-no-repeat pb-10`}
       >
+        <LaunchDarklyToolbar />
         {!isLoggedIn ? (
           <>
             <Image
@@ -31,14 +41,13 @@ export default function Bank() {
               alt="Bank Home Page Background"
             />
             <BankHomePage />
-
           </>
         ) : (
           <>
             <BankUserDashboard />
           </>
         )}
-        <Chatbot vertical="banking"/>
+        <Chatbot vertical="banking" />
       </motion.main>
     </>
   );
