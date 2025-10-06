@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { asyncWithLDProvider } from "launchdarkly-react-client-sdk";
 import { initTelemetry, inspectors } from "@launchdarkly/browser-telemetry";
 import Observability from "@launchdarkly/observability";
@@ -6,16 +6,31 @@ import SessionReplay from "@launchdarkly/session-replay";
 import { v4 as uuidv4 } from "uuid";
 import { setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
-import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
+import {
+  isAndroid,
+  isIOS,
+  isBrowser,
+  isMobile,
+  isMacOs,
+  isWindows,
+} from "react-device-detect";
+import { eventInterceptionPlugin, flagOverridePlugin } from "@/lib/plugins";
 
 const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [LDProvider, setLDProvider] = useState<any>(null);
 
   useEffect(() => {
     const initializeLDProvider = async () => {
-      const operatingSystem = isAndroid ? 'Android' : isIOS ? 'iOS' : isWindows ? 'Windows' : isMacOs ? 'macOS' : '';
-      const device = isMobile ? 'Mobile' : isBrowser ? 'Desktop' : '';
-      
+      const operatingSystem = isAndroid
+        ? "Android"
+        : isIOS
+        ? "iOS"
+        : isWindows
+        ? "Windows"
+        : isMacOs
+        ? "macOS"
+        : "";
+      const device = isMobile ? "Mobile" : isBrowser ? "Desktop" : "";
 
       const context = {
         kind: "multi",
@@ -45,7 +60,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
         },
         audience: {
           key: uuidv4().slice(0, 10),
-        }
+        },
       };
 
       setCookie(LD_CONTEXT_COOKIE_KEY, context);
@@ -62,28 +77,32 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           },
           inspectors: inspectors(),
           eventCapacity: 1000,
-          privateAttributes: ['email', 'name'],
+          privateAttributes: ["email", "name"],
           plugins: [
             new Observability({
-              serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
+              serviceName:
+                process.env.NEXT_PUBLIC_PROJECT_KEY + "-observability",
               tracingOrigins: true,
               networkRecording: {
                 enabled: true,
                 recordHeadersAndBody: true,
                 urlBlocklist: [],
-              }
+              },
             }),
             new SessionReplay({
-              serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
-              privacySetting: 'none',
+              serviceName:
+                process.env.NEXT_PUBLIC_PROJECT_KEY + "-session-replay",
+              privacySetting: "none",
               tracingOrigins: true,
               inlineImages: true,
               inlineVideos: true,
-              inlineStylesheet: true
-            })
-          ]
+              inlineStylesheet: true,
+            }),
+            flagOverridePlugin,
+            eventInterceptionPlugin,
+          ],
         },
-        context: context
+        context: context,
       });
 
       setLDProvider(() => Provider);
