@@ -31,14 +31,13 @@ export default function Bank() {
               alt="Bank Home Page Background"
             />
             <BankHomePage />
-
           </>
         ) : (
           <>
             <BankUserDashboard />
           </>
         )}
-        <Chatbot vertical="banking"/>
+        <Chatbot vertical="banking" />
       </motion.main>
     </>
   );
