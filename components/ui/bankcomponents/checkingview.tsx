@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AreaChartIcon, Banknote, Menu, Navigation } from "lucide-react";
+import { AreaChartIcon, Banknote, Menu, Navigation, Database, CheckCircle, Zap } from "lucide-react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "../card";
@@ -28,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CiMoneyCheck1 } from "react-icons/ci";
+import { Badge } from "@/components/ui/badge";
 
 type Transaction = {
   id: number;
@@ -116,14 +117,28 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
             <div className="flex-col">
-              <div className="flex">Checking Account</div>
+              <div className="flex mb-4">Checking Account</div>
               {financialDBMigration === "complete" || togglebankDBGuardedRelease ? (
-                <div className="flex text-center items-center justify-center my-6 bg-green-200 text-zinc-500 font-sohnebuch font-extralight text-base py-2">
-                  Retrieving data from DynamoDB
+                <div className="flex items-center justify-between my-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 px-4 py-3 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <Database className="h-6 w-6 text-green-700" />
+                    <div>
+                      <p className="font-semibold text-green-900 text-base">DynamoDB (Enhanced)</p>
+                      <p className="text-xs text-green-700 font-normal">Showing 20 recent transactions</p>
+                    </div>
+                  </div>
+                  <Badge className="bg-green-600 text-white">A3 Active</Badge>
                 </div>
               ) : (
-                <div className="flex text-center items-center justify-center my-6 bg-amber-200 font-sohnebuch font-extralight text-base py-2">
-                  Retrieving Data from RDS
+                <div className="flex items-center justify-between my-6 bg-gradient-to-r from-amber-100 to-yellow-100 border-2 border-amber-300 px-4 py-3 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <Database className="h-6 w-6 text-amber-700" />
+                    <div>
+                      <p className="font-semibold text-amber-900 text-base">RDS (Legacy)</p>
+                      <p className="text-xs text-amber-700 font-normal">Showing 10 recent transactions</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="border-amber-600 text-amber-700">A3 Off</Badge>
                 </div>
               )}
             </div>
@@ -143,7 +158,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((item, i) => (
+            {transactions.slice(0, financialDBMigration === "complete" || togglebankDBGuardedRelease ? 20 : 10).map((item, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{item.date}</TableCell>
                 <TableCell>{item.merchant}</TableCell>

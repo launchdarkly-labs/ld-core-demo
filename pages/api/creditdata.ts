@@ -60,6 +60,6 @@ export default function handler(
     return;
   }
 
-  const credit = generateRecentCreditTransactions(10);
+  const credit = generateRecentCreditTransactions(25);
   res.status(200).json(credit);
 }
