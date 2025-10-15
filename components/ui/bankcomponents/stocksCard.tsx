@@ -15,8 +15,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
+import { Badge } from "@/components/ui/badge";
+import { Zap, Info, TrendingUp, DollarSign, Activity } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -35,6 +37,7 @@ interface Stock {
 
 export const StocksComponent: React.FC = () => {
   const client = useLDClient();
+  const { togglebankAPIGuardedRelease } = useFlags();
   const [elapsedTime, setElapsedTime] = useState(0);
   const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
