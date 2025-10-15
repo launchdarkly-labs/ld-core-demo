@@ -188,7 +188,33 @@ export const StocksComponent: React.FC = () => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {/* API Version Banner */}
+      {togglebankAPIGuardedRelease ? (
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-lg shadow-md">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              <div>
+                <p className="font-bold text-sm">API v2.0 Active</p>
+                <p className="text-xs opacity-90">Real-time data with extended metrics</p>
+              </div>
+            </div>
+            <Badge className="bg-white text-blue-600 font-semibold">A4</Badge>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gray-100 border-2 border-gray-300 px-4 py-3 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Info className="h-5 w-5 text-gray-600" />
+              <span className="text-sm font-semibold text-gray-700">API v1.0 (Standard)</span>
+            </div>
+            <Badge variant="outline">A4 Off</Badge>
+          </div>
+        </div>
+      )}
+
       <div
         className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2`}
       >
