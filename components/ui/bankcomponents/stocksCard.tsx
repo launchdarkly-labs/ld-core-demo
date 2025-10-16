@@ -189,28 +189,22 @@ export const StocksComponent: React.FC = () => {
 
   return (
     <div className="space-y-3">
-      {/* API Version Banner */}
+      {/* API version banner */}
       {togglebankAPIGuardedRelease ? (
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-lg shadow-md">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
-              <div>
-                <p className="font-bold text-sm">API v2.0 Active</p>
-                <p className="text-xs opacity-90">Real-time data with extended metrics</p>
-              </div>
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            <div>
+              <p className="font-bold text-sm">API v2.0 Active</p>
+              <p className="text-xs opacity-90">Real-time data with extended metrics</p>
             </div>
-            <Badge className="bg-white text-blue-600 font-semibold">A4</Badge>
           </div>
         </div>
       ) : (
         <div className="bg-gray-100 border-2 border-gray-300 px-4 py-3 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Info className="h-5 w-5 text-gray-600" />
-              <span className="text-sm font-semibold text-gray-700">API v1.0 (Standard)</span>
-            </div>
-            <Badge variant="outline">A4 Off</Badge>
+          <div className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-gray-600" />
+            <span className="text-sm font-semibold text-gray-700">API v1.0 (Standard)</span>
           </div>
         </div>
       )}
@@ -268,6 +262,24 @@ export const StocksComponent: React.FC = () => {
                   ) : null}
                 </div>
               </div>
+              
+              {/* extended metrics for API v2.0 */}
+              {togglebankAPIGuardedRelease && (
+                <div className="mt-2 pt-2 border-t border-gray-200 flex gap-4 text-xs text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Vol: 2.3M</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="h-3 w-3" />
+                    <span>Cap: $1.2T</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Activity className="h-3 w-3" />
+                    <span>P/E: 28.5</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

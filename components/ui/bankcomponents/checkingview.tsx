@@ -119,7 +119,7 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
             <div className="flex-col">
               <div className="flex mb-4">Checking Account</div>
               {financialDBMigration === "complete" || togglebankDBGuardedRelease ? (
-                <div className="flex items-center justify-between my-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 px-4 py-3 rounded-lg shadow-sm">
+                <div className="flex items-center my-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 px-4 py-3 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3">
                     <Database className="h-6 w-6 text-green-700" />
                     <div>
@@ -127,10 +127,9 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
                       <p className="text-xs text-green-700 font-normal">Showing 20 recent transactions</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-600 text-white">A3 Active</Badge>
                 </div>
               ) : (
-                <div className="flex items-center justify-between my-6 bg-gradient-to-r from-amber-100 to-yellow-100 border-2 border-amber-300 px-4 py-3 rounded-lg shadow-sm">
+                <div className="flex items-center my-6 bg-gradient-to-r from-amber-100 to-yellow-100 border-2 border-amber-300 px-4 py-3 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3">
                     <Database className="h-6 w-6 text-amber-700" />
                     <div>
@@ -138,7 +137,6 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
                       <p className="text-xs text-amber-700 font-normal">Showing 10 recent transactions</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-amber-600 text-amber-700">A3 Off</Badge>
                 </div>
               )}
             </div>
