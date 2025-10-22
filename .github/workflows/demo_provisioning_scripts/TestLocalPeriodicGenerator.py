@@ -37,17 +37,17 @@ def test_imports():
         return False
     
     try:
-        from dynamodb_utils import DynamoDBClient
-        print("✅ dynamodb_utils")
+        from DynamoDBUtils import DynamoDBClient
+        print("✅ DynamoDBUtils")
     except ImportError:
-        print("❌ dynamodb_utils")
+        print("❌ DynamoDBUtils")
         return False
     
     try:
-        from ld_api_utils import LaunchDarklyAPIClient
-        print("✅ ld_api_utils")
+        from LDAPIUtils import LaunchDarklyAPIClient
+        print("✅ LDAPIUtils")
     except ImportError:
-        print("❌ ld_api_utils")
+        print("❌ LDAPIUtils")
         return False
     
     print("\n✅ All imports successful!\n")
@@ -85,7 +85,7 @@ def test_launchdarkly_api():
     print("=" * 60)
     
     try:
-        from ld_api_utils import LaunchDarklyAPIClient, construct_project_key_from_username
+        from LDAPIUtils import LaunchDarklyAPIClient, construct_project_key_from_username
         
         ld_api_token = os.getenv("LD_API_KEY")
         if not ld_api_token:
@@ -122,7 +122,7 @@ def test_dynamodb_connection():
     print("=" * 60)
     
     try:
-        from dynamodb_utils import DynamoDBClient
+        from DynamoDBUtils import DynamoDBClient
         
         print("🔍 Connecting to DynamoDB...")
         dynamodb_client = DynamoDBClient()
@@ -156,7 +156,7 @@ def test_full_workflow():
     print("=" * 60)
     
     try:
-        from lambda_periodic_results_generator import main
+        from LambdaPeriodicResultsGenerator import main
         
         print("🚀 Running main() function...")
         print("   This will generate results for ALL active demos")
@@ -232,3 +232,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

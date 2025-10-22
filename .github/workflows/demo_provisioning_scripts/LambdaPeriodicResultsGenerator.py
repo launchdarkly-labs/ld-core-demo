@@ -7,8 +7,8 @@ import logging
 import ldclient
 from ldclient.config import Config
 from dotenv import load_dotenv
-from dynamodb_utils import DynamoDBClient
-from ld_api_utils import LaunchDarklyAPIClient, construct_project_key_from_username
+from DynamoDBUtils import DynamoDBClient
+from LDAPIUtils import LaunchDarklyAPIClient, construct_project_key_from_username
 from results_generator import (
     evaluate_all_flags,
     ai_configs_monitoring_results_generator,
@@ -185,3 +185,4 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
     main()
+

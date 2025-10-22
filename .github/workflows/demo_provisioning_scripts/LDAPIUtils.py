@@ -26,7 +26,7 @@ class LaunchDarklyAPIClient:
         Retrieve SDK key and credentials for a specific project environment
         
         Args:
-            project_key: The project key (e.g., "mgarza-ld-demo")
+            project_key: The project key (ex: "user-ld-demo")
             environment_key: The environment key (default: "production")
             
         Returns:
@@ -76,6 +76,6 @@ def construct_project_key_from_username(username):
     """
     Construct LaunchDarkly project key from username
     Pattern: {username}-ld-demo
-    Example: mgarza -> mgarza-ld-demo
     """
     return f"{username}-ld-demo"
+

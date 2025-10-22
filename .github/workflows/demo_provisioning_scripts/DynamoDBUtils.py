@@ -50,7 +50,7 @@ class DynamoDBClient:
             
             logging.info(f"Found {len(items)} completed records")
             
-            # De-duplicate by username, keeping most recent
+            #de-duplicate by username, keeping most recent
             user_records = {}
             for item in items:
                 username = item.get('userKey')
@@ -76,3 +76,4 @@ class DynamoDBClient:
     def update_last_generated_timestamp(self, username):
         """Log when results were last generated for a user"""
         logging.info(f"Results generated for {username} at {datetime.now().isoformat()}")
+
