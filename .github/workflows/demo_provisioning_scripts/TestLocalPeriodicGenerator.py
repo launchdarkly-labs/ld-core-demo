@@ -17,40 +17,40 @@ def test_imports():
     
     try:
         import boto3
-        print("✅ boto3")
+        print("PASS: boto3")
     except ImportError:
-        print("❌ boto3 - Run: pip3 install boto3")
+        print("FAIL: boto3 - Run: pip3 install boto3")
         return False
     
     try:
         import requests
-        print("✅ requests")
+        print("PASS: requests")
     except ImportError:
-        print("❌ requests - Run: pip3 install requests")
+        print("FAIL: requests - Run: pip3 install requests")
         return False
     
     try:
         import ldclient
-        print("✅ ldclient")
+        print("PASS: ldclient")
     except ImportError:
-        print("❌ ldclient - Run: pip3 install launchdarkly-server-sdk")
+        print("FAIL: ldclient - Run: pip3 install launchdarkly-server-sdk")
         return False
     
     try:
         from DynamoDBUtils import DynamoDBClient
-        print("✅ DynamoDBUtils")
+        print("PASS: DynamoDBUtils")
     except ImportError:
-        print("❌ DynamoDBUtils")
+        print("FAIL: DynamoDBUtils")
         return False
     
     try:
         from LDAPIUtils import LaunchDarklyAPIClient
-        print("✅ LDAPIUtils")
+        print("PASS: LDAPIUtils")
     except ImportError:
-        print("❌ LDAPIUtils")
+        print("FAIL: LDAPIUtils")
         return False
     
-    print("\n✅ All imports successful!\n")
+    print("\nAll imports successful\n")
     return True
 
 
@@ -62,19 +62,19 @@ def test_environment_variables():
     
     ld_api_key = os.getenv("LD_API_KEY")
     if ld_api_key:
-        print(f"✅ LD_API_KEY is set")
+        print("PASS: LD_API_KEY is set")
     else:
-        print(f"❌ LD_API_KEY is NOT set")
+        print("FAIL: LD_API_KEY is NOT set")
         return False
     
     print("\nOptional AWS variables:")
     for var in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]:
         if os.getenv(var):
-            print(f"✅ {var} is set")
+            print(f"PASS: {var} is set")
         else:
-            print(f"ℹ️  {var} not set (may use aws CLI config)")
+            print(f"INFO: {var} not set (may use aws CLI config)")
     
-    print("\n✅ Required environment variables are set!\n")
+    print("\nRequired environment variables are set\n")
     return True
 
 
@@ -89,7 +89,7 @@ def test_launchdarkly_api():
         
         ld_api_token = os.getenv("LD_API_KEY")
         if not ld_api_token:
-            print("❌ LD_API_KEY not set")
+            print("FAIL: LD_API_KEY not set")
             return False
         
         ld_client = LaunchDarklyAPIClient(ld_api_token)
@@ -97,21 +97,22 @@ def test_launchdarkly_api():
         test_username = os.getenv("TEST_USERNAME", "mgarza")
         project_key = construct_project_key_from_username(test_username)
         
-        print(f"🔍 Testing with: {test_username} → {project_key}")
+        print(f"Testing with username: {test_username}")
+        print(f"Project key: {project_key}")
         
         credentials = ld_client.get_project_environment_keys(project_key, "production")
         
         if credentials:
-            print(f"✅ Retrieved credentials for {project_key}")
-            print(f"   SDK Key: {credentials['sdk_key'][:20]}...")
-            print("\n✅ LaunchDarkly API test successful!\n")
+            print(f"PASS: Retrieved credentials for {project_key}")
+            print(f"SDK Key: {credentials['sdk_key'][:20]}...")
+            print("\nLaunchDarkly API test successful\n")
             return True
         else:
-            print(f"❌ Could not retrieve credentials for {project_key}")
+            print(f"FAIL: Could not retrieve credentials for {project_key}")
             return False
             
     except Exception as e:
-        print(f"❌ LaunchDarkly API test failed: {str(e)}")
+        print(f"FAIL: LaunchDarkly API test failed: {str(e)}")
         return False
 
 
@@ -124,24 +125,24 @@ def test_dynamodb_connection():
     try:
         from DynamoDBUtils import DynamoDBClient
         
-        print("🔍 Connecting to DynamoDB...")
+        print("Connecting to DynamoDB...")
         dynamodb_client = DynamoDBClient()
         
         usernames = dynamodb_client.get_completed_users()
         
         if usernames:
-            print(f"✅ Connected to DynamoDB!")
-            print(f"   Found {len(usernames)} users")
-            print(f"   Sample: {usernames[:5]}")
-            print("\n✅ DynamoDB test successful!\n")
+            print("PASS: Connected to DynamoDB")
+            print(f"Found {len(usernames)} users")
+            print(f"Sample users: {usernames[:5]}")
+            print("\nDynamoDB test successful\n")
             return True
         else:
-            print("⚠️  Connected but no users found (table may be empty)")
-            print("\n✅ DynamoDB test successful!\n")
+            print("WARN: Connected but no users found (table may be empty)")
+            print("\nDynamoDB test successful\n")
             return True
             
     except Exception as e:
-        print(f"❌ DynamoDB test failed: {str(e)}")
+        print(f"FAIL: DynamoDB test failed: {str(e)}")
         print("\nCommon issues:")
         print("  1. Run 'aws configure' to set credentials")
         print("  2. Check IAM permissions")
@@ -158,23 +159,23 @@ def test_full_workflow():
     try:
         from LambdaPeriodicResultsGenerator import main
         
-        print("🚀 Running main() function...")
-        print("   This will generate results for ALL active demos")
-        print("   Press Ctrl+C to cancel")
+        print("Running main() function...")
+        print("This will generate results for ALL active demos")
+        print("Press Ctrl+C to cancel")
         
         import time
         time.sleep(3)
         
         main()
         
-        print("\n✅ Full workflow completed!\n")
+        print("\nFull workflow completed\n")
         return True
         
     except KeyboardInterrupt:
-        print("\n⚠️  Cancelled by user")
+        print("\nCancelled by user")
         return False
     except Exception as e:
-        print(f"\n❌ Full workflow failed: {str(e)}")
+        print(f"\nFAIL: Full workflow failed: {str(e)}")
         return False
 
 
@@ -188,12 +189,12 @@ def main():
     
     results.append(("Imports", test_imports()))
     if not results[-1][1]:
-        print("\n❌ Import test failed")
+        print("\nImport test failed")
         sys.exit(1)
     
     results.append(("Environment Variables", test_environment_variables()))
     if not results[-1][1]:
-        print("\n❌ Environment test failed")
+        print("\nEnvironment test failed")
         sys.exit(1)
     
     results.append(("LaunchDarkly API", test_launchdarkly_api()))
@@ -212,24 +213,19 @@ def main():
     print("=" * 60)
     
     for test_name, result in results:
-        if result is True:
-            print(f"✅ {test_name}: PASSED")
-        elif result is False:
-            print(f"❌ {test_name}: FAILED")
-        elif result is None:
-            print(f"⚠️  {test_name}: SKIPPED")
+        status = "PASSED" if result is True else "FAILED" if result is False else "SKIPPED"
+        print(f"{status}: {test_name}")
     
     print("=" * 60 + "\n")
     
     failed_tests = [name for name, result in results if result is False]
     if failed_tests:
-        print(f"❌ {len(failed_tests)} test(s) failed")
+        print(f"{len(failed_tests)} test(s) failed")
         sys.exit(1)
     else:
-        print("✅ All tests passed! Ready to deploy.")
+        print("All tests passed. Ready to deploy.")
         sys.exit(0)
 
 
 if __name__ == "__main__":
     main()
-
