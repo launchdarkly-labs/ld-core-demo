@@ -1,0 +1,6 @@
+[console_scripts]
+randomname = randomname:main
+
+[pyinstaller40]
+hook-dirs = randomname.__pyinstaller:get_hook_dirs
+
