@@ -1860,6 +1860,25 @@ class DemoBuilder:
         res = self.ldproject.attach_metric_to_flag("aiFraudDetectionGuardedRelease", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
         res = self.ldproject.add_guarded_rollout("aiFraudDetectionGuardedRelease", "production", metrics=["fraud-api-error-rate", "fraud-api-latency"], days=2)
         
+    def flag_simulate_fraud_error(self):
+        res = self.ldproject.create_flag(
+            "simulateFraudError",
+            "A8.1 - Simulate: Fraud Detection API Error - ToggleBank",
+            "Internal flag to trigger fraud detection API failures for demo purposes",
+            [
+                {
+                    "value": True,
+                    "name": "Trigger API Errors"
+                },
+                {
+                    "value": False,
+                    "name": "Normal Operation"
+                }
+            ],
+            tags=["simulate", "bank", "observability"],
+            on_variation=1,
+        )
+        
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
             "financialDBMigration",
