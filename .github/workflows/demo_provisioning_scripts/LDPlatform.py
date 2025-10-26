@@ -81,7 +81,29 @@ class LDPlatform:
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
 
-        data = json.loads(response.text)
+        # Check if the response is successful
+        if response.status_code != 200 and response.status_code != 201:
+            print(f"Error creating project: HTTP {response.status_code}")
+            print(f"Response: {response.text}")
+            return
+
+        # Parse response with error handling
+        try:
+            data = json.loads(response.text)
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            print(f"Response status: {response.status_code}")
+            print(f"Response text: {response.text[:500]}...")
+            return
+
+        # Check if response contains expected data structure
+        if "environments" not in data:
+            print(f"Error: Response does not contain 'environments' key")
+            print(f"Response status: {response.status_code}")
+            print(f"Response: {response.text[:500]}...")
+            return
+
+        # Extract environment information
         for e in data["environments"]:
             if e["key"] == "production":
                 self.client_id = e["_id"]
@@ -696,9 +718,31 @@ class LDPlatform:
                 + "/experimentation-settings",
                 headers=headers,
             )
-            data = json.loads(response.text)
+            
+            # Check if the response is successful
+            if response.status_code != 200:
+                print(f"Error getting experimentation settings: HTTP {response.status_code}")
+                print(f"Response: {response.text}")
+                return
+            
+            # Parse response with error handling
+            try:
+                data = json.loads(response.text)
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+                return
+            
             if "message" in data:
                 print("Error getting experimentation settings: " + data["message"])
+                return
+
+            # Check if response contains expected data structure
+            if "randomizationUnits" not in data:
+                print(f"Error: Response does not contain 'randomizationUnits' key")
+                print(f"Response status: {response.status_code}")
+                print(f"Response: {response.text[:500]}...")
                 return
 
             for ru in data["randomizationUnits"]:
@@ -1064,7 +1108,29 @@ class LDPlatform:
             "https://app.launchdarkly.com/api/v2/members?filter=" + filter,
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
-        data = json.loads(res.text)
+        
+        # Check if the response is successful
+        if res.status_code != 200:
+            print(f"Error getting user ID: HTTP {res.status_code}")
+            print(f"Response: {res.text}")
+            return "6502137e3310e112c47aeb92"
+        
+        # Parse response with error handling
+        try:
+            data = json.loads(res.text)
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            print(f"Response status: {res.status_code}")
+            print(f"Response text: {res.text[:500]}...")
+            return "6502137e3310e112c47aeb92"
+        
+        # Check if response contains expected data structure
+        if "totalCount" not in data or "items" not in data:
+            print(f"Error: Response does not contain expected keys")
+            print(f"Response status: {res.status_code}")
+            print(f"Response: {res.text[:500]}...")
+            return "6502137e3310e112c47aeb92"
+            
         if data["totalCount"] == 0:
             return "6502137e3310e112c47aeb92"
 
@@ -1259,7 +1325,29 @@ class LDPlatform:
             "Content-Type": "application/json",
         }
         res = self.getrequest("GET", url, headers=headers)
-        data = json.loads(res.text)
+        
+        # Check if the response is successful
+        if res.status_code != 200:
+            print(f"Error getting flag variation values: HTTP {res.status_code}")
+            print(f"Response: {res.text}")
+            return [], {"onVariation": 0, "offVariation": 0}
+        
+        # Parse response with error handling
+        try:
+            data = json.loads(res.text)
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            print(f"Response status: {res.status_code}")
+            print(f"Response text: {res.text[:500]}...")
+            return [], {"onVariation": 0, "offVariation": 0}
+        
+        # Check if response contains expected data structure
+        if "defaults" not in data or "variations" not in data:
+            print(f"Error: Response does not contain expected keys")
+            print(f"Response status: {res.status_code}")
+            print(f"Response: {res.text[:500]}...")
+            return [], {"onVariation": 0, "offVariation": 0}
+        
         defaults = {
             "onVariation": data["defaults"]["onVariation"],
             "offVariation": data["defaults"]["offVariation"],
@@ -1272,6 +1360,74 @@ class LDPlatform:
             ordinal += 1
 
         return var_ids, defaults
+
+    ##################################################
+    # Get flag variation names from LaunchDarkly API
+    ##################################################
+    def get_flag_variation_names(self, flag_key, segment=False):
+        """
+        Get the names of flag variations from LaunchDarkly API
+        Returns a list of variation names (excluding 'disabled' unless segment=True)
+        """
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        data = json.loads(res.text)
+        if "variations" not in data:
+            return []
+        
+        variation_names = []
+        for var in data["variations"]:
+            # If segment is True, include all variations (including "disabled")
+            # If segment is False, exclude "disabled" as before
+            if segment or var["name"] != "disabled":
+                variation_names.append(var["name"])
+        
+        return variation_names
+
+    ##################################################
+    # Get flag variation details (names and IDs) from LaunchDarkly API
+    ##################################################
+    def get_flag_variation_details(self, flag_key, segment=False):
+        """
+        Get both names and IDs of flag variations from LaunchDarkly API
+        Returns a list of dictionaries with 'name' and 'id' keys
+        """
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        data = json.loads(res.text)
+        if "variations" not in data:
+            return []
+        
+        variation_details = []
+        for var in data["variations"]:
+            # If segment is True, include all variations (including "disabled")
+            # If segment is False, exclude "disabled" as before
+            if segment or var["name"] != "disabled":
+                variation_details.append({
+                    "name": var["name"],
+                    "id": var["_id"],
+                    "value": var.get("value", None)
+                })
+        
+        return variation_details
 
     ##################################################
     # Get the flag variation IDs, returns a list
@@ -1307,7 +1463,9 @@ class LDPlatform:
     # Create a list of treatments, returns a list
     ##################################################
     def get_treatments(self, flag_key, name_list=None):
-        treatments = self.get_flag_variations(flag_key)
+        # Get both variation IDs and names in one API call for efficiency
+        variation_details = self.get_flag_variation_details(flag_key)
+        treatments = [var["id"] for var in variation_details]
         ret_treatments = []
         names = []
 
@@ -1318,11 +1476,8 @@ class LDPlatform:
             else:
                 names = name_list.copy()
         else:
-            for i in range(len(treatments)):
-                if i == 0:
-                    names.append("Control Configuration")
-                else:
-                    names.append("Treatment " + str(i))
+            # Use actual flag variation names from LaunchDarkly API
+            names = [var["name"] for var in variation_details]
         allocs = []
         total = 0.0
         for i in range(len(treatments)):
