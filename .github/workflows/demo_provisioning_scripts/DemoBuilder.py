@@ -1839,6 +1839,27 @@ class DemoBuilder:
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
         
+    def flag_ai_fraud_detection_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "aiFraudDetectionGuardedRelease",
+            "A8 - Release: AI Fraud Detection (Guarded Release) - ToggleBank",
+            "Release AI-powered fraud detection alerts for suspicious transactions",
+            [
+                {
+                    "value": True,
+                    "name": "Enable AI Fraud Detection"
+                },
+                {
+                    "value": False,
+                    "name": "Disable AI Fraud Detection"
+                }
+            ],
+            tags=["guarded-release", "bank", "observability"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("aiFraudDetectionGuardedRelease", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
+        res = self.ldproject.add_guarded_rollout("aiFraudDetectionGuardedRelease", "production", metrics=["fraud-api-error-rate", "fraud-api-latency"], days=2)
+        
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
             "financialDBMigration",
