@@ -1879,6 +1879,27 @@ class DemoBuilder:
             on_variation=1,
         )
         
+    def flag_notification_center_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "notificationCenterGuardedRelease",
+            "A9 - Release: Notification Center (Guarded Release) - ToggleBank",
+            "Release new notification center with real-time alerts and updates",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Notification Center"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Notification Center"
+                }
+            ],
+            tags=["guarded-release", "bank", "observability"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("notificationCenterGuardedRelease", ["notification-event-volume", "notification-client-errors", "notification-display-latency"])
+        res = self.ldproject.add_guarded_rollout("notificationCenterGuardedRelease", "production", metrics=["notification-event-volume", "notification-client-errors"], days=2)
+        
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
             "financialDBMigration",
