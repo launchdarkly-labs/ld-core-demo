@@ -154,6 +154,10 @@ class DemoBuilder:
         self.flag_federated_account()
         self.flag_togglebank_database_guarded_release()
         self.flag_togglebank_api_guarded_release()
+        self.flag_ai_fraud_detection_guarded_release()
+        self.flag_simulate_fraud_error()
+        self.flag_notification_center_guarded_release()
+        self.flag_simulate_notification_loop()
         self.flag_togglebank_show_different_special_offer_string()
         self.flag_togglebank_release_new_signup_promo()
         self.flag_togglebank_swap_widget_positions()
@@ -1899,6 +1903,25 @@ class DemoBuilder:
         )
         res = self.ldproject.attach_metric_to_flag("notificationCenterGuardedRelease", ["notification-event-volume", "notification-client-errors", "notification-display-latency"])
         res = self.ldproject.add_guarded_rollout("notificationCenterGuardedRelease", "production", metrics=["notification-event-volume", "notification-client-errors"], days=2)
+        
+    def flag_simulate_notification_loop(self):
+        res = self.ldproject.create_flag(
+            "simulateNotificationLoop",
+            "A9.1 - Simulate: Notification Spam Loop - ToggleBank",
+            "Internal flag to trigger notification spam loop for demo purposes",
+            [
+                {
+                    "value": True,
+                    "name": "Trigger Notification Spam"
+                },
+                {
+                    "value": False,
+                    "name": "Normal Notifications"
+                }
+            ],
+            tags=["simulate", "bank", "observability"],
+            on_variation=1,
+        )
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
