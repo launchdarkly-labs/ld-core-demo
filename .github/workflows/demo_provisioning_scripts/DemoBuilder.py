@@ -154,10 +154,6 @@ class DemoBuilder:
         self.flag_federated_account()
         self.flag_togglebank_database_guarded_release()
         self.flag_togglebank_api_guarded_release()
-        self.flag_fraud_detection_healthy_rollout()
-        self.flag_fraud_detection_failed_rollout()
-        self.flag_notification_center_healthy_rollout()
-        self.flag_notification_center_failed_rollout()
         self.flag_togglebank_show_different_special_offer_string()
         self.flag_togglebank_release_new_signup_promo()
         self.flag_togglebank_swap_widget_positions()
@@ -821,10 +817,6 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
-        res = self.ldproject.add_segment_to_flag("fraudDetectionHealthyRollout", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("fraudDetectionFailedRollout", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("notificationCenterHealthyRollout", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("notificationCenterFailedRollout", "beta-users", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
@@ -1846,86 +1838,6 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
-        
-    def flag_fraud_detection_healthy_rollout(self):
-        res = self.ldproject.create_flag(
-            "fraudDetectionHealthyRollout",
-            "A8 - Scenario: Enhanced Fraud Detection - Healthy Rollout - ToggleBank",
-            "Completed successful rollout of Enhanced Fraud Detection. Shows healthy metrics and smooth deployment.",
-            [
-                {
-                    "value": True,
-                    "name": "Show Healthy Rollout Scenario"
-                },
-                {
-                    "value": False,
-                    "name": "Hide Scenario"
-                }
-            ],
-            tags=["scenario", "guarded-release", "success", "bank", "observability"],
-            on_variation=1,
-        )
-        res = self.ldproject.attach_metric_to_flag("fraudDetectionHealthyRollout", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
-        
-    def flag_fraud_detection_failed_rollout(self):
-        res = self.ldproject.create_flag(
-            "fraudDetectionFailedRollout",
-            "A8.1 - Scenario: Enhanced Fraud Detection - Failed Rollout - ToggleBank",
-            "Failed rollout of Enhanced Fraud Detection. Shows error spike, automatic rollback, and recovery.",
-            [
-                {
-                    "value": True,
-                    "name": "Show Failed Rollout Scenario"
-                },
-                {
-                    "value": False,
-                    "name": "Hide Scenario"
-                }
-            ],
-            tags=["scenario", "guarded-release", "failure", "bank", "observability"],
-            on_variation=1,
-        )
-        res = self.ldproject.attach_metric_to_flag("fraudDetectionFailedRollout", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
-        
-    def flag_notification_center_healthy_rollout(self):
-        res = self.ldproject.create_flag(
-            "notificationCenterHealthyRollout",
-            "A9 - Scenario: Notification Center - Healthy Rollout - ToggleBank",
-            "Completed successful rollout of Notification Center. Shows normal notification volumes and good performance.",
-            [
-                {
-                    "value": True,
-                    "name": "Show Healthy Rollout Scenario"
-                },
-                {
-                    "value": False,
-                    "name": "Hide Scenario"
-                }
-            ],
-            tags=["scenario", "guarded-release", "success", "bank", "observability"],
-            on_variation=1,
-        )
-        res = self.ldproject.attach_metric_to_flag("notificationCenterHealthyRollout", ["notification-event-volume", "notification-client-errors", "notification-display-latency"])
-        
-    def flag_notification_center_failed_rollout(self):
-        res = self.ldproject.create_flag(
-            "notificationCenterFailedRollout",
-            "A9.1 - Scenario: Notification Center - Failed Rollout - ToggleBank",
-            "Failed rollout of Notification Center (spam issue). Shows notification loop, automatic rollback, and resolution.",
-            [
-                {
-                    "value": True,
-                    "name": "Show Failed Rollout Scenario"
-                },
-                {
-                    "value": False,
-                    "name": "Hide Scenario"
-                }
-            ],
-            tags=["scenario", "guarded-release", "failure", "bank", "observability"],
-            on_variation=1,
-        )
-        res = self.ldproject.attach_metric_to_flag("notificationCenterFailedRollout", ["notification-event-volume", "notification-client-errors", "notification-display-latency"])
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
