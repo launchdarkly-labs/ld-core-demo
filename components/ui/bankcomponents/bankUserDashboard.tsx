@@ -147,6 +147,12 @@ export default function BankUserDashboard() {
 						</NavbarRightSideWrapper>
 					</>
 				</NavWrapper>
+
+				{/* AI fraud detection section */}
+				<section className="px-6 pt-8 mb-6">
+					<FraudDetectionCard />
+				</section>
+
 				<section
 					className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
 						}`}
@@ -187,11 +193,6 @@ export default function BankUserDashboard() {
 
 					{federatedAccounts ?
 						<FederatedAccountModule /> : null}
-				</section>
-
-				{/* AI fraud detection section */}
-				<section className="px-6 mb-8">
-					<FraudDetectionCard />
 				</section>
 
 				{wealthManagement ? (
