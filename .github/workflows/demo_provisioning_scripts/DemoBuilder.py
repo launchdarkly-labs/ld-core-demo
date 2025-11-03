@@ -154,7 +154,7 @@ class DemoBuilder:
         self.flag_federated_account()
         self.flag_togglebank_database_guarded_release()
         self.flag_togglebank_api_guarded_release()
-        self.flag_ai_fraud_detection_guarded_release()
+        self.flag_enhanced_fraud_detection_guarded_release()
         self.flag_simulate_fraud_error()
         self.flag_notification_center_guarded_release()
         self.flag_simulate_notification_loop()
@@ -821,7 +821,7 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
-        res = self.ldproject.add_segment_to_flag("aiFraudDetectionGuardedRelease", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("enhancedFraudDetectionGuardedRelease", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("notificationCenterGuardedRelease", "beta-users", "production")
         
     def toggle_flags(self):
@@ -1845,26 +1845,26 @@ class DemoBuilder:
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
         
-    def flag_ai_fraud_detection_guarded_release(self):
+    def flag_enhanced_fraud_detection_guarded_release(self):
         res = self.ldproject.create_flag(
-            "aiFraudDetectionGuardedRelease",
-            "A8 - Release: AI Fraud Detection (Guarded Release) - ToggleBank",
-            "Release AI-powered fraud detection alerts for suspicious transactions",
+            "enhancedFraudDetectionGuardedRelease",
+            "A8 - Release: Enhanced Fraud Detection (Guarded Release) - ToggleBank",
+            "Release enhanced fraud detection system with real-time monitoring for suspicious transactions",
             [
                 {
                     "value": True,
-                    "name": "Enable AI Fraud Detection"
+                    "name": "Enable Enhanced Fraud Detection"
                 },
                 {
                     "value": False,
-                    "name": "Disable AI Fraud Detection"
+                    "name": "Disable Enhanced Fraud Detection"
                 }
             ],
             tags=["guarded-release", "bank", "observability"],
             on_variation=1,
         )
-        res = self.ldproject.attach_metric_to_flag("aiFraudDetectionGuardedRelease", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
-        res = self.ldproject.add_guarded_rollout("aiFraudDetectionGuardedRelease", "production", metrics=["fraud-api-error-rate", "fraud-api-latency"], days=2)
+        res = self.ldproject.attach_metric_to_flag("enhancedFraudDetectionGuardedRelease", ["fraud-api-error-rate", "fraud-api-latency", "fraud-check-success-rate"])
+        res = self.ldproject.add_guarded_rollout("enhancedFraudDetectionGuardedRelease", "production", metrics=["fraud-api-error-rate", "fraud-api-latency"], days=2)
         
     def flag_simulate_fraud_error(self):
         res = self.ldproject.create_flag(
