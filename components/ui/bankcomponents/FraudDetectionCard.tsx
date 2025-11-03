@@ -3,7 +3,6 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface FraudDetectionCardProps {
   // props will be added as needed
@@ -43,9 +42,8 @@ export default function FraudDetectionCard({}: FraudDetectionCardProps) {
             <Shield className="h-6 w-6 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-xl font-bold font-sohne text-gray-900 flex items-center gap-2">
+            <h3 className="text-xl font-bold font-sohne text-gray-900">
               AI Fraud Detection
-              <Badge className="bg-blue-600 text-white text-xs">Beta</Badge>
             </h3>
             <p className="text-sm text-gray-600 font-sohnelight mt-1">
               Check your recent transactions for suspicious activity
