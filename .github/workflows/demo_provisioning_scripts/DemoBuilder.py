@@ -821,6 +821,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
+        res = self.ldproject.add_segment_to_flag("aiFraudDetectionGuardedRelease", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("notificationCenterGuardedRelease", "beta-users", "production")
         
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(

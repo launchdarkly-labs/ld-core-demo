@@ -9,6 +9,7 @@ import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManageme
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
 import FraudDetectionCard from "@/components/ui/bankcomponents/FraudDetectionCard";
+import NotificationCenter from "@/components/ui/bankcomponents/NotificationCenter";
 import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
@@ -138,6 +139,9 @@ export default function BankUserDashboard() {
 									</>
 								)}
 
+								{/* notification center */}
+								<NotificationCenter />
+
 								<NavbarLogin variant={BANK} />
 							</>
 						</NavbarRightSideWrapper>
@@ -185,7 +189,7 @@ export default function BankUserDashboard() {
 						<FederatedAccountModule /> : null}
 				</section>
 
-				{/* AI Fraud Detection Section */}
+				{/* AI fraud detection section */}
 				<section className="px-6 mb-8">
 					<FraudDetectionCard />
 				</section>
