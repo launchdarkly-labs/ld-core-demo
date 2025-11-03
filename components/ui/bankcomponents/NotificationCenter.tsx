@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useFlags } from "launchdarkly-react-client-sdk";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { Bell, X, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,30 +10,39 @@ interface Notification {
   message: string;
   timestamp: Date;
   read: boolean;
+  type?: "info" | "alert" | "success" | "warning";
 }
 
 export default function NotificationCenter() {
   const { notificationCenterGuardedRelease } = useFlags();
+  const ldClient = useLDClient();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      title: "Security Alert",
-      message: "New device login detected from Chrome on MacOS",
-      timestamp: new Date(),
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Transaction Completed",
-      message: "Your transfer of $500 has been processed successfully",
-      timestamp: new Date(Date.now() - 3600000),
-      read: false,
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const fetchNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const userId = ldClient?.getContext()?.key || "anonymous";
+      const response = await fetch(`/api/notifications?userId=${userId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const parsedNotifications = data.notifications.map((n: any) => ({
+          ...n,
+          timestamp: new Date(n.timestamp),
+        }));
+        setNotifications(parsedNotifications);
+      }
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -48,6 +57,18 @@ export default function NotificationCenter() {
   const clearAll = () => {
     setNotifications([]);
   };
+
+  useEffect(() => {
+    if (notificationCenterGuardedRelease) {
+      fetchNotifications();
+    }
+  }, [notificationCenterGuardedRelease]);
+
+  useEffect(() => {
+    if (isOpen && notifications.length === 0) {
+      fetchNotifications();
+    }
+  }, [isOpen]);
 
   //close dropdown when clicking outside
   useEffect(() => {
@@ -111,6 +132,18 @@ export default function NotificationCenter() {
                 </button>
               )}
             </div>
+
+            {/* spam warning */}
+            {notifications.length > 5 && unreadCount > 5 && (
+              <div className="p-3 bg-amber-50 border-b border-amber-200">
+                <div className="flex items-center gap-2 text-amber-800">
+                  <div className="h-2 w-2 bg-amber-500 rounded-full animate-pulse" />
+                  <p className="text-xs font-semibold">
+                    Unusual notification volume detected ({notifications.length} notifications)
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* notification list */}
             <div className="max-h-96 overflow-y-auto">

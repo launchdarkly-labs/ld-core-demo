@@ -1,0 +1,186 @@
+{
+  "scenario": "failed",
+  "featureName": "Notification Center",
+  "rolloutDate": "2025-11-03",
+  "timeline": [
+    {
+      "timestamp": "2025-11-03T09:00:00Z",
+      "displayTime": "09:00 AM",
+      "event": "Rollout started",
+      "percentage": 0,
+      "status": "started"
+    },
+    {
+      "timestamp": "2025-11-03T09:15:00Z",
+      "displayTime": "09:15 AM",
+      "event": "Reached 5%",
+      "percentage": 5,
+      "status": "success",
+      "metrics": {
+        "notificationVolume": 128,
+        "clientErrors": 0.2,
+        "displayLatency": 86
+      }
+    },
+    {
+      "timestamp": "2025-11-03T09:30:00Z",
+      "displayTime": "09:30 AM",
+      "event": "Reached 10%",
+      "percentage": 10,
+      "status": "warning",
+      "metrics": {
+        "notificationVolume": 2847,
+        "clientErrors": 15.2,
+        "displayLatency": 1250
+      }
+    },
+    {
+      "timestamp": "2025-11-03T09:32:00Z",
+      "displayTime": "09:32 AM",
+      "event": "⚠️ ALERT: Notification volume spike detected",
+      "percentage": 10,
+      "status": "alert",
+      "alertMessage": "Notification volume increased 22x normal rate"
+    },
+    {
+      "timestamp": "2025-11-03T09:33:00Z",
+      "displayTime": "09:33 AM",
+      "event": "🔄 Automatic rollback initiated",
+      "percentage": 10,
+      "status": "rollback"
+    },
+    {
+      "timestamp": "2025-11-03T09:35:00Z",
+      "displayTime": "09:35 AM",
+      "event": "✓ Rollback complete - back to 0%",
+      "percentage": 0,
+      "status": "recovered",
+      "metrics": {
+        "notificationVolume": 156,
+        "clientErrors": 0.3,
+        "displayLatency": 88
+      }
+    }
+  ],
+  "spamNotifications": [
+    {
+      "id": "spam-1",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-03T09:30:12Z",
+      "displayTime": "09:30 AM",
+      "type": "alert",
+      "duplicate": true
+    },
+    {
+      "id": "spam-2",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-03T09:30:12Z",
+      "displayTime": "09:30 AM",
+      "type": "alert",
+      "duplicate": true
+    },
+    {
+      "id": "spam-3",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-03T09:30:12Z",
+      "displayTime": "09:30 AM",
+      "type": "alert",
+      "duplicate": true
+    },
+    {
+      "id": "spam-4",
+      "title": "Transaction Alert",
+      "message": "Unusual activity detected on your account",
+      "timestamp": "2025-11-03T09:30:15Z",
+      "displayTime": "09:30 AM",
+      "type": "warning",
+      "duplicate": true
+    },
+    {
+      "id": "spam-5",
+      "title": "Transaction Alert",
+      "message": "Unusual activity detected on your account",
+      "timestamp": "2025-11-03T09:30:15Z",
+      "displayTime": "09:30 AM",
+      "type": "warning",
+      "duplicate": true
+    },
+    {
+      "id": "spam-6",
+      "title": "Account Update",
+      "message": "Your settings have been changed",
+      "timestamp": "2025-11-03T09:30:18Z",
+      "displayTime": "09:30 AM",
+      "type": "info",
+      "duplicate": true
+    },
+    {
+      "id": "spam-7",
+      "title": "Account Update",
+      "message": "Your settings have been changed",
+      "timestamp": "2025-11-03T09:30:18Z",
+      "displayTime": "09:30 AM",
+      "type": "info",
+      "duplicate": true
+    },
+    {
+      "id": "spam-8",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-03T09:30:20Z",
+      "displayTime": "09:30 AM",
+      "type": "alert",
+      "duplicate": true
+    },
+    {
+      "id": "spam-9",
+      "title": "Transaction Alert",
+      "message": "Unusual activity detected on your account",
+      "timestamp": "2025-11-03T09:30:22Z",
+      "displayTime": "09:30 AM",
+      "type": "warning",
+      "duplicate": true
+    },
+    {
+      "id": "spam-10",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-03T09:30:24Z",
+      "displayTime": "09:30 AM",
+      "type": "alert",
+      "duplicate": true
+    }
+  ],
+  "errors": [
+    {
+      "timestamp": "2025-11-03T09:30:12Z",
+      "displayTime": "09:30 AM",
+      "level": "error",
+      "icon": "alert",
+      "message": "NotificationLoop: Duplicate notification detected in event handler",
+      "errorCode": "NOTIFICATION_LOOP",
+      "occurrences": 147
+    },
+    {
+      "timestamp": "2025-11-03T09:30:45Z",
+      "displayTime": "09:30 AM",
+      "level": "error",
+      "icon": "alert",
+      "message": "Client error: Too many notifications rendered",
+      "errorCode": "RENDER_OVERFLOW",
+      "occurrences": 89
+    }
+  ],
+  "summary": {
+    "totalDuration": "5 minutes",
+    "usersAffected": 147,
+    "averageSpamPerUser": 8.5,
+    "errorsLogged": 236,
+    "rollbackTime": "2 minutes",
+    "impactContained": "10% rollout (5,000 users max)"
+  }
+}
+

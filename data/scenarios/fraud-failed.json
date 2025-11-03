@@ -1,0 +1,102 @@
+{
+  "scenario": "failed",
+  "featureName": "Enhanced Fraud Detection",
+  "rolloutDate": "2025-11-03",
+  "timeline": [
+    {
+      "timestamp": "2025-11-03T09:00:00Z",
+      "displayTime": "09:00 AM",
+      "event": "Rollout started",
+      "percentage": 0,
+      "status": "started"
+    },
+    {
+      "timestamp": "2025-11-03T09:15:00Z",
+      "displayTime": "09:15 AM",
+      "event": "Reached 5%",
+      "percentage": 5,
+      "status": "success",
+      "metrics": {
+        "errorRate": 0.03,
+        "latency": 148,
+        "successRate": 99.97
+      }
+    },
+    {
+      "timestamp": "2025-11-03T09:30:00Z",
+      "displayTime": "09:30 AM",
+      "event": "Reached 10%",
+      "percentage": 10,
+      "status": "warning",
+      "metrics": {
+        "errorRate": 8.5,
+        "latency": 3200,
+        "successRate": 91.5
+      }
+    },
+    {
+      "timestamp": "2025-11-03T09:32:00Z",
+      "displayTime": "09:32 AM",
+      "event": "⚠️ ALERT: Error rate threshold exceeded",
+      "percentage": 10,
+      "status": "alert",
+      "alertMessage": "Error rate increased from 0.03% to 8.5%"
+    },
+    {
+      "timestamp": "2025-11-03T09:33:00Z",
+      "displayTime": "09:33 AM",
+      "event": "🔄 Automatic rollback initiated",
+      "percentage": 10,
+      "status": "rollback"
+    },
+    {
+      "timestamp": "2025-11-03T09:35:00Z",
+      "displayTime": "09:35 AM",
+      "event": "✓ Rollback complete - back to 0%",
+      "percentage": 0,
+      "status": "recovered",
+      "metrics": {
+        "errorRate": 0.02,
+        "latency": 145,
+        "successRate": 99.98
+      }
+    }
+  ],
+  "errors": [
+    {
+      "timestamp": "2025-11-03T09:30:30Z",
+      "displayTime": "09:30 AM",
+      "level": "error",
+      "icon": "alert",
+      "message": "API_ERROR: Unable to connect to fraud detection service",
+      "errorCode": "ECONNREFUSED",
+      "affectedUsers": 12
+    },
+    {
+      "timestamp": "2025-11-03T09:31:15Z",
+      "displayTime": "09:31 AM",
+      "level": "error",
+      "icon": "alert",
+      "message": "API_ERROR: Unable to connect to fraud detection service",
+      "errorCode": "ECONNREFUSED",
+      "affectedUsers": 18
+    },
+    {
+      "timestamp": "2025-11-03T09:31:45Z",
+      "displayTime": "09:31 AM",
+      "level": "error",
+      "icon": "alert",
+      "message": "API_ERROR: Unable to connect to fraud detection service",
+      "errorCode": "ECONNREFUSED",
+      "affectedUsers": 15
+    }
+  ],
+  "summary": {
+    "totalDuration": "5 minutes",
+    "usersAffected": 147,
+    "errorsLogged": 45,
+    "rollbackTime": "2 minutes",
+    "impactContained": "10% rollout (5,000 users max)"
+  }
+}
+

@@ -1,7 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ld from "@launchdarkly/node-server-sdk";
 
-const ldClient = ld.init(process.env.NEXT_PUBLIC_LD_SDK_KEY || "");
+let ldClient: ld.LDClient | null = null;
+
+if (process.env.NEXT_PUBLIC_LD_SDK_KEY) {
+  ldClient = ld.init(process.env.NEXT_PUBLIC_LD_SDK_KEY);
+}
 
 type FraudCheckResponse = {
   success: boolean;
@@ -26,20 +30,31 @@ export default async function handler(
   }
 
   try {
-    await ldClient.waitForInitialization();
+    // simulate processing delay
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
-    const { userId = "anonymous" } = req.body;
-    
-    const user = {
-      key: userId,
-      anonymous: userId === "anonymous",
-    };
+    let simulateFraudError = false;
 
-    const simulateFraudError = await ldClient.variation(
-      "simulateFraudError",
-      user,
-      false
-    );
+    if (ldClient) {
+      try {
+        await ldClient.waitForInitialization({ timeout: 3 });
+
+        const { userId = "anonymous" } = req.body;
+        
+        const user = {
+          key: userId,
+          anonymous: userId === "anonymous",
+        };
+
+        simulateFraudError = await ldClient.variation(
+          "simulateFraudError",
+          user,
+          false
+        );
+      } catch (ldError) {
+        console.warn("LaunchDarkly not available, using default values:", ldError);
+      }
+    }
 
     // simulate API error if flag is on
     if (simulateFraudError) {
@@ -50,9 +65,6 @@ export default async function handler(
         error: "API_ERROR: Unable to connect to fraud detection service",
       });
     }
-
-    // simulate processing delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
 
     // success response
     return res.status(200).json({

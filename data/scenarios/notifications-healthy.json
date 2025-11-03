@@ -1,0 +1,92 @@
+{
+  "scenario": "healthy",
+  "featureName": "Notification Center",
+  "rolloutDate": "2025-11-02",
+  "timeline": [
+    {
+      "timestamp": "2025-11-02T11:00:00Z",
+      "displayTime": "11:00 AM",
+      "event": "Rollout started",
+      "percentage": 0,
+      "status": "started"
+    },
+    {
+      "timestamp": "2025-11-02T11:30:00Z",
+      "displayTime": "11:30 AM",
+      "event": "Reached 25%",
+      "percentage": 25,
+      "status": "success",
+      "metrics": {
+        "notificationVolume": 245,
+        "clientErrors": 0.1,
+        "displayLatency": 85
+      }
+    },
+    {
+      "timestamp": "2025-11-02T12:00:00Z",
+      "displayTime": "12:00 PM",
+      "event": "Reached 50%",
+      "percentage": 50,
+      "status": "success",
+      "metrics": {
+        "notificationVolume": 512,
+        "clientErrors": 0.2,
+        "displayLatency": 82
+      }
+    },
+    {
+      "timestamp": "2025-11-02T13:00:00Z",
+      "displayTime": "01:00 PM",
+      "event": "Reached 75%",
+      "percentage": 75,
+      "status": "success",
+      "metrics": {
+        "notificationVolume": 789,
+        "clientErrors": 0.1,
+        "displayLatency": 88
+      }
+    },
+    {
+      "timestamp": "2025-11-02T14:30:00Z",
+      "displayTime": "02:30 PM",
+      "event": "100% Complete!",
+      "percentage": 100,
+      "status": "complete",
+      "metrics": {
+        "notificationVolume": 1024,
+        "clientErrors": 0.2,
+        "displayLatency": 84
+      }
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-1",
+      "title": "Security Alert",
+      "message": "New device login detected from Chrome on MacOS",
+      "timestamp": "2025-11-02T11:15:00Z",
+      "displayTime": "11:15 AM",
+      "type": "alert",
+      "read": false
+    },
+    {
+      "id": "notif-2",
+      "title": "Transaction Completed",
+      "message": "Your transfer of $500 has been processed successfully",
+      "timestamp": "2025-11-02T12:45:00Z",
+      "displayTime": "12:45 PM",
+      "type": "success",
+      "read": false
+    },
+    {
+      "id": "notif-3",
+      "title": "Account Update",
+      "message": "Your profile information was updated",
+      "timestamp": "2025-11-02T14:10:00Z",
+      "displayTime": "02:10 PM",
+      "type": "info",
+      "read": true
+    }
+  ]
+}
+
