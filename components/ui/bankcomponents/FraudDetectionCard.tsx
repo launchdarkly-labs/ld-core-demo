@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useFlags } from "launchdarkly-react-client-sdk";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, CheckCircle, AlertTriangle, X, Sparkles } from "lucide-react";
@@ -8,21 +8,48 @@ interface FraudDetectionCardProps {
   // props will be added as needed
 }
 
+interface FraudCheckResult {
+  success: boolean;
+  status: "clear" | "suspicious" | "error";
+  message: string;
+  transactionsChecked?: number;
+  error?: string;
+}
+
 export default function FraudDetectionCard({}: FraudDetectionCardProps) {
   const { enhancedFraudDetectionGuardedRelease } = useFlags();
+  const ldClient = useLDClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<FraudCheckResult | null>(null);
 
   const handleFraudCheck = async () => {
     setIsChecking(true);
     setResult(null);
 
-    // placeholder
-    setTimeout(() => {
+    try {
+      const userId = ldClient?.getContext()?.key || "anonymous";
+      
+      const response = await fetch("/api/fraud-check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      const data: FraudCheckResult = await response.json();
+      setResult(data);
+    } catch (error) {
+      setResult({
+        success: false,
+        status: "error",
+        message: "Failed to perform fraud check",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
       setIsChecking(false);
-      setResult("Fraud check completed");
-    }, 1000);
+    }
   };
 
   if (!enhancedFraudDetectionGuardedRelease) {
@@ -127,7 +154,7 @@ export default function FraudDetectionCard({}: FraudDetectionCardProps) {
                       )}
                     </Button>
 
-                    {result && (
+                    {result && result.status === "clear" && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -143,8 +170,36 @@ export default function FraudDetectionCard({}: FraudDetectionCardProps) {
                               All Clear
                             </p>
                             <p className="text-sm text-green-700 font-sohnelight">
-                              No suspicious activity detected. Your account is secure.
+                              {result.message}. Checked {result.transactionsChecked} transactions.
                             </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {result && result.status === "error" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="relative overflow-hidden rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 p-5 shadow-md"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="bg-red-100 rounded-full p-2">
+                            <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" strokeWidth={2.5} />
+                          </div>
+                          <div>
+                            <p className="text-base font-bold text-red-900 mb-1 font-sohne">
+                              Service Error
+                            </p>
+                            <p className="text-sm text-red-700 font-sohnelight mb-2">
+                              {result.message}
+                            </p>
+                            {result.error && (
+                              <p className="text-xs text-red-600 font-mono bg-red-100 px-2 py-1 rounded">
+                                {result.error}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </motion.div>
