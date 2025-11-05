@@ -22,52 +22,50 @@ export default function NotificationCenter() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const triggerNotificationSpam = () => {
-    // trigger notification spam loop error for observability demo
-    const spamNotifications: Notification[] = [];
-    
-    // create 50 duplicate notifications rapidly
-    for (let i = 0; i < 50; i++) {
-      spamNotifications.push({
-        id: `spam-${i}-${Date.now()}`,
-        title: i % 3 === 0 ? "Security Alert!" : i % 3 === 1 ? "Urgent Action Required!" : "Account Notice",
-        message: i % 3 === 0 
-          ? "Unauthorized access attempt detected. Verify your identity immediately!" 
-          : i % 3 === 1 
-          ? "Your account has been compromised. Click here now!"
-          : "Unusual activity detected on your account!",
-        timestamp: new Date(),
-        read: false,
-        type: i % 2 === 0 ? "alert" : "warning",
-      });
-    }
-    
-    setNotifications(spamNotifications);
-    
-    // throw error for LaunchDarkly Observability (Error Monitoring + Session Replay)
-    // note: in dev mode, this will show Next.js error overlay - that's expected
-    // for demos, run in production mode: npm run build && npm start
-    setTimeout(() => {
-      const error = new Error("NotificationSpamError: Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
-      error.name = "NotificationSpamError";
-      
-      // add metadata for better error context
-      (error as any).component = "NotificationCenter";
-      (error as any).errorType = "notification-spam";
-      (error as any).notificationCount = spamNotifications.length;
-      (error as any).severity = "high";
-      
-      console.error("🔴 Notification Loop Error:", error);
-      
-      // throw to LaunchDarkly Observability
-      throw error;
-    }, 100);
-  };
-
   const toggleDropdown = () => {
     if (!isOpen) {
-      // trigger spam when opening
-      triggerNotificationSpam();
+      // trigger notification spam loop error for observability demo
+      const spamNotifications: Notification[] = [];
+      
+      // create 50 duplicate notifications rapidly
+      for (let i = 0; i < 50; i++) {
+        spamNotifications.push({
+          id: `spam-${i}-${Date.now()}`,
+          title: i % 3 === 0 ? "Security Alert!" : i % 3 === 1 ? "Urgent Action Required!" : "Account Notice",
+          message: i % 3 === 0 
+            ? "Unauthorized access attempt detected. Verify your identity immediately!" 
+            : i % 3 === 1 
+            ? "Your account has been compromised. Click here now!"
+            : "Unusual activity detected on your account!",
+          timestamp: new Date(),
+          read: false,
+          type: i % 2 === 0 ? "alert" : "warning",
+        });
+      }
+      
+      setNotifications(spamNotifications);
+      
+      // throw error for LaunchDarkly Observability
+      // using setTimeout to throw asynchronously (no overlay in production mode)
+      setTimeout(() => {
+        const error = new Error("NotificationSpamError: Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
+        error.name = "NotificationSpamError";
+        
+        // add metadata for better error context and Vega analysis
+        (error as any).component = "NotificationCenter";
+        (error as any).errorType = "notification-spam";
+        (error as any).notificationCount = spamNotifications.length;
+        (error as any).severity = "high";
+        (error as any).userAction = "clicked-notification-bell";
+        (error as any).affectedFeature = "notification-center";
+        (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
+        
+        // log first for visibility
+        console.error("🔴 Notification Loop Error:", error);
+        
+        // throw for LaunchDarkly's global error handler to catch
+        throw error;
+      }, 50);
     }
     setIsOpen(!isOpen);
   };

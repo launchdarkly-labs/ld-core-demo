@@ -959,13 +959,25 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
     
     logging.info("Starting Payment Engine Healthy scenario generator...")
     
-    # static timeline with predefined metrics
-    timeline = [
-        {"percentage": 25, "error_rate": 0.01, "latency": 142, "success_rate": 99.99},
-        {"percentage": 50, "error_rate": 0.02, "latency": 144, "success_rate": 99.98},
-        {"percentage": 75, "error_rate": 0.01, "latency": 143, "success_rate": 99.99},
-        {"percentage": 100, "error_rate": 0.02, "latency": 145, "success_rate": 99.98},
-    ]
+    # Wait for rollout to be fully initialized with retry logic
+    logging.info("Waiting for flag rollout to be ready...")
+    max_retries = 6
+    retry_count = 0
+    rollout_ready = False
+    
+    while retry_count < max_retries and not rollout_ready:
+        time.sleep(5)
+        flag_details = get_flag_details("paymentEngineHealthyRollout")
+        if flag_details and is_measured_rollout(flag_details):
+            rollout_ready = True
+            logging.info("✅ Payment Engine Healthy rollout is ready!")
+        else:
+            retry_count += 1
+            logging.info(f"Rollout not ready yet, retrying... ({retry_count}/{max_retries})")
+    
+    if not rollout_ready:
+        logging.error("Payment Engine Healthy rollout failed to initialize after 30 seconds. Exiting.")
+        return
     
     user_counter = 0
     flush_counter = 0
@@ -978,10 +990,6 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
             break
         
         try:
-            # cycle through timeline stages based on current rollout percentage
-            # use deterministic data pattern for each stage
-            current_stage = timeline[user_counter % len(timeline)]
-            
             # create deterministic user
             user_key = f"payment-healthy-user-{user_counter}"
             builder = Context.builder(user_key)
@@ -992,20 +1000,33 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
             # evaluate the flag to create exposures
             flag_value = client.variation("paymentEngineHealthyRollout", user_context, False)
             
+            # Generate metrics based on flag value (both healthy, new version slightly better)
+            if flag_value:
+                # NEW VERSION (True): EXCELLENT - even better metrics than control
+                error_rate = 0.5  # 0.5% error rate
+                latency = 140     # 140ms latency - slightly faster
+                success_rate = 99.5  # 99.5% success
+            else:
+                # CONTROL (False): GOOD - baseline metrics
+                error_rate = 1.0  # 1% error rate - still good
+                latency = 150     # 150ms latency
+                success_rate = 99.0  # 99% success
+            
             # track success rate
-            if random.random() < (current_stage["success_rate"] / 100):
+            if random.random() < (success_rate / 100):
                 client.track("payment-success-rate", user_context)
             
             # track error rate
-            if random.random() < (current_stage["error_rate"] / 100):
+            if random.random() < (error_rate / 100):
                 client.track("payment-error-rate", user_context)
             
             # track latency with small variance
-            latency = int(current_stage["latency"] + random.uniform(-3, 3))
-            client.track("payment-latency", user_context, None, latency)
+            latency_variance = 5
+            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
+            client.track("payment-latency", user_context, None, latency_value)
             
             # business metric: track transactions processed (successful payments)
-            if random.random() < (current_stage["success_rate"] / 100):
+            if random.random() < (success_rate / 100):
                 client.track("payment-transactions-processed", user_context, None, 1)
             
             user_counter += 1
@@ -1032,6 +1053,10 @@ def payment_engine_failed_scenario_generator(client, stop_event):
         return
     
     logging.info("Starting Payment Processing v2.0 Failed scenario generator...")
+    
+    # Wait for rollout to be fully initialized
+    logging.info("Waiting for flag rollout to be ready...")
+    time.sleep(10)
     
     user_counter = 0
     flush_counter = 0
@@ -1178,23 +1203,12 @@ def generate_results(project_key, api_key):
         # let generators run continuously until measured rollouts complete
         logging.info("All guarded release generators are now running...")
         logging.info("They will continue generating data until their measured rollouts complete.")
-        logging.info("This typically takes 10-15 minutes. Press Ctrl+C to stop early if needed.")
+        logging.info("Generators will automatically stop when rollouts finish (typically 10-15 minutes).")
+        logging.info("Press Ctrl+C to stop early if needed.")
         logging.info("")
         
-        # wait longer to ensure generators stay alive during entire monitoring window
-        time.sleep(600)  # 10 minutes
-        
-        logging.info("Setting stop events (generators will finish current loops)...")
-        stop_event.set()
-        risk_mgmt_stop_event.set()
-        financial_agent_stop_event.set()
-        # togglebank_db_stop_event.set()  # Old A3 - Commented out
-        investment_db_stop_event.set()
-        investment_api_stop_event.set()
-        risk_mgmt_db_stop_event.set()
-        payment_healthy_stop_event.set()
-        payment_failed_stop_event.set()
-        
+        # Wait for all generators to complete naturally (no timeout)
+        # Each generator will exit when its measured rollout is complete
         # a4_thread.join()  # Old A4 - Commented out
         risk_mgmt_thread.join()
         financial_agent_thread.join()
@@ -1204,6 +1218,8 @@ def generate_results(project_key, api_key):
         risk_mgmt_db_thread.join()
         payment_healthy_thread.join()
         payment_failed_thread.join()
+        
+        logging.info("All guarded release generators have completed.")
         
         client.flush()
         client.close()
