@@ -79,7 +79,8 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
               tracingOrigins: true,
               inlineImages: true,
               inlineVideos: true,
-              inlineStylesheet: true
+              inlineStylesheet: true,
+              contextFriendlyName: (ctx) => ctx.user.key
             })
           ]
         },
