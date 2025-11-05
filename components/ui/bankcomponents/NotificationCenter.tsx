@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
-import { Bell, X, CheckCircle } from "lucide-react";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+import { Bell, X, CheckCircle, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,7 +14,6 @@ interface Notification {
 }
 
 export default function NotificationCenter() {
-  const { notificationCenterGuardedRelease } = useFlags();
   const ldClient = useLDClient();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,28 +22,53 @@ export default function NotificationCenter() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const fetchNotifications = async () => {
-    setIsLoading(true);
-    try {
-      const userId = ldClient?.getContext()?.key || "anonymous";
-      const response = await fetch(`/api/notifications?userId=${userId}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        const parsedNotifications = data.notifications.map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp),
-        }));
-        setNotifications(parsedNotifications);
-      }
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    } finally {
-      setIsLoading(false);
+  const triggerNotificationSpam = () => {
+    // trigger notification spam loop error for observability demo
+    const spamNotifications: Notification[] = [];
+    
+    // create 50 duplicate notifications rapidly
+    for (let i = 0; i < 50; i++) {
+      spamNotifications.push({
+        id: `spam-${i}-${Date.now()}`,
+        title: i % 3 === 0 ? "Security Alert!" : i % 3 === 1 ? "Urgent Action Required!" : "Account Notice",
+        message: i % 3 === 0 
+          ? "Unauthorized access attempt detected. Verify your identity immediately!" 
+          : i % 3 === 1 
+          ? "Your account has been compromised. Click here now!"
+          : "Unusual activity detected on your account!",
+        timestamp: new Date(),
+        read: false,
+        type: i % 2 === 0 ? "alert" : "warning",
+      });
     }
+    
+    setNotifications(spamNotifications);
+    
+    // throw error for LaunchDarkly Observability (Error Monitoring + Session Replay)
+    // note: in dev mode, this will show Next.js error overlay - that's expected
+    // for demos, run in production mode: npm run build && npm start
+    setTimeout(() => {
+      const error = new Error("NotificationSpamError: Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
+      error.name = "NotificationSpamError";
+      
+      // add metadata for better error context
+      (error as any).component = "NotificationCenter";
+      (error as any).errorType = "notification-spam";
+      (error as any).notificationCount = spamNotifications.length;
+      (error as any).severity = "high";
+      
+      console.error("🔴 Notification Loop Error:", error);
+      
+      // throw to LaunchDarkly Observability
+      throw error;
+    }, 100);
   };
 
   const toggleDropdown = () => {
+    if (!isOpen) {
+      // trigger spam when opening
+      triggerNotificationSpam();
+    }
     setIsOpen(!isOpen);
   };
 
@@ -57,18 +81,6 @@ export default function NotificationCenter() {
   const clearAll = () => {
     setNotifications([]);
   };
-
-  useEffect(() => {
-    if (notificationCenterGuardedRelease) {
-      fetchNotifications();
-    }
-  }, [notificationCenterGuardedRelease]);
-
-  useEffect(() => {
-    if (isOpen && notifications.length === 0) {
-      fetchNotifications();
-    }
-  }, [isOpen]);
 
   //close dropdown when clicking outside
   useEffect(() => {
@@ -87,11 +99,6 @@ export default function NotificationCenter() {
     };
   }, [isOpen]);
 
-  //don't render if flag is off
-  if (!notificationCenterGuardedRelease) {
-    return null;
-  }
-
   return (
     <div className="relative" ref={dropdownRef}>
       {/* bell icon button */}
@@ -100,10 +107,10 @@ export default function NotificationCenter() {
         className="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
         aria-label="Notifications"
       >
-        <Bell className={`h-6 w-6 ${isOpen ? 'text-blue-600' : 'text-gray-700'}`} />
+        <Bell className={`h-6 w-6 ${isOpen ? 'text-blue-600' : notifications.length > 10 ? 'text-red-600' : 'text-gray-700'}`} />
         {unreadCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
-            {unreadCount}
+          <Badge className={`absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-white text-xs ${notifications.length > 10 ? 'bg-red-600 animate-pulse' : 'bg-red-500'}`}>
+            {unreadCount > 99 ? '99+' : unreadCount}
           </Badge>
         )}
       </button>
@@ -133,16 +140,33 @@ export default function NotificationCenter() {
               )}
             </div>
 
-            {/* spam warning */}
-            {notifications.length > 5 && unreadCount > 5 && (
-              <div className="p-3 bg-amber-50 border-b border-amber-200">
-                <div className="flex items-center gap-2 text-amber-800">
-                  <div className="h-2 w-2 bg-amber-500 rounded-full animate-pulse" />
-                  <p className="text-xs font-semibold">
-                    Unusual notification volume detected ({notifications.length} notifications)
-                  </p>
+            {/* spam warning - error state */}
+            {notifications.length > 10 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-gradient-to-r from-red-50 to-rose-50 border-b-2 border-red-300"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 animate-pulse" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-red-900 font-sohne">
+                      ⚠️ Notification Loop Detected
+                    </p>
+                    <p className="text-xs text-red-700 font-sohnelight mt-1">
+                      Critical error: {notifications.length} duplicate notifications generated. Event listener recursion detected.
+                    </p>
+                    <div className="mt-2 flex items-center gap-2 text-xs">
+                      <span className="px-2 py-1 bg-red-100 text-red-800 rounded font-mono">
+                        ERROR: NOTIFICATION_LOOP
+                      </span>
+                      <span className="text-red-600">
+                        Component: NotificationCenter.tsx
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* notification list */}

@@ -124,6 +124,11 @@ class DemoBuilder:
         self.metric_government_rm_db_errors()
         self.metric_government_rm_api_latency()
         self.metric_government_rm_api_errors()
+        self.metric_payment_success_rate()
+        self.metric_payment_latency()
+        self.metric_payment_error_rate()
+        self.metric_payment_transactions_processed()
+        self.metric_payment_revenue_protected()
         
         print("Done")
         self.metrics_created = True
@@ -152,8 +157,10 @@ class DemoBuilder:
         print("Creating flags...")
         self.flag_wealth_management()
         self.flag_federated_account()
-        self.flag_togglebank_database_guarded_release()
-        self.flag_togglebank_api_guarded_release()
+        # self.flag_togglebank_database_guarded_release()  # Old A3 - Commented out
+        # self.flag_togglebank_api_guarded_release()  # Old A4 - Commented out
+        self.flag_payment_engine_healthy_rollout()  # Now A3
+        self.flag_payment_engine_failed_rollout()  # Now A4
         self.flag_togglebank_show_different_special_offer_string()
         self.flag_togglebank_release_new_signup_promo()
         self.flag_togglebank_swap_widget_positions()
@@ -747,8 +754,10 @@ class DemoBuilder:
     def add_userid_to_flags(self):
         res = self.ldproject.add_maintainer_to_flag("wealthManagement")
         res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
-        res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")
-        res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")
+        # res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")  # Old A3 - Commented out
+        # res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")  # Old A4 - Commented out
+        res = self.ldproject.add_maintainer_to_flag("paymentEngineHealthyRollout")  # New A3
+        res = self.ldproject.add_maintainer_to_flag("paymentProcessingV2FailedRollout")  # New A4
         res = self.ldproject.add_maintainer_to_flag("financialDBMigration")
         res = self.ldproject.add_maintainer_to_flag("investment-recent-trade-db")
         res = self.ldproject.add_maintainer_to_flag("release-new-investment-stock-api")
@@ -810,7 +819,9 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "mobile-users", "production")
-        res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")
+        # res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")  # Old A3 - Commented out
+        res = self.ldproject.add_segment_to_flag("paymentEngineHealthyRollout", "beta-users", "production")  # New A3
+        res = self.ldproject.add_segment_to_flag("paymentProcessingV2FailedRollout", "beta-users", "production")  # New A4
         res = self.ldproject.add_segment_to_flag("investment-recent-trade-db", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
@@ -1239,6 +1250,66 @@ class DemoBuilder:
             unit="",
             success_criteria="LowerThanBaseline",
             tags=["guarded-release", "public-sector"]
+        )
+        
+    def metric_payment_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-success-rate",
+            metric_name="Payment Success Rate - ToggleBank",
+            event_key="payment-success-rate",
+            metric_description="Tracks successful payment transactions in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-latency",
+            metric_name="Payment Latency - ToggleBank",
+            event_key="payment-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment engine upgrade.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-error-rate",
+            metric_name="Payment Error Rate - ToggleBank",
+            event_key="payment-error-rate",
+            metric_description="Tracks payment processing errors in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_transactions_processed(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-transactions-processed",
+            metric_name="Payment Transactions Processed - ToggleBank",
+            event_key="payment-transactions-processed",
+            metric_description="Tracks total number of payment transactions successfully processed.",
+            numeric=True,
+            unit="transactions",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
+        )
+    
+    def metric_payment_revenue_protected(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-revenue-protected",
+            metric_name="Payment Revenue Protected - ToggleBank",
+            event_key="payment-revenue-protected",
+            metric_description="Tracks estimated revenue protected by automatic rollback during payment engine failures.",
+            numeric=True,
+            unit="USD",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
         )
         
 ############################################################################################################
@@ -1838,6 +1909,48 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
+        
+    def flag_payment_engine_healthy_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentEngineHealthyRollout",
+            "A3 - Scenario: Payment Engine Upgrade - Healthy Rollout - ToggleBank",
+            "Static scenario showing successful payment engine rollout (0% to 100%). Demonstrates smooth deployment with healthy metrics.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Healthy Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentEngineHealthyRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed"])
+        res = self.ldproject.add_guarded_rollout("paymentEngineHealthyRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=3)
+        
+    def flag_payment_engine_failed_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentProcessingV2FailedRollout",
+            "A4 - Scenario: Payment Processing v2.0 - Failed Rollout - ToggleBank",
+            "Static scenario showing failed payment processing v2.0 rollout with automatic rollback. Demonstrates error spike and automatic recovery.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Failed Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed", "payment-revenue-protected"])
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=3)
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
