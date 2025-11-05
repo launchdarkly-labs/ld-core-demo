@@ -48,8 +48,8 @@ export default function NotificationCenter() {
       // throw error for LaunchDarkly Observability
       // using setTimeout to throw asynchronously (no overlay in production mode)
       setTimeout(() => {
-        const error = new Error("NotificationSpamError: Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
-        error.name = "NotificationSpamError";
+        const error = new Error("Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
+        error.name = "Notification Spam Error";
         
         // add metadata for better error context and Vega analysis
         (error as any).component = "NotificationCenter";
@@ -61,7 +61,7 @@ export default function NotificationCenter() {
         (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
         
         // log first for visibility
-        console.error("🔴 Notification Loop Error:", error);
+        console.error("🔴 Notification Spam Error:", error);
         
         // throw for LaunchDarkly's global error handler to catch
         throw error;
@@ -149,19 +149,11 @@ export default function NotificationCenter() {
                   <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 animate-pulse" />
                   <div className="flex-1">
                     <p className="text-sm font-bold text-red-900 font-sohne">
-                      ⚠️ Notification Loop Detected
+                      ⚠️ System Alert
                     </p>
                     <p className="text-xs text-red-700 font-sohnelight mt-1">
-                      Critical error: {notifications.length} duplicate notifications generated. Event listener recursion detected.
+                      We're experiencing an issue loading your notifications. Our team has been notified and is working on a fix. Please refresh or try again later.
                     </p>
-                    <div className="mt-2 flex items-center gap-2 text-xs">
-                      <span className="px-2 py-1 bg-red-100 text-red-800 rounded font-mono">
-                        ERROR: NOTIFICATION_LOOP
-                      </span>
-                      <span className="text-red-600">
-                        Component: NotificationCenter.tsx
-                      </span>
-                    </div>
                   </div>
                 </div>
               </motion.div>
