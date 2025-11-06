@@ -959,7 +959,7 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
     
     logging.info("Starting Payment Engine Healthy scenario generator...")
     
-    # Wait for rollout to be fully initialized with retry logic
+    # wait for rollout to be fully initialized with retry logic
     logging.info("Waiting for flag rollout to be ready...")
     max_retries = 6
     retry_count = 0

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { Bell, X, CheckCircle, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,57 +15,125 @@ interface Notification {
 
 export default function NotificationCenter() {
   const ldClient = useLDClient();
+  const flags = useFlags();
+  const enhancedNotificationCenter = flags.enhancedNotificationCenter;
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const errorThrownRef = useRef(false);
+  const spamActiveRef = useRef(false);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const toggleDropdown = () => {
-    if (!isOpen) {
-      // trigger notification spam loop error for observability demo
-      const spamNotifications: Notification[] = [];
+  // continuous notification spam when flag is enabled
+  useEffect(() => {
+    if (enhancedNotificationCenter) {
+      spamActiveRef.current = true;
       
-      // create 50 duplicate notifications rapidly
-      for (let i = 0; i < 50; i++) {
-        spamNotifications.push({
-          id: `spam-${i}-${Date.now()}`,
-          title: i % 3 === 0 ? "Security Alert!" : i % 3 === 1 ? "Urgent Action Required!" : "Account Notice",
-          message: i % 3 === 0 
-            ? "Unauthorized access attempt detected. Verify your identity immediately!" 
-            : i % 3 === 1 
-            ? "Your account has been compromised. Click here now!"
-            : "Unusual activity detected on your account!",
-          timestamp: new Date(),
-          read: false,
-          type: i % 2 === 0 ? "alert" : "warning",
-        });
+      // throw error once when flag is first detected
+      if (!errorThrownRef.current) {
+        errorThrownRef.current = true;
+        setTimeout(() => {
+          const error = new Error("Event listener recursion in NotificationCenter - continuous notification generation detected");
+          error.name = "Notification Spam Error";
+          
+          // add metadata for better error context and Vega analysis
+          (error as any).component = "NotificationCenter";
+          (error as any).errorType = "notification-spam";
+          (error as any).severity = "high";
+          (error as any).userAction = "flag-enabled";
+          (error as any).affectedFeature = "enhanced-notification-center";
+          (error as any).flagKey = "enhancedNotificationCenter";
+          (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
+          
+          console.error("🔴 Notification Spam Error:", error);
+          throw error;
+        }, 100);
       }
+
+      // start continuous spam 
+      const spamInterval = () => {
+        if (!spamActiveRef.current) return; // stop if flag is disabled
+        
+        setNotifications((prev) => {
+          const newBatch: Notification[] = [];
+          const currentCount = prev.length;
+          
+          // random batch size: grows over time
+          const randomBatchSize = Math.floor(Math.random() * (25 - 3 + 1)) + 3 + Math.floor(currentCount / 50);
+          
+          for (let i = 0; i < randomBatchSize; i++) {
+            newBatch.push({
+              id: `spam-${currentCount + i}-${Date.now()}-${Math.random()}`,
+              title: i % 3 === 0 ? "Security Alert!" : i % 3 === 1 ? "Urgent Action Required!" : "Account Notice",
+              message: i % 3 === 0 
+                ? "Unauthorized access attempt detected. Verify your identity immediately!" 
+                : i % 3 === 1 
+                ? "Your account has been compromised. Click here now!"
+                : "Unusual activity detected on your account!",
+              timestamp: new Date(),
+              read: false,
+              type: i % 2 === 0 ? "alert" : "warning",
+            });
+          }
+          
+          return [...prev, ...newBatch];
+        });
+        
+        // schedule next batch with random timing
+        if (spamActiveRef.current) {
+          const nextDelay = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000;
+          setTimeout(spamInterval, nextDelay);
+        }
+      };
       
-      setNotifications(spamNotifications);
-      
-      // throw error for LaunchDarkly Observability
-      // using setTimeout to throw asynchronously (no overlay in production mode)
-      setTimeout(() => {
-        const error = new Error("Event listener recursion in NotificationCenter - " + spamNotifications.length + " duplicate notifications generated");
-        error.name = "Notification Spam Error";
-        
-        // add metadata for better error context and Vega analysis
-        (error as any).component = "NotificationCenter";
-        (error as any).errorType = "notification-spam";
-        (error as any).notificationCount = spamNotifications.length;
-        (error as any).severity = "high";
-        (error as any).userAction = "clicked-notification-bell";
-        (error as any).affectedFeature = "notification-center";
-        (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
-        
-        // log first for visibility
-        console.error("🔴 Notification Spam Error:", error);
-        
-        // throw for LaunchDarkly's global error handler to catch
-        throw error;
-      }, 50);
+      // start the spam loop
+      const initialDelay = Math.floor(Math.random() * (2000 - 500 + 1)) + 500;
+      setTimeout(spamInterval, initialDelay);
+
+      return () => {
+        spamActiveRef.current = false;
+        errorThrownRef.current = false;
+      };
+    } else {
+      // reset when flag is disabled
+      spamActiveRef.current = false;
+      errorThrownRef.current = false;
+      setNotifications([]); // clear spam notifications
+    }
+  }, [enhancedNotificationCenter]);
+
+  const toggleDropdown = () => {
+    if (!isOpen && !enhancedNotificationCenter) {
+      // normal behavior: load a few standard notifications (only when flag is OFF)
+      const normalNotifications: Notification[] = [
+        {
+          id: "notif-1",
+          title: "Payment Received",
+          message: "You received a payment of $150.00 from John Doe",
+          timestamp: new Date(Date.now() - 3600000),
+          read: false,
+          type: "success",
+        },
+        {
+          id: "notif-2",
+          title: "Account Statement",
+          message: "Your monthly statement is now available",
+          timestamp: new Date(Date.now() - 86400000),
+          read: false,
+          type: "info",
+        },
+        {
+          id: "notif-3",
+          title: "Security Update",
+          message: "We've updated our security settings",
+          timestamp: new Date(Date.now() - 172800000),
+          read: true,
+          type: "info",
+        },
+      ];
+      setNotifications(normalNotifications);
     }
     setIsOpen(!isOpen);
   };

@@ -38,6 +38,7 @@ class DemoBuilder:
         self.create_metric_groups()
         self.create_flags()
         self.update_add_userid_to_flags()
+        self.create_alerts()
         self.create_ai_config()
         self.enable_csa_shadow_ai_feature_flags()
         self.create_and_run_experiments() 
@@ -149,6 +150,14 @@ class DemoBuilder:
         
 ############################################################################################################
 
+    # Create all alerts
+    def create_alerts(self):
+        print("Creating alerts...")
+        self.alert_notification_spam_error()
+        print("Done")
+        
+############################################################################################################
+
     # Create all the flags
     def create_flags(self):
         if not self.project_created:
@@ -156,6 +165,7 @@ class DemoBuilder:
             return
         print("Creating flags...")
         self.flag_wealth_management()
+        self.flag_notification_error_simulator()  # A1.1 - Observability
         self.flag_federated_account()
         # self.flag_togglebank_database_guarded_release()  # Old A3 - Commented out
         # self.flag_togglebank_api_guarded_release()  # Old A4 - Commented out
@@ -753,6 +763,7 @@ class DemoBuilder:
 
     def add_userid_to_flags(self):
         res = self.ldproject.add_maintainer_to_flag("wealthManagement")
+        res = self.ldproject.add_maintainer_to_flag("enhancedNotificationCenter")  # A1.1
         res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
         # res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")  # Old A3 - Commented out
         # res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")  # Old A4 - Commented out
@@ -817,6 +828,8 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "beta-users", "production")  # A1.1
+        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "development-team", "production")  # A1.1
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "mobile-users", "production")
         # res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")  # Old A3 - Commented out
@@ -1310,6 +1323,21 @@ class DemoBuilder:
             unit="USD",
             success_criteria="HigherThanBaseline",
             tags=["guarded-release", "bank", "payment", "business"]
+        )
+        
+############################################################################################################
+
+    ##################################################
+    # Alert Definitions
+    ##################################################
+    
+    def alert_notification_spam_error(self):
+        res = self.ldproject.create_alert(
+            alert_name="Enhanced Notification Center - Error Detected",
+            description="Alerts when an error is detected for the Enhanced Notification Center feature",
+            alert_type="anomaly",
+            flag_key="enhancedNotificationCenter",
+            environment="production"
         )
         
 ############################################################################################################
@@ -1850,6 +1878,25 @@ class DemoBuilder:
             on_variation=1,
         )
 
+    def flag_notification_error_simulator(self):
+        res = self.ldproject.create_flag(
+            "enhancedNotificationCenter",
+            "A1.1 - Release: Enhanced Notification Center - ToggleBank",
+            "Releases new enhanced notification center with real-time updates and improved UI",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Enhanced Notification Center"
+                },
+                {
+                    "value": False,
+                    "name": "Use Legacy Notifications"
+                }
+            ],
+            tags=["release", "bank", "observability"],
+            on_variation=1,
+        )
+
     def flag_federated_account(self):
         res = self.ldproject.create_flag(
             "federatedAccounts",
@@ -1913,8 +1960,8 @@ class DemoBuilder:
     def flag_payment_engine_healthy_rollout(self):
         res = self.ldproject.create_flag(
             "paymentEngineHealthyRollout",
-            "A3 - Scenario: Payment Engine Upgrade - Healthy Rollout - ToggleBank",
-            "Static scenario showing successful payment engine rollout (0% to 100%). Demonstrates smooth deployment with healthy metrics.",
+            "A3 - Release: Payment Engine Upgrade - Healthy Rollout - ToggleBank",
+            "Releases upgraded payment engine with improved performance and reliability. Demonstrates smooth deployment with healthy metrics.",
             [
                 {
                     "value": True,
@@ -1934,8 +1981,8 @@ class DemoBuilder:
     def flag_payment_engine_failed_rollout(self):
         res = self.ldproject.create_flag(
             "paymentProcessingV2FailedRollout",
-            "A4 - Scenario: Payment Processing v2.0 - Failed Rollout - ToggleBank",
-            "Static scenario showing failed payment processing v2.0 rollout with automatic rollback. Demonstrates error spike and automatic recovery.",
+            "A4 - Release: Payment Processing v2.0 - Failed Rollout - ToggleBank",
+            "Releases new payment processing v2.0 system with enhanced transaction handling. Demonstrates automatic rollback on error detection.",
             [
                 {
                     "value": True,
