@@ -981,13 +981,17 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
     
     user_counter = 0
     flush_counter = 0
+    status_check_counter = 0
     
     while True:
-        flag_details = get_flag_details("paymentEngineHealthyRollout")
-        if not flag_details or not is_measured_rollout(flag_details):
-            logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
-            stop_event.set()
-            break
+        # Only check rollout status every 500 users to avoid API rate limits
+        if status_check_counter >= 500:
+            flag_details = get_flag_details("paymentEngineHealthyRollout")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
         
         try:
             # create deterministic user
@@ -1031,14 +1035,15 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
             
             user_counter += 1
             flush_counter += 1
+            status_check_counter += 1
             
-            # flush events every 100 users to ensure data is sent
-            if flush_counter >= 100:
+            # flush events every 50 users to ensure data is sent more frequently
+            if flush_counter >= 50:
                 client.flush()
                 flush_counter = 0
                 logging.info(f"Flushed payment healthy events (total users: {user_counter})")
             
-            time.sleep(0.001)  # minimal delay for high volume generation
+            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
             
         except Exception as e:
             logging.error(f"Error generating payment healthy metrics: {str(e)}")
@@ -1054,20 +1059,40 @@ def payment_engine_failed_scenario_generator(client, stop_event):
     
     logging.info("Starting Payment Processing v2.0 Failed scenario generator...")
     
-    # Wait for rollout to be fully initialized
+    # Wait for rollout to be fully initialized with retry logic (same as healthy scenario)
     logging.info("Waiting for flag rollout to be ready...")
-    time.sleep(10)
+    max_retries = 6
+    retry_count = 0
+    rollout_ready = False
+    
+    while retry_count < max_retries and not rollout_ready:
+        time.sleep(5)
+        flag_details = get_flag_details("paymentProcessingV2FailedRollout")
+        if flag_details and is_measured_rollout(flag_details):
+            rollout_ready = True
+            logging.info("✅ Payment Processing v2.0 Failed rollout is ready!")
+        else:
+            retry_count += 1
+            logging.info(f"Rollout not ready yet, retrying... ({retry_count}/{max_retries})")
+    
+    if not rollout_ready:
+        logging.error("Payment Processing v2.0 Failed rollout failed to initialize after 30 seconds. Exiting.")
+        return
     
     user_counter = 0
     flush_counter = 0
     alert_triggered = False
+    status_check_counter = 0
     
     while True:
-        flag_details = get_flag_details("paymentProcessingV2FailedRollout")
-        if not flag_details or not is_measured_rollout(flag_details):
-            logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Processing v2.0 Failed generator.")
-            stop_event.set()
-            break
+        # Only check rollout status every 500 users to avoid API rate limits
+        if status_check_counter >= 500:
+            flag_details = get_flag_details("paymentProcessingV2FailedRollout")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Processing v2.0 Failed generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
         
         try:
             # create deterministic user
@@ -1104,18 +1129,52 @@ def payment_engine_failed_scenario_generator(client, stop_event):
                 latency = 150     # 150ms latency - fast
                 success_rate = 99.5  # 99.5% success
             
-            # track success rate
+            # track success rate (using v2-specific metric)
             if random.random() < (success_rate / 100):
-                client.track("payment-success-rate", user_context)
+                client.track("payment-v2-success-rate", user_context)
             
-            # track error rate - this is the key metric that should trigger rollback
+            # track error rate (using v2-specific metric) - this is the key metric that should trigger rollback
             if random.random() < (error_rate / 100):
-                client.track("payment-error-rate", user_context)
+                client.track("payment-v2-error-rate", user_context)
+                
+                # NEW: Create real observability error for Regression Debugging UI
+                # Only create actual errors when flag_value is True (broken version)
+                if flag_value:
+                    error_types = [
+                        "PaymentGatewayTimeout",
+                        "TransactionValidationError", 
+                        "DatabaseConnectionError",
+                        "PaymentProcessorException",
+                        "InsufficientFundsError"
+                    ]
+                    error_messages = [
+                        "Payment gateway timed out after 30 seconds",
+                        "Transaction validation failed: invalid card number format",
+                        "Database connection pool exhausted",
+                        "Payment processor returned 500 Internal Server Error",
+                        "Insufficient funds for transaction amount"
+                    ]
+                    
+                    error_idx = random.randint(0, len(error_types) - 1)
+                    
+                    # Track the autogenerated observability error metric
+                    # This is what enables Regression Debugging UI
+                    error_data = {
+                        "error.kind": error_types[error_idx],
+                        "error.message": error_messages[error_idx],
+                        "service.name": "payment-processing-v2",
+                        "component": "PaymentEngine",
+                        "transaction.id": f"txn-{user_counter}",
+                        "user.id": user_key,
+                        "flag.key": "paymentProcessingV2FailedRollout",
+                        "severity": "high"
+                    }
+                    client.track("$ld:telemetry:error", user_context, error_data, 1)
             
-            # track latency with variance
+            # track latency with variance (using v2-specific metric)
             latency_variance = 200 if flag_value else 10
             latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
-            client.track("payment-latency", user_context, None, latency_value)
+            client.track("payment-v2-latency", user_context, None, latency_value)
             
             # business metric: track transactions processed (successful payments)
             if random.random() < (success_rate / 100):
@@ -1123,14 +1182,15 @@ def payment_engine_failed_scenario_generator(client, stop_event):
             
             user_counter += 1
             flush_counter += 1
+            status_check_counter += 1
             
-            # flush events every 100 users to ensure data is sent
-            if flush_counter >= 100:
+            # flush events every 50 users to ensure data is sent more frequently
+            if flush_counter >= 50:
                 client.flush()
                 flush_counter = 0
                 logging.info(f"Flushed payment failed events (total users: {user_counter})")
             
-            time.sleep(0.001)  # minimal delay for high volume generation
+            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
             
         except Exception as e:
             logging.error(f"Error generating payment v2 failed metrics: {str(e)}")

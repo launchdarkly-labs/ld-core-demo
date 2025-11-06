@@ -46,6 +46,9 @@ export default function NotificationCenter() {
           (error as any).affectedFeature = "enhanced-notification-center";
           (error as any).flagKey = "enhancedNotificationCenter";
           (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
+          (error as any).sourceFile = "components/ui/bankcomponents/NotificationCenter.tsx";
+          (error as any).sourceFunction = "useEffect (notification spam generator)";
+          (error as any).codeLocation = "Lines 30-105 (spam generation loop)";
           
           console.error("🔴 Notification Spam Error:", error);
           throw error;

@@ -66,6 +66,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           plugins: [
             new Observability({
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
+              version: '1.0.0',
               tracingOrigins: true,
               networkRecording: {
                 enabled: true,

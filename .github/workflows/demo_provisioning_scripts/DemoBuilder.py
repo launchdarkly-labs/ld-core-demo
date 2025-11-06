@@ -128,6 +128,9 @@ class DemoBuilder:
         self.metric_payment_success_rate()
         self.metric_payment_latency()
         self.metric_payment_error_rate()
+        self.metric_payment_v2_success_rate()
+        self.metric_payment_v2_latency()
+        self.metric_payment_v2_error_rate()
         self.metric_payment_transactions_processed()
         self.metric_payment_revenue_protected()
         
@@ -1301,6 +1304,42 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "payment"]
         )
     
+    def metric_payment_v2_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-success-rate",
+            metric_name="Payment v2 Success Rate - ToggleBank",
+            event_key="payment-v2-success-rate",
+            metric_description="Tracks successful payment transactions in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-latency",
+            metric_name="Payment v2 Latency - ToggleBank",
+            event_key="payment-v2-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment processing v2.0 system.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-error-rate",
+            metric_name="Payment v2 Error Rate - ToggleBank",
+            event_key="payment-v2-error-rate",
+            metric_description="Tracks payment processing errors in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
     def metric_payment_transactions_processed(self):
         res = self.ldproject.create_metric(
             metric_key="payment-transactions-processed",
@@ -1996,8 +2035,8 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "scenario"],
             on_variation=1,
         )
-        res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed", "payment-revenue-protected"])
-        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=3)
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "payment-transactions-processed", "payment-revenue-protected", "$ld:telemetry:error"])
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "$ld:telemetry:error"], days=3)
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(
