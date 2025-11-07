@@ -34,7 +34,9 @@ export default function NotificationCenter() {
       // throw error once when flag is first detected
       if (!errorThrownRef.current) {
         errorThrownRef.current = true;
-        setTimeout(() => {
+        
+        // throw error immediately using queueMicrotask
+        queueMicrotask(() => {
           const error = new Error("Event listener recursion in NotificationCenter - continuous notification generation detected");
           error.name = "Notification Spam Error";
           
@@ -48,11 +50,14 @@ export default function NotificationCenter() {
           (error as any).suggestedFix = "Add loading state or debounce to prevent duplicate notification generation";
           (error as any).sourceFile = "components/ui/bankcomponents/NotificationCenter.tsx";
           (error as any).sourceFunction = "useEffect (notification spam generator)";
-          (error as any).codeLocation = "Lines 30-105 (spam generation loop)";
+          (error as any).codeLocation = "Lines 30-85 (spam generation loop)";
+          (error as any).timestamp = new Date().toISOString();
           
           console.error("🔴 Notification Spam Error:", error);
+          
+          // throw the error to trigger global error handlers
           throw error;
-        }, 100);
+        });
       }
 
       // start continuous spam 

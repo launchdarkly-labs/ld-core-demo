@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "upload-sourcemaps": "ldcli sourcemaps upload --app-version 1.0.0 --path .next/static/chunks --base-path /_next/static/chunks"
+    "upload-sourcemaps": "ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks --base-path _next/static/chunks && ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks/pages --base-path _next/static/chunks/pages"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.14",
