@@ -2291,3 +2291,59 @@ class LDPlatform:
                 variations.append(variation)
         
         return variations
+    
+    ##################################################
+    # Create Alert
+    ##################################################
+    def create_alert(
+        self,
+        alert_name,
+        description,
+        alert_type="anomaly",
+        flag_key=None,
+        environment="production"
+    ):
+        """
+        Creates an alert in LaunchDarkly
+        
+        Args:
+            alert_name: Name of the alert
+            description: Description of the alert
+            alert_type: Type of alert (anomaly, threshold, etc.)
+            flag_key: Optional flag key to associate with the alert
+            environment: Environment key (default: production)
+        """
+        url = f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/alerts"
+        
+        payload = {
+            "name": alert_name,
+            "description": description,
+            "kind": alert_type,
+            "environmentKey": environment
+        }
+        
+        # adding flag filter if specified
+        if flag_key:
+            payload["filter"] = {
+                "flagKey": flag_key
+            }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+        
+        response = self.getrequest("POST", url, json=payload, headers=headers)
+        
+        if response.status_code not in [200, 201]:
+            print(f"Error creating alert: HTTP {response.status_code}")
+            print(f"Response: {response.text}")
+            return response
+        
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error creating alert: " + data["message"])
+        else:
+            print(f"✅ Alert created: {alert_name}")
+        
+        return response

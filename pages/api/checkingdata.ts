@@ -71,6 +71,6 @@ export default async function handler(
     return;
   }
 
-  const checking = generateRecentTransactions("checking", 12);
+  const checking = generateRecentTransactions("checking", 25);
   res.status(200).json(checking);
 }

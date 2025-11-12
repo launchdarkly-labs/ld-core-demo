@@ -38,6 +38,7 @@ class DemoBuilder:
         self.create_metric_groups()
         self.create_flags()
         self.update_add_userid_to_flags()
+        self.create_alerts()
         self.create_ai_config()
         self.enable_csa_shadow_ai_feature_flags()
         self.create_and_run_experiments() 
@@ -124,6 +125,17 @@ class DemoBuilder:
         self.metric_government_rm_db_errors()
         self.metric_government_rm_api_latency()
         self.metric_government_rm_api_errors()
+        self.metric_payment_success_rate()
+        self.metric_payment_latency()
+        self.metric_payment_error_rate()
+        self.metric_payment_v2_success_rate()
+        self.metric_payment_v2_latency()
+        self.metric_payment_v2_error_rate()
+        self.metric_payment_interactive_success_rate()  # A4.1
+        self.metric_payment_interactive_latency()       # A4.1
+        self.metric_payment_interactive_error_rate()    # A4.1
+        self.metric_payment_transactions_processed()
+        self.metric_payment_revenue_protected()
         
         print("Done")
         self.metrics_created = True
@@ -144,6 +156,14 @@ class DemoBuilder:
         
 ############################################################################################################
 
+    # Create all alerts
+    def create_alerts(self):
+        print("Creating alerts...")
+        self.alert_notification_spam_error()
+        print("Done")
+        
+############################################################################################################
+
     # Create all the flags
     def create_flags(self):
         if not self.project_created:
@@ -151,9 +171,13 @@ class DemoBuilder:
             return
         print("Creating flags...")
         self.flag_wealth_management()
+        self.flag_notification_error_simulator()  # A1.1 - Observability
         self.flag_federated_account()
-        self.flag_togglebank_database_guarded_release()
-        self.flag_togglebank_api_guarded_release()
+        # self.flag_togglebank_database_guarded_release()  # Old A3 - Commented out
+        # self.flag_togglebank_api_guarded_release()  # Old A4 - Commented out
+        self.flag_payment_engine_healthy_rollout()  # Now A3
+        self.flag_payment_engine_failed_rollout()  # Now A4
+        self.flag_payment_processing_interactive_demo()  # A4.1 - Interactive Demo
         self.flag_togglebank_show_different_special_offer_string()
         self.flag_togglebank_release_new_signup_promo()
         self.flag_togglebank_swap_widget_positions()
@@ -746,9 +770,13 @@ class DemoBuilder:
 
     def add_userid_to_flags(self):
         res = self.ldproject.add_maintainer_to_flag("wealthManagement")
+        res = self.ldproject.add_maintainer_to_flag("enhancedNotificationCenter")  # A1.1
         res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
-        res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")
-        res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")
+        # res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")  # Old A3 - Commented out
+        # res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")  # Old A4 - Commented out
+        res = self.ldproject.add_maintainer_to_flag("paymentEngineHealthyRollout")  # New A3
+        res = self.ldproject.add_maintainer_to_flag("paymentProcessingV2FailedRollout")  # New A4
+        res = self.ldproject.add_maintainer_to_flag("paymentProcessingInteractiveDemo")  # A4.1
         res = self.ldproject.add_maintainer_to_flag("financialDBMigration")
         res = self.ldproject.add_maintainer_to_flag("investment-recent-trade-db")
         res = self.ldproject.add_maintainer_to_flag("release-new-investment-stock-api")
@@ -808,9 +836,14 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
+        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "beta-users", "production")  # A1.1
+        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "development-team", "production")  # A1.1
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "mobile-users", "production")
-        res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")
+        # res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")  # Old A3 - Commented out
+        res = self.ldproject.add_segment_to_flag("paymentEngineHealthyRollout", "beta-users", "production")  # New A3
+        res = self.ldproject.add_segment_to_flag("paymentProcessingV2FailedRollout", "beta-users", "production")  # New A4
+        res = self.ldproject.add_segment_to_flag("paymentProcessingInteractiveDemo", "beta-users", "production")  # A4.1
         res = self.ldproject.add_segment_to_flag("investment-recent-trade-db", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("release-new-investment-stock-api", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("showCardsSectionComponent", "development-team", "production")
@@ -1239,6 +1272,153 @@ class DemoBuilder:
             unit="",
             success_criteria="LowerThanBaseline",
             tags=["guarded-release", "public-sector"]
+        )
+        
+    def metric_payment_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-success-rate",
+            metric_name="Payment Success Rate - ToggleBank",
+            event_key="payment-success-rate",
+            metric_description="Tracks successful payment transactions in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-latency",
+            metric_name="Payment Latency - ToggleBank",
+            event_key="payment-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment engine upgrade.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-error-rate",
+            metric_name="Payment Error Rate - ToggleBank",
+            event_key="payment-error-rate",
+            metric_description="Tracks payment processing errors in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-success-rate",
+            metric_name="Payment v2 Success Rate - ToggleBank",
+            event_key="payment-v2-success-rate",
+            metric_description="Tracks successful payment transactions in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-latency",
+            metric_name="Payment v2 Latency - ToggleBank",
+            event_key="payment-v2-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment processing v2.0 system.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-error-rate",
+            metric_name="Payment v2 Error Rate - ToggleBank",
+            event_key="payment-v2-error-rate",
+            metric_description="Tracks payment processing errors in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_interactive_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-success-rate",
+            metric_name="Payment Interactive Demo Success Rate - ToggleBank",
+            event_key="payment-interactive-success-rate",
+            metric_description="Tracks successful payment transactions in the interactive demo system.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_interactive_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-latency",
+            metric_name="Payment Interactive Demo Latency - ToggleBank",
+            event_key="payment-interactive-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the interactive demo system.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_interactive_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-error-rate",
+            metric_name="Payment Interactive Demo Error Rate - ToggleBank",
+            event_key="payment-interactive-error-rate",
+            metric_description="Tracks payment processing errors in the interactive demo system.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_transactions_processed(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-transactions-processed",
+            metric_name="Payment Transactions Processed - ToggleBank",
+            event_key="payment-transactions-processed",
+            metric_description="Tracks total number of payment transactions successfully processed.",
+            numeric=True,
+            unit="transactions",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
+        )
+    
+    def metric_payment_revenue_protected(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-revenue-protected",
+            metric_name="Payment Revenue Protected - ToggleBank",
+            event_key="payment-revenue-protected",
+            metric_description="Tracks estimated revenue protected by automatic rollback during payment engine failures.",
+            numeric=True,
+            unit="USD",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
+        )
+        
+############################################################################################################
+
+    ##################################################
+    # Alert Definitions
+    ##################################################
+    
+    def alert_notification_spam_error(self):
+        res = self.ldproject.create_alert(
+            alert_name="Enhanced Notification Center - Error Detected",
+            description="Alerts when an error is detected for the Enhanced Notification Center feature",
+            alert_type="anomaly",
+            flag_key="enhancedNotificationCenter",
+            environment="production"
         )
         
 ############################################################################################################
@@ -1779,6 +1959,25 @@ class DemoBuilder:
             on_variation=1,
         )
 
+    def flag_notification_error_simulator(self):
+        res = self.ldproject.create_flag(
+            "enhancedNotificationCenter",
+            "A1.1 - Release: Enhanced Notification Center - ToggleBank",
+            "Releases new enhanced notification center with real-time updates and improved UI",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Enhanced Notification Center"
+                },
+                {
+                    "value": False,
+                    "name": "Use Legacy Notifications"
+                }
+            ],
+            tags=["release", "bank", "observability"],
+            on_variation=1,
+        )
+
     def flag_federated_account(self):
         res = self.ldproject.create_flag(
             "federatedAccounts",
@@ -1838,6 +2037,69 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
+        
+    def flag_payment_engine_healthy_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentEngineHealthyRollout",
+            "A3 - Release: Payment Engine Upgrade - Healthy Rollout - ToggleBank",
+            "Releases upgraded payment engine with improved performance and reliability. Demonstrates smooth deployment with healthy metrics.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Healthy Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentEngineHealthyRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed"])
+        res = self.ldproject.add_guarded_rollout("paymentEngineHealthyRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=3)
+        
+    def flag_payment_engine_failed_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentProcessingV2FailedRollout",
+            "A4 - Release: Payment Processing v2.0 - Failed Rollout - ToggleBank",
+            "Releases new payment processing v2.0 system with enhanced transaction handling. Demonstrates automatic rollback on error detection.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Failed Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "payment-transactions-processed", "payment-revenue-protected", "$ld:telemetry:error"])
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "$ld:telemetry:error"], days=3)
+        
+    def flag_payment_processing_interactive_demo(self):
+        res = self.ldproject.create_flag(
+            "paymentProcessingInteractiveDemo",
+            "A4.1 - Interactive Demo: Payment Processing - ToggleBank",
+            "Interactive flag for live demos of guarded rollouts. Can be manually configured for healthy OR failed scenarios during presentations.",
+            [
+                {
+                    "value": True,
+                    "name": "Enable New Payment Processing"
+                },
+                {
+                    "value": False,
+                    "name": "Use Legacy Payment Processing"
+                }
+            ],
+            tags=["guarded-release", "bank", "demo", "interactive"],
+            on_variation=1,
+        )
+        # attach unique metrics for A4.1
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingInteractiveDemo", ["payment-interactive-success-rate", "payment-interactive-latency", "payment-interactive-error-rate", "payment-transactions-processed", "payment-revenue-protected", "$ld:telemetry:error"])
         
     def flag_database_migration(self):
         res = self.ldproject.create_flag(

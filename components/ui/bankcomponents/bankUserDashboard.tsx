@@ -8,6 +8,7 @@ import LoginContext from "@/utils/contexts/login";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
+import NotificationCenter from "@/components/ui/bankcomponents/NotificationCenter";
 import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
@@ -137,11 +138,15 @@ export default function BankUserDashboard() {
 									</>
 								)}
 
+								{/* notification center */}
+								<NotificationCenter />
+
 								<NavbarLogin variant={BANK} />
 							</>
 						</NavbarRightSideWrapper>
 					</>
 				</NavWrapper>
+
 				<section
 					className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
 						}`}

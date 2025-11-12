@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { useFlags } from "launchdarkly-react-client-sdk";
 
-import { CreditCard, Menu, Navigation } from "lucide-react";
+import { CreditCard, Menu, Navigation, Database, CheckCircle, Zap } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ import {
 } from "../table";
 import { use, useEffect, useState } from "react";
 import { get } from "lodash";
+import { Badge } from "@/components/ui/badge";
 
 type Transaction = {
   id: number;
@@ -106,14 +107,26 @@ export function CreditAccount() {
         <SheetHeader>
           <SheetTitle className="font-sohne text-2xl">
             <div className="flex-col">
-              <div className="flex">GSF Platinum Credit Account</div>
+              <div className="flex mb-4">GSF Platinum Credit Account</div>
               {financialDBMigration === "complete" || togglebankDBGuardedRelease? (
-                <div className="flex text-center items-center justify-center my-6 bg-green-200 text-zinc-500 font-sohnebuch font-extralight text-base py-2">
-                  Retrieving data from DynamoDB
+                <div className="flex items-center my-6 bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 px-4 py-3 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <Database className="h-6 w-6 text-green-700" />
+                    <div>
+                      <p className="font-semibold text-green-900 text-base">DynamoDB (Enhanced)</p>
+                      <p className="text-xs text-green-700 font-normal">Showing 20 recent transactions</p>
+                    </div>
+                  </div>
                 </div>
               ) : (
-                <div className="flex text-center items-center justify-center my-6 bg-amber-200 font-sohnebuch font-extralight text-base py-2">
-                  Retrieving data from RDS
+                <div className="flex items-center my-6 bg-gradient-to-r from-amber-100 to-yellow-100 border-2 border-amber-300 px-4 py-3 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <Database className="h-6 w-6 text-amber-700" />
+                    <div>
+                      <p className="font-semibold text-amber-900 text-base">RDS (Legacy)</p>
+                      <p className="text-xs text-amber-700 font-normal">Showing 10 recent transactions</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -136,7 +149,7 @@ export function CreditAccount() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((invoice, i) => (
+            {transactions.slice(0, financialDBMigration === "complete" || togglebankDBGuardedRelease ? 20 : 10).map((invoice, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{invoice.date}</TableCell>
                 <TableCell>{invoice.merchant}</TableCell>
