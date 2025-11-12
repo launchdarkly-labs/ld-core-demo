@@ -3,6 +3,7 @@ import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { Bell, X, CheckCircle, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/components/hooks/use-mobile";
 
 interface Notification {
   id: string;
@@ -17,6 +18,7 @@ export default function NotificationCenter() {
   const ldClient = useLDClient();
   const flags = useFlags();
   const enhancedNotificationCenter = flags.enhancedNotificationCenter;
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -197,17 +199,21 @@ export default function NotificationCenter() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
+            className={`absolute right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden ${
+              isMobile 
+                ? 'w-[min(90vw,360px)]' 
+                : 'w-96'
+            }`}
           >
             {/* header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-              <h3 className="text-lg font-bold font-sohne text-gray-900">
+            <div className={`flex items-center justify-between ${isMobile ? 'p-3' : 'p-4'} border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50`}>
+              <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-sohne font-semibold text-gray-900`}>
                 Notifications
               </h3>
               {notifications.length > 0 && (
                 <button
                   onClick={clearAll}
-                  className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                  className={`${isMobile ? 'text-[11px]' : 'text-xs'} font-sohne text-blue-600 hover:text-blue-700 font-medium`}
                 >
                   Clear All
                 </button>
@@ -219,15 +225,15 @@ export default function NotificationCenter() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-gradient-to-r from-red-50 to-rose-50 border-b-2 border-red-300"
+                className={`${isMobile ? 'p-3' : 'p-4'} bg-gradient-to-r from-red-50 to-rose-50 border-b-2 border-red-300`}
               >
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 animate-pulse" />
+                  <AlertTriangle className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'} text-red-600 flex-shrink-0 animate-pulse`} />
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-red-900 font-sohne">
+                    <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-sohne font-semibold text-red-900`}>
                       ⚠️ System Alert
                     </p>
-                    <p className="text-xs text-red-700 font-sohnelight mt-1">
+                    <p className={`${isMobile ? 'text-[11px]' : 'text-xs'} font-sohnelight text-red-700 mt-1 leading-relaxed`}>
                       We're experiencing an issue loading your notifications. Our team has been notified and is working on a fix. Please refresh or try again later.
                     </p>
                   </div>
@@ -236,11 +242,11 @@ export default function NotificationCenter() {
             )}
 
             {/* notification list */}
-            <div className="max-h-96 overflow-y-auto">
+            <div className={`${isMobile ? 'max-h-[60vh]' : 'max-h-96'} overflow-y-auto`}>
               {notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-8 text-center">
-                  <CheckCircle className="h-12 w-12 text-gray-300 mb-3" />
-                  <p className="text-sm text-gray-500 font-sohnelight">
+                <div className={`flex flex-col items-center justify-center ${isMobile ? 'p-6' : 'p-8'} text-center`}>
+                  <CheckCircle className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} text-gray-300 mb-3`} />
+                  <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-sohnelight text-gray-500`}>
                     No new notifications
                   </p>
                 </div>
@@ -250,25 +256,25 @@ export default function NotificationCenter() {
                     key={notification.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
+                    className={`${isMobile ? 'p-3' : 'p-4'} border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
                       !notification.read ? 'bg-blue-50/30' : ''
                     }`}
                     onClick={() => markAsRead(notification.id)}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold font-sohne text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-sohne font-semibold text-gray-900 flex-1`}>
                             {notification.title}
                           </p>
                           {!notification.read && (
-                            <div className="h-2 w-2 bg-blue-600 rounded-full" />
+                            <div className={`${isMobile ? 'h-1.5 w-1.5' : 'h-2 w-2'} bg-blue-600 rounded-full flex-shrink-0`} />
                           )}
                         </div>
-                        <p className="text-xs text-gray-600 font-sohnelight mt-1">
+                        <p className={`${isMobile ? 'text-[11px]' : 'text-xs'} font-sohnelight text-gray-600 leading-relaxed`}>
                           {notification.message}
                         </p>
-                        <p className="text-xs text-gray-400 mt-2">
+                        <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-sohnelight text-gray-400 mt-1.5`}>
                           {formatTimestamp(notification.timestamp)}
                         </p>
                       </div>
