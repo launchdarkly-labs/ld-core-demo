@@ -15,8 +15,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import LoginContext from "@/utils/contexts/login";
+import { Badge } from "@/components/ui/badge";
+import { Zap, Info, TrendingUp, DollarSign, Activity } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -35,6 +37,7 @@ interface Stock {
 
 export const StocksComponent: React.FC = () => {
   const client = useLDClient();
+  const { togglebankAPIGuardedRelease } = useFlags();
   const [elapsedTime, setElapsedTime] = useState(0);
   const { loginUser, userObject, updateAudienceContext } = useContext(LoginContext);
   const [runDemo, setRunDemo] = useState(false);
@@ -185,7 +188,27 @@ export const StocksComponent: React.FC = () => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {/* API version banner */}
+      {togglebankAPIGuardedRelease ? (
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-lg shadow-md">
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            <div>
+              <p className="font-bold text-sm">API v2.0 Active</p>
+              <p className="text-xs opacity-90">Real-time data with extended metrics</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gray-100 border-2 border-gray-300 px-4 py-3 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-gray-600" />
+            <span className="text-sm font-semibold text-gray-700">API v1.0 (Standard)</span>
+          </div>
+        </div>
+      )}
+
       <div
         className={`bg-blue-300/30 rounded-full flex items-center justify-center w-10 h-10 border-2`}
       >
@@ -239,6 +262,24 @@ export const StocksComponent: React.FC = () => {
                   ) : null}
                 </div>
               </div>
+              
+              {/* extended metrics for API v2.0 */}
+              {togglebankAPIGuardedRelease && (
+                <div className="mt-2 pt-2 border-t border-gray-200 flex gap-4 text-xs text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Vol: 2.3M</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="h-3 w-3" />
+                    <span>Cap: $1.2T</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Activity className="h-3 w-3" />
+                    <span>P/E: 28.5</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 type CreditTransaction = {
   id: number;
@@ -51,15 +52,40 @@ function generateRecentCreditTransactions(count: number = 10): CreditTransaction
   return data;
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CreditTransaction[] | { error: string }>
 ) {
   if (req.method !== "GET") {
+    const errorObj = new Error("Method not allowed");
+    await recordErrorToLD(
+      errorObj,
+      "Invalid HTTP method for credit data endpoint",
+      {
+        component: "CreditDataAPI",
+        endpoint: "/api/creditdata",
+        method: req.method || "unknown",
+      }
+    );
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
 
-  const credit = generateRecentCreditTransactions(10);
-  res.status(200).json(credit);
+  try {
+    const credit = generateRecentCreditTransactions(25);
+    res.status(200).json(credit);
+  } catch (error) {
+    console.error("Error generating credit transactions:", error);
+    if (error instanceof Error) {
+      await recordErrorToLD(
+        error,
+        "Failed to generate credit account transactions",
+        {
+          component: "CreditDataAPI",
+          endpoint: "/api/creditdata",
+        }
+      );
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
 }

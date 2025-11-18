@@ -8,6 +8,9 @@ import { setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from 'react-device-detect';
 
+// Get version from environment (set in next.config.js)
+const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0';
+
 const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [LDProvider, setLDProvider] = useState<any>(null);
 
@@ -66,6 +69,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           plugins: [
             new Observability({
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
+              version: APP_VERSION,
               tracingOrigins: true,
               networkRecording: {
                 enabled: true,
@@ -77,10 +81,8 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
               privacySetting: 'none',
               tracingOrigins: true,
-              inlineImages: true,
-              inlineVideos: true,
-              inlineStylesheet: true,
-              contextFriendlyName: (ctx) => ctx.user.key
+              // @ts-ignore
+              contextFriendlyName: (ctx) => { return ctx.user.key; }
             })
           ]
         },

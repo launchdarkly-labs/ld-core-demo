@@ -143,37 +143,38 @@ def evaluate_all_flags(client):
     evaluate_flags_by_tag(client, "financial-advisor-agent", "financial-advisor-agent")
     evaluate_flags_by_tag(client, "Experimentation", "Experimentation")
 
-def a4_guarded_release_generator(client, stop_event):
-    if not client.is_initialized():
-        logging.error("LaunchDarkly client is not initialized for A4")
-        return
-    logging.info("Starting guarded release rollback generator for A4 flag...")
-    while True:
-        flag_details = get_flag_details(A4_FLAG_KEY)
-        if not flag_details or not is_measured_rollout(flag_details):
-            logging.info("Measured rollout is over or flag details unavailable. Exiting A4 generator.")
-            stop_event.set()
-            break
-        try:
-            user_context = generate_user_context()
-            flag_value = client.variation(A4_FLAG_KEY, user_context, False)
-            if flag_value:
-                # True: higher error rate, higher latency
-                if random.random() < 0.8:
-                    client.track(API_ERROR_RATE_KEY, user_context)
-                latency = random.randint(500, 1000)
-                client.track(API_LATENCY_KEY, user_context, None, latency)
-            else:
-                # False: lower error rate, lower latency
-                if random.random() < 0.1:
-                    client.track(API_ERROR_RATE_KEY, user_context)
-                latency = random.randint(100, 200)
-                client.track(API_LATENCY_KEY, user_context, None, latency)
-            time.sleep(0.05)  # Increased delay to prevent API overload
-        except Exception as e:
-            logging.error(f"Error during A4 guarded release simulation: {str(e)}")
-            continue
-    logging.info("A4 guarded release rollback generator finished.")
+# Old A4 - Commented out (replaced by payment_engine_failed_scenario_generator)
+# def a4_guarded_release_generator(client, stop_event):
+#     if not client.is_initialized():
+#         logging.error("LaunchDarkly client is not initialized for A4")
+#         return
+#     logging.info("Starting guarded release rollback generator for A4 flag...")
+#     while True:
+#         flag_details = get_flag_details(A4_FLAG_KEY)
+#         if not flag_details or not is_measured_rollout(flag_details):
+#             logging.info("Measured rollout is over or flag details unavailable. Exiting A4 generator.")
+#             stop_event.set()
+#             break
+#         try:
+#             user_context = generate_user_context()
+#             flag_value = client.variation(A4_FLAG_KEY, user_context, False)
+#             if flag_value:
+#                 # True: higher error rate, higher latency
+#                 if random.random() < 0.8:
+#                     client.track(API_ERROR_RATE_KEY, user_context)
+#                 latency = random.randint(500, 1000)
+#                 client.track(API_LATENCY_KEY, user_context, None, latency)
+#             else:
+#                 # False: lower error rate, lower latency
+#                 if random.random() < 0.1:
+#                     client.track(API_ERROR_RATE_KEY, user_context)
+#                 latency = random.randint(100, 200)
+#                 client.track(API_LATENCY_KEY, user_context, None, latency)
+#             time.sleep(0.05)  # Increased delay to prevent API overload
+#         except Exception as e:
+#             logging.error(f"Error during A4 guarded release simulation: {str(e)}")
+#             continue
+#     logging.info("A4 guarded release rollback generator finished.")
 
 def risk_mgmt_guarded_release_generator(client, stop_event):
     if not client.is_initialized():
@@ -821,37 +822,38 @@ def government_ai_config_experiment_results_generator(client):
             continue
     logging.info("AI Configs experiment results generation for ai-config--publicbot completed")
 
-def togglebank_db_guarded_release_generator(client, stop_event):
-    if not client.is_initialized():
-        logging.error("LaunchDarkly client is not initialized for ToggleBank DB")
-        return
-    logging.info("Starting guarded release rollback generator for ToggleBank DB flag...")
-    while True:
-        flag_details = get_flag_details("togglebankDBGuardedRelease")
-        if not flag_details or not is_measured_rollout(flag_details):
-            logging.info("Measured rollout is over or flag details unavailable. Exiting ToggleBank DB generator.")
-            stop_event.set()
-            break
-        try:
-            user_context = generate_user_context()
-            flag_value = client.variation("togglebankDBGuardedRelease", user_context, False)
-            if flag_value:
-                # True: higher error rate, higher latency
-                if random.random() < 0.7:
-                    client.track("recent-trades-db-errors", user_context)
-                latency = random.randint(300, 700)
-                client.track("recent-trades-db-latency", user_context, None, latency)
-            else:
-                # False: lower error rate, lower latency
-                if random.random() < 0.08:
-                    client.track("recent-trades-db-errors", user_context)
-                latency = random.randint(50, 150)
-                client.track("recent-trades-db-latency", user_context, None, latency)
-            time.sleep(0.05)
-        except Exception as e:
-            logging.error(f"Error during ToggleBank DB guarded release simulation: {str(e)}")
-            continue
-    logging.info("ToggleBank DB guarded release rollback generator finished.")
+# Old A3 - Commented out (replaced by payment_engine_healthy_scenario_generator)
+# def togglebank_db_guarded_release_generator(client, stop_event):
+#     if not client.is_initialized():
+#         logging.error("LaunchDarkly client is not initialized for ToggleBank DB")
+#         return
+#     logging.info("Starting guarded release rollback generator for ToggleBank DB flag...")
+#     while True:
+#         flag_details = get_flag_details("togglebankDBGuardedRelease")
+#         if not flag_details or not is_measured_rollout(flag_details):
+#             logging.info("Measured rollout is over or flag details unavailable. Exiting ToggleBank DB generator.")
+#             stop_event.set()
+#             break
+#         try:
+#             user_context = generate_user_context()
+#             flag_value = client.variation("togglebankDBGuardedRelease", user_context, False)
+#             if flag_value:
+#                 # True: higher error rate, higher latency
+#                 if random.random() < 0.7:
+#                     client.track("recent-trades-db-errors", user_context)
+#                 latency = random.randint(300, 700)
+#                 client.track("recent-trades-db-latency", user_context, None, latency)
+#             else:
+#                 # False: lower error rate, lower latency
+#                 if random.random() < 0.08:
+#                     client.track("recent-trades-db-errors", user_context)
+#                 latency = random.randint(50, 150)
+#                 client.track("recent-trades-db-latency", user_context, None, latency)
+#             time.sleep(0.05)
+#         except Exception as e:
+#             logging.error(f"Error during ToggleBank DB guarded release simulation: {str(e)}")
+#             continue
+#     logging.info("ToggleBank DB guarded release rollback generator finished.")
 
 def investment_db_guarded_release_generator(client, stop_event):
     if not client.is_initialized():
@@ -949,6 +951,387 @@ def risk_mgmt_db_guarded_release_generator(client, stop_event):
             continue
     logging.info("Risk Management DB guarded release rollback generator finished.")
 
+def payment_engine_healthy_scenario_generator(client, stop_event):
+    """Static data generator for healthy payment engine rollout scenario"""
+    if not client.is_initialized():
+        logging.error("LaunchDarkly client is not initialized for Payment Engine Healthy scenario")
+        return
+    
+    logging.info("Starting Payment Engine Healthy scenario generator...")
+    
+    # wait for rollout to be fully initialized with retry logic
+    logging.info("Waiting for flag rollout to be ready...")
+    max_retries = 6
+    retry_count = 0
+    rollout_ready = False
+    
+    while retry_count < max_retries and not rollout_ready:
+        time.sleep(5)
+        flag_details = get_flag_details("paymentEngineHealthyRollout")
+        if flag_details and is_measured_rollout(flag_details):
+            rollout_ready = True
+            logging.info("✅ Payment Engine Healthy rollout is ready!")
+        else:
+            retry_count += 1
+            logging.info(f"Rollout not ready yet, retrying... ({retry_count}/{max_retries})")
+    
+    if not rollout_ready:
+        logging.error("Payment Engine Healthy rollout failed to initialize after 30 seconds. Exiting.")
+        return
+    
+    user_counter = 0
+    flush_counter = 0
+    status_check_counter = 0
+    
+    while True:
+        # Only check rollout status every 500 users to avoid API rate limits
+        if status_check_counter >= 500:
+            flag_details = get_flag_details("paymentEngineHealthyRollout")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
+        
+        try:
+            # create deterministic user
+            user_key = f"payment-healthy-user-{user_counter}"
+            builder = Context.builder(user_key)
+            builder.set("name", f"Payment User {user_counter}")
+            builder.set("email", f"user{user_counter}@togglebank.com")
+            user_context = builder.build()
+            
+            # evaluate the flag to create exposures
+            flag_value = client.variation("paymentEngineHealthyRollout", user_context, False)
+            
+            # Generate metrics based on flag value (both healthy, new version slightly better)
+            if flag_value:
+                # NEW VERSION (True): EXCELLENT - even better metrics than control
+                error_rate = 0.5  # 0.5% error rate
+                latency = 140     # 140ms latency - slightly faster
+                success_rate = 99.5  # 99.5% success
+            else:
+                # CONTROL (False): GOOD - baseline metrics
+                error_rate = 1.0  # 1% error rate - still good
+                latency = 150     # 150ms latency
+                success_rate = 99.0  # 99% success
+            
+            # track success rate
+            if random.random() < (success_rate / 100):
+                client.track("payment-success-rate", user_context)
+            
+            # track error rate
+            if random.random() < (error_rate / 100):
+                client.track("payment-error-rate", user_context)
+            
+            # track latency with small variance
+            latency_variance = 5
+            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
+            client.track("payment-latency", user_context, None, latency_value)
+            
+            # business metric: track transactions processed (successful payments)
+            if random.random() < (success_rate / 100):
+                client.track("payment-transactions-processed", user_context, None, 1)
+            
+            user_counter += 1
+            flush_counter += 1
+            status_check_counter += 1
+            
+            # flush events every 50 users to ensure data is sent more frequently
+            if flush_counter >= 50:
+                client.flush()
+                flush_counter = 0
+                logging.info(f"Flushed payment healthy events (total users: {user_counter})")
+            
+            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
+            
+        except Exception as e:
+            logging.error(f"Error generating payment healthy metrics: {str(e)}")
+            continue
+    
+    logging.info(f"Payment Engine Healthy scenario generator finished. Total users generated: {user_counter}")
+
+def payment_interactive_demo_generator(client, stop_event):
+    """Interactive demo generator for A4.1 - generates failed rollout metrics"""
+    if not client.is_initialized():
+        logging.error("LaunchDarkly client is not initialized for Payment Interactive Demo")
+        return
+    
+    logging.info("Starting A4.1 Payment Interactive Demo monitor...")
+    logging.info("Waiting for you to manually create a guarded rollout for A4.1 flag...")
+    logging.info("(Will keep checking until rollout is detected or other generators finish)")
+    
+    # Keep checking for rollout indefinitely (no timeout)
+    rollout_ready = False
+    
+    while not rollout_ready and not stop_event.is_set():
+        time.sleep(10)  # Check every 10 seconds
+        flag_details = get_flag_details("paymentProcessingInteractiveDemo")
+        if flag_details and is_measured_rollout(flag_details):
+            rollout_ready = True
+            logging.info("✅ A4.1 Payment Interactive Demo rollout detected! Starting data generation...")
+    
+    if not rollout_ready:
+        logging.info("A4.1 Payment Interactive Demo: No rollout created during this session.")
+        return
+    
+    user_counter = 0
+    flush_counter = 0
+    alert_triggered = False
+    status_check_counter = 0
+    
+    while True:
+        # only check rollout status every 500 users to avoid API rate limits
+        if status_check_counter >= 500:
+            flag_details = get_flag_details("paymentProcessingInteractiveDemo")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("A4.1 measured rollout is over or flag details unavailable. Exiting generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
+        
+        try:
+            # create deterministic user
+            user_key = f"payment-interactive-user-{user_counter}"
+            builder = Context.builder(user_key)
+            builder.set("name", f"Payment Interactive User {user_counter}")
+            builder.set("email", f"interactive{user_counter}@togglebank.com")
+            builder.set("role", "Beta")  # Beta users to match segment targeting
+            user_context = builder.build()
+            
+            # evaluate the flag to create exposures
+            flag_value = client.variation("paymentProcessingInteractiveDemo", user_context, False)
+            
+            # generate FAILED metrics - this is for demo rollback
+            if flag_value:
+                # broken version - generates very bad metrics
+                error_rate = 20.0  # 20% error rate - catastrophic failure
+                latency = 4000     # 4s latency - extremely slow
+                success_rate = 80.0  # 80% success = 20% failure
+                
+                # trigger alert when first user gets bad version
+                if not alert_triggered:
+                    logging.warning(f"🚨 A4.1 Demo: High error rate detected - rollback should trigger!")
+                    alert_triggered = True
+            else:
+                # healthy version - generates good baseline metrics
+                error_rate = 0.5  # 0.5% error rate - normal/healthy
+                latency = 150     # 150ms latency - fast
+                success_rate = 99.5  # 99.5% success
+            
+            # track success rate (using interactive-specific metric)
+            if random.random() < (success_rate / 100):
+                client.track("payment-interactive-success-rate", user_context)
+            
+            # track error rate (using interactive-specific metric) - key metric for rollback
+            if random.random() < (error_rate / 100):
+                client.track("payment-interactive-error-rate", user_context)
+                
+                # Create real observability error for Regression Debugging UI
+                # Only create actual errors when flag_value is True (broken version)
+                if flag_value:
+                    error_types = [
+                        "PaymentGatewayTimeout",
+                        "TransactionValidationError", 
+                        "DatabaseConnectionError",
+                        "PaymentProcessorException",
+                        "InsufficientFundsError"
+                    ]
+                    error_messages = [
+                        "Payment gateway timed out after 30 seconds",
+                        "Transaction validation failed: invalid card number format",
+                        "Database connection pool exhausted",
+                        "Payment processor returned 500 Internal Server Error",
+                        "Insufficient funds for transaction amount"
+                    ]
+                    
+                    error_idx = random.randint(0, len(error_types) - 1)
+                    error_data = {
+                        "error.kind": error_types[error_idx],
+                        "error.message": error_messages[error_idx],
+                        "service.name": "payment-processing-interactive",
+                        "component": "PaymentEngine",
+                        "transaction.id": f"txn-{user_counter}",
+                        "user.id": user_key,
+                        "flag.key": "paymentProcessingInteractiveDemo",
+                        "severity": "high"
+                    }
+                    client.track("$ld:telemetry:error", user_context, error_data, 1)
+            
+            # track latency with variance (using interactive-specific metric)
+            latency_variance = 200 if flag_value else 10
+            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
+            client.track("payment-interactive-latency", user_context, None, latency_value)
+            
+            # business metric: track transactions processed (successful payments)
+            if random.random() < (success_rate / 100):
+                client.track("payment-transactions-processed", user_context, None, 1)
+            
+            user_counter += 1
+            flush_counter += 1
+            status_check_counter += 1
+            
+            # flush events every 50 users to ensure data is sent more frequently
+            if flush_counter >= 50:
+                client.flush()
+                flush_counter = 0
+                logging.info(f"Flushed A4.1 interactive demo events (total users: {user_counter})")
+            
+            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
+            
+        except Exception as e:
+            logging.error(f"Error generating A4.1 interactive demo metrics: {str(e)}")
+            continue
+    
+    logging.info(f"A4.1 Payment Interactive Demo generator finished. Total users generated: {user_counter}")
+
+def payment_engine_failed_scenario_generator(client, stop_event):
+    """Static data generator for failed payment processing v2.0 rollout with automatic rollback"""
+    if not client.is_initialized():
+        logging.error("LaunchDarkly client is not initialized for Payment Processing v2.0 Failed scenario")
+        return
+    
+    logging.info("Starting Payment Processing v2.0 Failed scenario generator...")
+    
+    # Wait for rollout to be fully initialized with retry logic (same as healthy scenario)
+    logging.info("Waiting for flag rollout to be ready...")
+    max_retries = 6
+    retry_count = 0
+    rollout_ready = False
+    
+    while retry_count < max_retries and not rollout_ready:
+        time.sleep(5)
+        flag_details = get_flag_details("paymentProcessingV2FailedRollout")
+        if flag_details and is_measured_rollout(flag_details):
+            rollout_ready = True
+            logging.info("✅ Payment Processing v2.0 Failed rollout is ready!")
+        else:
+            retry_count += 1
+            logging.info(f"Rollout not ready yet, retrying... ({retry_count}/{max_retries})")
+    
+    if not rollout_ready:
+        logging.error("Payment Processing v2.0 Failed rollout failed to initialize after 30 seconds. Exiting.")
+        return
+    
+    user_counter = 0
+    flush_counter = 0
+    alert_triggered = False
+    status_check_counter = 0
+    
+    while True:
+        # Only check rollout status every 500 users to avoid API rate limits
+        if status_check_counter >= 500:
+            flag_details = get_flag_details("paymentProcessingV2FailedRollout")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Processing v2.0 Failed generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
+        
+        try:
+            # create deterministic user
+            user_key = f"payment-v2-failed-user-{user_counter}"
+            builder = Context.builder(user_key)
+            builder.set("name", f"Payment v2 User {user_counter}")
+            builder.set("email", f"userv2{user_counter}@togglebank.com")
+            user_context = builder.build()
+            
+            # evaluate the flag to create exposures
+            flag_value = client.variation("paymentProcessingV2FailedRollout", user_context, False)
+            
+            # KEY FIX: Generate metrics based on flag value, not user count
+            # This allows LaunchDarkly to compare True vs False variations
+            if flag_value:
+                # NEW VERSION (True): BROKEN - generates very bad metrics
+                error_rate = 20.0  # 20% error rate - catastrophic failure
+                latency = 4000     # 4s latency - extremely slow
+                success_rate = 80.0  # 80% success = 20% failure
+                
+                # trigger alert when first user gets bad version
+                if not alert_triggered:
+                    alert_user_key = "payment-system-alert"
+                    alert_builder = Context.builder(alert_user_key)
+                    alert_builder.set("name", "Payment System Alert")
+                    alert_builder.set("email", "alerts@togglebank.com")
+                    alert_context = alert_builder.build()
+                    client.track("payment-rollback-triggered", alert_context)
+                    logging.info(f"🚨 Payment rollback triggered at user {user_counter} - high error rate detected in new version")
+                    alert_triggered = True
+            else:
+                # OLD VERSION (False): HEALTHY - generates good baseline metrics
+                error_rate = 0.5  # 0.5% error rate - normal/healthy
+                latency = 150     # 150ms latency - fast
+                success_rate = 99.5  # 99.5% success
+            
+            # track success rate (using v2-specific metric)
+            if random.random() < (success_rate / 100):
+                client.track("payment-v2-success-rate", user_context)
+            
+            # track error rate (using v2-specific metric) - this is the key metric that should trigger rollback
+            if random.random() < (error_rate / 100):
+                client.track("payment-v2-error-rate", user_context)
+                
+                # create real observability error for regression debugging ui
+                # only create actual errors when flag_value is True (broken version)
+                if flag_value:
+                    error_types = [
+                        "PaymentGatewayTimeout",
+                        "TransactionValidationError", 
+                        "DatabaseConnectionError",
+                        "PaymentProcessorException",
+                        "InsufficientFundsError"
+                    ]
+                    error_messages = [
+                        "Payment gateway timed out after 30 seconds",
+                        "Transaction validation failed: invalid card number format",
+                        "Database connection pool exhausted",
+                        "Payment processor returned 500 Internal Server Error",
+                        "Insufficient funds for transaction amount"
+                    ]
+                    
+                    error_idx = random.randint(0, len(error_types) - 1)
+                    
+                    # track the autogenerated observability error metric
+                    # this enables regression debugging ui
+                    error_data = {
+                        "error.kind": error_types[error_idx],
+                        "error.message": error_messages[error_idx],
+                        "service.name": "payment-processing-v2",
+                        "component": "PaymentEngine",
+                        "transaction.id": f"txn-{user_counter}",
+                        "user.id": user_key,
+                        "flag.key": "paymentProcessingV2FailedRollout",
+                        "severity": "high"
+                    }
+                    client.track("$ld:telemetry:error", user_context, error_data, 1)
+            
+            # track latency with variance (using v2-specific metric)
+            latency_variance = 200 if flag_value else 10
+            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
+            client.track("payment-v2-latency", user_context, None, latency_value)
+            
+            # business metric: track transactions processed (successful payments)
+            if random.random() < (success_rate / 100):
+                client.track("payment-transactions-processed", user_context, None, 1)
+            
+            user_counter += 1
+            flush_counter += 1
+            status_check_counter += 1
+            
+            # flush events every 50 users to ensure data is sent more frequently
+            if flush_counter >= 50:
+                client.flush()
+                flush_counter = 0
+                logging.info(f"Flushed payment failed events (total users: {user_counter})")
+            
+            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
+            
+        except Exception as e:
+            logging.error(f"Error generating payment v2 failed metrics: {str(e)}")
+            continue
+    
+    logging.info(f"Payment Processing v2.0 Failed scenario generator finished. Total users generated: {user_counter}")
+
 def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
     sdk_key = os.getenv("LD_SDK_KEY")
@@ -979,49 +1362,62 @@ def generate_results(project_key, api_key):
         togglebank_widget_position_experiment_results_generator(client)  # swapWidgetPositions
         government_ai_config_experiment_results_generator(client)  # ai-config--publicbot
         
-        # Guarded release generators
+        # Guarded release generators (including static scenario-based ones)
         stop_event = threading.Event()
         risk_mgmt_stop_event = threading.Event()
         financial_agent_stop_event = threading.Event()
-        togglebank_db_stop_event = threading.Event()
+        # togglebank_db_stop_event = threading.Event()  # Old A3 - Commented out
         investment_db_stop_event = threading.Event()
         investment_api_stop_event = threading.Event()
         risk_mgmt_db_stop_event = threading.Event()
+        payment_healthy_stop_event = threading.Event()
+        payment_failed_stop_event = threading.Event()
+        payment_interactive_stop_event = threading.Event()
         
         # Create and start all guarded release threads
-        a4_thread = threading.Thread(target=a4_guarded_release_generator, args=(client, stop_event))
+        # a4_thread = threading.Thread(target=a4_guarded_release_generator, args=(client, stop_event))  # Old A4 - Commented out
         risk_mgmt_thread = threading.Thread(target=risk_mgmt_guarded_release_generator, args=(client, risk_mgmt_stop_event))
         financial_agent_thread = threading.Thread(target=financial_advisor_agent_guarded_release_generator, args=(client, financial_agent_stop_event))
-        togglebank_db_thread = threading.Thread(target=togglebank_db_guarded_release_generator, args=(client, togglebank_db_stop_event))
+        # togglebank_db_thread = threading.Thread(target=togglebank_db_guarded_release_generator, args=(client, togglebank_db_stop_event))  # Old A3 - Commented out
         investment_db_thread = threading.Thread(target=investment_db_guarded_release_generator, args=(client, investment_db_stop_event))
         investment_api_thread = threading.Thread(target=investment_api_guarded_release_generator, args=(client, investment_api_stop_event))
         risk_mgmt_db_thread = threading.Thread(target=risk_mgmt_db_guarded_release_generator, args=(client, risk_mgmt_db_stop_event))
+        payment_healthy_thread = threading.Thread(target=payment_engine_healthy_scenario_generator, args=(client, payment_healthy_stop_event))  # New A3
+        payment_failed_thread = threading.Thread(target=payment_engine_failed_scenario_generator, args=(client, payment_failed_stop_event))  # New A4
+        payment_interactive_thread = threading.Thread(target=payment_interactive_demo_generator, args=(client, payment_interactive_stop_event))  # A4.1
         
-        a4_thread.start()
+        # a4_thread.start()  # Old A4 - Commented out
         risk_mgmt_thread.start()
         financial_agent_thread.start()
-        togglebank_db_thread.start()
+        # togglebank_db_thread.start()  # Old A3 - Commented out
         investment_db_thread.start()
         investment_api_thread.start()
         risk_mgmt_db_thread.start()
+        payment_healthy_thread.start()
+        payment_failed_thread.start()
+        payment_interactive_thread.start()
         
-        time.sleep(5)
+        # let generators run continuously until measured rollouts complete
+        logging.info("All guarded release generators are now running...")
+        logging.info("They will continue generating data until their measured rollouts complete.")
+        logging.info("Generators will automatically stop when rollouts finish (typically 10-15 minutes).")
+        logging.info("Press Ctrl+C to stop early if needed.")
+        logging.info("")
         
-        stop_event.set()
-        risk_mgmt_stop_event.set()
-        financial_agent_stop_event.set()
-        togglebank_db_stop_event.set()
-        investment_db_stop_event.set()
-        investment_api_stop_event.set()
-        risk_mgmt_db_stop_event.set()
-        
-        a4_thread.join()
+        # Wait for all generators to complete naturally (no timeout)
+        # Each generator will exit when its measured rollout is complete
+        # a4_thread.join()  # Old A4 - Commented out
         risk_mgmt_thread.join()
         financial_agent_thread.join()
-        togglebank_db_thread.join()
+        # togglebank_db_thread.join()  # Old A3 - Commented out
         investment_db_thread.join()
         investment_api_thread.join()
         risk_mgmt_db_thread.join()
+        payment_healthy_thread.join()
+        payment_failed_thread.join()
+        payment_interactive_thread.join()
+        
+        logging.info("All guarded release generators have completed.")
         
         client.flush()
         client.close()
