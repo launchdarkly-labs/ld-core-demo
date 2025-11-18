@@ -22,6 +22,7 @@ import {
 import { use, useEffect, useState } from "react";
 import { get } from "lodash";
 import { Badge } from "@/components/ui/badge";
+import { recordErrorToLD } from "@/utils/observability/client";
 
 type Transaction = {
   id: number;
@@ -38,14 +39,51 @@ export function CreditAccount() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   async function getTransactions() {
-    const response = await fetch("/api/creditdata");
-    let transactionsJson: Transaction[];
-    if (response.status == 200) {
-      const data = await response?.json();
-     
-      transactionsJson = data;
-    } else {
-      transactionsJson = [
+    try {
+      const response = await fetch("/api/creditdata");
+      let transactionsJson: Transaction[];
+      if (response.status == 200) {
+        const data = await response?.json();
+       
+        transactionsJson = data;
+      } else {
+        const errorObj = new Error(`Failed to fetch credit account transactions. Status: ${response.status}`);
+        recordErrorToLD(
+          errorObj,
+          "Failed to fetch credit account data",
+          {
+            component: "CreditAccount",
+            endpoint: "/api/creditdata",
+            statusCode: String(response.status),
+          }
+        );
+        transactionsJson = [
+          {
+            id: 0,
+            date: "",
+            merchant: "",
+            status: "Server Error",
+            amount: 0,
+            accounttype: "",
+            user: "",
+          },
+        ];
+      }
+      setTransactions(transactionsJson);
+      return transactionsJson;
+    } catch (error) {
+      console.error("Error fetching credit transactions:", error);
+      if (error instanceof Error) {
+        recordErrorToLD(
+          error,
+          "Error occurred while fetching credit account transactions",
+          {
+            component: "CreditAccount",
+            endpoint: "/api/creditdata",
+          }
+        );
+      }
+      const errorTransactions: Transaction[] = [
         {
           id: 0,
           date: "",
@@ -56,9 +94,9 @@ export function CreditAccount() {
           user: "",
         },
       ];
+      setTransactions(errorTransactions);
+      return errorTransactions;
     }
-    setTransactions(transactionsJson);
-    return transactionsJson;
   }
 
   useEffect(() => {

@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import { Badge } from "@/components/ui/badge";
+import { recordErrorToLD } from "@/utils/observability/client";
 
 type Transaction = {
   id: number;
@@ -51,13 +52,51 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
   const { financialDBMigration, togglebankDBGuardedRelease } = useFlags();
 
   async function getTransactions() {
-    const response = await fetch("/api/checkingdata");
-    let transactionsJson: Transaction[];
-    if (response.status == 200) {
-      const data = await response.json();
-      transactionsJson = data;
-    } else {
-      transactionsJson = [
+    try {
+      const response = await fetch("/api/checkingdata");
+      let transactionsJson: Transaction[];
+      if (response.status == 200) {
+        const data = await response.json();
+        transactionsJson = data;
+      } else {
+        const errorObj = new Error(`Failed to fetch checking account transactions. Status: ${response.status}`);
+        recordErrorToLD(
+          errorObj,
+          "Failed to fetch checking account data",
+          {
+            component: "CheckingAccount",
+            endpoint: "/api/checkingdata",
+            statusCode: String(response.status),
+          }
+        );
+        transactionsJson = [
+          {
+            id: 0,
+            date: "",
+            merchant: "",
+            status: "Server Error",
+            amount: 0,
+            accounttype: "",
+            user: "",
+          },
+        ];
+      }
+
+      setTransactions(transactionsJson);
+      return transactionsJson;
+    } catch (error) {
+      console.error("Error fetching checking transactions:", error);
+      if (error instanceof Error) {
+        recordErrorToLD(
+          error,
+          "Error occurred while fetching checking account transactions",
+          {
+            component: "CheckingAccount",
+            endpoint: "/api/checkingdata",
+          }
+        );
+      }
+      const errorTransactions: Transaction[] = [
         {
           id: 0,
           date: "",
@@ -68,10 +107,9 @@ export function CheckingAccount({ wealthManagement }: CheckingAccountProps) {
           user: "",
         },
       ];
+      setTransactions(errorTransactions);
+      return errorTransactions;
     }
-
-    setTransactions(transactionsJson);
-    return transactionsJson;
   }
 
   useEffect(() => {

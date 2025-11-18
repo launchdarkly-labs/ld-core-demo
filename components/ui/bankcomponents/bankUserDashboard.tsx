@@ -29,6 +29,7 @@ import {
 	NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
+import { recordErrorToLD } from "@/utils/observability/client";
 
 export default function BankUserDashboard() {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +49,17 @@ export default function BankUserDashboard() {
 			});
 
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+				const errorObj = new Error(`HTTP error! status: ${response.status}. Check API Server Logs.`);
+				recordErrorToLD(
+					errorObj,
+					"Failed to fetch AI response from Bedrock API",
+					{
+						component: "BankUserDashboard",
+						endpoint: "/api/bedrock",
+						statusCode: String(response.status),
+					}
+				);
+				throw errorObj;
 			}
 
 			const data = await response.json();
@@ -57,6 +68,16 @@ export default function BankUserDashboard() {
 			return data.completion;
 		} catch (error) {
 			console.error("An error occurred:", error);
+			if (error instanceof Error) {
+				recordErrorToLD(
+					error,
+					"Error occurred while submitting query to Bedrock API",
+					{
+						component: "BankUserDashboard",
+						endpoint: "/api/bedrock",
+					}
+				);
+			}
 		} finally {
 			setLoading(false);
 		}

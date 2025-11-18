@@ -17,6 +17,7 @@ import { pushMetric } from "./guardrail/metrics";
 import { addUserToSegment } from "@/utils/guardrail/ldApi";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -191,6 +192,17 @@ Is there a specific service you'd like to know more about?`;
 				}
 			} catch (error) {
 				console.error('Knowledge Base retrieval error:', error);
+				if (error instanceof Error) {
+					await recordErrorToLD(
+						error,
+						"Failed to retrieve knowledge base passages",
+						{
+							component: "ChatAPI",
+							endpoint: "/api/chat",
+							operation: "getKbPassages",
+						}
+					);
+				}
 				return "Error retrieving passages from knowledge base.";
 			}
 		}
@@ -735,6 +747,16 @@ Is there a specific service you'd like to know more about?`;
 			} catch (error: any) {
 				console.error("Error sending request to Bedrock:", error);
 				tracker.trackError();
+				const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
+				await recordErrorToLD(
+					errorObj,
+					"Failed to send request to Bedrock",
+					{
+						component: "ChatAPI",
+						endpoint: "/api/chat",
+						operation: "bedrockStream",
+					}
+				);
 
 				// If we haven't started streaming yet, send a standard error response
         if (!res.writableEnded) {
@@ -748,6 +770,15 @@ Is there a specific service you'd like to know more about?`;
 		}
 	} catch (error: any) {
 		console.error("Error in chatResponse:", error);
+		const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
+		await recordErrorToLD(
+			errorObj,
+			"Error in chat response handler",
+			{
+				component: "ChatAPI",
+				endpoint: "/api/chat",
+			}
+		);
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 }

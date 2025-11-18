@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ld from "@launchdarkly/node-server-sdk";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 let ldClient: ld.LDClient | null = null;
 
@@ -184,6 +185,16 @@ export default async function handler(
     });
   } catch (error) {
     console.error("Notifications fetch error:", error);
+    if (error instanceof Error) {
+      await recordErrorToLD(
+        error,
+        "Failed to fetch notifications",
+        {
+          component: "NotificationsAPI",
+          endpoint: "/api/notifications",
+        }
+      );
+    }
     return res.status(500).json({
       success: false,
       notifications: [],

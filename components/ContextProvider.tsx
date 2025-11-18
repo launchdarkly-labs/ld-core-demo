@@ -81,9 +81,8 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
               privacySetting: 'none',
               tracingOrigins: true,
-              inlineImages: true,
-              inlineVideos: true,
-              inlineStylesheet: true
+              // @ts-ignore
+              contextFriendlyName: (ctx) => { return ctx.user.key; }
             })
           ]
         },

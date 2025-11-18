@@ -3,6 +3,7 @@ import {
     InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 import { NextApiRequest, NextApiResponse } from 'next';
+import { recordErrorToLD } from "@/utils/observability/server";
 
 
 export default async function bedrockCall(req: NextApiRequest, res: NextApiResponse) {
@@ -28,7 +29,16 @@ export default async function bedrockCall(req: NextApiRequest, res: NextApiRespo
         let jsontext = JSON.parse(decoder.decode(response.body));
         res.status(200).json(jsontext);
     } catch (error: any) {
-      
+        const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
+        await recordErrorToLD(
+            errorObj,
+            "Failed to invoke Bedrock model",
+            {
+                component: "BedrockAPI",
+                endpoint: "/api/bedrock",
+                modelId: input.modelId || "unknown",
+            }
+        );
         throw new Error(error.message);
     }
 }

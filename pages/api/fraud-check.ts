@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as ld from "@launchdarkly/node-server-sdk";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 let ldClient: ld.LDClient | null = null;
 
@@ -76,6 +77,16 @@ export default async function handler(
     });
   } catch (error) {
     console.error("Fraud check error:", error);
+    if (error instanceof Error) {
+      await recordErrorToLD(
+        error,
+        "Failed to process fraud check",
+        {
+          component: "FraudCheckAPI",
+          endpoint: "/api/fraud-check",
+        }
+      );
+    }
     return res.status(500).json({
       success: false,
       status: "error",
