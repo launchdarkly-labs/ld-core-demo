@@ -94,7 +94,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.7",
-    "drizzle-kit": "^0.18.1",
+    "drizzle-kit": "^0.31.7",
     "esbuild": "^0.25.0",
     "postcss": "^8",
     "postcss-cli": "^9.1.0",
