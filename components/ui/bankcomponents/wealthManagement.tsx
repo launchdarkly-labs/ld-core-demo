@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { StocksComponent } from "@/components/ui/bankcomponents/stocksCard";
+import { recordErrorToLD } from "@/utils/observability/client";
 
 interface WealthManagementSheetProps {
   data: any;
@@ -171,12 +172,27 @@ const WealthManagementSheet = ({
                         const button = e.currentTarget;
                         button.textContent = "Error";
                         button.classList.add("bg-red-500"); 
-                        await controls.start("shake"); 
-                        throw new Error("Error Loading Brokerage Account Details. API failed to respond");
-                        setTimeout(() => {
-                          button.textContent = "View Account Details";
-                          button.classList.remove("bg-red-500");
-                        }, 2000);
+                        try {
+                          await controls.start("shake"); 
+                          const errorObj = new Error("Error Loading Brokerage Account Details. API failed to respond");
+                          recordErrorToLD(
+                            errorObj,
+                            "Failed to load brokerage account details",
+                            {
+                              component: "WealthManagement",
+                              accountType: "brokerage",
+                              accountNumber: "***6552",
+                            }
+                          );
+                          throw errorObj;
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setTimeout(() => {
+                            button.textContent = "View Account Details";
+                            button.classList.remove("bg-red-500");
+                          }, 2000);
+                        }
                       }}
                       animate={controls}
                       initial={false} // Ensure the initial state is not applied
@@ -205,7 +221,17 @@ const WealthManagementSheet = ({
                         button.classList.add("bg-red-500"); 
                         try {
                           await controls.start("shake"); 
-                          throw new Error("Error Loading Brokerage Account Details. API failed to respond");
+                          const errorObj = new Error("Error Loading Brokerage Account Details. API failed to respond");
+                          recordErrorToLD(
+                            errorObj,
+                            "Failed to load brokerage account details",
+                            {
+                              component: "WealthManagement",
+                              accountType: "brokerage",
+                              accountNumber: "***7553",
+                            }
+                          );
+                          throw errorObj;
                         } catch (error) {
                           console.error(error);
                         } finally {

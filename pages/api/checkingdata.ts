@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 type CheckingTransaction = {
   id: number;
@@ -67,10 +68,35 @@ export default async function handler(
   res: NextApiResponse<CheckingTransaction[] | { error: string }>
 ) {
   if (req.method !== "GET") {
+    const errorObj = new Error("Method not allowed");
+    await recordErrorToLD(
+      errorObj,
+      "Invalid HTTP method for checking data endpoint",
+      {
+        component: "CheckingDataAPI",
+        endpoint: "/api/checkingdata",
+        method: req.method || "unknown",
+      }
+    );
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
 
-  const checking = generateRecentTransactions("checking", 12);
-  res.status(200).json(checking);
+  try {
+    const checking = generateRecentTransactions("checking", 25);
+    res.status(200).json(checking);
+  } catch (error) {
+    console.error("Error generating checking transactions:", error);
+    if (error instanceof Error) {
+      await recordErrorToLD(
+        error,
+        "Failed to generate checking account transactions",
+        {
+          component: "CheckingDataAPI",
+          endpoint: "/api/checkingdata",
+        }
+      );
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
 }

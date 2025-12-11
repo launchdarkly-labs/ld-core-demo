@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { recordErrorToLD } from "@/utils/observability/server";
 
 type RecentTrade = {
   id: number;
@@ -32,14 +33,39 @@ function generateRecentTrades(count: number = 6): RecentTrade[] {
   });
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<RecentTrade[] | { error: string }>
 ) {
   if (req.method !== "GET") {
+    const errorObj = new Error("Method not allowed");
+    await recordErrorToLD(
+      errorObj,
+      "Invalid HTTP method for recent trades endpoint",
+      {
+        component: "RecentTradesAPI",
+        endpoint: "/api/recenttrades",
+        method: req.method || "unknown",
+      }
+    );
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
-  const data = generateRecentTrades(6);
-  res.status(200).json(data);
+  try {
+    const data = generateRecentTrades(6);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error generating recent trades:", error);
+    if (error instanceof Error) {
+      await recordErrorToLD(
+        error,
+        "Failed to generate recent trades data",
+        {
+          component: "RecentTradesAPI",
+          endpoint: "/api/recenttrades",
+        }
+      );
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
 }
