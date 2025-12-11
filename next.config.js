@@ -9,6 +9,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
+  turbopack: {}, // Acknowledge Turbopack is used (webpack config is fallback for non-Turbopack builds)
   env: {
     NEXT_PUBLIC_APP_VERSION: version,
     NEXT_PUBLIC_CREATED_DATE: new Date().toISOString(),
