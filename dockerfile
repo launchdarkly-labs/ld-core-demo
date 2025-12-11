@@ -4,7 +4,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install --production --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 # FROM node:18-alpine AS builder
 FROM public.ecr.aws/docker/library/node:22-alpine AS builder
