@@ -12,12 +12,14 @@ import threading
 from ldai.client import LDAIClient, AIConfig, ModelConfig, LDMessage, ProviderConfig
 from ldai.tracker import TokenUsage, FeedbackKind
 from datetime import datetime, timedelta
+from browser_error_generator import generate_frontend_errors
 
 load_dotenv()
 
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("LD_PROJECT_KEY")
 LD_API_URL = os.getenv("LD_API_URL", "https://app.launchdarkly.com/api/v2")
+DEMO_NAMESPACE = os.getenv("DEMO_NAMESPACE")
 ENVIRONMENT_KEY = "production"
 
 HEADERS = {
@@ -1078,6 +1080,12 @@ def payment_engine_failed_scenario_generator(client, stop_event):
     if not rollout_ready:
         logging.error("Payment Processing v2.0 Failed rollout failed to initialize after 30 seconds. Exiting.")
         return
+    
+    if DEMO_NAMESPACE:
+        logging.info(f"Generating frontend errors via browser at {DEMO_NAMESPACE}.launchdarklydemos.com")
+        generate_frontend_errors(DEMO_NAMESPACE, num_visits=30)
+    else:
+        logging.warning("DEMO_NAMESPACE not set - skipping browser error generation")
     
     user_counter = 0
     flush_counter = 0
