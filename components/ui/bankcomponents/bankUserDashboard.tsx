@@ -53,7 +53,13 @@ export default function BankUserDashboard() {
 			setTimeout(() => {
 				const err = new Error(error.message);
 				err.name = error.name;
-				throw err;
+				
+				recordErrorToLD(err, error.message, {
+					'flag.key': 'paymentProcessingV2FailedRollout',
+					'error.kind': error.name,
+					'service.name': 'payment-processing-v2',
+					'component': 'PaymentEngine',
+				});
 			}, 100);
 		}
 	}, [paymentProcessingV2FailedRollout]);
