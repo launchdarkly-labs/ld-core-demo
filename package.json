@@ -58,7 +58,7 @@
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.559.0",
-    "next": "^16.0.8",
+    "next": "^16.0.9",
     "openai": "^5.23.2",
     "pg": "^8.11.3",
     "playwright": "^1.39.0",
