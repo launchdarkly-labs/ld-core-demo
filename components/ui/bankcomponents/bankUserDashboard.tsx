@@ -29,7 +29,6 @@ import {
 	NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
-import { recordErrorToLD } from "@/utils/observability/client";
 
 export default function BankUserDashboard() {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -53,13 +52,7 @@ export default function BankUserDashboard() {
 			setTimeout(() => {
 				const err = new Error(error.message);
 				err.name = error.name;
-				
-				recordErrorToLD(err, error.message, {
-					'flag.key': 'paymentProcessingV2FailedRollout',
-					'error.kind': error.name,
-					'service.name': 'payment-processing-v2',
-					'component': 'PaymentEngine',
-				});
+				throw err;
 			}, 100);
 		}
 	}, [paymentProcessingV2FailedRollout]);
