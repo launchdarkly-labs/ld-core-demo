@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
@@ -35,10 +35,28 @@ export default function BankUserDashboard() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [aiResponse, setAIResponse] = useState<string>("");
 	const { isLoggedIn } = useContext(LoginContext);
-	const { wealthManagement, federatedAccounts } = useFlags();
+	const { wealthManagement, federatedAccounts, paymentProcessingV2FailedRollout } = useFlags();
 	const money = JSON.stringify(oldCheckingData);
 	const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
 	const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'
+
+	useEffect(() => {
+		if (paymentProcessingV2FailedRollout) {
+			const errors = [
+				{ name: 'PaymentGatewayTimeout', message: 'Payment gateway timed out after 30 seconds' },
+				{ name: 'TransactionValidationError', message: 'Transaction validation failed: invalid card format' },
+				{ name: 'DatabaseConnectionError', message: 'Database connection pool exhausted' },
+				{ name: 'PaymentProcessorException', message: 'Payment processor returned 500 error' },
+			];
+			const error = errors[Math.floor(Math.random() * errors.length)];
+			
+			setTimeout(() => {
+				const err = new Error(error.message);
+				err.name = error.name;
+				throw err;
+			}, 100);
+		}
+	}, [paymentProcessingV2FailedRollout]);
 
 	async function submitQuery(query: any) {
 		try {
