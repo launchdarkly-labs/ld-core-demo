@@ -77,13 +77,13 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
                 urlBlocklist: [],
               }
             }),
-            new SessionReplay({
-              serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
-              privacySetting: 'none',
-              tracingOrigins: true,
-              // @ts-ignore
-              contextFriendlyName: (ctx) => { return ctx.user.key; }
-            })
+          new SessionReplay({
+            serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-session-replay",
+            privacySetting: 'none',
+            tracingOrigins: true,
+            // @ts-ignore
+            contextFriendlyName: (ctx) => { return ctx.key; }
+          })
           ]
         },
         context: context

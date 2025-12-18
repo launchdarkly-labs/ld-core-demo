@@ -110,34 +110,33 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 		const errorKind = errorTypes[errorIdx];
 		const errorMessage = errorMessages[errorIdx];
 
-		const err = new Error(errorMessage);
-		err.name = errorKind;
+		const error = new Error(errorMessage);
+		error.name = errorKind;
 
-		const errorData = {
-			"error.kind": errorKind,
-			"error.message": errorMessage,
-			"service.name": "transaction-monitoring",
-			"component": "TransactionMonitoring",
-			"user.id": userContext.key,
-			"flag.key": flagKey,
-			"severity": "high"
-		};
+		recordErrorToLD(
+			error,
+			errorMessage,
+			{
+				component: "TransactionMonitoring",
+				errorType: errorKind,
+				severity: "high",
+				flagKey: flagKey,
+				userId: userContext.key,
+				transactionId: `txn-${Math.floor(Math.random() * 1000000)}`,
+				timestamp: new Date().toISOString(),
+			}
+		);
 
-		if (client) {
-			client.track("$ld:telemetry:error", errorData);
-		}
+		(error as any).component = "TransactionMonitoring";
+		(error as any).errorType = errorKind;
+		(error as any).severity = "high";
+		(error as any).flagKey = flagKey;
+		(error as any).userId = userContext.key;
+		(error as any).timestamp = new Date().toISOString();
 
-		recordErrorToLD(err, errorMessage, {
-			component: "TransactionMonitoring",
-			errorType: errorKind,
-			flagKey: flagKey,
-			severity: "high",
-			userId: userContext.key
-		});
-
-		queueMicrotask(() => {
-			throw err;
-		});
+		setTimeout(() => {
+			throw error;
+		}, 0);
 
 		setErrorCounter((prev) => prev + 1);
 	};
