@@ -139,6 +139,7 @@ class DemoBuilder:
         self.metric_transaction_monitor_success_rate()  # A8
         self.metric_transaction_monitor_latency()       # A8
         self.metric_transaction_monitor_error_rate()    # A8
+        self.metric_telemetry_error()                   # A8 - Observability
         
         print("Done")
         self.metrics_created = True
@@ -1445,6 +1446,18 @@ class DemoBuilder:
             unit="",
             success_criteria="LowerThanBaseline",
             tags=["guarded-release", "bank", "transaction-monitoring"]
+        )
+    
+    def metric_telemetry_error(self):
+        res = self.ldproject.create_metric(
+            metric_key="telemetry-error-metric",
+            metric_name="Telemetry Errors",
+            event_key="$ld:telemetry:error",
+            metric_description="Tracks frontend errors captured by the Observability SDK for regression debugging.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "observability", "transaction-monitoring"]
         )
         
 ############################################################################################################
@@ -3073,8 +3086,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "observability"],
             on_variation=0,
         )
-        res = self.ldproject.attach_metric_to_flag("transactionMonitoring", ["transaction-monitor-success-rate", "transaction-monitor-latency", "transaction-monitor-error-rate", "$ld:telemetry:error"])
-        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["transaction-monitor-success-rate", "transaction-monitor-latency", "transaction-monitor-error-rate", "$ld:telemetry:error"], days=3)
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["transaction-monitor-success-rate", "transaction-monitor-latency", "transaction-monitor-error-rate", "telemetry-error-metric"], days=3)
 
 ############################################################################################################
 ############################################################################################################
