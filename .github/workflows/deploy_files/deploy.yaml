@@ -1,3 +1,16 @@
+# =============================================================================
+# ServiceAccount for EKS Pod Identity
+# =============================================================================
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ld-core-demo-sa
+  # No annotation needed - Pod Identity Association handles IAM role binding
+
+---
+# =============================================================================
+# Deployment
+# =============================================================================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,6 +27,7 @@ spec:
       labels:
         app: ld-core-demo
     spec:
+      serviceAccountName: ld-core-demo-sa
       containers:
         - name: ld-core-demo
           image: placeholder4
@@ -24,6 +38,9 @@ spec:
           imagePullPolicy: IfNotPresent
 
 ---
+# =============================================================================
+# Service
+# =============================================================================
 apiVersion: v1
 kind: Service
 metadata:
@@ -38,6 +55,9 @@ spec:
   type: ClusterIP
 
 ---
+# =============================================================================
+# Ingress
+# =============================================================================
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
