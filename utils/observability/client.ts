@@ -17,7 +17,7 @@ export function recordErrorToLD(
   message?: string,
   metadataOrPayload?: Record<string, unknown> | { [key: string]: string },
   source?: string,
-  type: ErrorMessageType = "error"
+  type?: ErrorMessageType
 ): void {
   const payload = metadataOrPayload 
     ? (typeof metadataOrPayload === "object" && !Array.isArray(metadataOrPayload) && Object.values(metadataOrPayload).every(v => typeof v === "string"))
@@ -33,6 +33,7 @@ export function recordErrorToLD(
     }
 
     if (LDObserve && typeof LDObserve.recordError === "function") {
+      // @ts-ignore - type compatibility with LDObserve.recordError
       LDObserve.recordError(error, message, payload, finalSource, type)
       return
     }
