@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
-import { randomLatency } from "@/utils/utils";
 import { Beaker } from "lucide-react";
 import { recordErrorToLD } from "@/utils/observability/client";
 
@@ -58,32 +57,9 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 
 		if (flagEnabled) {
 			const errorRate = 20;
-			const latency = randomLatency(3000, 5000);
-			const successRate = 80;
-
-			client.track("transaction-monitor-latency", undefined, latency);
-
-			if (Math.random() * 100 < successRate) {
-				client.track("transaction-monitor-success-rate");
-			}
 
 			if (Math.random() * 100 < errorRate) {
-				client.track("transaction-monitor-error-rate");
 				throwPaymentError(userContext);
-			}
-		} else {
-			const errorRate = 0.5;
-			const latency = randomLatency(100, 200);
-			const successRate = 99.5;
-
-			client.track("transaction-monitor-latency", undefined, latency);
-
-			if (Math.random() * 100 < successRate) {
-				client.track("transaction-monitor-success-rate");
-			}
-
-			if (Math.random() * 100 < errorRate) {
-				client.track("transaction-monitor-error-rate");
 			}
 		}
 

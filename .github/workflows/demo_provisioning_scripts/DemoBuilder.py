@@ -136,9 +136,6 @@ class DemoBuilder:
         self.metric_payment_interactive_error_rate()    # A4.1
         self.metric_payment_transactions_processed()
         self.metric_payment_revenue_protected()
-        self.metric_transaction_monitor_success_rate()  # A8
-        self.metric_transaction_monitor_latency()       # A8
-        self.metric_transaction_monitor_error_rate()    # A8
         self.metric_telemetry_error()                   # A8 - Observability
         
         print("Done")
@@ -1410,42 +1407,6 @@ class DemoBuilder:
             unit="USD",
             success_criteria="HigherThanBaseline",
             tags=["guarded-release", "bank", "payment", "business"]
-        )
-    
-    def metric_transaction_monitor_success_rate(self):
-        res = self.ldproject.create_metric(
-            metric_key="transaction-monitor-success-rate",
-            metric_name="Transaction Monitor Success Rate - ToggleBank",
-            event_key="transaction-monitor-success-rate",
-            metric_description="Tracks successful transaction monitoring events in the real-time monitoring system.",
-            numeric=False,
-            unit="",
-            success_criteria="HigherThanBaseline",
-            tags=["guarded-release", "bank", "transaction-monitoring"]
-        )
-    
-    def metric_transaction_monitor_latency(self):
-        res = self.ldproject.create_metric(
-            metric_key="transaction-monitor-latency",
-            metric_name="Transaction Monitor Latency - ToggleBank",
-            event_key="transaction-monitor-latency",
-            metric_description="Tracks latency in milliseconds for the transaction monitoring system.",
-            numeric=True,
-            unit="ms",
-            success_criteria="LowerThanBaseline",
-            tags=["guarded-release", "bank", "transaction-monitoring"]
-        )
-    
-    def metric_transaction_monitor_error_rate(self):
-        res = self.ldproject.create_metric(
-            metric_key="transaction-monitor-error-rate",
-            metric_name="Transaction Monitor Error Rate - ToggleBank",
-            event_key="transaction-monitor-error-rate",
-            metric_description="Tracks error rates in the transaction monitoring system.",
-            numeric=False,
-            unit="",
-            success_criteria="LowerThanBaseline",
-            tags=["guarded-release", "bank", "transaction-monitoring"]
         )
     
     def metric_telemetry_error(self):
@@ -3086,7 +3047,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "observability"],
             on_variation=0,
         )
-        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["transaction-monitor-success-rate", "transaction-monitor-latency", "transaction-monitor-error-rate", "telemetry-error-metric"], days=3)
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=3)
 
 ############################################################################################################
 ############################################################################################################
