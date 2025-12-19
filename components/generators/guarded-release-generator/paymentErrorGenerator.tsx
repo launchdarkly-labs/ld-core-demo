@@ -44,7 +44,7 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 				
 			userCounterRef.current += 1;
 			setUserCounter(userCounterRef.current);
-		}, 50);
+		}, 10);
 		}
 
 		return () => {
