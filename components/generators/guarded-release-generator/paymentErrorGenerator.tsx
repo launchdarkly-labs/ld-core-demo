@@ -42,9 +42,9 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 				
 				await simulateMetricsAndErrors(syntheticUser, flagValue);
 				
-				userCounterRef.current += 1;
-				setUserCounter(userCounterRef.current);
-			}, 100);
+			userCounterRef.current += 1;
+			setUserCounter(userCounterRef.current);
+		}, 50);
 		}
 
 		return () => {
@@ -56,7 +56,7 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 		if (!client) return;
 
 		if (flagEnabled) {
-			const errorRate = 20;
+			const errorRate = 100;
 
 			if (Math.random() * 100 < errorRate) {
 				throwPaymentError(userContext);
