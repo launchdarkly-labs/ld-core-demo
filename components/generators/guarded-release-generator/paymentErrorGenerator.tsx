@@ -61,6 +61,8 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 			if (Math.random() * 100 < errorRate) {
 				throwPaymentError(userContext);
 			}
+		} else {
+			client.track("transaction-monitor-baseline");
 		}
 
 		await client.flush();
