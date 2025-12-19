@@ -136,6 +136,7 @@ class DemoBuilder:
         self.metric_payment_interactive_error_rate()    # A4.1
         self.metric_payment_transactions_processed()
         self.metric_payment_revenue_protected()
+        self.metric_telemetry_error()                   # A8 - Observability
         
         print("Done")
         self.metrics_created = True
@@ -181,6 +182,7 @@ class DemoBuilder:
         self.flag_togglebank_show_different_special_offer_string()
         self.flag_togglebank_release_new_signup_promo()
         self.flag_togglebank_swap_widget_positions()
+        self.flag_transaction_monitoring()  # A8 - Transaction Monitoring
         self.flag_database_guarded_release()
         self.flag_api_guarded_release()
         #print(" - C1 - Experiment: AI Models for Chatbot")
@@ -777,6 +779,7 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("paymentEngineHealthyRollout")  # New A3
         res = self.ldproject.add_maintainer_to_flag("paymentProcessingV2FailedRollout")  # New A4
         res = self.ldproject.add_maintainer_to_flag("paymentProcessingInteractiveDemo")  # A4.1
+        res = self.ldproject.add_maintainer_to_flag("transactionMonitoring")  # A8
         res = self.ldproject.add_maintainer_to_flag("financialDBMigration")
         res = self.ldproject.add_maintainer_to_flag("investment-recent-trade-db")
         res = self.ldproject.add_maintainer_to_flag("release-new-investment-stock-api")
@@ -1404,6 +1407,18 @@ class DemoBuilder:
             unit="USD",
             success_criteria="HigherThanBaseline",
             tags=["guarded-release", "bank", "payment", "business"]
+        )
+    
+    def metric_telemetry_error(self):
+        res = self.ldproject.create_metric(
+            metric_key="telemetry-error-metric",
+            metric_name="Telemetry Errors",
+            event_key="$ld:telemetry:error",
+            metric_description="Tracks frontend errors captured by the Observability SDK for regression debugging.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "observability", "transaction-monitoring"]
         )
         
 ############################################################################################################
@@ -3013,6 +3028,26 @@ class DemoBuilder:
             on_variation=0,
             off_variation=1,
         )
+
+    def flag_transaction_monitoring(self):
+        res = self.ldproject.create_flag(
+            "transactionMonitoring",
+            "A8 - Release: Transaction Monitoring System - ToggleBank",
+            "Demo flag for regression debug feature enabling real-time transaction monitoring and observability insights.",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Transaction Monitoring"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Transaction Monitoring"
+                }
+            ],
+            tags=["guarded-release", "bank", "observability"],
+            on_variation=0,
+        )
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=7)
 
 ############################################################################################################
 ############################################################################################################

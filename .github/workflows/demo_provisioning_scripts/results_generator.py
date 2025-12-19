@@ -18,6 +18,7 @@ load_dotenv()
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("LD_PROJECT_KEY")
 LD_API_URL = os.getenv("LD_API_URL", "https://app.launchdarkly.com/api/v2")
+DEMO_NAMESPACE = os.getenv("DEMO_NAMESPACE")
 ENVIRONMENT_KEY = "production"
 
 HEADERS = {
