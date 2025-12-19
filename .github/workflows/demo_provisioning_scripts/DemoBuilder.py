@@ -3047,7 +3047,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "observability"],
             on_variation=0,
         )
-        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=18)
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=432)
 
 ############################################################################################################
 ############################################################################################################
