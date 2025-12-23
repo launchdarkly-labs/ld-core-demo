@@ -31,4 +31,4 @@ def update_deploy_files():
     subprocess.run(sed_command, shell=True)
 
 if __name__ == "__main__":
-    main()
+	main()
