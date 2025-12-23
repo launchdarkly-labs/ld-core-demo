@@ -12,10 +12,10 @@ import { UserContextInterface } from "@/utils/apiTypesInterface";
 
 
 export default async function bedrockCall(req: NextApiRequest, res: NextApiResponse) {
-    const client = new BedrockRuntimeClient({region: 'us-west-2', credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
-    } });
+    const client = new BedrockRuntimeClient({
+        region: process.env.AWS_REGION || 'us-east-1',
+        // Credentials automatically provided by EKS Pod Identity
+    });
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const prompt = req.body
     // let context:UserContextInterface = JSON.parse(

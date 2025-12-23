@@ -26,13 +26,10 @@ export default async function chatResponse(
 	try {
 			const DEBUG = ((process.env.AI_DEBUG || process.env.DEBUG_AI || "").toLowerCase() in { "true":1, "1":1, "yes":1 });
 			const dlog = (...args: any[]) => { if (DEBUG) { console.log("[AI DEBUG]", ...args); } };
-		const region = process.env.AWS_DEFAULT_REGION ?? process.env.AWS_REGION ?? "us-west-2";
+		const region = process.env.AWS_DEFAULT_REGION ?? process.env.AWS_REGION ?? "us-east-1";
 		const bedrockClient = new BedrockRuntimeClient({
 			region,
-			credentials: {
-				accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
-				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
-			},
+			// Credentials automatically provided by EKS Pod Identity
 		});
 
 		// Initialize OpenAI client
@@ -43,15 +40,8 @@ export default async function chatResponse(
 		// Initialize Bedrock Agent Runtime client for knowledge base retrieval
 		const bedrockAgentClient = new BedrockAgentRuntimeClient({
 			region,
-			credentials: {
-				accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
-				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
-			},
+			// Credentials automatically provided by EKS Pod Identity
 		});
-
-		if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-			throw new Error("AWS credentials are not set");
-		}
 
 		if (!process.env.OPENAI_API_KEY) {
 			throw new Error("OpenAI API key is not set");

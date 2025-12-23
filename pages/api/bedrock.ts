@@ -7,7 +7,10 @@ import { recordErrorToLD } from "@/utils/observability/server";
 
 
 export default async function bedrockCall(req: NextApiRequest, res: NextApiResponse) {
-    const client = new BedrockRuntimeClient({ region: "us-west-2" });
+    const client = new BedrockRuntimeClient({ 
+        region: process.env.AWS_REGION || "us-east-1",
+        // Credentials automatically provided by EKS Pod Identity
+    });
     const prompt = req.body;
 
     const input = {

@@ -23,6 +23,7 @@ env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   WORKFLOW_RECORDS_TABLE: ${{ secrets.WORKFLOW_RECORDS_TABLE }}
   WORKFLOW_API_ENDPOINT: ${{ secrets.WORKFLOW_API_ENDPOINT }}
+  EKS_POD_IDENTITY_ROLE_ARN: ${{ secrets.EKS_POD_IDENTITY_ROLE_ARN }}
 
 jobs:
 
@@ -179,12 +180,12 @@ jobs:
           echo LD_API_KEY=${{ env.LD_API_KEY }} >> ./.env.production
           echo DESTINATIONENV=production >> ./.env.production
           echo PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
-          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} >> ./.env.production
-          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> ./.env.production
           echo NEXT_PUBLIC_PROJECT_KEY=${{ env.LD_PROJECT_KEY }} >> ./.env.production
           echo BEDROCK_GUARDRAIL_ID=${{ env.BEDROCK_GUARDRAIL_ID }} >> ./.env.production
           echo BEDROCK_KNOWLEDGE_ID=${{ env.BEDROCK_KNOWLEDGE_ID }} >> ./.env.production
           echo OPENAI_API_KEY=${{ env.OPENAI_API_KEY }} >> ./.env.production
+          echo AWS_REGION=us-east-1 >> ./.env.production
+          echo AWS_DEFAULT_REGION=us-east-1 >> ./.env.production
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -216,6 +217,16 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: create namespace ${{ env.DEMO_NAMESPACE }}
+
+      - name: Create EKS Pod Identity Association
+        run: |
+          echo "Creating Pod Identity Association for namespace: ${{ env.DEMO_NAMESPACE }}"
+          aws eks create-pod-identity-association \
+            --cluster-name ld-core-demo-eks \
+            --namespace ${{ env.DEMO_NAMESPACE }} \
+            --service-account ld-core-demo-sa \
+            --role-arn ${{ env.EKS_POD_IDENTITY_ROLE_ARN }} \
+            --region us-east-1 || echo "Pod Identity Association may already exist, continuing..."
 
       - name: Applying deploy file to Kubernetes
         uses: kodermax/kubectl-aws-eks@master
