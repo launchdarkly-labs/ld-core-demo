@@ -38,7 +38,7 @@ class DemoBuilder:
         self.create_metric_groups()
         self.create_flags()
         self.update_add_userid_to_flags()
-        self.create_alerts()
+        #self.create_alerts()
         self.create_ai_config()
         self.enable_csa_shadow_ai_feature_flags()
         self.create_and_run_experiments() 
