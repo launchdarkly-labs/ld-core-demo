@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import random
 import time
 import threading
-from ldai.client import LDAIClient, AIConfig, ModelConfig, LDMessage, ProviderConfig
+from ldai.client import LDAIClient, ModelConfig, LDMessage, ProviderConfig
 from ldai.tracker import TokenUsage, FeedbackKind
 from datetime import datetime, timedelta
 
@@ -272,20 +272,20 @@ def ai_configs_monitoring_results_generator(client):
 
     logging.info("Starting AI Configs monitoring results generation...")
 
-    fallback_value = AIConfig(
-        enabled=True,
-        model=ModelConfig(
-            name="default-model",
-            parameters={"temperature": 0.8},
-        ),
-        messages=[LDMessage(role="system", content="")],
-        provider=ProviderConfig(name="default-provider"),
-    )
+    # fallback_value = AIConfig(
+    #     enabled=True,
+    #     model=ModelConfig(
+    #         name="default-model",
+    #         parameters={"temperature": 0.8},
+    #     ),
+    #     messages=[LDMessage(role="system", content="")],
+    #     provider=ProviderConfig(name="default-provider"),
+    # )
 
     for i in range(NUM_RUNS):
         try:
             context = generate_user_context()
-            config, tracker = aiclient.config(LD_FLAG_KEY, context, fallback_value)
+            config, tracker = aiclient.config(LD_FLAG_KEY, context, {})
             duration = random.randint(500, 2000)
             time_to_first_token = random.randint(50, duration)
             prompt_tokens = random.randint(20, 100)
@@ -322,20 +322,20 @@ def financial_agent_monitoring_results_generator(client):
 
     logging.info("Starting Financial Agent monitoring results generation...")
 
-    fallback_value = AIConfig(
-        enabled=True,
-        model=ModelConfig(
-            name="default-model",
-            parameters={"temperature": 0.8},
-        ),
-        messages=[LDMessage(role="system", content="")],
-        provider=ProviderConfig(name="default-provider"),
-    )
+    # fallback_value = AIConfig(
+    #     enabled=True,
+    #     model=ModelConfig(
+    #         name="default-model",
+    #         parameters={"temperature": 0.8},
+    #     ),
+    #     messages=[LDMessage(role="system", content="")],
+    #     provider=ProviderConfig(name="default-provider"),
+    # )
 
     for i in range(NUM_RUNS):
         try:
             context = generate_user_context()
-            config, tracker = aiclient.config(LD_FLAG_KEY, context, fallback_value)
+            config, tracker = aiclient.config(LD_FLAG_KEY, context, {})
             duration = random.randint(500, 2000)
             time_to_first_token = random.randint(50, duration)
             prompt_tokens = random.randint(20, 100)
