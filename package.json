@@ -21,7 +21,7 @@
     "@launchdarkly/observability-node": "^0.3.1",
     "@launchdarkly/server-sdk-ai": "^0.12.2",
     "@launchdarkly/session-replay": "^0.4.7",
-    "@launchdarkly/toolbar": "^0.25.0",
+    "@launchdarkly/toolbar": "^1.6.0",
     "@opentelemetry/sdk-node": "^0.206.0",
     "@playwright/test": "^1.39.0",
     "@radix-ui/react-accordion": "^1.1.2",
