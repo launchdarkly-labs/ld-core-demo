@@ -60,9 +60,6 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
           useCamelCaseFlagKeys: false,
         },
         options: {
-          application: {
-            id: "launch-investments",
-          },
           inspectors: inspectors(),
           eventCapacity: 1000,
           privateAttributes: ['email', 'name'],
@@ -71,6 +68,9 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
               serviceName: process.env.NEXT_PUBLIC_PROJECT_KEY+"-observability",
               version: APP_VERSION,
               tracingOrigins: true,
+              reportConsoleErrors: true,
+              //backendUrl: "https://pub.observability.app.launchdarkly.com",
+              //otel: { otlpEndpoint: "https://otel.observability.app.launchdarkly.com" },
               networkRecording: {
                 enabled: true,
                 recordHeadersAndBody: true,

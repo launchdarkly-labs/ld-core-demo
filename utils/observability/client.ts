@@ -1,15 +1,17 @@
-import { LDObserve as LDObserveImport } from '@launchdarkly/observability';
+import { LDObserve } from "@launchdarkly/observability";
 
-type ErrorMessageType = "error" | "warning" | "info"
+type ErrorMessageType = "error" | "warning" | "info";
 
-function convertMetadataToPayload(metadata?: Record<string, unknown>): { [key: string]: string } | undefined {
-  if (!metadata) return undefined
-  
-  const payload: { [key: string]: string } = {}
+function convertMetadataToPayload(
+  metadata?: Record<string, unknown>,
+): { [key: string]: string } | undefined {
+  if (!metadata) return undefined;
+
+  const payload: { [key: string]: string } = {};
   for (const [key, value] of Object.entries(metadata)) {
-    payload[key] = String(value)
+    payload[key] = String(value);
   }
-  return payload
+  return payload;
 }
 
 export function recordErrorToLD(
@@ -17,32 +19,39 @@ export function recordErrorToLD(
   message?: string,
   metadataOrPayload?: Record<string, unknown> | { [key: string]: string },
   source?: string,
-  type?: ErrorMessageType
+  type?: ErrorMessageType,
 ): void {
-  const payload = metadataOrPayload 
-    ? (typeof metadataOrPayload === "object" && !Array.isArray(metadataOrPayload) && Object.values(metadataOrPayload).every(v => typeof v === "string"))
-      ? metadataOrPayload as { [key: string]: string }
+  const payload = metadataOrPayload
+    ? typeof metadataOrPayload === "object" &&
+      !Array.isArray(metadataOrPayload) &&
+      Object.values(metadataOrPayload).every((v) => typeof v === "string")
+      ? (metadataOrPayload as { [key: string]: string })
       : convertMetadataToPayload(metadataOrPayload as Record<string, unknown>)
-    : undefined
-  
-  const finalSource = source || (payload?.component || (metadataOrPayload && typeof metadataOrPayload === "object" && "component" in metadataOrPayload ? String(metadataOrPayload.component) : undefined))
-  
+    : undefined;
+
+  const finalSource =
+    source ||
+    payload?.component ||
+    (metadataOrPayload &&
+    typeof metadataOrPayload === "object" &&
+    "component" in metadataOrPayload
+      ? String(metadataOrPayload.component)
+      : undefined);
+
   try {
     if (typeof window === "undefined") {
-      return
+      console.log("Type of window is undefined");
+      return;
     }
-    
-    // Try the import first, then fall back to window.LDObserve
-    const LDObserve = (LDObserveImport && typeof LDObserveImport.recordError === "function") 
-      ? LDObserveImport 
-      : (window as any).LDObserve;
-    
-    if (LDObserve && typeof LDObserve.recordError === "function") {
-      // @ts-ignore - type compatibility with LDObserve.recordError
-      LDObserve.recordError(error, message, payload, finalSource, type)
-      return
-    }
+
+    // Access the globally exposed LDObserve instance
+    // This is set by the Observability plugin after initialization in ContextProvider
+    //const LDObserve = (window as any).LDObserve;
+
+    LDObserve.recordError(error, message, payload, finalSource);
+    return;
   } catch (err) {
-    console.warn("Failed to record error to LaunchDarkly observability:", err)
+    console.log("Error in recordErrorToLD", err);
+    console.warn("Failed to record error to LaunchDarkly observability:", err);
   }
 }

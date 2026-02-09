@@ -62,7 +62,7 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 				throwPaymentError(userContext);
 			}
 		} else {
-			client.track("transaction-monitor-baseline");
+			//client.track("transaction-monitor-baseline");
 		}
 
 		await client.flush();
@@ -95,7 +95,7 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 			error,
 			errorMessage,
 			{
-				component: "TransactionMonitoring",
+				component: "TransactionMonitoring-recordLD",
 				errorType: errorKind,
 				severity: "high",
 				flagKey: flagKey,
@@ -105,15 +105,15 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 			}
 		);
 
-		client?.track("$ld:telemetry:error", {
+		/*client?.track("$ld:telemetry:error", {
 			"error.kind": errorKind,
 			"error.message": errorMessage,
 			"service.name": "transaction-monitoring",
-			"component": "TransactionMonitoring",
+			"component": "TransactionMonitoring-track",
 			"user.id": userContext.key,
 			"flag.key": flagKey,
 			"severity": "high"
-		}, 1);
+		}, 1);*/
 
 		(error as any).component = "TransactionMonitoring";
 		(error as any).errorType = errorKind;
@@ -122,9 +122,10 @@ const PaymentErrorGenerator = ({ flagKey, title }: { flagKey: string; title: str
 		(error as any).userId = userContext.key;
 		(error as any).timestamp = new Date().toISOString();
 
+		// Error is already recorded to LD Observability, no need to throw
 		setTimeout(() => {
-			throw error;
-		}, 0);
+		 	throw error;
+		 }, 0);
 
 		setErrorCounter((prev) => prev + 1);
 	};
