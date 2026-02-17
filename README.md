@@ -84,9 +84,14 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 | Variable | Description |
 |----------|-------------|
 | `LD_SDK_KEY` | Server-side SDK key |
+| `LD_CLIENT_ID` | Optional. Client-side ID for browser Observability + Session Replay (from Project → Environments → SDK key). Passed from server to client. |
 | `AWS_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
 | `PORT` | Server port (default 3000) |
+
+**Frontend observability**
+
+When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK in the browser with the **Observability** plugin (errors, logs, traces, network) and **Session Replay** (privacy: `strict`). The same `LD_OBSERVABILITY_SERVICE_NAME` used on the server is passed to the frontend for consistent service naming. Data is sent to LaunchDarkly so you can inspect frontend metrics and replays in the Observability UI. If the client ID is unset, the app runs without the client SDK and only server-side observability applies.
 
 **AWS credentials**
 

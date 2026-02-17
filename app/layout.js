@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Outfit } from "next/font/google";
+import { LDClientProvider } from "./LDClientProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -15,7 +16,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={outfit.variable}>
-      <body>{children}</body>
+      <body>
+        <LDClientProvider
+          clientSideID={process.env.LD_CLIENT_ID}
+          observabilityServiceName={process.env.LD_OBSERVABILITY_SERVICE_NAME}
+        >
+          {children}
+        </LDClientProvider>
+      </body>
     </html>
   );
 }

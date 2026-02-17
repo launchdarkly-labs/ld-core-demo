@@ -2,7 +2,11 @@ import path from "path";
 import { config as loadEnv } from "dotenv";
 import { init } from "@launchdarkly/node-server-sdk";
 import { initAi } from "@launchdarkly/server-sdk-ai";
+import { Observability, LDObserve } from "@launchdarkly/observability-node";
 import * as defaults from "./ai-config-defaults.js";
+
+/** Re-export for manual spans, metrics, and logs (e.g. runWithHeaders). */
+export { LDObserve };
 
 // Ensure .env.local is loaded when running locally (Next.js can miss it with Turbopack/cwd)
 if (process.env.NODE_ENV !== "production") {
@@ -25,7 +29,15 @@ export async function getLdClient() {
   const key = process.env.LD_SDK_KEY;
   if (!key) throw new Error("LD_SDK_KEY is required");
   if (!ldClient) {
-    ldClient = init(key);
+    ldClient = init(key, {
+      plugins: [
+        new Observability({
+          serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "policy-agent-node",
+          // When LD_OTLP_ENDPOINT is unset, the plugin uses its default (LaunchDarkly's OTLP endpoint).
+          ...(process.env.LD_OTLP_ENDPOINT && { otlpEndpoint: process.env.LD_OTLP_ENDPOINT }),
+        }),
+      ],
+    });
     await ldClient.waitForInitialization({ timeout: 10 });
   }
   return ldClient;

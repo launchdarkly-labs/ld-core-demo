@@ -5,7 +5,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ["@launchdarkly/node-server-sdk", "@launchdarkly/server-sdk-ai", "@aws-sdk/client-bedrock-runtime"],
+  serverExternalPackages: [
+      "@launchdarkly/node-server-sdk",
+      "@launchdarkly/server-sdk-ai",
+      "@launchdarkly/observability-node",
+      "@aws-sdk/client-bedrock-runtime",
+    ],
   outputFileTracingRoot: __dirname,
 };
 

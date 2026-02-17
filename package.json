@@ -12,8 +12,12 @@
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@launchdarkly/node-server-sdk": "^9.10.2",
+    "@launchdarkly/observability": "^1.0.1",
+    "@launchdarkly/observability-node": "^1.0.0",
     "@launchdarkly/server-sdk-ai": "^0.16.1",
+    "@launchdarkly/session-replay": "^1.0.1",
     "dotenv": "^17.2.3",
+    "launchdarkly-react-client-sdk": "^3.9.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
