@@ -1,7 +1,12 @@
 import * as traceloop from "@traceloop/node-server-sdk";
 
 const localTesting = process.env.OPENLLMETRY_LOCAL_TESTING === "true" || process.env.OPENLLMETRY_LOCAL_TESTING === "1";
-traceloop.initialize({ disableBatch: localTesting });
+const otlpBaseUrl =
+  process.env.LD_OTLP_ENDPOINT || "https://otel.observability.app.launchdarkly.com";
+traceloop.initialize({
+  disableBatch: localTesting,
+  baseUrl: otlpBaseUrl,
+});
 
 import {
   BedrockRuntimeClient,

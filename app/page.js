@@ -28,7 +28,12 @@ function MessageRow({ role, content, markdown }) {
           }}
         />
       ) : (
-        <div className={msgClass}>{content}</div>
+        <div
+          className={msgClass}
+          style={!isUser ? { whiteSpace: "pre-wrap" } : undefined}
+        >
+          {content}
+        </div>
       )}
     </div>
   );
