@@ -10,6 +10,7 @@ const nextConfig = {
       "@launchdarkly/server-sdk-ai",
       "@launchdarkly/observability-node",
       "@aws-sdk/client-bedrock-runtime",
+      "@traceloop/node-server-sdk",
     ],
   outputFileTracingRoot: __dirname,
 };

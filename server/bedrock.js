@@ -1,3 +1,8 @@
+import * as traceloop from "@traceloop/node-server-sdk";
+
+const localTesting = process.env.OPENLLMETRY_LOCAL_TESTING === "true" || process.env.OPENLLMETRY_LOCAL_TESTING === "1";
+traceloop.initialize({ disableBatch: localTesting });
+
 import {
   BedrockRuntimeClient,
   ConverseStreamCommand,

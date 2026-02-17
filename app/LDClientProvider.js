@@ -33,11 +33,7 @@ export function LDClientProvider({ children, clientSideID, observabilityServiceN
 
   useEffect(() => {
     try {
-      let key = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("ld-anon-key") : null;
-      if (!key) {
-        key = [...crypto.getRandomValues(new Uint8Array(8))].map((x) => x.toString(16)).join("");
-        if (typeof sessionStorage !== "undefined") sessionStorage.setItem("ld-anon-key", key);
-      }
+      const key = [...crypto.getRandomValues(new Uint8Array(8))].map((x) => x.toString(16)).join("");
       setContextKey(key);
     } catch (_) {
       setContextKey(`anon-${Date.now()}`);

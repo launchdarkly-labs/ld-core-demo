@@ -16,6 +16,7 @@
     "@launchdarkly/observability-node": "^1.0.0",
     "@launchdarkly/server-sdk-ai": "^0.16.1",
     "@launchdarkly/session-replay": "^1.0.1",
+    "@traceloop/node-server-sdk": "^0.22.7",
     "dotenv": "^17.2.3",
     "launchdarkly-react-client-sdk": "^3.9.0",
     "next": "^15.0.0",
