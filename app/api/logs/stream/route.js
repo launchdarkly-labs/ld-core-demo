@@ -1,9 +1,27 @@
-import { subscribe } from "../../../../lib/log-stream";
+import { subscribe, pushLog } from "../../../../lib/log-stream";
 
 /**
  * SSE log stream – broadcasts logs from chat/triage/bedrock to the Terminal UI.
+ * POST with { guardrails: true|false } to push "Guardrails turned on/off" (e.g. from toggle click).
  */
 export const dynamic = "force-dynamic";
+
+export async function POST(request) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  const guardrailsOn = body.guardrails === true;
+  const msg = guardrailsOn ? "Guardrails turned on" : "Guardrails turned off";
+  pushLog({
+    level: "INFO",
+    message: `*** ${msg} ***`,
+    name: guardrailsOn ? "guardrails-on" : "guardrails-off",
+  });
+  return Response.json({ ok: true }, { status: 200 });
+}
 
 export async function GET() {
   const encoder = new TextEncoder();

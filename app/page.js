@@ -50,6 +50,7 @@ function ChatWidget() {
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [guardrailsOn, setGuardrailsOn] = useState(true);
   const chatContentRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -70,7 +71,7 @@ function ChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userInput: text }),
+        body: JSON.stringify({ userInput: text, guardrails: guardrailsOn }),
       });
       const data = await res.json();
 
@@ -94,10 +95,40 @@ function ChatWidget() {
       <header className="chat-header">
         <div className="header-content">
           <h2 className="chat-title">Coverage Concierge</h2>
-          <p className="header-subtitle">
-            Powered by <span className="provider-badge">Amazon Bedrock</span> ·
-            Triage only
-          </p>
+          <div className="header-subtitle-row">
+            <p className="header-subtitle">
+              Powered by <span className="provider-badge">Amazon Bedrock</span> ·
+              Guardrails {guardrailsOn ? "on" : "off"}
+            </p>
+            <button
+              type="button"
+              className={`guardrails-btn ${guardrailsOn ? "guardrails-on" : ""}`}
+              onClick={() => {
+                const next = !guardrailsOn;
+                setGuardrailsOn(next);
+                fetch("/api/logs/stream", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ guardrails: next }),
+                }).catch(() => {});
+              }}
+              title="Guardrails"
+              aria-label="Toggle guardrails"
+            >
+              <svg
+                className="guardrails-icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
       <div className="chat-content" ref={chatContentRef}>

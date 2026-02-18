@@ -24,6 +24,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
     query_type: queryType,
     specialist_response: specialistResponse,
     ...userContext,
+    guardrails: userContext.guardrails !== false,
   };
 
   log({ level: "INFO", message: `   Pulling AI config (${CONFIG_KEY})...`, name: "brand" });

@@ -224,10 +224,57 @@ body {
   color: #111;
 }
 
+.header-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 .header-subtitle {
-  margin: 4px 0 0;
+  margin: 0;
   font-size: 0.8rem;
   color: #6b7280;
+}
+
+.guardrails-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #1e40af;
+  border-radius: 6px;
+  background: #1e40af;
+  color: #1e3a8a;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.guardrails-btn .guardrails-icon {
+  fill: #dc2626;
+}
+
+.guardrails-btn:hover {
+  background: #1d4ed8;
+  border-color: #1e40af;
+  color: #1e3a8a;
+}
+
+.guardrails-btn.guardrails-on {
+  background: #93c5fd;
+  border-color: #60a5fa;
+  color: #3b82f6;
+}
+
+.guardrails-btn.guardrails-on .guardrails-icon {
+  fill: #22c55e;
+}
+
+.guardrails-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .provider-badge {
@@ -440,6 +487,16 @@ body {
 .log-message {
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.terminal-line.log-guardrails-on .log-message {
+  font-weight: bold;
+  color: #22c55e;
+}
+
+.terminal-line.log-guardrails-off .log-message {
+  font-weight: bold;
+  color: red;
 }
 
 .terminal-empty {

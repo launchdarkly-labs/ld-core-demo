@@ -68,7 +68,10 @@ export default function Terminal() {
           </div>
         ) : (
           logs.map((log, index) => (
-            <div key={index} className={`terminal-line ${getLogClass(log.level)}`}>
+            <div
+              key={index}
+              className={`terminal-line ${getLogClass(log.level)}${log.name === "guardrails-on" ? " log-guardrails-on" : log.name === "guardrails-off" ? " log-guardrails-off" : ""}`}
+            >
               <span className="log-message">{log.message}</span>
             </div>
           ))

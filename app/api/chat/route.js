@@ -30,10 +30,17 @@ export async function POST(request) {
     return Response.json({ error: "userInput is required" }, { status: 400 });
   }
 
+  const guardrails = body.guardrails !== false;
   const requestId = crypto.randomUUID();
   const userContext = createUserContext(body);
+  userContext.guardrails = guardrails;
   const query = userInput.trim();
 
+  pushLog({
+    level: "INFO",
+    message: guardrails ? "Guardrails turned on" : "Guardrails turned off",
+    name: "chat",
+  });
   pushLog({
     level: "INFO",
     message: `💬 Chat request (${requestId.slice(0, 8)}…) · "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`,
