@@ -35,7 +35,11 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
   const startTime = Date.now();
   let result;
   try {
-    result = await converse(modelId, messages, { temperature: 0.5, maxTokens: 1024 });
+    result = await converse(modelId, messages, {
+      temperature: 0.5,
+      maxTokens: 1024,
+      taskName: "brand_agent",
+    });
   } catch (err) {
     tracker.trackError();
     throw err;

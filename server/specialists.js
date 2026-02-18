@@ -28,7 +28,11 @@ export async function runSpecialist(queryType, query, userContext = {}, options 
   const startTime = Date.now();
   let result;
   try {
-    result = await converse(modelId, messages, { temperature: 0.3, maxTokens: 1024 });
+    result = await converse(modelId, messages, {
+      temperature: 0.3,
+      maxTokens: 1024,
+      taskName: queryType,
+    });
   } catch (err) {
     tracker.trackError();
     throw err;

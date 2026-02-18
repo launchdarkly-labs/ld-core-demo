@@ -1,6 +1,10 @@
+// LLM observability init order: (1) LD, (2) OpenLLMetry, (3) Bedrock. init-ld runs first; triage loads bedrock.js.
+// Import withWorkflow after triage/specialists/brand so bedrock.js (and traceloop.initialize()) load first.
+import "../../../server/init-ld.js";
 import { runTriage } from "../../../server/triage.js";
 import { runSpecialist } from "../../../server/specialists.js";
 import { runBrandAgent } from "../../../server/brand.js";
+import { withWorkflow } from "@traceloop/node-server-sdk";
 import { pushLog } from "../../../lib/log-stream";
 
 function createUserContext(body = {}) {
@@ -44,31 +48,39 @@ export async function POST(request) {
   const logger = (entry) => pushLog({ ...entry, name: entry.name ?? "chat" });
 
   try {
-    // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
-    const triageResult = await runTriage(query, userContext, { logger });
-    pushLog({
-      level: "INFO",
-      message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
-      name: "chat",
-    });
+    const result = await withWorkflow(
+      { name: "chat_request" },
+      async () => {
+        // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
+        const triageResult = await runTriage(query, userContext, { logger });
+        pushLog({
+          level: "INFO",
+          message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
+          name: "chat",
+        });
 
-    // 2. Specialist: run the chosen agent
-    const specialistResult = await runSpecialist(
-      triageResult.queryType,
-      query,
-      userContext,
-      { logger }
+        // 2. Specialist: run the chosen agent
+        const specialistResult = await runSpecialist(
+          triageResult.queryType,
+          query,
+          userContext,
+          { logger }
+        );
+
+        // 3. Brand agent: turn specialist response into final customer reply
+        const brandResult = await runBrandAgent(
+          specialistResult.content,
+          query,
+          triageResult.queryType,
+          userContext,
+          { logger }
+        );
+
+        return { triageResult, specialistResult, brandResult };
+      }
     );
 
-    // 3. Brand agent: turn specialist response into final customer reply
-    const brandResult = await runBrandAgent(
-      specialistResult.content,
-      query,
-      triageResult.queryType,
-      userContext,
-      { logger }
-    );
-
+    const { triageResult, specialistResult, brandResult } = result;
     const agentFlow = [
       {
         agent: "triage_router",

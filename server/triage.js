@@ -30,7 +30,11 @@ export async function runTriage(query, userContext = {}, options = {}) {
   log({ level: "INFO", message: `🚀 Calling Bedrock (${modelId})...`, name: "triage" });
   let result;
   try {
-    result = await converse(modelId, messages, { temperature: 0, maxTokens: 1024 });
+    result = await converse(modelId, messages, {
+      temperature: 0,
+      maxTokens: 1024,
+      taskName: "triage_router",
+    });
   } catch (err) {
     tracker.trackError();
     throw err;

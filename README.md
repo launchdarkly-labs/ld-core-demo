@@ -56,6 +56,8 @@ npm run dev
 
 Open http://localhost:3000.
 
+If you see build errors (e.g. module not found, or missing `routes-manifest.json`), try a clean build: `rm -rf .next && npm run build` (or `npm run dev`).
+
 ## Quick start (Docker)
 
 ```bash
@@ -93,6 +95,16 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 
 When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK in the browser with the **Observability** plugin (errors, logs, traces, network) and **Session Replay** (privacy: `strict`). The same `LD_OBSERVABILITY_SERVICE_NAME` used on the server is passed to the frontend for consistent service naming. Data is sent to LaunchDarkly so you can inspect frontend metrics and replays in the Observability UI. If the client ID is unset, the app runs without the client SDK and only server-side observability applies.
 
+**LLM observability (init order)**
+
+LaunchDarkly and OpenLLMetry require a strict init order so LLM spans are captured correctly:
+
+1. **LaunchDarkly SDK** (with Observability plugin) — first.
+2. **OpenLLMetry** — second, before the LLM provider is imported.
+3. **LLM provider** (Bedrock) — third; OpenLLMetry instruments it.
+
+The app enforces this by loading [`server/init-ld.js`](server/init-ld.js) first in the chat route (it initializes the LD client), then loading triage/specialists/brand, which pull in [`server/bedrock.js`](server/bedrock.js) where OpenLLMetry is initialized and only then is the Bedrock client imported. Do not import `bedrock.js` (or any module that imports it) before LD has been initialized. LLM traces go to Traceloop by default; no env vars required. Optional: `OPENLLMETRY_LOCAL_TESTING=true` for immediate trace export when testing locally.
+
 **AWS credentials**
 
 - **Local**: Set `AWS_PROFILE=yourprofile` in `.env.local` and run `aws sso login --profile yourprofile`..
@@ -117,6 +129,7 @@ policy-agent-node/
 │       ├── chat/route.js  # POST /api/chat → server/triage
 │       └── health/route.js
 ├── server/
+│   ├── init-ld.js             # Ensures LD (Observability) inits before OpenLLMetry/Bedrock
 │   ├── ai-config-defaults.js  # Default prompts/model per agent
 │   ├── ld.js                  # LaunchDarkly client + getAIConfig
 │   ├── triage.js              # Triage: LD config → Bedrock → queryType

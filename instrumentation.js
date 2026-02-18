@@ -1,12 +1,6 @@
 /**
- * Next.js instrumentation: runs once when the Node server starts.
- * Ensures LaunchDarkly SDK (with Observability) is initialized before any
- * route loads OpenLLMetry or LLM modules, per recommended init order.
+ * Next.js instrumentation hook (runs at server startup).
+ * LaunchDarkly is initialized from server/init-ld.js when the chat route
+ * is first loaded, so we keep this empty to avoid bundling node: deps here.
  */
-export async function register() {
-  if (process.env.NEXT_RUNTIME !== "nodejs") return;
-  if (!process.env.LD_SDK_KEY) return;
-
-  const { getLdClient } = await import("./server/ld.js");
-  await getLdClient();
-}
+export async function register() {}
