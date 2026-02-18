@@ -9,10 +9,17 @@ const DEFAULT_SERVICE_NAME = "policy-agent-node";
 
 /**
  * Client-side LaunchDarkly provider with Observability and Session Replay.
- * Receives LD_CLIENT_ID and LD_OBSERVABILITY_SERVICE_NAME from the server layout.
  */
-export function LDClientProvider({ children, clientSideID, observabilityServiceName }) {
+export function LDClientProvider({
+  children,
+  clientSideID,
+  observabilityServiceName,
+  sessionReplayPrivacy,
+}) {
   const [contextKey, setContextKey] = useState(null);
+
+  // LD_SESSION_REPLAY_PRIVACY: default (default) | strict
+  const privacy = sessionReplayPrivacy === "strict" ? "strict" : "default";
 
   const ldOptions = useMemo(
     () => ({
@@ -25,10 +32,10 @@ export function LDClientProvider({ children, clientSideID, observabilityServiceN
             recordHeadersAndBody: false,
           },
         }),
-        new Record({ privacySetting: "strict" }),
+        new Record({ privacySetting: privacy }),
       ],
     }),
-    [observabilityServiceName]
+    [observabilityServiceName, privacy]
   );
 
   useEffect(() => {

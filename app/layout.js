@@ -20,6 +20,7 @@ export default function RootLayout({ children }) {
         <LDClientProvider
           clientSideID={process.env.LD_CLIENT_ID}
           observabilityServiceName={process.env.LD_OBSERVABILITY_SERVICE_NAME}
+          sessionReplayPrivacy={process.env.LD_SESSION_REPLAY_PRIVACY}
         >
           {children}
         </LDClientProvider>
