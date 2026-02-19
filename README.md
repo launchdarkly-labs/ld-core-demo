@@ -1,6 +1,6 @@
 # Policy Agent Node
 
- ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand agent** → final response.
+ ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand_agent_completion** → final response.
 
 ## System architecture
 
@@ -8,9 +8,19 @@
 
 - **Triage router** — [`server/triage.js`](server/triage.js): Uses LaunchDarkly AI Config `triage_agent` to call Bedrock; the model returns JSON with `query_type` (`policy_question`, `provider_lookup`, or `scheduler_agent`). Low confidence (&lt; 0.7) can set `escalationNeeded`; the chosen type is passed to the specialist step.
 - **Specialist** — [`server/specialists.js`](server/specialists.js): One of three agents runs (Policy Specialist, Provider Specialist, or Schedule Agent), each with a simple Bedrock prompt. No RAG in this app; specialists answer from instructions only.
-- **Brand agent** — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful).
+- **Brand completion** (`brand_agent_completion`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). Uses LaunchDarkly AI Config with **judges** attached; we only act on the **toxicity** score for guardrails (see below).
 
--- **TODO** Implement Judge flow for metrics and obserability
+### Judge flow and guardrails
+
+Brand completion runs via LaunchDarkly’s `createChat` + `invoke`, so any **judges** attached to the `brand-agent-completion` AI Config run automatically. Their scores and reasoning are logged in the backend terminal.
+
+**Guardrails (toxicity only):** We only trigger a safety re-run based on the **toxicity** judge. If the toxicity score is **&gt; 0.7** and guardrails are on, we:
+
+1. Log that guardrails triggered (red, bold in the terminal).
+2. Call brand completion again with `guardrail_fallback: true` in context so LaunchDarkly can serve a different (safer) variation of the prompt.
+3. Use the **safety re-run** response as the final response to the customer (no judges on the re-run; we use `getCompletionConfig` + Bedrock `converse` so the reply is always returned correctly).
+
+Other judge metrics (e.g. relevance, tone) are logged but do not trigger any automatic re-run or guardrail behavior.
 
 ```
                         ┌─────────────────┐
@@ -19,8 +29,8 @@
                                  │
                         ┌────────▼────────┐
                         │ TRIAGE ROUTER   │
-                        │ (triage_agent   │
-                        │  via LaunchDarkly)
+                        │(triage_agent via│
+                        │ LaunchDarkly)   |
                         └────────┬────────┘
                                  │
             ┌────────────────────┼────────────────────┐
@@ -29,20 +39,33 @@
     │ POLICY         │   │ PROVIDER        │  │ SCHEDULE        │
     │ SPECIALIST     │   │ SPECIALIST      │  │ AGENT           │
     │                │   │                 │  │                 │
-    │ policy_question│   │ provider_lookup │  │ scheduler_agent  │
+    │ policy_question│   │ provider_lookup │  │ scheduler_agent │
     └───────┬────────┘   └───────┬─────────┘  └───────┬─────────┘
             │                    │                    │
             └────────────────────┼────────────────────┘
                                  │
                         ┌────────▼────────┐
-                        │  BRAND AGENT    │
-                        │  (final voice)  │
+                        │ BRAND COMPLETION│
+                        │ (judges run)    │
                         └────────┬────────┘
                                  │
-                        ┌────────▼────────┐
-                        │ FINAL RESPONSE  │
-                        │ to customer     │
-                        └─────────────────┘
+                    toxicity > 0.7? (guardrails on)
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │ no               │ yes (optional)   │
+              ▼                  ▼                  │
+     ┌─────────────────┐  ┌───────────────┐         │
+     │ FINAL RESPONSE  │  │ Safety re-run │         │
+     │ to customer     │  │ (brand again  │         │
+     │ (brand output)  │  │  w/ fallback) │         │
+     └─────────────────┘  └──────┬────────┘         │
+                                 │                  │
+                                 ▼                  │
+                         ┌────────────────┐         │
+                         │ FINAL RESPONSE │         │
+                         │ to customer    │─────────┘
+                         │ (safety output)│
+                         └────────────────┘
 ```
 
 ## Quick start (local)
@@ -55,8 +78,6 @@ npm run dev
 ```
 
 Open http://localhost:3000.
-
-If you see build errors (e.g. module not found, or missing `routes-manifest.json`), try a clean build: `rm -rf .next && npm run build` (or `npm run dev`).
 
 ## Quick start (Docker)
 
@@ -87,24 +108,13 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 |----------|-------------|
 | `LD_SDK_KEY` | Server-side SDK key |
 | `LD_CLIENT_ID` | Optional. Client-side ID for browser Observability + Session Replay (from Project → Environments → SDK key). Passed from server to client. |
-| `LD_SESSION_REPLAY_PRIVACY` | Optional. `default` (default) \| `strict`. |
 | `AWS_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
 | `PORT` | Server port (default 3000) |
 
 **Frontend observability**
 
-When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK in the browser with the **Observability** plugin (errors, logs, traces, network) and **Session Replay**. Session Replay privacy defaults to `default`; set `LD_SESSION_REPLAY_PRIVACY=strict` to mask text in replays. The same `LD_OBSERVABILITY_SERVICE_NAME` used on the server is passed to the frontend for consistent service naming. Data is sent to LaunchDarkly so you can inspect frontend metrics and replays in the Observability UI. If the client ID is unset, the app runs without the client SDK and only server-side observability applies.
-
-**LLM observability (init order)**
-
-LaunchDarkly and OpenLLMetry require a strict init order so LLM spans are captured correctly:
-
-1. **LaunchDarkly SDK** (with Observability plugin) — first.
-2. **OpenLLMetry** — second, before the LLM provider is imported.
-3. **LLM provider** (Bedrock) — third; OpenLLMetry instruments it.
-
-The app enforces this by loading [`server/init-ld.js`](server/init-ld.js) first in the chat route (it initializes the LD client), then loading triage/specialists/brand, which pull in [`server/bedrock.js`](server/bedrock.js) where OpenLLMetry is initialized and only then is the Bedrock client imported. Do not import `bedrock.js` (or any module that imports it) before LD has been initialized. LLM traces go to Traceloop by default; no env vars required. Optional: `OPENLLMETRY_LOCAL_TESTING=true` for immediate trace export when testing locally.
+When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK in the browser with the **Observability** plugin (errors, logs, traces, network) and **Session Replay** (privacy: `strict`). The same `LD_OBSERVABILITY_SERVICE_NAME` used on the server is passed to the frontend for consistent service naming. Data is sent to LaunchDarkly so you can inspect frontend metrics and replays in the Observability UI. If the client ID is unset, the app runs without the client SDK and only server-side observability applies.
 
 **AWS credentials**
 
@@ -115,7 +125,7 @@ The app enforces this by loading [`server/init-ld.js`](server/init-ld.js) first 
 
 - `POST /api/chat`  
   Body: `{ "userInput": "What's my copay for a specialist?" }`  
-  Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent.
+  Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent_completion.
 - `GET /api/health`  
   Returns `{ status: "ok" }`.
 
@@ -130,12 +140,11 @@ policy-agent-node/
 │       ├── chat/route.js  # POST /api/chat → server/triage
 │       └── health/route.js
 ├── server/
-│   ├── init-ld.js             # Ensures LD (Observability) inits before OpenLLMetry/Bedrock
 │   ├── ai-config-defaults.js  # Default prompts/model per agent
 │   ├── ld.js                  # LaunchDarkly client + getAIConfig
 │   ├── triage.js              # Triage: LD config → Bedrock → queryType
 │   ├── specialists.js         # Policy / Provider / Schedule specialists 
-│   ├── brand.js               # Brand agent: specialist reply → final response
+│   ├── brand.js               # Brand completion: specialist reply → final response
 │   └── bedrock.js             # Bedrock Converse streaming
 ├── public/                 # Static assets (unchanged)
 ├── Dockerfile              # Multi-stage: deps → builder → runner
@@ -145,8 +154,34 @@ policy-agent-node/
 └── package.json
 ```
 
+### Addendum: LaunchDarkly judges and message order
+
+When using **judges** with the LaunchDarkly AI SDK (e.g. on `brand-agent-completion`), you may see:
+
+```text
+warn: [LaunchDarkly] LangChain structured model invocation failed: ValidationException: A conversation must start with a user message. Try again with a conversation that starts with a user message.
+```
+
+**Fix:** In the LaunchDarkly UI, configure the **judge** AI Config so that the **first message in the conversation is a user message**. If the judge only has a system message, add a user message first (e.g. a prompt that includes `{{message_history}}` and `{{response_to_evaluate}}`), or reorder messages so the conversation starts with the user turn. The Bedrock/LangChain path requires the conversation to begin with a user message.
+
+*Note: LaunchDarkly could improve this by automatically converting or prepending a user message when absent, or by documenting this requirement in the judge AI Config docs.*
+
+### Bedrock: "On-demand throughput isn't supported"
+
+If you see:
+
+```text
+ValidationException: Invocation of model ID ... with on-demand throughput isn't supported. Retry your request with the ID or ARN of an inference profile that contains this model.
+```
+
+**Meaning:** That model is only available via **provisioned throughput** in Bedrock, not on-demand. You're calling it by model ID (on-demand); Bedrock wants an **inference profile** ID/ARN instead.
+
+**Fix:** In LaunchDarkly, set the model to the **inference profile** ID/ARN for that model (from the Bedrock console), or switch to a model that supports on-demand (e.g. `anthropic.claude-3-5-sonnet-20241022-v2:0`).
+
+---
+
 **TODO**
 - Finalize KBs and implement in configs for RAG
-- Implement Judge w/ metrics sent to LD
+- Judge metrics sent to LD (scores/traces)
 - Auto upload LLM configs & tools to project
 - Auto create experiment and realistic dummy data

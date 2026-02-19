@@ -74,7 +74,7 @@ async function converseImpl(modelId, messages, options) {
   };
 }
 
-/** options.taskName: optional Traceloop task name for the span (e.g. "triage_router", "brand_agent"). */
+/** options.taskName: optional Traceloop task name for the span (e.g. "triage_router", "brand_agent_completion"). */
 export async function converse(modelId, messages, options = {}) {
   const { taskName, ...opts } = options;
   if (taskName) {

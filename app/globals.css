@@ -385,7 +385,7 @@ body {
 
 /* Terminal */
 .terminal-offset {
-  margin-left: 400px;
+  margin-left: 520px;
   transition: margin-left 0.3s ease;
 }
 
@@ -394,7 +394,7 @@ body {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 400px;
+  width: 520px;
   background: #1e1e1e;
   color: #d4d4d4;
   font-family: Monaco, Menlo, monospace;
@@ -497,6 +497,11 @@ body {
 .terminal-line.log-guardrails-off .log-message {
   font-weight: bold;
   color: red;
+}
+
+.terminal-line.log-guardrails-triggered .log-message {
+  font-weight: bold;
+  color: #f87171;
 }
 
 .terminal-empty {

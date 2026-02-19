@@ -74,7 +74,7 @@ export async function POST(request) {
           { logger }
         );
 
-        // 3. Brand agent: turn specialist response into final customer reply
+        // 3. Brand completion: turn specialist response into final customer reply
         const brandResult = await runBrandAgent(
           specialistResult.content,
           query,
@@ -109,7 +109,7 @@ export async function POST(request) {
         tokens: specialistResult.usage,
       },
       {
-        agent: "brand_agent",
+        agent: "brand_agent_completion",
         name: "Brand Voice",
         status: "complete",
         icon: "✨",
@@ -120,7 +120,7 @@ export async function POST(request) {
     ];
 
     return Response.json({
-      response: brandResult.content,
+      response: brandResult?.content ?? "",
       requestId,
       agentFlow,
       metrics: {

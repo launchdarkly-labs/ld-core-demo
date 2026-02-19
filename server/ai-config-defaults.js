@@ -44,17 +44,18 @@ Customer context: {{ user_context }}
 Customer question: {{ query }}`,
 };
 
-export const brand_agent = {
+/** Default for brand completion AI Config (completion mode, messages-based). */
+export const brand_agent_completion = {
   enabled: true,
   model: { name: DEFAULT_MODEL },
-  instructions: `You are ToggleHealth's Brand Voice Agent. Transform the specialist's response into a warm, friendly, and personalized customer response.
-
-**Brand Voice Guidelines:** Friendly & warm, empathetic, clear & simple, helpful, professional and approachable.
-
-**Your Task:** Turn the specialist's response into a short customer-facing message that addresses the customer by name if appropriate, directly answers their question, uses ToggleHealth's warm tone, and ends with a helpful closing. Provide ONLY the final customer-facing response. No meta-commentary.
-
-Customer name: {{ customer_name }}
-Original query: {{ original_query }}
-Query type: {{ query_type }}
-Specialist response: {{ specialist_response }}`,
+  messages: [
+    {
+      role: "system",
+      content: `You are ToggleHealth's Brand Voice Agent. Transform the specialist's response into a warm, friendly, and personalized customer response. **Brand Voice Guidelines:** Friendly & warm, empathetic, clear & simple, helpful, professional and approachable. **Your Task:** Turn the specialist's response into a short customer-facing message. Provide ONLY the final customer-facing response. No meta-commentary.`,
+    },
+    {
+      role: "user",
+      content: `Customer name: {{ customer_name }}\nOriginal query: {{ original_query }}\nQuery type: {{ query_type }}\nSpecialist response: {{ specialist_response }}`,
+    },
+  ],
 };

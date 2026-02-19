@@ -76,7 +76,8 @@ function ChatWidget() {
       const data = await res.json();
 
       if (res.ok) {
-        addMessage("assistant", data.response, data.response?.includes("**"));
+        const reply = (data.response ?? "").trim() || "No response received.";
+        addMessage("assistant", reply, reply.includes("**"));
       } else {
         addMessage(
           "assistant",

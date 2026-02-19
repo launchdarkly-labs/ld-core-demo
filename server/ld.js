@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export const TRIAGE_DEFAULT = defaults.triage_agent;
-export const BRAND_AGENT_DEFAULT = defaults.brand_agent;
+export const BRAND_COMPLETION_DEFAULT = defaults.brand_agent_completion;
 
 /** Map queryType from triage to LaunchDarkly AI Config key and fallback. */
 export const SPECIALIST_AI_CONFIG = {
@@ -110,4 +110,33 @@ export async function getAIConfig(configKey, context, fallbackConfig) {
     trackDuration: () => {},
   };
   return { config, tracker: agent.tracker ?? noopTracker };
+}
+
+/**
+ * Fetch completion AI config from LaunchDarkly (messages-based). Returns config with judgeConfiguration when judges are attached.
+ */
+export async function getCompletionConfig(configKey, context, fallbackConfig, variables = {}) {
+  const ldClient = await getLdClient();
+  const aiClient = initAi(ldClient);
+  const ldContext = {
+    kind: "user",
+    key: (context.user_key || "anonymous").toString(),
+    ...context,
+  };
+  const completion = await aiClient.completionConfig(configKey, ldContext, fallbackConfig, variables);
+  const config = {
+    messages: completion.messages ?? fallbackConfig.messages,
+    model: completion.model
+      ? { name: completion.model.name ?? fallbackConfig.model?.name }
+      : fallbackConfig.model,
+    judgeConfiguration: completion.judgeConfiguration,
+  };
+  const noopTracker = {
+    trackSuccess: () => {},
+    trackError: () => {},
+    trackTokens: () => {},
+    trackTimeToFirstToken: () => {},
+    trackDuration: () => {},
+  };
+  return { config, tracker: completion.tracker ?? noopTracker };
 }
