@@ -40,6 +40,7 @@ import {
   generateToggleBankSignupFunnelExperimentResults,
 } from "@/components/generators/experimentation-automation/funnelExperimentGeneratorFunctions";
 import GuardedReleaseGenerator from "@/components/generators/guarded-release-generator/guardedReleaseGenerator";
+import PaymentErrorGenerator from "@/components/generators/guarded-release-generator/paymentErrorGenerator";
 
 export function QuickCommandDialog({ children }: { children: any }) {
   const [open, setOpen] = React.useState(false);
@@ -134,6 +135,9 @@ export function QuickCommandDialog({ children }: { children: any }) {
             </CommandItem>
             <CommandItem>
               <GuardedReleaseGenerator flagKey={"togglebankDBGuardedRelease"} title={"[ToggleBank] Database Guarded Release Generator (No Rollback)"}/>
+            </CommandItem>
+            <CommandItem>
+              <PaymentErrorGenerator flagKey={"transactionMonitoring"} title={"[ToggleBank] Transaction Monitoring Generator"}/>
             </CommandItem>
             <CommandItem>
               <ExperimentGenerator

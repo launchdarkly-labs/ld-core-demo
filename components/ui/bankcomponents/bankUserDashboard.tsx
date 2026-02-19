@@ -3,6 +3,7 @@ import { CheckingAccount } from "@/components/ui/bankcomponents/checkingview";
 import { CreditAccount } from "@/components/ui/bankcomponents/creditview";
 import { MorgtgageAccount } from "@/components/ui/bankcomponents/mortgageview";
 import { useFlags } from "launchdarkly-react-client-sdk";
+import { recordErrorToLD } from "@/utils/observability/client";
 import { oldCheckingData } from "@/lib/oldCheckingData";
 import LoginContext from "@/utils/contexts/login";
 import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManagement";
@@ -29,7 +30,6 @@ import {
 	NavbarSignUpButton,
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
-import { recordErrorToLD } from "@/utils/observability/client";
 
 export default function BankUserDashboard() {
 	const [loading, setLoading] = useState<boolean>(false);

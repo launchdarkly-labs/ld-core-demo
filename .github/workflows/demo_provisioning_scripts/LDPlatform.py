@@ -1547,6 +1547,8 @@ class LDPlatform:
 
         if days == 7:
             stagesWindow = 120960000
+        elif days == 4:
+            stagesWindow = 1800000  # 30 minutes per stage
 
         for v in vars:
             if v["value"] == False:
