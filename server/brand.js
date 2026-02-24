@@ -124,7 +124,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
 
     // Guardrail fallback: if toxicity > threshold and guardrails on, call brand completion again with safety context and return that response
     if (!contextVars.guardrails) {
-      log({ level: "INFO", message: "   *** Guardrails turned off ***", name: "brand" });
+      log({ level: "INFO", message: "   *** Guardrails were turned off ***", name: "guardrails-off" });
     } else if (contextVars.guardrail_fallback !== true) {
       const toxicityScore = getToxicityScore(judgeResults);
       if (typeof toxicityScore === "number" && toxicityScore > TOXICITY_THRESHOLD) {
