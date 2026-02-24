@@ -74,20 +74,29 @@ export async function POST(request) {
           { logger }
         );
 
-        // 3. Brand completion: turn specialist response into final customer reply
-        const brandResult = await runBrandAgent(
-          specialistResult.content,
-          query,
-          triageResult.queryType,
-          userContext,
-          { logger }
-        );
+        // 3. Brand completion + parallel agent (same time; parallel agent uses AI Config + Bedrock, no LangChain)
+        const [brandResult, parallelResult] = await Promise.all([
+          runBrandAgent(
+            specialistResult.content,
+            query,
+            triageResult.queryType,
+            userContext,
+            { logger }
+          ),
+          runParallelAgent(
+            specialistResult.content,
+            query,
+            triageResult.queryType,
+            userContext,
+            { logger }
+          ),
+        ]);
 
-        return { triageResult, specialistResult, brandResult };
+        return { triageResult, specialistResult, brandResult, parallelResult };
       }
     );
 
-    const { triageResult, specialistResult, brandResult } = result;
+    const { triageResult, specialistResult, brandResult, parallelResult } = result;
     const agentFlow = [
       {
         agent: "triage_router",
@@ -109,7 +118,7 @@ export async function POST(request) {
         tokens: specialistResult.usage,
       },
       {
-        agent: "brand_agent_completion",
+        agent: "brand_agent",
         name: "Brand Voice",
         status: "complete",
         icon: "✨",
@@ -117,16 +126,27 @@ export async function POST(request) {
         ttft_ms: brandResult.ttftMs,
         tokens: brandResult.usage,
       },
+      {
+        agent: "parallel_agent",
+        name: "Parallel Agent",
+        status: "complete",
+        icon: "⚡",
+        duration: parallelResult.durationMs,
+        ttft_ms: parallelResult.ttftMs,
+        tokens: parallelResult.usage,
+        content: parallelResult.content,
+      },
     ];
 
     return Response.json({
       response: brandResult?.content ?? "",
       requestId,
       agentFlow,
+      parallelAgentContent: parallelResult?.content ?? "",
       metrics: {
         query_type: triageResult.queryType,
         confidence: triageResult.confidence,
-        agent_count: 3,
+        agent_count: 4,
         rag_enabled: false,
       },
     });

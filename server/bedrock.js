@@ -8,15 +8,13 @@ import { ChatBedrockConverse } from "@langchain/aws";
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 
 const localTesting =
-  process.env.OPENLLMETRY_LOCAL_TESTING === "true" ||
-  process.env.OPENLLMETRY_LOCAL_TESTING === "1";
+  process.env.OPENLLMETRY_LOCAL_TESTING === "true"
 traceloop.initialize({
   disableBatch: localTesting,
   instrumentModules: { langchain: true },
 });
 
 const region =
-  process.env.AWS_REGION ||
   process.env.AWS_DEFAULT_REGION ||
   "us-east-1";
 
@@ -74,7 +72,7 @@ async function converseImpl(modelId, messages, options) {
   };
 }
 
-/** options.taskName: optional Traceloop task name for the span (e.g. "triage_router", "brand_agent_completion"). */
+/** options.taskName: optional Traceloop task name for the span (e.g. "triage_router", "brand_agent"). */
 export async function converse(modelId, messages, options = {}) {
   const { taskName, ...opts } = options;
   if (taskName) {

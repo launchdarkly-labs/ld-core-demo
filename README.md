@@ -1,6 +1,6 @@
 # Policy Agent Node
 
- ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand_agent_completion** → final response.
+ ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand_agent** → final response.
 
 ## System architecture
 
@@ -8,7 +8,7 @@
 
 - **Triage router** — [`server/triage.js`](server/triage.js): Uses LaunchDarkly AI Config `triage_agent` to call Bedrock; the model returns JSON with `query_type` (`policy_question`, `provider_lookup`, or `scheduler_agent`). Low confidence (&lt; 0.7) can set `escalationNeeded`; the chosen type is passed to the specialist step.
 - **Specialist** — [`server/specialists.js`](server/specialists.js): One of three agents runs (Policy Specialist, Provider Specialist, or Schedule Agent), each with a simple Bedrock prompt. No RAG in this app; specialists answer from instructions only.
-- **Brand completion** (`brand_agent_completion`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). Uses LaunchDarkly AI Config with **judges** attached; we only act on the **toxicity** score for guardrails (see below).
+- **Brand completion** (`brand_agent`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). Uses LaunchDarkly AI Config with **judges** attached; we only act on the **toxicity** score for guardrails (see below).
 
 ### Judge flow and guardrails
 
@@ -90,7 +90,7 @@ docker build -t policy-agent-node .
 ```bash
 docker run -p 3000:3000 \
   -e LD_SDK_KEY=your-key \
-  -e AWS_REGION=us-east-1 \
+  -e AWS_DEFAULT_REGION=us-east-1 \
   -e AWS_PROFILE=aiconfigdemo \
   -e HOME=/app \
   -v "$HOME/.aws:/app/.aws:ro" \
@@ -108,7 +108,7 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 |----------|-------------|
 | `LD_SDK_KEY` | Server-side SDK key |
 | `LD_CLIENT_ID` | Optional. Client-side ID for browser Observability + Session Replay (from Project → Environments → SDK key). Passed from server to client. |
-| `AWS_REGION` | e.g. `us-east-1` |
+| `AWS_DEFAULT_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
 | `PORT` | Server port (default 3000) |
 
@@ -125,7 +125,7 @@ When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK 
 
 - `POST /api/chat`  
   Body: `{ "userInput": "What's my copay for a specialist?" }`  
-  Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent_completion.
+  Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent.
 - `GET /api/health`  
   Returns `{ status: "ok" }`.
 

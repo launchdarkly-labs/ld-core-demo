@@ -139,7 +139,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
           safetyResult = await converse(fallbackModelId, fallbackMessages, {
             temperature: 0.5,
             maxTokens: 1024,
-            taskName: "brand_agent_completion",
+            taskName: "brand_agent",
           });
         } catch (err) {
           fallbackTracker.trackError();
@@ -187,7 +187,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
     result = await converse(modelId, messages, {
       temperature: 0.5,
       maxTokens: 1024,
-      taskName: "brand_agent_completion",
+      taskName: "brand_agent",
     });
   } catch (err) {
     tracker.trackError();

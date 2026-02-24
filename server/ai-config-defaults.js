@@ -45,7 +45,7 @@ Customer question: {{ query }}`,
 };
 
 /** Default for brand completion AI Config (completion mode, messages-based). */
-export const brand_agent_completion = {
+export const brand_agent = {
   enabled: true,
   model: { name: DEFAULT_MODEL },
   messages: [

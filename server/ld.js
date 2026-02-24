@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export const TRIAGE_DEFAULT = defaults.triage_agent;
-export const BRAND_COMPLETION_DEFAULT = defaults.brand_agent_completion;
+export const BRAND_COMPLETION_DEFAULT = defaults.brand_agent;
 
 /** Map queryType from triage to LaunchDarkly AI Config key and fallback. */
 export const SPECIALIST_AI_CONFIG = {
