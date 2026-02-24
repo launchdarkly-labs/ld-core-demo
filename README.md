@@ -12,7 +12,7 @@
 
 ### Judge flow and guardrails
 
-Brand completion runs via LaunchDarkly’s `createChat` + `invoke`, so any **judges** attached to the `brand-agent-completion` AI Config run automatically. Their scores and reasoning are logged in the backend terminal.
+Brand completion runs via LaunchDarkly’s `createChat` + `invoke`, so any **judges** attached to the `brand_agent` AI Config run automatically. Their scores and reasoning are logged in the backend terminal.
 
 **Guardrails (toxicity only):** We only trigger a safety re-run based on the **toxicity** judge. If the toxicity score is **&gt; 0.7** and guardrails are on, we:
 
@@ -156,7 +156,7 @@ policy-agent-node/
 
 ### Addendum: LaunchDarkly judges and message order
 
-When using **judges** with the LaunchDarkly AI SDK (e.g. on `brand-agent-completion`), you may see:
+When using **judges** with the LaunchDarkly AI SDK (e.g. on `brand_agent`), you may see:
 
 ```text
 warn: [LaunchDarkly] LangChain structured model invocation failed: ValidationException: A conversation must start with a user message. Try again with a conversation that starts with a user message.

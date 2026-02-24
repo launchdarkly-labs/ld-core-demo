@@ -2,7 +2,7 @@ import { getLdClient, getCompletionConfig, BRAND_COMPLETION_DEFAULT } from "./ld
 import { initAi } from "@launchdarkly/server-sdk-ai";
 import { converse } from "./bedrock.js";
 
-const CONFIG_KEY = "brand-agent-completion";
+const CONFIG_KEY = "brand_agent";
 const TOXICITY_THRESHOLD = 0.7;
 
 /** Get toxicity score from judge results (any judge with evals.toxicity or judge key "toxicity"). */
@@ -22,7 +22,7 @@ function getToxicityScore(judgeResults) {
 
 /**
  * Run the brand completion to turn the specialist's response into the final customer-facing reply.
- * Uses LaunchDarkly AI Config (brand-agent-completion). Prefers createChat + invoke so that
+ * Uses LaunchDarkly AI Config (brand_agent). Prefers createChat + invoke so that
  * judges attached in LD run automatically; falls back to getCompletionConfig + converse when
  * createChat is unavailable (e.g. provider not initialized).
  * @param {string} specialistResponse - Raw response from policy/provider/schedule specialist
