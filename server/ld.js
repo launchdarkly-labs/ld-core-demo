@@ -130,6 +130,7 @@ export async function getCompletionConfig(configKey, context, fallbackConfig, va
       ? { name: completion.model.name ?? fallbackConfig.model?.name }
       : fallbackConfig.model,
     judgeConfiguration: completion.judgeConfiguration,
+    custom: completion.model?.custom,
   };
   const noopTracker = {
     trackSuccess: () => {},

@@ -36,13 +36,17 @@ async function converseImpl(modelId, messages, options) {
   const id = getModelId(modelId);
   const lcMessages = toLangChainMessages(messages);
 
-  const llm = new ChatBedrockConverse({
+  const llmOptions = {
     model: id,
     region,
     temperature: options.temperature ?? 0,
     maxTokens: options.maxTokens ?? 2000,
     streamUsage: true,
-  });
+  };
+  if (options.guardrailConfig?.guardrailIdentifier && options.guardrailConfig?.guardrailVersion) {
+    llmOptions.guardrailConfig = options.guardrailConfig;
+  }
+  const llm = new ChatBedrockConverse(llmOptions);
 
   const startTime = Date.now();
   let ttftMs;

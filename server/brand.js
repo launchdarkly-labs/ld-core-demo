@@ -4,6 +4,8 @@ import { converse } from "./bedrock.js";
 
 const CONFIG_KEY = "brand_agent";
 const TOXICITY_THRESHOLD = 0.7;
+const DEFAULT_GUARDRAIL_ID = "i7aqo05chetu";
+const DEFAULT_GUARDRAIL_VERSION = "1";
 
 /** Get toxicity score from judge results (any judge with evals.toxicity or judge key "toxicity"). */
 function getToxicityScore(judgeResults) {
@@ -70,10 +72,17 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
 
     let judgeResults = [];
     try {
-      const evalResults = await chatResponse.evaluations;
-      if (evalResults?.length) {
-        log({ level: "INFO", message: `   👨‍⚖️ Judges: ${evalResults.map((r) => r.judgeConfigKey ?? "?").join(", ")}`, name: "brand" });
+      const rawEvalResults = await chatResponse.evaluations;
+      const evalResults = Array.isArray(rawEvalResults) ? rawEvalResults : [];
+      if (evalResults.length === 0) {
+        log({ level: "INFO", message: `   👨‍⚖️ No judge evaluations returned`, name: "brand" });
+      } else {
+        log({ level: "INFO", message: `   👨‍⚖️ Judges: ${evalResults.map((r) => r?.judgeConfigKey ?? "?").join(", ")}`, name: "brand" });
         for (const jr of evalResults) {
+          if (jr == null) {
+            log({ level: "WARN", message: `   👨‍⚖️ Judge result missing (undefined or null entry in evaluations)`, name: "brand" });
+            continue;
+          }
           if (jr.success && jr.evals && Object.keys(jr.evals).length > 0) {
             for (const [metric, evalScore] of Object.entries(jr.evals)) {
               const score = evalScore?.score ?? "—";
@@ -98,7 +107,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
             }
           }
         }
-        judgeResults = evalResults;
+        judgeResults = evalResults.filter((r) => r != null);
       }
     } catch (e) {
       log({ level: "WARN", message: `   👨‍⚖️ Judge evaluations error: ${e?.message ?? e}`, name: "brand" });
@@ -133,6 +142,8 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
         );
         const fallbackModelId = fallbackConfig.model?.name ?? BRAND_COMPLETION_DEFAULT.model?.name;
         const fallbackMessages = fallbackConfig.messages ?? [];
+        const fallbackGrId = fallbackConfig.custom?.gr_id ?? DEFAULT_GUARDRAIL_ID;
+        const fallbackGrVersion = fallbackConfig.custom?.gr_version ?? DEFAULT_GUARDRAIL_VERSION;
         const fallbackStart = Date.now();
         let safetyResult;
         try {
@@ -140,6 +151,10 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
             temperature: 0.5,
             maxTokens: 1024,
             taskName: "brand_agent",
+            guardrailConfig: {
+              guardrailIdentifier: String(fallbackGrId),
+              guardrailVersion: String(fallbackGrVersion),
+            },
           });
         } catch (err) {
           fallbackTracker.trackError();
@@ -180,6 +195,8 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
   );
   const modelId = config.model?.name ?? BRAND_COMPLETION_DEFAULT.model?.name;
   const messages = config.messages ?? [];
+  const grId = config.custom?.gr_id ?? DEFAULT_GUARDRAIL_ID;
+  const grVersion = config.custom?.gr_version ?? DEFAULT_GUARDRAIL_VERSION;
 
   const startTime = Date.now();
   let result;
@@ -188,6 +205,10 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
       temperature: 0.5,
       maxTokens: 1024,
       taskName: "brand_agent",
+      guardrailConfig: {
+      guardrailIdentifier: String(grId),
+      guardrailVersion: String(grVersion),
+    },
     });
   } catch (err) {
     tracker.trackError();
