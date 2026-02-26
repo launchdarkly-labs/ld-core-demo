@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export default function Terminal() {
+export default function Terminal({ logSessionId }) {
   const [logs, setLogs] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -18,7 +18,8 @@ export default function Terminal() {
       try {
         const logEntry = JSON.parse(event.data);
         if (logEntry.level === "HEARTBEAT") return;
-        setLogs((prev) => [...prev, logEntry]);
+        const isForThisSession = !logEntry.sessionId || logEntry.sessionId === logSessionId;
+        if (isForThisSession) setLogs((prev) => [...prev, logEntry]);
       } catch (_) {}
     };
     eventSource.onerror = () => setIsConnected(false);
@@ -26,7 +27,7 @@ export default function Terminal() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [logSessionId]);
 
   useEffect(() => {
     if (!isCollapsed) logsEndRef.current?.scrollIntoView({ behavior: "smooth" });

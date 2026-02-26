@@ -1,4 +1,5 @@
 import path from "path";
+import { AsyncLocalStorage } from "async_hooks";
 import { config as loadEnv } from "dotenv";
 import { init } from "@launchdarkly/node-server-sdk";
 import { initAi } from "@launchdarkly/server-sdk-ai";
@@ -23,24 +24,74 @@ export const SPECIALIST_AI_CONFIG = {
   scheduler_agent: { configKey: "scheduler_agent", fallback: defaults.scheduler_agent },
 };
 
-let ldClient = null;
+// --- Persistent LD client cache (keyed by SDK key) ---
+const clients = new Map();
+const TTL_MS = 30 * 60 * 1000; // 30 min
 
-export async function getLdClient() {
-  const key = process.env.LD_SDK_KEY;
-  if (!key) throw new Error("LD_SDK_KEY is required");
-  if (!ldClient) {
-    ldClient = init(key, {
-      plugins: [
-        new Observability({
-          serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "policy-agent-node",
-          // When LD_OTLP_ENDPOINT is unset, the plugin uses its default (LaunchDarkly's OTLP endpoint).
-          ...(process.env.LD_OTLP_ENDPOINT && { otlpEndpoint: process.env.LD_OTLP_ENDPOINT }),
-        }),
-      ],
-    });
-    await ldClient.waitForInitialization({ timeout: 10 });
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 min
+
+async function getClient(sdkKey) {
+  const entry = clients.get(sdkKey);
+  if (entry && Date.now() - entry.lastUsed < TTL_MS) {
+    entry.lastUsed = Date.now();
+    return entry.client;
   }
-  return ldClient;
+  if (entry) {
+    entry.client.close().catch(() => {});
+    clients.delete(sdkKey);
+  }
+  const client = init(sdkKey, {
+    plugins: [
+      new Observability({
+        serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "policy-agent-node",
+        ...(process.env.LD_OTLP_ENDPOINT && { otlpEndpoint: process.env.LD_OTLP_ENDPOINT }),
+      }),
+    ],
+  });
+  await client.waitForInitialization({ timeout: 10 });
+  clients.set(sdkKey, { client, lastUsed: Date.now() });
+  return client;
+}
+
+function cleanup() {
+  const now = Date.now();
+  for (const [key, entry] of clients.entries()) {
+    if (now - entry.lastUsed > TTL_MS) {
+      entry.client.close().catch(() => {});
+      clients.delete(key);
+    }
+  }
+}
+
+let cleanupInterval = null;
+function startCleanupInterval() {
+  if (cleanupInterval) return;
+  cleanupInterval = setInterval(cleanup, CLEANUP_INTERVAL_MS);
+  if (cleanupInterval.unref) cleanupInterval.unref();
+}
+startCleanupInterval();
+
+/** Request-scoped SDK key (set by chat route from body.sdkKey). */
+const ldSdkKeyStorage = new AsyncLocalStorage();
+
+/**
+ * Run async work with the given SDK key as the current session. Used by the chat API.
+ * @param {string} sdkKey - Server-side SDK key for LaunchDarkly
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T>}
+ */
+export function runWithSdkKey(sdkKey, fn) {
+  return ldSdkKeyStorage.run(sdkKey, fn);
+}
+
+/**
+ * Get a LaunchDarkly server-side client for the current request (or env default).
+ * Uses SDK key from AsyncLocalStorage (set by runWithSdkKey) or process.env.LD_SDK_KEY.
+ */
+export async function getLdClient() {
+  const key = ldSdkKeyStorage.getStore() ?? process.env.LD_SDK_KEY;
+  if (!key) throw new Error("LD_SDK_KEY is required (set session SDK key in UI or LD_SDK_KEY in env)");
+  return getClient(key);
 }
 
 function substituteContext(template, contextVars) {

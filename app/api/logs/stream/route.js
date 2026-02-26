@@ -14,11 +14,13 @@ export async function POST(request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const guardrailsOn = body.guardrails === true;
+  const sessionId = body?.sessionId?.trim() || null;
   const msg = guardrailsOn ? "Guardrails turned on" : "Guardrails turned off";
   pushLog({
     level: "INFO",
     message: `*** ${msg} ***`,
     name: guardrailsOn ? "guardrails-on" : "guardrails-off",
+    ...(sessionId && { sessionId }),
   });
   return Response.json({ ok: true }, { status: 200 });
 }

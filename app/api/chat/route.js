@@ -1,6 +1,7 @@
 // LLM observability init order: (1) LD, (2) OpenLLMetry, (3) Bedrock. init-ld runs first; triage loads bedrock.js.
 // Import withWorkflow after triage/specialists/brand so bedrock.js (and traceloop.initialize()) load first.
 import "../../../server/init-ld.js";
+import { runWithSdkKey } from "../../../server/ld.js";
 import { runTriage } from "../../../server/triage.js";
 import { runSpecialist } from "../../../server/specialists.js";
 import { runBrandAgent } from "../../../server/brand.js";
@@ -30,41 +31,54 @@ export async function POST(request) {
     return Response.json({ error: "userInput is required" }, { status: 400 });
   }
 
+  const sdkKey = body?.sdkKey?.trim() || process.env.LD_SDK_KEY;
+  if (!sdkKey) {
+    return Response.json(
+      { error: "sdkKey is required (set connection in user menu or LD_SDK_KEY in env)" },
+      { status: 400 }
+    );
+  }
+
   const guardrails = body.guardrails !== false;
+  const sessionId = body?.sessionId?.trim() || null;
   const requestId = crypto.randomUUID();
   const userContext = createUserContext(body);
   userContext.guardrails = guardrails;
   const query = userInput.trim();
 
+  const logger = (entry) => pushLog({ ...entry, name: entry.name ?? "chat", ...(sessionId && { sessionId }) });
+
   pushLog({
     level: "INFO",
     message: guardrails ? "Guardrails turned on" : "Guardrails turned off",
     name: "chat",
+    ...(sessionId && { sessionId }),
   });
   pushLog({
     level: "INFO",
-    message: `💬 Chat request (${requestId.slice(0, 8)}…) · "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`,
+    message: `💬 Chat request (…${sdkKey.slice(-4)}) · "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`,
     name: "chat",
+    ...(sessionId && { sessionId }),
   });
   pushLog({
     level: "INFO",
     message: `   Context: policy=${userContext.policy_id ?? "—"} · ${userContext.location ?? "—"}`,
     name: "chat",
+    ...(sessionId && { sessionId }),
   });
 
-  const logger = (entry) => pushLog({ ...entry, name: entry.name ?? "chat" });
-
   try {
-    const result = await withWorkflow(
-      { name: "chat_request" },
-      async () => {
-        // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
-        const triageResult = await runTriage(query, userContext, { logger });
-        pushLog({
-          level: "INFO",
-          message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
-          name: "chat",
-        });
+    const result = await runWithSdkKey(sdkKey, () =>
+      withWorkflow(
+        { name: "chat_request" },
+        async () => {
+          // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
+          const triageResult = await runTriage(query, userContext, { logger });
+          logger({
+            level: "INFO",
+            message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
+            name: "chat",
+          });
 
         // 2. Specialist: run the chosen agent
         const specialistResult = await runSpecialist(
@@ -84,7 +98,8 @@ export async function POST(request) {
         );
 
         return { triageResult, specialistResult, brandResult };
-      }
+        }
+      )
     );
 
     const { triageResult, specialistResult, brandResult } = result;
@@ -137,6 +152,7 @@ export async function POST(request) {
       level: "ERROR",
       message: `❌ Triage error: ${message}`,
       name: "chat",
+      ...(sessionId && { sessionId }),
     });
     const isAws = /credentials|sso|token|KeyError|Refreshing/i.test(message);
     return Response.json(
