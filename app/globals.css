@@ -83,7 +83,7 @@ body {
 .nav-connection-status {
   font-size: 0.875rem;
   color: #6b7280;
-  margin-right: 1rem;
+  margin-left: 0.25rem;
   padding: 0.4rem 0.75rem;
   background: linear-gradient(135deg, rgba(126, 34, 206, 0.12) 0%, rgba(109, 40, 217, 0.08) 100%);
   border: 1px solid rgba(126, 34, 206, 0.25);
