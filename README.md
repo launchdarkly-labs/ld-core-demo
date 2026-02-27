@@ -94,6 +94,8 @@ The app supports **multiple LaunchDarkly connections** via the UI. You can run w
 
 **Terminal logs** are scoped to the current session: each browser tab has its own session ID, so the backend terminal only shows logs for requests from that tab (including guardrails toggle and chat flow).
 
+## Quick start (Docker)
+
 ```bash
 docker build -t policy-agent-node .
 ```
@@ -124,6 +126,8 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 | `AWS_DEFAULT_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
 | `PORT` | Server port (default 3000) |
+| `LD_API_KEY` | Optional. LaunchDarkly API token for **Create AI configs** (see [Auto-generate AI configs](#auto-generate-ai-configs)). |
+| `LD_PROJECT_KEY` | Optional. Default LaunchDarkly project key when creating AI configs. |
 
 **Frontend observability**
 
@@ -143,6 +147,24 @@ When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK 
   Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent.
 - `GET /api/health`  
   Returns `{ status: "ok" }`.
+
+## Auto-generate AI configs
+
+You can seed a LaunchDarkly project with AI configs (agents, judges, completion configs) from a JSON file using the **Create AI configs** action in the settings dropdown.
+
+**Setup**
+
+1. **Seed file** — Place **`ai-configs-seed.json`** in the project root. The file must contain an **`ai_configs`** array; each element describes one AI config (key, name, description, mode, tags) and its **variations** (messages, model, modelConfigKey). The format matches an export from LaunchDarkly (e.g. a backup of existing configs).
+2. **API token** — Set **`LD_API_KEY`** in `.env.local` (or env) to your LaunchDarkly **API token** (not the SDK key). The token must have permission to create AI configs in the target project.
+3. **Target project** — If you enter an **SDK key** in the settings and click Create AI configs, the server **resolves the project key from that SDK key** (via the LaunchDarkly API: which project/environment has that key). You can override by passing **`projectKey`** in the request body or setting **`LD_PROJECT_KEY`** in the environment; otherwise the default project key is used when no SDK key is provided or resolution fails.
+
+**Usage**
+
+1. Open the **settings (gear)** menu in the top-left.
+2. Enter your **server-side SDK key** (used to authenticate the request).
+3. Click **Create AI configs**. The server reads `ai-configs-seed.json`, then for each entry calls the LaunchDarkly REST API to create the AI config and its variations in the target project.
+
+The response reports how many configs and variations were created and lists any failures (e.g. duplicate key or missing model).
 
 ## Project layout
 
@@ -164,6 +186,7 @@ policy-agent-node/
 ├── public/                 # Static assets (unchanged)
 ├── Dockerfile              # Multi-stage: deps → builder → runner
 ├── next.config.mjs
+├── ai-configs-seed.json    # Seed file for Create AI configs (ai_configs array)
 ├── .env.example
 ├── .env.local             # copy from .env.example; not committed
 └── package.json
