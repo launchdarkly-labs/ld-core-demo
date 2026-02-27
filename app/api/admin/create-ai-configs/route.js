@@ -35,10 +35,10 @@ export async function POST(request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const sdkKey = (body?.sdkKey ?? body?.sessionSdkKey)?.trim();
-  if (!sdkKey) {
+  const projectKey = body?.projectKey?.trim();
+  if (!projectKey) {
     return Response.json(
-      { error: "sdkKey or sessionSdkKey is required" },
+      { error: "projectKey is required (connect to a project first)." },
       { status: 400 }
     );
   }
@@ -54,28 +54,24 @@ export async function POST(request) {
     );
   }
 
-  const projectKey =
-    body?.projectKey?.trim() ||
-    process.env.LD_PROJECT_KEY?.trim() ||
-    "nteixeira-ld-demo";
-  const backupPath = join(process.cwd(), "backup_stuff2.json");
+  const seedPath = join(process.cwd(), "ai-configs-seed.json");
 
   let backup;
   try {
-    const raw = await readFile(backupPath, "utf-8");
+    const raw = await readFile(seedPath, "utf-8");
     backup = JSON.parse(raw);
   } catch (e) {
     const msg =
       e.code === "ENOENT"
-        ? "backup_stuff2.json not found in project root"
-        : e.message || "Failed to read backup file";
+        ? "ai-configs-seed.json not found in project root"
+        : e.message || "Failed to read seed file";
     return Response.json({ error: msg }, { status: 400 });
   }
 
   const aiConfigs = backup?.ai_configs;
   if (!Array.isArray(aiConfigs) || aiConfigs.length === 0) {
     return Response.json(
-      { error: "backup_stuff2.json has no ai_configs array" },
+      { error: "ai-configs-seed.json has no ai_configs array" },
       { status: 400 }
     );
   }

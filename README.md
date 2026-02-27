@@ -79,20 +79,22 @@ npm run dev
 
 Open http://localhost:3000.
 
-## SDK key and connections
+## Project key and connections
 
-The app supports **multiple LaunchDarkly connections** via the UI. You can run without setting `LD_SDK_KEY` in the environment.
+The app uses a **project key** to connect to LaunchDarkly. You can run without setting `LD_SDK_KEY` in the environment.
 
 **In the UI (top-left):**
 
 1. Click the **settings (gear)** icon.
-2. Enter your **server-side SDK key** in the field (the key from your LaunchDarkly project environment, e.g. `sdk-...`).
-3. Click **Use for chat** to set this key as the **current session connection**. The purple badge next to the gear will show **Connected …xxxx** (last 4 characters of the key).
-4. All chat requests in this tab then use that SDK key. The backend caches LD clients by key (30‑minute TTL; stale clients are closed every 5 minutes).
+2. Enter your **LaunchDarkly project key** (e.g. `nteixeira-ld-demo`).
+3. Click **Connect**. The server uses the LaunchDarkly API (`LD_API_KEY`) to:
+   - Check the project exists (error if not).
+   - Set the **project key** and **SDK key** for your session (SDK key is taken from the project’s **production** environment, or the first environment if production is missing).
+4. The purple badge shows **Connected &lt;projectKey&gt;** and chat uses the resolved SDK key. The backend caches LD clients by SDK key (30‑minute TTL; cleanup every 5 minutes).
 
-**Fallback:** If you do not set a session key in the UI, the server uses **`LD_SDK_KEY`** from the environment (e.g. `.env.local`). If neither is set, chat returns an error asking you to set a connection.
+**Fallback:** If you do not connect in the UI, the server uses **`LD_SDK_KEY`** from the environment. If neither is set, chat returns an error.
 
-**Terminal logs** are scoped to the current session: each browser tab has its own session ID, so the backend terminal only shows logs for requests from that tab (including guardrails toggle and chat flow).
+**Terminal logs** are scoped to the current session (one per browser tab).
 
 ## Quick start (Docker)
 
@@ -121,13 +123,12 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 
 | Variable | Description |
 |----------|-------------|
-| `LD_SDK_KEY` | Optional. Server-side SDK key used when no session key is set in the UI. See [SDK key and connections](#sdk-key-and-connections). |
+| `LD_SDK_KEY` | Optional. Server-side SDK key used when no session is set via the UI. See [Project key and connections](#project-key-and-connections). |
 | `LD_CLIENT_ID` | Optional. Client-side ID for browser Observability + Session Replay (from Project → Environments → SDK key). Passed from server to client. |
 | `AWS_DEFAULT_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
 | `PORT` | Server port (default 3000) |
 | `LD_API_KEY` | Optional. LaunchDarkly API token for **Create AI configs** (see [Auto-generate AI configs](#auto-generate-ai-configs)). |
-| `LD_PROJECT_KEY` | Optional. Default LaunchDarkly project key when creating AI configs. |
 
 **Frontend observability**
 
@@ -142,8 +143,8 @@ When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK 
 
 - `POST /api/chat`  
   Body: `{ "userInput": "…", "sdkKey": "sdk-…", "sessionId": "…" }`.  
-  **`sdkKey`** (optional): server-side SDK key for this request; if omitted, `LD_SDK_KEY` from the environment is used.  
-  **`sessionId`** (optional): scopes backend terminal logs to this session (e.g. one per browser tab).  
+  **`sdkKey`** (optional): set by Connect from the project’s production environment; if omitted, `LD_SDK_KEY` from the environment is used.  
+  **`sessionId`** (optional): scopes backend terminal logs to this session.  
   Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent.
 - `GET /api/health`  
   Returns `{ status: "ok" }`.
@@ -154,15 +155,15 @@ You can seed a LaunchDarkly project with AI configs (agents, judges, completion 
 
 **Setup**
 
-1. **Seed file** — Place **`ai-configs-seed.json`** in the project root. The file must contain an **`ai_configs`** array; each element describes one AI config (key, name, description, mode, tags) and its **variations** (messages, model, modelConfigKey). The format matches an export from LaunchDarkly (e.g. a backup of existing configs).
-2. **API token** — Set **`LD_API_KEY`** in `.env.local` (or env) to your LaunchDarkly **API token** (not the SDK key). The token must have permission to create AI configs in the target project.
-3. **Target project** — If you enter an **SDK key** in the settings and click Create AI configs, the server **resolves the project key from that SDK key** (via the LaunchDarkly API: which project/environment has that key). You can override by passing **`projectKey`** in the request body or setting **`LD_PROJECT_KEY`** in the environment; otherwise the default project key is used when no SDK key is provided or resolution fails.
+1. **Seed file** — Place **`ai-configs-seed.json`** in the project root with an **`ai_configs`** array (format matches a LaunchDarkly export).
+2. **API token** — Set **`LD_API_KEY`** in `.env.local` (LaunchDarkly API token). Required for Connect and for Create AI configs.
+3. **Target project** — Connect in the UI with a **project key** first. **Create AI configs** uses the session’s project key (no separate project key input). The button is disabled until you are connected.
 
 **Usage**
 
-1. Open the **settings (gear)** menu in the top-left.
-2. Enter your **server-side SDK key** (used to authenticate the request).
-3. Click **Create AI configs**. The server reads `ai-configs-seed.json`, then for each entry calls the LaunchDarkly REST API to create the AI config and its variations in the target project.
+1. Open the **settings (gear)** menu and enter a **project key**.
+2. Click **Connect** to validate the project and set the session (project key + SDK key for production env).
+3. Click **Create AI configs** to seed the connected project from `ai-configs-seed.json`.
 
 The response reports how many configs and variations were created and lists any failures (e.g. duplicate key or missing model).
 

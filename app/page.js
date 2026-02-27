@@ -1,18 +1,25 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Terminal from "./components/Terminal";
 
 function scrollToEnd(messagesEndRef) {
   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 }
 
+const DOCS = [
+  { id: "how-it-works", label: "How it works", src: "/docs/How-it-works.png" },
+  { id: "ld-architecture", label: "LD Architecture", src: "/docs/LD-Architecture.png" },
+];
+
 function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessionProjectKey }) {
   const [open, setOpen] = useState(false);
-  const [sdkKey, setSdkKey] = useState("");
+  const [projectKeyInput, setProjectKeyInput] = useState("");
   const [actionStatus, setActionStatus] = useState(null);
-  const [resolveError, setResolveError] = useState(null);
-  const [resolving, setResolving] = useState(false);
+  const [connectError, setConnectError] = useState(null);
+  const [connecting, setConnecting] = useState(false);
+  const [viewingDoc, setViewingDoc] = useState(null);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -24,28 +31,37 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
     return () => document.removeEventListener("click", handleClickOutside);
   }, [open]);
 
-  const handleUseForChat = async () => {
-    const key = sdkKey.trim();
+  useEffect(() => {
+    if (!viewingDoc) return;
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setViewingDoc(null);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [viewingDoc]);
+
+  const handleConnect = async () => {
+    const key = projectKeyInput.trim();
     if (!key) return;
-    setResolveError(null);
-    setResolving(true);
+    setConnectError(null);
+    setConnecting(true);
     try {
-      const res = await fetch("/api/admin/resolve-project", {
+      const res = await fetch("/api/admin/connect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sdkKey: key }),
+        body: JSON.stringify({ projectKey: key }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.projectKey) {
-        setSessionSdkKey(key);
+      if (res.ok && data.projectKey && data.sdkKey) {
         setSessionProjectKey(data.projectKey);
+        setSessionSdkKey(data.sdkKey);
       } else {
-        setResolveError(data.error || "Could not resolve project for this SDK key.");
+        setConnectError(data.error || "Could not connect to project.");
       }
     } catch (e) {
-      setResolveError(e.message || "Request failed");
+      setConnectError(e.message || "Request failed");
     } finally {
-      setResolving(false);
+      setConnecting(false);
     }
   };
 
@@ -55,11 +71,7 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
       const res = await fetch(`/api/admin/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sdkKey: sdkKey.trim() || undefined,
-          sessionSdkKey: sessionSdkKey || undefined,
-          projectKey: sessionProjectKey || undefined,
-        }),
+        body: JSON.stringify({ projectKey: sessionProjectKey || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
@@ -90,13 +102,13 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
       {open && (
         <div className="user-dropdown" role="menu">
           <div className="user-dropdown-field">
-            <label htmlFor="user-menu-sdk-key">SDK key</label>
+            <label htmlFor="user-menu-project-key">Project key</label>
             <input
-              id="user-menu-sdk-key"
-              type="password"
-              placeholder="Server-side SDK key (sdk-...)"
-              value={sdkKey}
-              onChange={(e) => setSdkKey(e.target.value)}
+              id="user-menu-project-key"
+              type="text"
+              placeholder="e.g. nteixeira-ld-demo"
+              value={projectKeyInput}
+              onChange={(e) => setProjectKeyInput(e.target.value)}
               className="user-dropdown-input"
             />
           </div>
@@ -104,24 +116,24 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
             <button
               type="button"
               className="user-dropdown-btn user-dropdown-btn-primary"
-              onClick={handleUseForChat}
-              disabled={!sdkKey.trim() || resolving}
+              onClick={handleConnect}
+              disabled={!projectKeyInput.trim() || connecting}
             >
-              {resolving ? "Resolving…" : "Use for chat"}
+              {connecting ? "Connecting…" : "Connect"}
             </button>
             <button
               type="button"
               className="user-dropdown-btn"
               onClick={() => runAction("create-ai-configs")}
               disabled={!sessionProjectKey || actionStatus?.status === "loading"}
-              title={!sessionProjectKey ? "Set SDK key and use for chat first" : undefined}
+              title={!sessionProjectKey ? "Connect to a project first" : undefined}
             >
               Create AI configs
             </button>
           </div>
-          {resolveError && (
+          {connectError && (
             <div className="user-dropdown-status error" role="alert">
-              {resolveError}
+              {connectError}
             </div>
           )}
           {actionStatus && (
@@ -131,8 +143,60 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
               {actionStatus.status === "error" && (actionStatus.message || "Error.")}
             </div>
           )}
+          <div className="user-dropdown-docs">
+            <div className="user-dropdown-docs-label">
+              <svg className="user-dropdown-docs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              <span>Documents</span>
+            </div>
+            {DOCS.map((doc) => (
+              <button
+                key={doc.id}
+                type="button"
+                className="user-dropdown-doc-btn"
+                onClick={() => {
+                  setViewingDoc(doc.id);
+                  setOpen(false);
+                }}
+              >
+                {doc.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
+      {viewingDoc && (() => {
+        const doc = DOCS.find((d) => d.id === viewingDoc);
+        if (!doc || typeof document === "undefined") return null;
+        return createPortal(
+          <div
+            className="doc-modal-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Viewing ${doc.label}`}
+            onClick={() => setViewingDoc(null)}
+          >
+            <div className="doc-modal-content" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="doc-modal-close"
+                onClick={() => setViewingDoc(null)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <h3 className="doc-modal-title">{doc.label}</h3>
+              <img src={doc.src} alt={doc.label} className="doc-modal-img" />
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
     </div>
   );
 }
@@ -341,7 +405,21 @@ export default function Home() {
               setSessionProjectKey={setSessionProjectKey}
             />
             <span className="nav-connection-status" aria-live="polite">
-              {sessionProjectKey ? `Connected ${sessionProjectKey}` : "Set SDK key to connect"}
+              {sessionProjectKey ? (
+                <>
+                  Connected{" "}
+                  <a
+                    href={`https://app.launchdarkly.com/projects/${sessionProjectKey}/ai-configs`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="nav-connection-link"
+                  >
+                    {sessionProjectKey}
+                  </a>
+                </>
+              ) : (
+                "Set project to connect"
+              )}
             </span>
           </div>
           <img src="/health/toggleHealth_logo_horizontal.svg" alt="ToggleHealth" className="nav-logo" />

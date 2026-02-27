@@ -92,6 +92,18 @@ body {
   font-weight: 500;
 }
 
+.nav-connection-status .nav-connection-link {
+  color: #5b21b6;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(91, 33, 182, 0.4);
+}
+
+.nav-connection-status .nav-connection-link:hover {
+  color: #4c1d95;
+  border-bottom-color: #4c1d95;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
@@ -224,6 +236,112 @@ body {
 .user-dropdown-status.error {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.user-dropdown-docs {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.user-dropdown-docs-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.user-dropdown-docs-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.user-dropdown-doc-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.user-dropdown-doc-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #111;
+}
+
+.doc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.doc-modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.doc-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+  z-index: 1;
+}
+
+.doc-modal-close:hover {
+  background: #e5e7eb;
+  color: #111;
+}
+
+.doc-modal-title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111;
+  padding-right: 48px;
+}
+
+.doc-modal-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
 .hero-section {
