@@ -72,14 +72,27 @@ Other judge metrics (e.g. relevance, tone) are logged but do not trigger any aut
 
 ```bash
 cp .env.example .env.local
-# Edit .env.local: set LD_SDK_KEY; set AWS_PROFILE=aiconfigdemo and run: aws sso login --profile aiconfigdemo
+# Edit .env.local: set LD_SDK_KEY (optional if you set a session key in the UI); set AWS_PROFILE=aiconfigdemo and run: aws sso login --profile aiconfigdemo
 npm install
 npm run dev
 ```
 
 Open http://localhost:3000.
 
-## Quick start (Docker)
+## SDK key and connections
+
+The app supports **multiple LaunchDarkly connections** via the UI. You can run without setting `LD_SDK_KEY` in the environment.
+
+**In the UI (top-left):**
+
+1. Click the **settings (gear)** icon.
+2. Enter your **server-side SDK key** in the field (the key from your LaunchDarkly project environment, e.g. `sdk-...`).
+3. Click **Use for chat** to set this key as the **current session connection**. The purple badge next to the gear will show **Connected …xxxx** (last 4 characters of the key).
+4. All chat requests in this tab then use that SDK key. The backend caches LD clients by key (30‑minute TTL; stale clients are closed every 5 minutes).
+
+**Fallback:** If you do not set a session key in the UI, the server uses **`LD_SDK_KEY`** from the environment (e.g. `.env.local`). If neither is set, chat returns an error asking you to set a connection.
+
+**Terminal logs** are scoped to the current session: each browser tab has its own session ID, so the backend terminal only shows logs for requests from that tab (including guardrails toggle and chat flow).
 
 ```bash
 docker build -t policy-agent-node .
@@ -106,7 +119,7 @@ Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use 
 
 | Variable | Description |
 |----------|-------------|
-| `LD_SDK_KEY` | Server-side SDK key |
+| `LD_SDK_KEY` | Optional. Server-side SDK key used when no session key is set in the UI. See [SDK key and connections](#sdk-key-and-connections). |
 | `LD_CLIENT_ID` | Optional. Client-side ID for browser Observability + Session Replay (from Project → Environments → SDK key). Passed from server to client. |
 | `AWS_DEFAULT_REGION` | e.g. `us-east-1` |
 | `AWS_PROFILE` | Local only: SSO profile (e.g. `aiconfigdemo`). Omit in Docker/EKS. |
@@ -124,7 +137,9 @@ When `LD_CLIENT_ID` is set, the app initializes the LaunchDarkly JavaScript SDK 
 ## API
 
 - `POST /api/chat`  
-  Body: `{ "userInput": "What's my copay for a specialist?" }`  
+  Body: `{ "userInput": "…", "sdkKey": "sdk-…", "sessionId": "…" }`.  
+  **`sdkKey`** (optional): server-side SDK key for this request; if omitted, `LD_SDK_KEY` from the environment is used.  
+  **`sessionId`** (optional): scopes backend terminal logs to this session (e.g. one per browser tab).  
   Returns: `{ response, requestId, agentFlow, metrics }`. `response` is the brand-voiced final reply; `agentFlow` lists triage, specialist, and brand_agent.
 - `GET /api/health`  
   Returns `{ status: "ok" }`.
@@ -141,7 +156,7 @@ policy-agent-node/
 │       └── health/route.js
 ├── server/
 │   ├── ai-config-defaults.js  # Default prompts/model per agent
-│   ├── ld.js                  # LaunchDarkly client + getAIConfig
+│   ├── ld.js                  # LaunchDarkly client cache (by SDK key) + getAIConfig, runWithSdkKey
 │   ├── triage.js              # Triage: LD config → Bedrock → queryType
 │   ├── specialists.js         # Policy / Provider / Schedule specialists 
 │   ├── brand.js               # Brand completion: specialist reply → final response

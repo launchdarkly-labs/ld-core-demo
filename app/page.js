@@ -7,10 +7,12 @@ function scrollToEnd(messagesEndRef) {
   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 }
 
-function UserMenu({ sessionSdkKey, setSessionSdkKey }) {
+function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessionProjectKey }) {
   const [open, setOpen] = useState(false);
   const [sdkKey, setSdkKey] = useState("");
   const [actionStatus, setActionStatus] = useState(null);
+  const [resolveError, setResolveError] = useState(null);
+  const [resolving, setResolving] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -22,13 +24,42 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey }) {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [open]);
 
+  const handleUseForChat = async () => {
+    const key = sdkKey.trim();
+    if (!key) return;
+    setResolveError(null);
+    setResolving(true);
+    try {
+      const res = await fetch("/api/admin/resolve-project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sdkKey: key }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.projectKey) {
+        setSessionSdkKey(key);
+        setSessionProjectKey(data.projectKey);
+      } else {
+        setResolveError(data.error || "Could not resolve project for this SDK key.");
+      }
+    } catch (e) {
+      setResolveError(e.message || "Request failed");
+    } finally {
+      setResolving(false);
+    }
+  };
+
   const runAction = async (action) => {
     setActionStatus({ action, status: "loading" });
     try {
       const res = await fetch(`/api/admin/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sdkKey: sdkKey.trim() || undefined }),
+        body: JSON.stringify({
+          sdkKey: sdkKey.trim() || undefined,
+          sessionSdkKey: sessionSdkKey || undefined,
+          projectKey: sessionProjectKey || undefined,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
@@ -73,18 +104,26 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey }) {
             <button
               type="button"
               className="user-dropdown-btn user-dropdown-btn-primary"
-              onClick={() => {
-                const key = sdkKey.trim();
-                if (key) setSessionSdkKey(key);
-              }}
-              disabled={!sdkKey.trim()}
+              onClick={handleUseForChat}
+              disabled={!sdkKey.trim() || resolving}
             >
-              Use for chat
+              {resolving ? "Resolving…" : "Use for chat"}
             </button>
-            <button type="button" className="user-dropdown-btn" onClick={() => runAction("create-ai-configs")} disabled={actionStatus?.status === "loading"}>
+            <button
+              type="button"
+              className="user-dropdown-btn"
+              onClick={() => runAction("create-ai-configs")}
+              disabled={!sessionProjectKey || actionStatus?.status === "loading"}
+              title={!sessionProjectKey ? "Set SDK key and use for chat first" : undefined}
+            >
               Create AI configs
             </button>
           </div>
+          {resolveError && (
+            <div className="user-dropdown-status error" role="alert">
+              {resolveError}
+            </div>
+          )}
           {actionStatus && (
             <div className={`user-dropdown-status ${actionStatus.status}`} role="status">
               {actionStatus.status === "loading" && "Running…"}
@@ -281,6 +320,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
 
 export default function Home() {
   const [sessionSdkKey, setSessionSdkKey] = useState("");
+  const [sessionProjectKey, setSessionProjectKey] = useState("");
   const [logSessionId] = useState(
     () => (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `sess-${Date.now()}-${Math.random().toString(36).slice(2)}`)
   );
@@ -294,9 +334,14 @@ export default function Home() {
       <div className="homepage-wrapper terminal-offset">
         <nav className="health-nav">
           <div className="nav-right">
-            <UserMenu sessionSdkKey={sessionSdkKey} setSessionSdkKey={setSessionSdkKey} />
+            <UserMenu
+              sessionSdkKey={sessionSdkKey}
+              setSessionSdkKey={setSessionSdkKey}
+              sessionProjectKey={sessionProjectKey}
+              setSessionProjectKey={setSessionProjectKey}
+            />
             <span className="nav-connection-status" aria-live="polite">
-              {sessionSdkKey ? `Connected …${sessionSdkKey.slice(-4)}` : "Set SDK key to connect"}
+              {sessionProjectKey ? `Connected ${sessionProjectKey}` : "Set SDK key to connect"}
             </span>
           </div>
           <img src="/health/toggleHealth_logo_horizontal.svg" alt="ToggleHealth" className="nav-logo" />
