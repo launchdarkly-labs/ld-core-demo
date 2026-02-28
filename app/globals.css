@@ -459,10 +459,14 @@ body {
 }
 
 /* Chat widget */
-.app-container {
+.chat-widget-wrap {
   position: fixed;
   right: 24px;
   bottom: 24px;
+  z-index: 1000;
+}
+
+.app-container {
   width: 420px;
   max-height: 600px;
   background: #fff;
@@ -470,7 +474,6 @@ body {
   box-shadow: 0 10px 40px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
   overflow: hidden;
   border: 1px solid #e5e7eb;
 }
@@ -614,6 +617,161 @@ body {
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
+}
+
+/* Left-side judge panel (opens to the left of chat) */
+.judge-panel {
+  position: absolute;
+  right: 100%;
+  top: 0;
+  height: 100%;
+  width: 0;
+  max-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: none;
+  border-radius: 12px 0 0 12px;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  margin-right: 0;
+  transition: width 0.25s ease, max-width 0.25s ease, box-shadow 0.25s ease;
+}
+
+.judge-panel.open {
+  width: 320px;
+  max-width: 320px;
+  max-height: 600px;
+  border: 1px solid #e5e7eb;
+  border-right: none;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+  margin-right: 36px;
+}
+
+.judge-panel-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.judge-panel-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: #e5e7eb;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.judge-panel-close:hover {
+  background: #d1d5db;
+  color: #111;
+}
+
+.judge-panel-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 14px;
+}
+
+/* Tab on left edge of chat to open/close judge panel (short flap, not full height) */
+.judge-tab {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 32px;
+  height: 100px;
+  margin-right: 4px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: translateY(-50%) rotate(180deg);
+  padding: 8px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #722f37;
+  background: #f5e6e8;
+  border: 1px solid #e5e7eb;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.judge-tab:hover {
+  background: #edd5d8;
+  color: #5c232a;
+}
+
+.judge-tab.open {
+  background: #e8d0d3;
+  color: #722f37;
+}
+
+.judge-tab-label {
+  display: inline-block;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.judge-metrics-judge {
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.judge-metrics-judge:last-child {
+  border-bottom: none;
+}
+
+.judge-metrics-judge-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.judge-metrics-metric {
+  margin-left: 8px;
+  margin-bottom: 8px;
+}
+
+.judge-metrics-metric-name {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-right: 8px;
+}
+
+.judge-metrics-metric-score {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #374151;
+}
+
+.judge-metrics-reasoning {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.4;
+  font-style: italic;
 }
 
 .chat-footer {

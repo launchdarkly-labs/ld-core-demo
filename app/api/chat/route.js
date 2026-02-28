@@ -138,6 +138,7 @@ export async function POST(request) {
       response: brandResult?.content ?? "",
       requestId,
       agentFlow,
+      judgeResults: brandResult?.judgeResults ?? [],
       metrics: {
         query_type: triageResult.queryType,
         confidence: triageResult.confidence,

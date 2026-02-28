@@ -245,6 +245,8 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [guardrailsOn, setGuardrailsOn] = useState(true);
+  const [lastJudgeResults, setLastJudgeResults] = useState([]);
+  const [judgeDropdownOpen, setJudgeDropdownOpen] = useState(false);
   const chatContentRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -260,6 +262,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
     setInput("");
     setSending(true);
     addMessage("user", text);
+    setLastJudgeResults([]);
 
     try {
       const res = await fetch("/api/chat", {
@@ -277,6 +280,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
       if (res.ok) {
         const reply = (data.response ?? "").trim() || "No response received.";
         addMessage("assistant", reply, reply.includes("**"));
+        setLastJudgeResults(Array.isArray(data.judgeResults) ? data.judgeResults : []);
       } else {
         addMessage(
           "assistant",
@@ -291,7 +295,61 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
   };
 
   return (
-    <div className="app-container">
+    <div className="chat-widget-wrap">
+      {lastJudgeResults.length > 0 && (
+        <>
+          <div
+            id="judge-panel"
+            role="region"
+            aria-labelledby="judge-tab-btn"
+            className={`judge-panel ${judgeDropdownOpen ? "open" : ""}`}
+          >
+            <div className="judge-panel-header">
+              <span>LLM Judges – Brand Voice ({lastJudgeResults.length})</span>
+              <button
+                type="button"
+                className="judge-panel-close"
+                onClick={() => setJudgeDropdownOpen(false)}
+                aria-label="Close judges panel"
+              >
+                ×
+              </button>
+            </div>
+            <div className="judge-panel-content">
+              {lastJudgeResults.map((jr, idx) => (
+                <div key={idx} className="judge-metrics-judge">
+                  <div className="judge-metrics-judge-name">
+                    {jr.judgeConfigKey ?? `Judge ${idx + 1}`}
+                  </div>
+                  {jr.success && jr.evals && Object.entries(jr.evals).map(([metric, evalScore]) => (
+                    <div key={metric} className="judge-metrics-metric">
+                      <span className="judge-metrics-metric-name">{metric}</span>
+                      <span className="judge-metrics-metric-score">
+                        Score: {evalScore?.score ?? "—"}
+                      </span>
+                      {evalScore?.reasoning && (
+                        <p className="judge-metrics-reasoning">{evalScore.reasoning}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          <button
+            type="button"
+            id="judge-tab-btn"
+            className={`judge-tab ${judgeDropdownOpen ? "open" : ""}`}
+            onClick={() => setJudgeDropdownOpen((o) => !o)}
+            aria-expanded={judgeDropdownOpen}
+            aria-controls="judge-panel"
+            title="LLM Judges – Brand Voice"
+          >
+            <span className="judge-tab-label">LLM Judges ({lastJudgeResults.length})</span>
+          </button>
+        </>
+      )}
+      <div className="app-container">
       <header className="chat-header">
         <div className="header-content">
           <h2 className="chat-title">Coverage Concierge</h2>
@@ -378,6 +436,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
           Send
         </button>
       </div>
+    </div>
     </div>
   );
 }
