@@ -76,30 +76,58 @@ export async function POST(request) {
     );
   }
 
-  const results = { created: [], failed: [] };
+  // Process mode "judge" configs first, then pause 2s before the rest (so judges exist when others reference them)
+  const judgeConfigs = aiConfigs.filter((c) => c.mode === "judge");
+  const otherConfigs = aiConfigs.filter((c) => c.mode !== "judge");
+  const orderedConfigs = [...judgeConfigs, ...otherConfigs];
+
+  const results = { created: [], failed: [], skipped: [] };
   const headers = ldHeaders(apiKey);
 
-  for (const config of aiConfigs) {
+  for (let i = 0; i < orderedConfigs.length; i++) {
+    const config = orderedConfigs[i];
+    const isJudge = config.mode === "judge";
+    const justFinishedJudges = isJudge === false && i > 0 && orderedConfigs[i - 1].mode === "judge";
+    if (justFinishedJudges && judgeConfigs.length > 0) {
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+
     const configKey = config.key;
     const configName = config.name || configKey;
     const description = config.description ?? "";
     const mode = (config.mode === "judge" || config.mode === "agent" ? config.mode : "completion");
     const tags = Array.isArray(config.tags) ? config.tags : [];
 
+    const createBody = {
+      key: configKey,
+      name: configName,
+      description,
+      mode,
+      tags,
+    };
+    if (mode === "judge") {
+      for (const v of config.targeting.variations) {
+        if (v.value?.evaluationMetricKey) {
+          createBody.evaluationMetricKey = v.value.evaluationMetricKey;
+          break;
+        }
+      }
+    }
+
     try {
+      // Skip create if config already exists (avoids "could not find the enabled variation" etc.)
+      const getRes = await fetch(
+        `${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}`,
+        { method: "GET", headers }
+      );
+      if (getRes.ok) {
+        results.skipped.push(configKey);
+        continue;
+      }
+
       const createRes = await fetch(
         `${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs`,
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            key: configKey,
-            name: configName,
-            description,
-            mode,
-            tags,
-          }),
-        }
+        { method: "POST", headers, body: JSON.stringify(createBody) }
       );
 
       if (!createRes.ok) {
@@ -129,18 +157,28 @@ export async function POST(request) {
         const model = normalizeModel(v);
         const modelConfigKey = v.modelConfigKey || "";
 
+        const varPayload = {
+          key: vKey,
+          name: vName,
+          messages,
+          model,
+          modelConfigKey: modelConfigKey || undefined,
+        };
+        if (v.judgeConfiguration?.judges?.length) {
+          varPayload.judgeConfiguration = {
+            judges: v.judgeConfiguration.judges.map((j) => ({
+              judgeConfigKey: j.judgeConfigKey,
+              samplingRate: j.samplingRate,
+            })),
+          };
+        }
+
         const varRes = await fetch(
           `${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}/variations`,
           {
             method: "POST",
             headers,
-            body: JSON.stringify({
-              key: vKey,
-              name: vName,
-              messages,
-              model,
-              modelConfigKey: modelConfigKey || undefined,
-            }),
+            body: JSON.stringify(varPayload),
           }
         );
 
@@ -151,16 +189,57 @@ export async function POST(request) {
             const j = JSON.parse(errBody);
             if (j.message) errMsg = j.message;
           } catch {}
-          results.failed.push({
-            key: configKey,
-            variation: vKey,
-            step: "create_variation",
-            status: varRes.status,
-            message: errMsg,
-          });
+        results.failed.push({
+          key: configKey,
+          variation: vKey,
+          step: "create_variation",
+          status: varRes.status,
+          message: errMsg,
+        });
         } else {
           const last = results.created[results.created.length - 1];
           if (last && last.key === configKey) last.variations += 1;
+        }
+      }
+
+      // Set which variation is served when the flag is on (defaults.onVariation + fallthrough per env)
+      const defaults = config.targeting?.defaults;
+      if (defaults && typeof defaults.onVariation === "number") {
+        const patchBody = {
+          defaults: {
+            onVariation: defaults.onVariation,
+            offVariation: defaults.offVariation ?? 0,
+          },
+        };
+        const envs = config.targeting.environments;
+        if (envs && typeof envs === "object") {
+          patchBody.environments = {};
+          for (const [envKey, env] of Object.entries(envs)) {
+            if (env?.fallthrough?.variation !== undefined) {
+              patchBody.environments[envKey] = {
+                fallthrough: { variation: env.fallthrough.variation },
+                offVariation: env.offVariation ?? 0,
+              };
+            }
+          }
+        }
+        const patchRes = await fetch(
+          `${LD_API_BASE}/flags/${encodeURIComponent(projectKey)}/${encodeURIComponent(configKey)}`,
+          { method: "PATCH", headers, body: JSON.stringify(patchBody) }
+        );
+        if (!patchRes.ok) {
+          const errBody = await patchRes.text();
+          let errMsg = errBody;
+          try {
+            const j = JSON.parse(errBody);
+            if (j.message) errMsg = j.message;
+          } catch {}
+          results.failed.push({
+            key: configKey,
+            step: "patch_targeting",
+            status: patchRes.status,
+            message: errMsg,
+          });
         }
       }
     } catch (e) {
@@ -175,15 +254,19 @@ export async function POST(request) {
   const totalCreated = results.created.length;
   const totalVariations = results.created.reduce((s, c) => s + (c.variations ?? 0), 0);
   const totalFailed = results.failed.length;
+  const totalSkipped = results.skipped.length;
 
   return Response.json({
     ok: totalFailed === 0,
     message:
       totalFailed === 0
-        ? `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s) in project "${projectKey}".`
-        : `Created ${totalCreated} config(s), ${totalVariations} variation(s); ${totalFailed} failure(s).`,
+        ? `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s) in project "${projectKey}".` +
+          (totalSkipped > 0 ? ` Skipped ${totalSkipped} existing: ${results.skipped.join(", ")}.` : "")
+        : `Created ${totalCreated} config(s), ${totalVariations} variation(s); ${totalFailed} failure(s).` +
+          (totalSkipped > 0 ? ` Skipped ${totalSkipped}: ${results.skipped.join(", ")}.` : ""),
     projectKey,
     created: results.created,
     failed: results.failed,
+    skipped: results.skipped,
   });
 }
