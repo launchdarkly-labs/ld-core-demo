@@ -76,17 +76,58 @@ export async function POST(request) {
     );
   }
 
-  // Process mode "judge" configs first, then pause 2s before the rest (so judges exist when others reference them)
+  const results = {
+    created: [],
+    failed: [],
+    skipped: [],
+    toolsCreated: [],
+    toolsFailed: [],
+    targetingUpdated: [],
+  };
+  const headers = ldHeaders(apiKey);
+
+  // Step 1: Create tools from tools_library first (so configs can reference them)
+  const toolsLibrary = backup?.tools_library ?? backup?.["tools-library"];
+  if (Array.isArray(toolsLibrary) && toolsLibrary.length > 0) {
+    const toolsUrl = `${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-tools`;
+    for (const t of toolsLibrary) {
+      const key = t?.key;
+      const schema = t?.schema;
+      if (key == null || schema === undefined) {
+        results.toolsFailed.push({ key: key ?? "?", message: "missing key or schema" });
+        continue;
+      }
+      const payload = { key, schema };
+      if (t.description != null) payload.description = t.description;
+      if (t.customParameters != null) payload.customParameters = t.customParameters;
+      try {
+        const toolRes = await fetch(toolsUrl, { method: "POST", headers, body: JSON.stringify(payload) });
+        if (toolRes.ok) {
+          results.toolsCreated.push(key);
+        } else {
+          const errBody = await toolRes.text();
+          let errMsg = errBody;
+          try {
+            const j = JSON.parse(errBody);
+            if (j.message) errMsg = j.message;
+          } catch {}
+          results.toolsFailed.push({ key, status: toolRes.status, message: errMsg });
+        }
+      } catch (e) {
+        results.toolsFailed.push({ key, message: e.message || String(e) });
+      }
+    }
+  }
+
+  // Step 2: Judges first, then other configs; Step 3 (patch targeting) is done per config after variations
   const judgeConfigs = aiConfigs.filter((c) => c.mode === "judge");
   const otherConfigs = aiConfigs.filter((c) => c.mode !== "judge");
   const orderedConfigs = [...judgeConfigs, ...otherConfigs];
 
-  const results = { created: [], failed: [], skipped: [] };
-  const headers = ldHeaders(apiKey);
-
   for (let i = 0; i < orderedConfigs.length; i++) {
     const config = orderedConfigs[i];
     const isJudge = config.mode === "judge";
+    // Pause after judges so they exist when other configs reference them
     const justFinishedJudges = isJudge === false && i > 0 && orderedConfigs[i - 1].mode === "judge";
     if (justFinishedJudges && judgeConfigs.length > 0) {
       await new Promise((r) => setTimeout(r, 2000));
@@ -240,6 +281,8 @@ export async function POST(request) {
             status: patchRes.status,
             message: errMsg,
           });
+        } else {
+          results.targetingUpdated.push(configKey);
         }
       }
     } catch (e) {
@@ -255,18 +298,37 @@ export async function POST(request) {
   const totalVariations = results.created.reduce((s, c) => s + (c.variations ?? 0), 0);
   const totalFailed = results.failed.length;
   const totalSkipped = results.skipped.length;
+  const totalToolsCreated = results.toolsCreated.length;
+  const totalToolsFailed = results.toolsFailed.length;
+  const totalTargetingUpdated = results.targetingUpdated.length;
+
+  const steps = [];
+  steps.push(
+    totalToolsCreated > 0 || totalToolsFailed > 0
+      ? `Step 1 — Creating tools: ${totalToolsCreated} created, ${totalToolsFailed} failed.`
+      : "Step 1 — Creating tools: skipped (no tools_library in seed)."
+  );
+  steps.push(
+    `Step 2 — Creating AI configs: ${totalCreated} created (${totalVariations} variation(s))` +
+      (totalSkipped > 0 ? `, ${totalSkipped} skipped` : "") +
+      (totalFailed > 0 ? `, ${totalFailed} failed` : "") +
+      "."
+  );
+  steps.push(`Step 3 — Targeting: ${totalTargetingUpdated} config(s) updated.`);
+  if (totalFailed === 0) {
+    steps.push("Success.");
+  }
+  const message = steps.join(" ");
 
   return Response.json({
     ok: totalFailed === 0,
-    message:
-      totalFailed === 0
-        ? `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s) in project "${projectKey}".` +
-          (totalSkipped > 0 ? ` Skipped ${totalSkipped} existing: ${results.skipped.join(", ")}.` : "")
-        : `Created ${totalCreated} config(s), ${totalVariations} variation(s); ${totalFailed} failure(s).` +
-          (totalSkipped > 0 ? ` Skipped ${totalSkipped}: ${results.skipped.join(", ")}.` : ""),
+    message,
     projectKey,
     created: results.created,
     failed: results.failed,
     skipped: results.skipped,
+    toolsCreated: results.toolsCreated,
+    toolsFailed: results.toolsFailed,
+    targetingUpdated: results.targetingUpdated,
   });
 }

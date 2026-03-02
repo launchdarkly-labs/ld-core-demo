@@ -531,7 +531,9 @@
       "name": "Multi Agent A: Triage",
       "description": "",
       "mode": "agent",
-      "tags": ["toggle-health"],
+      "tags": [
+        "toggle-health"
+      ],
       "createdAt": 1762815579419,
       "updatedAt": 1762815579419,
       "version": 15,
@@ -1157,13 +1159,15 @@
           "type": "application/json"
         }
       }
-    },  
+    },
     {
       "key": "policy_agent",
       "name": "Multi Agent B: Policy",
       "description": "",
       "mode": "agent",
-      "tags": ["toggle-health"],
+      "tags": [
+        "toggle-health"
+      ],
       "createdAt": 1762815901986,
       "updatedAt": 1762815901986,
       "version": 32,
@@ -3939,7 +3943,9 @@
       "name": "Multi Agent D: Scheduler",
       "description": "",
       "mode": "agent",
-      "tags": ["toggle-health"],
+      "tags": [
+        "toggle-health"
+      ],
       "createdAt": 1762816121641,
       "updatedAt": 1762816121641,
       "version": 5,
@@ -6098,5 +6104,434 @@
       }
     }
   ],
-  "tools-library": []
+  "tools_library": [
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/Draft_Email",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1769023268476,
+      "description": "Draft an email for potential followup",
+      "key": "Draft_Email",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/Google_Calendar",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1769023241803,
+      "description": "Add important dates to the calendar",
+      "key": "Google_Calendar",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/analyze_sentiment_aws_comprehend",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257937866,
+      "description": "Analyzes sentiment and emotional tone of customer messages using AWS Comprehend. Helps brand voice agent adjust response tone appropriately.",
+      "key": "analyze_sentiment_aws_comprehend",
+      "schema": {
+        "properties": {
+          "language_code": {
+            "description": "Language code (e.g., 'en', 'es')",
+            "type": "string"
+          },
+          "text": {
+            "description": "Text to analyze",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "language_code"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/apply_brand_guidelines",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257939083,
+      "description": "Validates and adjusts response text to match brand voice guidelines. Checks tone, terminology, formatting, and compliance with brand standards from style guide database.",
+      "key": "apply_brand_guidelines",
+      "schema": {
+        "properties": {
+          "max_reading_level": {
+            "description": "Maximum reading grade level (e.g.,8.0 for 8th grade)", "type": "number"
+          },
+          "response_text": {
+            "description": "Response text to validate and adjust",
+            "type": "string"
+          },
+          "target_tone": {
+            "description": "Target tone for the response",
+            "enum": [
+              "empathetic",
+              "professional",
+              "friendly",
+              "urgent",
+              "educational"
+            ],
+            "type": "string"
+          },
+          "validate_compliance": {
+            "description": "Check for HIPAA and regulatory compliance",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "response_text",
+          "target_tone"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/assess_urgency_level",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257936661,
+      "description": "Analyzes query urgency using keyword matching and ML classification. Identifies emergency situations, time-sensitive requests, and priority levels for appropriate routing.",
+      "key": "assess_urgency_level",
+      "schema": {
+        "properties": {
+          "query_text": {
+            "description": "Customer query to assess",
+            "type": "string"
+          },
+          "user_context": {
+            "description": "Additional context about user (policy status, recent claims, etc.)",
+            "type": "object"
+          }
+        },
+        "required": [
+          "query_text"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/book_calendly_appointment",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257933556,
+      "description": "Creates appointment booking through Calendly API integration. Handles scheduling, confirmation emails, calendar invites, and appointment reminders.",
+      "key": "book_calendly_appointment",
+      "schema": {
+        "properties": {
+          "custom_questions": {
+            "description": "Responses to custom intake questions",
+            "items": {
+              "properties": {
+                "answer": {
+                  "type": "string"
+                },
+                "question": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "event_type_uuid": {
+            "description": "Calendly event type UUID (identifies appointment type and provider)",
+            "type": "string"
+          },
+          "invitee_email": {
+            "description": "Patient email address",
+            "format": "email",
+            "type": "string"
+          },
+          "invitee_name": {
+            "description": "Patient full name",
+            "type": "string"
+          },
+          "invitee_phone": {
+            "description": "Patient phone number",
+            "type": "string"
+          },
+          "start_time": {
+            "description": "Appointment start time in ISO 8601 format",
+            "format": "date-time",
+            "type": "string"
+          },
+          "timezone": {
+            "description": "Patient timezone (e.g., 'America/Los_Angeles')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_type_uuid",
+          "start_time",
+          "invitee_email",
+          "invitee_name",
+          "timezone"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/calculate_out_of_pocket_costs",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257930463,
+      "description": "Calculates patient's estimated out-of-pocket costs based on deductible progress, coinsurance, copays, and out-of-pocket maximum. Performs real-time cost estimation for proposed services.",
+      "key": "calculate_out_of_pocket_costs",
+      "schema": {
+        "properties": {
+          "estimated_charge": {
+            "description": "Estimated charge amount in dollars",
+            "type": "number"
+          },
+          "in_network": {
+            "description": "Whether the provider is in-network",
+            "type": "boolean"
+          },
+          "policy_id": {
+            "description": "Policy identifier",
+            "type": "string"
+          },
+          "service_code": {
+            "description": "CPT or service code for the medical procedure",
+            "type": "string"
+          }
+        },
+        "required": [
+          "policy_id",
+          "service_code",
+          "estimated_charge",
+          "in_network"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/cancel_or_reschedule_appointment",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257940310,
+      "description": "Handles appointment cancellations and rescheduling through integrated scheduling system. Updates calendars, sends notifications, and manages waitlists.",
+      "key": "cancel_or_reschedule_appointment",
+      "schema": {
+        "properties": {
+          "action": {
+            "description": "Action to perform",
+            "enum": [
+              "cancel",
+              "reschedule"
+            ],
+            "type": "string"
+          },
+          "add_to_waitlist": {
+            "description": "Add patient to waitlist for earlier availability",
+            "type": "boolean"
+          },
+          "appointment_id": {
+            "description": "Unique appointment identifier",
+            "type": "string"
+          },
+          "cancellation_reason": {
+            "description": "Reason for cancellation (optional)",
+            "type": "string"
+          },
+          "new_start_time": {
+            "description": "New appointment time (required for reschedule)",
+            "format": "date-time",
+            "type": "string"
+          },
+          "notify_patient": {
+            "description": "Send confirmation notification to patient",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "appointment_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/check_accessibility_requirements",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257938468,
+      "description": "Analyzes user profile for accessibility needs (screen reader compatibility, large text, high contrast) and formats response accordingly. Ensures WCAG 2.1 AA compliance.",
+      "key": "check_accessibility_requirements",
+      "schema": {
+        "properties": {
+          "check_readability": {
+            "description": "Check Flesch-Kincaid readability score",
+            "type": "boolean"
+          },
+          "response_text": {
+            "description": "Response text to format",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "User identifier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "response_text"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    },
+    {
+      "_links": {
+        "parent": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools",
+          "type": "application/json"
+        },
+        "self": {
+          "href": "/api/v2/projects/nteixeira-ld-demo/ai-tools/check_google_calendar_availability",
+          "type": "application/json"
+        }
+      },
+      "createdAt": 1770257932947,
+      "description": "Queries provider availability through Google Calendar API integration. Returns available appointment slots based on provider schedules, existing appointments, and booking rules.",
+      "key": "check_google_calendar_availability",
+      "schema": {
+        "properties": {
+          "appointment_type": {
+            "description": "Type of appointment to schedule",
+            "enum": [
+              "new_patient",
+              "follow_up",
+              "annual_physical",
+              "consultation",
+              "procedure"
+            ],
+            "type": "string"
+          },
+          "calendar_id": {
+            "description": "Google Calendar ID for the provider",
+            "type": "string"
+          },
+          "date_range": {
+            "properties": {
+              "end_date": {
+                "description": "End date for availability search (YYYY-MM-DD)",
+                "format": "date",
+                "type": "string"
+              },
+              "start_date": {
+                "description": "Start date for availability search (YYYY-MM-DD)",
+                "format": "date",
+                "type": "string"
+              }
+            },
+            "required": [
+              "start_date",
+              "end_date"
+            ],
+            "type": "object"
+          },
+          "duration_minutes": {
+            "description": "Required appointment duration in minutes",
+            "type": "number"
+          },
+          "provider_id": {
+            "description": "Provider's unique identifier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider_id",
+          "calendar_id",
+          "date_range",
+          "duration_minutes"
+        ],
+        "type": "object"
+      },
+      "version": 1
+    }
+  ]
 }
