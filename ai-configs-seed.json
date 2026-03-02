@@ -1397,48 +1397,6 @@
             "lastModified": 1764295770582,
             "offVariation": 0,
             "rules": [
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "74706d7c-be8e-4042-941f-9dbb1d57b40e",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "insurancebot-enterprise-customers"
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              },
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "2e8e70cb-b200-4518-9b34-2498262a76e1",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "insurancebot-commercial-experience"
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              },
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "bb619fc9-a77a-40d2-b676-25e4829c9b97",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "beta-users"
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              }
             ],
             "targets": [],
             "trackEvents": false,
@@ -4969,57 +4927,17 @@
             "offVariation": 0,
             "rules": [
               {
+                "disabled": false,
+                "variation": 2,
                 "clauses": [
                   {
-                    "attribute": "is_fallback",
-                    "id": "062c1639-a3f7-4169-ac7e-6e8097244df4",
-                    "negate": false,
+                    "attribute": "guardrails",
                     "op": "in",
                     "values": [
                       true
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              },
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "4d04abb0-55c7-4ba3-ab27-b6cd489f3e12",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "insurancebot-enterprise-customers"
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              },
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "dcec3ef8-ec43-4525-9111-c7548ac738ec",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "insurancebot-commercial-experience"
-                    ]
-                  }
-                ],
-                "trackEvents": false
-              },
-              {
-                "clauses": [
-                  {
-                    "attribute": "segmentMatch",
-                    "id": "189624f1-1dff-4b7a-bdad-49948ccc07f9",
-                    "negate": false,
-                    "op": "segmentMatch",
-                    "values": [
-                      "beta-users"
-                    ]
+                    ],
+                    "contextKind": "user",
+                    "negate": false
                   }
                 ],
                 "trackEvents": false
