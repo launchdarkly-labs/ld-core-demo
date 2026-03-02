@@ -152,7 +152,7 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
                 <line x1="16" y1="17" x2="8" y2="17" />
                 <polyline points="10 9 9 9 8 9" />
               </svg>
-              <span>Documents</span>
+              <span>Reference</span>
             </div>
             {DOCS.map((doc) => (
               <button
@@ -167,6 +167,22 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
                 {doc.label}
               </button>
             ))}
+            <a
+              href="https://app.launchdarkly.com/projects/mpoliks-ld-demo/experiments/toggle-health-policy-agent-prompt-impact_l09nJ1_M3ARtd_T3uzV6_IIIbgV/results?env=production&selected-env=production"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="user-dropdown-doc-btn"
+            >
+              Experiments
+            </a>
+            <a
+              href="https://www.loom.com/share/c318015371e64fd1a4c2a3fbb2323d3d"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="user-dropdown-doc-btn"
+            >
+              AI Configs E2E Demo
+            </a>
           </div>
         </div>
       )}

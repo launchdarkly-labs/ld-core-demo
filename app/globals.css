@@ -275,6 +275,11 @@ body {
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
+a.user-dropdown-doc-btn {
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
 .user-dropdown-doc-btn:hover {
   background: #f3f4f6;
   border-color: #d1d5db;
