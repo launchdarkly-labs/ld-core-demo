@@ -309,7 +309,7 @@ export async function POST(request) {
   const steps = [];
   steps.push(
     totalToolsCreated > 0 || totalToolsFailed > 0
-      ? `Step 1 — Creating tools: ${totalToolsCreated} created, ${totalToolsFailed} failed.`
+      ? `Step 1 — Creating tools: ${totalToolsCreated} created, ${totalToolsFailed} skipped.`
       : "Step 1 — Creating tools: skipped (no tools_library in seed)."
   );
   steps.push(

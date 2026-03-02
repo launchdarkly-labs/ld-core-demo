@@ -5,7 +5,7 @@ import { converse } from "./bedrock.js";
 const CONFIG_KEY = "brand_agent";
 const TOXICITY_THRESHOLD = 0.7;
 const DEFAULT_GUARDRAIL_ID = "i7aqo05chetu";
-const DEFAULT_GUARDRAIL_VERSION = "1";
+const DEFAULT_GUARDRAIL_VERSION = "9";
 
 /** Get toxicity score from judge results (any judge with evals.toxicity or judge key "toxicity"). */
 function getToxicityScore(judgeResults) {
