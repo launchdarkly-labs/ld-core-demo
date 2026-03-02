@@ -564,10 +564,10 @@
           "key": "sonnet-4-simple-prompt",
           "model": {
             "custom": {},
-            "modelName": "Bedrock.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "modelName": "claude-sonnet-4-5-20250929-v1:0",
             "parameters": {}
           },
-          "modelConfigKey": "claude-4-sonnet-us-anthropic-claude-sonnet-4-20250514-v-1-0",
+          "modelConfigKey": "Bedrock.anthropic.claude-sonnet-4-5-20250929-v1:0",
           "name": "Sonnet 4 + Simple Prompt",
           "state": "published",
           "tools": [
@@ -604,11 +604,11 @@
           "key": "sonnet-4-simple-prompt-copy",
           "model": {
             "custom": {},
-            "modelName": "us.meta.llama4-maverick-17b-instruct-v1:0",
+            "modelName": "meta.llama3-8b-instruct-v1:0",
             "parameters": {}
           },
-          "modelConfigKey": "meta-llama-4-maverick-us-meta-llama-4-maverick-17-b-instruct-v-1-0",
-          "name": "Llama 4 + Simple Prompt",
+          "modelConfigKey": "Bedrock.meta.llama3-8b-instruct-v1:0",
+          "name": "Llama 3 + Simple Prompt",
           "state": "published",
           "tools": [
             {
@@ -644,10 +644,10 @@
           "key": "nova-pro-simple-prompt-copy",
           "model": {
             "custom": {},
-            "modelName": "us.amazon.nova-pro-v1:0",
+            "modelName": "amazon.nova-pro-v1:0",
             "parameters": {}
           },
-          "modelConfigKey": "amazon-nova-pro-v-1-us-amazon-nova-pro-v-1-0",
+          "modelConfigKey": "Bedrock.amazon.nova-pro-v1:0",
           "name": "Nova Pro + Simple Prompt",
           "state": "published",
           "tools": [
@@ -676,7 +676,7 @@
         "createdAt": 1762815579419,
         "defaults": {
           "offVariation": 0,
-          "onVariation": 0
+          "onVariation": 2
         },
         "environments": {
           "production": {
@@ -685,7 +685,7 @@
             "contextTargets": [],
             "enabled": true,
             "fallthrough": {
-              "variation": 1
+              "variation": 2
             },
             "lastModified": 1763486924791,
             "offVariation": 0,
