@@ -32,8 +32,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.env.production ./
-
-USER nextjs
+COPY --from=builder --chown=nextjs:nodejs /app/ai-configs-seed.json ./ai-configs-seed.json
 
 EXPOSE 3000
 
