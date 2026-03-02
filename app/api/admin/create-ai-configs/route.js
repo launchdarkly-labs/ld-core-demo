@@ -197,6 +197,8 @@ export async function POST(request) {
         const messages = Array.isArray(v.messages) ? v.messages : [];
         const model = normalizeModel(v);
         const modelConfigKey = v.modelConfigKey || "";
+        let instructions = v.instructions;
+        if (typeof instructions !== "string") instructions = "";
 
         const varPayload = {
           key: vKey,
@@ -204,6 +206,7 @@ export async function POST(request) {
           messages,
           model,
           modelConfigKey: modelConfigKey || undefined,
+          instructions,
         };
         if (v.judgeConfiguration?.judges?.length) {
           varPayload.judgeConfiguration = {

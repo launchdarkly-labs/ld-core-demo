@@ -5,7 +5,7 @@
       "name": "AI Judge - Accuracy",
       "description": "",
       "mode": "judge",
-      "tags": [],
+      "tags": ["judge", "ai"],
       "createdAt": 1767714217438,
       "updatedAt": 1767714217438,
       "version": 2,
@@ -63,7 +63,7 @@
             "contextTargets": [],
             "enabled": true,
             "fallthrough": {
-              "variation": 0
+              "variation": 1
             },
             "lastModified": 1767714217572,
             "offVariation": 0,
