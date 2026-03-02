@@ -261,10 +261,14 @@ export async function POST(request) {
           patchBody.environments = {};
           for (const [envKey, env] of Object.entries(envs)) {
             if (env?.fallthrough?.variation !== undefined) {
-              patchBody.environments[envKey] = {
+              const envPatch = {
                 fallthrough: { variation: env.fallthrough.variation },
                 offVariation: env.offVariation ?? 0,
               };
+              if (env.rules != null) envPatch.rules = env.rules;
+              if (env.targets != null) envPatch.targets = env.targets;
+              if (env.contextTargets != null) envPatch.contextTargets = env.contextTargets;
+              patchBody.environments[envKey] = envPatch;
             }
           }
         }
