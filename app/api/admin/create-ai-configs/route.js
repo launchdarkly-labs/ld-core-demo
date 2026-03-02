@@ -197,17 +197,18 @@ export async function POST(request) {
         const messages = Array.isArray(v.messages) ? v.messages : [];
         const model = normalizeModel(v);
         const modelConfigKey = v.modelConfigKey || "";
-        let instructions = v.instructions;
-        if (typeof instructions !== "string") instructions = "";
-
         const varPayload = {
           key: vKey,
           name: vName,
           messages,
           model,
           modelConfigKey: modelConfigKey || undefined,
-          instructions,
         };
+        if (mode === "agent") {
+          let instructions = v.instructions;
+          if (typeof instructions !== "string") instructions = "";
+          varPayload.instructions = instructions;
+        }
         if (v.judgeConfiguration?.judges?.length) {
           varPayload.judgeConfiguration = {
             judges: v.judgeConfiguration.judges.map((j) => ({
