@@ -20,6 +20,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: us-east-1
+  AWS_REGION: us-east-1
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
   KUBECTL_VERSION: "v1.23.0"
@@ -129,6 +130,7 @@ jobs:
           fi
         env:
           AWS_DEFAULT_REGION: 'us-east-1'
+          AWS_REGION: us-east-1
           ROOT_DOMAIN: launchdarklydemos.com
           
   notify-completion:
