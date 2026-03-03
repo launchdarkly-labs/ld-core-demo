@@ -71,7 +71,7 @@ export default function Terminal({ logSessionId }) {
           logs.map((log, index) => (
             <div
               key={index}
-              className={`terminal-line ${getLogClass(log.level)}${log.name === "guardrails-on" ? " log-guardrails-on" : log.name === "guardrails-off" ? " log-guardrails-off" : log.name === "guardrails-triggered" ? " log-guardrails-triggered" : ""}`}
+              className={`terminal-line ${getLogClass(log.level)}${log.name === "guardrails-on" ? " log-guardrails-on" : log.name === "guardrails-off" ? " log-guardrails-off" : log.name === "guardrails-triggered" ? " log-guardrails-triggered" : log.name === "toxicity-resend" ? " log-toxicity-resend" : ""}`}
             >
               <span className="log-message">{log.message}</span>
             </div>

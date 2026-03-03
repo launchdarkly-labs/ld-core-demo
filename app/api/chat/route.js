@@ -8,6 +8,14 @@ import { runBrandAgent } from "../../../server/brand.js";
 import { withWorkflow } from "@traceloop/node-server-sdk";
 import { pushLog } from "../../../lib/log-stream";
 
+/** Toxicity score above this triggers resend with guardrails. Override with env TOXICITY_THRESHOLD (0–1). */
+const TOXICITY_THRESHOLD = (() => {
+  const v = process.env.TOXICITY_THRESHOLD;
+  if (v === undefined || v === "") return 0.6;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 && n <= 1 ? n : 0.6;
+})();
+
 function createUserContext(body = {}) {
   return {
     user_key: "anonymous",
@@ -16,6 +24,20 @@ function createUserContext(body = {}) {
     policy_id: body.policyId ?? "TH-HMO-GOLD-2024",
     coverage_type: body.coverageType ?? "Gold HMO",
   };
+}
+
+/** Get toxicity score from judge results if present. Returns number 0–1 or null. */
+function getToxicityScore(judgeResults) {
+  if (!Array.isArray(judgeResults)) return null;
+  const toxicityJudge = judgeResults.find(
+    (jr) =>
+      (jr.judgeConfigKey && String(jr.judgeConfigKey).toLowerCase().includes("toxicity")) ||
+      (jr.judge_config_key && String(jr.judge_config_key).toLowerCase().includes("toxicity"))
+  );
+  if (!toxicityJudge || !toxicityJudge.evals || typeof toxicityJudge.evals !== "object") return null;
+  const evals = toxicityJudge.evals;
+  const entry = Object.values(evals).find((e) => e && typeof e.score === "number");
+  return entry ? entry.score : null;
 }
 
 export async function POST(request) {
@@ -88,21 +110,51 @@ export async function POST(request) {
           { logger }
         );
 
-        // 3. Brand completion
-        const brandResult = await runBrandAgent(
+        // 3. Brand completion — call initially without guardrails; after judges, if toxicity > 0.6, resend with guardrails
+        let brandResult = await runBrandAgent(
           specialistResult.content,
           query,
           triageResult.queryType,
-          userContext,
-          { logger, guardrails: userContext.guardrails }
+          { ...userContext, guardrails: false },
+          { logger }
         );
 
-        return { triageResult, specialistResult, brandResult };
+        const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
+        let firstRunJudgeResults = null;
+        if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
+          firstRunJudgeResults = brandResult?.judgeResults ?? [];
+          logger({
+            level: "WARN",
+            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
+            name: "toxicity-resend",
+          });
+          brandResult = await runBrandAgent(
+            specialistResult.content,
+            query,
+            triageResult.queryType,
+            { ...userContext, guardrails: true },
+            { logger }
+          );
+          logger({
+            level: "INFO",
+            message: `   Returned brand response from second run (with guardrails)`,
+            name: "chat",
+          });
+        }
+
+        return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
         }
       )
     );
 
-    const { triageResult, specialistResult, brandResult } = result;
+    const { triageResult, specialistResult, brandResult, firstRunJudgeResults } = result;
+    const judgeResultsForResponse =
+      firstRunJudgeResults && firstRunJudgeResults.length > 0
+        ? [
+            ...firstRunJudgeResults.map((j) => ({ ...j, runLabel: "First run (toxicity triggered resend)" })),
+            ...(brandResult?.judgeResults ?? []).map((j) => ({ ...j, runLabel: "Second run (with guardrails)" })),
+          ]
+        : brandResult?.judgeResults ?? [];
     const agentFlow = [
       {
         agent: "triage_router",
@@ -138,7 +190,7 @@ export async function POST(request) {
       response: brandResult?.content ?? "",
       requestId,
       agentFlow,
-      judgeResults: brandResult?.judgeResults ?? [],
+      judgeResults: judgeResultsForResponse,
       metrics: {
         query_type: triageResult.queryType,
         confidence: triageResult.confidence,

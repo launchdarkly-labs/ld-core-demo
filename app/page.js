@@ -339,6 +339,9 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
                 const friendlyMetric = (key) => (typeof key === "string" && key.includes(":") ? key.split(":").pop() : key);
                 return (
                   <div key={idx} className="judge-metrics-judge">
+                    {jr.runLabel && (
+                      <div className="judge-metrics-run-label">{jr.runLabel}</div>
+                    )}
                     <div className="judge-metrics-judge-name">{name}</div>
                     {hasEvals
                       ? Object.entries(evals).map(([metric, evalScore]) => (

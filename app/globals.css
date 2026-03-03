@@ -743,6 +743,14 @@ a.user-dropdown-doc-btn {
   border-bottom: none;
 }
 
+.judge-metrics-run-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+  text-transform: none;
+}
+
 .judge-metrics-judge-name {
   font-weight: 600;
   font-size: 0.85rem;
@@ -927,6 +935,11 @@ a.user-dropdown-doc-btn {
 .terminal-line.log-guardrails-triggered .log-message {
   font-weight: bold;
   color: #f87171;
+}
+
+.terminal-line.log-toxicity-resend .log-message {
+  font-weight: bold;
+  color: #ef4444;
 }
 
 .terminal-empty {
