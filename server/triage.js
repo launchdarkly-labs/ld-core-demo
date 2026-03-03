@@ -1,5 +1,6 @@
 import { getAIConfig, buildMessagesFromLdConfig, TRIAGE_DEFAULT } from "./ld.js";
 import { converse } from "./bedrock.js";
+import { runWithBedrockSpan, setGenAiAttributes } from "./observe-bedrock.js";
 
 const QUERY_TYPE_LABEL = {
   policy_question: "Policy Specialist",
@@ -30,11 +31,25 @@ export async function runTriage(query, userContext = {}, options = {}) {
   log({ level: "INFO", message: `🚀 Calling Bedrock (${modelId})...`, name: "triage" });
   let result;
   try {
-    result = await converse(modelId, messages, {
-      temperature: 0,
-      maxTokens: 1024,
-      taskName: "triage_router",
-    });
+    result = await runWithBedrockSpan(
+      "bedrock.inference.triage",
+      configKey,
+      options.headers,
+      async (span) => {
+        const r = await converse(modelId, messages, {
+          temperature: 0,
+          maxTokens: 1024,
+          taskName: "triage_router",
+        });
+        setGenAiAttributes(span, {
+          modelId,
+          messages,
+          completion: r.content,
+          usage: r.usage,
+        });
+        return r;
+      }
+    );
   } catch (err) {
     tracker.trackError();
     throw err;

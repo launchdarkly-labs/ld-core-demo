@@ -4,6 +4,7 @@ import {
   BRAND_COMPLETION_DEFAULT,
 } from "./ld.js";
 import { converse, converseStructured } from "./bedrock.js";
+import { runWithBedrockSpan, setGenAiAttributes } from "./observe-bedrock.js";
 import * as defaults from "./ai-config-defaults.js";
 
 const CONFIG_KEY = "brand_agent";
@@ -49,11 +50,25 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
   const startTime = Date.now();
   let result;
   try {
-    result = await converse(modelId, messages, {
-      temperature: 0.5,
-      maxTokens: 1024,
-      taskName: "brand_agent",
-    });
+    result = await runWithBedrockSpan(
+      "bedrock.inference.brand",
+      CONFIG_KEY,
+      options.headers,
+      async (span) => {
+        const r = await converse(modelId, messages, {
+          temperature: 0.5,
+          maxTokens: 1024,
+          taskName: "brand_agent",
+        });
+        setGenAiAttributes(span, {
+          modelId,
+          messages,
+          completion: r.content,
+          usage: r.usage,
+        });
+        return r;
+      }
+    );
   } catch (err) {
     tracker.trackError();
     throw err;

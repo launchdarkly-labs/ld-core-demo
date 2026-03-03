@@ -1,0 +1,2115 @@
+[
+    {
+      "timestamp": "2026-03-03 12:58:05.435 PM",
+      "secure_session_id": "jpNShVhOde30iKHO2xGesUTOTnIF",
+      "span_name": "HTTP POST",
+      "duration": "23s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 0,
+      "browser": {
+        "language": "en-US"
+      },
+      "component": "fetch",
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "host": "localhost:3000",
+        "method": "POST",
+        "request": {
+          "method": "POST"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length": 4262,
+        "scheme": "http",
+        "status_code": 200,
+        "status_text": "OK",
+        "url": "http://localhost:3000/api/chat",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      },
+      "server": {
+        "address": "localhost:3000",
+        "port": 3000
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@highlight-run/observability",
+          "version": "9.26.1"
+        },
+        "sdk": {
+          "language": "webjs",
+          "name": "opentelemetry",
+          "version": "1.30.1"
+        }
+      },
+      "url": {
+        "domain": "localhost",
+        "full": "http://localhost:3000/api/chat",
+        "path": "/api/chat",
+        "scheme": "http"
+      },
+      "user_agent": {
+        "original": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "6ca255dd9d270c9f",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {
+        "0": {
+          "timestamp": "2026-03-03T17:58:05.436000098Z",
+          "name": "fetchStart",
+          "attributes": {}
+        },
+        "1": {
+          "timestamp": "2026-03-03T17:58:05.436000098Z",
+          "name": "domainLookupStart",
+          "attributes": {}
+        },
+        "2": {
+          "timestamp": "2026-03-03T17:58:05.436000098Z",
+          "name": "domainLookupEnd",
+          "attributes": {}
+        },
+        "3": {
+          "timestamp": "2026-03-03T17:58:05.436000098Z",
+          "name": "connectStart",
+          "attributes": {}
+        },
+        "4": {
+          "timestamp": "2026-03-03T17:58:05.436000098Z",
+          "name": "connectEnd",
+          "attributes": {}
+        },
+        "5": {
+          "timestamp": "2026-03-03T17:58:05.437900098Z",
+          "name": "requestStart",
+          "attributes": {}
+        },
+        "6": {
+          "timestamp": "2026-03-03T17:58:28.404500098Z",
+          "name": "responseStart",
+          "attributes": {}
+        },
+        "7": {
+          "timestamp": "2026-03-03T17:58:28.406000098Z",
+          "name": "responseEnd",
+          "attributes": {}
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:06.253 PM",
+      "parent_span_id": "6ca255dd9d270c9f",
+      "span_name": "chat_request",
+      "duration": "22.1s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 818000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {}
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "08c84f830acf0803",
+      "span_kind": "Internal",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:06.263 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "2s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 828000000,
+      "aws": {
+        "request": {
+          "id": "93fdd357-5844-4b74-a096-b1a87f2125cf"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 688,
+          "output_tokens": 118
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "ConverseStream",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "e7a5f9cbab50548c",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:06.283 PM",
+      "parent_span_id": "e7a5f9cbab50548c",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "498.6ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 848000000,
+      "aws": {
+        "request": {
+          "id": "26810925-953b-4caa-a70c-308e961d9ebf"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "2abea8ccf87bf6f3",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:06.287 PM",
+      "parent_span_id": "2abea8ccf87bf6f3",
+      "span_name": "GET",
+      "duration": "492.5ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 852000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "100.50.93.201",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "100.50.93.201"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "a19f78e6a0973bf2",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:08.296 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "3.1s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 2861000000,
+      "aws": {
+        "request": {
+          "id": "9b042d24-f3ad-405f-8ff3-1841f0623c36"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0.3
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 1133,
+          "output_tokens": 323
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "ConverseStream",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "349b5c6bb2fba44d",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:08.302 PM",
+      "parent_span_id": "349b5c6bb2fba44d",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "562.7ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 2867000000,
+      "aws": {
+        "request": {
+          "id": "442cf105-c212-43bb-bc36-5221ab26a2c9"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "1cd797353147a93e",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:08.304 PM",
+      "parent_span_id": "1cd797353147a93e",
+      "span_name": "GET",
+      "duration": "560.2ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 2869000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "100.50.93.201",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "100.50.93.201"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "8a000f4fcd73acec",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:11.362 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "6.5s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 5927000000,
+      "aws": {
+        "request": {
+          "id": "76f648f3-88de-457f-a21b-1de58e3d0d3a"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0.5
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 132,
+          "output_tokens": 482
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "ConverseStream",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "8e9ed8ee8ece5ca1",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:11.366 PM",
+      "parent_span_id": "8e9ed8ee8ece5ca1",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "541ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 5931000000,
+      "aws": {
+        "request": {
+          "id": "e96bb54e-f9d9-4f7c-870c-b79177e9f95b"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "7ef706fd9f488ede",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:11.369 PM",
+      "parent_span_id": "7ef706fd9f488ede",
+      "span_name": "GET",
+      "duration": "535.9ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 5934000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "100.50.93.201",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "100.50.93.201"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "0dc071d8487c8db5",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:17.871 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "2.2s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 12436000000,
+      "aws": {
+        "request": {
+          "id": "f6db2412-eb7b-48f1-a5cb-24df4a85e4d5"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 874,
+          "output_tokens": 128
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "Converse",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "7805d8827ce84b77",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:17.874 PM",
+      "parent_span_id": "7805d8827ce84b77",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "524.2ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 12439000000,
+      "aws": {
+        "request": {
+          "id": "1652c7ad-405e-406c-ad6c-739f96fdfde6"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "c99e259a6a7e4bbe",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:17.876 PM",
+      "parent_span_id": "c99e259a6a7e4bbe",
+      "span_name": "GET",
+      "duration": "522.2ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 12441000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "100.50.93.201",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "100.50.93.201"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "dfc10ef83eb65b16",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:20.111 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "1.9s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 14676000000,
+      "aws": {
+        "request": {
+          "id": "d2ea1793-d78b-4208-b513-36dccfb4e43c"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 858,
+          "output_tokens": 102
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "Converse",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "e8bfe343061b1d32",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:20.117 PM",
+      "parent_span_id": "e8bfe343061b1d32",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "517.3ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 14682000000,
+      "aws": {
+        "request": {
+          "id": "1334d12a-f82c-40a1-9c7a-63f283c1a9b2"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "7c2d8f251e7720c8",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:20.120 PM",
+      "parent_span_id": "7c2d8f251e7720c8",
+      "span_name": "GET",
+      "duration": "513.4ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 14685000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "100.50.93.201",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "100.50.93.201"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "0b5dc2d23c756052",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:22.014 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "2.8s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 16579000000,
+      "aws": {
+        "request": {
+          "id": "e9e4f003-8da7-4dd2-9a6f-ff22b8a80aeb"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0.5
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 1187,
+          "output_tokens": 319
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "ConverseStream",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "ba4ecb0716eebab4",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:22.018 PM",
+      "parent_span_id": "ba4ecb0716eebab4",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "486.3ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 16583000000,
+      "aws": {
+        "request": {
+          "id": "c78d2570-f5cd-4641-8e9a-c92a6887fb45"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "4dd4bbc20bbabaa1",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:22.021 PM",
+      "parent_span_id": "4dd4bbc20bbabaa1",
+      "span_name": "GET",
+      "duration": "482.6ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 16586000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "52.205.128.98",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "52.205.128.98"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "3b2eaafa03e14466",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:24.871 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "1.8s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 19436000000,
+      "aws": {
+        "request": {
+          "id": "0b94497f-eb1a-4036-b91e-15795c2224de"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 711,
+          "output_tokens": 111
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "Converse",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "c07e358eb56154e3",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:24.877 PM",
+      "parent_span_id": "c07e358eb56154e3",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "435.7ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 19442000000,
+      "aws": {
+        "request": {
+          "id": "05e6ed13-3963-44dc-8cf9-5109029f023d"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "9f94f3d5e0a13d94",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:24.879 PM",
+      "parent_span_id": "9f94f3d5e0a13d94",
+      "span_name": "GET",
+      "duration": "433.5ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 19444000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "52.205.128.98",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "52.205.128.98"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "c8e0496f42da64d5",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:26.701 PM",
+      "parent_span_id": "08c84f830acf0803",
+      "span_name": "chat us.amazon.nova-pro-v1:0",
+      "duration": "1.7s",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 21266000000,
+      "aws": {
+        "request": {
+          "id": "c77d0514-3417-439f-897f-082459498c60"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "gen_ai": {
+        "operation": {
+          "name": "chat"
+        },
+        "provider": {
+          "name": "aws.bedrock"
+        },
+        "request": {
+          "max_tokens": 1024,
+          "model": "us.amazon.nova-pro-v1:0",
+          "temperature": 0
+        },
+        "response": {
+          "finish_reasons": {
+            "0": "end_turn"
+          }
+        },
+        "system": "aws.bedrock",
+        "usage": {
+          "input_tokens": 695,
+          "output_tokens": 74
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "Converse",
+        "service": "BedrockRuntime",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "876407455d410dd0",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:26.706 PM",
+      "parent_span_id": "876407455d410dd0",
+      "span_name": "SSO.GetRoleCredentials",
+      "duration": "419.8ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 21271000000,
+      "aws": {
+        "request": {
+          "id": "98269b5b-fe78-4b8b-8066-6ac627e67c31"
+        }
+      },
+      "cloud": {
+        "region": "us-east-1"
+      },
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "request": {},
+        "response": {
+          "status_code": 200
+        },
+        "status_code": 200
+      },
+      "rpc": {
+        "method": "GetRoleCredentials",
+        "service": "SSO",
+        "system": "aws-api"
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "5410cb1cd3eb01b5",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    },
+    {
+      "timestamp": "2026-03-03 12:58:26.710 PM",
+      "parent_span_id": "5410cb1cd3eb01b5",
+      "span_name": "GET",
+      "duration": "415.6ms",
+      "service_name": "policy-agent-node",
+      "environment": "Production",
+      "start_time": 21275000000,
+      "feature_flag": {
+        "set": {
+          "id": "69581c7a28801b09b7d0b8a1"
+        }
+      },
+      "http": {
+        "flavor": 1.1,
+        "host": "portal.sso.us-east-1.amazonaws.com",
+        "method": "GET",
+        "request": {
+          "method": "GET"
+        },
+        "response": {
+          "status_code": 200
+        },
+        "response_content_length_uncompressed": 1092,
+        "status_code": 200,
+        "status_text": "OK",
+        "target": "/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "url": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "user_agent": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "net": {
+        "peer": {
+          "ip": "52.205.128.98",
+          "name": "portal.sso.us-east-1.amazonaws.com",
+          "port": 443
+        },
+        "sock": {
+          "peer": {
+            "addr": "52.205.128.98"
+          }
+        },
+        "transport": "ip_tcp"
+      },
+      "network": {
+        "protocol": {
+          "name": "http",
+          "version": 1.1
+        }
+      },
+      "server": {
+        "address": "portal.sso.us-east-1.amazonaws.com",
+        "port": 443
+      },
+      "telemetry": {
+        "distro": {
+          "name": "@launchdarkly/observability-node",
+          "version": "1.0.0"
+        }
+      },
+      "url": {
+        "domain": "portal.sso.us-east-1.amazonaws.com",
+        "full": "https://portal.sso.us-east-1.amazonaws.com/federation/credentials?account_id=955116512041&role_name=Administrator",
+        "path": "/federation/credentials",
+        "query": "account_id=955116512041&role_name=Administrator",
+        "scheme": "https"
+      },
+      "user_agent": {
+        "original": "aws-sdk-js/3.990.0 ua/2.1 os/darwin#25.3.0 lang/js md/nodejs#22.16.0 api/sso#3.990.0 m/E"
+      },
+      "trace_id": "7fbd484f39fd9472bf0ff9444510e3da",
+      "span_id": "8c879e1622d9dafb",
+      "span_kind": "Client",
+      "status_code": "Unset",
+      "events": {},
+      "process": {
+        "command": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js",
+        "command_args": {
+          "0": "/usr/local/bin/node",
+          "1": "/Users/nickteixeira/projects/ld-core-demo/node_modules/next/dist/server/lib/start-server.js"
+        },
+        "executable": {
+          "name": "next-server (v15.5.12)",
+          "path": "/usr/local/bin/node"
+        },
+        "owner": "nickteixeira",
+        "pid": 32431,
+        "runtime": {
+          "description": "Node.js",
+          "name": "nodejs",
+          "version": "22.16.0"
+        }
+      },
+      "has_errors": false
+    }
+  ]

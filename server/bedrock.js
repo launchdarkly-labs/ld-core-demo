@@ -67,9 +67,8 @@ async function converseImpl(modelId, messages, options) {
   };
 }
 
-/** options.taskName: optional name for the span (e.g. "triage_router", "brand_agent"); reserved for future observability. */
 export async function converse(modelId, messages, options = {}) {
-  const { taskName: _taskName, ...opts } = options;
+  const { taskName: _taskName, configKey: _configKey, ...opts } = options;
   return converseImpl(modelId, messages, opts);
 }
 

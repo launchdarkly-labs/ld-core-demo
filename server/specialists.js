@@ -1,5 +1,6 @@
 import { getAIConfig, buildMessagesFromLdConfig, SPECIALIST_AI_CONFIG } from "./ld.js";
 import { converse } from "./bedrock.js";
+import { runWithBedrockSpan, setGenAiAttributes } from "./observe-bedrock.js";
 
 /**
  * Run the specialist agent for the given query type. Uses LaunchDarkly AI Config (policy_agent, provider_agent, scheduler_agent).
@@ -28,11 +29,25 @@ export async function runSpecialist(queryType, query, userContext = {}, options 
   const startTime = Date.now();
   let result;
   try {
-    result = await converse(modelId, messages, {
-      temperature: 0.3,
-      maxTokens: 1024,
-      taskName: queryType,
-    });
+    result = await runWithBedrockSpan(
+      `bedrock.inference.specialist.${queryType}`,
+      configKey,
+      options.headers,
+      async (span) => {
+        const r = await converse(modelId, messages, {
+          temperature: 0.3,
+          maxTokens: 1024,
+          taskName: queryType,
+        });
+        setGenAiAttributes(span, {
+          modelId,
+          messages,
+          completion: r.content,
+          usage: r.usage,
+        });
+        return r;
+      }
+    );
   } catch (err) {
     tracker.trackError();
     throw err;
