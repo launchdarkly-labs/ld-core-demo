@@ -94,7 +94,7 @@ export async function POST(request) {
           query,
           triageResult.queryType,
           userContext,
-          { logger }
+          { logger, guardrails: userContext.guardrails }
         );
 
         return { triageResult, specialistResult, brandResult };

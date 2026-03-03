@@ -7,8 +7,6 @@ import { converse, converseStructured } from "./bedrock.js";
 import * as defaults from "./ai-config-defaults.js";
 
 const CONFIG_KEY = "brand_agent";
-const DEFAULT_GUARDRAIL_ID = "i7aqo05chetu";
-const DEFAULT_GUARDRAIL_VERSION = "9";
 const DEFAULT_MODEL = defaults.brand_agent?.model?.name ?? "anthropic.claude-3-5-sonnet-20241022-v2:0";
 
 /** Bedrock Converse requires the conversation to start with a user message. Ensure that for brand_agent. */
@@ -47,8 +45,6 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
 
   const modelId = config.model?.name ?? DEFAULT_MODEL;
   const messages = ensureUserFirst(config.messages ?? []);
-  const grId = config.custom?.gr_id ?? DEFAULT_GUARDRAIL_ID;
-  const grVersion = config.custom?.gr_version ?? DEFAULT_GUARDRAIL_VERSION;
 
   const startTime = Date.now();
   let result;
@@ -57,10 +53,6 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
       temperature: 0.5,
       maxTokens: 1024,
       taskName: "brand_agent",
-      guardrailConfig: {
-        guardrailIdentifier: String(grId),
-        guardrailVersion: String(grVersion),
-      },
     });
   } catch (err) {
     tracker.trackError();
@@ -83,6 +75,20 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
   log({ level: "INFO", message: `   Brand response in ${durationMs}ms`, name: "brand" });
 
   const judgeResults = await runJudges(config, contextVars, content, log);
+
+  if (judgeResults.length > 0) {
+    log({ level: "INFO", message: `   Judges (${judgeResults.length}):`, name: "brand" });
+    for (const jr of judgeResults) {
+      const name = jr.judgeConfigKey ?? "judge";
+      const evals = jr.evals && typeof jr.evals === "object" ? jr.evals : {};
+      const parts = Object.entries(evals).map(([k, v]) => {
+        const label = k.includes(":") ? k.split(":").pop() : k;
+        return `${label}: ${v?.score ?? "—"}${v?.reasoning ? ` — ${String(v.reasoning).slice(0, 80)}…` : ""}`;
+      });
+      const line = parts.length ? parts.join(" | ") : (jr.error ? `Error: ${jr.error}` : "No scores");
+      log({ level: "INFO", message: `      ${name}: ${line}`, name: "brand" });
+    }
+  }
 
   return {
     content,
