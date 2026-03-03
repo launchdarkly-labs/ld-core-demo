@@ -1,11 +1,9 @@
-// LLM observability init order: (1) LD, (2) OpenLLMetry, (3) Bedrock. init-ld runs first; triage loads bedrock.js.
-// Import withWorkflow after triage/specialists/brand so bedrock.js (and traceloop.initialize()) load first.
+// LLM observability init order: (1) LD, (2) Bedrock. init-ld runs first; triage loads bedrock.js.
 import "../../../server/init-ld.js";
 import { runWithSdkKey } from "../../../server/ld.js";
 import { runTriage } from "../../../server/triage.js";
 import { runSpecialist } from "../../../server/specialists.js";
 import { runBrandAgent, runJudgesWithConfig } from "../../../server/brand.js";
-import { withWorkflow } from "@traceloop/node-server-sdk";
 import { pushLog } from "../../../lib/log-stream";
 
 /** Toxicity score above this triggers resend with guardrails. Override with env TOXICITY_THRESHOLD (0–1). */
@@ -90,92 +88,87 @@ export async function POST(request) {
   });
 
   try {
-    const result = await runWithSdkKey(sdkKey, () =>
-      withWorkflow(
-        { name: "chat_request" },
-        async () => {
-          // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
-          const triageResult = await runTriage(query, userContext, { logger });
+    const result = await runWithSdkKey(sdkKey, async () => {
+      // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
+      const triageResult = await runTriage(query, userContext, { logger });
+      logger({
+        level: "INFO",
+        message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
+        name: "chat",
+      });
+
+      // 2. Specialist: run the chosen agent
+      const specialistResult = await runSpecialist(
+        triageResult.queryType,
+        query,
+        userContext,
+        { logger }
+      );
+
+      // 3. Brand completion — call initially without guardrails; after judges, if toxicity > 0.6, resend with guardrails
+      let brandResult = await runBrandAgent(
+        specialistResult.content,
+        query,
+        triageResult.queryType,
+        { ...userContext, guardrails: false },
+        { logger }
+      );
+
+      const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
+      let firstRunJudgeResults = null;
+      let firstRunConfig = null;
+      if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
+        if (userContext.guardrails) {
+          firstRunJudgeResults = brandResult?.judgeResults ?? [];
+          firstRunConfig = brandResult?.config ?? null;
+          logger({
+            level: "WARN",
+            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
+            name: "toxicity-resend",
+          });
+          brandResult = await runBrandAgent(
+            specialistResult.content,
+            query,
+            triageResult.queryType,
+            { ...userContext, guardrails: true },
+            { logger }
+          );
+          // If second run's LD variation has no judges, run first run's judges on second run's content so they show in the LLM tab
+          const secondJudgeResults = brandResult?.judgeResults ?? [];
+          if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
+            const contextVars = {
+              user_key: userContext.user_key ?? "anonymous",
+              query,
+              customer_name: userContext.name ?? "there",
+              original_query: query,
+              query_type: triageResult.queryType,
+              specialist_response: specialistResult.content,
+              ...userContext,
+            };
+            const fallbackSecondJudges = await runJudgesWithConfig(
+              firstRunConfig,
+              contextVars,
+              brandResult?.content ?? "",
+              logger
+            );
+            brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
+          }
           logger({
             level: "INFO",
-            message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
+            message: `   Returned brand response from second run (with guardrails)`,
             name: "chat",
           });
-
-        // 2. Specialist: run the chosen agent
-        const specialistResult = await runSpecialist(
-          triageResult.queryType,
-          query,
-          userContext,
-          { logger }
-        );
-
-        // 3. Brand completion — call initially without guardrails; after judges, if toxicity > 0.6, resend with guardrails
-        let brandResult = await runBrandAgent(
-          specialistResult.content,
-          query,
-          triageResult.queryType,
-          { ...userContext, guardrails: false },
-          { logger }
-        );
-
-        const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
-        let firstRunJudgeResults = null;
-        let firstRunConfig = null;
-        if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
-          if (userContext.guardrails) {
-            firstRunJudgeResults = brandResult?.judgeResults ?? [];
-            firstRunConfig = brandResult?.config ?? null;
-            logger({
-              level: "WARN",
-              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
-              name: "toxicity-resend",
-            });
-            brandResult = await runBrandAgent(
-              specialistResult.content,
-              query,
-              triageResult.queryType,
-              { ...userContext, guardrails: true },
-              { logger }
-            );
-            // If second run's LD variation has no judges, run first run's judges on second run's content so they show in the LLM tab
-            const secondJudgeResults = brandResult?.judgeResults ?? [];
-            if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
-              const contextVars = {
-                user_key: userContext.user_key ?? "anonymous",
-                query,
-                customer_name: userContext.name ?? "there",
-                original_query: query,
-                query_type: triageResult.queryType,
-                specialist_response: specialistResult.content,
-                ...userContext,
-              };
-              const fallbackSecondJudges = await runJudgesWithConfig(
-                firstRunConfig,
-                contextVars,
-                brandResult?.content ?? "",
-                logger
-              );
-              brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
-            }
-            logger({
-              level: "INFO",
-              message: `   Returned brand response from second run (with guardrails)`,
-              name: "chat",
-            });
-          } else {
-            logger({
-              level: "INFO",
-              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
-              name: "toxicity-resend",
-            });
-          }
+        } else {
+          logger({
+            level: "INFO",
+            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
+            name: "toxicity-resend",
+          });
         }
+      }
 
-        return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
-        }
-      )
-    );
+      return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
+    });
 
     const { triageResult, specialistResult, brandResult, firstRunJudgeResults } = result;
     const judgeResultsForResponse =

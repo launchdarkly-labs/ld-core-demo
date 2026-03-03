@@ -19,7 +19,6 @@
     "@launchdarkly/server-sdk-ai": "^0.16.1",
     "@launchdarkly/server-sdk-ai-langchain": "^0.4.5",
     "@launchdarkly/session-replay": "^1.0.1",
-    "@traceloop/node-server-sdk": "^0.22.7",
     "dotenv": "^17.2.3",
     "langchain": "^1.2.25",
     "launchdarkly-react-client-sdk": "^3.9.0",

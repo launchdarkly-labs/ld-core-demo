@@ -1,17 +1,9 @@
 /**
- * LLM calls via LangChain (ChatBedrockConverse) for observability.
+ * LLM calls via LangChain (ChatBedrockConverse).
  * Init order: LaunchDarkly first (init-ld.js), then this file.
- * We use only LangChain instrumentation so spans go through the LangChain provider.
  */
-import * as traceloop from "@traceloop/node-server-sdk";
 import { ChatBedrockConverse } from "@langchain/aws";
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
-
-const localTesting = process.env.OPENLLMETRY_LOCAL_TESTING === "true";
-traceloop.initialize({
-  disableBatch: localTesting,
-  instrumentModules: { langchain: true },
-});
 
 const region =
   process.env.AWS_DEFAULT_REGION ||
@@ -75,15 +67,9 @@ async function converseImpl(modelId, messages, options) {
   };
 }
 
-/** options.taskName: optional Traceloop task name for the span (e.g. "triage_router", "brand_agent"). */
+/** options.taskName: optional name for the span (e.g. "triage_router", "brand_agent"); reserved for future observability. */
 export async function converse(modelId, messages, options = {}) {
-  const { taskName, ...opts } = options;
-  if (taskName) {
-    return traceloop.withTask(
-      { name: taskName },
-      async () => converseImpl(modelId, messages, opts)
-    );
-  }
+  const { taskName: _taskName, ...opts } = options;
   return converseImpl(modelId, messages, opts);
 }
 
