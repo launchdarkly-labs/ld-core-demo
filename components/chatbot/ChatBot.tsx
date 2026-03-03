@@ -24,6 +24,7 @@ import {
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import ReactMarkdown from "react-markdown";
 
 type ApiResponse = {
   response: string;
@@ -124,6 +125,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [selfHealingStatus, setSelfHealingStatus] = useState("");
   const [enableFallback, setEnableFallback] = useState(true);
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const selfHealingEndRef = useRef<HTMLDivElement | null>(null);
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
   const hasSelfHealing = vertical === "banking";
@@ -441,7 +443,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   const judgeMessage: Message = {
                     id: uuidv4().slice(0, 6) + "-judge",
                     role: "judge",
-                    content: `**AI Judge Evaluation**\n\n**Initial Model (${data.originalModel || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Original Response (Reverted):**\n> ${data.originalResponse || "No response captured"}\n\n**Fallback Model (Passed):**\n- Accuracy: ${data.judgeScores.after?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.after?.relevance?.toFixed(1) || "N/A"}%\n\nSelf-healed to: **${data.modelName}**`,
+                    content: `**AI Judge Evaluation**\n\n**Initial Model Scores (${data.originalModel || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Original Response (Reverted):**\n> ${data.originalResponse || "No response captured"}\n\n**Fallback Model Scores (Passed):**\n- Accuracy: ${data.judgeScores.after?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.after?.relevance?.toFixed(1) || "N/A"}%\n\nSelf-healed to: **${data.modelName}**`,
                     judgeScores: data.judgeScores,
                   };
                   setSelfHealingMessages((prev) => [...prev, judgeMessage]);
@@ -462,7 +464,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   const judgeMessage: Message = {
                     id: uuidv4().slice(0, 6) + "-judge",
                     role: "judge",
-                    content: `**AI Judge Evaluation**\n\n**Model (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n⚠ Scores below threshold (90%) — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
+                    content: `**AI Judge Evaluation**\n\n**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
                     judgeScores: data.judgeScores,
                   };
                   setSelfHealingMessages((prev) => [...prev, judgeMessage]);
@@ -690,9 +692,17 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       {isOpen && (
          <div
           ref={cardRef}
-          className="fixed bottom-16 right-0 z-50 flex items-end justify-end p-4 sm:p-6 max-w-full"
+          className={`fixed z-50 transition-all duration-500 ease-in-out ${
+            isExpanded
+              ? "inset-4 flex items-stretch"
+              : "bottom-16 right-0 flex items-end justify-end p-4 sm:p-6 max-w-full"
+          }`}
         >
-          <Card className="w-full max-w-md mx-auto">
+          <Card className={`transition-all duration-500 ease-in-out ${
+            isExpanded
+              ? "w-full h-full max-w-none overflow-auto"
+              : "w-full max-w-md mx-auto"
+          }`}>
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -766,7 +776,21 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="ml-auto rounded-full"
+                  className="rounded-full"
+                  title={isExpanded ? "Collapse" : "Expand"}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  )}
+                  <span className="sr-only">{isExpanded ? "Collapse" : "Expand"}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
                   onClick={() => setIsOpen(false)}
                 >
                   <XIcon className="h-6 w-6" />
@@ -795,7 +819,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 </div>
 
                 <TabsContent value="main" className="flex-1 flex flex-col overflow-hidden mt-0">
-                  <CardContent className="h-[400px] overflow-y-auto" ref={chatContentRef}>
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`} ref={chatContentRef}>
                     <div className="space-y-4">
                       <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                         <Accordion type="single" collapsible defaultValue="metrics">
@@ -911,7 +935,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                             </span>
                           )}
                           {selfHealingMetrics?.didFallback && (
-                            <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full">
+                            <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
                               Self-Healed
                             </span>
                           )}
@@ -962,7 +986,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     </div>
                   )}
 
-                  <CardContent className="h-[350px] overflow-y-auto">
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[350px]"}`}>
                     {!isSelfHealingEnabled && (
                       <div className="flex items-center justify-center h-full">
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -976,8 +1000,23 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                         {selfHealingMessages.map((m) => {
                           if (m.role === "judge") {
                             return (
-                              <div key={m.id} className="flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-xs bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-600">
-                                <div className="whitespace-pre-line">{m.content}</div>
+                              <div key={m.id} className="flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-600">
+                                <ReactMarkdown
+                                  components={{
+                                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                                    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                                    em: ({ children }) => <em className="italic">{children}</em>,
+                                    ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1 ml-2">{children}</ul>,
+                                    li: ({ children }) => <li>{children}</li>,
+                                    blockquote: ({ children }) => (
+                                      <blockquote className="border-l-2 border-purple-400 pl-3 italic mb-2 text-gray-600 dark:text-gray-300">
+                                        {children}
+                                      </blockquote>
+                                    ),
+                                  }}
+                                >
+                                  {m.content}
+                                </ReactMarkdown>
                               </div>
                             );
                           }
@@ -1068,7 +1107,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               </Tabs>
             ) : (
               <>
-                <CardContent className="h-[400px] overflow-y-auto" ref={chatContentRef}>
+                <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[400px]"}`} ref={chatContentRef}>
                   <div className="space-y-4">
                     <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                       <Accordion type="single" collapsible defaultValue="metrics">

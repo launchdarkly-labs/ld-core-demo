@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 
@@ -35,6 +35,7 @@ export default async function resetSelfHealing(
       if (!ctx.kind) ctx.kind = "user";
       if (!ctx.key && ctx.kind === "user") ctx.key = uuidv4();
       ctx.ai = { key: "ai-context", fallback: false };
+      setCookie(LD_CONTEXT_COOKIE_KEY, JSON.stringify(ctx), { req, res });
     }
 
     return res.status(200).json({ success: true, message: "AI context reset successfully" });

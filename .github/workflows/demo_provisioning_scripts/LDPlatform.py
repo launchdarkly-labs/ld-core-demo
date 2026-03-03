@@ -319,6 +319,100 @@ class LDPlatform:
         
     
     ##################################################
+    # Create AI Judge
+    ##################################################
+
+    def create_ai_judge(self, judge_key, judge_name, description, evaluation_metric_key, is_inverted, messages, model_config_key="OpenAI.gpt-5", model=None):
+        if model is None:
+            model = {"modelName": "gpt-5"}
+
+        payload = {
+            "key": judge_key,
+            "name": judge_name,
+            "description": description,
+            "mode": "judge",
+            "tags": ["judge", "ai"],
+            "evaluationMetricKey": evaluation_metric_key,
+            "isInverted": is_inverted,
+            "defaultVariation": {
+                "key": "default",
+                "name": "Default",
+                "messages": messages,
+                "model": model,
+                "modelConfigKey": model_config_key,
+            }
+        }
+
+        if self.user_id:
+            payload["maintainerId"] = self.user_id
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        response = self.getrequest(
+            "POST",
+            "https://app.launchdarkly.com/api/v2/projects/" + self.project_key + "/ai-configs",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error creating AI Judge: " + data["message"])
+                else:
+                    print(f"Successfully created AI Judge: {judge_name}")
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error creating judge: {e}")
+        return response
+
+    ##################################################
+    # Attach Judge to AI Config Variation
+    ##################################################
+
+    def attach_judge_to_variation(self, ai_config_key, variation_key, judge_key, sampling_rate=100):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/variations/"
+            + variation_key
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        payload = {
+            "judges": [
+                {
+                    "judgeConfigKey": judge_key,
+                    "samplingRate": sampling_rate,
+                }
+            ]
+        }
+
+        response = self.getrequest("PATCH", url, json=payload, headers=headers)
+
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print(f"Error attaching judge {judge_key} to {ai_config_key}/{variation_key}: " + data["message"])
+                else:
+                    print(f"Successfully attached judge {judge_key} to {ai_config_key}/{variation_key}")
+            except json.JSONDecodeError:
+                pass
+        return response
+
+    ##################################################
     # Create AI Config Versions
     ##################################################
         
@@ -2161,7 +2255,7 @@ class LDPlatform:
         return res
     
     ##################################################
-    # Add AI Fallback Targeting to AI Config
+    # Add AI Fallback Targeting
     ##################################################
     def add_ai_fallback_targeting_to_ai_config(self, ai_config_key, env_key, fallback_variation_key):
         variation_id = self.get_ai_config_variation_id(ai_config_key, fallback_variation_key)
