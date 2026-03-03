@@ -175,12 +175,21 @@ export async function getCompletionConfig(configKey, context, fallbackConfig, va
     ...context,
   };
   const completion = await aiClient.completionConfig(configKey, ldContext, fallbackConfig, variables);
+  const judges = completion.judgeConfiguration?.judges ?? [];
+  const normalizedJudges = judges.map((j) => ({
+    ...j,
+    key: j.key ?? j.judgeConfigKey,
+    samplingRate: j.samplingRate ?? 1,
+  }));
   const config = {
     messages: completion.messages ?? fallbackConfig.messages,
     model: completion.model
       ? { name: completion.model.name ?? fallbackConfig.model?.name }
       : fallbackConfig.model,
-    judgeConfiguration: completion.judgeConfiguration,
+    judgeConfiguration:
+      normalizedJudges.length > 0
+        ? { ...completion.judgeConfiguration, judges: normalizedJudges }
+        : completion.judgeConfiguration,
     custom: completion.model?.custom,
   };
   const noopTracker = {
@@ -191,4 +200,25 @@ export async function getCompletionConfig(configKey, context, fallbackConfig, va
     trackDuration: () => {},
   };
   return { config, tracker: completion.tracker ?? noopTracker };
+}
+
+const JUDGE_CONFIG_DEFAULT = { enabled: false, model: { name: null }, messages: [], evaluationMetricKey: null };
+
+/**
+ * Fetch judge AI config from LaunchDarkly (for running judges ourselves with Bedrock).
+ */
+export async function getJudgeConfig(judgeKey, context, variables = {}) {
+  const ldClient = await getLdClient();
+  const aiClient = initAi(ldClient);
+  const ldContext = {
+    kind: "user",
+    key: (context.user_key || "anonymous").toString(),
+    ...context,
+  };
+  const judgeConfig = await aiClient.judgeConfig(judgeKey, ldContext, JUDGE_CONFIG_DEFAULT, variables);
+  return {
+    messages: judgeConfig.messages ?? [],
+    evaluationMetricKey: judgeConfig.evaluationMetricKey ?? null,
+    model: judgeConfig.model?.name ?? null,
+  };
 }

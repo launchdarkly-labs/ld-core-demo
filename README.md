@@ -8,19 +8,7 @@
 
 - **Triage router** — [`server/triage.js`](server/triage.js): Uses LaunchDarkly AI Config `triage_agent` to call Bedrock; the model returns JSON with `query_type` (`policy_question`, `provider_lookup`, or `scheduler_agent`). Low confidence (&lt; 0.7) can set `escalationNeeded`; the chosen type is passed to the specialist step.
 - **Specialist** — [`server/specialists.js`](server/specialists.js): One of three agents runs (Policy Specialist, Provider Specialist, or Schedule Agent), each with a simple Bedrock prompt. No RAG in this app; specialists answer from instructions only.
-- **Brand completion** (`brand_agent`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). Uses LaunchDarkly AI Config with **judges** attached; we only act on the **toxicity** score for guardrails (see below).
-
-### Judge flow and guardrails
-
-Brand completion runs via LaunchDarkly’s `createChat` + `invoke`, so any **judges** attached to the `brand_agent` AI Config run automatically. Their scores and reasoning are logged in the backend terminal.
-
-**Guardrails (toxicity only):** We only trigger a safety re-run based on the **toxicity** judge. If the toxicity score is **&gt; 0.7** and guardrails are on, we:
-
-1. Log that guardrails triggered (red, bold in the terminal).
-2. Call brand completion again with `guardrail_fallback: true` in context so LaunchDarkly can serve a different (safer) variation of the prompt.
-3. Use the **safety re-run** response as the final response to the customer (no judges on the re-run; we use `getCompletionConfig` + Bedrock `converse` so the reply is always returned correctly).
-
-Other judge metrics (e.g. relevance, tone) are logged but do not trigger any automatic re-run or guardrail behavior.
+- **Brand completion** (`brand_agent`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). **Single path:** LaunchDarkly `getCompletionConfig` → Bedrock `converse` for the reply; then each **judge** from the config is run with Bedrock (user-first messages, structured JSON) and results are shown in the judge panel. No patches. Optional guardrails via AI Config `custom.gr_id` / `gr_version`.
 
 ```
                         ┌─────────────────┐
@@ -30,7 +18,7 @@ Other judge metrics (e.g. relevance, tone) are logged but do not trigger any aut
                         ┌────────▼────────┐
                         │ TRIAGE ROUTER   │
                         │(triage_agent via│
-                        │ LaunchDarkly)   |
+                        │ LaunchDarkly)   │
                         └────────┬────────┘
                                  │
             ┌────────────────────┼────────────────────┐
@@ -46,26 +34,15 @@ Other judge metrics (e.g. relevance, tone) are logged but do not trigger any aut
                                  │
                         ┌────────▼────────┐
                         │ BRAND COMPLETION│
-                        │ (judges run)    │
+                        │ getCompletionConfig
+                        │ + Bedrock converse
                         └────────┬────────┘
                                  │
-                    toxicity > 0.7? (guardrails on)
-                                 │
-              ┌──────────────────┼──────────────────┐
-              │ no               │ yes (optional)   │
-              ▼                  ▼                  │
-     ┌─────────────────┐  ┌───────────────┐         │
-     │ FINAL RESPONSE  │  │ Safety re-run │         │
-     │ to customer     │  │ (brand again  │         │
-     │ (brand output)  │  │  w/ fallback) │         │
-     └─────────────────┘  └──────┬────────┘         │
-                                 │                  │
-                                 ▼                  │
-                         ┌────────────────┐         │
-                         │ FINAL RESPONSE │         │
-                         │ to customer    │─────────┘
-                         │ (safety output)│
-                         └────────────────┘
+                                 ▼
+                        ┌─────────────────┐
+                        │ FINAL RESPONSE  │
+                        │ to customer     │
+                        └─────────────────┘
 ```
 
 ## Quick start (local)
@@ -193,17 +170,9 @@ policy-agent-node/
 └── package.json
 ```
 
-### Addendum: LaunchDarkly judges and message order
+### Addendum: Judges and Bedrock
 
-When using **judges** with the LaunchDarkly AI SDK (e.g. on `brand_agent`), you may see:
-
-```text
-warn: [LaunchDarkly] LangChain structured model invocation failed: ValidationException: A conversation must start with a user message. Try again with a conversation that starts with a user message.
-```
-
-**Fix:** In the LaunchDarkly UI, configure the **judge** AI Config so that the **first message in the conversation is a user message**. If the judge only has a system message, add a user message first (e.g. a prompt that includes `{{message_history}}` and `{{response_to_evaluate}}`), or reorder messages so the conversation starts with the user turn. The Bedrock/LangChain path requires the conversation to begin with a user message.
-
-*Note: LaunchDarkly could improve this by automatically converting or prepending a user message when absent, or by documenting this requirement in the judge AI Config docs.*
+The app runs judges by calling Bedrock directly with **user-first messages** (we prepend “Begin the evaluation.” when the judge’s first message is system), so no SDK patch is needed. If you run judges in the **Python notebook** with Bedrock and see `ValidationException: A conversation must start with a user message`, use the same approach there or configure the judge in the LaunchDarkly UI so the first message is a user message.
 
 ### Bedrock: "On-demand throughput isn't supported"
 

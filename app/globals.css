@@ -694,40 +694,38 @@ a.user-dropdown-doc-btn {
   padding: 12px 14px;
 }
 
-/* Tab on left edge of chat to open/close judge panel (short flap, not full height) */
+/* Tab on left edge of chat to open/close judge panel – same style as "Show Terminal" */
 .judge-tab {
   position: absolute;
   right: 100%;
   top: 50%;
   width: 32px;
-  height: 100px;
+  height: 160px;
   margin-right: 4px;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: translateY(-50%) rotate(180deg);
-  padding: 8px 6px;
-  font-size: 0.7rem;
+  padding: 12px 8px;
+  font-size: 12px;
+  font-family: Monaco, Menlo, monospace;
   font-weight: 600;
-  color: #722f37;
-  background: #f5e6e8;
-  border: 1px solid #e5e7eb;
-  border-right: none;
+  color: #fecaca;
+  background: linear-gradient(180deg, #6d28d9 0%, #5b21b6 100%);
+  border: none;
   border-radius: 8px 0 0 8px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, box-shadow 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 2px 0 8px rgba(109, 40, 217, 0.5);
 }
 
-.judge-tab:hover {
-  background: #edd5d8;
-  color: #5c232a;
-}
-
+.judge-tab:hover,
 .judge-tab.open {
-  background: #e8d0d3;
-  color: #722f37;
+  color: #fecaca;
+  background: linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 2px 0 10px rgba(109, 40, 217, 0.6);
 }
 
 .judge-tab-label {

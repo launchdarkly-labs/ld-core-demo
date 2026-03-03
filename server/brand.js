@@ -1,37 +1,26 @@
-import { getLdClient, getCompletionConfig, BRAND_COMPLETION_DEFAULT } from "./ld.js";
-import { initAi } from "@launchdarkly/server-sdk-ai";
-import { converse } from "./bedrock.js";
+import {
+  getCompletionConfig,
+  getJudgeConfig,
+  BRAND_COMPLETION_DEFAULT,
+} from "./ld.js";
+import { converse, converseStructured } from "./bedrock.js";
+import * as defaults from "./ai-config-defaults.js";
 
 const CONFIG_KEY = "brand_agent";
-const TOXICITY_THRESHOLD = 0.7;
 const DEFAULT_GUARDRAIL_ID = "i7aqo05chetu";
 const DEFAULT_GUARDRAIL_VERSION = "9";
+const DEFAULT_MODEL = defaults.brand_agent?.model?.name ?? "anthropic.claude-3-5-sonnet-20241022-v2:0";
 
-/** Get toxicity score from judge results (any judge with evals.toxicity or judge key "toxicity"). */
-function getToxicityScore(judgeResults) {
-  if (!Array.isArray(judgeResults)) return undefined;
-  for (const jr of judgeResults) {
-    if (jr.evals?.toxicity != null && typeof jr.evals.toxicity.score === "number") {
-      return jr.evals.toxicity.score;
-    }
-    if (jr.judgeConfigKey === "toxicity" && jr.evals && Object.keys(jr.evals).length > 0) {
-      const first = Object.values(jr.evals)[0];
-      return first?.score;
-    }
-  }
-  return undefined;
+/** Bedrock Converse requires the conversation to start with a user message. Ensure that for brand_agent. */
+function ensureUserFirst(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) return messages;
+  if (messages[0].role === "user") return messages;
+  return [{ role: "user", content: "Begin." }, ...messages];
 }
 
 /**
- * Run the brand completion to turn the specialist's response into the final customer-facing reply.
- * Uses LaunchDarkly AI Config (brand_agent). Prefers createChat + invoke so that
- * judges attached in LD run automatically; falls back to getCompletionConfig + converse when
- * createChat is unavailable (e.g. provider not initialized).
- * @param {string} specialistResponse - Raw response from policy/provider/schedule specialist
- * @param {string} query - Original customer query
- * @param {string} queryType - policy_question | provider_lookup | scheduler_agent
- * @param {object} userContext - User context (name, policy_id, etc.)
- * @param {{ logger?: (e: object) => void }} options
+ * Run the brand completion: get config from LaunchDarkly, call Bedrock Converse for the reply,
+ * then run each judge with Bedrock (user-first messages, no SDK patch). Single path.
  */
 export async function runBrandAgent(specialistResponse, query, queryType, userContext = {}, options = {}) {
   const log = options.logger ?? (() => {});
@@ -39,162 +28,25 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
 
   const contextVars = {
     user_key: userContext.user_key ?? "anonymous",
-    query: query,
+    query,
     customer_name: customerName,
     original_query: query,
     query_type: queryType,
     specialist_response: specialistResponse,
     ...userContext,
-    guardrails: userContext.guardrails !== false,
-  };
-
-  const ldContext = {
-    kind: "user",
-    key: contextVars.user_key,
-    ...contextVars,
   };
 
   log({ level: "INFO", message: `   Pulling AI config (${CONFIG_KEY})...`, name: "brand" });
 
-  const ldClient = await getLdClient();
-  const aiClient = initAi(ldClient);
-  const chat = await aiClient.createChat(CONFIG_KEY, ldContext, { enabled: false }, contextVars);
-
-  if (chat) {
-    // createChat + invoke: judges run automatically and are included in chatResponse.evaluations
-    log({ level: "INFO", message: `   Running brand completion (createChat + judges)...`, name: "brand" });
-    const startTime = Date.now();
-    const chatResponse = await chat.invoke(query);
-    const durationMs = Date.now() - startTime;
-    const content = (chatResponse.message?.content ?? "").trim();
-
-    log({ level: "INFO", message: `   Brand response in ${durationMs}ms`, name: "brand" });
-
-    let judgeResults = [];
-    try {
-      const rawEvalResults = await chatResponse.evaluations;
-      const evalResults = Array.isArray(rawEvalResults) ? rawEvalResults : [];
-      if (evalResults.length === 0) {
-        log({ level: "INFO", message: `   👨‍⚖️ No judge evaluations returned`, name: "brand" });
-      } else {
-        log({ level: "INFO", message: `   👨‍⚖️ Judges: ${evalResults.map((r) => r?.judgeConfigKey ?? "?").join(", ")}`, name: "brand" });
-        for (const jr of evalResults) {
-          if (jr == null) {
-            log({ level: "WARN", message: `   👨‍⚖️ Judge result missing (undefined or null entry in evaluations)`, name: "brand" });
-            continue;
-          }
-          if (jr.success && jr.evals && Object.keys(jr.evals).length > 0) {
-            for (const [metric, evalScore] of Object.entries(jr.evals)) {
-              const score = evalScore?.score ?? "—";
-              const reasoning = evalScore?.reasoning ?? "";
-              log({
-                level: "INFO",
-                message: `   👨‍⚖️ Judge ${jr.judgeConfigKey ?? "?"} · ${metric}`,
-                name: "brand",
-              });
-              log({
-                level: "INFO",
-                message: `      Score: ${score}`,
-                name: "brand",
-              });
-              if (reasoning) {
-                log({
-                  level: "INFO",
-                  message: `      "${reasoning}"`,
-                  name: "brand",
-                });
-              }
-            }
-          }
-        }
-        judgeResults = evalResults.filter((r) => r != null);
-      }
-    } catch (e) {
-      log({ level: "WARN", message: `   👨‍⚖️ Judge evaluations error: ${e?.message ?? e}`, name: "brand" });
-    }
-
-    const metrics = chatResponse.metrics ?? {};
-    const result = {
-      content,
-      usage: metrics.usage,
-      ttftMs: metrics.timeToFirstTokenMs,
-      durationMs,
-      judgeResults,
-    };
-
-    // Guardrail fallback: if toxicity > threshold and guardrails on, call brand completion again with safety context and return that response
-    if (!contextVars.guardrails) {
-      log({ level: "INFO", message: "   *** Guardrails were turned off ***", name: "guardrails-off" });
-    } else if (contextVars.guardrail_fallback !== true) {
-      const toxicityScore = getToxicityScore(judgeResults);
-      if (typeof toxicityScore === "number" && toxicityScore > TOXICITY_THRESHOLD) {
-        log({
-          level: "INFO",
-          message: `   **Guardrails triggered: toxicity ${toxicityScore} > ${TOXICITY_THRESHOLD}; re-running brand voice with safety mode.**`,
-          name: "guardrails-triggered",
-        });
-        const fallbackVars = { ...contextVars, guardrail_fallback: true };
-        const { config: fallbackConfig, tracker: fallbackTracker } = await getCompletionConfig(
-          CONFIG_KEY,
-          fallbackVars,
-          BRAND_COMPLETION_DEFAULT,
-          fallbackVars
-        );
-        const fallbackModelId = fallbackConfig.model?.name ?? BRAND_COMPLETION_DEFAULT.model?.name;
-        const fallbackMessages = fallbackConfig.messages ?? [];
-        const fallbackGrId = fallbackConfig.custom?.gr_id ?? DEFAULT_GUARDRAIL_ID;
-        const fallbackGrVersion = fallbackConfig.custom?.gr_version ?? DEFAULT_GUARDRAIL_VERSION;
-        const fallbackStart = Date.now();
-        let safetyResult;
-        try {
-          safetyResult = await converse(fallbackModelId, fallbackMessages, {
-            temperature: 0.5,
-            maxTokens: 1024,
-            taskName: "brand_agent",
-            guardrailConfig: {
-              guardrailIdentifier: String(fallbackGrId),
-              guardrailVersion: String(fallbackGrVersion),
-            },
-          });
-        } catch (err) {
-          fallbackTracker.trackError();
-          throw err;
-        }
-        fallbackTracker.trackSuccess();
-        const safetyDurationMs = safetyResult.durationMs ?? Date.now() - fallbackStart;
-        if (safetyResult.usage) {
-          fallbackTracker.trackTokens({
-            input: safetyResult.usage.inputTokens,
-            output: safetyResult.usage.outputTokens,
-            total: safetyResult.usage.totalTokens,
-          });
-        }
-        if (safetyResult.ttftMs != null) fallbackTracker.trackTimeToFirstToken(safetyResult.ttftMs);
-        if (typeof fallbackTracker.trackDuration === "function") fallbackTracker.trackDuration(safetyDurationMs);
-        log({ level: "INFO", message: `   Safety re-ran response in ${safetyDurationMs}ms`, name: "brand" });
-        return {
-          content: (safetyResult.content ?? "").trim(),
-          usage: safetyResult.usage,
-          ttftMs: safetyResult.ttftMs,
-          durationMs: safetyDurationMs,
-          judgeResults,
-        };
-      }
-    }
-
-    return result;
-  }
-
-  // Fallback: getCompletionConfig + converse (no judges)
-  log({ level: "INFO", message: `   createChat unavailable; using completion config + Bedrock (no judges)`, name: "brand" });
   const { config, tracker } = await getCompletionConfig(
     CONFIG_KEY,
     contextVars,
     BRAND_COMPLETION_DEFAULT,
     contextVars
   );
-  const modelId = config.model?.name ?? BRAND_COMPLETION_DEFAULT.model?.name;
-  const messages = config.messages ?? [];
+
+  const modelId = config.model?.name ?? DEFAULT_MODEL;
+  const messages = ensureUserFirst(config.messages ?? []);
   const grId = config.custom?.gr_id ?? DEFAULT_GUARDRAIL_ID;
   const grVersion = config.custom?.gr_version ?? DEFAULT_GUARDRAIL_VERSION;
 
@@ -206,9 +58,9 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
       maxTokens: 1024,
       taskName: "brand_agent",
       guardrailConfig: {
-      guardrailIdentifier: String(grId),
-      guardrailVersion: String(grVersion),
-    },
+        guardrailIdentifier: String(grId),
+        guardrailVersion: String(grVersion),
+      },
     });
   } catch (err) {
     tracker.trackError();
@@ -227,13 +79,74 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
   if (result.ttftMs != null) tracker.trackTimeToFirstToken(result.ttftMs);
   if (typeof tracker.trackDuration === "function") tracker.trackDuration(durationMs);
 
+  const content = (result.content ?? "").trim();
   log({ level: "INFO", message: `   Brand response in ${durationMs}ms`, name: "brand" });
 
+  const judgeResults = await runJudges(config, contextVars, content, log);
+
   return {
-    content: result.content?.trim() ?? "",
+    content,
     usage: result.usage,
     ttftMs: result.ttftMs,
     durationMs,
-    judgeResults: [],
+    judgeResults,
   };
+}
+
+/**
+ * Run each judge from config: get judge config, build user-first messages, call Bedrock structured, return normalized results.
+ */
+async function runJudges(config, contextVars, brandContent, log) {
+  const judges = config.judgeConfiguration?.judges ?? [];
+  if (judges.length === 0) return [];
+
+  const messageHistory = config.messages
+    ? config.messages.map((m) => `${m.role}: ${m.content}`).join("\n")
+    : "";
+
+  const results = [];
+  for (const judgeEntry of judges) {
+    const judgeKey = judgeEntry.key ?? judgeEntry.judgeConfigKey;
+    if (!judgeKey) continue;
+    const samplingRate = judgeEntry.samplingRate ?? 1;
+    if (Math.random() > samplingRate) continue;
+
+    try {
+      const judgeConfig = await getJudgeConfig(judgeKey, contextVars, {
+        message_history: messageHistory,
+        response_to_evaluate: brandContent,
+      });
+      const { messages: judgeMessages, evaluationMetricKey, model } = judgeConfig;
+      if (!evaluationMetricKey || !judgeMessages?.length) continue;
+
+      const substituted = judgeMessages.map((m) => ({
+        ...m,
+        content: String(m.content ?? "")
+          .replace(/\{\{\s*message_history\s*\}\}/g, messageHistory)
+          .replace(/\{\{\s*response_to_evaluate\s*\}\}/g, brandContent),
+      }));
+
+      const modelId = model ?? DEFAULT_MODEL;
+      const out = await converseStructured(modelId, substituted, evaluationMetricKey);
+      const evals = out.evaluations && typeof out.evaluations === "object" ? out.evaluations : {};
+      const evalForMetric = evals[evaluationMetricKey];
+      results.push({
+        judgeConfigKey: judgeKey,
+        success: !!evalForMetric,
+        evals: evalForMetric
+          ? { [evaluationMetricKey]: { score: evalForMetric.score, reasoning: evalForMetric.reasoning } }
+          : {},
+        error: undefined,
+      });
+    } catch (err) {
+      log({ level: "WARN", message: `   Judge ${judgeKey} failed: ${err?.message}`, name: "brand" });
+      results.push({
+        judgeConfigKey: judgeKey,
+        success: false,
+        evals: {},
+        error: err?.message ?? "Judge failed",
+      });
+    }
+  }
+  return results;
 }

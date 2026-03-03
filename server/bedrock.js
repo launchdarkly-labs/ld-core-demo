@@ -7,8 +7,7 @@ import * as traceloop from "@traceloop/node-server-sdk";
 import { ChatBedrockConverse } from "@langchain/aws";
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 
-const localTesting =
-  process.env.OPENLLMETRY_LOCAL_TESTING === "true"
+const localTesting = process.env.OPENLLMETRY_LOCAL_TESTING === "true";
 traceloop.initialize({
   disableBatch: localTesting,
   instrumentModules: { langchain: true },
@@ -86,4 +85,34 @@ export async function converse(modelId, messages, options = {}) {
     );
   }
   return converseImpl(modelId, messages, opts);
+}
+
+/**
+ * Single non-streaming invoke for judges. Messages must end with user; we prepend a user message if first is system (Bedrock requirement).
+ * Returns parsed { evaluations: { [evaluationMetricKey]: { score, reasoning } } }.
+ */
+export async function converseStructured(modelId, messages, evaluationMetricKey, options = {}) {
+  let lcMessages = toLangChainMessages(messages);
+  if (lcMessages.length > 0 && lcMessages[0].constructor.name === "SystemMessage") {
+    lcMessages = [new HumanMessage("Begin the evaluation."), ...lcMessages];
+  }
+  const jsonInstruction = `Respond with only valid JSON in this exact shape, no other text: {"evaluations": {"${evaluationMetricKey}": {"score": <number 0-1>, "reasoning": "<string>"}}}`;
+  lcMessages.push(new HumanMessage(jsonInstruction));
+
+  const id = getModelId(modelId);
+  const llm = new ChatBedrockConverse({
+    model: id,
+    region,
+    temperature: 0,
+    maxTokens: 1024,
+  });
+  const response = await llm.invoke(lcMessages);
+  const raw = typeof response.content === "string" ? response.content : String(response.content ?? "");
+  const trimmed = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+  try {
+    const data = JSON.parse(trimmed);
+    return data.evaluations && typeof data.evaluations === "object" ? data : { evaluations: {} };
+  } catch {
+    return { evaluations: {} };
+  }
 }

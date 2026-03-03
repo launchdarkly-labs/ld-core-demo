@@ -332,24 +332,34 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
               </button>
             </div>
             <div className="judge-panel-content">
-              {lastJudgeResults.map((jr, idx) => (
-                <div key={idx} className="judge-metrics-judge">
-                  <div className="judge-metrics-judge-name">
-                    {jr.judgeConfigKey ?? `Judge ${idx + 1}`}
+              {lastJudgeResults.map((jr, idx) => {
+                const name = jr.judgeConfigKey ?? jr.judge_config_key ?? `Judge ${idx + 1}`;
+                const evals = jr.evals && typeof jr.evals === "object" && !Array.isArray(jr.evals) ? jr.evals : {};
+                const hasEvals = Object.keys(evals).length > 0;
+                const friendlyMetric = (key) => (typeof key === "string" && key.includes(":") ? key.split(":").pop() : key);
+                return (
+                  <div key={idx} className="judge-metrics-judge">
+                    <div className="judge-metrics-judge-name">{name}</div>
+                    {hasEvals
+                      ? Object.entries(evals).map(([metric, evalScore]) => (
+                          <div key={metric} className="judge-metrics-metric">
+                            <span className="judge-metrics-metric-name">{friendlyMetric(metric)}</span>
+                            <span className="judge-metrics-metric-score">
+                              Score: {evalScore?.score ?? "—"}
+                            </span>
+                            {(evalScore?.reasoning ?? "") && (
+                              <p className="judge-metrics-reasoning">{evalScore.reasoning}</p>
+                            )}
+                          </div>
+                        ))
+                      : (
+                          <div className="judge-metrics-metric judge-metrics-metric-empty">
+                            {jr.error ? `Error: ${jr.error}` : "No evaluation scores"}
+                          </div>
+                        )}
                   </div>
-                  {jr.success && jr.evals && Object.entries(jr.evals).map(([metric, evalScore]) => (
-                    <div key={metric} className="judge-metrics-metric">
-                      <span className="judge-metrics-metric-name">{metric}</span>
-                      <span className="judge-metrics-metric-score">
-                        Score: {evalScore?.score ?? "—"}
-                      </span>
-                      {evalScore?.reasoning && (
-                        <p className="judge-metrics-reasoning">{evalScore.reasoning}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           <button
