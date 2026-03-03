@@ -4,7 +4,7 @@ import "../../../server/init-ld.js";
 import { runWithSdkKey } from "../../../server/ld.js";
 import { runTriage } from "../../../server/triage.js";
 import { runSpecialist } from "../../../server/specialists.js";
-import { runBrandAgent } from "../../../server/brand.js";
+import { runBrandAgent, runJudgesWithConfig } from "../../../server/brand.js";
 import { withWorkflow } from "@traceloop/node-server-sdk";
 import { pushLog } from "../../../lib/log-stream";
 
@@ -73,7 +73,7 @@ export async function POST(request) {
   pushLog({
     level: "INFO",
     message: guardrails ? "Guardrails turned on" : "Guardrails turned off",
-    name: "chat",
+    name: guardrails ? "guardrails-on" : "guardrails-off",
     ...(sessionId && { sessionId }),
   });
   pushLog({
@@ -121,25 +121,55 @@ export async function POST(request) {
 
         const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
         let firstRunJudgeResults = null;
+        let firstRunConfig = null;
         if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
-          firstRunJudgeResults = brandResult?.judgeResults ?? [];
-          logger({
-            level: "WARN",
-            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
-            name: "toxicity-resend",
-          });
-          brandResult = await runBrandAgent(
-            specialistResult.content,
-            query,
-            triageResult.queryType,
-            { ...userContext, guardrails: true },
-            { logger }
-          );
-          logger({
-            level: "INFO",
-            message: `   Returned brand response from second run (with guardrails)`,
-            name: "chat",
-          });
+          if (userContext.guardrails) {
+            firstRunJudgeResults = brandResult?.judgeResults ?? [];
+            firstRunConfig = brandResult?.config ?? null;
+            logger({
+              level: "WARN",
+              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
+              name: "toxicity-resend",
+            });
+            brandResult = await runBrandAgent(
+              specialistResult.content,
+              query,
+              triageResult.queryType,
+              { ...userContext, guardrails: true },
+              { logger }
+            );
+            // If second run's LD variation has no judges, run first run's judges on second run's content so they show in the LLM tab
+            const secondJudgeResults = brandResult?.judgeResults ?? [];
+            if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
+              const contextVars = {
+                user_key: userContext.user_key ?? "anonymous",
+                query,
+                customer_name: userContext.name ?? "there",
+                original_query: query,
+                query_type: triageResult.queryType,
+                specialist_response: specialistResult.content,
+                ...userContext,
+              };
+              const fallbackSecondJudges = await runJudgesWithConfig(
+                firstRunConfig,
+                contextVars,
+                brandResult?.content ?? "",
+                logger
+              );
+              brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
+            }
+            logger({
+              level: "INFO",
+              message: `   Returned brand response from second run (with guardrails)`,
+              name: "chat",
+            });
+          } else {
+            logger({
+              level: "INFO",
+              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
+              name: "toxicity-resend",
+            });
+          }
         }
 
         return { triageResult, specialistResult, brandResult, firstRunJudgeResults };

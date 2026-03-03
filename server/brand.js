@@ -96,7 +96,16 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
     ttftMs: result.ttftMs,
     durationMs,
     judgeResults,
+    config,
   };
+}
+
+/**
+ * Run judges from a completion config against given content. Exported so the chat route can run
+ * the first run's judges on the second run's content when the second run's LD variation has no judges.
+ */
+export async function runJudgesWithConfig(config, contextVars, content, log) {
+  return runJudges(config, contextVars, content, log);
 }
 
 /**

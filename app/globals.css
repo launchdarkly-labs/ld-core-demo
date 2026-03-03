@@ -633,7 +633,7 @@ a.user-dropdown-doc-btn {
   width: 0;
   max-width: 0;
   overflow: hidden;
-  background: #fff;
+  background: #f5f3ff;
   border: none;
   border-radius: 12px 0 0 12px;
   box-shadow: none;
@@ -647,9 +647,9 @@ a.user-dropdown-doc-btn {
   width: 320px;
   max-width: 320px;
   max-height: 600px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e9e5ff;
   border-right: none;
-  box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+  box-shadow: -4px 0 20px rgba(109, 40, 217, 0.08);
   margin-right: 36px;
 }
 
@@ -659,11 +659,11 @@ a.user-dropdown-doc-btn {
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #6d28d9 0%, #5b21b6 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: #fecaca;
 }
 
 .judge-panel-close {
@@ -671,18 +671,18 @@ a.user-dropdown-doc-btn {
   height: 28px;
   padding: 0;
   border: none;
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   font-size: 1.25rem;
   line-height: 1;
-  color: #6b7280;
+  color: #fecaca;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
 .judge-panel-close:hover {
-  background: #d1d5db;
-  color: #111;
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
 }
 
 .judge-panel-content {
@@ -692,6 +692,7 @@ a.user-dropdown-doc-btn {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: 12px 14px;
+  background: #f5f3ff;
 }
 
 /* Tab on left edge of chat to open/close judge panel – same style as "Show Terminal" */
