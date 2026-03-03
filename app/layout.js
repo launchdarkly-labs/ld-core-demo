@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Outfit } from "next/font/google";
-import { LDClientProvider } from "./LDClientProvider";
+import { SessionProvider, LDClientWrapper } from "./SessionContext";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -17,13 +17,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={outfit.variable}>
       <body>
-        <LDClientProvider
-          clientSideID={process.env.LD_CLIENT_ID}
-          observabilityServiceName={process.env.LD_OBSERVABILITY_SERVICE_NAME}
-          sessionReplayPrivacy={process.env.LD_SESSION_REPLAY_PRIVACY}
-        >
-          {children}
-        </LDClientProvider>
+        <SessionProvider>
+          <LDClientWrapper
+            observabilityServiceName={process.env.LD_OBSERVABILITY_SERVICE_NAME}
+            sessionReplayPrivacy={process.env.LD_SESSION_REPLAY_PRIVACY}
+          >
+            {children}
+          </LDClientWrapper>
+        </SessionProvider>
       </body>
     </html>
   );

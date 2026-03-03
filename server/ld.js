@@ -44,6 +44,7 @@ async function getClient(sdkKey) {
     plugins: [
       new Observability({
         serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "policy-agent-node",
+        // Traces/logs/metrics go to LaunchDarkly by default (otel.observability.app.launchdarkly.com)
         ...(process.env.LD_OTLP_ENDPOINT && { otlpEndpoint: process.env.LD_OTLP_ENDPOINT }),
       }),
     ],
@@ -85,12 +86,12 @@ export function runWithSdkKey(sdkKey, fn) {
 }
 
 /**
- * Get a LaunchDarkly server-side client for the current request (or env default).
- * Uses SDK key from AsyncLocalStorage (set by runWithSdkKey) or process.env.LD_SDK_KEY.
+ * Get a LaunchDarkly server-side client for the current request.
+ * Uses SDK key from AsyncLocalStorage (set by runWithSdkKey in the chat route). Only available after a project is connected.
  */
 export async function getLdClient() {
-  const key = ldSdkKeyStorage.getStore() ?? process.env.LD_SDK_KEY;
-  if (!key) throw new Error("LD_SDK_KEY is required (set session SDK key in UI or LD_SDK_KEY in env)");
+  const key = ldSdkKeyStorage.getStore();
+  if (!key) throw new Error("No SDK key in scope. Connect to a project in the user menu and send sdkKey with the request.");
   return getClient(key);
 }
 

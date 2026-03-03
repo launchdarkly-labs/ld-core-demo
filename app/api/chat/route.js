@@ -1,10 +1,14 @@
-// LLM observability init order: (1) LD, (2) Bedrock. init-ld runs first; triage loads bedrock.js.
+// Init order: (1) LD (with Observability), (2) Bedrock. init-ld runs first; triage loads bedrock.js.
 import "../../../server/init-ld.js";
-import { runWithSdkKey } from "../../../server/ld.js";
+import { runWithSdkKey, getLdClient, LDObserve } from "../../../server/ld.js";
 import { runTriage } from "../../../server/triage.js";
 import { runSpecialist } from "../../../server/specialists.js";
 import { runBrandAgent, runJudgesWithConfig } from "../../../server/brand.js";
 import { pushLog } from "../../../lib/log-stream";
+import { trace } from "@opentelemetry/api";
+
+const SERVICE_NAME = process.env.LD_OBSERVABILITY_SERVICE_NAME || "multi-agent-node";
+const tracer = trace.getTracer(SERVICE_NAME, "1.0.0");
 
 /** Toxicity score above this triggers resend with guardrails. Override with env TOXICITY_THRESHOLD (0–1). */
 const TOXICITY_THRESHOLD = (() => {
@@ -51,10 +55,10 @@ export async function POST(request) {
     return Response.json({ error: "userInput is required" }, { status: 400 });
   }
 
-  const sdkKey = body?.sdkKey?.trim() || process.env.LD_SDK_KEY;
+  const sdkKey = body?.sdkKey?.trim();
   if (!sdkKey) {
     return Response.json(
-      { error: "sdkKey is required (set connection in user menu or LD_SDK_KEY in env)" },
+      { error: "Connect to a project in the user menu first (sdkKey is required)." },
       { status: 400 }
     );
   }
@@ -89,8 +93,27 @@ export async function POST(request) {
 
   try {
     const result = await runWithSdkKey(sdkKey, async () => {
-      // 1. Triage: route to one of policy_question, provider_lookup, scheduler_agent
-      const triageResult = await runTriage(query, userContext, { logger });
+      await getLdClient(); // ensure LD client and Observability plugin are initialized so LDObserve has context
+      const headers =
+        request.headers && typeof request.headers.entries === "function"
+          ? Object.fromEntries(request.headers.entries())
+          : request.headers;
+      return LDObserve.runWithHeaders("chat_request", headers, async () => {
+        // Child spans so LaunchDarkly shows one trace: chat_request → triage_router → specialist → brand_agent
+        const triageResult = await tracer.startActiveSpan(
+          "triage_router",
+          { attributes: { "chat.query_type": "routing" } },
+          async (span) => {
+            try {
+              const out = await runTriage(query, userContext, { logger });
+              span?.setAttribute("chat.next_agent", out.nextAgent);
+              span?.setAttribute("chat.confidence", out.confidence);
+              return out;
+            } finally {
+              span?.end();
+            }
+          }
+        );
       logger({
         level: "INFO",
         message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
@@ -98,76 +121,101 @@ export async function POST(request) {
       });
 
       // 2. Specialist: run the chosen agent
-      const specialistResult = await runSpecialist(
-        triageResult.queryType,
-        query,
-        userContext,
-        { logger }
+      const specialistResult = await tracer.startActiveSpan(
+        `specialist.${triageResult.queryType}`,
+        { attributes: { "chat.query_type": triageResult.queryType } },
+        async (span) => {
+          try {
+            return await runSpecialist(
+              triageResult.queryType,
+              query,
+              userContext,
+              { logger }
+            );
+          } finally {
+            span?.end();
+          }
+        }
       );
 
       // 3. Brand completion — call initially without guardrails; after judges, if toxicity > 0.6, resend with guardrails
-      let brandResult = await runBrandAgent(
-        specialistResult.content,
-        query,
-        triageResult.queryType,
-        { ...userContext, guardrails: false },
-        { logger }
+      const brandSpanResult = await tracer.startActiveSpan(
+        "brand_agent",
+        { attributes: { "chat.query_type": triageResult.queryType } },
+        async (span) => {
+          try {
+            let brandResult = await runBrandAgent(
+              specialistResult.content,
+              query,
+              triageResult.queryType,
+              { ...userContext, guardrails: false },
+              { logger }
+            );
+
+            const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
+            let firstRunJudgeResults = null;
+            let firstRunConfig = null;
+            if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
+              if (userContext.guardrails) {
+                firstRunJudgeResults = brandResult?.judgeResults ?? [];
+                firstRunConfig = brandResult?.config ?? null;
+                logger({
+                  level: "WARN",
+                  message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
+                  name: "toxicity-resend",
+                });
+                brandResult = await runBrandAgent(
+                  specialistResult.content,
+                  query,
+                  triageResult.queryType,
+                  { ...userContext, guardrails: true },
+                  { logger }
+                );
+                // If second run's LD variation has no judges, run first run's judges on second run's content so they show in the LLM tab
+                const secondJudgeResults = brandResult?.judgeResults ?? [];
+                if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
+                  const contextVars = {
+                    user_key: userContext.user_key ?? "anonymous",
+                    query,
+                    customer_name: userContext.name ?? "there",
+                    original_query: query,
+                    query_type: triageResult.queryType,
+                    specialist_response: specialistResult.content,
+                    ...userContext,
+                  };
+                  const fallbackSecondJudges = await runJudgesWithConfig(
+                    firstRunConfig,
+                    contextVars,
+                    brandResult?.content ?? "",
+                    logger
+                  );
+                  brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
+                }
+                logger({
+                  level: "INFO",
+                  message: `   Returned brand response from second run (with guardrails)`,
+                  name: "chat",
+                });
+              } else {
+                logger({
+                  level: "INFO",
+                  message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
+                  name: "toxicity-resend",
+                });
+              }
+            }
+
+            return { brandResult, firstRunJudgeResults };
+          } finally {
+            span?.end();
+          }
+        }
       );
 
-      const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
-      let firstRunJudgeResults = null;
-      let firstRunConfig = null;
-      if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
-        if (userContext.guardrails) {
-          firstRunJudgeResults = brandResult?.judgeResults ?? [];
-          firstRunConfig = brandResult?.config ?? null;
-          logger({
-            level: "WARN",
-            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
-            name: "toxicity-resend",
-          });
-          brandResult = await runBrandAgent(
-            specialistResult.content,
-            query,
-            triageResult.queryType,
-            { ...userContext, guardrails: true },
-            { logger }
-          );
-          // If second run's LD variation has no judges, run first run's judges on second run's content so they show in the LLM tab
-          const secondJudgeResults = brandResult?.judgeResults ?? [];
-          if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
-            const contextVars = {
-              user_key: userContext.user_key ?? "anonymous",
-              query,
-              customer_name: userContext.name ?? "there",
-              original_query: query,
-              query_type: triageResult.queryType,
-              specialist_response: specialistResult.content,
-              ...userContext,
-            };
-            const fallbackSecondJudges = await runJudgesWithConfig(
-              firstRunConfig,
-              contextVars,
-              brandResult?.content ?? "",
-              logger
-            );
-            brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
-          }
-          logger({
-            level: "INFO",
-            message: `   Returned brand response from second run (with guardrails)`,
-            name: "chat",
-          });
-        } else {
-          logger({
-            level: "INFO",
-            message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
-            name: "toxicity-resend",
-          });
-        }
-      }
+      const { brandResult, firstRunJudgeResults } = brandSpanResult;
 
       return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
+      });
     });
 
     const { triageResult, specialistResult, brandResult, firstRunJudgeResults } = result;
@@ -223,6 +271,9 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error("Triage error:", err);
+    if (typeof LDObserve?.recordError === "function") {
+      LDObserve.recordError(err instanceof Error ? err : new Error(String(err)));
+    }
     const message = err?.message ?? "Internal server error";
     pushLog({
       level: "ERROR",

@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Terminal from "./components/Terminal";
+import { useSession } from "./SessionContext";
 
 function scrollToEnd(messagesEndRef) {
   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -13,7 +14,7 @@ const DOCS = [
   { id: "ld-architecture", label: "LD Architecture", src: "/docs/LD-Architecture.png" },
 ];
 
-function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessionProjectKey }) {
+function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
   const [open, setOpen] = useState(false);
   const [projectKeyInput, setProjectKeyInput] = useState("");
   const [actionStatus, setActionStatus] = useState(null);
@@ -53,8 +54,7 @@ function UserMenu({ sessionSdkKey, setSessionSdkKey, sessionProjectKey, setSessi
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.projectKey && data.sdkKey) {
-        setSessionProjectKey(data.projectKey);
-        setSessionSdkKey(data.sdkKey);
+        setSession(data);
       } else {
         setConnectError(data.error || "Could not connect to project.");
       }
@@ -471,8 +471,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
 }
 
 export default function Home() {
-  const [sessionSdkKey, setSessionSdkKey] = useState("");
-  const [sessionProjectKey, setSessionProjectKey] = useState("");
+  const { projectKey: sessionProjectKey, sdkKey: sessionSdkKey, setSession } = useSession();
   const [logSessionId] = useState(
     () => (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `sess-${Date.now()}-${Math.random().toString(36).slice(2)}`)
   );
@@ -487,10 +486,9 @@ export default function Home() {
         <nav className="health-nav">
           <div className="nav-right">
             <UserMenu
-              sessionSdkKey={sessionSdkKey}
-              setSessionSdkKey={setSessionSdkKey}
               sessionProjectKey={sessionProjectKey}
-              setSessionProjectKey={setSessionProjectKey}
+              sessionSdkKey={sessionSdkKey}
+              setSession={setSession}
             />
             <span className="nav-connection-status" aria-live="polite">
               {sessionProjectKey ? (

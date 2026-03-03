@@ -4,8 +4,8 @@ const DEFAULT_ENV_KEY = "production";
 /**
  * Connect to a LaunchDarkly project by project key.
  * 1. Check project exists (GET project)
- * 2. Get production environment SDK key
- * 3. Return { projectKey, sdkKey, environmentKey } for session
+ * 2. Get production environment (SDK key + client-side ID)
+ * 3. Return { projectKey, sdkKey, clientSideId, environmentKey } for session
  */
 export async function POST(request) {
   let body;
@@ -71,10 +71,27 @@ export async function POST(request) {
     }
 
     const production = items.find((e) => e.key === DEFAULT_ENV_KEY) ?? items[0];
-    const sdkKey = production.apiKey;
+    const envKey = production.key;
+
+    // GET single environment to obtain client-side ID (_id) for Observability + Session Replay
+    const envRes = await fetch(
+      `${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/environments/${encodeURIComponent(envKey)}`,
+      { headers }
+    );
+    if (!envRes.ok) {
+      const text = await envRes.text();
+      return Response.json(
+        { error: "Failed to load environment details", detail: text },
+        { status: envRes.status >= 500 ? 502 : envRes.status }
+      );
+    }
+    const envDetail = await envRes.json();
+    const sdkKey = envDetail.apiKey ?? production.apiKey;
+    const clientSideId = envDetail._id ?? null;
+
     if (!sdkKey) {
       return Response.json(
-        { error: `Environment "${production.key}" has no SDK key.` },
+        { error: `Environment "${envKey}" has no SDK key.` },
         { status: 400 }
       );
     }
@@ -82,8 +99,9 @@ export async function POST(request) {
     return Response.json({
       projectKey,
       sdkKey,
-      environmentKey: production.key,
-      environmentName: production.name,
+      clientSideId,
+      environmentKey: envKey,
+      environmentName: envDetail.name ?? production.name,
     });
   } catch (e) {
     return Response.json(
