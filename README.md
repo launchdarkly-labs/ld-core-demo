@@ -1,6 +1,6 @@
 # Policy Agent Node
 
- ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand_agent** → final response.
+ ToggleHealth UI and a multi-agent chat flow: **triage** → **specialist** (policy / provider / schedule) → **brand_agent** → **toxicity judge** → final response.
 
 ## System architecture
 
@@ -8,7 +8,7 @@
 
 - **Triage router** — [`server/triage.js`](server/triage.js): Uses LaunchDarkly AI Config `triage_agent` to call Bedrock; the model returns JSON with `query_type` (`policy_question`, `provider_lookup`, or `scheduler_agent`). Low confidence (&lt; 0.7) can set `escalationNeeded`; the chosen type is passed to the specialist step.
 - **Specialist** — [`server/specialists.js`](server/specialists.js): One of three agents runs (Policy Specialist, Provider Specialist, or Schedule Agent), each with a simple Bedrock prompt. No RAG in this app; specialists answer from instructions only.
-- **Brand completion** (`brand_agent`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). **Single path:** LaunchDarkly `getCompletionConfig` → Bedrock `converse` for the reply; then each **judge** from the config is run with Bedrock (user-first messages, structured JSON) and results are shown in the judge panel. No patches. Optional guardrails via AI Config `custom.gr_id` / `gr_version`.
+- **Brand Voice** (`brand_agent`) — [`server/brand.js`](server/brand.js): Takes the specialist’s raw reply and the original query, and returns the final customer-facing response in ToggleHealth’s voice (friendly, clear, helpful). **LLM Judge:** Judges are attached to the completion config in LaunchDarkly; when present, they run and results are shown in the judge panel.
 
 ```
                         ┌─────────────────┐
@@ -132,9 +132,11 @@ You can seed a LaunchDarkly project with AI configs (agents, judges, completion 
 
 **Setup**
 
-1. **Seed file** — Place **`ai-configs-seed.json`** in the project root with an **`ai_configs`** array (format matches a LaunchDarkly export).
+1. **Seed file** — The repo includes **`ai-configs-seed.json`** in the project root (with an **`ai_configs`** array; format matches a LaunchDarkly export). Use it as-is or replace it with your own export.
 2. **API token** — Set **`LD_API_KEY`** in `.env.local` (LaunchDarkly API token). Required for Connect and for Create AI configs.
 3. **Target project** — Connect in the UI with a **project key** first. **Create AI configs** uses the session’s project key (no separate project key input). The button is disabled until you are connected.
+
+**Deployed (Docker)** — The Dockerfile copies `ai-configs-seed.json` into the image at `/app/ai-configs-seed.json`. Keep the file in the build context (do not add it to `.dockerignore`). If the app still reports the seed file not found (e.g. different cwd), set **`AI_CONFIGS_SEED_PATH`** to the full path (e.g. `/app/ai-configs-seed.json`).
 
 **Usage**
 
@@ -170,6 +172,18 @@ policy-agent-node/
 └── package.json
 ```
 
+### Addendum: Bedrock Converse — conversation must start with a user message
+
+**Bedrock Converse API** requires the conversation to **start with a user message**. If the first message is a system message, you may see:
+
+```text
+ValidationException: A conversation must start with a user message. Try again with a conversation that starts with a user message.
+```
+
+**Fix in this repo (brand completion):** [`server/brand.js`](server/brand.js) calls `ensureUserFirst(messages)` before every Bedrock `converse()` for `brand_agent`. If the first message is not a user message (e.g. system), we prepend a user message (`"Begin."`) so the request is valid. You do not need to change your LaunchDarkly AI Config; the app handles it.
+
+**Alternative:** In LaunchDarkly, you can instead configure the completion so the first message in the prompt is already a user message (e.g. put instructions in a later system turn or in the user content).
+
 ### Addendum: Judges and Bedrock
 
 The app runs judges by calling Bedrock directly with **user-first messages** (we prepend “Begin the evaluation.” when the judge’s first message is system), so no SDK patch is needed. If you run judges in the **Python notebook** with Bedrock and see `ValidationException: A conversation must start with a user message`, use the same approach there or configure the judge in the LaunchDarkly UI so the first message is a user message.
@@ -191,5 +205,3 @@ ValidationException: Invocation of model ID ... with on-demand throughput isn't 
 **TODO**
 - Finalize KBs and implement in configs for RAG
 - Judge metrics sent to LD (scores/traces)
-- Auto upload LLM configs & tools to project
-- Auto create experiment and realistic dummy data

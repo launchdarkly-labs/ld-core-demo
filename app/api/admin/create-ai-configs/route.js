@@ -54,17 +54,38 @@ export async function POST(request) {
     );
   }
 
-  const seedPath = join(process.cwd(), "ai-configs-seed.json");
+  // Prefer explicit path (e.g. in Docker); fallback to project root from cwd
+  const candidates = [
+    process.env.AI_CONFIGS_SEED_PATH,
+    join(process.cwd(), "ai-configs-seed.json"),
+    join(process.cwd(), "..", "ai-configs-seed.json"),
+  ].filter(Boolean);
+  let seedPath = null;
+  for (const p of candidates) {
+    try {
+      await readFile(p, "utf-8");
+      seedPath = p;
+      break;
+    } catch {
+      /* try next */
+    }
+  }
+  if (!seedPath) {
+    return Response.json(
+      {
+        error:
+          "ai-configs-seed.json not found in project root. In Docker, ensure the file is in the image (see Dockerfile). Optionally set AI_CONFIGS_SEED_PATH.",
+      },
+      { status: 400 }
+    );
+  }
 
   let backup;
   try {
     const raw = await readFile(seedPath, "utf-8");
     backup = JSON.parse(raw);
   } catch (e) {
-    const msg =
-      e.code === "ENOENT"
-        ? "ai-configs-seed.json not found in project root"
-        : e.message || "Failed to read seed file";
+    const msg = e.message || "Failed to read seed file";
     return Response.json({ error: msg }, { status: 400 });
   }
 
