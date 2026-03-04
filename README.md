@@ -76,7 +76,7 @@ The app uses a **project key** to connect to LaunchDarkly. You can run without s
 ## Quick start (Docker)
 
 ```bash
-docker build -t policy-agent-node .
+docker build -t multi-agent-node .
 ```
 
 **Docker (local)** — use your host AWS profile (e.g. SSO). Mount `~/.aws` and set `AWS_PROFILE`:
@@ -88,7 +88,7 @@ docker run -p 3000:3000 \
   -e AWS_PROFILE=aiconfigdemo \
   -e HOME=/app \
   -v "$HOME/.aws:/app/.aws:ro" \
-  policy-agent-node
+  multi-agent-node
 ```
 
 Run `aws sso login --profile aiconfigdemo` on the host first. Alternatively use `--env-file .env` (do not commit `.env`).
@@ -149,7 +149,7 @@ The response reports how many configs and variations were created and lists any 
 ## Project layout
 
 ```
-policy-agent-node/
+multi-agent-node/
 ├── app/
 │   ├── layout.js          # Root layout + globals.css
 │   ├── page.js            # Home + Coverage Concierge chat (client)

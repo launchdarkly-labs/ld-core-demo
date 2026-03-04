@@ -43,7 +43,7 @@ async function getClient(sdkKey) {
   const client = init(sdkKey, {
     plugins: [
       new Observability({
-        serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "policy-agent-node",
+        serviceName: process.env.LD_OBSERVABILITY_SERVICE_NAME || "multi-agent-node",
         // Traces/logs/metrics go to LaunchDarkly by default (otel.observability.app.launchdarkly.com)
         ...(process.env.LD_OTLP_ENDPOINT && { otlpEndpoint: process.env.LD_OTLP_ENDPOINT }),
       }),

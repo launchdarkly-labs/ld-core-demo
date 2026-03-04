@@ -5,7 +5,7 @@ import { LDProvider } from "launchdarkly-react-client-sdk";
 import Observe from "@launchdarkly/observability";
 import Record from "@launchdarkly/session-replay";
 
-const DEFAULT_SERVICE_NAME = "policy-agent-node";
+const DEFAULT_SERVICE_NAME = "multi-agent-node";
 
 /**
  * Client-side LaunchDarkly provider with Observability and Session Replay.

@@ -1,5 +1,5 @@
 {
-  "name": "policy-agent-node",
+  "name": "multi-agent-node",
   "version": "1.0.0",
   "private": true,
   "type": "module",
