@@ -37,7 +37,8 @@ async function getClient(sdkKey) {
     return entry.client;
   }
   if (entry) {
-    entry.client.close().catch(() => {});
+    const p = entry.client.close();
+    if (p != null && typeof p.catch === "function") p.catch(() => {});
     clients.delete(sdkKey);
   }
   const client = init(sdkKey, {
@@ -58,7 +59,8 @@ function cleanup() {
   const now = Date.now();
   for (const [key, entry] of clients.entries()) {
     if (now - entry.lastUsed > TTL_MS) {
-      entry.client.close().catch(() => {});
+      const p = entry.client.close();
+      if (p != null && typeof p.catch === "function") p.catch(() => {});
       clients.delete(key);
     }
   }
