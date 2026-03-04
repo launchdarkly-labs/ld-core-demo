@@ -65,7 +65,7 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
           messages,
           completion: r.content,
           usage: r.usage,
-        });
+        }, { maxTokens: 1024, temperature: 0.5 });
         return r;
       }
     );

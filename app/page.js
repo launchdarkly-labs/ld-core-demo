@@ -168,6 +168,21 @@ function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
               </button>
             ))}
             <a
+              href={
+                sessionProjectKey
+                  ? `https://app.launchdarkly.com/projects/${sessionProjectKey}/traces?query=span_name%3Dbedrock.inference.triage&page=1&expressions=%5B%7B%22aggregator%22%3A%22Count%22%2C%22column%22%3A%22%22%7D%5D&limit=100&limitFunctionType=Count&bucketBySetting=Count&bucketByKey=Timestamp&bucketCount=50&bucketInterval=60&graphType=Bar+chart&relativeTime`
+                  : "#"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="user-dropdown-doc-btn"
+              title={!sessionProjectKey ? "Connect to a project first" : "Open Observability traces in LaunchDarkly"}
+              aria-disabled={!sessionProjectKey}
+              onClick={(e) => !sessionProjectKey && e.preventDefault()}
+            >
+              Observability (Traces)
+            </a>
+            <a
               href="https://app.launchdarkly.com/projects/mpoliks-ld-demo/experiments/toggle-health-policy-agent-prompt-impact_l09nJ1_M3ARtd_T3uzV6_IIIbgV/results?env=production&selected-env=production"
               target="_blank"
               rel="noopener noreferrer"

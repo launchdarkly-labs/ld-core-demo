@@ -46,7 +46,7 @@ export async function runTriage(query, userContext = {}, options = {}) {
           messages,
           completion: r.content,
           usage: r.usage,
-        });
+        }, { maxTokens: 1024, temperature: 0 });
         return r;
       }
     );

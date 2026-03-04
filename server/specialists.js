@@ -44,7 +44,7 @@ export async function runSpecialist(queryType, query, userContext = {}, options 
           messages,
           completion: r.content,
           usage: r.usage,
-        });
+        }, { maxTokens: 1024, temperature: 0.3 });
         return r;
       }
     );

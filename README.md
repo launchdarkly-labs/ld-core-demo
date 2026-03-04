@@ -159,6 +159,7 @@ policy-agent-node/
 ├── server/
 │   ├── ai-config-defaults.js  # Default prompts/model per agent
 │   ├── ld.js                  # LaunchDarkly client cache (by SDK key) + getAIConfig, runWithSdkKey
+│   ├── observe-bedrock.js     # LDObserve spans around Bedrock + gen_ai/ld dotted attributes
 │   ├── triage.js              # Triage: LD config → Bedrock → queryType
 │   ├── specialists.js         # Policy / Provider / Schedule specialists 
 │   ├── brand.js               # Brand completion: specialist reply → final response
@@ -199,6 +200,30 @@ ValidationException: Invocation of model ID ... with on-demand throughput isn't 
 **Meaning:** That model is only available via **provisioned throughput** in Bedrock, not on-demand. You're calling it by model ID (on-demand); Bedrock wants an **inference profile** ID/ARN instead.
 
 **Fix:** In LaunchDarkly, set the model to the **inference profile** ID/ARN for that model (from the Bedrock console), or switch to a model that supports on-demand (e.g. `anthropic.claude-3-5-sonnet-20241022-v2:0`).
+
+### Addendum: Observability — Summaries and monitoring tab
+
+The app instruments each chat request so LaunchDarkly **Observability** can show traces with **one span per Bedrock call**, tagged with AI Config and gen_ai attributes.
+
+**What we do**
+
+- **Parent span:** Each `/api/chat` runs inside `LDObserve.runWithHeaders("chat_request", headers, ...)`, giving a **`chat_request`** span.
+- **Child spans per LLM call:** Triage, specialist, and brand each wrap their Bedrock call in **`LDObserve.startWithHeaders(spanName, headers)`** so you get spans like `bedrock.inference.triage`, `bedrock.inference.specialist.policy_question`, `bedrock.inference.brand`. The route passes **headers** in options so these are in the same trace.
+- On each of those spans we set:
+  - **`ld.ai_config.key`** — AI Config key (`triage_agent`, `policy_agent`, `brand_agent`, etc.).
+  - **`deployment.environment`** — Set to `production`.
+  - **`gen_ai.prompt.0.content`**, **`gen_ai.prompt.0.role`**, **`gen_ai.prompt.1.content`**, … — Prompt messages as **dotted attributes** so the exporter produces **nested JSON** (e.g. `gen_ai.prompt: { "0": { content, role }, "1": { ... } }`), not a single JSON string.
+  - **`gen_ai.completion.0.content`**, **`gen_ai.completion.0.role`**, … — Completion in the **same pattern** as prompt (indexed 0, 1, …); a single response is just index `0`.
+  - **`gen_ai.request.model`**, **`gen_ai.request.max_tokens`**, **`gen_ai.request.temperature`**, **`gen_ai.provider.name`**, **`gen_ai.usage.*`** (input/output/prompt/completion tokens).
+
+**Where it lives**
+
+- **[`server/observe-bedrock.js`](server/observe-bedrock.js)** — `runWithBedrockSpan(spanName, configKey, headers, fn)` creates the LDObserve span and sets `ld.ai_config.key`; **`setGenAiAttributes(span, { modelId, messages, completion, usage }, options)`** sets the dotted gen_ai attributes. Triage, specialists, and brand call these after each Bedrock `converse()`.
+
+**In LaunchDarkly**
+
+- **Observability → Traces:** Filter by `ld.ai_config.key` or span name `bedrock.inference.*` to see which config was used, latency, and errors.
+- **Session Replay:** After **Connect** in the UI, the client SDK (with Session Replay) is initialized so you can link browser sessions to the same trace.
 
 ---
 
