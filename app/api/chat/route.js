@@ -59,7 +59,7 @@ export async function POST(request) {
     );
   }
 
-  const guardrails = body.guardrails !== false;
+  const guardrails = body.guardrails === true;
   const sessionId = body?.sessionId?.trim() || null;
   const requestId = crypto.randomUUID();
   const userContext = createUserContext(body);

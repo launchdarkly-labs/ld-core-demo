@@ -284,7 +284,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [guardrailsOn, setGuardrailsOn] = useState(true);
+  const [guardrailsOn, setGuardrailsOn] = useState(false);
   const [lastJudgeResults, setLastJudgeResults] = useState([]);
   const [judgeDropdownOpen, setJudgeDropdownOpen] = useState(false);
   const chatContentRef = useRef(null);
