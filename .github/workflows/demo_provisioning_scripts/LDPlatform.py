@@ -2138,7 +2138,86 @@ class LDPlatform:
         
         print(f"Variation with key '{variation_key}' not found")
         return None
+
+    ##################################################
+    # Create AI Fallback Segment
+    ##################################################
+    def create_ai_fallback_segment(self, env_key):
+        segment_key = "ai-fallback"
+        segment_name = "AI Fallback"
+        description = "Segment for AI contexts with fallback enabled - used for self-healing AI model switching"
+        
+        res = self.create_segment(segment_key, segment_name, env_key, description)
+        
+        res = self.add_segment_rule(
+            segment_key,
+            env_key,
+            "ai",
+            "fallback",
+            "in",
+            [True]
+        )
+        
+        return res
     
+    ##################################################
+    #adding AI fallback targeting
+    ##################################################
+    def add_ai_fallback_targeting_to_ai_config(self, ai_config_key, env_key, fallback_variation_key):
+        variation_id = self.get_ai_config_variation_id(ai_config_key, fallback_variation_key)
+        
+        if not variation_id:
+            print(f"Error: Could not find variation '{fallback_variation_key}' for AI config '{ai_config_key}'")
+            return None
+        
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        payload = {
+            "environmentKey": env_key,
+            "instructions": [
+                {
+                    "kind": "addRule",
+                    "variationId": variation_id,
+                    "clauses": [
+                        {
+                            "contextKind": "",
+                            "attribute": "segmentMatch",
+                            "op": "segmentMatch",
+                            "negate": False,
+                            "values": ["ai-fallback"]
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error adding AI fallback targeting: " + data["message"])
+                else:
+                    print(f"Successfully added AI fallback targeting to {ai_config_key}")
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+        
+        return response
+
     ##################################################
     # Add guarded rollout to AI Agent
     ##################################################

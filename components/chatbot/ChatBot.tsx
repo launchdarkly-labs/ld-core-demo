@@ -23,6 +23,8 @@ import {
 } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import ReactMarkdown from "react-markdown";
 
 type ApiResponse = {
   response: string;
@@ -53,14 +55,32 @@ interface Message {
   role: string;
   content: string;
   id: string;
+  judgeScores?: {
+    before?: { accuracy?: number; relevance?: number };
+    after?: { accuracy?: number; relevance?: number };
+  };
 }
+
+type ChatTab = "main" | "self-healing";
+
+type SelfHealingMetrics = {
+  modelName?: string;
+  modelType?: string;
+  timing?: StreamTiming;
+  tokens?: StreamTokens;
+  judgeScores?: {
+    before?: { accuracy?: number; relevance?: number };
+    after?: { accuracy?: number; relevance?: number };
+  };
+  didFallback?: boolean;
+};
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot({ vertical }: { vertical: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const startArray: Message[] = [];
-  // Pre-populated chat history for ToggleBank
+
   const getPrePopulatedMessages = (): Message[] => {
     if (vertical === "banking") {
       return [
@@ -84,6 +104,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
     return startArray;
   };
 
+  const SELF_HEALING_INITIAL_MESSAGE: Message = {
+    role: "assistant",
+    content: "Hi! I'm ToggleBot with self-healing capabilities. Ask me anything and I'll automatically switch to a better model if my initial response quality is low.",
+    id: "self-heal-welcome",
+  };
+
   const [messages, setMessages] = useState<Message[]>(getPrePopulatedMessages());
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'generating' | 'validating'>('idle');
@@ -91,6 +117,18 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [tokens, setTokens] = useState<StreamTokens | null>(null);
   const [metrics, setMetrics] = useState<StreamMetrics | null>(null);
   const [modelType, setModelType] = useState<'bedrock' | 'openai' | null>(null);
+
+  const [activeTab, setActiveTab] = useState<ChatTab>("main");
+  const [selfHealingMessages, setSelfHealingMessages] = useState<Message[]>([SELF_HEALING_INITIAL_MESSAGE]);
+  const [selfHealingMetrics, setSelfHealingMetrics] = useState<SelfHealingMetrics | null>(null);
+  const [selfHealingLoading, setSelfHealingLoading] = useState(false);
+  const [selfHealingStatus, setSelfHealingStatus] = useState("");
+  const [enableFallback, setEnableFallback] = useState(true);
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const selfHealingEndRef = useRef<HTMLDivElement | null>(null);
+  const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
+  const hasSelfHealing = vertical === "banking";
 
   // Function to determine model type from feature flag
   const getModelTypeFromFlag = (): 'bedrock' | 'openai' => {
@@ -152,6 +190,15 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         ? DEFAULT_AI_MODEL
         : useFlags()["ai-config--publicbot"];
   }
+
+  const selfHealingFlag = useFlags()[selfHealingAiConfigKey] as any;
+  const isSelfHealingEnabled = hasSelfHealing && selfHealingFlag?._ldMeta?.enabled !== false;
+
+  useEffect(() => {
+    if (selfHealingEndRef.current && activeTab === "self-healing") {
+      selfHealingEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selfHealingMessages, activeTab]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -303,6 +350,176 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       if (status !== 'idle') setStatus('idle');
     }
   }
+
+  async function submitSelfHealingQuery(promptOverride?: string) {
+    const userInput = promptOverride || input;
+    if (!userInput.trim() || selfHealingLoading || !isSelfHealingEnabled) return;
+
+    if (!promptOverride) setInput("");
+    setSelfHealingLoading(true);
+    setSelfHealingStatus("Initializing...");
+    setSelfHealingMetrics(null);
+
+    const userMessage: Message = {
+      role: "user",
+      content: userInput.trim(),
+      id: uuidv4().slice(0, 4),
+    };
+    setSelfHealingMessages((prev) => [...prev, userMessage]);
+
+    const assistantMessageId = uuidv4().slice(0, 4);
+
+    try {
+      const chatHistory = [...selfHealingMessages, userMessage].map((m) => ({
+        role: m.role,
+        content: m.content,
+        id: m.id,
+      }));
+
+      const response = await fetch("/api/chat/self-healing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userInput: userInput.trim(),
+          chatHistory,
+          aiConfigKey: selfHealingAiConfigKey,
+          enableFallback,
+        }),
+      });
+
+      if (!response.ok) {
+        let errorMessage = "Failed to send message";
+        try { const d = await response.json(); errorMessage = d.error || errorMessage; } catch {}
+        throw new Error(errorMessage);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = "";
+
+      if (reader) {
+        let buffer = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            try {
+              const data = JSON.parse(line.slice(6));
+
+              if (data.status) setSelfHealingStatus(data.status);
+              if (data.error) throw new Error(data.error);
+
+              if (data.chunk) {
+                assistantContent += data.chunk;
+                setSelfHealingMessages((prev) => {
+                  const exists = prev.some((m) => m.id === assistantMessageId);
+                  if (exists) {
+                    return prev.map((m) =>
+                      m.id === assistantMessageId ? { ...m, content: assistantContent } : m
+                    );
+                  }
+                  return [...prev, { id: assistantMessageId, role: "assistant", content: assistantContent }];
+                });
+              }
+
+              if (data.done) {
+                if (data.modelName || data.timing || data.tokens || data.judgeScores) {
+                  setSelfHealingMetrics({
+                    modelName: data.modelName,
+                    modelType: data.modelType,
+                    timing: data.timing,
+                    tokens: data.tokens,
+                    judgeScores: data.judgeScores,
+                    didFallback: data.didFallback,
+                  });
+                }
+
+                if (data.didFallback && data.judgeScores) {
+                  const judgeMessage: Message = {
+                    id: uuidv4().slice(0, 6) + "-judge",
+                    role: "judge",
+                    content: `**AI Judge Evaluation**\n\n**Initial Model Scores (${data.originalModel || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Original Response (Reverted):**\n> ${data.originalResponse || "No response captured"}\n\n**Fallback Model Scores (Passed):**\n- Accuracy: ${data.judgeScores.after?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.after?.relevance?.toFixed(1) || "N/A"}%\n\nSelf-healed to: **${data.modelName}**`,
+                    judgeScores: data.judgeScores,
+                  };
+                  setSelfHealingMessages((prev) => [...prev, judgeMessage]);
+
+                  setTimeout(() => {
+                    setSelfHealingMessages((prev) => [
+                      ...prev,
+                      {
+                        id: uuidv4().slice(0, 6) + "-reset",
+                        role: "assistant",
+                        content: "The self-healing demo is complete. Would you like to reset the context to try again?",
+                      },
+                    ]);
+                  }, 1000);
+                }
+
+                if (data.fallbackSkipped && data.judgeScores) {
+                  const judgeMessage: Message = {
+                    id: uuidv4().slice(0, 6) + "-judge",
+                    role: "judge",
+                    content: `**AI Judge Evaluation**\n\n**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
+                    judgeScores: data.judgeScores,
+                  };
+                  setSelfHealingMessages((prev) => [...prev, judgeMessage]);
+                }
+
+                setSelfHealingLoading(false);
+                return;
+              }
+            } catch (parseError) {
+              if (parseError instanceof Error && !parseError.message.includes("Unexpected token")) {
+                throw parseError;
+              }
+            }
+          }
+        }
+      }
+
+      if (!assistantContent) {
+        setSelfHealingMessages((prev) => [
+          ...prev,
+          { id: assistantMessageId, role: "assistant", content: "I'm sorry, there was an error processing your request." },
+        ]);
+      }
+      setSelfHealingLoading(false);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      const isDisabled = errorObj.message.includes("AI config is disabled");
+      setSelfHealingMessages((prev) => [
+        ...prev,
+        {
+          id: uuidv4().slice(0, 4),
+          role: "assistant",
+          content: isDisabled
+            ? "The self-healing chatbot is currently disabled. Please try again later."
+            : `${errorObj.message}\n\nWould you like to restart and try again?`,
+        },
+      ]);
+      setSelfHealingLoading(false);
+    }
+  }
+
+  async function resetSelfHealing() {
+    try {
+      setSelfHealingLoading(true);
+      await fetch("/api/chat/reset", { method: "POST" });
+      setSelfHealingMessages([SELF_HEALING_INITIAL_MESSAGE]);
+      setSelfHealingMetrics(null);
+    } catch (e) {
+      console.error("Failed to reset self-healing context", e);
+    } finally {
+      setSelfHealingLoading(false);
+    }
+  }
+
+  const SUGGESTED_PROMPTS = ["What is ToggleBank?"];
 
   const surveyResponseNotification = (surveyResponse: string) => {
     client?.track(surveyResponse, client.getContext());
@@ -475,9 +692,17 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       {isOpen && (
          <div
           ref={cardRef}
-          className="fixed bottom-16 right-0 z-50 flex items-end justify-end p-4 sm:p-6 max-w-full"
+          className={`fixed z-50 transition-all duration-500 ease-in-out ${
+            isExpanded
+              ? "inset-4 flex items-stretch"
+              : "bottom-16 right-0 flex items-end justify-end p-4 sm:p-6 max-w-full"
+          }`}
         >
-          <Card className="w-full max-w-md mx-auto">
+          <Card className={`transition-all duration-500 ease-in-out ${
+            isExpanded
+              ? "w-full h-full max-w-none overflow-auto"
+              : "w-full max-w-md mx-auto"
+          }`}>
             <CardHeader className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -551,7 +776,21 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="ml-auto rounded-full"
+                  className="rounded-full"
+                  title={isExpanded ? "Collapse" : "Expand"}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  )}
+                  <span className="sr-only">{isExpanded ? "Collapse" : "Expand"}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
                   onClick={() => setIsOpen(false)}
                 >
                   <XIcon className="h-6 w-6" />
@@ -559,140 +798,420 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent
-              className="h-[400px] overflow-y-auto"
-              ref={chatContentRef}
-            >
-              <div className="space-y-4">
-                <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
-                  <Accordion type="single" collapsible defaultValue="metrics">
-                    <AccordionItem value="metrics">
-                      <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
-                          <div className="flex flex-wrap gap-3">
-                            <div className="flex items-center gap-1">
-                              <span className="font-semibold">Accuracy:</span>
-                              <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="font-semibold">Source Fidelity:</span>
-                              <span>{(metrics?.sourceFidelity ?? 0).toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="font-semibold">Relevance:</span>
-                              <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
-                            </div>
-                            {tokens && (
-                              <div className="flex items-center gap-1">
-                                <span className="font-semibold">Tokens:</span>
-                                <span>{tokens.total ?? 0} (in {(tokens.input ?? 0)}, out {(tokens.output ?? 0)})</span>
+
+            {hasSelfHealing ? (
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ChatTab)} className="flex flex-col flex-1 overflow-hidden">
+                <div className="px-4 border-b border-gray-200 dark:border-gray-700">
+                  <TabsList className="w-full bg-transparent p-0 h-auto">
+                    <TabsTrigger
+                      value="main"
+                      className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none text-xs font-medium"
+                    >
+                      AI Chatbot
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="self-healing"
+                      className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none text-xs font-medium"
+                    >
+                      AI Self-Healing
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                <TabsContent value="main" className="flex-1 flex flex-col overflow-hidden mt-0">
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`} ref={chatContentRef}>
+                    <div className="space-y-4">
+                      <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
+                        <Accordion type="single" collapsible defaultValue="metrics">
+                          <AccordionItem value="metrics">
+                            <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
+                            <AccordionContent>
+                              <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                                <div className="flex flex-wrap gap-3">
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Accuracy:</span>
+                                    <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Source Fidelity:</span>
+                                    <span>{(metrics?.sourceFidelity ?? 0).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Relevance:</span>
+                                    <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                                  </div>
+                                  {tokens && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Tokens:</span>
+                                      <span>{tokens.total ?? 0} (in {(tokens.input ?? 0)}, out {(tokens.output ?? 0)})</span>
+                                    </div>
+                                  )}
+                                  {timing && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Timing:</span>
+                                      <span>TTFT {(timing.timeToFirstToken ?? 0)}ms, Total {(timing.totalTime ?? 0)}ms</span>
+                                    </div>
+                                  )}
+                                </div>
+                                {metrics?.judge && (
+                                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                      <div className="font-semibold mb-1">Accurate claims</div>
+                                      <ul className="list-disc pl-5 space-y-1">
+                                        {(metrics.judge.accurate_claims ?? []).map((c: string, idx: number) => (
+                                          <li key={`acc-${idx}`}>{c}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                    <div>
+                                      <div className="font-semibold mb-1">Inaccurate/unsupported claims</div>
+                                      <ul className="list-disc pl-5 space-y-1">
+                                        {(metrics.judge.inaccurate_claims ?? []).map((c: string, idx: number) => (
+                                          <li key={`inacc-${idx}`}>{c}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                            {timing && (
-                              <div className="flex items-center gap-1">
-                                <span className="font-semibold">Timing:</span>
-                                <span>TTFT {(timing.timeToFirstToken ?? 0)}ms, Total {(timing.totalTime ?? 0)}ms</span>
-                              </div>
-                            )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                        {isLoading && (
+                          <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
+                            <PulseLoader size={6} color="#6b7280" />
+                            <span>Generating and Validating Response…</span>
                           </div>
-                          {metrics?.judge && (
-                            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div>
-                                <div className="font-semibold mb-1">Accurate claims</div>
-                                <ul className="list-disc pl-5 space-y-1">
-                                  {(metrics.judge.accurate_claims ?? []).map((c: string, idx: number) => (
-                                    <li key={`acc-${idx}`}>{c}</li>
-                                  ))}
-                                </ul>
+                        )}
+                      </div>
+                      {messages.map((m) => {
+                        if (m?.role === "assistant") {
+                          return (
+                            <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
+                              <div className="whitespace-pre-line">{m?.content}</div>
+                            </div>
+                          );
+                        }
+                        if (m?.role === "loader" && isLoading) {
+                          return (
+                            <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
+                              <PulseLoader />
+                            </div>
+                          );
+                        }
+                        return (
+                          <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-airways text-white dark:bg-gray-50 dark:text-gray-900">
+                            <div className="whitespace-pre-line">{m?.content}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <form className="flex w-full items-center space-x-2" onSubmit={(e) => e.preventDefault()}>
+                      {aiNewModelChatbotFlag?._ldMeta?.enabled === false ? (
+                        <p className="text-airlinegray">We are offline for today. Please return next time!</p>
+                      ) : (
+                        <>
+                          <Input id="message" placeholder="Type your message..." className="flex-1" autoComplete="off" value={input} onChange={handleInputChange} />
+                          <Button type="submit" size="icon" onClick={() => submitQuery()} className="bg-airlinedarkblue">
+                            <SendIcon className="h-4 w-4" />
+                            <span className="sr-only">Send</span>
+                          </Button>
+                        </>
+                      )}
+                    </form>
+                  </CardFooter>
+                </TabsContent>
+
+                <TabsContent value="self-healing" className="flex-1 flex flex-col overflow-hidden mt-0">
+                  {isSelfHealingEnabled && (
+                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {(selfHealingMetrics?.modelName || selfHealingFlag?.model?.name) && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              Model: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics?.modelName || selfHealingFlag?.model?.name}</span>
+                            </span>
+                          )}
+                          {selfHealingMetrics?.didFallback && (
+                            <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
+                              Self-Healed
+                            </span>
+                          )}
+                        </div>
+                        {/* Settings dropdown */}
+                        <div className="relative">
+                          <button
+                            onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
+                            className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded border border-gray-300 dark:border-gray-600 hover:border-purple-400"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Options
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${showSettingsDropdown ? 'rotate-180' : ''}`}><polyline points="6 9 12 15 18 9"/></svg>
+                          </button>
+                          {showSettingsDropdown && (
+                            <div className="absolute right-0 top-full mt-1 w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                              <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Demo Mode</span>
                               </div>
-                              <div>
-                                <div className="font-semibold mb-1">Inaccurate/unsupported claims</div>
-                                <ul className="list-disc pl-5 space-y-1">
-                                  {(metrics.judge.inaccurate_claims ?? []).map((c: string, idx: number) => (
-                                    <li key={`inacc-${idx}`}>{c}</li>
-                                  ))}
-                                </ul>
+                              <div className="p-2">
+                                <button
+                                  onClick={() => { setEnableFallback(!enableFallback); setShowSettingsDropdown(false); }}
+                                  className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                                >
+                                  <div className="flex flex-col items-start">
+                                    <span className="text-xs text-gray-700 dark:text-gray-200">Enable Fallback</span>
+                                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{enableFallback ? "Shows self-healing" : "Bad response only"}</span>
+                                  </div>
+                                  <div className={`w-8 h-4 rounded-full transition-colors relative ${enableFallback ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableFallback ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                                  </div>
+                                </button>
                               </div>
                             </div>
                           )}
                         </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                  {isLoading && (
-                    <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
-                      <PulseLoader size={6} color="#6b7280" />
-                      <span>Generating and Validating Response…</span>
+                      </div>
+                      {selfHealingMetrics && (
+                        <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          {selfHealingMetrics.timing?.totalTime !== undefined && (
+                            <span>Time: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.timing.totalTime}ms</span></span>
+                          )}
+                          {selfHealingMetrics.tokens?.total !== undefined && (
+                            <span>Tokens: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.tokens.total}</span></span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
-                {messages.map((m) => {
-                  if (m?.role === "assistant") {
-                    return (
-                      <div
-                        key={m?.id}
-                        className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
-                      >
-                        <div className="whitespace-pre-line">{m?.content}</div>
-                      </div>
-                    );
-                  }
 
-                  if (m?.role === "loader" && isLoading) {
-                    return (
-                      <div
-                        key={m?.id}
-                        className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800"
-                      >
-                        <PulseLoader className="" />
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[350px]"}`}>
+                    {!isSelfHealingEnabled && (
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                          The self-healing chatbot is currently disabled. Please try again later.
+                        </p>
                       </div>
-                    );
-                  }
+                    )}
 
-                  return (
-                    <div
-                      key={m?.id}
-                      className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-airways text-white dark:bg-gray-50 dark:text-gray-900"
-                    >
-                      <div className="whitespace-pre-line">{m?.content}</div>
+                    {isSelfHealingEnabled && (
+                      <div className="space-y-4">
+                        {selfHealingMessages.map((m) => {
+                          if (m.role === "judge") {
+                            return (
+                              <div key={m.id} className="flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-600">
+                                <ReactMarkdown
+                                  components={{
+                                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                                    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                                    em: ({ children }) => <em className="italic">{children}</em>,
+                                    ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1 ml-2">{children}</ul>,
+                                    li: ({ children }) => <li>{children}</li>,
+                                    blockquote: ({ children }) => (
+                                      <blockquote className="border-l-2 border-purple-400 pl-3 italic mb-2 text-gray-600 dark:text-gray-300">
+                                        {children}
+                                      </blockquote>
+                                    ),
+                                  }}
+                                >
+                                  {m.content}
+                                </ReactMarkdown>
+                              </div>
+                            );
+                          }
+                          if (m.role === "assistant") {
+                            const isResetPrompt =
+                              m.content.includes("Would you like to reset") ||
+                              m.content.includes("Would you like to restart");
+                            return (
+                              <div key={m.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
+                                <div className="whitespace-pre-line">{m.content}</div>
+                                {isResetPrompt && (
+                                  <Button
+                                    onClick={resetSelfHealing}
+                                    variant="outline"
+                                    size="sm"
+                                    className="mt-1 text-purple-600 dark:text-purple-400 border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                  >
+                                    Reset Self-Healing Demo
+                                  </Button>
+                                )}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key={m.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-bank text-white">
+                              <div className="whitespace-pre-line">{m.content}</div>
+                            </div>
+                          );
+                        })}
+
+                        {selfHealingMessages.length === 1 && (
+                          <div className="space-y-2 mt-3">
+                            {SUGGESTED_PROMPTS.map((prompt, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => submitSelfHealingQuery(prompt)}
+                                className="block w-full text-left px-3 py-2 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-purple-400 transition-colors"
+                              >
+                                {prompt}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {selfHealingLoading && (
+                          <div className="flex items-center gap-2 p-2">
+                            <PulseLoader size={6} color="#A34FDE" />
+                            {selfHealingStatus && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">{selfHealingStatus}</span>
+                            )}
+                          </div>
+                        )}
+
+                        <div ref={selfHealingEndRef} />
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter>
+                    <form className="flex w-full items-center space-x-2" onSubmit={(e) => { e.preventDefault(); submitSelfHealingQuery(); }}>
+                      {!isSelfHealingEnabled ? (
+                        <p className="text-airlinegray text-sm">Self-healing chatbot is disabled.</p>
+                      ) : (
+                        <>
+                          <Input
+                            id="self-healing-message"
+                            placeholder="Ask me anything (I'll self-heal if needed)..."
+                            className="flex-1"
+                            autoComplete="off"
+                            value={input}
+                            onChange={handleInputChange}
+                            disabled={selfHealingLoading}
+                          />
+                          <Button
+                            type="submit"
+                            size="icon"
+                            disabled={!input.trim() || selfHealingLoading}
+                            className="bg-purple-600 hover:bg-purple-700"
+                          >
+                            <SendIcon className="h-4 w-4" />
+                            <span className="sr-only">Send</span>
+                          </Button>
+                        </>
+                      )}
+                    </form>
+                  </CardFooter>
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <>
+                <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[400px]"}`} ref={chatContentRef}>
+                  <div className="space-y-4">
+                    <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
+                      <Accordion type="single" collapsible defaultValue="metrics">
+                        <AccordionItem value="metrics">
+                          <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
+                          <AccordionContent>
+                            <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                              <div className="flex flex-wrap gap-3">
+                                <div className="flex items-center gap-1">
+                                  <span className="font-semibold">Accuracy:</span>
+                                  <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span className="font-semibold">Source Fidelity:</span>
+                                  <span>{(metrics?.sourceFidelity ?? 0).toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span className="font-semibold">Relevance:</span>
+                                  <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                                </div>
+                                {tokens && (
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Tokens:</span>
+                                    <span>{tokens.total ?? 0} (in {(tokens.input ?? 0)}, out {(tokens.output ?? 0)})</span>
+                                  </div>
+                                )}
+                                {timing && (
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Timing:</span>
+                                    <span>TTFT {(timing.timeToFirstToken ?? 0)}ms, Total {(timing.totalTime ?? 0)}ms</span>
+                                  </div>
+                                )}
+                              </div>
+                              {metrics?.judge && (
+                                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <div>
+                                    <div className="font-semibold mb-1">Accurate claims</div>
+                                    <ul className="list-disc pl-5 space-y-1">
+                                      {(metrics.judge.accurate_claims ?? []).map((c: string, idx: number) => (
+                                        <li key={`acc-${idx}`}>{c}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                  <div>
+                                    <div className="font-semibold mb-1">Inaccurate/unsupported claims</div>
+                                    <ul className="list-disc pl-5 space-y-1">
+                                      {(metrics.judge.inaccurate_claims ?? []).map((c: string, idx: number) => (
+                                        <li key={`inacc-${idx}`}>{c}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                      {isLoading && (
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-600 dark:text-gray-300">
+                          <PulseLoader size={6} color="#6b7280" />
+                          <span>Generating and Validating Response…</span>
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <form
-                className="flex w-full items-center space-x-2"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                {aiNewModelChatbotFlag?._ldMeta?.enabled === false ? (
-                  <p className="text-airlinegray">
-                    We are offline for today. Please return next time!
-                  </p>
-                ) : (
-                  <>
-                    <Input
-                      id="message"
-                      placeholder="Type your message..."
-                      className="flex-1"
-                      autoComplete="off"
-                      value={input}
-                      onChange={handleInputChange}
-                    />
-                    <Button
-                      type="submit"
-                      size="icon"
-                      onClick={() => submitQuery()}
-                      className="bg-airlinedarkblue"
-                    >
-                      <SendIcon className="h-4 w-4" />
-                      <span className="sr-only">Send</span>
-                    </Button>
-                  </>
-                )}
-              </form>
-            </CardFooter>
+                    {messages.map((m) => {
+                      if (m?.role === "assistant") {
+                        return (
+                          <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
+                            <div className="whitespace-pre-line">{m?.content}</div>
+                          </div>
+                        );
+                      }
+                      if (m?.role === "loader" && isLoading) {
+                        return (
+                          <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800">
+                            <PulseLoader />
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={m?.id} className="flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ml-auto bg-gradient-airways text-white dark:bg-gray-50 dark:text-gray-900">
+                          <div className="whitespace-pre-line">{m?.content}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <form className="flex w-full items-center space-x-2" onSubmit={(e) => e.preventDefault()}>
+                    {aiNewModelChatbotFlag?._ldMeta?.enabled === false ? (
+                      <p className="text-airlinegray">We are offline for today. Please return next time!</p>
+                    ) : (
+                      <>
+                        <Input id="message" placeholder="Type your message..." className="flex-1" autoComplete="off" value={input} onChange={handleInputChange} />
+                        <Button type="submit" size="icon" onClick={() => submitQuery()} className="bg-airlinedarkblue">
+                          <SendIcon className="h-4 w-4" />
+                          <span className="sr-only">Send</span>
+                        </Button>
+                      </>
+                    )}
+                  </form>
+                </CardFooter>
+              </>
+            )}
           </Card>
         </div>
       )}
