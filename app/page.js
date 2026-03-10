@@ -24,6 +24,12 @@ function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
+    if (open) {
+      setProjectKeyInput(sessionProjectKey || "");
+    }
+  }, [open, sessionProjectKey]);
+
+  useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);

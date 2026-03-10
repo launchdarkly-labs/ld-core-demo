@@ -57,6 +57,7 @@ export function LDClientProvider({
 
   return (
     <LDProvider
+      key={clientSideID || "none"}
       clientSideID={clientSideID}
       context={{ kind: "user", key: contextKey }}
       options={ldOptions}

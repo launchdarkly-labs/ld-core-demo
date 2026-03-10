@@ -49,36 +49,6 @@ function setCompletionAttributes(span, completion) {
 }
 
 /**
- * Run an async Bedrock inference inside an LDObserve span. Sets ld.ai_config.key and
- * gen_ai.* on the span, then runs fn(span). Caller should set gen_ai attributes on the
- * span from inside fn; this helper handles span.end() and errors.
- *
- * @param {string} spanName - e.g. "bedrock.inference.triage", "bedrock.inference.brand"
- * @param {string} configKey - AI Config key, e.g. "triage_agent", "brand_agent"
- * @param {Record<string, string> | import('http').IncomingHttpHeaders} headers - Request headers (for trace context)
- * @param {(span: import('@opentelemetry/api').Span) => Promise<T>} fn - Async work; can call span.setAttribute(...)
- * @returns {Promise<T>}
- */
-export async function runWithBedrockSpan(spanName, configKey, headers, fn) {
-  if (!headers || typeof headers !== "object") {
-    return fn(null);
-  }
-  const { span, ctx } = LDObserve.startWithHeaders(spanName, headers);
-  span.setAttribute("ld.ai_config.key", configKey);
-  span.setAttribute("deployment.environment", "production");
-  try {
-    const result = await context.with(ctx, () => fn(span));
-    span.end();
-    return result;
-  } catch (err) {
-    span.recordException(err);
-    span.setStatus({ code: SpanStatusCode.ERROR, message: err?.message });
-    span.end();
-    throw err;
-  }
-}
-
-/**
  * Set gen_ai.* attributes on a span to match gen_ai format structure. Prompt and completion
  * are set as dotted keys (gen_ai.prompt.0.content, gen_ai.completion.0.content, etc.)
  * so the exporter produces nested JSON, not a string.
@@ -112,4 +82,34 @@ export function setGenAiAttributes(span, { modelId, messages, completion, usage 
       span.setAttribute("gen_ai.request.temperature", Number(options.temperature));
     }
   } catch (_) {}
+}
+
+/**
+ * Run an async Bedrock inference inside an LDObserve span. Sets ld.ai_config.key and
+ * gen_ai.* on the span, then runs fn(span). Caller should set gen_ai attributes on the
+ * span from inside fn; this helper handles span.end() and errors.
+ *
+ * @param {string} spanName - e.g. "bedrock.inference.triage", "bedrock.inference.brand"
+ * @param {string} configKey - AI Config key, e.g. "triage_agent", "brand_agent"
+ * @param {Record<string, string> | import('http').IncomingHttpHeaders} headers - Request headers (for trace context)
+ * @param {(span: import('@opentelemetry/api').Span) => Promise<T>} fn - Async work; can call span.setAttribute(...)
+ * @returns {Promise<T>}
+ */
+export async function runWithBedrockSpan(spanName, configKey, headers, fn) {
+  if (!headers || typeof headers !== "object") {
+    return fn(null);
+  }
+  const { span, ctx } = LDObserve.startWithHeaders(spanName, headers);
+  span.setAttribute("ld.ai_config.key", configKey);
+  span.setAttribute("deployment.environment", "production");
+  try {
+    const result = await context.with(ctx, () => fn(span));
+    span.end();
+    return result;
+  } catch (err) {
+    span.recordException(err);
+    span.setStatus({ code: SpanStatusCode.ERROR, message: err?.message });
+    span.end();
+    throw err;
+  }
 }
