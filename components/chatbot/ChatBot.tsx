@@ -25,6 +25,7 @@ import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ReactMarkdown from "react-markdown";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type ApiResponse = {
   response: string;
@@ -77,6 +78,7 @@ type SelfHealingMetrics = {
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
 export default function Chatbot({ vertical }: { vertical: string }) {
+  const { open: sidebarOpen } = useSidebar();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const startArray: Message[] = [];
@@ -671,7 +673,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-20">
+      <div
+        className="fixed bottom-4 z-20 transition-[right] duration-200 ease-linear"
+        style={{ right: sidebarOpen ? 'calc(30vw + 1rem)' : '1rem' }}
+      >
         <Button
           variant="ghost"
           size="icon"
@@ -694,9 +699,13 @@ export default function Chatbot({ vertical }: { vertical: string }) {
           ref={cardRef}
           className={`fixed z-50 transition-all duration-500 ease-in-out ${
             isExpanded
-              ? "inset-4 flex items-stretch"
-              : "bottom-16 right-0 flex items-end justify-end p-4 sm:p-6 max-w-full"
+              ? "top-4 bottom-4 left-4 flex items-stretch"
+              : "bottom-16 flex items-end justify-end p-4 sm:p-6 max-w-full"
           }`}
+          style={{ right: isExpanded
+            ? (sidebarOpen ? 'calc(30vw + 1rem)' : '1rem')
+            : (sidebarOpen ? '30vw' : '0px')
+          }}
         >
           <Card className={`transition-all duration-500 ease-in-out ${
             isExpanded

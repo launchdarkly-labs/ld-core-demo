@@ -18,6 +18,7 @@ import { addUserToSegment } from "@/utils/guardrail/ldApi";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
+import { pushLog } from "@/lib/log-stream";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -53,6 +54,9 @@ export default async function chatResponse(
 		const clientSideContext = JSON.parse(
 			getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
 		);
+
+		pushLog({ level: "INFO", message: `💬 Chat request · "${(userInput ?? "").slice(0, 60)}${(userInput ?? "").length > 60 ? "…" : ""}"`, name: "chat" });
+		pushLog({ level: "INFO", message: `   AI Config: ${aiConfigKey}`, name: "chat" });
 
 		function mapPromptToConversation(
 			prompt: { role: 'user' | 'assistant' | 'system'; content: string }[],
@@ -426,6 +430,7 @@ Is there a specific service you'd like to know more about?`;
 
 		const aiConfig = initialAiConfig;
 		if (!aiConfig.enabled) {
+			pushLog({ level: "WARN", message: `⚠️ AI config "${aiConfigKey}" is disabled`, name: "chat" });
 			throw new Error("AI config is disabled");
 		} else {
 			if (!aiConfig.model) {
@@ -437,6 +442,8 @@ Is there a specific service you'd like to know more about?`;
 			}
 
 			const { tracker } = aiConfig;
+			pushLog({ level: "INFO", message: `📥 Pulled AI config from LaunchDarkly (${aiConfigKey})`, name: "chat" });
+			pushLog({ level: "INFO", message: `   Model: ${aiConfig.model.name}`, name: "chat" });
 
 			try {
 				// Guardrail clamp: pull blocked patterns from system message JSON if provided
@@ -502,6 +509,7 @@ Is there a specific service you'd like to know more about?`;
 				}
 
 				if (matched || blockTriggered) {
+					pushLog({ level: "WARN", message: `🛡️ Guardrail triggered — blocked pattern: "${matched}"`, name: "guardrails-triggered" });
 					res.writeHead(200, {
 						'Content-Type': 'text/event-stream',
 						'Cache-Control': 'no-cache',
@@ -537,10 +545,12 @@ Is there a specific service you'd like to know more about?`;
 				let fullResponse = '';
 				let timeToFirstToken = 0;
 				let firstTokenReceived = false;
-				const startTime = Date.now(); // Start time for total duration
+				const startTime = Date.now();
 				let totalInputTokens = 0;
 				let totalOutputTokens = 0;
 				let totalTokens = 0;
+
+				pushLog({ level: "INFO", message: `🚀 Calling ${isBedrock ? "Bedrock" : "OpenAI"} (${modelId})...`, name: "chat" });
 
 				if (isBedrock) {
 					// Use Bedrock streaming API
@@ -635,9 +645,10 @@ Is there a specific service you'd like to know more about?`;
 				};
 				tracker.trackTokens?.(tokens);
 
-		// Calculate total generation time
 		const totalTime = Date.now() - startTime;
 		tracker.trackDuration?.(totalTime);
+
+		pushLog({ level: "INFO", message: `   Response in ${totalTime}ms · ${totalInputTokens} in / ${totalOutputTokens} out tokens`, name: "chat" });
 
 		// Calculate cost based on model and token usage
 		function calculateModelCost(modelId: string, inputTokens: number, outputTokens: number): number {
@@ -690,10 +701,14 @@ Is there a specific service you'd like to know more about?`;
 					responseText: fullResponse,
 					userQuestion: userInput
 				});
+				pushLog({ level: "INFO", message: `⚖️ Judge accuracy: ${judge.accuracy?.toFixed(2) ?? "—"}`, name: "chat" });
+
 				const relModel = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
 				let relevance: number | null = await computeRelevanceLLM(userInput, fullResponse, relModel);
 				if (relevance === null) relevance = computeRelevanceJaccard(userInput, fullResponse);
 				const sourceFidelity = (judge as any).sourceFidelity ?? judge.accuracy ?? 0;
+
+				pushLog({ level: "INFO", message: `   Relevance: ${relevance?.toFixed(2) ?? "—"} · Fidelity: ${sourceFidelity?.toFixed(2) ?? "—"}`, name: "chat" });
 
 				// Track custom metrics in LaunchDarkly using the existing client
 				try {
@@ -733,9 +748,11 @@ Is there a specific service you'd like to know more about?`;
 				res.write(`data: ${JSON.stringify(data)}\n\n`);
 				res.end();
 
+				pushLog({ level: "INFO", message: `✅ Chat complete · cost: $${responseCost}`, name: "chat" });
 				tracker.trackSuccess();
 			} catch (error: any) {
 				console.error("Error sending request to Bedrock:", error);
+				pushLog({ level: "ERROR", message: `❌ LLM error: ${error?.message ?? "Unknown error"}`, name: "chat" });
 				tracker.trackError();
 				const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
 				await recordErrorToLD(
@@ -760,6 +777,7 @@ Is there a specific service you'd like to know more about?`;
 		}
 	} catch (error: any) {
 		console.error("Error in chatResponse:", error);
+		pushLog({ level: "ERROR", message: `❌ Chat error: ${error?.message ?? "Unknown error"}`, name: "chat" });
 		const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
 		await recordErrorToLD(
 			errorObj,
