@@ -966,7 +966,16 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                               </div>
                               <div className="p-2">
                                 <button
-                                  onClick={() => { setEnableFallback(!enableFallback); setShowSettingsDropdown(false); }}
+                                  onClick={() => {
+                                    const newVal = !enableFallback;
+                                    setEnableFallback(newVal);
+                                    setShowSettingsDropdown(false);
+                                    fetch("/api/logs/stream", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ message: newVal ? "*** Fallback turned on ***" : "*** Fallback turned off ***", level: newVal ? "guardrails-on" : "guardrails-off", name: "self-healing" }),
+                                    }).catch(() => {});
+                                  }}
                                   className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                                 >
                                   <div className="flex flex-col items-start">

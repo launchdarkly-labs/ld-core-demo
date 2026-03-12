@@ -5,6 +5,7 @@ import { initAi } from "@launchdarkly/server-sdk-ai";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
+import { pushLog } from "@/lib/log-stream";
 
 interface LaunchDarklyContext {
   kind: string;
@@ -73,6 +74,9 @@ export default async function selfHealingChat(
     if (!userInput || typeof userInput !== "string") {
       return res.status(400).json({ error: "userInput is required" });
     }
+
+    pushLog({ level: "INFO", message: `💬 Self-healing chat · "${userInput.slice(0, 60)}${userInput.length > 60 ? "…" : ""}"`, name: "self-healing" });
+    pushLog({ level: "INFO", message: `   AI Config: ${aiConfigKey} · Fallback: ${enableFallback ? "enabled" : "disabled"}`, name: enableFallback ? "guardrails-on" : "guardrails-off" });
 
     const clientSideContext = JSON.parse(
       getCookie(LD_CONTEXT_COOKIE_KEY, { res, req })?.toString() || "{}"
@@ -253,6 +257,9 @@ export default async function selfHealingChat(
 
       const originalModelName = finalModelName;
 
+      pushLog({ level: "INFO", message: `📥 Pulled AI config from LaunchDarkly (${aiConfigKey})`, name: "self-healing" });
+      pushLog({ level: "INFO", message: `   Model: ${finalModelName}`, name: "self-healing" });
+      pushLog({ level: "INFO", message: `🚀 Generating initial response...`, name: "self-healing" });
       sendSSE({ status: "Generating initial response..." });
 
       const aiConfigMessages = internalConfig?.messages || [];
@@ -332,8 +339,11 @@ export default async function selfHealingChat(
         }
       }
 
+      pushLog({ level: "INFO", message: `⚖️ Judge scores — Accuracy: ${judgeScoresBefore.accuracy?.toFixed(1) ?? "—"}% · Relevance: ${judgeScoresBefore.relevance?.toFixed(1) ?? "—"}%`, name: "self-healing" });
+
       if (scoresBelowThreshold(judgeScoresBefore) && enableFallback) {
         originalBadResponse = finalResponse;
+        pushLog({ level: "WARN", message: `   Scores below ${JUDGE_THRESHOLD}% threshold — triggering self-healing fallback`, name: "toxicity-resend" });
         sendSSE({
           status: "Fallback detected! Switching models...",
           originalResponse: originalBadResponse,
@@ -369,6 +379,7 @@ export default async function selfHealingChat(
           );
 
           if (fallbackChat) {
+            pushLog({ level: "INFO", message: `🔄 Running fallback model: ${finalModelName}`, name: "self-healing" });
             sendSSE({ status: "Running fallback AI config..." });
 
             const fallbackInternalConfig = (fallbackChat as any).aiConfig;
@@ -446,8 +457,10 @@ export default async function selfHealingChat(
           judgeScoresAfter = judgeScoresBefore;
         }
       } else if (scoresBelowThreshold(judgeScoresBefore) && !enableFallback) {
+        pushLog({ level: "INFO", message: `   Scores below threshold but fallback disabled — returning first run`, name: "self-healing" });
         judgeScoresAfter = judgeScoresBefore;
       } else {
+        pushLog({ level: "INFO", message: `   Scores above threshold — no fallback needed`, name: "self-healing" });
         judgeScoresAfter = judgeScoresBefore;
       }
 
@@ -468,6 +481,11 @@ export default async function selfHealingChat(
         );
       }
       const estimatedOutputTokens = Math.ceil(finalResponse.length / 4);
+
+      if (didFallback) {
+        pushLog({ level: "INFO", message: `⚖️ Fallback scores — Accuracy: ${judgeScoresAfter.accuracy?.toFixed(1) ?? "—"}% · Relevance: ${judgeScoresAfter.relevance?.toFixed(1) ?? "—"}%`, name: "self-healing" });
+      }
+      pushLog({ level: "INFO", message: `✅ Self-healing complete in ${totalTime}ms${didFallback ? " (self-healed)" : ""}`, name: "self-healing" });
 
       sendSSE({ chunk: finalResponse, done: false });
 
@@ -498,6 +516,7 @@ export default async function selfHealingChat(
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));
       console.error("Error in self-healing chat:", errorObj);
+      pushLog({ level: "ERROR", message: `❌ Self-healing chat error: ${errorObj.message}`, name: "self-healing" });
 
       await recordErrorToLD(errorObj, "Error in self-healing chat", {
         component: "SelfHealingChat",
@@ -511,6 +530,7 @@ export default async function selfHealingChat(
   } catch (error) {
     const errorObj = error instanceof Error ? error : new Error(String(error));
     console.error("Error in self-healing chat API:", errorObj);
+    pushLog({ level: "ERROR", message: `❌ Self-healing API error: ${errorObj.message}`, name: "self-healing" });
 
     await recordErrorToLD(errorObj, "Error in self-healing chat API", {
       component: "SelfHealingChatAPI",
