@@ -19,7 +19,7 @@ import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
-import { runMultiAgentPipeline, LLMCallResult } from "@/lib/multi-agent";
+import { runMultiAgentPipeline } from "@/lib/multi-agent";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -530,76 +530,25 @@ Is there a specific service you'd like to know more about?`;
 					'Connection': 'keep-alive',
 				});
 
-				// Get the model ID from AI Configs
-				let modelId = aiConfig.model.name;
+				const modelId = aiConfig.model.name;
 				const isBedrock = isBedrockModel(modelId);
-				
-				if (isBedrock && !modelId.startsWith('us.')) {
-					modelId = 'us.' + modelId;
-				}
-
 				const startTime = Date.now();
-
-				// Build a generic callLLM function that routes to Bedrock or OpenAI
-				const callLLM = async (systemPrompt: string, userMessage: string): Promise<LLMCallResult> => {
-					const callStart = Date.now();
-					if (isBedrock) {
-						const messages = [
-							{ role: 'user' as const, content: [{ text: userMessage }] },
-						];
-						const cmd = new ConverseCommand({
-							modelId,
-							system: [{ text: systemPrompt }],
-							messages,
-							inferenceConfig: {
-								temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
-								maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
-							},
-						});
-						const resp: any = await bedrockClient.send(cmd);
-						const content = resp?.output?.message?.content?.[0]?.text ?? '';
-						const usage = resp?.usage ?? {};
-						return {
-							content,
-							inputTokens: usage.inputTokens ?? 0,
-							outputTokens: usage.outputTokens ?? 0,
-							durationMs: Date.now() - callStart,
-						};
-					} else {
-						const messages = [
-							{ role: 'system', content: systemPrompt },
-							{ role: 'user', content: userMessage },
-						];
-						const resp = await openai.chat.completions.create({
-							model: modelId,
-							messages,
-							max_completion_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
-							response_format: { type: "text" },
-						});
-						const content = resp.choices?.[0]?.message?.content ?? '';
-						return {
-							content,
-							inputTokens: resp.usage?.prompt_tokens ?? 0,
-							outputTokens: resp.usage?.completion_tokens ?? 0,
-							durationMs: Date.now() - callStart,
-						};
-					}
-				};
-
-				pushLog({ level: "INFO", message: `🚀 Calling ${isBedrock ? "Bedrock" : "OpenAI"} (${modelId})...`, name: "chat" });
 
 				const sendStatus = (msg: string) => {
 					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
 				};
 
 				// Run multi-agent pipeline: Triage → Specialist → Brand Voice
-				const agentResult = await runMultiAgentPipeline(
+				// Each agent pulls its own AI config from LaunchDarkly
+				const agentResult = await runMultiAgentPipeline({
+					aiClient,
+					context,
+					bedrockClient,
+					openai,
 					userInput,
 					sourcePassages,
-					callLLM,
-					modelId,
 					sendStatus,
-				);
+				});
 
 				const fullResponse = agentResult.finalResponse;
 				const totalInputTokens = agentResult.totalInputTokens;
@@ -609,10 +558,9 @@ Is there a specific service you'd like to know more about?`;
 				const timeToFirstToken = Date.now() - startTime;
 				tracker.trackTimeToFirstToken(timeToFirstToken);
 
-				// Send the final response as a chunk to the client
+				// Send the final response to the client
 				res.write(`data: ${JSON.stringify({ chunk: fullResponse, done: false })}\n\n`);
 
-				// Track token usage
 				const tokens: LDTokenUsage = {
 					input: totalInputTokens,
 					output: totalOutputTokens,

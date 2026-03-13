@@ -255,6 +255,7 @@ class DemoBuilder:
         ##################################################
         self.create_togglebot_ai_config()
         self.create_togglebot_self_heal_ai_config()
+        self.create_togglebot_multi_agent_ai_configs()
         self.create_llm_as_judge_ai_config()
         self.create_government_publicbot_ai_config()
         self.create_custom_financial_models()
@@ -789,6 +790,13 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("ai-config--ai-travel-prompt-text")
         res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot")
         res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-self-heal-chatbot")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-triage")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-accounts-specialist")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-loans-specialist")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-investments-specialist")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-transfers-specialist")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-support-specialist")
+        res = self.ldproject.add_maintainer_to_flag("ai-config--togglebot-brand-voice")
         res = self.ldproject.add_maintainer_to_flag("ai-config--ai-new-model-chatbot")
         res = self.ldproject.add_maintainer_to_flag("storeAttentionCallout")
         res = self.ldproject.add_maintainer_to_flag("cartSuggestedItems")
@@ -914,6 +922,13 @@ class DemoBuilder:
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-travel-prompt-text")
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-self-heal-chatbot")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-triage")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-accounts-specialist")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-loans-specialist")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-investments-specialist")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-transfers-specialist")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-support-specialist")
+        res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-brand-voice")
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-new-model-chatbot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--publicbot")
         
@@ -1722,6 +1737,267 @@ class DemoBuilder:
             )
         
         self.ldproject.update_flag_client_side_availability("ai-config--togglebot-self-heal-chatbot")
+
+    def create_togglebot_multi_agent_ai_configs(self):
+        model_config = {
+            "modelName": "gpt-5-mini",
+            "parameters": {
+                "max_completion_tokens": 1000
+            }
+        }
+        model_config_key = "OpenAI.gpt-5-mini"
+        tags = ["ai-models", "ai-config", "multi-agent", "bank"]
+
+        # -----------------------------------------------------------
+        # 1. Triage Agent
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-triage",
+            "ToggleBot Triage Agent - ToggleBank",
+            "Routes customer queries to the appropriate banking specialist based on topic classification",
+            tags
+        )
+        triage_system_prompt = (
+            "You are a banking query classifier for ToggleBank. Classify the customer's query into exactly one category.\n\n"
+            "Categories:\n"
+            "- accounts: Checking/savings accounts, balances, transactions, account management, statements, fees\n"
+            "- loans_credit: Personal loans, home mortgages, auto loans, credit cards, credit applications, interest rates, payments\n"
+            "- investments: Portfolio management, investment advice, retirement planning, stocks, bonds, mutual funds, 401k\n"
+            "- transfers: Wire transfers, online transfers, bill payments, money movement, Zelle, ACH\n"
+            "- customer_support: General questions about ToggleBank, technical issues, complaints, other inquiries\n\n"
+            "Return ONLY a JSON object (no markdown fencing):\n"
+            "{\"category\": \"<key>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-triage",
+            "gpt-5-mini-triage",
+            model_config_key,
+            "GPT-5 Mini - Triage",
+            model_config,
+            [
+                {"content": triage_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-triage", "production", "on")
+
+        # -----------------------------------------------------------
+        # 2. Accounts Specialist
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-accounts-specialist",
+            "ToggleBot Accounts Specialist - ToggleBank",
+            "Specialist agent for checking/savings accounts, balances, transactions, and account management queries",
+            tags
+        )
+        accounts_system_prompt = (
+            "You are ToggleBank's Accounts Specialist. You have deep expertise in checking accounts, savings accounts, "
+            "money market accounts, CDs, account fees, transaction history, and account management.\n\n"
+            "Answer the customer's question thoroughly and accurately. Use specific details when possible. "
+            "If the question requires account-specific information you don't have, explain what the customer should do "
+            "to get that information (e.g., log in to online banking, visit a branch, call support).\n\n"
+            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n"
+            "- City: {{ ldctx.location }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-accounts-specialist",
+            "gpt-5-mini-accounts",
+            model_config_key,
+            "GPT-5 Mini - Accounts",
+            model_config,
+            [
+                {"content": accounts_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-accounts-specialist", "production", "on")
+
+        # -----------------------------------------------------------
+        # 3. Loans & Credit Specialist
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-loans-specialist",
+            "ToggleBot Loans & Credit Specialist - ToggleBank",
+            "Specialist agent for personal loans, mortgages, auto loans, credit cards, and credit-related queries",
+            tags
+        )
+        loans_system_prompt = (
+            "You are ToggleBank's Loans & Credit Specialist. You have deep expertise in personal loans, home mortgages, "
+            "auto loans, credit cards, lines of credit, interest rates, loan applications, payment schedules, and "
+            "credit-related policies.\n\n"
+            "Answer the customer's question thoroughly and accurately. Provide specific rate ranges or policy details "
+            "when relevant. If the question requires application-specific information, guide the customer on next steps.\n\n"
+            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n"
+            "- City: {{ ldctx.location }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-loans-specialist",
+            "gpt-5-mini-loans",
+            model_config_key,
+            "GPT-5 Mini - Loans",
+            model_config,
+            [
+                {"content": loans_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-loans-specialist", "production", "on")
+
+        # -----------------------------------------------------------
+        # 4. Investments Specialist
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-investments-specialist",
+            "ToggleBot Investments Specialist - ToggleBank",
+            "Specialist agent for portfolio management, retirement planning, stocks, bonds, and investment advisory",
+            tags
+        )
+        investments_system_prompt = (
+            "You are ToggleBank's Investment Services Specialist. You have deep expertise in portfolio management, "
+            "retirement planning (401k, IRA), stocks, bonds, mutual funds, ETFs, investment advisory services, "
+            "and wealth management.\n\n"
+            "Answer the customer's question thoroughly and accurately. When discussing investments, remind customers "
+            "that past performance doesn't guarantee future results when appropriate. Guide them to speak with a "
+            "financial advisor for personalized advice.\n\n"
+            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n"
+            "- City: {{ ldctx.location }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-investments-specialist",
+            "gpt-5-mini-investments",
+            model_config_key,
+            "GPT-5 Mini - Investments",
+            model_config,
+            [
+                {"content": investments_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-investments-specialist", "production", "on")
+
+        # -----------------------------------------------------------
+        # 5. Transfers Specialist
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-transfers-specialist",
+            "ToggleBot Transfers Specialist - ToggleBank",
+            "Specialist agent for wire transfers, ACH, Zelle, bill pay, mobile deposits, and money movement",
+            tags
+        )
+        transfers_system_prompt = (
+            "You are ToggleBank's Digital Banking & Transfers Specialist. You have deep expertise in wire transfers, "
+            "ACH transfers, Zelle payments, bill pay, mobile deposits, online banking features, and money movement "
+            "between accounts.\n\n"
+            "Answer the customer's question thoroughly and accurately. Include relevant details about transfer limits, "
+            "processing times, and fees when applicable.\n\n"
+            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n"
+            "- City: {{ ldctx.location }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-transfers-specialist",
+            "gpt-5-mini-transfers",
+            model_config_key,
+            "GPT-5 Mini - Transfers",
+            model_config,
+            [
+                {"content": transfers_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-transfers-specialist", "production", "on")
+
+        # -----------------------------------------------------------
+        # 6. Customer Support Specialist
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-support-specialist",
+            "ToggleBot Customer Support Specialist - ToggleBank",
+            "Specialist agent for general banking questions, technical support, complaints, and miscellaneous inquiries",
+            tags
+        )
+        support_system_prompt = (
+            "You are ToggleBank's Customer Support Specialist. You handle general banking questions, technical support "
+            "for online and mobile banking, account inquiries, complaints, and any questions that don't fit a specific domain.\n\n"
+            "Answer the customer's question thoroughly and accurately. Be empathetic and solution-oriented. "
+            "If the issue requires escalation, explain the process clearly.\n\n"
+            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n"
+            "- City: {{ ldctx.location }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-support-specialist",
+            "gpt-5-mini-support",
+            model_config_key,
+            "GPT-5 Mini - Support",
+            model_config,
+            [
+                {"content": support_system_prompt, "role": "system"},
+                {"content": "{{ userInput }}", "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-support-specialist", "production", "on")
+
+        # -----------------------------------------------------------
+        # 7. Brand Voice Agent
+        # -----------------------------------------------------------
+        self.ldproject.create_ai_config(
+            "ai-config--togglebot-brand-voice",
+            "ToggleBot Brand Voice - ToggleBank",
+            "Takes specialist responses and rewrites them in ToggleBank's warm, professional brand voice",
+            tags
+        )
+        brand_system_prompt = (
+            "You are ToggleBank's Brand Voice editor. Your job is to take a specialist's response and ensure it "
+            "matches ToggleBank's brand voice.\n\n"
+            "Brand guidelines:\n"
+            "- Warm, professional, and approachable tone\n"
+            "- Address the customer directly using \"you\" / \"your\"\n"
+            "- Be concise and clear — avoid jargon\n"
+            "- Maintain ALL factual content from the specialist response\n"
+            "- Format for readability (short paragraphs, bullet points where helpful)\n"
+            "- End with a helpful next step or offer for further assistance when appropriate\n\n"
+            "IMPORTANT: Do NOT add any information that wasn't in the specialist's response. Only adjust tone and formatting.\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}"
+        )
+        brand_user_prompt = (
+            "Original customer question: {{ userInput }}\n\n"
+            "Specialist's response to rewrite:\n{{ specialist_response }}"
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-brand-voice",
+            "gpt-5-mini-brand",
+            model_config_key,
+            "GPT-5 Mini - Brand Voice",
+            model_config,
+            [
+                {"content": brand_system_prompt, "role": "system"},
+                {"content": brand_user_prompt, "role": "user"}
+            ]
+        )
+        time.sleep(1)
+        self.ldproject.toggle_ai_config("ai-config--togglebot-brand-voice", "production", "on")
 
     def create_llm_as_judge_ai_config(self):
         res = self.ldproject.create_ai_config(
