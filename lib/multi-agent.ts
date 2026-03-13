@@ -4,9 +4,7 @@ import {
 } from "@aws-sdk/client-bedrock-runtime";
 import { pushLog } from "./log-stream";
 
-// ---------------------------------------------------------------------------
 // Types
-// ---------------------------------------------------------------------------
 
 export type BankingCategory =
 	| "accounts"
@@ -68,9 +66,7 @@ interface MultiAgentDeps {
 	sendStatus?: (msg: string) => void;
 }
 
-// ---------------------------------------------------------------------------
-// Config keys — must match what DemoBuilder provisions in LaunchDarkly
-// ---------------------------------------------------------------------------
+// Config keys — must match what DemoBuilder provisions in LD
 
 const TRIAGE_CONFIG_KEY = "ai-config--togglebot-triage";
 
@@ -92,9 +88,7 @@ const CATEGORY_LABELS: Record<BankingCategory, string> = {
 	customer_support: "Customer Support",
 };
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 function isBedrockModel(modelName: string): boolean {
 	const patterns = [
@@ -103,6 +97,19 @@ function isBedrockModel(modelName: string): boolean {
 		"stability.stable-diffusion", "mistral.mistral", "deepseek.deepseek",
 	];
 	return patterns.some((p) => modelName.includes(p));
+}
+
+function configToMessages(config: any): Array<{ role: string; content: string }> {
+	if (config.messages && config.messages.length > 0) {
+		return config.messages.map((m: any) => ({
+			role: m.role as string,
+			content: m.content as string,
+		}));
+	}
+	if (config.instructions) {
+		return [{ role: "system", content: config.instructions as string }];
+	}
+	return [];
 }
 
 async function callLLM(
@@ -168,9 +175,7 @@ async function callLLM(
 	}
 }
 
-// ---------------------------------------------------------------------------
-// Agent functions — each pulls its own AI config from LaunchDarkly
-// ---------------------------------------------------------------------------
+// Agent functions — each pulls its own AI config from LD
 
 async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const { aiClient, context, bedrockClient, openai, userInput } = deps;
@@ -200,10 +205,7 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const modelName = triageConfig.model.name;
 	pushLog({ level: "INFO", message: `   Model: ${modelName}`, name: "triage" });
 
-	const messages = (triageConfig.messages ?? []).map((m: any) => ({
-		role: m.role as string,
-		content: m.content as string,
-	}));
+	const messages = configToMessages(triageConfig);
 
 	const result = await callLLM(modelName, messages, bedrockClient, openai, {
 		temperature: 0,
@@ -281,10 +283,7 @@ async function runSpecialistAgent(
 	const modelName = specialistConfig.model.name;
 	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName})...`, name: "specialist" });
 
-	let messages = (specialistConfig.messages ?? []).map((m: any) => ({
-		role: m.role as string,
-		content: m.content as string,
-	}));
+	let messages = configToMessages(specialistConfig);
 
 	if (sourcePassages.length > 0) {
 		const ragContext = `\n\nUse the following reference material to inform your answer. Only use facts from this material:\n\n${sourcePassages.join("\n\n---\n\n")}`;
@@ -348,10 +347,7 @@ async function runBrandVoiceAgent(
 
 	const modelName = brandConfig.model.name;
 
-	const messages = (brandConfig.messages ?? []).map((m: any) => ({
-		role: m.role as string,
-		content: m.content as string,
-	}));
+	const messages = configToMessages(brandConfig);
 
 	const result = await callLLM(modelName, messages, bedrockClient, openai);
 
@@ -378,9 +374,7 @@ async function runBrandVoiceAgent(
 	};
 }
 
-// ---------------------------------------------------------------------------
 // Pipeline orchestrator
-// ---------------------------------------------------------------------------
 
 export async function runMultiAgentPipeline(
 	deps: MultiAgentDeps,

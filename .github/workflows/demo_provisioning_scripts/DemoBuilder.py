@@ -1755,9 +1755,10 @@ class DemoBuilder:
             "ai-config--togglebot-triage",
             "ToggleBot Triage Agent - ToggleBank",
             "Routes customer queries to the appropriate banking specialist based on topic classification",
-            tags
+            tags,
+            mode="agent"
         )
-        triage_system_prompt = (
+        triage_instructions = (
             "You are a banking query classifier for ToggleBank. Classify the customer's query into exactly one category.\n\n"
             "Categories:\n"
             "- accounts: Checking/savings accounts, balances, transactions, account management, statements, fees\n"
@@ -1765,6 +1766,7 @@ class DemoBuilder:
             "- investments: Portfolio management, investment advice, retirement planning, stocks, bonds, mutual funds, 401k\n"
             "- transfers: Wire transfers, online transfers, bill payments, money movement, Zelle, ACH\n"
             "- customer_support: General questions about ToggleBank, technical issues, complaints, other inquiries\n\n"
+            "The user's query is: {{ userInput }}\n\n"
             "Return ONLY a JSON object (no markdown fencing):\n"
             "{\"category\": \"<key>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
         )
@@ -1774,10 +1776,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Triage",
             model_config,
-            [
-                {"content": triage_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=triage_instructions,
+            description="Classifies banking queries into specialist categories"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-triage", "production", "on")
@@ -1792,9 +1792,10 @@ class DemoBuilder:
             "ai-config--togglebot-accounts-specialist",
             "ToggleBot Accounts Specialist - ToggleBank",
             "Specialist agent for checking/savings accounts, balances, transactions, and account management queries",
-            tags
+            tags,
+            mode="agent"
         )
-        accounts_system_prompt = (
+        accounts_instructions = (
             "You are ToggleBank's Accounts Specialist. You have deep expertise in checking accounts, savings accounts, "
             "money market accounts, CDs, account fees, transaction history, and account management.\n\n"
             "Answer the customer's question thoroughly and accurately. Use specific details when possible. "
@@ -1804,7 +1805,8 @@ class DemoBuilder:
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
             "- Account Tier: {{ ldctx.user.tier }}\n"
-            "- City: {{ ldctx.location }}"
+            "- City: {{ ldctx.location }}\n\n"
+            "User's question: {{ userInput }}"
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-accounts-specialist",
@@ -1812,10 +1814,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Accounts",
             model_config,
-            [
-                {"content": accounts_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=accounts_instructions,
+            description="Handles checking/savings account queries"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-accounts-specialist", "production", "on")
@@ -1830,9 +1830,10 @@ class DemoBuilder:
             "ai-config--togglebot-loans-specialist",
             "ToggleBot Loans & Credit Specialist - ToggleBank",
             "Specialist agent for personal loans, mortgages, auto loans, credit cards, and credit-related queries",
-            tags
+            tags,
+            mode="agent"
         )
-        loans_system_prompt = (
+        loans_instructions = (
             "You are ToggleBank's Loans & Credit Specialist. You have deep expertise in personal loans, home mortgages, "
             "auto loans, credit cards, lines of credit, interest rates, loan applications, payment schedules, and "
             "credit-related policies.\n\n"
@@ -1842,7 +1843,8 @@ class DemoBuilder:
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
             "- Account Tier: {{ ldctx.user.tier }}\n"
-            "- City: {{ ldctx.location }}"
+            "- City: {{ ldctx.location }}\n\n"
+            "User's question: {{ userInput }}"
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-loans-specialist",
@@ -1850,10 +1852,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Loans",
             model_config,
-            [
-                {"content": loans_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=loans_instructions,
+            description="Handles loan and credit queries"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-loans-specialist", "production", "on")
@@ -1868,9 +1868,10 @@ class DemoBuilder:
             "ai-config--togglebot-investments-specialist",
             "ToggleBot Investments Specialist - ToggleBank",
             "Specialist agent for portfolio management, retirement planning, stocks, bonds, and investment advisory",
-            tags
+            tags,
+            mode="agent"
         )
-        investments_system_prompt = (
+        investments_instructions = (
             "You are ToggleBank's Investment Services Specialist. You have deep expertise in portfolio management, "
             "retirement planning (401k, IRA), stocks, bonds, mutual funds, ETFs, investment advisory services, "
             "and wealth management.\n\n"
@@ -1881,7 +1882,8 @@ class DemoBuilder:
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
             "- Account Tier: {{ ldctx.user.tier }}\n"
-            "- City: {{ ldctx.location }}"
+            "- City: {{ ldctx.location }}\n\n"
+            "User's question: {{ userInput }}"
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-investments-specialist",
@@ -1889,10 +1891,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Investments",
             model_config,
-            [
-                {"content": investments_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=investments_instructions,
+            description="Handles investment and retirement queries"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-investments-specialist", "production", "on")
@@ -1907,9 +1907,10 @@ class DemoBuilder:
             "ai-config--togglebot-transfers-specialist",
             "ToggleBot Transfers Specialist - ToggleBank",
             "Specialist agent for wire transfers, ACH, Zelle, bill pay, mobile deposits, and money movement",
-            tags
+            tags,
+            mode="agent"
         )
-        transfers_system_prompt = (
+        transfers_instructions = (
             "You are ToggleBank's Digital Banking & Transfers Specialist. You have deep expertise in wire transfers, "
             "ACH transfers, Zelle payments, bill pay, mobile deposits, online banking features, and money movement "
             "between accounts.\n\n"
@@ -1919,7 +1920,8 @@ class DemoBuilder:
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
             "- Account Tier: {{ ldctx.user.tier }}\n"
-            "- City: {{ ldctx.location }}"
+            "- City: {{ ldctx.location }}\n\n"
+            "User's question: {{ userInput }}"
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-transfers-specialist",
@@ -1927,10 +1929,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Transfers",
             model_config,
-            [
-                {"content": transfers_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=transfers_instructions,
+            description="Handles transfer and payment queries"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-transfers-specialist", "production", "on")
@@ -1945,9 +1945,10 @@ class DemoBuilder:
             "ai-config--togglebot-support-specialist",
             "ToggleBot Customer Support Specialist - ToggleBank",
             "Specialist agent for general banking questions, technical support, complaints, and miscellaneous inquiries",
-            tags
+            tags,
+            mode="agent"
         )
-        support_system_prompt = (
+        support_instructions = (
             "You are ToggleBank's Customer Support Specialist. You handle general banking questions, technical support "
             "for online and mobile banking, account inquiries, complaints, and any questions that don't fit a specific domain.\n\n"
             "Answer the customer's question thoroughly and accurately. Be empathetic and solution-oriented. "
@@ -1956,7 +1957,8 @@ class DemoBuilder:
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
             "- Account Tier: {{ ldctx.user.tier }}\n"
-            "- City: {{ ldctx.location }}"
+            "- City: {{ ldctx.location }}\n\n"
+            "User's question: {{ userInput }}"
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-support-specialist",
@@ -1964,10 +1966,8 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Support",
             model_config,
-            [
-                {"content": support_system_prompt, "role": "system"},
-                {"content": "{{ userInput }}", "role": "user"}
-            ]
+            instructions=support_instructions,
+            description="Handles general support and miscellaneous queries"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-support-specialist", "production", "on")
@@ -1982,9 +1982,10 @@ class DemoBuilder:
             "ai-config--togglebot-brand-voice",
             "ToggleBot Brand Voice - ToggleBank",
             "Takes specialist responses and rewrites them in ToggleBank's warm, professional brand voice",
-            tags
+            tags,
+            mode="agent"
         )
-        brand_system_prompt = (
+        brand_instructions = (
             "You are ToggleBank's Brand Voice editor. Your job is to take a specialist's response and ensure it "
             "matches ToggleBank's brand voice.\n\n"
             "Brand guidelines:\n"
@@ -1997,9 +1998,7 @@ class DemoBuilder:
             "IMPORTANT: Do NOT add any information that wasn't in the specialist's response. Only adjust tone and formatting.\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
-            "- Account Tier: {{ ldctx.user.tier }}"
-        )
-        brand_user_prompt = (
+            "- Account Tier: {{ ldctx.user.tier }}\n\n"
             "Original customer question: {{ userInput }}\n\n"
             "Specialist's response to rewrite:\n{{ specialist_response }}"
         )
@@ -2009,16 +2008,48 @@ class DemoBuilder:
             model_config_key,
             "GPT-5 Mini - Brand Voice",
             model_config,
-            [
-                {"content": brand_system_prompt, "role": "system"},
-                {"content": brand_user_prompt, "role": "user"}
-            ]
+            instructions=brand_instructions,
+            description="Rewrites specialist responses in ToggleBank brand voice"
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-brand-voice", "production", "on")
         brand_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "gpt-5-mini-brand")
         if brand_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-brand-voice", "production", brand_var_id)
+
+        # -----------------------------------------------------------
+        # Agent Graph — visual flow in LaunchDarkly dashboard
+        # -----------------------------------------------------------
+        specialist_keys = [
+            "ai-config--togglebot-accounts-specialist",
+            "ai-config--togglebot-loans-specialist",
+            "ai-config--togglebot-investments-specialist",
+            "ai-config--togglebot-transfers-specialist",
+            "ai-config--togglebot-support-specialist",
+        ]
+
+        edges = []
+        for spec_key in specialist_keys:
+            short = spec_key.replace("ai-config--togglebot-", "").replace("-specialist", "")
+            edges.append({
+                "key": f"triage-to-{short}",
+                "sourceConfig": "ai-config--togglebot-triage",
+                "targetConfig": spec_key,
+            })
+            edges.append({
+                "key": f"{short}-to-brand",
+                "sourceConfig": spec_key,
+                "targetConfig": "ai-config--togglebot-brand-voice",
+            })
+
+
+        self.ldproject.create_agent_graph(
+            "togglebot-multi-agent",
+            "ToggleBot Multi-Agent - ToggleBank",
+            "Multi-agent pipeline: Triage routes to banking specialists, Brand Voice polishes the response",
+            edges,
+            root_config_key="ai-config--togglebot-triage",
+        )
 
     def create_llm_as_judge_ai_config(self):
         res = self.ldproject.create_ai_config(
