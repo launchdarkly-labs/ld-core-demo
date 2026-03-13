@@ -19,6 +19,7 @@ import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
+import { runMultiAgentPipeline, LLMCallResult } from "@/lib/multi-agent";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -537,107 +538,81 @@ Is there a specific service you'd like to know more about?`;
 					modelId = 'us.' + modelId;
 				}
 
-				// Combine AI config messages with chat history
-				const chatHistoryMessages = mapChatHistoryToConversation(chatHistory);
-				const allMessages = [...mapPromptToConversation(aiConfig.messages ?? []), ...chatHistoryMessages];
-				
-
-				let fullResponse = '';
-				let timeToFirstToken = 0;
-				let firstTokenReceived = false;
 				const startTime = Date.now();
-				let totalInputTokens = 0;
-				let totalOutputTokens = 0;
-				let totalTokens = 0;
+
+				// Build a generic callLLM function that routes to Bedrock or OpenAI
+				const callLLM = async (systemPrompt: string, userMessage: string): Promise<LLMCallResult> => {
+					const callStart = Date.now();
+					if (isBedrock) {
+						const messages = [
+							{ role: 'user' as const, content: [{ text: userMessage }] },
+						];
+						const cmd = new ConverseCommand({
+							modelId,
+							system: [{ text: systemPrompt }],
+							messages,
+							inferenceConfig: {
+								temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
+								maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
+							},
+						});
+						const resp: any = await bedrockClient.send(cmd);
+						const content = resp?.output?.message?.content?.[0]?.text ?? '';
+						const usage = resp?.usage ?? {};
+						return {
+							content,
+							inputTokens: usage.inputTokens ?? 0,
+							outputTokens: usage.outputTokens ?? 0,
+							durationMs: Date.now() - callStart,
+						};
+					} else {
+						const messages = [
+							{ role: 'system', content: systemPrompt },
+							{ role: 'user', content: userMessage },
+						];
+						const resp = await openai.chat.completions.create({
+							model: modelId,
+							messages,
+							max_completion_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
+							response_format: { type: "text" },
+						});
+						const content = resp.choices?.[0]?.message?.content ?? '';
+						return {
+							content,
+							inputTokens: resp.usage?.prompt_tokens ?? 0,
+							outputTokens: resp.usage?.completion_tokens ?? 0,
+							durationMs: Date.now() - callStart,
+						};
+					}
+				};
 
 				pushLog({ level: "INFO", message: `🚀 Calling ${isBedrock ? "Bedrock" : "OpenAI"} (${modelId})...`, name: "chat" });
 
-				if (isBedrock) {
-					// Use Bedrock streaming API
-					const streamCommand = new ConverseStreamCommand({
-						modelId: modelId,
-						messages: allMessages,
-						inferenceConfig: {
-							temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
-							maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 200,
-						},
-					});
+				const sendStatus = (msg: string) => {
+					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
+				};
 
-					const streamResponse = await bedrockClient.send(streamCommand);
+				// Run multi-agent pipeline: Triage → Specialist → Brand Voice
+				const agentResult = await runMultiAgentPipeline(
+					userInput,
+					sourcePassages,
+					callLLM,
+					modelId,
+					sendStatus,
+				);
 
-					// Process the Bedrock stream
-					for await (const chunk of streamResponse.stream ?? []) {
-						if (chunk.contentBlockDelta?.delta?.text) {
-							// If this is the first token/chunk
-							if (!firstTokenReceived) {
-								timeToFirstToken = Date.now() - startTime;
-								tracker.trackTimeToFirstToken(timeToFirstToken);
-								firstTokenReceived = true;
-							}
+				const fullResponse = agentResult.finalResponse;
+				const totalInputTokens = agentResult.totalInputTokens;
+				const totalOutputTokens = agentResult.totalOutputTokens;
+				const totalTokens = totalInputTokens + totalOutputTokens;
 
-							const textChunk = chunk.contentBlockDelta.delta.text;
-							fullResponse += textChunk;
+				const timeToFirstToken = Date.now() - startTime;
+				tracker.trackTimeToFirstToken(timeToFirstToken);
 
-							// Stream each chunk to the client using SSE format
-							res.write(`data: ${JSON.stringify({ 
-								chunk: textChunk,
-								done: false 
-							})}\n\n`);
-						}
-						if (chunk.metadata?.usage) {
-							const usage = chunk.metadata.usage;
-							totalInputTokens += usage.inputTokens ?? 0;
-							totalOutputTokens += usage.outputTokens ?? 0;
-							totalTokens += usage.totalTokens ?? 0;
-						}
-					}
-				} else {
-					// Use OpenAI non-streaming API
-					const openaiMessages = mapMessagesToOpenAIFormat(allMessages);
-					const response = await openai.chat.completions.create({
-						model: modelId,
-						messages: openaiMessages,
-						max_completion_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
-						response_format: { type: "text" }
-					});
+				// Send the final response as a chunk to the client
+				res.write(`data: ${JSON.stringify({ chunk: fullResponse, done: false })}\n\n`);
 
-					// Get the full response - check multiple possible locations
-					const choice = response.choices[0];
-					fullResponse = choice?.message?.content ?? '';
-					
-					// If content is empty, check if there's reasoning or other content
-					if (!fullResponse && choice?.message) {
-						const message = choice.message;
-						
-						// Check for reasoning content or other possible content fields
-						if (message.reasoning) {
-							fullResponse = message.reasoning;
-						} else if (message.annotations && message.annotations.length > 0) {
-							fullResponse = message.annotations[0].content || '';
-						} else {
-							// If still no content, create a fallback response
-							fullResponse = "I apologize, but I'm having trouble generating a response at the moment. Please try again.";
-						}
-					}
-					
-					// Track timing
-					timeToFirstToken = Date.now() - startTime;
-					tracker.trackTimeToFirstToken(timeToFirstToken);
-					firstTokenReceived = true;
-
-					// Get actual token usage from OpenAI response
-					totalInputTokens = response.usage?.prompt_tokens ?? 0;
-					totalOutputTokens = response.usage?.completion_tokens ?? 0;
-					totalTokens = response.usage?.total_tokens ?? 0;
-
-					// Send the complete response as a single chunk
-					res.write(`data: ${JSON.stringify({ 
-						chunk: fullResponse,
-						done: false 
-					})}\n\n`);
-				}
-
-				// After processing, send the total token usage
+				// Track token usage
 				const tokens: LDTokenUsage = {
 					input: totalInputTokens,
 					output: totalOutputTokens,
