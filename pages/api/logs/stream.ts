@@ -15,14 +15,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { guardrails, sessionId } = req.body ?? {};
-  const msg = guardrails === true ? "Guardrails turned on" : "Guardrails turned off";
-  pushLog({
-    level: "INFO",
-    message: `*** ${msg} ***`,
-    name: guardrails ? "guardrails-on" : "guardrails-off",
-    ...(sessionId && { sessionId }),
-  });
+  const { message, level, name, sessionId } = req.body ?? {};
+  if (message) {
+    pushLog({
+      level: level || "INFO",
+      message,
+      name: name || "chat",
+      ...(sessionId && { sessionId }),
+    });
+  }
   return res.status(200).json({ ok: true });
 }
 
