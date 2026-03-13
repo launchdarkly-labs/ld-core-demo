@@ -1781,6 +1781,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-triage", "production", "on")
+        triage_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-triage", "gpt-5-mini-triage")
+        if triage_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-triage", "production", triage_var_id)
 
         # -----------------------------------------------------------
         # 2. Accounts Specialist
@@ -1816,6 +1819,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-accounts-specialist", "production", "on")
+        accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "gpt-5-mini-accounts")
+        if accounts_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-accounts-specialist", "production", accounts_var_id)
 
         # -----------------------------------------------------------
         # 3. Loans & Credit Specialist
@@ -1851,6 +1857,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-loans-specialist", "production", "on")
+        loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "gpt-5-mini-loans")
+        if loans_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-loans-specialist", "production", loans_var_id)
 
         # -----------------------------------------------------------
         # 4. Investments Specialist
@@ -1887,6 +1896,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-investments-specialist", "production", "on")
+        investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "gpt-5-mini-investments")
+        if investments_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-investments-specialist", "production", investments_var_id)
 
         # -----------------------------------------------------------
         # 5. Transfers Specialist
@@ -1922,6 +1934,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-transfers-specialist", "production", "on")
+        transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "gpt-5-mini-transfers")
+        if transfers_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-transfers-specialist", "production", transfers_var_id)
 
         # -----------------------------------------------------------
         # 6. Customer Support Specialist
@@ -1956,6 +1971,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-support-specialist", "production", "on")
+        support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "gpt-5-mini-support")
+        if support_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-support-specialist", "production", support_var_id)
 
         # -----------------------------------------------------------
         # 7. Brand Voice Agent
@@ -1998,6 +2016,9 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_ai_config("ai-config--togglebot-brand-voice", "production", "on")
+        brand_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "gpt-5-mini-brand")
+        if brand_var_id:
+            self.ldproject.update_ai_config_targeting("ai-config--togglebot-brand-voice", "production", brand_var_id)
 
     def create_llm_as_judge_ai_config(self):
         res = self.ldproject.create_ai_config(
