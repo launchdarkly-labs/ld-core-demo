@@ -183,7 +183,7 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	pushLog({ level: "INFO", message: `🗂️ Triage — classifying query...`, name: "triage" });
 	pushLog({ level: "INFO", message: `   Pulling AI config (${TRIAGE_CONFIG_KEY})...`, name: "triage" });
 
-	const triageConfig = await aiClient.config(
+	const triageConfig = await aiClient.agentConfig(
 		TRIAGE_CONFIG_KEY,
 		context,
 		{ enabled: false },
@@ -260,7 +260,7 @@ async function runSpecialistAgent(
 
 	pushLog({ level: "INFO", message: `   Pulling AI config (${configKey})...`, name: "specialist" });
 
-	const specialistConfig = await aiClient.config(
+	const specialistConfig = await aiClient.agentConfig(
 		configKey,
 		context,
 		{ enabled: false },
@@ -327,7 +327,7 @@ async function runBrandVoiceAgent(
 
 	pushLog({ level: "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...`, name: "brand" });
 
-	const brandConfig = await aiClient.config(
+	const brandConfig = await aiClient.agentConfig(
 		BRAND_VOICE_CONFIG_KEY,
 		context,
 		{ enabled: false },
