@@ -1720,7 +1720,7 @@ class DemoBuilder:
         
         time.sleep(2)
         
-        self.ldproject.toggle_ai_config("ai-config--togglebot-self-heal-chatbot", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-self-heal-chatbot", "on", "production")
         
         self.ldproject.add_ai_fallback_targeting_to_ai_config(
             "ai-config--togglebot-self-heal-chatbot",
@@ -1780,7 +1780,7 @@ class DemoBuilder:
             description="Classifies banking queries into specialist categories"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-triage", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-triage", "on", "production")
         triage_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-triage", "gpt-5-mini-triage")
         if triage_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-triage", "production", triage_var_id)
@@ -1818,7 +1818,7 @@ class DemoBuilder:
             description="Handles checking/savings account queries"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-accounts-specialist", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-accounts-specialist", "on", "production")
         accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "gpt-5-mini-accounts")
         if accounts_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-accounts-specialist", "production", accounts_var_id)
@@ -1856,7 +1856,7 @@ class DemoBuilder:
             description="Handles loan and credit queries"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-loans-specialist", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-loans-specialist", "on", "production")
         loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "gpt-5-mini-loans")
         if loans_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-loans-specialist", "production", loans_var_id)
@@ -1895,7 +1895,7 @@ class DemoBuilder:
             description="Handles investment and retirement queries"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-investments-specialist", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-investments-specialist", "on", "production")
         investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "gpt-5-mini-investments")
         if investments_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-investments-specialist", "production", investments_var_id)
@@ -1933,7 +1933,7 @@ class DemoBuilder:
             description="Handles transfer and payment queries"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-transfers-specialist", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-transfers-specialist", "on", "production")
         transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "gpt-5-mini-transfers")
         if transfers_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-transfers-specialist", "production", transfers_var_id)
@@ -1970,7 +1970,7 @@ class DemoBuilder:
             description="Handles general support and miscellaneous queries"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-support-specialist", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-support-specialist", "on", "production")
         support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "gpt-5-mini-support")
         if support_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-support-specialist", "production", support_var_id)
@@ -2012,7 +2012,7 @@ class DemoBuilder:
             description="Rewrites specialist responses in ToggleBank brand voice"
         )
         time.sleep(1)
-        self.ldproject.toggle_ai_config("ai-config--togglebot-brand-voice", "production", "on")
+        self.ldproject.toggle_flag("ai-config--togglebot-brand-voice", "on", "production")
         brand_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "gpt-5-mini-brand")
         if brand_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-brand-voice", "production", brand_var_id)
@@ -2096,7 +2096,7 @@ class DemoBuilder:
             print(" - Updated LLM as Judge AI config targeting to claude-sonnet-3-7 variation")
             
             # Toggle on the AI config
-            self.ldproject.toggle_ai_config("llm-as-judge", "production", "on")
+            self.ldproject.toggle_flag("llm-as-judge", "on", "production")
             print(" - Toggled on LLM as Judge AI config")
         else:
             print(" - Warning: Could not find claude-sonnet-3-7 variation for LLM as Judge AI config")
