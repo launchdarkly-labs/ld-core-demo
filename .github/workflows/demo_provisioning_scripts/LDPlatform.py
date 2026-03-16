@@ -288,7 +288,7 @@ class LDPlatform:
     # Create AI Config
     ##################################################
     
-    def create_ai_config(self, config_key, config_name, description, tags):
+    def create_ai_config(self, config_key, config_name, description, tags, mode=None):
         
         payload = {
             "description": description,
@@ -296,6 +296,8 @@ class LDPlatform:
             "name": config_name,
             "tags": tags
         }
+        if mode:
+            payload["mode"] = mode
         
         headers = {
             "Content-Type": "application/json",
@@ -322,17 +324,22 @@ class LDPlatform:
     # Create AI Config Versions
     ##################################################
         
-    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages, custom=None):
+    def create_ai_config_versions(self, ai_config_key, ai_config_version_key, ai_model_config_key, ai_config_version_name, model, messages=None, custom=None, instructions=None, description=None):
         
         payload = {
             "key": ai_config_version_key,
             "name": ai_config_version_name,
-            "messages": messages,  # Used for AI config versions
             "model": model,
             "modelConfigKey": ai_model_config_key,
             "tools": [],
             "toolKeys": []
         }
+        if instructions is not None:
+            payload["instructions"] = instructions
+        if description is not None:
+            payload["description"] = description
+        if messages is not None:
+            payload["messages"] = messages
         if custom is not None:
             payload["custom"] = custom
 
@@ -2138,6 +2145,43 @@ class LDPlatform:
         
         print(f"Variation with key '{variation_key}' not found")
         return None
+
+    ##################################################
+    # Create Agent Graph
+    ##################################################
+    def create_agent_graph(self, graph_key, graph_name, description, edges, root_config_key=None):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/agent-graphs"
+        )
+
+        payload = {
+            "key": graph_key,
+            "name": graph_name,
+            "description": description,
+            "edges": edges,
+        }
+        if root_config_key:
+            payload["rootConfigKey"] = root_config_key
+
+        if self.user_id:
+            payload["maintainerId"] = self.user_id
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        response = self.getrequest("POST", url, json=payload, headers=headers)
+        try:
+            data = json.loads(response.text)
+            if "message" in data:
+                print("Error creating agent graph: " + data["message"])
+        except json.JSONDecodeError:
+            print(f"Agent graph creation response status: {response.status_code}")
+        return response
 
     ##################################################
     # Create AI Fallback Segment

@@ -18,6 +18,8 @@ import { addUserToSegment } from "@/utils/guardrail/ldApi";
 import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
+import { pushLog } from "@/lib/log-stream";
+import { runMultiAgentPipeline } from "@/lib/multi-agent";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -53,6 +55,9 @@ export default async function chatResponse(
 		const clientSideContext = JSON.parse(
 			getCookie(LD_CONTEXT_COOKIE_KEY, { res, req }) || "{}"
 		);
+
+		pushLog({ level: "INFO", message: `💬 Chat request · "${(userInput ?? "").slice(0, 60)}${(userInput ?? "").length > 60 ? "…" : ""}"`, name: "chat" });
+		pushLog({ level: "INFO", message: `   AI Config: ${aiConfigKey}`, name: "chat" });
 
 		function mapPromptToConversation(
 			prompt: { role: 'user' | 'assistant' | 'system'; content: string }[],
@@ -426,6 +431,7 @@ Is there a specific service you'd like to know more about?`;
 
 		const aiConfig = initialAiConfig;
 		if (!aiConfig.enabled) {
+			pushLog({ level: "WARN", message: `⚠️ AI config "${aiConfigKey}" is disabled`, name: "chat" });
 			throw new Error("AI config is disabled");
 		} else {
 			if (!aiConfig.model) {
@@ -437,6 +443,8 @@ Is there a specific service you'd like to know more about?`;
 			}
 
 			const { tracker } = aiConfig;
+			pushLog({ level: "INFO", message: `📥 Pulled AI config from LaunchDarkly (${aiConfigKey})`, name: "chat" });
+			pushLog({ level: "INFO", message: `   Model: ${aiConfig.model.name}`, name: "chat" });
 
 			try {
 				// Guardrail clamp: pull blocked patterns from system message JSON if provided
@@ -502,6 +510,7 @@ Is there a specific service you'd like to know more about?`;
 				}
 
 				if (matched || blockTriggered) {
+					pushLog({ level: "WARN", message: `🛡️ Guardrail triggered — blocked pattern: "${matched}"`, name: "guardrails-triggered" });
 					res.writeHead(200, {
 						'Content-Type': 'text/event-stream',
 						'Cache-Control': 'no-cache',
@@ -521,113 +530,37 @@ Is there a specific service you'd like to know more about?`;
 					'Connection': 'keep-alive',
 				});
 
-				// Get the model ID from AI Configs
-				let modelId = aiConfig.model.name;
+				const modelId = aiConfig.model.name;
 				const isBedrock = isBedrockModel(modelId);
-				
-				if (isBedrock && !modelId.startsWith('us.')) {
-					modelId = 'us.' + modelId;
-				}
+				const startTime = Date.now();
 
-				// Combine AI config messages with chat history
-				const chatHistoryMessages = mapChatHistoryToConversation(chatHistory);
-				const allMessages = [...mapPromptToConversation(aiConfig.messages ?? []), ...chatHistoryMessages];
-				
+				const sendStatus = (msg: string) => {
+					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
+				};
 
-				let fullResponse = '';
-				let timeToFirstToken = 0;
-				let firstTokenReceived = false;
-				const startTime = Date.now(); // Start time for total duration
-				let totalInputTokens = 0;
-				let totalOutputTokens = 0;
-				let totalTokens = 0;
+				// Run multi-agent pipeline: Triage → Specialist → Brand Voice
+				// Each agent pulls its own AI config from LaunchDarkly
+				const agentResult = await runMultiAgentPipeline({
+					aiClient,
+					context,
+					bedrockClient,
+					openai,
+					userInput,
+					sourcePassages,
+					sendStatus,
+				});
 
-				if (isBedrock) {
-					// Use Bedrock streaming API
-					const streamCommand = new ConverseStreamCommand({
-						modelId: modelId,
-						messages: allMessages,
-						inferenceConfig: {
-							temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
-							maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 200,
-						},
-					});
+				const fullResponse = agentResult.finalResponse;
+				const totalInputTokens = agentResult.totalInputTokens;
+				const totalOutputTokens = agentResult.totalOutputTokens;
+				const totalTokens = totalInputTokens + totalOutputTokens;
 
-					const streamResponse = await bedrockClient.send(streamCommand);
+				const timeToFirstToken = Date.now() - startTime;
+				tracker.trackTimeToFirstToken(timeToFirstToken);
 
-					// Process the Bedrock stream
-					for await (const chunk of streamResponse.stream ?? []) {
-						if (chunk.contentBlockDelta?.delta?.text) {
-							// If this is the first token/chunk
-							if (!firstTokenReceived) {
-								timeToFirstToken = Date.now() - startTime;
-								tracker.trackTimeToFirstToken(timeToFirstToken);
-								firstTokenReceived = true;
-							}
+				// Send the final response to the client
+				res.write(`data: ${JSON.stringify({ chunk: fullResponse, done: false })}\n\n`);
 
-							const textChunk = chunk.contentBlockDelta.delta.text;
-							fullResponse += textChunk;
-
-							// Stream each chunk to the client using SSE format
-							res.write(`data: ${JSON.stringify({ 
-								chunk: textChunk,
-								done: false 
-							})}\n\n`);
-						}
-						if (chunk.metadata?.usage) {
-							const usage = chunk.metadata.usage;
-							totalInputTokens += usage.inputTokens ?? 0;
-							totalOutputTokens += usage.outputTokens ?? 0;
-							totalTokens += usage.totalTokens ?? 0;
-						}
-					}
-				} else {
-					// Use OpenAI non-streaming API
-					const openaiMessages = mapMessagesToOpenAIFormat(allMessages);
-					const response = await openai.chat.completions.create({
-						model: modelId,
-						messages: openaiMessages,
-						max_completion_tokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 1000,
-						response_format: { type: "text" }
-					});
-
-					// Get the full response - check multiple possible locations
-					const choice = response.choices[0];
-					fullResponse = choice?.message?.content ?? '';
-					
-					// If content is empty, check if there's reasoning or other content
-					if (!fullResponse && choice?.message) {
-						const message = choice.message;
-						
-						// Check for reasoning content or other possible content fields
-						if (message.reasoning) {
-							fullResponse = message.reasoning;
-						} else if (message.annotations && message.annotations.length > 0) {
-							fullResponse = message.annotations[0].content || '';
-						} else {
-							// If still no content, create a fallback response
-							fullResponse = "I apologize, but I'm having trouble generating a response at the moment. Please try again.";
-						}
-					}
-					
-					// Track timing
-					timeToFirstToken = Date.now() - startTime;
-					tracker.trackTimeToFirstToken(timeToFirstToken);
-					firstTokenReceived = true;
-
-					// Get actual token usage from OpenAI response
-					totalInputTokens = response.usage?.prompt_tokens ?? 0;
-					totalOutputTokens = response.usage?.completion_tokens ?? 0;
-					totalTokens = response.usage?.total_tokens ?? 0;
-
-					// Send the complete response as a single chunk
-					res.write(`data: ${JSON.stringify({ 
-						chunk: fullResponse,
-						done: false 
-					})}\n\n`);
-				}
-
-				// After processing, send the total token usage
 				const tokens: LDTokenUsage = {
 					input: totalInputTokens,
 					output: totalOutputTokens,
@@ -635,9 +568,10 @@ Is there a specific service you'd like to know more about?`;
 				};
 				tracker.trackTokens?.(tokens);
 
-		// Calculate total generation time
 		const totalTime = Date.now() - startTime;
 		tracker.trackDuration?.(totalTime);
+
+		pushLog({ level: "INFO", message: `   Response in ${totalTime}ms · ${totalInputTokens} in / ${totalOutputTokens} out tokens`, name: "chat" });
 
 		// Calculate cost based on model and token usage
 		function calculateModelCost(modelId: string, inputTokens: number, outputTokens: number): number {
@@ -690,10 +624,14 @@ Is there a specific service you'd like to know more about?`;
 					responseText: fullResponse,
 					userQuestion: userInput
 				});
+				pushLog({ level: "INFO", message: `⚖️ Judge accuracy: ${judge.accuracy?.toFixed(2) ?? "—"}`, name: "chat" });
+
 				const relModel = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
 				let relevance: number | null = await computeRelevanceLLM(userInput, fullResponse, relModel);
 				if (relevance === null) relevance = computeRelevanceJaccard(userInput, fullResponse);
 				const sourceFidelity = (judge as any).sourceFidelity ?? judge.accuracy ?? 0;
+
+				pushLog({ level: "INFO", message: `   Relevance: ${relevance?.toFixed(2) ?? "—"} · Fidelity: ${sourceFidelity?.toFixed(2) ?? "—"}`, name: "chat" });
 
 				// Track custom metrics in LaunchDarkly using the existing client
 				try {
@@ -733,9 +671,11 @@ Is there a specific service you'd like to know more about?`;
 				res.write(`data: ${JSON.stringify(data)}\n\n`);
 				res.end();
 
+				pushLog({ level: "INFO", message: `✅ Chat complete · cost: $${responseCost}`, name: "chat" });
 				tracker.trackSuccess();
 			} catch (error: any) {
 				console.error("Error sending request to Bedrock:", error);
+				pushLog({ level: "ERROR", message: `❌ LLM error: ${error?.message ?? "Unknown error"}`, name: "chat" });
 				tracker.trackError();
 				const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
 				await recordErrorToLD(
@@ -760,6 +700,7 @@ Is there a specific service you'd like to know more about?`;
 		}
 	} catch (error: any) {
 		console.error("Error in chatResponse:", error);
+		pushLog({ level: "ERROR", message: `❌ Chat error: ${error?.message ?? "Unknown error"}`, name: "chat" });
 		const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
 		await recordErrorToLD(
 			errorObj,
