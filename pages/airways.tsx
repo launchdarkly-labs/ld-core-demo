@@ -27,6 +27,7 @@ import LaunchClubStatus from "@/components/ui/airwayscomponents/launchClubStatus
 import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
 import AirwaysHero from "@/components/ui/airwayscomponents/AirwaysHero";
 import LaunchSignUp from "@/components/ui/airwayscomponents/launchSignup";
+import ClassifierDemo from "@/components/ui/airwayscomponents/ClassifierDemo";
 import { AIRLINES } from "@/utils/constants";
 import { useRouter } from "next/router";
 
@@ -169,6 +170,7 @@ export default function Airways() {
               </div>
             </motion.section>
           )}
+          <ClassifierDemo />
           <Chatbot vertical="airways"/>
         </motion.main>
       </AnimatePresence>

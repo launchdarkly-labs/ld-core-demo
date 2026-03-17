@@ -13,7 +13,7 @@ export type BankingCategory =
 	| "transfers"
 	| "customer_support";
 
-interface LLMCallResult {
+export interface LLMCallResult {
 	content: string;
 	inputTokens: number;
 	outputTokens: number;
@@ -90,7 +90,7 @@ const CATEGORY_LABELS: Record<BankingCategory, string> = {
 
 // Helpers
 
-function isBedrockModel(modelName: string): boolean {
+export function isBedrockModel(modelName: string): boolean {
 	const patterns = [
 		"anthropic.claude", "amazon.titan", "amazon.nova",
 		"meta.llama", "cohere.command", "ai21.jurassic",
@@ -99,7 +99,7 @@ function isBedrockModel(modelName: string): boolean {
 	return patterns.some((p) => modelName.includes(p));
 }
 
-function configToMessages(config: any): Array<{ role: string; content: string }> {
+export function configToMessages(config: any): Array<{ role: string; content: string }> {
 	if (config.messages && config.messages.length > 0) {
 		return config.messages.map((m: any) => ({
 			role: m.role as string,
@@ -112,7 +112,7 @@ function configToMessages(config: any): Array<{ role: string; content: string }>
 	return [];
 }
 
-async function callLLM(
+export async function callLLM(
 	modelId: string,
 	messages: Array<{ role: string; content: string }>,
 	bedrockClient: BedrockRuntimeClient,
