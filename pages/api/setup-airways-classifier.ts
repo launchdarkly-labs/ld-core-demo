@@ -28,13 +28,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 	const projectKey = body?.projectKey?.trim();
-	const apiKey = (body?.apiKey || process.env.LD_API_KEY || process.env.LAUNCHDARKLY_API_TOKEN)?.trim();
+	const apiKey = (process.env.LD_API_KEY || process.env.LAUNCHDARKLY_API_TOKEN)?.trim();
 
 	if (!projectKey) {
 		return res.status(400).json({ error: "projectKey is required" });
 	}
 	if (!apiKey) {
-		return res.status(400).json({ error: "apiKey is required (pass it in the request or set LD_API_KEY env var)" });
+		return res.status(400).json({ error: "LD_API_KEY is not set. Add your LaunchDarkly API token to .env to create AI configs." });
 	}
 
 	// Read the seed file

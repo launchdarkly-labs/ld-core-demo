@@ -45,7 +45,6 @@ export default function ClassifierDemo() {
 
 	// Setup state
 	const [showSetup, setShowSetup] = useState(false);
-	const [setupApiKey, setSetupApiKey] = useState("");
 	const [setupProjectKey, setSetupProjectKey] = useState("");
 	const [setupLoading, setSetupLoading] = useState(false);
 	const [setupResult, setSetupResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -55,14 +54,14 @@ export default function ClassifierDemo() {
 	}, [turns]);
 
 	async function runSetup() {
-		if (!setupApiKey.trim() || !setupProjectKey.trim()) return;
+		if (!setupProjectKey.trim()) return;
 		setSetupLoading(true);
 		setSetupResult(null);
 		try {
 			const res = await fetch("/api/setup-airways-classifier", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ apiKey: setupApiKey.trim(), projectKey: setupProjectKey.trim() }),
+				body: JSON.stringify({ projectKey: setupProjectKey.trim() }),
 			});
 			const data = await res.json();
 			setSetupResult({ ok: data.ok ?? res.ok, message: data.message || data.error || "Unknown result" });
@@ -202,24 +201,18 @@ export default function ClassifierDemo() {
 						<p className="text-xs text-gray-500 mb-2">
 							Provision the 3 AI configs (triage, eval, improver) into your LaunchDarkly project.
 						</p>
-						<div className="flex flex-col gap-2">
+						<div className="flex gap-2">
 							<Input
 								value={setupProjectKey}
 								onChange={(e: any) => setSetupProjectKey(e.target.value)}
-								placeholder="LD Project Key"
-								className="text-sm"
-							/>
-							<Input
-								type="password"
-								value={setupApiKey}
-								onChange={(e: any) => setSetupApiKey(e.target.value)}
-								placeholder="LD API Key"
+								onKeyDown={(e: any) => e.key === "Enter" && runSetup()}
+								placeholder="LD Project Key (e.g. gyeutter-ld-demo)"
 								className="text-sm"
 							/>
 							<Button
 								onClick={runSetup}
-								disabled={setupLoading || !setupApiKey.trim() || !setupProjectKey.trim()}
-								className="bg-gradient-airways text-white hover:opacity-90 text-sm"
+								disabled={setupLoading || !setupProjectKey.trim()}
+								className="bg-gradient-airways text-white hover:opacity-90 text-sm whitespace-nowrap"
 							>
 								{setupLoading ? <PulseLoader size={4} color="white" /> : "Create AI Configs"}
 							</Button>
