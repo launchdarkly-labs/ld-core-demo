@@ -6,7 +6,7 @@ import { Sparkles, ChevronDown } from "lucide-react";
 import airlineLoginHeroBackground from "@/public/airline/airline-login-hero-background.jpeg";
 
 import { Button } from "../button";
-import DestinationPicker from "./DestinationPicker";
+
 import TripsContext from "@/utils/contexts/TripContext";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -37,6 +37,8 @@ const AirwaysHero = () => {
     from: new Date(),
     to: addDays(new Date(), 7),
   });
+
+  const [aiQuery, setAiQuery] = useState("");
 
   const flags = useFlags();
   const destinationPickerNewAIModelLDFlag = flags["ai-config--destination-picker-new-ai-model"];
@@ -114,14 +116,33 @@ const AirwaysHero = () => {
             </h2> */}
 
             {destinationPickerNewAIModelLDFlag?._ldMeta?.enabled !== false && (
-              <DestinationPicker>
-                <Button className="bg-airlinedarkblue shadow-xl rounded-3xl w-[15rem] py-6 flex gap-2 animate-pulse hover:animate-none">
-                  <span>
-                    <Sparkles />{" "}
-                  </span>
-                  Find your next trip with AI
+              <div className="flex gap-2 w-full max-w-md">
+                <input
+                  type="text"
+                  value={aiQuery}
+                  onChange={(e) => setAiQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && aiQuery.trim()) {
+                      window.dispatchEvent(new CustomEvent("airways-ai-query", { detail: aiQuery.trim() }));
+                      setAiQuery("");
+                    }
+                  }}
+                  placeholder="Ask about flights, bookings, status..."
+                  className="flex-1 px-4 py-3 rounded-full bg-white/90 backdrop-blur text-gray-800 placeholder-gray-400 text-sm shadow-xl border-0 outline-none focus:ring-2 focus:ring-airlinedarkblue"
+                />
+                <Button
+                  onClick={() => {
+                    if (aiQuery.trim()) {
+                      window.dispatchEvent(new CustomEvent("airways-ai-query", { detail: aiQuery.trim() }));
+                      setAiQuery("");
+                    }
+                  }}
+                  className="bg-airlinedarkblue shadow-xl rounded-full px-6 py-3 flex gap-2 hover:opacity-90"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Ask AI
                 </Button>
-              </DestinationPicker>
+              </div>
             )}
           </div>
 

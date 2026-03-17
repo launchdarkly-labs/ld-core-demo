@@ -29,13 +29,13 @@
       ],
       "targeting": {
         "defaults": {
-          "onVariation": 1,
+          "onVariation": 0,
           "offVariation": 0
         },
         "environments": {
           "production": {
             "enabled": true,
-            "fallthrough": { "variation": 1 },
+            "fallthrough": { "variation": 0 },
             "offVariation": 0,
             "rules": [],
             "targets": [],
@@ -73,13 +73,13 @@
       ],
       "targeting": {
         "defaults": {
-          "onVariation": 1,
+          "onVariation": 0,
           "offVariation": 0
         },
         "environments": {
           "production": {
             "enabled": true,
-            "fallthrough": { "variation": 1 },
+            "fallthrough": { "variation": 0 },
             "offVariation": 0,
             "rules": [],
             "targets": [],
@@ -117,13 +117,13 @@
       ],
       "targeting": {
         "defaults": {
-          "onVariation": 1,
+          "onVariation": 0,
           "offVariation": 0
         },
         "environments": {
           "production": {
             "enabled": true,
-            "fallthrough": { "variation": 1 },
+            "fallthrough": { "variation": 0 },
             "offVariation": 0,
             "rules": [],
             "targets": [],

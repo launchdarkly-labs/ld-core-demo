@@ -59,7 +59,7 @@ export async function createVariation(
 	variation: {
 		key: string;
 		name: string;
-		model: { name: string };
+		model: { name: string } | { modelName: string };
 		modelConfigKey: string;
 		messages?: Array<{ role: string; content: string }>;
 		instructions?: string;
@@ -72,7 +72,7 @@ export async function createVariation(
 	const payload = {
 		key: variation.key,
 		name: variation.name,
-		model: variation.model,
+		model: "modelName" in variation.model ? variation.model : { modelName: (variation.model as any).name, parameters: {} },
 		modelConfigKey: variation.modelConfigKey,
 		messages: variation.messages || [],
 		instructions: variation.instructions,

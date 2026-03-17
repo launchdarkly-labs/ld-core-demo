@@ -53,6 +53,33 @@ export default function ClassifierDemo() {
 		resultsEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [turns]);
 
+	// Queue for queries from the hero input
+	const [pendingQuery, setPendingQuery] = useState<string | null>(null);
+
+	useEffect(() => {
+		const handler = (e: Event) => {
+			const query = (e as CustomEvent).detail;
+			if (query && typeof query === "string") {
+				const match = AIRWAYS_EVAL_DATASET.find(
+					(tc) => tc.query.toLowerCase() === query.toLowerCase(),
+				);
+				setExpectedIntent(match?.expectedIntent ?? null);
+				setInput(query);
+				setPendingQuery(query);
+			}
+		};
+		window.addEventListener("airways-ai-query", handler);
+		return () => window.removeEventListener("airways-ai-query", handler);
+	}, []);
+
+	// Auto-submit when pendingQuery is set and input has updated
+	useEffect(() => {
+		if (pendingQuery && input === pendingQuery && !isLoading) {
+			setPendingQuery(null);
+			submit();
+		}
+	}, [pendingQuery, input]);
+
 	async function runSetup() {
 		if (!setupProjectKey.trim()) return;
 		setSetupLoading(true);
@@ -86,7 +113,11 @@ export default function ClassifierDemo() {
 		setIsLoading(true);
 		setStatus("Starting classification...");
 
+		const turnId = Date.now();
 		const turn: TurnResult = { query: userInput, expectedIntent: expected ?? undefined };
+
+		// Add placeholder turn immediately
+		setTurns((prev) => [...prev, { ...turn }]);
 
 		try {
 			const response = await fetch("/api/airways-classifier", {
@@ -101,16 +132,20 @@ export default function ClassifierDemo() {
 			const reader = response.body?.getReader();
 			if (!reader) throw new Error("No reader");
 
+			const decoder = new TextDecoder();
+			let buffer = "";
+
 			while (true) {
 				const { done, value } = await reader.read();
 				if (done) break;
 
-				const text = new TextDecoder().decode(value);
-				const events = text.split("\n\n");
+				buffer += decoder.decode(value, { stream: true });
+				const parts = buffer.split("\n\n");
+				buffer = parts.pop() || "";
 
-				for (const event of events) {
+				for (const event of parts) {
 					if (!event.trim() || !event.startsWith("data:")) continue;
-					const jsonStr = event.replace(/^data:\s/, "");
+					const jsonStr = event.replace(/^data:\s*/, "");
 					try {
 						const data = JSON.parse(jsonStr);
 
@@ -119,24 +154,26 @@ export default function ClassifierDemo() {
 						}
 						if (data.classification) {
 							turn.classification = data.classification;
-							setTurns((prev) => [...prev.filter((t) => t !== turn), { ...turn }]);
 						}
 						if (data.eval) {
 							turn.eval = data.eval;
-							setTurns((prev) => [...prev.filter((t) => t.query !== turn.query || t !== prev[prev.length - 1]), { ...turn }]);
 						}
 						if (data.improvement) {
 							turn.improvement = data.improvement;
 						}
-						if (data.done) {
-							// Update accuracy tracker
-							if (turn.eval) {
-								setAccuracy((prev) => ({
-									correct: prev.correct + (turn.eval!.correct ? 1 : 0),
-									total: prev.total + 1,
-								}));
-							}
+						if (data.done && turn.eval) {
+							setAccuracy((prev) => ({
+								correct: prev.correct + (turn.eval!.correct ? 1 : 0),
+								total: prev.total + 1,
+							}));
 						}
+
+						// Update the last turn in place
+						setTurns((prev) => {
+							const updated = [...prev];
+							updated[updated.length - 1] = { ...turn };
+							return updated;
+						});
 					} catch {
 						// skip parse errors
 					}
@@ -146,15 +183,6 @@ export default function ClassifierDemo() {
 			console.error("Classifier error:", error);
 		}
 
-		setTurns((prev) => {
-			const existing = prev.findIndex((t) => t.query === turn.query);
-			if (existing >= 0) {
-				const updated = [...prev];
-				updated[existing] = { ...turn };
-				return updated;
-			}
-			return [...prev, turn];
-		});
 		setIsLoading(false);
 		setStatus("");
 	}
