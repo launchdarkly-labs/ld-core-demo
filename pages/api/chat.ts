@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
 import { runMultiAgentPipeline } from "@/lib/multi-agent";
+import { LDObserve } from "@launchdarkly/observability-node";
 
 export default async function chatResponse(
 	req: NextApiRequest,
@@ -538,17 +539,35 @@ Is there a specific service you'd like to know more about?`;
 					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
 				};
 
-				// Run multi-agent pipeline: Triage → Specialist → Brand Voice
-				// Each agent pulls its own AI config from LaunchDarkly
-				const agentResult = await runMultiAgentPipeline({
-					aiClient,
-					context,
-					bedrockClient,
-					openai,
-					userInput,
-					sourcePassages,
-					sendStatus,
-				});
+				// Run multi-agent pipeline inside a parent span so server traces link to client (req.headers has traceparent)
+				// and we get multiple child spans: chat.triage, chat.specialist, chat.brand_voice with gen_ai.* attributes.
+				// aiConfigKey on spans links this trace to the AIC in LaunchDarkly so the POST /api/chat trace shows under the AIC.
+				const agentResult =
+					typeof LDObserve?.runWithHeaders === "function"
+						? await LDObserve.runWithHeaders("POST - /api/chat", req.headers as Record<string, string>, () =>
+								runMultiAgentPipeline({
+									aiClient,
+									context,
+									bedrockClient,
+									openai,
+									userInput,
+									sourcePassages,
+									sendStatus,
+									requestHeaders: req.headers,
+									aiConfigKey,
+								}),
+							)
+						: await runMultiAgentPipeline({
+								aiClient,
+								context,
+								bedrockClient,
+								openai,
+								userInput,
+								sourcePassages,
+								sendStatus,
+								requestHeaders: req.headers,
+								aiConfigKey,
+							});
 
 				const fullResponse = agentResult.finalResponse;
 				const totalInputTokens = agentResult.totalInputTokens;
