@@ -8,7 +8,6 @@ import {
 	AIRWAYS_EVAL_DATASET,
 	INTENT_LABELS,
 	type AirwaysIntent,
-	type EvalTestCase,
 } from "@/lib/airways-eval-dataset";
 import type {
 	ClassifyResult,
@@ -96,11 +95,6 @@ export default function ClassifierDemo() {
 			setSetupResult({ ok: false, message: e.message || "Request failed" });
 		}
 		setSetupLoading(false);
-	}
-
-	function selectTestCase(tc: EvalTestCase) {
-		setInput(tc.query);
-		setExpectedIntent(tc.expectedIntent);
 	}
 
 	async function submit() {
@@ -223,54 +217,7 @@ export default function ClassifierDemo() {
 					</div>
 				</CardHeader>
 
-				{/* Setup panel */}
-				{showSetup && (
-					<CardContent className="border-b pb-4">
-						<p className="text-xs text-gray-500 mb-2">
-							Provision the 3 AI configs (triage, eval, improver) into your LaunchDarkly project.
-						</p>
-						<div className="flex gap-2">
-							<Input
-								value={setupProjectKey}
-								onChange={(e: any) => setSetupProjectKey(e.target.value)}
-								onKeyDown={(e: any) => e.key === "Enter" && runSetup()}
-								placeholder="LD Project Key (e.g. gyeutter-ld-demo)"
-								className="text-sm"
-							/>
-							<Button
-								onClick={runSetup}
-								disabled={setupLoading || !setupProjectKey.trim()}
-								className="bg-gradient-airways text-white hover:opacity-90 text-sm whitespace-nowrap"
-							>
-								{setupLoading ? <PulseLoader size={4} color="white" /> : "Create AI Configs"}
-							</Button>
-							{setupResult && (
-								<div className={`text-xs px-2 py-1.5 rounded ${setupResult.ok ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
-									{setupResult.message}
-								</div>
-							)}
-						</div>
-					</CardContent>
-				)}
-
 				<CardContent className="space-y-4">
-					{/* Test case suggestions */}
-					<div>
-						<p className="text-xs font-medium text-gray-500 mb-2">Test queries (click to use):</p>
-						<div className="flex flex-wrap gap-1.5">
-							{AIRWAYS_EVAL_DATASET.slice(0, 14).map((tc, i) => (
-								<button
-									key={i}
-									onClick={() => selectTestCase(tc)}
-									className="text-xs px-2 py-1 rounded-full border border-gray-200 hover:border-airlinedarkblue hover:bg-airlinedarkblue/5 transition-colors text-gray-600 hover:text-airlinedarkblue truncate max-w-[220px]"
-									title={`Expected: ${INTENT_LABELS[tc.expectedIntent]}`}
-								>
-									{tc.query}
-								</button>
-							))}
-						</div>
-					</div>
-
 					{/* Input */}
 					<div className="flex gap-2">
 						<div className="flex-1 relative">
@@ -317,6 +264,35 @@ export default function ClassifierDemo() {
 								<TurnCard key={i} turn={turn} index={i} />
 							))}
 							<div ref={resultsEndRef} />
+						</div>
+					)}
+				{/* Setup panel */}
+					{showSetup && (
+						<div className="border-t pt-4">
+							<p className="text-xs text-gray-500 mb-2">
+								Provision the 3 AI configs (triage, eval, improver) into your LaunchDarkly project.
+							</p>
+							<div className="flex gap-2">
+								<Input
+									value={setupProjectKey}
+									onChange={(e: any) => setSetupProjectKey(e.target.value)}
+									onKeyDown={(e: any) => e.key === "Enter" && runSetup()}
+									placeholder="LD Project Key (e.g. gyeutter-ld-demo)"
+									className="text-sm"
+								/>
+								<Button
+									onClick={runSetup}
+									disabled={setupLoading || !setupProjectKey.trim()}
+									className="bg-gradient-airways text-white hover:opacity-90 text-sm whitespace-nowrap"
+								>
+									{setupLoading ? <PulseLoader size={4} color="white" /> : "Create AI Configs"}
+								</Button>
+								{setupResult && (
+									<div className={`text-xs px-2 py-1.5 rounded ${setupResult.ok ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+										{setupResult.message}
+									</div>
+								)}
+							</div>
 						</div>
 					)}
 				</CardContent>
