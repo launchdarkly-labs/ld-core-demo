@@ -305,6 +305,9 @@ async function improvePrompt(
 	// Validation: run a subset of test cases against old and new prompts
 	pushLog({ level: "INFO", message: `   Validating improvement against test cases...`, name: "improver" });
 
+	// Resolve the triage model name once — use currentModel from the LD API fetch above
+	const triageModelName = currentModel || modelName;
+
 	const validationSubset = getEvalSubset(7);
 	let oldCorrect = 0;
 	let newCorrect = 0;
@@ -330,14 +333,12 @@ async function improvePrompt(
 			} catch { /* count as wrong */ }
 		}
 
-		// Test with new prompt directly
+		// Test with new prompt directly — always use the triage model, not the improver model
 		const newMessages: Array<{ role: string; content: string }> = [
 			{ role: "system", content: newPrompt },
 			{ role: "user", content: tc.query },
 		];
-		// Use the same model as the current triage config
-		const testModelName = currentConfig?.model?.name || modelName;
-		const newResult = await callLLM(testModelName, newMessages, bedrockClient, openai, {
+		const newResult = await callLLM(triageModelName, newMessages, bedrockClient, openai, {
 			temperature: 0,
 			maxTokens: 256,
 		});
