@@ -1,0 +1,136 @@
+{
+  "ai_configs": [
+    {
+      "key": "ai-config--launchairways-triage",
+      "name": "LaunchAirways Triage",
+      "description": "Classifies customer queries into airline service categories. Intentionally basic prompt to demonstrate self-improvement.",
+      "mode": "completion",
+      "tags": ["airways", "classifier", "self-improving"],
+      "variations": [
+        {
+          "key": "initial-bad-prompt",
+          "name": "Initial (Intentionally Vague)",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Classify the user's intent into one of these categories: flight_booking, manage_booking, flight_status, loyalty, baggage, check_in, customer_support.\n\nReturn JSON: {\"intent\": \"<category>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
+            },
+            {
+              "role": "user",
+              "content": "{{userInput}}"
+            }
+          ],
+          "model": {
+            "modelName": "amazon.nova-lite-v1:0",
+            "parameters": {}
+          },
+          "modelConfigKey": "Bedrock.amazon.nova-lite-v1:0"
+        }
+      ],
+      "targeting": {
+        "defaults": {
+          "onVariation": 1,
+          "offVariation": 0
+        },
+        "environments": {
+          "production": {
+            "enabled": true,
+            "fallthrough": { "variation": 1 },
+            "offVariation": 0,
+            "rules": [],
+            "targets": [],
+            "contextTargets": []
+          }
+        }
+      }
+    },
+    {
+      "key": "ai-config--launchairways-triage-eval",
+      "name": "LaunchAirways Triage Eval",
+      "description": "LLM judge that evaluates whether an intent classification was correct and explains why.",
+      "mode": "completion",
+      "tags": ["airways", "eval", "self-improving"],
+      "variations": [
+        {
+          "key": "eval-default",
+          "name": "Default Eval Judge",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are an evaluation judge for an airline intent classifier. Your job is to determine whether a classification was correct.\n\nThe classifier was given a user query and predicted an intent category. You are given the predicted intent and the expected (correct) intent.\n\nCategories:\n- flight_booking: Booking new flights, checking availability, pricing\n- manage_booking: Changing existing reservations (seat, date, upgrade, cancel, add meals)\n- flight_status: Checking if flights are on time, delayed, gate info\n- loyalty: LaunchClub miles, tier status, earning/redeeming points\n- baggage: Luggage allowance, carry-on rules, extra bag fees, size limits\n- check_in: Online/airport check-in, boarding passes, check-in timing\n- customer_support: Complaints, refunds, lost items, general help\n\nAnalyze whether the predicted intent matches the expected intent. If incorrect, explain WHY the classifier likely got confused (what's ambiguous, what signal it missed).\n\nReturn JSON:\n{\"correct\": true/false, \"reasoning\": \"<explanation>\"}"
+            },
+            {
+              "role": "user",
+              "content": "User query: \"{{userInput}}\"\nPredicted intent: {{predictedIntent}}\nExpected intent: {{expectedIntent}}\nClassifier reasoning: {{classifierReasoning}}"
+            }
+          ],
+          "model": {
+            "modelName": "amazon.nova-lite-v1:0",
+            "parameters": {}
+          },
+          "modelConfigKey": "Bedrock.amazon.nova-lite-v1:0"
+        }
+      ],
+      "targeting": {
+        "defaults": {
+          "onVariation": 1,
+          "offVariation": 0
+        },
+        "environments": {
+          "production": {
+            "enabled": true,
+            "fallthrough": { "variation": 1 },
+            "offVariation": 0,
+            "rules": [],
+            "targets": [],
+            "contextTargets": []
+          }
+        }
+      }
+    },
+    {
+      "key": "ai-config--launchairways-triage-improver",
+      "name": "LaunchAirways Triage Improver",
+      "description": "Rewrites the triage classifier prompt based on evaluation feedback to improve accuracy.",
+      "mode": "completion",
+      "tags": ["airways", "improver", "self-improving"],
+      "variations": [
+        {
+          "key": "improver-default",
+          "name": "Default Improver",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are a prompt engineer improving an intent classification system for an airline chatbot.\n\nYou will receive:\n- The current system prompt being used by the classifier\n- A query that was misclassified\n- The predicted (wrong) intent and the expected (correct) intent\n- An explanation of why the classifier got it wrong\n\nYour job: rewrite the system prompt to fix this misclassification while maintaining correct behavior for other intents.\n\nThe classifier must return JSON: {\"intent\": \"<category>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}\n\nCategories: flight_booking, manage_booking, flight_status, loyalty, baggage, check_in, customer_support\n\nGuidelines for the improved prompt:\n- Add clear category definitions that distinguish between confusable intents\n- Add 1-2 few-shot examples if the confusion is common\n- Keep the prompt concise (under 500 words)\n- Preserve the JSON output format requirement\n\nReturn ONLY the improved system prompt text. No explanations, no code fences."
+            },
+            {
+              "role": "user",
+              "content": "CURRENT PROMPT:\n{{currentPrompt}}\n\nFAILED QUERY: \"{{failedQuery}}\"\nPREDICTED: {{predictedIntent}}\nEXPECTED: {{expectedIntent}}\nEVAL REASONING: {{evalReasoning}}"
+            }
+          ],
+          "model": {
+            "modelName": "amazon.nova-lite-v1:0",
+            "parameters": {}
+          },
+          "modelConfigKey": "Bedrock.amazon.nova-lite-v1:0"
+        }
+      ],
+      "targeting": {
+        "defaults": {
+          "onVariation": 1,
+          "offVariation": 0
+        },
+        "environments": {
+          "production": {
+            "enabled": true,
+            "fallthrough": { "variation": 1 },
+            "offVariation": 0,
+            "rules": [],
+            "targets": [],
+            "contextTargets": []
+          }
+        }
+      }
+    }
+  ]
+}

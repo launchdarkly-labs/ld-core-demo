@@ -37,14 +37,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		return res.status(400).json({ error: "LD_API_KEY is not set. Add your LaunchDarkly API token to .env to create AI configs." });
 	}
 
-	// Read the seed file
-	const seedPath = join(process.cwd(), "lib", "airways-classifier-seed.json");
+	// Read the seed file — check multiple locations (local dev vs Docker)
+	const candidates = [
+		join(process.cwd(), "lib", "airways-classifier-seed.json"),
+		join(process.cwd(), "airways-classifier-seed.json"),
+		join(__dirname, "..", "..", "lib", "airways-classifier-seed.json"),
+		"/app/lib/airways-classifier-seed.json",
+		"/app/airways-classifier-seed.json",
+	];
 	let seed: any;
-	try {
-		const raw = await readFile(seedPath, "utf-8");
-		seed = JSON.parse(raw);
-	} catch (e: any) {
-		return res.status(500).json({ error: `Failed to read seed file: ${e.message}` });
+	let seedPath: string | null = null;
+	for (const p of candidates) {
+		try {
+			const raw = await readFile(p, "utf-8");
+			seed = JSON.parse(raw);
+			seedPath = p;
+			break;
+		} catch { /* try next */ }
+	}
+	if (!seedPath || !seed) {
+		return res.status(500).json({ error: `Seed file not found. Checked: ${candidates.join(", ")}` });
 	}
 
 	const aiConfigs = seed?.ai_configs;
