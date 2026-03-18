@@ -216,6 +216,36 @@ export default function ClassifierDemo() {
 					</div>
 				</CardHeader>
 
+				{/* Setup panel */}
+				{showSetup && (
+					<CardContent className="border-b pb-4 pt-0">
+						<p className="text-xs text-gray-500 mb-2">
+							Provision the 3 AI configs (triage, eval, improver) into your LaunchDarkly project.
+						</p>
+						<div className="flex gap-2">
+							<Input
+								value={setupProjectKey}
+								onChange={(e: any) => setSetupProjectKey(e.target.value)}
+								onKeyDown={(e: any) => e.key === "Enter" && runSetup()}
+								placeholder="LD Project Key (e.g. gyeutter-ld-demo)"
+								className="text-sm"
+							/>
+							<Button
+								onClick={runSetup}
+								disabled={setupLoading || !setupProjectKey.trim()}
+								className="bg-gradient-airways text-white hover:opacity-90 text-sm whitespace-nowrap"
+							>
+								{setupLoading ? <PulseLoader size={4} color="white" /> : "Create AI Configs"}
+							</Button>
+							{setupResult && (
+								<div className={`text-xs px-2 py-1.5 rounded ${setupResult.ok ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+									{setupResult.message}
+								</div>
+							)}
+						</div>
+					</CardContent>
+				)}
+
 				<CardContent className="space-y-4">
 					{/* Status */}
 					{status && (
@@ -232,35 +262,6 @@ export default function ClassifierDemo() {
 								<TurnCard key={i} turn={turn} index={i} />
 							))}
 							<div ref={resultsEndRef} />
-						</div>
-					)}
-				{/* Setup panel */}
-					{showSetup && (
-						<div className="border-t pt-4">
-							<p className="text-xs text-gray-500 mb-2">
-								Provision the 3 AI configs (triage, eval, improver) into your LaunchDarkly project.
-							</p>
-							<div className="flex gap-2">
-								<Input
-									value={setupProjectKey}
-									onChange={(e: any) => setSetupProjectKey(e.target.value)}
-									onKeyDown={(e: any) => e.key === "Enter" && runSetup()}
-									placeholder="LD Project Key (e.g. gyeutter-ld-demo)"
-									className="text-sm"
-								/>
-								<Button
-									onClick={runSetup}
-									disabled={setupLoading || !setupProjectKey.trim()}
-									className="bg-gradient-airways text-white hover:opacity-90 text-sm whitespace-nowrap"
-								>
-									{setupLoading ? <PulseLoader size={4} color="white" /> : "Create AI Configs"}
-								</Button>
-								{setupResult && (
-									<div className={`text-xs px-2 py-1.5 rounded ${setupResult.ok ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
-										{setupResult.message}
-									</div>
-								)}
-							</div>
 						</div>
 					)}
 				</CardContent>
