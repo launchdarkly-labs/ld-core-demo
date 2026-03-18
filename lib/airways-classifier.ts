@@ -371,6 +371,7 @@ async function improvePrompt(
 				modelConfigKey: currentModelConfigKey || "custom",
 				messages: [
 					{ role: "system", content: newPrompt },
+					{ role: "user", content: "{{userInput}}" },
 				],
 			});
 

@@ -101,7 +101,6 @@ export default function ClassifierDemo() {
 
 		const userInput = input;
 		const expected = expectedIntent;
-		setInput("");
 		setExpectedIntent(null);
 		setIsLoading(true);
 		setStatus("Starting classification...");

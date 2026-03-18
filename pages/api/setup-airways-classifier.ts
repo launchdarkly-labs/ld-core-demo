@@ -85,14 +85,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const tags = Array.isArray(config.tags) ? config.tags : [];
 
 		try {
-			// Check if config already exists
+			// Delete existing config if present so we can recreate fresh
 			const getRes = await fetch(
 				`${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}`,
 				{ method: "GET", headers },
 			);
 			if (getRes.ok) {
-				results.skipped.push(configKey);
-				continue;
+				await fetch(
+					`${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}`,
+					{ method: "DELETE", headers },
+				);
 			}
 
 			// Create the config
@@ -213,8 +215,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const totalVariations = results.created.reduce((s, c) => s + (c.variations ?? 0), 0);
 
 	return res.status(200).json({
-		ok: results.failed.length === 0,
-		message: `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s). ${results.skipped.length} skipped. ${results.failed.length} failed. ${results.targetingUpdated.length} targeting updated.`,
+		ok: totalCreated > 0 && results.failed.filter(f => f.step === "create_config" || f.step === "create_variation").length === 0,
+		message: results.failed.length === 0
+			? `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s), targeting enabled.`
+			: `Created ${totalCreated} AI config(s) with ${totalVariations} variation(s). ${results.failed.length} issue(s): ${results.failed.map(f => `${f.key} (${f.step})`).join(", ")}`,
 		projectKey,
 		...results,
 	});
