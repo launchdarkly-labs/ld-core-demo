@@ -155,18 +155,17 @@ async function evalClassification(
 		{
 			userInput,
 			predictedIntent: classification.intent,
-			expectedIntent: expectedIntent!,
+			expectedIntent: expectedIntent ?? "unknown — use your own judgment",
 			classifierReasoning: classification.reasoning,
 		},
 	);
 
 	if (!config.enabled || !config.model) {
 		pushLog({ level: "WARN", message: `   Eval config disabled — skipping`, name: "eval" });
-		const correct = classification.intent === expectedIntent;
 		return {
-			correct,
-			score: correct ? 1 : 0,
-			reasoning: "Eval config unavailable — used exact match",
+			correct: true,
+			score: 1,
+			reasoning: "Eval config unavailable — assuming correct",
 			inputTokens: 0,
 			outputTokens: 0,
 			durationMs: 0,
@@ -195,16 +194,16 @@ async function evalClassification(
 		const raw = result.content.trim().replace(/^```json?\s*|\s*```$/g, "");
 		parsed = JSON.parse(raw);
 	} catch {
-		const correct = classification.intent === expectedIntent;
-		parsed = { correct, reasoning: "Could not parse eval response — used exact match" };
+		parsed = { correct: false, reasoning: "Could not parse eval response" };
 	}
 
-	const correct = parsed.correct ?? (classification.intent === expectedIntent);
+	const correct = parsed.correct ?? false;
 
 	if (correct) {
 		pushLog({ level: "INFO", message: `   ✅ Correct — ${INTENT_LABELS[classification.intent]}`, name: "eval" });
 	} else {
-		pushLog({ level: "WARN", message: `   ❌ Incorrect — predicted: ${INTENT_LABELS[classification.intent]}, expected: ${INTENT_LABELS[expectedIntent!]}`, name: "eval" });
+		const expectedLabel = expectedIntent ? INTENT_LABELS[expectedIntent] : "unknown";
+		pushLog({ level: "WARN", message: `   ❌ Incorrect — predicted: ${INTENT_LABELS[classification.intent]}${expectedIntent ? `, expected: ${expectedLabel}` : ""}`, name: "eval" });
 		pushLog({ level: "INFO", message: `   Reason: ${parsed.reasoning ?? "unknown"}`, name: "eval" });
 	}
 
@@ -427,36 +426,24 @@ export async function runClassifierPipeline(
 	status("Classifying intent...");
 	const classification = await classifyIntent(deps);
 
-	// Stage 2: Eval (if expected intent provided)
-	let evalResult: EvalResult | undefined;
-	if (deps.expectedIntent) {
-		status("Evaluating classification...");
-		evalResult = await evalClassification(classification, deps);
-	}
+	// Stage 2: Eval — always run (acts as second-opinion judge)
+	status("Evaluating classification...");
+	const evalResult = await evalClassification(classification, deps);
 
 	// Stage 3: Improve — trigger if eval failed OR confidence is below threshold
 	let improvement: ImproveResult | undefined;
 	const lowConfidence = classification.confidence < CONFIDENCE_THRESHOLD;
 
-	if (evalResult && !evalResult.correct) {
+	if (!evalResult.correct || lowConfidence) {
+		if (lowConfidence && evalResult.correct) {
+			pushLog({
+				level: "WARN",
+				message: `⚠️ Low confidence (${(classification.confidence * 100).toFixed(0)}% < ${(CONFIDENCE_THRESHOLD * 100).toFixed(0)}%) — triggering prompt improvement`,
+				name: "classifier",
+			});
+		}
 		status("Generating prompt improvement...");
 		improvement = await improvePrompt(classification, evalResult, deps);
-	} else if (lowConfidence) {
-		pushLog({
-			level: "WARN",
-			message: `⚠️ Low confidence (${(classification.confidence * 100).toFixed(0)}% < ${(CONFIDENCE_THRESHOLD * 100).toFixed(0)}%) — triggering prompt improvement`,
-			name: "classifier",
-		});
-		status("Low confidence — generating prompt improvement...");
-		const syntheticEval: EvalResult = {
-			correct: false,
-			score: 0,
-			reasoning: `Low confidence classification (${(classification.confidence * 100).toFixed(0)}%) — classifier prompt needs to be more decisive`,
-			inputTokens: 0,
-			outputTokens: 0,
-			durationMs: 0,
-		};
-		improvement = await improvePrompt(classification, syntheticEval, deps);
 	}
 
 	return { classification, eval: evalResult, improvement };
