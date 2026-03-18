@@ -217,37 +217,6 @@ export default function ClassifierDemo() {
 				</CardHeader>
 
 				<CardContent className="space-y-4">
-					{/* Input */}
-					<div className="flex gap-2">
-						<div className="flex-1 relative">
-							<Input
-								value={input}
-								onChange={(e: any) => {
-									setInput(e.target.value);
-									if (!expectedIntent) setExpectedIntent(null);
-								}}
-								onKeyDown={(e: any) => e.key === "Enter" && submit()}
-								placeholder="Type a query or select one above..."
-								className="pr-24"
-								disabled={isLoading}
-							/>
-							{expectedIntent && (
-								<span className="absolute right-2 top-1/2 -translate-y-1/2">
-									<Badge className={`${INTENT_COLORS[expectedIntent]} text-white text-[10px]`}>
-										{INTENT_LABELS[expectedIntent]}
-									</Badge>
-								</span>
-							)}
-						</div>
-						<Button
-							onClick={submit}
-							disabled={isLoading || !input.trim()}
-							className="bg-gradient-airways text-white hover:opacity-90"
-						>
-							{isLoading ? <PulseLoader size={6} color="white" /> : "Classify"}
-						</Button>
-					</div>
-
 					{/* Status */}
 					{status && (
 						<div className="text-sm text-airlinedarkblue flex items-center gap-2">
