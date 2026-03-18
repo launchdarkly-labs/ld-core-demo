@@ -171,12 +171,14 @@ export default function ClassifierDemo() {
 					}
 				}
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Classifier error:", error);
+			setStatus(`Error: ${error?.message || "Request failed"}`);
+			// Remove the placeholder turn on error
+			setTurns((prev) => prev.slice(0, -1));
 		}
 
 		setIsLoading(false);
-		setStatus("");
 	}
 
 	const accuracyPct = accuracy.total > 0 ? ((accuracy.correct / accuracy.total) * 100).toFixed(0) : "—";

@@ -244,7 +244,7 @@ async function improvePrompt(
 			} else if (latest.instructions) {
 				currentPrompt = latest.instructions;
 			}
-			currentModel = latest.model?.name || "";
+			currentModel = latest.model?.modelName || latest.model?.name || "";
 			currentModelConfigKey = latest.modelConfigKey || "";
 		}
 	} catch (e: any) {
@@ -259,7 +259,7 @@ async function improvePrompt(
 			currentPrompt,
 			evalReasoning: evalResult.reasoning,
 			failedQuery: userInput,
-			expectedIntent: expectedIntent!,
+			expectedIntent: expectedIntent ?? "unknown",
 			predictedIntent: classification.intent,
 		},
 	);
