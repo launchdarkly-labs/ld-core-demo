@@ -80,9 +80,9 @@ async function classifyIntent(deps: ClassifierPipelineDeps): Promise<ClassifyRes
 	);
 
 	if (!config.enabled || !config.model) {
-		pushLog({ level: "WARN", message: `   Triage config disabled — defaulting to customer_support`, name: "classifier" });
+		pushLog({ level: "WARN", message: `   Triage config disabled — defaulting to flight_booking`, name: "classifier" });
 		return {
-			intent: "customer_support",
+			intent: "flight_booking",
 			confidence: 0,
 			reasoning: "Config unavailable",
 			inputTokens: 0,
@@ -113,12 +113,12 @@ async function classifyIntent(deps: ClassifierPipelineDeps): Promise<ClassifyRes
 		const raw = result.content.trim().replace(/^```json?\s*|\s*```$/g, "");
 		parsed = JSON.parse(raw);
 	} catch {
-		parsed = { intent: "customer_support", confidence: 0, reasoning: "Could not parse response" };
+		parsed = { intent: "flight_booking", confidence: 0, reasoning: "Could not parse response" };
 	}
 
 	const intent = (AIRWAYS_INTENTS.includes(parsed.intent as AirwaysIntent)
 		? parsed.intent
-		: "customer_support") as AirwaysIntent;
+		: "flight_booking") as AirwaysIntent;
 	const confidence = typeof parsed.confidence === "number" ? parsed.confidence : 0;
 
 	pushLog({

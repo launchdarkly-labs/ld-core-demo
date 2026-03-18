@@ -30,7 +30,6 @@ const INTENT_COLORS: Record<AirwaysIntent, string> = {
 	loyalty: "bg-emerald-500",
 	baggage: "bg-orange-500",
 	check_in: "bg-cyan-500",
-	customer_support: "bg-gray-500",
 };
 
 export default function ClassifierDemo() {

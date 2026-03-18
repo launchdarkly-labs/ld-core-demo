@@ -4,8 +4,7 @@ export type AirwaysIntent =
 	| "flight_status"
 	| "loyalty"
 	| "baggage"
-	| "check_in"
-	| "customer_support";
+	| "check_in";
 
 export const AIRWAYS_INTENTS: AirwaysIntent[] = [
 	"flight_booking",
@@ -14,7 +13,6 @@ export const AIRWAYS_INTENTS: AirwaysIntent[] = [
 	"loyalty",
 	"baggage",
 	"check_in",
-	"customer_support",
 ];
 
 export const INTENT_LABELS: Record<AirwaysIntent, string> = {
@@ -24,7 +22,6 @@ export const INTENT_LABELS: Record<AirwaysIntent, string> = {
 	loyalty: "Loyalty Program",
 	baggage: "Baggage",
 	check_in: "Check-in",
-	customer_support: "Customer Support",
 };
 
 export interface EvalTestCase {
@@ -71,11 +68,9 @@ export const AIRWAYS_EVAL_DATASET: EvalTestCase[] = [
 	{ query: "Can I get my boarding pass on my phone?", expectedIntent: "check_in" },
 	{ query: "How early can I check in for an international flight?", expectedIntent: "check_in" },
 
-	// customer_support
-	{ query: "I need to file a complaint about my last flight", expectedIntent: "customer_support" },
-	{ query: "How do I get a refund for a cancelled flight?", expectedIntent: "customer_support" },
-	{ query: "I lost my bag at the airport, what do I do?", expectedIntent: "customer_support" },
-	{ query: "I need to speak with a supervisor about my experience", expectedIntent: "customer_support" },
+	// reassigned from customer_support — no catch-all category
+	{ query: "How do I get a refund for a cancelled flight?", expectedIntent: "manage_booking" },
+	{ query: "I lost my bag at the airport, what do I do?", expectedIntent: "baggage" },
 ];
 
 /** Return a stratified subset of n test cases (at least one per intent). */
