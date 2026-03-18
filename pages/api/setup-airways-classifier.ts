@@ -144,44 +144,64 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				}
 			}
 
-			// Patch targeting
-			const defaults = config.targeting?.defaults;
-			if (defaults && typeof defaults.onVariation === "number") {
-				const patchBody: any = {
-					defaults: {
-						onVariation: defaults.onVariation,
-						offVariation: defaults.offVariation ?? 0,
-					},
-				};
+			// Enable targeting and set fallthrough to the first variation
+			// First, get the config to find the variation ID
+			const refetchRes = await fetch(
+				`${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}`,
+				{ method: "GET", headers },
+			);
+			if (refetchRes.ok) {
+				const configData = await refetchRes.json();
+				const variations = configData.variations || [];
+				if (variations.length > 0) {
+					const variationId = variations[0]._id;
+					const environmentKey = process.env.LAUNCHDARKLY_ENVIRONMENT_KEY || "production";
 
-				const envs = config.targeting?.environments;
-				if (envs && typeof envs === "object") {
-					patchBody.environments = {};
-					for (const [envKey, env] of Object.entries(envs) as [string, any][]) {
-						if (env?.fallthrough?.variation !== undefined) {
-							patchBody.environments[envKey] = {
-								fallthrough: { variation: env.fallthrough.variation },
-								offVariation: env.offVariation ?? 0,
-								rules: env.rules ?? [],
-								targets: env.targets ?? [],
-								contextTargets: env.contextTargets ?? [],
-							};
-						}
+					// Turn on the config in the environment
+					const enableRes = await fetch(
+						`${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}/targeting`,
+						{
+							method: "PATCH",
+							headers,
+							body: JSON.stringify({
+								environmentKey,
+								instructions: [
+									{ kind: "turnFlagOn" },
+								],
+							}),
+						},
+					);
+
+					if (!enableRes.ok) {
+						const errText = await enableRes.text();
+						let errMsg = errText;
+						try { errMsg = JSON.parse(errText).message || errText; } catch {}
+						results.failed.push({ key: configKey, step: "enable_targeting", status: enableRes.status, message: errMsg });
 					}
-				}
 
-				const patchRes = await fetch(
-					`${LD_API_BASE}/flags/${encodeURIComponent(projectKey)}/${encodeURIComponent(configKey)}`,
-					{ method: "PATCH", headers, body: JSON.stringify(patchBody) },
-				);
+					// Set fallthrough to serve the first variation
+					const ftRes = await fetch(
+						`${LD_API_BASE}/projects/${encodeURIComponent(projectKey)}/ai-configs/${encodeURIComponent(configKey)}/targeting`,
+						{
+							method: "PATCH",
+							headers,
+							body: JSON.stringify({
+								environmentKey,
+								instructions: [
+									{ kind: "updateFallthroughVariationOrRollout", variationId },
+								],
+							}),
+						},
+					);
 
-				if (patchRes.ok) {
-					results.targetingUpdated.push(configKey);
-				} else {
-					const errText = await patchRes.text();
-					let errMsg = errText;
-					try { errMsg = JSON.parse(errText).message || errText; } catch {}
-					results.failed.push({ key: configKey, step: "patch_targeting", status: patchRes.status, message: errMsg });
+					if (ftRes.ok) {
+						results.targetingUpdated.push(configKey);
+					} else {
+						const errText = await ftRes.text();
+						let errMsg = errText;
+						try { errMsg = JSON.parse(errText).message || errText; } catch {}
+						results.failed.push({ key: configKey, step: "patch_targeting", status: ftRes.status, message: errMsg });
+					}
 				}
 			}
 		} catch (e: any) {
