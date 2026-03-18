@@ -13,7 +13,7 @@
           "messages": [
             {
               "role": "system",
-              "content": "Classify the user's intent into one of these categories: flight_booking, manage_booking, flight_status, loyalty, baggage, check_in, customer_support.\n\nReturn JSON: {\"intent\": \"<category>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
+              "content": "You help with airline stuff. Figure out what the user wants. Pick one: flight_booking, manage_booking, flight_status, loyalty, baggage, check_in, customer_support. Return JSON: {\"intent\": \"<category>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
             },
             {
               "role": "user",

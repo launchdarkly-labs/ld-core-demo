@@ -416,6 +416,8 @@ async function improvePrompt(
 
 // Pipeline orchestrator
 
+const CONFIDENCE_THRESHOLD = 0.85;
+
 export async function runClassifierPipeline(
 	deps: ClassifierPipelineDeps,
 ): Promise<ClassifierPipelineResult> {
@@ -425,20 +427,36 @@ export async function runClassifierPipeline(
 	status("Classifying intent...");
 	const classification = await classifyIntent(deps);
 
-	// If no expected intent provided, just return classification
-	if (!deps.expectedIntent) {
-		return { classification };
+	// Stage 2: Eval (if expected intent provided)
+	let evalResult: EvalResult | undefined;
+	if (deps.expectedIntent) {
+		status("Evaluating classification...");
+		evalResult = await evalClassification(classification, deps);
 	}
 
-	// Stage 2: Eval
-	status("Evaluating classification...");
-	const evalResult = await evalClassification(classification, deps);
-
-	// Stage 3: Improve (only if eval failed)
+	// Stage 3: Improve — trigger if eval failed OR confidence is below threshold
 	let improvement: ImproveResult | undefined;
-	if (!evalResult.correct) {
+	const lowConfidence = classification.confidence < CONFIDENCE_THRESHOLD;
+
+	if (evalResult && !evalResult.correct) {
 		status("Generating prompt improvement...");
 		improvement = await improvePrompt(classification, evalResult, deps);
+	} else if (lowConfidence) {
+		pushLog({
+			level: "WARN",
+			message: `⚠️ Low confidence (${(classification.confidence * 100).toFixed(0)}% < ${(CONFIDENCE_THRESHOLD * 100).toFixed(0)}%) — triggering prompt improvement`,
+			name: "classifier",
+		});
+		status("Low confidence — generating prompt improvement...");
+		const syntheticEval: EvalResult = {
+			correct: false,
+			score: 0,
+			reasoning: `Low confidence classification (${(classification.confidence * 100).toFixed(0)}%) — classifier prompt needs to be more decisive`,
+			inputTokens: 0,
+			outputTokens: 0,
+			durationMs: 0,
+		};
+		improvement = await improvePrompt(classification, syntheticEval, deps);
 	}
 
 	return { classification, eval: evalResult, improvement };
