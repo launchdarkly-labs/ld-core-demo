@@ -440,29 +440,6 @@ await ldClient.waitForInitialization({ timeout: 10 });
 const aiClient: LDAIClient = initAi(ldClient);`}
                             />
                             <h3 className="text-2xl font-bold my-3.5">
-                                Set up the context
-                            </h3>
-                            <p>
-                                Context attributes drive targeting rules and fill in template
-                                variables in your AI Config prompts.
-                            </p>
-                            <Code
-                                language={"ts"}
-                                code={`const context: LDContext = {
-  kind: 'multi',
-  user: {
-    key: 'user-123',
-    name: 'Sandy',
-    tier: 'platinum',
-  },
-  location: {
-    key: 'loc-us-east',
-    city: 'Portland',
-    country: 'US',
-  },
-};`}
-                            />
-                            <h3 className="text-2xl font-bold my-3.5">
                                 Retrieve an AI Config (completion mode)
                             </h3>
                             <p>
