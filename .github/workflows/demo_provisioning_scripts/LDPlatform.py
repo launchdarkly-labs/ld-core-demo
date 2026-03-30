@@ -318,6 +318,61 @@ class LDPlatform:
         if "message" in data:
             print("Error creating AI Config: " + data["message"])
         return response
+
+    ##################################################
+    # Create AI Tool (library tool with key, description, schema)
+    # https://launchdarkly.com/docs/api/ai-configs/post-ai-tool
+    ##################################################
+
+    def create_ai_tool(self, tool_key, description=None, schema=None, custom_parameters=None):
+        """Create an AI tool in the project.
+
+        API reference: https://launchdarkly.com/docs/api/ai-configs/post-ai-tool
+
+        Args:
+            tool_key: Unique key for the tool.
+            description: Human-readable description shown in the LD UI.
+            schema: JSON Schema object describing the tool's parameters.
+            custom_parameters: Optional custom metadata dict.
+
+        Returns:
+            requests.Response — the raw API response (JSON body includes
+            ``key`` and ``version`` on success).
+        """
+        payload = {
+            "key": tool_key,
+            "schema": schema if schema is not None else {"properties": {}, "additionalProperties": False, "required": []}
+        }
+        if description:
+            payload["description"] = description
+        if custom_parameters is not None:
+            payload["customParameters"] = custom_parameters
+        if self.user_id:
+            payload["maintainerId"] = self.user_id
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        response = self.getrequest(
+            "POST",
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/ai-tools",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print(f"Error creating AI tool {tool_key}: {data['message']}")
+                else:
+                    print(f"Created AI tool: {tool_key}")
+            except json.JSONDecodeError:
+                pass
+        return response
         
     
     ##################################################
@@ -356,8 +411,7 @@ class LDPlatform:
             headers=headers,
         )
         
-        # Add better error handling for JSON parsing
-        if response.text.strip():  # Only try to parse if response is not empty
+        if response.text.strip():
             try:
                 data = json.loads(response.text)
                 if "message" in data:
@@ -370,7 +424,51 @@ class LDPlatform:
             print("Empty response received from AI config version API")
             
         return response
-    
+
+    ##################################################
+    # Attach tools to an AI Config variation
+    # https://launchdarkly.com/docs/api/ai-configs/patch-ai-config-variation
+    ##################################################
+
+    def patch_variation_tools(self, ai_config_key, variation_key, tools):
+        """Attach tools to an existing AI Config variation.
+
+        Uses PATCH to update the variation with a ``tools`` array of
+        ``{key, version}`` objects.  The variation must already exist
+        (created via ``create_ai_config_versions``).
+
+        Args:
+            ai_config_key: Key of the parent AI Config.
+            variation_key: Key of the variation to update.
+            tools: List of dicts, each with ``key`` (str) and ``version`` (int).
+
+        Returns:
+            requests.Response — the raw API response.
+        """
+        payload = {"tools": tools}
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/variations/"
+            + variation_key
+        )
+        response = self.getrequest("PATCH", url, json=payload, headers=headers)
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print(f"Error attaching tools to {ai_config_key}/{variation_key}: {data['message']}")
+            except json.JSONDecodeError:
+                pass
+        return response
+
     ##################################################
     # Create AI Agent
     ##################################################
@@ -2040,8 +2138,15 @@ class LDPlatform:
             if counter > 8:
                 break
             if status_code != 200:
-                data = json.loads(response.text)
-                print("Error advancing flag phase: " + data["message"])
+                try:
+                    data = json.loads(response.text)
+                    msg = data.get("message", "")
+                except Exception:
+                    msg = response.text or ""
+                if "Phase must have status" in msg or "ReadyToStart" in msg:
+                    print("Warning: Skipping phase advance (phase not in ReadyToStart/Active): " + msg[:80])
+                    break
+                print("Error advancing flag phase: " + msg)
                 time.sleep(3)
 
         return response
