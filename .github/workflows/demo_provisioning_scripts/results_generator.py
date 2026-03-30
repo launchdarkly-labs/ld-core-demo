@@ -980,77 +980,36 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
         logging.error("Payment Engine Healthy rollout failed to initialize after 30 seconds. Exiting.")
         return
     
-    user_counter = 0
-    flush_counter = 0
-    status_check_counter = 0
-    
     while True:
-        # Only check rollout status every 500 users to avoid API rate limits
-        if status_check_counter >= 500:
-            flag_details = get_flag_details("paymentEngineHealthyRollout")
-            if not flag_details or not is_measured_rollout(flag_details):
-                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
-                stop_event.set()
-                break
-            status_check_counter = 0
-        
+        flag_details = get_flag_details("paymentEngineHealthyRollout")
+        if not flag_details or not is_measured_rollout(flag_details):
+            logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
+            stop_event.set()
+            break
         try:
-            # create deterministic user
-            user_key = f"payment-healthy-user-{user_counter}"
-            builder = Context.builder(user_key)
-            builder.set("name", f"Payment User {user_counter}")
-            builder.set("email", f"user{user_counter}@togglebank.com")
-            user_context = builder.build()
-            
-            # evaluate the flag to create exposures
+            user_context = generate_user_context()
             flag_value = client.variation("paymentEngineHealthyRollout", user_context, False)
-            
-            # Generate metrics based on flag value (both healthy, new version slightly better)
             if flag_value:
-                # NEW VERSION (True): EXCELLENT - even better metrics than control
-                error_rate = 0.5  # 0.5% error rate
-                latency = 140     # 140ms latency - slightly faster
-                success_rate = 99.5  # 99.5% success
-            else:
-                # CONTROL (False): GOOD - baseline metrics
-                error_rate = 1.0  # 1% error rate - still good
-                latency = 150     # 150ms latency
-                success_rate = 99.0  # 99% success
-            
-            # track success rate
-            if random.random() < (success_rate / 100):
-                client.track("payment-success-rate", user_context)
-            
-            # track error rate
-            if random.random() < (error_rate / 100):
-                client.track("payment-error-rate", user_context)
-            
-            # track latency with small variance
-            latency_variance = 5
-            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
-            client.track("payment-latency", user_context, None, latency_value)
-            
-            # business metric: track transactions processed (successful payments)
-            if random.random() < (success_rate / 100):
+                if random.random() < 0.05:
+                    client.track("payment-error-rate", user_context)
+                if random.random() < 0.92:
+                    client.track("payment-success-rate", user_context)
+                latency = random.randint(50, 150)
+                client.track("payment-latency", user_context, None, latency)
                 client.track("payment-transactions-processed", user_context, None, 1)
-            
-            user_counter += 1
-            flush_counter += 1
-            status_check_counter += 1
-            
-            # flush events every 50 users to ensure data is sent more frequently
-            if flush_counter >= 50:
-                client.flush()
-                flush_counter = 0
-                logging.info(f"Flushed payment healthy events (total users: {user_counter})")
-            
-            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
-            
+            else:
+                if random.random() < 0.15:
+                    client.track("payment-error-rate", user_context)
+                if random.random() < 0.82:
+                    client.track("payment-success-rate", user_context)
+                latency = random.randint(200, 400)
+                client.track("payment-latency", user_context, None, latency)
+                client.track("payment-transactions-processed", user_context, None, 1)
+            time.sleep(0.03)
         except Exception as e:
             logging.error(f"Error generating payment healthy metrics: {str(e)}")
             continue
-    
-    logging.info(f"Payment Engine Healthy scenario generator finished. Total users generated: {user_counter}")
+    logging.info("Payment Engine Healthy scenario generator finished.")
 
 def payment_engine_failed_scenario_generator(client, stop_event):
     """Static data generator for failed payment processing v2.0 rollout with automatic rollback"""
@@ -1081,69 +1040,38 @@ def payment_engine_failed_scenario_generator(client, stop_event):
         return
     
     user_counter = 0
-    flush_counter = 0
-    alert_triggered = False
     status_check_counter = 0
-    
+
     while True:
-        # Only check rollout status every 500 users to avoid API rate limits
-        if status_check_counter >= 500:
+        if status_check_counter >= 100:
             flag_details = get_flag_details("paymentProcessingV2FailedRollout")
             if not flag_details or not is_measured_rollout(flag_details):
                 logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Processing v2.0 Failed generator.")
                 stop_event.set()
                 break
             status_check_counter = 0
-        
         try:
-            # create deterministic user
-            user_key = f"payment-v2-failed-user-{user_counter}"
-            builder = Context.builder(user_key)
-            builder.set("name", f"Payment v2 User {user_counter}")
-            builder.set("email", f"userv2{user_counter}@togglebank.com")
-            user_context = builder.build()
-            
-            # evaluate the flag to create exposures
+            user_context = generate_user_context()
             flag_value = client.variation("paymentProcessingV2FailedRollout", user_context, False)
-            
-            # KEY FIX: Generate metrics based on flag value, not user count
-            # This allows LaunchDarkly to compare True vs False variations
             if flag_value:
-                # NEW VERSION (True): BROKEN - generates very bad metrics
-                error_rate = 20.0  # 20% error rate - catastrophic failure
-                latency = 4000     # 4s latency - extremely slow
-                success_rate = 80.0  # 80% success = 20% failure
-                
-                # trigger alert when first user gets bad version
-                if not alert_triggered:
-                    alert_user_key = "payment-system-alert"
-                    alert_builder = Context.builder(alert_user_key)
-                    alert_builder.set("name", "Payment System Alert")
-                    alert_builder.set("email", "alerts@togglebank.com")
-                    alert_context = alert_builder.build()
-                    client.track("payment-rollback-triggered", alert_context)
-                    logging.info(f"🚨 Payment rollback triggered at user {user_counter} - high error rate detected in new version")
-                    alert_triggered = True
-            else:
-                # OLD VERSION (False): HEALTHY - generates good baseline metrics
-                error_rate = 0.5  # 0.5% error rate - normal/healthy
-                latency = 150     # 150ms latency - fast
-                success_rate = 99.5  # 99.5% success
-            
-            # track success rate (using v2-specific metric)
-            if random.random() < (success_rate / 100):
-                client.track("payment-v2-success-rate", user_context)
-            
-            # track error rate (using v2-specific metric) - this is the key metric that should trigger rollback
-            if random.random() < (error_rate / 100):
-                client.track("payment-v2-error-rate", user_context)
-                
-                # create real observability error for regression debugging ui
-                # only create actual errors when flag_value is True (broken version)
-                if flag_value:
+                if user_counter < 8000:
+                    progress = 0.0
+                else:
+                    progress = min((user_counter - 8000) / 15000.0, 1.0)
+                p3 = progress * progress * progress
+                error_chance = 0.08 + (0.64 * p3) + random.uniform(-0.06, 0.06)
+                error_chance = max(0.05, min(0.80, error_chance))
+                success_chance = 0.90 - (0.60 * p3) + random.uniform(-0.05, 0.05)
+                success_chance = max(0.15, min(0.92, success_chance))
+                latency_low = int(80 + (270 * p3))
+                latency_high = int(180 + (570 * p3))
+
+                if random.random() < error_chance:
+                    client.track("payment-v2-error-rate", user_context)
+
                     error_types = [
                         "PaymentGatewayTimeout",
-                        "TransactionValidationError", 
+                        "TransactionValidationError",
                         "DatabaseConnectionError",
                         "PaymentProcessorException",
                         "InsufficientFundsError"
@@ -1155,49 +1083,43 @@ def payment_engine_failed_scenario_generator(client, stop_event):
                         "Payment processor returned 500 Internal Server Error",
                         "Insufficient funds for transaction amount"
                     ]
-                    
                     error_idx = random.randint(0, len(error_types) - 1)
-                    
-                    # track the autogenerated observability error metric
-                    # this enables regression debugging ui
                     error_data = {
                         "error.kind": error_types[error_idx],
                         "error.message": error_messages[error_idx],
                         "service.name": "payment-processing-v2",
                         "component": "PaymentEngine",
                         "transaction.id": f"txn-{user_counter}",
-                        "user.id": user_key,
+                        "user.id": user_context.key,
                         "flag.key": "paymentProcessingV2FailedRollout",
                         "severity": "high"
                     }
                     client.track("$ld:telemetry:error", user_context, error_data, 1)
-            
-            # track latency with variance (using v2-specific metric)
-            latency_variance = 200 if flag_value else 10
-            latency_value = int(latency + random.uniform(-latency_variance, latency_variance))
-            client.track("payment-v2-latency", user_context, None, latency_value)
-            
-            # business metric: track transactions processed (successful payments)
-            if random.random() < (success_rate / 100):
+
+                if random.random() < success_chance:
+                    client.track("payment-v2-success-rate", user_context)
+                latency = random.randint(latency_low, latency_high)
+                client.track("payment-v2-latency", user_context, None, latency)
                 client.track("payment-transactions-processed", user_context, None, 1)
-            
+                if random.random() < max(0.10, 0.85 - (0.60 * progress)):
+                    client.track("payment-revenue-protected", user_context, None, random.randint(50, int(500 + 500 * (1 - progress))))
+            else:
+                if random.random() < 0.08:
+                    client.track("payment-v2-error-rate", user_context)
+                if random.random() < 0.90:
+                    client.track("payment-v2-success-rate", user_context)
+                latency = random.randint(80, 180)
+                client.track("payment-v2-latency", user_context, None, latency)
+                client.track("payment-transactions-processed", user_context, None, 1)
+                if random.random() < 0.85:
+                    client.track("payment-revenue-protected", user_context, None, random.randint(200, 1000))
             user_counter += 1
-            flush_counter += 1
             status_check_counter += 1
-            
-            # flush events every 50 users to ensure data is sent more frequently
-            if flush_counter >= 50:
-                client.flush()
-                flush_counter = 0
-                logging.info(f"Flushed payment failed events (total users: {user_counter})")
-            
-            time.sleep(0.005)  # 5ms delay = ~200 events/sec (prevents SDK overload)
-            
+            time.sleep(0.03)
         except Exception as e:
             logging.error(f"Error generating payment v2 failed metrics: {str(e)}")
             continue
-    
-    logging.info(f"Payment Processing v2.0 Failed scenario generator finished. Total users generated: {user_counter}")
+    logging.info("Payment Processing v2.0 Failed scenario generator finished.")
 
 def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
