@@ -1051,9 +1051,15 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        data = json.loads(response.text)
-        if "message" in data:
-            print("Error creating release pipeline: " + data["message"])
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error creating release pipeline: " + data["message"])
+            except json.JSONDecodeError:
+                print(f"Release pipeline: non-JSON response (status {response.status_code})")
+        else:
+            print(f"Release pipeline: empty response (status {response.status_code})")
         return response
 
     def create_shortcut(self, name, key, icon, tags, env_key, sort_by="name"):
