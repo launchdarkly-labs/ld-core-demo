@@ -2064,7 +2064,18 @@ class LDPlatform:
                 "LD-API-Version": "beta",
             },
         )
-        data = json.loads(res.text)
+        if not res.text.strip():
+            print(f"get_pipeline_phase_ids: empty response (status {res.status_code})")
+            return {}
+        try:
+            data = json.loads(res.text)
+        except json.JSONDecodeError:
+            print(f"get_pipeline_phase_ids: non-JSON response (status {res.status_code})")
+            return {}
+        if "phases" not in data:
+            msg = data.get("message", "no 'phases' key in response")
+            print(f"get_pipeline_phase_ids: {msg}")
+            return {}
         c = 0
         phases = ["test", "guard", "ga"]
         phase_ids = {}

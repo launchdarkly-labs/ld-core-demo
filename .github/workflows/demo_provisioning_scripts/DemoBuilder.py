@@ -61,7 +61,7 @@ class DemoBuilder:
             "python3", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
         ], env=env)
         
-        self.setup_release_pipeline()
+        # self.setup_release_pipeline()  # Release Assistant removed from LD platform
         proc.wait()
      
 ############################################################################################################
@@ -4059,7 +4059,13 @@ class DemoBuilder:
         res = self.ldproject.create_release_pipeline(
             "togglebank-v2-pipeline", "ToggleBank v2.0 Release"
         )
+        if res.status_code not in (200, 201):
+            print(f"Skipping release pipeline steps (creation returned {res.status_code})")
+            return
         self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        if not self.phase_ids:
+            print("Skipping release pipeline steps (could not retrieve phase IDs)")
+            return
         self.rp_enhanced_user_authentication()
         self.rp_biometric_login_support()
         self.rp_customizable_account_dashboards()
