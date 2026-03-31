@@ -1149,9 +1149,15 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        data = json.loads(response.text)
-        if "message" in data:
-            print("Error creating release pipeline: " + data["message"])
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print("Error creating release pipeline: " + data["message"])
+            except json.JSONDecodeError:
+                print(f"Release pipeline: non-JSON response (status {response.status_code})")
+        else:
+            print(f"Release pipeline: empty response (status {response.status_code})")
         return response
 
     def create_shortcut(self, name, key, icon, tags, env_key, sort_by="name"):
@@ -2058,7 +2064,18 @@ class LDPlatform:
                 "LD-API-Version": "beta",
             },
         )
-        data = json.loads(res.text)
+        if not res.text.strip():
+            print(f"get_pipeline_phase_ids: empty response (status {res.status_code})")
+            return {}
+        try:
+            data = json.loads(res.text)
+        except json.JSONDecodeError:
+            print(f"get_pipeline_phase_ids: non-JSON response (status {res.status_code})")
+            return {}
+        if "phases" not in data:
+            msg = data.get("message", "no 'phases' key in response")
+            print(f"get_pipeline_phase_ids: {msg}")
+            return {}
         c = 0
         phases = ["test", "guard", "ga"]
         phase_ids = {}
