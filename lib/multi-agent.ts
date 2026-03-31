@@ -2,6 +2,8 @@ import {
 	BedrockRuntimeClient,
 	ConverseCommand,
 } from "@aws-sdk/client-bedrock-runtime";
+import { LDObserve } from "@launchdarkly/observability-node";
+import type { LDAIConfigTracker } from "@launchdarkly/server-sdk-ai";
 import { pushLog } from "./log-stream";
 
 // Types
@@ -56,6 +58,9 @@ export interface MultiAgentResult {
 	totalOutputTokens: number;
 }
 
+/** Request headers for trace context propagation (W3C traceparent) so server spans attach to client trace */
+type RequestHeaders = Record<string, string | string[] | undefined>;
+
 interface MultiAgentDeps {
 	aiClient: any;
 	context: any;
@@ -64,6 +69,10 @@ interface MultiAgentDeps {
 	userInput: string;
 	sourcePassages: string[];
 	sendStatus?: (msg: string) => void;
+	/** Optional request headers to link server-side spans to the same trace as the client */
+	requestHeaders?: RequestHeaders;
+	/** AI Config key used for this request — set on spans so LaunchDarkly AIC view links to this trace */
+	aiConfigKey?: string;
 }
 
 // Config keys — must match what DemoBuilder provisions in LD
@@ -89,6 +98,13 @@ const CATEGORY_LABELS: Record<BankingCategory, string> = {
 };
 
 // Helpers
+
+const MAX_SPAN_ATTR_CHARS = 2000;
+
+function truncateForSpan(s: string, max = MAX_SPAN_ATTR_CHARS): string {
+	if (s.length <= max) return s;
+	return s.slice(0, max) + "...[truncated]";
+}
 
 function isBedrockModel(modelName: string): boolean {
 	const patterns = [
@@ -118,61 +134,124 @@ async function callLLM(
 	bedrockClient: BedrockRuntimeClient,
 	openai: any,
 	params?: { temperature?: number; maxTokens?: number },
+	tracker?: LDAIConfigTracker,
+	/** Agent label for span name (e.g. triage, specialist, brand_voice) and request headers for trace linking */
+	options?: { agentLabel?: string; requestHeaders?: RequestHeaders },
 ): Promise<LLMCallResult> {
-	const callStart = Date.now();
-	const isBedrock = isBedrockModel(modelId);
-	let resolvedModelId = modelId;
-	if (isBedrock && !resolvedModelId.startsWith("us.")) {
-		resolvedModelId = "us." + resolvedModelId;
-	}
+	// OpenTelemetry GenAI semantic conventions: https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans
+	const runWithSpan = async (span?: { addEvent: (name: string, attributes?: Record<string, string | number | boolean>) => void }) => {
+		const callStart = Date.now();
+		const isBedrock = isBedrockModel(modelId);
+		let resolvedModelId = modelId;
+		if (isBedrock && !resolvedModelId.startsWith("us.")) {
+			resolvedModelId = "us." + resolvedModelId;
+		}
 
-	const temp = params?.temperature ?? 0.5;
-	const maxTokens = params?.maxTokens ?? 1000;
+		const temp = params?.temperature ?? 0.5;
+		const maxTokens = params?.maxTokens ?? 1000;
+		const providerName = isBedrock ? "aws.bedrock" : "openai";
 
-	if (isBedrock) {
-		const systemMsgs = messages.filter((m) => m.role === "system");
-		const nonSystemMsgs = messages.filter((m) => m.role !== "system");
-		const bedrockMessages = nonSystemMsgs.map((m) => ({
-			role: m.role as "user" | "assistant",
-			content: [{ text: m.content }],
+		// Input in parts format for gen_ai.client.inference.operation.details event
+		const inputForEvent = messages.map((m) => ({
+			role: m.role,
+			parts: [{ content: truncateForSpan(m.content), type: "text" as const }],
 		}));
+		// Required/recommended gen_ai.* attributes (set at span start)
+		LDObserve.setAttributes({
+			"gen_ai.operation.name": "chat",
+			"gen_ai.provider.name": providerName,
+			"gen_ai.request.model": resolvedModelId,
+			"gen_ai.request.temperature": temp,
+			"gen_ai.request.max_tokens": maxTokens,
+			"gen_ai.output.type": "text",
+		});
 
-		const cmd = new ConverseCommand({
-			modelId: resolvedModelId,
-			...(systemMsgs.length > 0
-				? { system: systemMsgs.map((m) => ({ text: m.content })) }
-				: {}),
-			messages: bedrockMessages,
-			inferenceConfig: { temperature: temp, maxTokens },
+		let result: LLMCallResult;
+		if (isBedrock) {
+			const systemMsgs = messages.filter((m) => m.role === "system");
+			const nonSystemMsgs = messages.filter((m) => m.role !== "system");
+			const bedrockMessages = nonSystemMsgs.map((m) => ({
+				role: m.role as "user" | "assistant",
+				content: [{ text: m.content }],
+			}));
+
+			const cmd = new ConverseCommand({
+				modelId: resolvedModelId,
+				...(systemMsgs.length > 0
+					? { system: systemMsgs.map((m) => ({ text: m.content })) }
+					: {}),
+				messages: bedrockMessages,
+				inferenceConfig: { temperature: temp, maxTokens },
+			});
+			const resp: any = await bedrockClient.send(cmd);
+			const content = resp?.output?.message?.content?.[0]?.text ?? "";
+			const usage = resp?.usage ?? {};
+			result = {
+				content,
+				inputTokens: usage.inputTokens ?? 0,
+				outputTokens: usage.outputTokens ?? 0,
+				durationMs: Date.now() - callStart,
+			};
+		} else {
+			const openaiMessages = messages.map((m) => ({
+				role: m.role as "system" | "user" | "assistant",
+				content: m.content,
+			}));
+			const createOptions = {
+				model: resolvedModelId,
+				messages: openaiMessages,
+				max_completion_tokens: maxTokens,
+				response_format: { type: "text" as const },
+			};
+			// Use LaunchDarkly AI SDK to call OpenAI and record metrics when tracker is provided
+			// https://launchdarkly.com/docs/sdk/ai/node-js
+			const resp =
+				tracker && typeof tracker.trackOpenAIMetrics === "function"
+					? await tracker.trackOpenAIMetrics(() =>
+							openai.chat.completions.create(createOptions),
+						)
+					: await openai.chat.completions.create(createOptions);
+			const content = resp.choices?.[0]?.message?.content ?? "";
+			result = {
+				content,
+				inputTokens: resp.usage?.prompt_tokens ?? 0,
+				outputTokens: resp.usage?.completion_tokens ?? 0,
+				durationMs: Date.now() - callStart,
+			};
+		}
+
+		// Output in parts format for gen_ai.client.inference.operation.details event
+		const outputForEvent = [
+			{
+				finish_reason: "stop" as const,
+				parts: [{ content: truncateForSpan(result.content) }],
+			},
+		];
+		// Usage on the span
+		LDObserve.setAttributes({
+			"gen_ai.usage.input_tokens": result.inputTokens,
+			"gen_ai.usage.output_tokens": result.outputTokens,
+			"gen_ai.response.model": resolvedModelId,
 		});
-		const resp: any = await bedrockClient.send(cmd);
-		const content = resp?.output?.message?.content?.[0]?.text ?? "";
-		const usage = resp?.usage ?? {};
-		return {
-			content,
-			inputTokens: usage.inputTokens ?? 0,
-			outputTokens: usage.outputTokens ?? 0,
-			durationMs: Date.now() - callStart,
-		};
-	} else {
-		const openaiMessages = messages.map((m) => ({
-			role: m.role as "system" | "user" | "assistant",
-			content: m.content,
-		}));
-		const resp = await openai.chat.completions.create({
-			model: resolvedModelId,
-			messages: openaiMessages,
-			max_completion_tokens: maxTokens,
-			response_format: { type: "text" },
-		});
-		const content = resp.choices?.[0]?.message?.content ?? "";
-		return {
-			content,
-			inputTokens: resp.usage?.prompt_tokens ?? 0,
-			outputTokens: resp.usage?.completion_tokens ?? 0,
-			durationMs: Date.now() - callStart,
-		};
+		// Record request/response in span event so input/output show up in LaunchDarkly
+		if (span && typeof span.addEvent === "function") {
+			span.addEvent("gen_ai.client.inference.operation.details", {
+				"gen_ai.input.messages": JSON.stringify(inputForEvent),
+				"gen_ai.operation.name": "chat",
+				"gen_ai.output.messages": JSON.stringify(outputForEvent),
+				"has_errors": false,
+			});
+		}
+		return result;
+	};
+
+	// Use request headers so this span attaches to the same trace as the client (W3C traceparent)
+	const headers = options?.requestHeaders ?? {};
+	const spanName = options?.agentLabel ? `chat.${options.agentLabel}` : "chat";
+	if (typeof LDObserve?.runWithHeaders === "function") {
+		return LDObserve.runWithHeaders(spanName, headers as Record<string, string>, (span) => runWithSpan(span));
 	}
+	return runWithSpan();
 }
 
 // Agent functions — each pulls its own AI config from LD
@@ -210,15 +289,18 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const result = await callLLM(modelName, messages, bedrockClient, openai, {
 		temperature: 0,
 		maxTokens: 256,
-	});
+	}, triageConfig.tracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
 
-	triageConfig.tracker?.trackSuccess?.();
-	if (result.durationMs) triageConfig.tracker?.trackDuration?.(result.durationMs);
-	triageConfig.tracker?.trackTokens?.({
-		input: result.inputTokens,
-		output: result.outputTokens,
-		total: result.inputTokens + result.outputTokens,
-	});
+	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
+	if (isBedrockModel(modelName)) {
+		triageConfig.tracker?.trackSuccess?.();
+		if (result.durationMs) triageConfig.tracker?.trackDuration?.(result.durationMs);
+		triageConfig.tracker?.trackTokens?.({
+			input: result.inputTokens,
+			output: result.outputTokens,
+			total: result.inputTokens + result.outputTokens,
+		});
+	}
 
 	let parsed: { category?: string; confidence?: number; reasoning?: string };
 	try {
@@ -292,15 +374,21 @@ async function runSpecialistAgent(
 		);
 	}
 
-	const result = await callLLM(modelName, messages, bedrockClient, openai);
-
-	specialistConfig.tracker?.trackSuccess?.();
-	if (result.durationMs) specialistConfig.tracker?.trackDuration?.(result.durationMs);
-	specialistConfig.tracker?.trackTokens?.({
-		input: result.inputTokens,
-		output: result.outputTokens,
-		total: result.inputTokens + result.outputTokens,
+	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, specialistConfig.tracker, {
+		agentLabel: "specialist",
+		requestHeaders: deps.requestHeaders,
 	});
+
+	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
+	if (isBedrockModel(modelName)) {
+		specialistConfig.tracker?.trackSuccess?.();
+		if (result.durationMs) specialistConfig.tracker?.trackDuration?.(result.durationMs);
+		specialistConfig.tracker?.trackTokens?.({
+			input: result.inputTokens,
+			output: result.outputTokens,
+			total: result.inputTokens + result.outputTokens,
+		});
+	}
 
 	pushLog({
 		level: "INFO",
@@ -349,15 +437,21 @@ async function runBrandVoiceAgent(
 
 	const messages = configToMessages(brandConfig);
 
-	const result = await callLLM(modelName, messages, bedrockClient, openai);
-
-	brandConfig.tracker?.trackSuccess?.();
-	if (result.durationMs) brandConfig.tracker?.trackDuration?.(result.durationMs);
-	brandConfig.tracker?.trackTokens?.({
-		input: result.inputTokens,
-		output: result.outputTokens,
-		total: result.inputTokens + result.outputTokens,
+	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandConfig.tracker, {
+		agentLabel: "brand_voice",
+		requestHeaders: deps.requestHeaders,
 	});
+
+	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
+	if (isBedrockModel(modelName)) {
+		brandConfig.tracker?.trackSuccess?.();
+		if (result.durationMs) brandConfig.tracker?.trackDuration?.(result.durationMs);
+		brandConfig.tracker?.trackTokens?.({
+			input: result.inputTokens,
+			output: result.outputTokens,
+			total: result.inputTokens + result.outputTokens,
+		});
+	}
 
 	pushLog({
 		level: "INFO",
@@ -380,6 +474,14 @@ export async function runMultiAgentPipeline(
 	deps: MultiAgentDeps,
 ): Promise<MultiAgentResult> {
 	const status = deps.sendStatus ?? (() => {});
+
+	// Link this trace to the AI Config in LaunchDarkly (same attributes as evaluation span so AIC view shows this trace)
+	if (deps.aiConfigKey && typeof LDObserve?.setAttributes === "function") {
+		LDObserve.setAttributes({
+			"feature_flag.key": deps.aiConfigKey,
+			"feature_flag.provider.name": "LaunchDarkly",
+		});
+	}
 
 	// Step 1: Triage
 	status("Classifying query...");
