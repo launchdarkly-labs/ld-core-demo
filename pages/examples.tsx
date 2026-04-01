@@ -403,6 +403,206 @@ client.track('something-happened-with-custom-data', { someData: 2 });`}
                             <p>Create experiments around the metrics that matter to you!</p>
                         </AccordionContent>
                     </AccordionItem>
+                    <AccordionItem value="item-6">
+                        <AccordionTrigger>
+                            <h2 className="text-2xl">AI Configs</h2>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Install the AI SDK
+                            </h3>
+                            <p>
+                                The AI SDK works alongside the Node.js server-side SDK. Install
+                                both, plus an optional provider package for OpenAI.
+                            </p>
+                            <Code
+                                language={"bash"}
+                                code={`npm install @launchdarkly/node-server-sdk @launchdarkly/server-sdk-ai
+# Optional: provider-specific package for OpenAI
+npm install @launchdarkly/server-sdk-ai-openai`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Import and initialize the AI client
+                            </h3>
+                            <p>
+                                Create the base LaunchDarkly client, then wrap it with{" "}
+                                <code>initAi</code> to get an <code>aiClient</code> for
+                                interacting with AI Configs.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`import { init, LDContext } from '@launchdarkly/node-server-sdk';
+import { initAi, LDAIClient, LDAIConfig } from '@launchdarkly/server-sdk-ai';
+
+const ldClient = init('YOUR_SDK_KEY');
+await ldClient.waitForInitialization({ timeout: 10 });
+
+const aiClient: LDAIClient = initAi(ldClient);`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Retrieve an AI Config (completion mode)
+                            </h3>
+                            <p>
+                                Use <code>completionConfig()</code> to get the messages and model
+                                for a completion-style AI Config. Pass template variables to
+                                interpolate values into your prompts.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`const aiConfig: LDAIConfig = await aiClient.completionConfig(
+  'my-ai-config-key',
+  context,
+  { enabled: false }, // fallback if LD is unreachable
+  { userInput: 'What savings accounts do you offer?' },
+);
+
+if (aiConfig.enabled) {
+  // aiConfig.messages — prompt messages from the AI Config variation
+  // aiConfig.model    — model name and parameters
+  // aiConfig.tracker  — tracker instance for recording metrics
+}`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Retrieve an AI Config (agent mode)
+                            </h3>
+                            <p>
+                                Agent mode returns instructions instead of messages, enabling
+                                multi-step agent workflows.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`import { LDAIAgentConfig } from '@launchdarkly/server-sdk-ai';
+
+const agent: LDAIAgentConfig = await aiClient.agentConfig(
+  'my-agent-config-key',
+  context,
+  { enabled: false },
+  { userInput: 'Tell me about my account balance' },
+);
+
+if (agent.enabled) {
+  // agent.instructions — the goal/task from the AI Config variation
+  // agent.model        — model name and parameters
+  // agent.tracker      — tracker instance for recording metrics
+}`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Call the LLM with automatic metric tracking
+                            </h3>
+                            <p>
+                                Wrap your provider call with a convenience method to
+                                automatically record duration, token usage, and success/error.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`import OpenAI from 'openai';
+
+const openai = new OpenAI();
+const { tracker } = aiConfig;
+
+// OpenAI — trackOpenAIMetrics wraps the call and records metrics
+const completion = await tracker.trackOpenAIMetrics(async () =>
+  openai.chat.completions.create({
+    model: aiConfig.model?.name || 'gpt-4',
+    messages: aiConfig.messages || [],
+    temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
+  }),
+);
+
+console.log('Response:', completion.choices[0].message.content);`}
+                            />
+                            <Code
+                                language={"ts"}
+                                code={`import { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
+
+const { tracker } = aiConfig;
+
+// Bedrock — trackBedrockConverseMetrics records the same metrics
+const completion = tracker.trackBedrockConverseMetrics(
+  await bedrockClient.send(
+    new ConverseCommand({
+      modelId: aiConfig.model?.name ?? 'anthropic.claude-3',
+      messages: mapPromptToConversation(aiConfig.messages ?? []),
+      inferenceConfig: {
+        temperature: (aiConfig.model?.parameters?.temperature as number) ?? 0.5,
+        maxTokens: (aiConfig.model?.parameters?.maxTokens as number) ?? 4096,
+      },
+    }),
+  ),
+);`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Manual LLM observability
+                            </h3>
+                            <p>
+                                For streaming responses or custom providers, track metrics
+                                individually using the tracker.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`import { LDTokenUsage } from '@launchdarkly/server-sdk-ai';
+
+const { tracker } = aiConfig;
+
+// Track how long the generation took (ms)
+tracker.trackDuration(1250);
+
+// Track token usage
+const tokens: LDTokenUsage = { input: 150, output: 85, total: 235 };
+tracker.trackTokens(tokens);
+
+// Track time to first token for streaming responses (ms)
+tracker.trackTimeToFirstToken(320);
+
+// Track generation outcome
+tracker.trackSuccess();
+// or on failure:
+// tracker.trackError();
+
+// Retrieve a summary of all recorded metrics
+const summary = tracker.getSummary();`}
+                            />
+                            <h3 className="text-2xl font-bold my-3.5">
+                                Send satisfaction events
+                            </h3>
+                            <p>
+                                Record user feedback (thumbs up / thumbs down) on AI-generated
+                                content. Use the tracker from the same request lifecycle.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`import { LDFeedbackKind } from '@launchdarkly/server-sdk-ai';
+
+// Immediate feedback — within the same request that generated content
+tracker.trackFeedback({ kind: LDFeedbackKind.Positive });
+// or
+tracker.trackFeedback({ kind: LDFeedbackKind.Negative });`}
+                            />
+                            <p>
+                                If feedback arrives later (e.g. the user clicks a button after
+                                the response), persist the tracker metadata at generation time
+                                and replay it when feedback arrives.
+                            </p>
+                            <Code
+                                language={"ts"}
+                                code={`// At generation time — persist the tracker metadata
+const trackData = aiConfig.tracker.getTrackData();
+// Store trackData alongside the conversation in your database
+
+// Later, when the user provides feedback
+ldClient.track(
+  '$ld:ai:feedback:user:positive', // or '$ld:ai:feedback:user:negative'
+  context,       // the same context from generation time
+  trackData,     // the persisted tracker metadata
+  1,
+);`}
+                            />
+                            <p>
+                                Satisfaction metrics appear on the Monitoring tab of your AI
+                                Config in the LaunchDarkly dashboard.
+                            </p>
+                        </AccordionContent>
+                    </AccordionItem>
                 </Accordion>
             </div>
         </main>

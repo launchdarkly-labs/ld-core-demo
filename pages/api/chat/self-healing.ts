@@ -6,6 +6,7 @@ import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
+import { LDObserve } from "@launchdarkly/observability-node";
 
 interface LaunchDarklyContext {
   kind: string;
@@ -54,6 +55,89 @@ interface TrackedChatWithInternals {
 }
 
 const JUDGE_THRESHOLD = 90;
+
+const MAX_SPAN_ATTR_CHARS = 2000;
+function truncateForSpan(s: string, max = MAX_SPAN_ATTR_CHARS): string {
+  if (s.length <= max) return s;
+  return s.slice(0, max) + "...[truncated]";
+}
+function isBedrockModel(modelName: string): boolean {
+  const patterns = [
+    "anthropic.claude",
+    "amazon.titan",
+    "amazon.nova",
+    "meta.llama",
+    "cohere.command",
+    "ai21.jurassic",
+    "stability.stable-diffusion",
+    "mistral.mistral",
+    "deepseek.deepseek",
+  ];
+  return patterns.some((p) => modelName.includes(p));
+}
+
+/** Run chat.invoke inside an observability span with gen_ai attributes and request/response event (same as multi-agent). */
+async function invokeWithSpan(
+  spanName: string,
+  headers: Record<string, string | string[] | undefined>,
+  chat: { invoke: (input: string) => Promise<{ message?: { content?: string }; evaluations?: unknown } & Record<string, unknown>> },
+  userInput: string,
+  configMessages: Array<{ role?: string; content?: string }>,
+  modelName: string,
+  aiConfigKey: string
+): Promise<{ message?: { content?: string }; evaluations?: unknown } & Record<string, unknown>> {
+  const runWithSpan = async (
+    span?: { addEvent: (name: string, attributes?: Record<string, string | number | boolean>) => void }
+  ) => {
+    const isBedrock = isBedrockModel(modelName);
+    const providerName = isBedrock ? "aws.bedrock" : "openai";
+    const inputForEvent = [
+      ...configMessages.map((m) => ({
+        role: m.role || "user",
+        parts: [{ content: truncateForSpan(m.content || ""), type: "text" as const }],
+      })),
+      { role: "user" as const, parts: [{ content: truncateForSpan(userInput), type: "text" as const }] },
+    ];
+    // Link this span to the AI Config in LaunchDarkly (same as multi-agent so AIC view shows this trace)
+    if (aiConfigKey && typeof LDObserve?.setAttributes === "function") {
+      LDObserve.setAttributes({
+        "feature_flag.key": aiConfigKey,
+        "feature_flag.provider.name": "LaunchDarkly",
+      });
+    }
+    LDObserve.setAttributes({
+      "gen_ai.operation.name": "chat",
+      "gen_ai.provider.name": providerName,
+      "gen_ai.request.model": modelName,
+      "gen_ai.request.temperature": 0.5,
+      "gen_ai.request.max_tokens": 1000,
+      "gen_ai.output.type": "text",
+    });
+    const response = await chat.invoke(userInput);
+    const content = response.message?.content ?? "";
+    const metrics = (response as { metrics?: { usage?: { input?: number; output?: number } } }).metrics?.usage;
+    LDObserve.setAttributes({
+      "gen_ai.usage.input_tokens": metrics?.input ?? 0,
+      "gen_ai.usage.output_tokens": metrics?.output ?? 0,
+      "gen_ai.response.model": modelName,
+    });
+    if (span && typeof span.addEvent === "function") {
+      span.addEvent("gen_ai.client.inference.operation.details", {
+        "gen_ai.input.messages": JSON.stringify(inputForEvent),
+        "gen_ai.operation.name": "chat",
+        "gen_ai.output.messages": JSON.stringify([
+          { finish_reason: "stop" as const, parts: [{ content: truncateForSpan(content) }] },
+        ]),
+        has_errors: false,
+      });
+    }
+    return response;
+  };
+  if (typeof LDObserve?.runWithHeaders === "function") {
+    return LDObserve.runWithHeaders(spanName, headers as Record<string, string>, (span) => runWithSpan(span));
+  }
+  return runWithSpan(undefined);
+}
 
 export default async function selfHealingChat(
   req: NextApiRequest,
@@ -216,13 +300,14 @@ export default async function selfHealingChat(
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
 
-    try {
-      const chat = await (aiClient as any).createChat(
-        aiConfigKey,
-        context,
-        defaultConfig,
-        templateVariables
-      );
+    const execute = async () => {
+      try {
+        const chat = await (aiClient as any).createChat(
+          aiConfigKey,
+          context,
+          defaultConfig,
+          templateVariables
+        );
 
       if (!chat) {
         sendSSE({ error: "Failed to create chat", done: true });
@@ -270,7 +355,15 @@ export default async function selfHealingChat(
         }
       }
 
-      const chatResponse = await chat.invoke(userInput);
+      const chatResponse = await invokeWithSpan(
+        "chat.self_healing",
+        req.headers,
+        chat,
+        userInput,
+        aiConfigMessages,
+        finalModelName,
+        aiConfigKey
+      );
       sendSSE({ status: "Evaluating with AI Judges..." });
       let finalResponse = chatResponse.message?.content || "";
       let originalBadResponse = "";
@@ -395,7 +488,15 @@ export default async function selfHealingChat(
               }
             }
 
-            const fallbackResponse = await fallbackChat.invoke(userInput);
+            const fallbackResponse = await invokeWithSpan(
+              "chat.self_healing.fallback",
+              req.headers,
+              fallbackChat,
+              userInput,
+              fallbackMessages,
+              finalModelName,
+              aiConfigKey
+            );
             finalResponse = fallbackResponse.message?.content || finalResponse;
             didFallback = true;
 
@@ -526,6 +627,25 @@ export default async function selfHealingChat(
 
       sendSSE({ error: errorObj.message, done: true });
       res.end();
+    }
+    };
+    // Use same parent span name as main chat ("POST - /api/chat") so AIC view associates this trace.
+    // feature_flag.key = aiConfigKey links the trace to this AIC; url.path distinguishes the route.
+    if (typeof LDObserve?.runWithHeaders === "function") {
+      await LDObserve.runWithHeaders(
+        "POST - /api/chat",
+        req.headers as Record<string, string>,
+        (span) => {
+          LDObserve.setAttributes({
+            "feature_flag.key": aiConfigKey,
+            "feature_flag.provider.name": "LaunchDarkly",
+            "url.path": "/api/chat/self-healing",
+          });
+          return execute();
+        }
+      );
+    } else {
+      await execute();
     }
   } catch (error) {
     const errorObj = error instanceof Error ? error : new Error(String(error));

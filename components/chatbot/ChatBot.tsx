@@ -445,7 +445,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   const judgeMessage: Message = {
                     id: uuidv4().slice(0, 6) + "-judge",
                     role: "judge",
-                    content: `**AI Judge Evaluation**\n\n**Initial Model Scores (${data.originalModel || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Original Response (Reverted):**\n> ${data.originalResponse || "No response captured"}\n\n**Fallback Model Scores (Passed):**\n- Accuracy: ${data.judgeScores.after?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.after?.relevance?.toFixed(1) || "N/A"}%\n\nSelf-healed to: **${data.modelName}**`,
+                    content: `**Initial Model Scores (${data.originalModel || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n---\n\n**Original Response (Reverted):**\n${(data.originalResponse || "No response captured").split("\n").map((line: string) => "> " + line).join("\n")}\n\n---\n\n**Fallback Model Scores (Passed):**\n- Accuracy: ${data.judgeScores.after?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.after?.relevance?.toFixed(1) || "N/A"}%\n\n---\n\nSelf-healed to: **${data.modelName}**`,
                     judgeScores: data.judgeScores,
                   };
                   setSelfHealingMessages((prev) => [...prev, judgeMessage]);
@@ -466,7 +466,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   const judgeMessage: Message = {
                     id: uuidv4().slice(0, 6) + "-judge",
                     role: "judge",
-                    content: `**AI Judge Evaluation**\n\n**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
+                    content: `**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n---\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
                     judgeScores: data.judgeScores,
                   };
                   setSelfHealingMessages((prev) => [...prev, judgeMessage]);
@@ -1001,6 +1001,46 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                           )}
                         </div>
                       )}
+                      {(() => {
+                        const judgeMsg = [...selfHealingMessages].reverse().find((m) => m.role === "judge");
+                        if (!judgeMsg) return null;
+                        return (
+                          <Accordion type="single" collapsible className="mt-1">
+                            <AccordionItem value="judge-eval" className="border-0">
+                              <AccordionTrigger className="py-1 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:no-underline">
+                                AI Judge Evaluation
+                              </AccordionTrigger>
+                              <AccordionContent className="text-xs pb-1">
+                                <div className="max-h-[200px] overflow-y-auto rounded-md border border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 p-2">
+                                  <ReactMarkdown
+                                    components={{
+                                      p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                                      strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                                      em: ({ children }) => <em className="italic">{children}</em>,
+                                      ul: ({ children }) => <ul className="list-disc list-inside mb-1.5 space-y-0.5 ml-2">{children}</ul>,
+                                      li: ({ children }) => <li>{children}</li>,
+                                      hr: () => <div className="my-3" />,
+                                      blockquote: ({ children }) => (
+                                        <blockquote className="border-l-2 border-purple-400 pl-2 italic mb-1.5 text-gray-600 dark:text-gray-300">
+                                          {children}
+                                        </blockquote>
+                                      ),
+                                      code: ({ children, className }) => {
+                                        const isBlock = className?.includes("language-");
+                                        return isBlock
+                                          ? <pre className="bg-gray-100 dark:bg-gray-800 rounded p-1.5 overflow-x-auto mb-1.5"><code className={className}>{children}</code></pre>
+                                          : <code className="bg-gray-200 dark:bg-gray-700 rounded px-1 py-0.5 text-[11px] break-all">{children}</code>;
+                                      },
+                                    }}
+                                  >
+                                    {judgeMsg.content}
+                                  </ReactMarkdown>
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        );
+                      })()}
                     </div>
                   )}
 
@@ -1017,26 +1057,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                       <div className="space-y-4">
                         {selfHealingMessages.map((m) => {
                           if (m.role === "judge") {
-                            return (
-                              <div key={m.id} className="flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-600">
-                                <ReactMarkdown
-                                  components={{
-                                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                                    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                                    em: ({ children }) => <em className="italic">{children}</em>,
-                                    ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1 ml-2">{children}</ul>,
-                                    li: ({ children }) => <li>{children}</li>,
-                                    blockquote: ({ children }) => (
-                                      <blockquote className="border-l-2 border-purple-400 pl-3 italic mb-2 text-gray-600 dark:text-gray-300">
-                                        {children}
-                                      </blockquote>
-                                    ),
-                                  }}
-                                >
-                                  {m.content}
-                                </ReactMarkdown>
-                              </div>
-                            );
+                            return null;
                           }
                           if (m.role === "assistant") {
                             const isResetPrompt =
