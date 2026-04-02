@@ -61,7 +61,7 @@ class DemoBuilder:
             "python3", os.path.join(os.path.dirname(__file__), "LDGeneratorsRunner.py")
         ], env=env)
         
-        # self.setup_release_pipeline()  # Release Assistant removed from LD platform
+        # self.setup_release_pipeline()  # Release Assistant removed (no longer supported)
         proc.wait()
      
 ############################################################################################################
@@ -1806,13 +1806,24 @@ class DemoBuilder:
             """Build a tools array of {key, version} dicts for the variation POST."""
             return [{"key": k, "version": tool_versions.get(k, 1)} for k in keys]
 
-        model_config = {
-            "modelName": "gpt-5-mini",
+        nova_pro_config = {
+            "modelName": "amazon.nova-pro-v1:0",
             "parameters": {
-                "max_completion_tokens": 1000
+                "maxTokens": 1000,
+                "temperature": 0.5
             }
         }
-        model_config_key = "OpenAI.gpt-5-mini"
+        nova_pro_config_key = "Bedrock.amazon.nova-pro-v1:0"
+
+        haiku_config = {
+            "modelName": "anthropic.claude-3-5-haiku-20241022-v1:0",
+            "parameters": {
+                "maxTokens": 1000,
+                "temperature": 0.5
+            }
+        }
+        haiku_config_key = "Bedrock.anthropic.claude-3-5-haiku-20241022-v1:0"
+
         tags = ["ai-models", "ai-config", "multi-agent", "bank"]
 
         # -----------------------------------------------------------
@@ -1840,22 +1851,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-triage",
-            "gpt-5-mini-triage",
-            model_config_key,
-            "GPT-5 Mini - Triage",
-            model_config,
+            "nova-pro-triage",
+            nova_pro_config_key,
+            "Nova Pro - Triage",
+            nova_pro_config,
             instructions=triage_instructions,
             description="Classifies banking queries into specialist categories",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-triage", "gpt-5-mini-triage",
-            _tools("get-customer-context"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-triage", "on", "production")
-        triage_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-triage", "gpt-5-mini-triage")
+        triage_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-triage", "nova-pro-triage")
         if triage_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-triage", "production", triage_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-triage", "nova-pro-triage",
+            _tools("get-customer-context"),
+        )
 
         # -----------------------------------------------------------
         # 2. Accounts Specialist
@@ -1883,22 +1894,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-accounts-specialist",
-            "gpt-5-mini-accounts",
-            model_config_key,
-            "GPT-5 Mini - Accounts",
-            model_config,
+            "haiku-accounts",
+            haiku_config_key,
+            "Haiku - Accounts",
+            haiku_config,
             instructions=accounts_instructions,
             description="Handles checking/savings account queries",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-accounts-specialist", "gpt-5-mini-accounts",
-            _tools("get-customer-context", "search-knowledge-base"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-accounts-specialist", "on", "production")
-        accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "gpt-5-mini-accounts")
+        accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "haiku-accounts")
         if accounts_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-accounts-specialist", "production", accounts_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-accounts-specialist", "haiku-accounts",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 3. Loans & Credit Specialist
@@ -1927,22 +1938,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-loans-specialist",
-            "gpt-5-mini-loans",
-            model_config_key,
-            "GPT-5 Mini - Loans",
-            model_config,
+            "haiku-loans",
+            haiku_config_key,
+            "Haiku - Loans",
+            haiku_config,
             instructions=loans_instructions,
             description="Handles loan and credit queries",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-loans-specialist", "gpt-5-mini-loans",
-            _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-loans-specialist", "on", "production")
-        loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "gpt-5-mini-loans")
+        loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "haiku-loans")
         if loans_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-loans-specialist", "production", loans_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-loans-specialist", "haiku-loans",
+            _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
+        )
 
         # -----------------------------------------------------------
         # 4. Investments Specialist
@@ -1971,22 +1982,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-investments-specialist",
-            "gpt-5-mini-investments",
-            model_config_key,
-            "GPT-5 Mini - Investments",
-            model_config,
+            "haiku-investments",
+            haiku_config_key,
+            "Haiku - Investments",
+            haiku_config,
             instructions=investments_instructions,
             description="Handles investment and retirement queries",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-investments-specialist", "gpt-5-mini-investments",
-            _tools("get-customer-context", "search-knowledge-base"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-investments-specialist", "on", "production")
-        investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "gpt-5-mini-investments")
+        investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "haiku-investments")
         if investments_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-investments-specialist", "production", investments_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-investments-specialist", "haiku-investments",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 5. Transfers Specialist
@@ -2014,22 +2025,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-transfers-specialist",
-            "gpt-5-mini-transfers",
-            model_config_key,
-            "GPT-5 Mini - Transfers",
-            model_config,
+            "haiku-transfers",
+            haiku_config_key,
+            "Haiku - Transfers",
+            haiku_config,
             instructions=transfers_instructions,
             description="Handles transfer and payment queries",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-transfers-specialist", "gpt-5-mini-transfers",
-            _tools("get-customer-context", "search-knowledge-base"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-transfers-specialist", "on", "production")
-        transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "gpt-5-mini-transfers")
+        transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "haiku-transfers")
         if transfers_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-transfers-specialist", "production", transfers_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-transfers-specialist", "haiku-transfers",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 6. Customer Support Specialist
@@ -2056,22 +2067,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-support-specialist",
-            "gpt-5-mini-support",
-            model_config_key,
-            "GPT-5 Mini - Support",
-            model_config,
+            "haiku-support",
+            haiku_config_key,
+            "Haiku - Support",
+            haiku_config,
             instructions=support_instructions,
             description="Handles general support and miscellaneous queries",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-support-specialist", "gpt-5-mini-support",
-            _tools("get-customer-context", "search-knowledge-base"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-support-specialist", "on", "production")
-        support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "gpt-5-mini-support")
+        support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "haiku-support")
         if support_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-support-specialist", "production", support_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-support-specialist", "haiku-support",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 7. Brand Voice Agent
@@ -2103,22 +2114,22 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-brand-voice",
-            "gpt-5-mini-brand",
-            model_config_key,
-            "GPT-5 Mini - Brand Voice",
-            model_config,
+            "nova-pro-brand",
+            nova_pro_config_key,
+            "Nova Pro - Brand Voice",
+            nova_pro_config,
             instructions=brand_instructions,
             description="Rewrites specialist responses in ToggleBank brand voice",
         )
-        self.ldproject.patch_variation_tools(
-            "ai-config--togglebot-brand-voice", "gpt-5-mini-brand",
-            _tools("rewrite-response-for-channel"),
-        )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-brand-voice", "on", "production")
-        brand_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "gpt-5-mini-brand")
+        brand_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "nova-pro-brand")
         if brand_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-brand-voice", "production", brand_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-brand-voice", "nova-pro-brand",
+            _tools("rewrite-response-for-channel"),
+        )
 
         # -----------------------------------------------------------
         # Agent Graph — visual flow in LaunchDarkly dashboard
@@ -2601,7 +2612,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.attach_metric_to_flag("paymentEngineHealthyRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed"])
-        res = self.ldproject.add_guarded_rollout("paymentEngineHealthyRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=3)
+        res = self.ldproject.add_guarded_rollout("paymentEngineHealthyRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=1)
         
     def flag_payment_engine_failed_rollout(self):
         res = self.ldproject.create_flag(
@@ -2622,7 +2633,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "payment-transactions-processed", "payment-revenue-protected"])
-        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"], days=4)
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"], days=3)
         
     def flag_payment_processing_interactive_demo(self):
         res = self.ldproject.create_flag(

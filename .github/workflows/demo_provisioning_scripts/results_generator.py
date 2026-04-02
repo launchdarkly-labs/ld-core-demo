@@ -362,6 +362,68 @@ def financial_agent_monitoring_results_generator(client):
     logging.info("Financial Agent monitoring results generation completed")
     # Do not flush or close client here; handled in generate_flags
 
+def multi_agent_monitoring_results_generator(client):
+    AGENT_CONFIGS = [
+        {"key": "ai-config--togglebot-triage", "label": "Triage", "fast": True},
+        {"key": "ai-config--togglebot-accounts-specialist", "label": "Accounts Specialist", "fast": False},
+        {"key": "ai-config--togglebot-loans-specialist", "label": "Loans Specialist", "fast": False},
+        {"key": "ai-config--togglebot-investments-specialist", "label": "Investments Specialist", "fast": False},
+        {"key": "ai-config--togglebot-transfers-specialist", "label": "Transfers Specialist", "fast": False},
+        {"key": "ai-config--togglebot-support-specialist", "label": "Support Specialist", "fast": False},
+        {"key": "ai-config--togglebot-brand-voice", "label": "Brand Voice", "fast": True},
+    ]
+    NUM_RUNS = 300
+    aiclient = LDAIClient(client)
+
+    if not client.is_initialized():
+        logging.error("Failed to initialize LaunchDarkly client for multi-agent monitoring")
+        return
+
+    logging.info("Starting multi-agent monitoring results generation...")
+
+    for agent in AGENT_CONFIGS:
+        flag_key = agent["key"]
+        label = agent["label"]
+        is_fast = agent["fast"]
+        logging.info(f"  Generating {NUM_RUNS} events for {label} ({flag_key})...")
+
+        for i in range(NUM_RUNS):
+            try:
+                context = generate_user_context()
+                config, tracker = aiclient.config(flag_key, context, {})
+
+                if is_fast:
+                    duration = random.randint(100, 600)
+                    prompt_tokens = random.randint(15, 80)
+                    completion_tokens = random.randint(20, 150)
+                else:
+                    duration = random.randint(300, 1200)
+                    prompt_tokens = random.randint(40, 120)
+                    completion_tokens = random.randint(80, 400)
+
+                time_to_first_token = random.randint(30, min(200, duration))
+                total_tokens = prompt_tokens + completion_tokens
+                tokens = TokenUsage(prompt_tokens, completion_tokens, total_tokens)
+
+                tracker.track_duration(duration)
+                tracker.track_tokens(tokens)
+                tracker.track_time_to_first_token(time_to_first_token)
+
+                if random.random() < 0.97:
+                    tracker.track_success()
+                else:
+                    tracker.track_error()
+
+                if (i + 1) % 100 == 0:
+                    logging.info(f"    Processed {i + 1}/{NUM_RUNS} events for {label}")
+                    client.flush()
+            except Exception as e:
+                logging.error(f"Error processing {label} event {i}: {str(e)}")
+                continue
+
+    client.flush()
+    logging.info("Multi-agent monitoring results generation completed")
+
 def experiment_results_generator(client):
     LD_FEATURE_FLAG_KEY = "cartSuggestedItems"
     LD_PRIMARYMETRIC_KEY = "in-cart-total-items"
@@ -980,12 +1042,16 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
         logging.error("Payment Engine Healthy rollout failed to initialize after 30 seconds. Exiting.")
         return
     
+    status_check_counter = 0
+
     while True:
-        flag_details = get_flag_details("paymentEngineHealthyRollout")
-        if not flag_details or not is_measured_rollout(flag_details):
-            logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
-            stop_event.set()
-            break
+        if status_check_counter >= 100:
+            flag_details = get_flag_details("paymentEngineHealthyRollout")
+            if not flag_details or not is_measured_rollout(flag_details):
+                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Engine Healthy generator.")
+                stop_event.set()
+                break
+            status_check_counter = 0
         try:
             user_context = generate_user_context()
             flag_value = client.variation("paymentEngineHealthyRollout", user_context, False)
@@ -1005,6 +1071,7 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
                 latency = random.randint(200, 400)
                 client.track("payment-latency", user_context, None, latency)
                 client.track("payment-transactions-processed", user_context, None, 1)
+            status_check_counter += 1
             time.sleep(0.03)
         except Exception as e:
             logging.error(f"Error generating payment healthy metrics: {str(e)}")
@@ -1054,47 +1121,49 @@ def payment_engine_failed_scenario_generator(client, stop_event):
             user_context = generate_user_context()
             flag_value = client.variation("paymentProcessingV2FailedRollout", user_context, False)
             if flag_value:
-                if user_counter < 8000:
+                if user_counter < 10000:
                     progress = 0.0
                 else:
-                    progress = min((user_counter - 8000) / 15000.0, 1.0)
-                p3 = progress * progress * progress
-                error_chance = 0.08 + (0.64 * p3) + random.uniform(-0.06, 0.06)
+                    progress = min((user_counter - 10000) / 10000.0, 1.0)
+
+                error_chance = 0.08 + (0.64 * progress) + random.uniform(-0.08, 0.08)
                 error_chance = max(0.05, min(0.80, error_chance))
-                success_chance = 0.90 - (0.60 * p3) + random.uniform(-0.05, 0.05)
+                success_chance = 0.90 - (0.60 * progress) + random.uniform(-0.05, 0.05)
                 success_chance = max(0.15, min(0.92, success_chance))
-                latency_low = int(80 + (270 * p3))
-                latency_high = int(180 + (570 * p3))
+
+                lat_progress = max(0.0, (progress - 0.4) / 0.6) if progress > 0.4 else 0.0
+                latency_low = int(80 + (270 * lat_progress))
+                latency_high = int(180 + (570 * lat_progress))
 
                 if random.random() < error_chance:
                     client.track("payment-v2-error-rate", user_context)
-
-                    error_types = [
-                        "PaymentGatewayTimeout",
-                        "TransactionValidationError",
-                        "DatabaseConnectionError",
-                        "PaymentProcessorException",
-                        "InsufficientFundsError"
-                    ]
-                    error_messages = [
-                        "Payment gateway timed out after 30 seconds",
-                        "Transaction validation failed: invalid card number format",
-                        "Database connection pool exhausted",
-                        "Payment processor returned 500 Internal Server Error",
-                        "Insufficient funds for transaction amount"
-                    ]
-                    error_idx = random.randint(0, len(error_types) - 1)
-                    error_data = {
-                        "error.kind": error_types[error_idx],
-                        "error.message": error_messages[error_idx],
-                        "service.name": "payment-processing-v2",
-                        "component": "PaymentEngine",
-                        "transaction.id": f"txn-{user_counter}",
-                        "user.id": user_context.key,
-                        "flag.key": "paymentProcessingV2FailedRollout",
-                        "severity": "high"
-                    }
-                    client.track("$ld:telemetry:error", user_context, error_data, 1)
+                    if progress > 0.2:
+                        error_types = [
+                            "PaymentGatewayTimeout",
+                            "TransactionValidationError",
+                            "DatabaseConnectionError",
+                            "PaymentProcessorException",
+                            "InsufficientFundsError"
+                        ]
+                        error_messages = [
+                            "Payment gateway timed out after 30 seconds",
+                            "Transaction validation failed: invalid card number format",
+                            "Database connection pool exhausted",
+                            "Payment processor returned 500 Internal Server Error",
+                            "Insufficient funds for transaction amount"
+                        ]
+                        error_idx = random.randint(0, len(error_types) - 1)
+                        error_data = {
+                            "error.kind": error_types[error_idx],
+                            "error.message": error_messages[error_idx],
+                            "service.name": "payment-processing-v2",
+                            "component": "PaymentEngine",
+                            "transaction.id": f"txn-{user_counter}",
+                            "user.id": user_context.key,
+                            "flag.key": "paymentProcessingV2FailedRollout",
+                            "severity": "high"
+                        }
+                        client.track("$ld:telemetry:error", user_context, error_data, 1)
 
                 if random.random() < success_chance:
                     client.track("payment-v2-success-rate", user_context)
@@ -1134,6 +1203,7 @@ def generate_results(project_key, api_key):
         # AI Configs monitoring
         ai_configs_monitoring_results_generator(client)
         financial_agent_monitoring_results_generator(client)
+        multi_agent_monitoring_results_generator(client)
         
         # All experiment result generators
         experiment_results_generator(client)  # cartSuggestedItems

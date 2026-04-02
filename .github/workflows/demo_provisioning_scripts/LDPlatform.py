@@ -1863,6 +1863,32 @@ class LDPlatform:
             payload["comment"] = comment
 
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
+
+        # Log semantic patch result
+        try:
+            data = json.loads(res.text)
+            if "message" in data:
+                print(f"  [toggle_flag] Semantic patch for {flag_key}: {data['message']}")
+        except (json.JSONDecodeError, AttributeError):
+            print(f"  [toggle_flag] Semantic patch for {flag_key}: status {res.status_code}")
+
+        # Follow up with JSON Patch to directly set on/off state
+        on_value = flag_state == "on"
+        json_patch_headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        json_patch_payload = [
+            {"op": "replace", "path": "/environments/" + flag_env + "/on", "value": on_value}
+        ]
+        res2 = self.getrequest("PATCH", url, headers=json_patch_headers, json=json_patch_payload)
+        try:
+            data2 = json.loads(res2.text)
+            if "message" in data2:
+                print(f"  [toggle_flag] JSON patch for {flag_key}: {data2['message']}")
+        except (json.JSONDecodeError, AttributeError):
+            print(f"  [toggle_flag] JSON patch for {flag_key}: status {res2.status_code}")
+
         return res
 
     ##################################################
