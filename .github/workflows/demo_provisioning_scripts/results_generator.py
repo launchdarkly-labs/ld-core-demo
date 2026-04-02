@@ -390,7 +390,10 @@ def multi_agent_monitoring_results_generator(client):
         for i in range(NUM_RUNS):
             try:
                 context = generate_user_context()
-                config, tracker = aiclient.config(flag_key, context, {})
+                if hasattr(aiclient, 'agent_config'):
+                    config, tracker = aiclient.agent_config(flag_key, context, {})
+                else:
+                    config, tracker = aiclient.config(flag_key, context, {})
 
                 if is_fast:
                     duration = random.randint(100, 600)

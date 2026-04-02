@@ -169,7 +169,10 @@ async function callLLM(
 		let result: LLMCallResult;
 		if (isBedrock) {
 			const systemMsgs = messages.filter((m) => m.role === "system");
-			const nonSystemMsgs = messages.filter((m) => m.role !== "system");
+			let nonSystemMsgs = messages.filter((m) => m.role !== "system");
+			if (nonSystemMsgs.length === 0) {
+				nonSystemMsgs = [{ role: "user", content: "Please respond based on the instructions provided." }];
+			}
 			const bedrockMessages = nonSystemMsgs.map((m) => ({
 				role: m.role as "user" | "assistant",
 				content: [{ text: m.content }],
@@ -193,7 +196,11 @@ async function callLLM(
 				durationMs: Date.now() - callStart,
 			};
 		} else {
-			const openaiMessages = messages.map((m) => ({
+			let finalMessages = messages;
+			if (!messages.some((m) => m.role === "user")) {
+				finalMessages = [...messages, { role: "user", content: "Please respond based on the instructions provided." }];
+			}
+			const openaiMessages = finalMessages.map((m) => ({
 				role: m.role as "system" | "user" | "assistant",
 				content: m.content,
 			}));
