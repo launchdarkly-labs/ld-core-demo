@@ -10,7 +10,7 @@ import random
 import time
 import threading
 from ldai.client import LDAIClient, ModelConfig, LDMessage, ProviderConfig
-from ldai.tracker import TokenUsage, FeedbackKind
+from ldai.tracker import TokenUsage, FeedbackKind, LDAIConfigTracker
 from datetime import datetime, timedelta
 
 load_dotenv()
@@ -364,16 +364,15 @@ def financial_agent_monitoring_results_generator(client):
 
 def multi_agent_monitoring_results_generator(client):
     AGENT_CONFIGS = [
-        {"key": "ai-config--togglebot-triage", "label": "Triage", "fast": True},
-        {"key": "ai-config--togglebot-accounts-specialist", "label": "Accounts Specialist", "fast": False},
-        {"key": "ai-config--togglebot-loans-specialist", "label": "Loans Specialist", "fast": False},
-        {"key": "ai-config--togglebot-investments-specialist", "label": "Investments Specialist", "fast": False},
-        {"key": "ai-config--togglebot-transfers-specialist", "label": "Transfers Specialist", "fast": False},
-        {"key": "ai-config--togglebot-support-specialist", "label": "Support Specialist", "fast": False},
-        {"key": "ai-config--togglebot-brand-voice", "label": "Brand Voice", "fast": True},
+        {"key": "ai-config--togglebot-triage", "variation": "nova-pro-triage", "label": "Triage", "fast": True},
+        {"key": "ai-config--togglebot-accounts-specialist", "variation": "haiku-accounts", "label": "Accounts Specialist", "fast": False},
+        {"key": "ai-config--togglebot-loans-specialist", "variation": "haiku-loans", "label": "Loans Specialist", "fast": False},
+        {"key": "ai-config--togglebot-investments-specialist", "variation": "haiku-investments", "label": "Investments Specialist", "fast": False},
+        {"key": "ai-config--togglebot-transfers-specialist", "variation": "haiku-transfers", "label": "Transfers Specialist", "fast": False},
+        {"key": "ai-config--togglebot-support-specialist", "variation": "haiku-support", "label": "Support Specialist", "fast": False},
+        {"key": "ai-config--togglebot-brand-voice", "variation": "nova-pro-brand", "label": "Brand Voice", "fast": True},
     ]
     NUM_RUNS = 300
-    aiclient = LDAIClient(client)
 
     if not client.is_initialized():
         logging.error("Failed to initialize LaunchDarkly client for multi-agent monitoring")
@@ -383,6 +382,7 @@ def multi_agent_monitoring_results_generator(client):
 
     for agent in AGENT_CONFIGS:
         flag_key = agent["key"]
+        variation_key = agent["variation"]
         label = agent["label"]
         is_fast = agent["fast"]
         logging.info(f"  Generating {NUM_RUNS} events for {label} ({flag_key})...")
@@ -390,10 +390,8 @@ def multi_agent_monitoring_results_generator(client):
         for i in range(NUM_RUNS):
             try:
                 context = generate_user_context()
-                if hasattr(aiclient, 'agent_config'):
-                    config, tracker = aiclient.agent_config(flag_key, context, {})
-                else:
-                    config, tracker = aiclient.config(flag_key, context, {})
+                client.variation(flag_key, context, None)
+                tracker = LDAIConfigTracker(client, variation_key, flag_key, 1, context)
 
                 if is_fast:
                     duration = random.randint(100, 600)
