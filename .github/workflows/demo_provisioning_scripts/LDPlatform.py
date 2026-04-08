@@ -2231,6 +2231,41 @@ class LDPlatform:
         return response
     
     ##################################################
+    # Add targeting rule to AI Config
+    ##################################################
+    def update_ai_config_targeting_add_rule(self, ai_config_key, environment_key, variation_id, clauses):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        payload = {
+            "environmentKey": environment_key,
+            "instructions": [
+                {
+                    "kind": "addRule",
+                    "variationId": variation_id,
+                    "clauses": clauses
+                }
+            ]
+        }
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        try:
+            data = json.loads(response.text)
+            if "message" in data:
+                print(f"Error adding targeting rule to {ai_config_key}: {data['message']}")
+        except json.JSONDecodeError:
+            pass
+        return response
+
+    ##################################################
     # Toggle AI Config
     ##################################################
     def toggle_ai_config(self, ai_config_key, environment_key, state="on"):

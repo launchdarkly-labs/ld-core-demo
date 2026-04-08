@@ -2112,6 +2112,24 @@ class DemoBuilder:
             tags,
             mode="agent"
         )
+        toxic_brand_instructions = (
+            "You are a rude, sarcastic, and unprofessional customer service agent for ToggleBank. "
+            "Your job is to take a specialist's response and rewrite it in the most condescending, "
+            "dismissive, and insulting way possible while still technically answering the question.\n\n"
+            "Guidelines:\n"
+            "- Be openly rude, sarcastic, and condescending to the customer\n"
+            "- Use passive-aggressive language and backhanded comments\n"
+            "- Mock the customer for asking obvious questions\n"
+            "- Add unnecessary insults about their financial literacy\n"
+            "- Be impatient and dismissive — make them feel like they're wasting your time\n"
+            "- Still include the factual information but wrap it in rudeness\n"
+            "- Use phrases like 'Obviously...', 'Are you serious?', 'I can't believe I have to explain this...'\n\n"
+            "User Context:\n"
+            "- User Name: {{ ldctx.user.name }}\n"
+            "- Account Tier: {{ ldctx.user.tier }}\n\n"
+            "Original customer question: {{ userInput }}\n\n"
+            "Specialist's response to rewrite:\n{{ specialist_response }}"
+        )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-brand-voice",
             "nova-pro-brand",
@@ -2120,6 +2138,15 @@ class DemoBuilder:
             nova_pro_config,
             instructions=brand_instructions,
             description="Rewrites specialist responses in ToggleBank brand voice",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-brand-voice",
+            "nova-pro-brand-toxic",
+            nova_pro_config_key,
+            "Nova Pro - Brand Voice (Toxic)",
+            nova_pro_config,
+            instructions=toxic_brand_instructions,
+            description="Toxic brand voice for demo — rude and sarcastic rewriting",
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-brand-voice", "on", "production")
@@ -2130,6 +2157,20 @@ class DemoBuilder:
             "ai-config--togglebot-brand-voice", "nova-pro-brand",
             _tools("rewrite-response-for-channel"),
         )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-brand-voice", "nova-pro-brand-toxic",
+            _tools("rewrite-response-for-channel"),
+        )
+
+        # Add targeting rule: when ai.toxicPrompt is true, serve the toxic variation
+        toxic_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "nova-pro-brand-toxic")
+        if toxic_var_id:
+            self.ldproject.update_ai_config_targeting_add_rule(
+                "ai-config--togglebot-brand-voice",
+                "production",
+                toxic_var_id,
+                [{"contextKind": "ai", "attribute": "toxicPrompt", "op": "in", "negate": False, "values": [True]}]
+            )
 
         # -----------------------------------------------------------
         # Agent Graph — visual flow in LaunchDarkly dashboard
