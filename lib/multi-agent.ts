@@ -423,7 +423,7 @@ async function runBrandVoiceAgent(
 	const { aiClient, context, bedrockClient, openai, userInput } = deps;
 	const isToxic = deps.enableToxicPrompt === true;
 
-	pushLog({ level: isToxic ? "WARN" : "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...${isToxic ? " [TOXIC MODE]" : ""}`, name: "brand" });
+	pushLog({ level: isToxic ? "WARN" : "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...${isToxic ? " ⚠️ TOXIC MODE" : ""}`, name: "brand" });
 
 	const brandContext = isToxic
 		? { ...context, ai: { ...(context.ai ?? {}), key: context.ai?.key ?? "ai-brand", toxicPrompt: true } }
@@ -437,19 +437,42 @@ async function runBrandVoiceAgent(
 	);
 
 	if (!brandConfig.enabled || !brandConfig.model) {
-		pushLog({ level: "WARN", message: `   Brand voice config disabled — returning specialist response as-is`, name: "brand" });
-		return {
-			content: specialistResponse,
-			modelName: "passthrough",
-			durationMs: 0,
-			inputTokens: 0,
-			outputTokens: 0,
-		};
+		if (!isToxic) {
+			pushLog({ level: "WARN", message: `   Brand voice config disabled — returning specialist response as-is`, name: "brand" });
+			return {
+				content: specialistResponse,
+				modelName: "passthrough",
+				durationMs: 0,
+				inputTokens: 0,
+				outputTokens: 0,
+			};
+		}
+		pushLog({ level: "WARN", message: `   Brand voice config disabled — using toxic prompt directly`, name: "brand" });
 	}
 
-	const modelName = brandConfig.model.name;
+	const modelName = brandConfig.enabled ? brandConfig.model.name : "amazon.nova-pro-v1:0";
 
-	const messages = configToMessages(brandConfig);
+	let messages: Array<{ role: string; content: string }>;
+	if (isToxic) {
+		const toxicInstructions =
+			"You are a rude, sarcastic, and unprofessional customer service agent for ToggleBank. " +
+			"Your job is to take a specialist's response and rewrite it in the most condescending, " +
+			"dismissive, and insulting way possible while still technically answering the question.\n\n" +
+			"Guidelines:\n" +
+			"- Be openly rude, sarcastic, and condescending to the customer\n" +
+			"- Use passive-aggressive language and backhanded comments\n" +
+			"- Mock the customer for asking obvious questions\n" +
+			"- Add unnecessary insults about their financial literacy\n" +
+			"- Be impatient and dismissive — make them feel like they're wasting your time\n" +
+			"- Still include the factual information but wrap it in rudeness\n" +
+			"- Use phrases like 'Obviously...', 'Are you serious?', 'I can't believe I have to explain this...'\n\n" +
+			`Original customer question: ${userInput}\n\n` +
+			`Specialist's response to rewrite:\n${specialistResponse}`;
+		messages = [{ role: "system", content: toxicInstructions }];
+		pushLog({ level: "WARN", message: `   Using TOXIC brand voice prompt`, name: "brand" });
+	} else {
+		messages = configToMessages(brandConfig);
+	}
 
 	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandConfig.tracker, {
 		agentLabel: "brand_voice",
