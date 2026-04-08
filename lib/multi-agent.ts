@@ -73,6 +73,8 @@ interface MultiAgentDeps {
 	requestHeaders?: RequestHeaders;
 	/** AI Config key used for this request — set on spans so LaunchDarkly AIC view links to this trace */
 	aiConfigKey?: string;
+	/** When true, the Brand Voice agent uses the toxic prompt variation */
+	enableToxicPrompt?: boolean;
 }
 
 // Config keys — must match what DemoBuilder provisions in LD
@@ -419,12 +421,17 @@ async function runBrandVoiceAgent(
 	deps: MultiAgentDeps,
 ): Promise<BrandVoiceResult> {
 	const { aiClient, context, bedrockClient, openai, userInput } = deps;
+	const isToxic = deps.enableToxicPrompt === true;
 
-	pushLog({ level: "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...`, name: "brand" });
+	pushLog({ level: isToxic ? "WARN" : "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...${isToxic ? " [TOXIC MODE]" : ""}`, name: "brand" });
+
+	const brandContext = isToxic
+		? { ...context, ai: { ...(context.ai ?? {}), key: context.ai?.key ?? "ai-brand", toxicPrompt: true } }
+		: context;
 
 	const brandConfig = await aiClient.agentConfig(
 		BRAND_VOICE_CONFIG_KEY,
-		context,
+		brandContext,
 		{ enabled: false },
 		{ userInput, specialist_response: specialistResponse },
 	);
