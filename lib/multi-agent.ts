@@ -398,82 +398,85 @@ async function runSpecialistAgent(
 	}
 
 	const modelName = specialistConfig.model.name;
+	const useBedrock = isBedrockModel(modelName);
 	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName}) with RAG tools...`, name: "specialist" });
 
-	let resolvedModelId = modelName;
-	if (isBedrockModel(resolvedModelId) && !resolvedModelId.startsWith("us.")) {
-		resolvedModelId = "us." + resolvedModelId;
-	}
-
 	const configMessages = configToMessages(specialistConfig);
-	const systemMsgs = configMessages.filter((m) => m.role === "system");
-	const nonSystemMsgs = configMessages.filter((m) => m.role !== "system");
-	if (nonSystemMsgs.length === 0) {
-		nonSystemMsgs.push({ role: "user", content: userInput });
-	}
 
-	const bedrockMessages: any[] = nonSystemMsgs.map((m) => ({
-		role: m.role as "user" | "assistant",
-		content: [{ text: m.content }],
-	}));
-
-	const callStart = Date.now();
-	let totalInputTokens = 0;
-	let totalOutputTokens = 0;
-	let finalContent = "";
-	let loopCount = 0;
-	const MAX_TOOL_LOOPS = 3;
-
-	while (loopCount < MAX_TOOL_LOOPS) {
-		loopCount++;
-		const resp: any = await bedrockClient.send(
-			new ConverseCommand({
-				modelId: resolvedModelId,
-				...(systemMsgs.length > 0 ? { system: systemMsgs.map((m) => ({ text: m.content })) } : {}),
-				messages: bedrockMessages,
-				toolConfig: { tools: [RAG_TOOL_SPEC] },
-				inferenceConfig: { temperature: 0.5, maxTokens: 1000 },
-			}),
-		);
-
-		totalInputTokens += resp?.usage?.inputTokens ?? 0;
-		totalOutputTokens += resp?.usage?.outputTokens ?? 0;
-
-		const assistantMessage = resp?.output?.message;
-		if (assistantMessage) bedrockMessages.push(assistantMessage);
-
-		if (resp.stopReason !== "tool_use") {
-			finalContent = assistantMessage?.content?.find((b: any) => b.text)?.text ?? "";
-			break;
+	if (useBedrock) {
+		// --- Bedrock path: native tool-use loop with RAG ---
+		let resolvedModelId = modelName;
+		if (!resolvedModelId.startsWith("us.")) {
+			resolvedModelId = "us." + resolvedModelId;
 		}
 
-		const toolResults: any[] = [];
-		for (const block of assistantMessage?.content ?? []) {
-			if (!block.toolUse) continue;
-			const { toolUseId, name, input } = block.toolUse;
-			const query = (input as any)?.query ?? userInput;
+		const systemMsgs = configMessages.filter((m) => m.role === "system");
+		const nonSystemMsgs = configMessages.filter((m) => m.role !== "system");
+		if (nonSystemMsgs.length === 0) {
+			nonSystemMsgs.push({ role: "user", content: userInput });
+		}
 
-			pushLog({ level: "INFO", message: `   🔍 RAG tool call: searching ${ragSource} for "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`, name: "specialist" });
+		const bedrockMessages: any[] = nonSystemMsgs.map((m) => ({
+			role: m.role as "user" | "assistant",
+			content: [{ text: m.content }],
+		}));
 
-			try {
-				const chunks = await retrieve(query, { source: ragSource, topK: 5 });
-				const resultText = chunks.length > 0
-					? chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n")
-					: "No relevant results found in this knowledge base.";
-				pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
-				toolResults.push({ toolResult: { toolUseId, content: [{ text: resultText }] } });
-			} catch (err: any) {
-				pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
-				toolResults.push({ toolResult: { toolUseId, content: [{ text: `Error: ${err.message}` }], status: "error" } });
+		const callStart = Date.now();
+		let totalInputTokens = 0;
+		let totalOutputTokens = 0;
+		let finalContent = "";
+		let loopCount = 0;
+		const MAX_TOOL_LOOPS = 3;
+
+		while (loopCount < MAX_TOOL_LOOPS) {
+			loopCount++;
+			const resp: any = await bedrockClient.send(
+				new ConverseCommand({
+					modelId: resolvedModelId,
+					...(systemMsgs.length > 0 ? { system: systemMsgs.map((m) => ({ text: m.content })) } : {}),
+					messages: bedrockMessages,
+					toolConfig: { tools: [RAG_TOOL_SPEC] },
+					inferenceConfig: { temperature: 0.5, maxTokens: 1000 },
+				}),
+			);
+
+			totalInputTokens += resp?.usage?.inputTokens ?? 0;
+			totalOutputTokens += resp?.usage?.outputTokens ?? 0;
+
+			const assistantMessage = resp?.output?.message;
+			if (assistantMessage) bedrockMessages.push(assistantMessage);
+
+			if (resp.stopReason !== "tool_use") {
+				finalContent = assistantMessage?.content?.find((b: any) => b.text)?.text ?? "";
+				break;
 			}
+
+			const toolResults: any[] = [];
+			for (const block of assistantMessage?.content ?? []) {
+				if (!block.toolUse) continue;
+				const { toolUseId, input } = block.toolUse;
+				const query = (input as any)?.query ?? userInput;
+
+				pushLog({ level: "INFO", message: `   🔍 RAG tool call: searching ${ragSource} for "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`, name: "specialist" });
+
+				try {
+					const chunks = await retrieve(query, { source: ragSource, topK: 5 });
+					const resultText = chunks.length > 0
+						? chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n")
+						: "No relevant results found in this knowledge base.";
+					pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+					toolResults.push({ toolResult: { toolUseId, content: [{ text: resultText }] } });
+				} catch (err: any) {
+					pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+					toolResults.push({ toolResult: { toolUseId, content: [{ text: `Error: ${err.message}` }], status: "error" } });
+				}
+			}
+
+			bedrockMessages.push({ role: "user", content: toolResults });
 		}
 
-		bedrockMessages.push({ role: "user", content: toolResults });
-	}
+		const durationMs = Date.now() - callStart;
 
-	const durationMs = Date.now() - callStart;
-
-	if (isBedrockModel(modelName)) {
 		specialistConfig.tracker?.trackSuccess?.();
 		if (durationMs) specialistConfig.tracker?.trackDuration?.(durationMs);
 		specialistConfig.tracker?.trackTokens?.({
@@ -481,22 +484,64 @@ async function runSpecialistAgent(
 			output: totalOutputTokens,
 			total: totalInputTokens + totalOutputTokens,
 		});
+
+		pushLog({
+			level: "INFO",
+			message: `   Specialist (${label}) response in ${durationMs}ms${loopCount > 1 ? ` (${loopCount - 1} tool calls)` : ""}`,
+			name: "specialist",
+		});
+
+		return {
+			content: finalContent,
+			category,
+			specialistLabel: label,
+			modelName,
+			durationMs,
+			inputTokens: totalInputTokens,
+			outputTokens: totalOutputTokens,
+		};
 	}
+
+	// --- OpenAI path: pre-fetch RAG context, then single callLLM ---
+	pushLog({ level: "INFO", message: `   🔍 Pre-fetching RAG context from ${ragSource}...`, name: "specialist" });
+	let ragContext = "";
+	try {
+		const chunks = await retrieve(userInput, { source: ragSource, topK: 5 });
+		if (chunks.length > 0) {
+			ragContext = chunks
+				.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`)
+				.join("\n\n---\n\n");
+			pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+		} else {
+			pushLog({ level: "INFO", message: `   📄 RAG returned 0 chunks`, name: "specialist" });
+		}
+	} catch (err: any) {
+		pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+	}
+
+	const messages = ragContext
+		? [...configMessages, { role: "user" as const, content: `Reference material from knowledge base:\n\n${ragContext}` }]
+		: configMessages;
+
+	const result = await callLLM(modelName, messages, bedrockClient, deps.openai, {
+		temperature: 0.5,
+		maxTokens: 1000,
+	}, specialistConfig.tracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
 
 	pushLog({
 		level: "INFO",
-		message: `   Specialist (${label}) response in ${durationMs}ms${loopCount > 1 ? ` (${loopCount - 1} tool calls)` : ""}`,
+		message: `   Specialist (${label}) response in ${result.durationMs}ms (pre-fetched RAG)`,
 		name: "specialist",
 	});
 
 	return {
-		content: finalContent,
+		content: result.content,
 		category,
 		specialistLabel: label,
 		modelName,
-		durationMs,
-		inputTokens: totalInputTokens,
-		outputTokens: totalOutputTokens,
+		durationMs: result.durationMs,
+		inputTokens: result.inputTokens,
+		outputTokens: result.outputTokens,
 	};
 }
 

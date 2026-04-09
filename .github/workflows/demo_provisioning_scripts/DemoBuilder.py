@@ -1825,6 +1825,13 @@ class DemoBuilder:
         }
         haiku_config_key = "Bedrock.anthropic.claude-3-5-haiku-20241022-v1:0"
 
+        gpt5_mini_config = {
+            "modelName": "gpt-5-mini",
+            "parameters": {},
+            "custom": {}
+        }
+        gpt5_mini_config_key = "OpenAI.gpt-5-mini"
+
         tags = ["ai-models", "ai-config", "multi-agent", "bank"]
 
         # -----------------------------------------------------------
@@ -1868,6 +1875,19 @@ class DemoBuilder:
             "ai-config--togglebot-triage", "nova-pro-triage",
             _tools("get-customer-context"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-triage",
+            "gpt5-mini-triage",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Triage",
+            gpt5_mini_config,
+            instructions=triage_instructions,
+            description="Lower-cost triage agent using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-triage", "gpt5-mini-triage",
+            _tools("get-customer-context"),
+        )
 
         # -----------------------------------------------------------
         # 2. Accounts Specialist
@@ -1909,6 +1929,19 @@ class DemoBuilder:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-accounts-specialist", "production", accounts_var_id)
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-accounts-specialist", "haiku-accounts",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-accounts-specialist",
+            "gpt5-mini-accounts",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Accounts",
+            gpt5_mini_config,
+            instructions=accounts_instructions,
+            description="Lower-cost accounts specialist using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-accounts-specialist", "gpt5-mini-accounts",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -1955,6 +1988,19 @@ class DemoBuilder:
             "ai-config--togglebot-loans-specialist", "haiku-loans",
             _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-loans-specialist",
+            "gpt5-mini-loans",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Loans",
+            gpt5_mini_config,
+            instructions=loans_instructions,
+            description="Lower-cost loans specialist using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-loans-specialist", "gpt5-mini-loans",
+            _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
+        )
 
         # -----------------------------------------------------------
         # 4. Investments Specialist
@@ -1997,6 +2043,19 @@ class DemoBuilder:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-investments-specialist", "production", investments_var_id)
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-investments-specialist", "haiku-investments",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-investments-specialist",
+            "gpt5-mini-investments",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Investments",
+            gpt5_mini_config,
+            instructions=investments_instructions,
+            description="Lower-cost investments specialist using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-investments-specialist", "gpt5-mini-investments",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -2042,6 +2101,19 @@ class DemoBuilder:
             "ai-config--togglebot-transfers-specialist", "haiku-transfers",
             _tools("get-customer-context", "search-knowledge-base"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-transfers-specialist",
+            "gpt5-mini-transfers",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Transfers",
+            gpt5_mini_config,
+            instructions=transfers_instructions,
+            description="Lower-cost transfers specialist using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-transfers-specialist", "gpt5-mini-transfers",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 6. Customer Support Specialist
@@ -2082,6 +2154,19 @@ class DemoBuilder:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-support-specialist", "production", support_var_id)
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-support-specialist", "haiku-support",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-support-specialist",
+            "gpt5-mini-support",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Support",
+            gpt5_mini_config,
+            instructions=support_instructions,
+            description="Lower-cost support specialist using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-support-specialist", "gpt5-mini-support",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -2158,6 +2243,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-brand-voice", "nova-pro-brand-toxic",
+            _tools("rewrite-response-for-channel"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-brand-voice",
+            "gpt5-mini-brand",
+            gpt5_mini_config_key,
+            "GPT-5 Mini - Brand Voice",
+            gpt5_mini_config,
+            instructions=brand_instructions,
+            description="Lower-cost brand voice agent using GPT-5 Mini",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-brand-voice", "gpt5-mini-brand",
             _tools("rewrite-response-for-channel"),
         )
 
