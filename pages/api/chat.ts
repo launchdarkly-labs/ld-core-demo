@@ -709,9 +709,11 @@ Is there a specific service you'd like to know more about?`;
 				try { pushMetric({ ts: Date.now(), sourceFidelity, relevance, accuracy: judge.accuracy, toxicity, cost: responseCost }); } catch {}
 
 				// Send the final response with timing information and metrics
+				const agentModelName = agentResult.brandVoice?.modelName;
 				const data = {
 					response: fullResponse,
 					modelName: aiConfig?.model?.name,
+					agentModelName,
 					modelType: isBedrock ? 'bedrock' : 'openai',
 					enabled: aiConfig.enabled,
 					timing: {

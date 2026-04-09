@@ -365,11 +365,11 @@ def financial_agent_monitoring_results_generator(client):
 def multi_agent_monitoring_results_generator(client):
     AGENT_CONFIGS = [
         {"key": "ai-config--togglebot-triage", "variation": "nova-pro-triage", "label": "Triage", "fast": True},
-        {"key": "ai-config--togglebot-accounts-specialist", "variation": "haiku-accounts", "label": "Accounts Specialist", "fast": False},
-        {"key": "ai-config--togglebot-loans-specialist", "variation": "haiku-loans", "label": "Loans Specialist", "fast": False},
-        {"key": "ai-config--togglebot-investments-specialist", "variation": "haiku-investments", "label": "Investments Specialist", "fast": False},
-        {"key": "ai-config--togglebot-transfers-specialist", "variation": "haiku-transfers", "label": "Transfers Specialist", "fast": False},
-        {"key": "ai-config--togglebot-support-specialist", "variation": "haiku-support", "label": "Support Specialist", "fast": False},
+        {"key": "ai-config--togglebot-accounts-specialist", "variation": "nova-pro-accounts", "label": "Accounts Specialist", "fast": False},
+        {"key": "ai-config--togglebot-loans-specialist", "variation": "nova-pro-loans", "label": "Loans Specialist", "fast": False},
+        {"key": "ai-config--togglebot-investments-specialist", "variation": "nova-pro-investments", "label": "Investments Specialist", "fast": False},
+        {"key": "ai-config--togglebot-transfers-specialist", "variation": "nova-pro-transfers", "label": "Transfers Specialist", "fast": False},
+        {"key": "ai-config--togglebot-support-specialist", "variation": "nova-pro-support", "label": "Support Specialist", "fast": False},
         {"key": "ai-config--togglebot-brand-voice", "variation": "nova-pro-brand", "label": "Brand Voice", "fast": True},
     ]
     NUM_RUNS = 300

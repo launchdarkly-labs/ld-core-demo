@@ -1915,6 +1915,15 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-accounts-specialist",
+            "nova-pro-accounts",
+            nova_pro_config_key,
+            "Nova Pro - Accounts",
+            nova_pro_config,
+            instructions=accounts_instructions,
+            description="Handles checking/savings account queries",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-accounts-specialist",
             "haiku-accounts",
             haiku_config_key,
             "Haiku - Accounts",
@@ -1924,9 +1933,13 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-accounts-specialist", "on", "production")
-        accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "haiku-accounts")
+        accounts_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-accounts-specialist", "nova-pro-accounts")
         if accounts_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-accounts-specialist", "production", accounts_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-accounts-specialist", "nova-pro-accounts",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-accounts-specialist", "haiku-accounts",
             _tools("get-customer-context", "search-knowledge-base"),
@@ -1972,6 +1985,15 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-loans-specialist",
+            "nova-pro-loans",
+            nova_pro_config_key,
+            "Nova Pro - Loans",
+            nova_pro_config,
+            instructions=loans_instructions,
+            description="Handles loan and credit queries",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-loans-specialist",
             "haiku-loans",
             haiku_config_key,
             "Haiku - Loans",
@@ -1981,9 +2003,13 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-loans-specialist", "on", "production")
-        loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "haiku-loans")
+        loans_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-loans-specialist", "nova-pro-loans")
         if loans_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-loans-specialist", "production", loans_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-loans-specialist", "nova-pro-loans",
+            _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
+        )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-loans-specialist", "haiku-loans",
             _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
@@ -2029,6 +2055,15 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-investments-specialist",
+            "nova-pro-investments",
+            nova_pro_config_key,
+            "Nova Pro - Investments",
+            nova_pro_config,
+            instructions=investments_instructions,
+            description="Handles investment and retirement queries",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-investments-specialist",
             "haiku-investments",
             haiku_config_key,
             "Haiku - Investments",
@@ -2038,9 +2073,13 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-investments-specialist", "on", "production")
-        investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "haiku-investments")
+        investments_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-investments-specialist", "nova-pro-investments")
         if investments_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-investments-specialist", "production", investments_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-investments-specialist", "nova-pro-investments",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-investments-specialist", "haiku-investments",
             _tools("get-customer-context", "search-knowledge-base"),
@@ -2085,6 +2124,15 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-transfers-specialist",
+            "nova-pro-transfers",
+            nova_pro_config_key,
+            "Nova Pro - Transfers",
+            nova_pro_config,
+            instructions=transfers_instructions,
+            description="Handles transfer and payment queries",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-transfers-specialist",
             "haiku-transfers",
             haiku_config_key,
             "Haiku - Transfers",
@@ -2094,9 +2142,13 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-transfers-specialist", "on", "production")
-        transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "haiku-transfers")
+        transfers_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-transfers-specialist", "nova-pro-transfers")
         if transfers_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-transfers-specialist", "production", transfers_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-transfers-specialist", "nova-pro-transfers",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-transfers-specialist", "haiku-transfers",
             _tools("get-customer-context", "search-knowledge-base"),
@@ -2140,6 +2192,15 @@ class DemoBuilder:
         )
         self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-support-specialist",
+            "nova-pro-support",
+            nova_pro_config_key,
+            "Nova Pro - Support",
+            nova_pro_config,
+            instructions=support_instructions,
+            description="Handles general support and miscellaneous queries",
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-support-specialist",
             "haiku-support",
             haiku_config_key,
             "Haiku - Support",
@@ -2149,9 +2210,13 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.toggle_flag("ai-config--togglebot-support-specialist", "on", "production")
-        support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "haiku-support")
+        support_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-support-specialist", "nova-pro-support")
         if support_var_id:
             self.ldproject.update_ai_config_targeting("ai-config--togglebot-support-specialist", "production", support_var_id)
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-support-specialist", "nova-pro-support",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-support-specialist", "haiku-support",
             _tools("get-customer-context", "search-knowledge-base"),

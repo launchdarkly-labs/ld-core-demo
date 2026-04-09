@@ -120,6 +120,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [tokens, setTokens] = useState<StreamTokens | null>(null);
   const [metrics, setMetrics] = useState<StreamMetrics | null>(null);
   const [modelType, setModelType] = useState<'bedrock' | 'openai' | null>(null);
+  const [agentModelName, setAgentModelName] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<ChatTab>("main");
   const [selfHealingMessages, setSelfHealingMessages] = useState<Message[]>([SELF_HEALING_INITIAL_MESSAGE]);
@@ -134,11 +135,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
   const hasSelfHealing = vertical === "banking";
 
-  // Function to determine model type from feature flag
+  // Function to determine model type from feature flag or agent response
   const getModelTypeFromFlag = (): 'bedrock' | 'openai' => {
-    if (aiNewModelChatbotFlag?.model?.name) {
-      const modelId = aiNewModelChatbotFlag.model.name;
-      // Check if it's a Bedrock model based on model name patterns
+    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+    if (modelId) {
       const bedrockPatterns = [
         'anthropic.claude',
         'amazon.titan',
@@ -332,6 +332,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               if (data?.tokens) setTokens(data.tokens);
               if (data?.metrics) setMetrics(data.metrics);
               if (data?.modelType) setModelType(data.modelType);
+              if (data?.agentModelName) setAgentModelName(data.agentModelName);
             }
           } catch (err) {
             console.error('Error parsing SSE data:', err, jsonStr);
@@ -541,9 +542,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const chatContentRef = useRef<HTMLDivElement | null>(null);
 
   const aiModelName = () => {
-    // Extract model name from the full model ID
-    if (aiNewModelChatbotFlag?.model?.name) {
-      const modelId = aiNewModelChatbotFlag.model.name;
+    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+    if (modelId) {
       
       // Map of model IDs to friendly names
       // Model name mapping, recognizes both with and without 'us.' prefix
@@ -581,6 +581,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.anthropic.claude-3-haiku-20240307-v1:0': 'Claude 3 Haiku',
         'anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
         'us.anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
+        'anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
+        'us.anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
         'anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
         'us.anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
 
