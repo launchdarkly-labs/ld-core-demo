@@ -68,7 +68,6 @@ interface MultiAgentDeps {
 	bedrockClient: BedrockRuntimeClient;
 	openai: any;
 	userInput: string;
-	sourcePassages: string[];
 	sendStatus?: (msg: string) => void;
 	/** Optional request headers to link server-side spans to the same trace as the client */
 	requestHeaders?: RequestHeaders;

@@ -604,7 +604,6 @@ Is there a specific service you'd like to know more about?`;
 					bedrockClient,
 					openai,
 					userInput,
-					sourcePassages,
 					sendStatus,
 					enableToxicPrompt,
 				});
