@@ -288,7 +288,7 @@ class LDPlatform:
     # Create AI Config
     ##################################################
     
-    def create_ai_config(self, config_key, config_name, description, tags, mode=None, evaluation_metric_key=None, is_inverted=None):
+    def create_ai_config(self, config_key, config_name, description, tags, mode=None, evaluation_metric_key=None, is_inverted=None, default_variation=None):
         
         payload = {
             "description": description,
@@ -302,6 +302,8 @@ class LDPlatform:
             payload["evaluationMetricKey"] = evaluation_metric_key
         if is_inverted is not None:
             payload["isInverted"] = is_inverted
+        if default_variation is not None:
+            payload["defaultVariation"] = default_variation
         
         headers = {
             "Content-Type": "application/json",
