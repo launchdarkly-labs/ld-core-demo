@@ -10,7 +10,7 @@ import random
 import time
 import threading
 from ldai.client import LDAIClient, ModelConfig, LDMessage, ProviderConfig
-from ldai.tracker import TokenUsage, FeedbackKind, LDAIConfigTracker
+from ldai.tracker import TokenUsage, FeedbackKind
 from datetime import datetime, timedelta
 
 load_dotenv()
@@ -361,69 +361,6 @@ def financial_agent_monitoring_results_generator(client):
 
     logging.info("Financial Agent monitoring results generation completed")
     # Do not flush or close client here; handled in generate_flags
-
-def multi_agent_monitoring_results_generator(client):
-    AGENT_CONFIGS = [
-        {"key": "ai-config--togglebot-triage", "variation": "nova-pro-triage", "label": "Triage", "fast": True},
-        {"key": "ai-config--togglebot-accounts-specialist", "variation": "nova-pro-accounts", "label": "Accounts Specialist", "fast": False},
-        {"key": "ai-config--togglebot-loans-specialist", "variation": "nova-pro-loans", "label": "Loans Specialist", "fast": False},
-        {"key": "ai-config--togglebot-investments-specialist", "variation": "nova-pro-investments", "label": "Investments Specialist", "fast": False},
-        {"key": "ai-config--togglebot-transfers-specialist", "variation": "nova-pro-transfers", "label": "Transfers Specialist", "fast": False},
-        {"key": "ai-config--togglebot-support-specialist", "variation": "nova-pro-support", "label": "Support Specialist", "fast": False},
-        {"key": "ai-config--togglebot-brand-voice", "variation": "nova-pro-brand", "label": "Brand Voice", "fast": True},
-    ]
-    NUM_RUNS = 300
-
-    if not client.is_initialized():
-        logging.error("Failed to initialize LaunchDarkly client for multi-agent monitoring")
-        return
-
-    logging.info("Starting multi-agent monitoring results generation...")
-
-    for agent in AGENT_CONFIGS:
-        flag_key = agent["key"]
-        variation_key = agent["variation"]
-        label = agent["label"]
-        is_fast = agent["fast"]
-        logging.info(f"  Generating {NUM_RUNS} events for {label} ({flag_key})...")
-
-        for i in range(NUM_RUNS):
-            try:
-                context = generate_user_context()
-                client.variation(flag_key, context, None)
-                tracker = LDAIConfigTracker(client, variation_key, flag_key, 1, context)
-
-                if is_fast:
-                    duration = random.randint(100, 600)
-                    prompt_tokens = random.randint(15, 80)
-                    completion_tokens = random.randint(20, 150)
-                else:
-                    duration = random.randint(300, 1200)
-                    prompt_tokens = random.randint(40, 120)
-                    completion_tokens = random.randint(80, 400)
-
-                time_to_first_token = random.randint(30, min(200, duration))
-                total_tokens = prompt_tokens + completion_tokens
-                tokens = TokenUsage(prompt_tokens, completion_tokens, total_tokens)
-
-                tracker.track_duration(duration)
-                tracker.track_tokens(tokens)
-                tracker.track_time_to_first_token(time_to_first_token)
-
-                if random.random() < 0.97:
-                    tracker.track_success()
-                else:
-                    tracker.track_error()
-
-                if (i + 1) % 100 == 0:
-                    logging.info(f"    Processed {i + 1}/{NUM_RUNS} events for {label}")
-                    client.flush()
-            except Exception as e:
-                logging.error(f"Error processing {label} event {i}: {str(e)}")
-                continue
-
-    client.flush()
-    logging.info("Multi-agent monitoring results generation completed")
 
 def experiment_results_generator(client):
     LD_FEATURE_FLAG_KEY = "cartSuggestedItems"
@@ -1204,7 +1141,6 @@ def generate_results(project_key, api_key):
         # AI Configs monitoring
         ai_configs_monitoring_results_generator(client)
         financial_agent_monitoring_results_generator(client)
-        multi_agent_monitoring_results_generator(client)
         
         # All experiment result generators
         experiment_results_generator(client)  # cartSuggestedItems
