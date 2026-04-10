@@ -2,14 +2,18 @@
 """
 Multi-project synthetic traffic handler for ToggleBank Agent Graph.
 
-Mirrors the periodic-results-generator pattern:
-  1. Fetches active demo environments from DynamoDB
-  2. Filters to users whose agent-graph data is stale
-  3. For each user (in batches), resolves their project's SDK key via LD API
-  4. Initializes an LD client for that project and runs agent-graph iterations
-  5. Updates the DynamoDB timestamp so the user is skipped next run
+Two invocation modes:
 
-Fires hourly via EventBridge.
+  Scheduled (EventBridge cron — hourly):
+    1. Fetches active demo environments from DynamoDB
+    2. Filters to users whose agent-graph data is stale
+    3. For each user (in batches), resolves their project SDK key via LD API
+    4. Initializes an LD client for that project and runs agent-graph iterations
+    5. Updates the DynamoDB timestamp so the user is skipped next run
+
+  On-demand (provisioning trigger):
+    Accepts {"project_key": "..."} or {"username": "..."} in the event payload
+    and immediately generates agent-graph data for that single project.
 """
 
 import json
@@ -142,12 +146,28 @@ def _run_single_iteration(iteration_num: int, project_key: str) -> dict:
 # Lambda entry point
 # ---------------------------------------------------------------------------
 
+def _run_single_project_by_key(project_key, ld_api_client):
+    """Resolve SDK key and run iterations for one project. Returns (result, username)."""
+    credentials = ld_api_client.get_project_environment_keys(project_key, "production")
+    if not credentials or not credentials.get("sdk_key"):
+        logger.warning(f"  SKIPPED: No credentials for {project_key}")
+        return None, None
+
+    result = run_iterations_for_project(project_key, credentials["sdk_key"])
+    return result, None
+
+
 def lambda_handler(event, context):
-    """AWS Lambda entry point — multi-project agent graph workflow."""
+    """AWS Lambda entry point — multi-project agent graph workflow.
+
+    Supports two invocation modes:
+      1. Scheduled (EventBridge cron): scans DynamoDB for stale environments
+      2. On-demand (provisioning trigger): pass {"project_key": "..."} or
+         {"username": "..."} to generate data for a single fresh environment
+    """
     execution_start = datetime.now(timezone.utc)
     logger.info(
-        f"[AgentGraph] Starting multi-project synthetic traffic "
-        f"at {execution_start.isoformat()}"
+        f"[AgentGraph] Starting synthetic traffic at {execution_start.isoformat()}"
     )
     logger.info(f"Event: {json.dumps(event, default=str)}")
 
@@ -156,8 +176,37 @@ def lambda_handler(event, context):
         logger.error("LD_API_KEY environment variable not set")
         return {"statusCode": 500, "body": "LD_API_KEY not set"}
 
-    dynamodb_client = DynamoDBClient()
     ld_api_client = LaunchDarklyAPIClient(ld_api_token)
+
+    # --- On-demand mode: single project from provisioning trigger ---
+    trigger_project = event.get("project_key")
+    trigger_username = event.get("username")
+
+    if trigger_project or trigger_username:
+        project_key = trigger_project or construct_project_key_from_username(trigger_username)
+        logger.info(f"[AgentGraph] On-demand trigger for project: {project_key}")
+
+        result, _ = _run_single_project_by_key(project_key, ld_api_client)
+        if result is None:
+            return {"statusCode": 200, "body": f"Skipped {project_key} — no credentials"}
+
+        total_duration = int(
+            (datetime.now(timezone.utc) - execution_start).total_seconds()
+        )
+        summary = {
+            "mode": "on-demand",
+            "project": project_key,
+            "result": result,
+            "total_duration_seconds": total_duration,
+        }
+        logger.info(
+            f"[AgentGraph] On-demand complete: {project_key} — "
+            f"{'SUCCESS' if result.get('success') else 'FAILED'} in {total_duration}s"
+        )
+        return {"statusCode": 200, "body": json.dumps(summary, default=str)}
+
+    # --- Scheduled mode: scan DynamoDB for stale environments ---
+    dynamodb_client = DynamoDBClient()
 
     all_usernames = dynamodb_client.get_completed_users()
     if not all_usernames:
@@ -219,6 +268,7 @@ def lambda_handler(event, context):
     )
 
     summary = {
+        "mode": "scheduled",
         "total_users_found": len(all_usernames),
         "users_needing_refresh": len(users_to_process),
         "batch_size": len(batch),
@@ -243,6 +293,7 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
+    import sys
     from dotenv import load_dotenv
 
     load_dotenv()
@@ -257,5 +308,14 @@ if __name__ == "__main__":
         },
     )()
 
-    result = lambda_handler({}, test_context)
+    # Usage:  python handler_agent_graph.py                    (scheduled scan)
+    #         python handler_agent_graph.py --project foo-ld-demo  (on-demand)
+    #         python handler_agent_graph.py --username foo          (on-demand)
+    event = {}
+    if "--project" in sys.argv:
+        event["project_key"] = sys.argv[sys.argv.index("--project") + 1]
+    elif "--username" in sys.argv:
+        event["username"] = sys.argv[sys.argv.index("--username") + 1]
+
+    result = lambda_handler(event, test_context)
     print(json.dumps(json.loads(result["body"]), indent=2))
