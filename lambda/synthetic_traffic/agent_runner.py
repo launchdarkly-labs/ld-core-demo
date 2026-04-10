@@ -67,19 +67,43 @@ def _get_bedrock_client():
     return boto3.client("bedrock-runtime", region_name=region)
 
 
+class SafeGraphTracker:
+    """Wraps AIGraphTracker so unknown/changed methods silently no-op
+    instead of crashing the iteration."""
+
+    def __init__(self, tracker):
+        self._tracker = tracker
+
+    def __getattr__(self, name):
+        attr = getattr(self._tracker, name, None)
+        if attr is None or not callable(attr):
+            return lambda *a, **kw: None
+
+        def _safe(*args, **kwargs):
+            try:
+                return attr(*args, **kwargs)
+            except Exception as e:
+                logger.debug(f"Graph tracker {name} failed: {e}")
+
+        return _safe
+
+
 def patch_tracker_for_graph(tracker, graph_key: str) -> None:
-    """Inject graphKey into tracker event data so the Agent Graph UI
-    associates per-node metrics with the correct graph."""
+    """Inject graphKey into per-node tracker event data so the Agent Graph
+    dashboard associates per-node metrics with the correct graph."""
     if tracker is None:
         return
-    original = tracker._LDAIConfigTracker__get_track_data
+    try:
+        original = tracker._LDAIConfigTracker__get_track_data
 
-    def patched():
-        data = original()
-        data["graphKey"] = graph_key
-        return data
+        def patched(**kwargs):
+            data = original(**kwargs)
+            data["graphKey"] = graph_key
+            return data
 
-    tracker._LDAIConfigTracker__get_track_data = patched
+        tracker._LDAIConfigTracker__get_track_data = patched
+    except Exception as e:
+        logger.debug(f"patch_tracker_for_graph skipped: {e}")
 
 
 def simulate_tool_calls(node, graph_tracker) -> list[str]:
@@ -117,6 +141,14 @@ def invoke_model(agent_config, messages: list[dict]) -> tuple[str, dict[str, int
         if agent_config.model
         else "amazon.nova-pro-v1:0"
     )
+
+    BEDROCK_PROVIDERS = ("amazon.", "anthropic.", "meta.", "cohere.", "ai21.", "mistral.")
+    is_bedrock = any(model_name.startswith(p) for p in BEDROCK_PROVIDERS) or model_name.startswith("us.")
+
+    if not is_bedrock:
+        logger.warning(f"Non-Bedrock model '{model_name}', falling back to amazon.nova-pro-v1:0")
+        model_name = "amazon.nova-pro-v1:0"
+
     model_id = model_name
     if not model_id.startswith("us."):
         model_id = f"us.{model_id}"
@@ -165,11 +197,14 @@ def invoke_model(agent_config, messages: list[dict]) -> tuple[str, dict[str, int
     }
 
     if agent_config.tracker and tokens["input"] + tokens["output"] > 0:
-        agent_config.tracker.track_tokens(TokenUsage(
-            input=tokens["input"],
-            output=tokens["output"],
-            total=tokens["input"] + tokens["output"],
-        ))
+        try:
+            agent_config.tracker.track_tokens(TokenUsage(
+                input=tokens["input"],
+                output=tokens["output"],
+                total=tokens["input"] + tokens["output"],
+            ))
+        except Exception as e:
+            logger.warning(f"track_tokens failed: {e}")
 
     return response_text, tokens
 
@@ -208,8 +243,14 @@ def run_triage(triage_node, question: str, user_context: dict,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Triage track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Triage track_success failed: {e}")
 
         graph_tracker.track_node_invocation(triage_node.get_key())
         tools_called = simulate_tool_calls(triage_node, graph_tracker)
@@ -277,8 +318,14 @@ def run_specialist(specialist_node, question: str, user_context: dict,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Specialist track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Specialist track_success failed: {e}")
 
         graph_tracker.track_node_invocation(node_key)
         graph_tracker.track_handoff_success(triage_key, node_key)
@@ -327,8 +374,14 @@ def run_brand_voice(brand_node, specialist_response: str, question: str,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Brand voice track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Brand voice track_success failed: {e}")
 
         graph_tracker.track_node_invocation(node_key)
         graph_tracker.track_handoff_success(specialist_key, node_key)
@@ -379,7 +432,7 @@ def run_agent_graph(
             f"are reachable and enabled in LaunchDarkly"
         )
 
-    graph_tracker = agent_graph.get_tracker()
+    graph_tracker = SafeGraphTracker(agent_graph.get_tracker())
     root_node = agent_graph.root()
 
     if root_node is None:
@@ -439,11 +492,13 @@ def run_agent_graph(
 
     # Feedback
     if feedback and brand_node:
-        brand_tracker = brand_node.get_config().tracker
-        if brand_tracker:
-            patch_tracker_for_graph(brand_tracker, graph_key)
-            kind = FeedbackKind.Positive if feedback == "positive" else FeedbackKind.Negative
-            brand_tracker.track_feedback({"kind": kind})
+        try:
+            brand_tracker = brand_node.get_config().tracker
+            if brand_tracker:
+                kind = FeedbackKind.Positive if feedback == "positive" else FeedbackKind.Negative
+                brand_tracker.track_feedback({"kind": kind})
+        except Exception as e:
+            logger.debug(f"Feedback tracking failed: {e}")
 
     ldclient.get().flush()
 

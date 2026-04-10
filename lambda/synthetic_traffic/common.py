@@ -13,10 +13,11 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
-ITERATIONS = 10
+ITERATIONS_MIN = 17
+ITERATIONS_MAX = 23
 POSITIVE_FEEDBACK_RATE = 0.99
 BATCH_SIZE = 5
-DAYS_BEFORE_REGENERATE = 3
+DAYS_BEFORE_REGENERATE = 1
 
 BETA_TESTER_USERS = [
     {"name": "Alice Chen", "location": "San Francisco, CA", "tier": "Platinum", "role": "Beta"},

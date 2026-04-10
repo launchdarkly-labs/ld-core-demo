@@ -42,7 +42,7 @@ cmd_build() {
     cp "${SCRIPT_DIR}/LDAPIUtils.py" "${PACKAGE_DIR}/"
 
     cd "${PACKAGE_DIR}"
-    rm -rf *.dist-info __pycache__ tests
+    rm -rf __pycache__ tests
     zip -r "${ZIP_FILE}" . -x '*.pyc' '__pycache__/*' > /dev/null
     cd "${SCRIPT_DIR}"
 

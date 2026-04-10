@@ -26,7 +26,8 @@ from common import (
     BATCH_SIZE,
     BETA_TESTER_USERS,
     DAYS_BEFORE_REGENERATE,
-    ITERATIONS,
+    ITERATIONS_MAX,
+    ITERATIONS_MIN,
     POSITIVE_FEEDBACK_RATE,
     QUESTION_POOL,
     build_ld_context,
@@ -58,12 +59,19 @@ def run_iterations_for_project(project_key, sdk_key):
         logger.error(f"  SKIP: LD client failed to initialize for {project_key}")
         return {"project": project_key, "success": False, "error": "init_failed"}
 
+    num_iterations = random.randint(ITERATIONS_MIN, ITERATIONS_MAX)
+    logger.info(f"  Running {num_iterations} iterations for {project_key}")
+
     results = []
     try:
-        for i in range(1, ITERATIONS + 1):
+        for i in range(1, num_iterations + 1):
             result = _run_single_iteration(i, project_key)
             results.append(result)
-            logger.info(f"  [{project_key}] Iteration {i}/{ITERATIONS} done")
+            logger.info(f"  [{project_key}] Iteration {i}/{num_iterations} done")
+
+            if not result.get("success") and "disabled" in result.get("error", ""):
+                logger.warning(f"  Agent graph disabled for {project_key}, skipping remaining iterations")
+                break
     except Exception as e:
         logger.error(f"  ERROR running iterations for {project_key}: {e}")
     finally:
@@ -75,7 +83,7 @@ def run_iterations_for_project(project_key, sdk_key):
     success_count = sum(1 for r in results if r.get("success"))
     return {
         "project": project_key,
-        "success": True,
+        "success": success_count > 0,
         "iterations": len(results),
         "successful": success_count,
         "failed": len(results) - success_count,

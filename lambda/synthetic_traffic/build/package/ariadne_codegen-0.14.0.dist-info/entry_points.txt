@@ -1,0 +1,2 @@
+[console_scripts]
+ariadne-codegen = ariadne_codegen.main:main

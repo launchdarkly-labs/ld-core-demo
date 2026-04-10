@@ -13,10 +13,11 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
-ITERATIONS = 10
+ITERATIONS_MIN = 17
+ITERATIONS_MAX = 23
 POSITIVE_FEEDBACK_RATE = 0.99
 BATCH_SIZE = 5
-DAYS_BEFORE_REGENERATE = 3
+DAYS_BEFORE_REGENERATE = 1
 
 BETA_TESTER_USERS = [
     {"name": "Alice Chen", "location": "San Francisco, CA", "tier": "Platinum", "role": "Beta"},
@@ -158,11 +159,47 @@ def build_ld_context(user_context: dict):
     return builder.build()
 
 
+class _NoOpSpan:
+    """Drop-in replacement span when OpenTelemetry context fails in Lambda."""
+
+    def set_attribute(self, key, value):
+        pass
+
+    def set_status(self, *args, **kwargs):
+        pass
+
+    def record_exception(self, e):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+
+def safe_span(tracer, name, **kwargs):
+    """Wrap tracer.start_as_current_span, falling back to no-op on failure."""
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _fallback():
+        yield _NoOpSpan()
+
+    try:
+        cm = tracer.start_as_current_span(name, **kwargs)
+        return cm
+    except Exception:
+        return _fallback()
+
+
 def get_tracer(name: str = "togglebank.agent-graph"):
     """Get an OpenTelemetry tracer for synthetic traffic spans."""
-    from opentelemetry import trace
-
-    return trace.get_tracer(name, "1.0.0")
+    try:
+        from opentelemetry import trace
+        return trace.get_tracer(name, "1.0.0")
+    except Exception:
+        return None
 
 
 def flush_traces(timeout_ms: int = 10000):

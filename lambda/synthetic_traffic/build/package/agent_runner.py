@@ -28,6 +28,7 @@ from typing import Any, Optional
 
 import boto3
 import chevron
+from common import safe_span
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +55,11 @@ TRIAGE_CATEGORY_MAP = {
 
 
 def _get_tracer():
-    from opentelemetry import trace
-    return trace.get_tracer("togglebank.agent-graph")
+    try:
+        from opentelemetry import trace
+        return trace.get_tracer("togglebank.agent-graph")
+    except Exception:
+        return None
 
 
 def _get_bedrock_client():
@@ -63,19 +67,43 @@ def _get_bedrock_client():
     return boto3.client("bedrock-runtime", region_name=region)
 
 
+class SafeGraphTracker:
+    """Wraps AIGraphTracker so unknown/changed methods silently no-op
+    instead of crashing the iteration."""
+
+    def __init__(self, tracker):
+        self._tracker = tracker
+
+    def __getattr__(self, name):
+        attr = getattr(self._tracker, name, None)
+        if attr is None or not callable(attr):
+            return lambda *a, **kw: None
+
+        def _safe(*args, **kwargs):
+            try:
+                return attr(*args, **kwargs)
+            except Exception as e:
+                logger.debug(f"Graph tracker {name} failed: {e}")
+
+        return _safe
+
+
 def patch_tracker_for_graph(tracker, graph_key: str) -> None:
-    """Inject graphKey into tracker event data so the Agent Graph UI
-    associates per-node metrics with the correct graph."""
+    """Inject graphKey into per-node tracker event data so the Agent Graph
+    dashboard associates per-node metrics with the correct graph."""
     if tracker is None:
         return
-    original = tracker._LDAIConfigTracker__get_track_data
+    try:
+        original = tracker._LDAIConfigTracker__get_track_data
 
-    def patched():
-        data = original()
-        data["graphKey"] = graph_key
-        return data
+        def patched(**kwargs):
+            data = original(**kwargs)
+            data["graphKey"] = graph_key
+            return data
 
-    tracker._LDAIConfigTracker__get_track_data = patched
+        tracker._LDAIConfigTracker__get_track_data = patched
+    except Exception as e:
+        logger.debug(f"patch_tracker_for_graph skipped: {e}")
 
 
 def simulate_tool_calls(node, graph_tracker) -> list[str]:
@@ -113,6 +141,14 @@ def invoke_model(agent_config, messages: list[dict]) -> tuple[str, dict[str, int
         if agent_config.model
         else "amazon.nova-pro-v1:0"
     )
+
+    BEDROCK_PROVIDERS = ("amazon.", "anthropic.", "meta.", "cohere.", "ai21.", "mistral.")
+    is_bedrock = any(model_name.startswith(p) for p in BEDROCK_PROVIDERS) or model_name.startswith("us.")
+
+    if not is_bedrock:
+        logger.warning(f"Non-Bedrock model '{model_name}', falling back to amazon.nova-pro-v1:0")
+        model_name = "amazon.nova-pro-v1:0"
+
     model_id = model_name
     if not model_id.startswith("us."):
         model_id = f"us.{model_id}"
@@ -161,11 +197,14 @@ def invoke_model(agent_config, messages: list[dict]) -> tuple[str, dict[str, int
     }
 
     if agent_config.tracker and tokens["input"] + tokens["output"] > 0:
-        agent_config.tracker.track_tokens(TokenUsage(
-            input=tokens["input"],
-            output=tokens["output"],
-            total=tokens["input"] + tokens["output"],
-        ))
+        try:
+            agent_config.tracker.track_tokens(TokenUsage(
+                input=tokens["input"],
+                output=tokens["output"],
+                total=tokens["input"] + tokens["output"],
+            ))
+        except Exception as e:
+            logger.warning(f"track_tokens failed: {e}")
 
     return response_text, tokens
 
@@ -182,19 +221,14 @@ def build_messages(instructions: str | None, **context_vars) -> list[dict]:
 
 def run_triage(triage_node, question: str, user_context: dict,
                graph_tracker, graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = triage_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
 
-    with tracer.start_as_current_span(
-        "agent-graph.triage",
-        attributes={
-            "agent.name": triage_node.get_key(),
-            "agent.model": config.model.name if config.model else "",
-        },
-    ) as span:
+    with safe_span(tracer, "agent-graph.triage", attributes={
+        "agent.name": triage_node.get_key(),
+        "agent.model": config.model.name if config.model else "",
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -209,8 +243,14 @@ def run_triage(triage_node, question: str, user_context: dict,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Triage track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Triage track_success failed: {e}")
 
         graph_tracker.track_node_invocation(triage_node.get_key())
         tools_called = simulate_tool_calls(triage_node, graph_tracker)
@@ -218,8 +258,6 @@ def run_triage(triage_node, question: str, user_context: dict,
         span.set_attribute("agent.tokens.input", tokens["input"])
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
 
         try:
             result = json.loads(response_text)
@@ -227,8 +265,6 @@ def run_triage(triage_node, question: str, user_context: dict,
             result = {"category": "customer_support", "confidence": 0.5}
 
         category = result.get("category", "customer_support")
-        span.set_attribute("agent.query_type", category)
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Triage: %s (confidence: %.2f), %dms",
@@ -258,21 +294,16 @@ def find_specialist_node(graph, triage_node, category: str):
 def run_specialist(specialist_node, question: str, user_context: dict,
                    category: str, graph_tracker, triage_key: str,
                    graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = specialist_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
     node_key = specialist_node.get_key()
 
-    with tracer.start_as_current_span(
-        f"agent-graph.{node_key}",
-        attributes={
-            "agent.name": node_key,
-            "agent.model": config.model.name if config.model else "",
-            "agent.query_type": category,
-        },
-    ) as span:
+    with safe_span(tracer, f"agent-graph.{node_key}", attributes={
+        "agent.name": node_key,
+        "agent.model": config.model.name if config.model else "",
+        "agent.query_type": category,
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -287,8 +318,14 @@ def run_specialist(specialist_node, question: str, user_context: dict,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Specialist track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Specialist track_success failed: {e}")
 
         graph_tracker.track_node_invocation(node_key)
         graph_tracker.track_handoff_success(triage_key, node_key)
@@ -298,9 +335,6 @@ def run_specialist(specialist_node, question: str, user_context: dict,
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
         span.set_attribute("agent.response_length", len(response_text))
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Specialist (%s): %d chars, %dms, tools: %s",
@@ -313,20 +347,15 @@ def run_specialist(specialist_node, question: str, user_context: dict,
 def run_brand_voice(brand_node, specialist_response: str, question: str,
                     user_context: dict, graph_tracker, specialist_key: str,
                     graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = brand_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
     node_key = brand_node.get_key()
 
-    with tracer.start_as_current_span(
-        f"agent-graph.{node_key}",
-        attributes={
-            "agent.name": node_key,
-            "agent.model": config.model.name if config.model else "",
-        },
-    ) as span:
+    with safe_span(tracer, f"agent-graph.{node_key}", attributes={
+        "agent.name": node_key,
+        "agent.model": config.model.name if config.model else "",
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -345,8 +374,14 @@ def run_brand_voice(brand_node, specialist_response: str, question: str,
         duration_ms = int((time.time() - node_start) * 1000)
 
         if config.tracker:
-            config.tracker.track_duration(duration_ms)
-            config.tracker.track_success()
+            try:
+                config.tracker.track_duration(duration_ms)
+            except Exception as e:
+                logger.warning(f"Brand voice track_duration failed: {e}")
+            try:
+                config.tracker.track_success()
+            except Exception as e:
+                logger.warning(f"Brand voice track_success failed: {e}")
 
         graph_tracker.track_node_invocation(node_key)
         graph_tracker.track_handoff_success(specialist_key, node_key)
@@ -356,9 +391,6 @@ def run_brand_voice(brand_node, specialist_response: str, question: str,
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
         span.set_attribute("agent.response_length", len(response_text))
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Brand voice (%s): %d chars, %dms",
@@ -400,7 +432,7 @@ def run_agent_graph(
             f"are reachable and enabled in LaunchDarkly"
         )
 
-    graph_tracker = agent_graph.get_tracker()
+    graph_tracker = SafeGraphTracker(agent_graph.get_tracker())
     root_node = agent_graph.root()
 
     if root_node is None:
@@ -460,11 +492,13 @@ def run_agent_graph(
 
     # Feedback
     if feedback and brand_node:
-        brand_tracker = brand_node.get_config().tracker
-        if brand_tracker:
-            patch_tracker_for_graph(brand_tracker, graph_key)
-            kind = FeedbackKind.Positive if feedback == "positive" else FeedbackKind.Negative
-            brand_tracker.track_feedback({"kind": kind})
+        try:
+            brand_tracker = brand_node.get_config().tracker
+            if brand_tracker:
+                kind = FeedbackKind.Positive if feedback == "positive" else FeedbackKind.Negative
+                brand_tracker.track_feedback({"kind": kind})
+        except Exception as e:
+            logger.debug(f"Feedback tracking failed: {e}")
 
     ldclient.get().flush()
 
