@@ -28,6 +28,7 @@ from typing import Any, Optional
 
 import boto3
 import chevron
+from common import safe_span
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +55,11 @@ TRIAGE_CATEGORY_MAP = {
 
 
 def _get_tracer():
-    from opentelemetry import trace
-    return trace.get_tracer("togglebank.agent-graph")
+    try:
+        from opentelemetry import trace
+        return trace.get_tracer("togglebank.agent-graph")
+    except Exception:
+        return None
 
 
 def _get_bedrock_client():
@@ -182,19 +186,14 @@ def build_messages(instructions: str | None, **context_vars) -> list[dict]:
 
 def run_triage(triage_node, question: str, user_context: dict,
                graph_tracker, graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = triage_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
 
-    with tracer.start_as_current_span(
-        "agent-graph.triage",
-        attributes={
-            "agent.name": triage_node.get_key(),
-            "agent.model": config.model.name if config.model else "",
-        },
-    ) as span:
+    with safe_span(tracer, "agent-graph.triage", attributes={
+        "agent.name": triage_node.get_key(),
+        "agent.model": config.model.name if config.model else "",
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -218,8 +217,6 @@ def run_triage(triage_node, question: str, user_context: dict,
         span.set_attribute("agent.tokens.input", tokens["input"])
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
 
         try:
             result = json.loads(response_text)
@@ -227,8 +224,6 @@ def run_triage(triage_node, question: str, user_context: dict,
             result = {"category": "customer_support", "confidence": 0.5}
 
         category = result.get("category", "customer_support")
-        span.set_attribute("agent.query_type", category)
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Triage: %s (confidence: %.2f), %dms",
@@ -258,21 +253,16 @@ def find_specialist_node(graph, triage_node, category: str):
 def run_specialist(specialist_node, question: str, user_context: dict,
                    category: str, graph_tracker, triage_key: str,
                    graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = specialist_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
     node_key = specialist_node.get_key()
 
-    with tracer.start_as_current_span(
-        f"agent-graph.{node_key}",
-        attributes={
-            "agent.name": node_key,
-            "agent.model": config.model.name if config.model else "",
-            "agent.query_type": category,
-        },
-    ) as span:
+    with safe_span(tracer, f"agent-graph.{node_key}", attributes={
+        "agent.name": node_key,
+        "agent.model": config.model.name if config.model else "",
+        "agent.query_type": category,
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -298,9 +288,6 @@ def run_specialist(specialist_node, question: str, user_context: dict,
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
         span.set_attribute("agent.response_length", len(response_text))
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Specialist (%s): %d chars, %dms, tools: %s",
@@ -313,20 +300,15 @@ def run_specialist(specialist_node, question: str, user_context: dict,
 def run_brand_voice(brand_node, specialist_response: str, question: str,
                     user_context: dict, graph_tracker, specialist_key: str,
                     graph_key: str):
-    from opentelemetry.trace import StatusCode
-
     tracer = _get_tracer()
     config = brand_node.get_config()
     patch_tracker_for_graph(config.tracker, graph_key)
     node_key = brand_node.get_key()
 
-    with tracer.start_as_current_span(
-        f"agent-graph.{node_key}",
-        attributes={
-            "agent.name": node_key,
-            "agent.model": config.model.name if config.model else "",
-        },
-    ) as span:
+    with safe_span(tracer, f"agent-graph.{node_key}", attributes={
+        "agent.name": node_key,
+        "agent.model": config.model.name if config.model else "",
+    }) as span:
         node_start = time.time()
 
         messages = build_messages(
@@ -356,9 +338,6 @@ def run_brand_voice(brand_node, specialist_response: str, question: str,
         span.set_attribute("agent.tokens.output", tokens["output"])
         span.set_attribute("agent.duration_ms", duration_ms)
         span.set_attribute("agent.response_length", len(response_text))
-        if tools_called:
-            span.set_attribute("agent.tools_called", ", ".join(tools_called))
-        span.set_status(StatusCode.OK)
 
         logger.info(
             "  Brand voice (%s): %d chars, %dms",

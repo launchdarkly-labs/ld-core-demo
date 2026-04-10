@@ -77,6 +77,14 @@ def init_ld_client(sdk_key):
     import ldclient
     from ldclient.config import Config
 
+    def _basic_config():
+        return Config(
+            sdk_key,
+            events_max_pending=10000,
+            flush_interval=2,
+            send_events=True,
+        )
+
     try:
         from ldobserve import ObservabilityConfig, ObservabilityPlugin
 
@@ -90,16 +98,10 @@ def init_ld_client(sdk_key):
             flush_interval=2,
             send_events=True,
         )
-    except ImportError:
-        logger.warning("ldobserve not available, running without observability")
-        config = Config(
-            sdk_key,
-            events_max_pending=10000,
-            flush_interval=2,
-            send_events=True,
-        )
-
-    ldclient.set_config(config)
+        ldclient.set_config(config)
+    except Exception as e:
+        logger.warning(f"Observability plugin failed ({e}), using basic config")
+        ldclient.set_config(_basic_config())
 
     for _ in range(20):
         if ldclient.get().is_initialized():

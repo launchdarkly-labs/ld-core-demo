@@ -35,6 +35,7 @@ from common import (
     flush_traces,
     get_tracer,
     init_ld_client,
+    safe_span,
 )
 from agent_runner import run_agent_graph
 
@@ -88,65 +89,45 @@ def _run_single_iteration(iteration_num: int, project_key: str) -> dict:
     user_context = create_user_context(user_spec)
     feedback = "positive" if random.random() < POSITIVE_FEEDBACK_RATE else "negative"
 
-    tracer = get_tracer("togglebank.agent-graph")
+    start_time = time.time()
+    try:
+        ld_context = build_ld_context(user_context)
+        result = run_agent_graph(
+            graph_key=AGENT_GRAPH_KEY,
+            ld_context=ld_context,
+            question=question,
+            user_context=user_context,
+            feedback=feedback,
+        )
 
-    with tracer.start_as_current_span(
-        "synthetic-iteration",
-        attributes={
-            "synthetic.iteration": iteration_num,
-            "synthetic.project": project_key,
-            "synthetic.user.name": user_spec["name"],
-            "synthetic.question": question[:60],
-            "synthetic.handler": "agent-graph",
-        },
-    ) as span:
-        start_time = time.time()
-        try:
-            ld_context = build_ld_context(user_context)
-            result = run_agent_graph(
-                graph_key=AGENT_GRAPH_KEY,
-                ld_context=ld_context,
-                question=question,
-                user_context=user_context,
-                feedback=feedback,
-            )
+        logger.info(
+            f"  [Iteration {iteration_num}] {result.query_type}, "
+            f"{result.duration_ms}ms, path: {' -> '.join(result.execution_path)}"
+        )
 
-            from opentelemetry.trace import StatusCode
+        return {
+            "iteration": iteration_num,
+            "user": user_spec["name"],
+            "question": question,
+            "duration_ms": result.duration_ms,
+            "query_type": result.query_type,
+            "execution_path": result.execution_path,
+            "success": True,
+        }
 
-            span.set_attribute("synthetic.duration_ms", result.duration_ms)
-            span.set_attribute("synthetic.query_type", result.query_type)
-            span.set_attribute(
-                "synthetic.execution_path", ",".join(result.execution_path)
-            )
-            span.set_status(StatusCode.OK)
+    except Exception as e:
+        duration_ms = int((time.time() - start_time) * 1000)
+        logger.error(
+            f"  [Iteration {iteration_num}] Error: {e}", exc_info=True
+        )
 
-            return {
-                "iteration": iteration_num,
-                "user": user_spec["name"],
-                "question": question,
-                "duration_ms": result.duration_ms,
-                "query_type": result.query_type,
-                "execution_path": result.execution_path,
-                "success": True,
-            }
-
-        except Exception as e:
-            duration_ms = int((time.time() - start_time) * 1000)
-            logger.error(
-                f"  [Iteration {iteration_num}] Error: {e}", exc_info=True
-            )
-            from opentelemetry.trace import StatusCode
-
-            span.set_status(StatusCode.ERROR, str(e))
-            span.record_exception(e)
-
-            return {
-                "iteration": iteration_num,
-                "user": user_spec["name"],
-                "error": str(e),
-                "duration_ms": duration_ms,
-                "success": False,
-            }
+        return {
+            "iteration": iteration_num,
+            "user": user_spec["name"],
+            "error": str(e),
+            "duration_ms": duration_ms,
+            "success": False,
+        }
 
 
 # ---------------------------------------------------------------------------
