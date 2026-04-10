@@ -1,8 +1,8 @@
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/redis/__init__.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/redis/custom_types.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/redis/package.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/redis/util.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/redis/version.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/redis/__init__.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/redis/custom_types.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/redis/package.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/redis/util.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/redis/version.cpython-39.pyc,,
 opentelemetry/instrumentation/redis/__init__.py,sha256=zn76kOhpOhw4-qloCJhnVTgwqWEEGHWK-St64v6PaFw,22356
 opentelemetry/instrumentation/redis/custom_types.py,sha256=BZ3DDaZKKIkB0ChZHdPbBrV1hNZQCDME9vJQufXlhLU,888
 opentelemetry/instrumentation/redis/package.py,sha256=R7jq1ZysT9oC_IWt7iV_6mHAo9kfCXF74gtzPYqnG7Q,619

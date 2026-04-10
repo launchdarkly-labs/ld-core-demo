@@ -1,8 +1,8 @@
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/pinecone/__init__.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/pinecone/config.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/pinecone/query_handlers.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/pinecone/utils.cpython-39.pyc,,
-../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-o2yl9iff/lib/python/opentelemetry/instrumentation/pinecone/version.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/pinecone/__init__.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/pinecone/config.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/pinecone/query_handlers.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/pinecone/utils.cpython-39.pyc,,
+../../../../../../../../../Users/melaniegarza/Library/Caches/com.apple.python/private/var/folders/2l/ncsxhw_15hsf_4qj0hdrc6n00000gn/T/pip-target-i7k8n_6m/lib/python/opentelemetry/instrumentation/pinecone/version.cpython-39.pyc,,
 opentelemetry/instrumentation/pinecone/__init__.py,sha256=I0NKqmfc1XJQRUsCFUFaXb9PJNFfWZ_7FEMjchjA5tY,7346
 opentelemetry/instrumentation/pinecone/config.py,sha256=CtypZov_ytI9nSrfN9lWnjcufbAR9sfkXRA0OstDEUw,42
 opentelemetry/instrumentation/pinecone/query_handlers.py,sha256=scesH_tLav1X7tCd56VTtmI3LNyUaT1i8HsFziWcbl4,3524
