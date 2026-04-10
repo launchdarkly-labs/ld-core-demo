@@ -26,7 +26,7 @@ cmd_build() {
     rm -rf "${BUILD_DIR}"
     mkdir -p "${PACKAGE_DIR}"
 
-    pip install \
+    pip3 install \
         --platform manylinux2014_x86_64 \
         --target "${PACKAGE_DIR}" \
         --implementation cp \
