@@ -1,3 +1,0 @@
-[opentelemetry_instrumentor]
-pinecone_client=opentelemetry.instrumentation.pinecone:PineconeInstrumentor
-

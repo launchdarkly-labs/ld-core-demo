@@ -1,3 +1,0 @@
-[opentelemetry_instrumentor]
-weaviate_client=opentelemetry.instrumentation.weaviate:WeaviateInstrumentor
-

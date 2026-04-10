@@ -1,3 +1,0 @@
-[opentelemetry_instrumentor]
-haystack-ai=opentelemetry.instrumentation.haystack:HaystackInstrumentor
-

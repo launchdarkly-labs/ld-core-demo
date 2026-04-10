@@ -1,3 +1,0 @@
-[opentelemetry_instrumentor]
-ibm-watson-machine-learning=opentelemetry.instrumentation.watsonx:WatsonxInstrumentor
-
