@@ -2,16 +2,18 @@
 """
 Multi-project synthetic traffic handler for ToggleBank Agent Graph.
 
-Two invocation modes:
+Three invocation modes:
 
   Scheduled (EventBridge cron — hourly):
-    1. Fetches active demo environments from DynamoDB
-    2. Filters to users whose agent-graph data is stale
-    3. For each user (in batches), resolves their project SDK key via LD API
-    4. Initializes an LD client for that project and runs agent-graph iterations
-    5. Updates the DynamoDB timestamp so the user is skipped next run
+    Fetches active demo environments from DynamoDB, filters to stale ones,
+    resolves SDK keys via LD API, runs agent-graph iterations in batches,
+    and updates timestamps so users are skipped next run.
 
-  On-demand (provisioning trigger):
+  DynamoDB Stream (automatic on provisioning):
+    Fires when a record in the provisioning table reaches status=completed.
+    Generates agent-graph data for that single new project immediately.
+
+  On-demand (manual / direct invoke):
     Accepts {"project_key": "..."} or {"username": "..."} in the event payload
     and immediately generates agent-graph data for that single project.
 """
@@ -160,10 +162,12 @@ def _run_single_project_by_key(project_key, ld_api_client):
 def lambda_handler(event, context):
     """AWS Lambda entry point — multi-project agent graph workflow.
 
-    Supports two invocation modes:
+    Supports three invocation modes:
       1. Scheduled (EventBridge cron): scans DynamoDB for stale environments
-      2. On-demand (provisioning trigger): pass {"project_key": "..."} or
-         {"username": "..."} to generate data for a single fresh environment
+      2. DynamoDB Stream: fires automatically when a provisioning record
+         reaches status=completed — generates data for that one project
+      3. On-demand: pass {"project_key": "..."} or {"username": "..."} to
+         generate data for a single project manually
     """
     execution_start = datetime.now(timezone.utc)
     logger.info(
@@ -178,7 +182,31 @@ def lambda_handler(event, context):
 
     ld_api_client = LaunchDarklyAPIClient(ld_api_token)
 
-    # --- On-demand mode: single project from provisioning trigger ---
+    # --- DynamoDB Stream mode: extract username from stream records ---
+    if "Records" in event and event["Records"][0].get("eventSource") == "aws:dynamodb":
+        for record in event["Records"]:
+            if record.get("eventName") not in ("INSERT", "MODIFY"):
+                continue
+            new_image = record.get("dynamodb", {}).get("NewImage", {})
+            status = new_image.get("status", {}).get("S", "")
+            username = new_image.get("userKey", {}).get("S", "")
+            if status == "completed" and username:
+                logger.info(f"[AgentGraph] DynamoDB Stream trigger for user: {username}")
+                project_key = construct_project_key_from_username(username)
+                result, _ = _run_single_project_by_key(project_key, ld_api_client)
+                if result and result.get("success"):
+                    logger.info(f"[AgentGraph] Stream trigger SUCCESS for {project_key}")
+                else:
+                    logger.warning(f"[AgentGraph] Stream trigger FAILED for {project_key}")
+        total_duration = int(
+            (datetime.now(timezone.utc) - execution_start).total_seconds()
+        )
+        return {"statusCode": 200, "body": json.dumps({
+            "mode": "dynamodb-stream",
+            "total_duration_seconds": total_duration,
+        }, default=str)}
+
+    # --- On-demand mode: single project from direct invocation ---
     trigger_project = event.get("project_key")
     trigger_username = event.get("username")
 
