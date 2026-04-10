@@ -1,0 +1,489 @@
+[
+	{
+		"description": "Should match a log based on severity",
+		"samplingConfig": {
+			"logs": [
+				{
+					"severityText": {
+						"matchValue": "error"
+					},
+					"samplingRatio": 42
+				}
+			]
+		},
+		"inputLog": {
+			"severityText": "error"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should match a log based on message content with exact attribute",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"matchValue": "Connection failed"
+					},
+					"samplingRatio": 42
+				}
+			]
+		},
+		"inputLog": {
+			"message": "Connection failed"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should not match a log when severity does not match",
+		"samplingConfig": {
+			"logs": [
+				{
+					"severityText": {
+						"matchValue": "error"
+					},
+					"samplingRatio": 42
+				}
+			]
+		},
+		"inputLog": {
+			"severityText": "info"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": true,
+					"attributes": null
+				}
+			}
+		]
+	},
+	{
+		"description": "Should match a log based on message content with regex",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"regexValue": "Error: .*"
+					},
+					"samplingRatio": 42
+				}
+			]
+		},
+		"inputLog": {
+			"message": "Error: Connection timed out"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 42
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should exact match a log based on string attribute value",
+		"samplingConfig": {
+			"logs": [
+				{
+					"attributes": [
+						{
+							"key": {
+								"matchValue": "service.name"
+							},
+							"attribute": {
+								"matchValue": "api-gateway"
+							}
+						}
+					],
+					"samplingRatio": 75
+				}
+			]
+		},
+		"inputLog": {
+			"attributes": {
+				"service.name": "api-gateway",
+				"environment": "production"
+			}
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 75
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 75
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should regex match a log based on string attribute value",
+		"samplingConfig": {
+			"logs": [
+				{
+					"attributes": [
+						{
+							"key": {
+								"matchValue": "service.name"
+							},
+							"attribute": {
+								"regexValue": "api-.*"
+							}
+						}
+					],
+					"samplingRatio": 75
+				}
+			]
+		},
+		"inputLog": {
+			"attributes": {
+				"service.name": "api-gateway",
+				"environment": "production"
+			}
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 75
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 75
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should match a log based on boolean attribute value",
+		"samplingConfig": {
+			"logs": [
+				{
+					"attributes": [
+						{
+							"key": {
+								"matchValue": "error.fatal"
+							},
+							"attribute": {
+								"matchValue": true
+							}
+						}
+					],
+					"samplingRatio": 100
+				}
+			]
+		},
+		"inputLog": {
+			"attributes": {
+				"error.fatal": true,
+				"error.message": "Critical system failure"
+			}
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 100
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 100
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should match a log based on numeric attribute value",
+		"samplingConfig": {
+			"logs": [
+				{
+					"attributes": [
+						{
+							"key": {
+								"matchValue": "http.status_code"
+							},
+							"attribute": {
+								"matchValue": 500
+							}
+						}
+					],
+					"samplingRatio": 50
+				}
+			]
+		},
+		"inputLog": {
+			"attributes": {
+				"http.status_code": 500,
+				"http.method": "POST"
+			}
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 50
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 50
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should match a log based on message, severity, and multiple attribute types",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"regexValue": "Database connection .*"
+					},
+					"severityText": {
+						"matchValue": "error"
+					},
+					"attributes": [
+						{
+							"key": {
+								"regexValue": "service.*"
+							},
+							"attribute": {
+								"regexValue": "db-.*"
+							}
+						},
+						{
+							"key": {
+								"matchValue": "retry.enabled"
+							},
+							"attribute": {
+								"matchValue": true
+							}
+						},
+						{
+							"key": {
+								"matchValue": "retry.count"
+							},
+							"attribute": {
+								"matchValue": 3
+							}
+						}
+					],
+					"samplingRatio": 90
+				}
+			]
+		},
+		"inputLog": {
+			"message": "Database connection failed: timeout",
+			"severityText": "error",
+			"attributes": {
+				"service.name": "db-connector",
+				"retry.enabled": true,
+				"retry.count": 3,
+				"database.name": "user-profiles",
+				"error.type": "CONNECTION_TIMEOUT"
+			}
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 90
+					}
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": false,
+					"attributes": {
+						"launchdarkly.sampling.ratio": 90
+					}
+				}
+			}
+		]
+	},
+	{
+		"description": "Should not match an empty log when message and severity are defined",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"regexValue": "Database connection .*"
+					},
+					"severityText": {
+						"matchValue": "error"
+					},
+					"samplingRatio": 90
+				}
+			]
+		},
+		"inputLog": {},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": true
+				}
+			}
+		]
+	},
+	{
+		"description": "Should not match a log with a message when message and severity are defined",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"regexValue": "Database connection .*"
+					},
+					"severityText": {
+						"matchValue": "error"
+					},
+					"samplingRatio": 90
+				}
+			]
+		},
+		"inputLog": {
+			"message": "Database connection failed: timeout"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": true
+				}
+			}
+		]
+	},
+	{
+		"description": "Should not match a log with only severity when message and severity are defined",
+		"samplingConfig": {
+			"logs": [
+				{
+					"message": {
+						"regexValue": "Database connection .*"
+					},
+					"severityText": {
+						"matchValue": "error"
+					},
+					"samplingRatio": 90
+				}
+			]
+		},
+		"inputLog": {
+			"severityText": "error"
+		},
+		"samplerFunctionCases": [
+			{
+				"type": "always",
+				"expected_result": {
+					"sample": true
+				}
+			},
+			{
+				"type": "never",
+				"expected_result": {
+					"sample": true
+				}
+			}
+		]
+	}
+]

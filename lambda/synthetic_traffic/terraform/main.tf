@@ -46,7 +46,7 @@ variable "ld_api_key" {
 variable "dynamodb_table_name" {
   description = "DynamoDB table that tracks active demo environments"
   type        = string
-  default     = "ld-core-demo-environments"
+  default     = "ld-core-demo-provisioning-workflow-records-prod"
 }
 
 variable "schedule_expression" {

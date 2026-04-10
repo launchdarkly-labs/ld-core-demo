@@ -1,0 +1,480 @@
+import json
+from typing import Iterator, Optional
+
+import pytest
+from ld_eventsource.sse_client import Event
+
+from ldclient.impl.datasourcev2.polling import PollingDataSource, PollingResult
+from ldclient.impl.datasystem.protocolv2 import (
+    DeleteObject,
+    Error,
+    EventName,
+    Goodbye,
+    PutObject
+)
+from ldclient.impl.util import (
+    _LD_ENVID_HEADER,
+    _LD_FD_FALLBACK_HEADER,
+    UnsuccessfulResponseException,
+    _Fail,
+    _Success
+)
+from ldclient.interfaces import (
+    ChangeSetBuilder,
+    ChangeType,
+    DataSourceErrorKind,
+    DataSourceState,
+    IntentCode,
+    ObjectKind,
+    Payload,
+    Selector,
+    ServerIntent
+)
+from ldclient.testing.mock_components import MockSelectorStore
+
+
+class ListBasedRequester:
+    def __init__(self, results: Iterator[PollingResult]):
+        self._results = results
+        self._index = 0
+
+    def fetch(
+        self, selector: Optional[Selector]
+    ) -> PollingResult:  # pylint: disable=unused-argument
+        return next(self._results)
+
+
+@pytest.fixture
+def events() -> dict:
+    server_intent = ServerIntent(
+        payload=Payload(
+            id="id",
+            target=300,
+            code=IntentCode.TRANSFER_FULL,
+            reason="cant-catchup",
+        )
+    )
+    intent_event = Event(
+        event=EventName.SERVER_INTENT,
+        data=json.dumps(server_intent.to_dict()),
+    )
+
+    put = PutObject(
+        version=100, kind=ObjectKind.FLAG, key="flag-key", object={"key": "flag-key"}
+    )
+    put_event = Event(
+        event=EventName.PUT_OBJECT,
+        data=json.dumps(put.to_dict()),
+    )
+    delete = DeleteObject(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    delete_event = Event(
+        event=EventName.DELETE_OBJECT,
+        data=json.dumps(delete.to_dict()),
+    )
+
+    selector = Selector(state="p:SOMETHING:300", version=300)
+    payload_transferred_event = Event(
+        event=EventName.PAYLOAD_TRANSFERRED,
+        data=json.dumps(selector.to_dict()),
+    )
+
+    goodbye = Goodbye(reason="test reason", silent=True, catastrophe=False)
+    goodbye_event = Event(
+        event=EventName.GOODBYE,
+        data=json.dumps(goodbye.to_dict()),
+    )
+
+    error = Error(payload_id="p:SOMETHING:300", reason="test reason")
+    error_event = Event(
+        event=EventName.ERROR,
+        data=json.dumps(error.to_dict()),
+    )
+
+    heartbeat_event = Event(event=EventName.HEARTBEAT)
+
+    return {
+        EventName.SERVER_INTENT: intent_event,
+        EventName.PAYLOAD_TRANSFERRED: payload_transferred_event,
+        EventName.PUT_OBJECT: put_event,
+        EventName.DELETE_OBJECT: delete_event,
+        EventName.GOODBYE: goodbye_event,
+        EventName.ERROR: error_event,
+        EventName.HEARTBEAT: heartbeat_event,
+    }
+
+
+def test_handles_no_changes():
+    change_set = ChangeSetBuilder.no_changes()
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id is None
+    assert valid.change_set is not None
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_NONE
+    assert len(valid.change_set.changes) == 0
+
+
+def test_handles_empty_changeset():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id is None
+
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 0
+    assert valid.change_set.selector.is_defined()
+    assert valid.change_set.selector.version == 300
+    assert valid.change_set.selector.state == "p:SOMETHING:300"
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_FULL
+
+
+def test_handles_put_objects():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_put(
+        version=100, kind=ObjectKind.FLAG, key="flag-key", obj={"key": "flag-key"}
+    )
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id is None
+
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 1
+    assert valid.change_set.changes[0].action == ChangeType.PUT
+    assert valid.change_set.changes[0].kind == ObjectKind.FLAG
+    assert valid.change_set.changes[0].key == "flag-key"
+    assert valid.change_set.changes[0].object == {"key": "flag-key"}
+    assert valid.change_set.changes[0].version == 100
+    assert valid.change_set.selector.is_defined()
+    assert valid.change_set.selector.version == 300
+    assert valid.change_set.selector.state == "p:SOMETHING:300"
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_FULL
+
+
+def test_handles_delete_objects():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_delete(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id is None
+
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 1
+    assert valid.change_set.changes[0].action == ChangeType.DELETE
+    assert valid.change_set.changes[0].kind == ObjectKind.FLAG
+    assert valid.change_set.changes[0].key == "flag-key"
+    assert valid.change_set.changes[0].version == 101
+    assert valid.change_set.selector.is_defined()
+    assert valid.change_set.selector.version == 300
+    assert valid.change_set.selector.state == "p:SOMETHING:300"
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_FULL
+
+
+def test_generic_error_interrupts_and_recovers():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_delete(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(
+            results=iter([_Fail(error="error for test"), polling_result])
+        ),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    interrupted = next(sync)
+    valid = next(sync)
+
+    assert interrupted.state == DataSourceState.INTERRUPTED
+    assert interrupted.error is not None
+    assert interrupted.error.kind == DataSourceErrorKind.NETWORK_ERROR
+    assert interrupted.error.status_code == 0
+    assert interrupted.error.message == "error for test"
+    assert interrupted.revert_to_fdv1 is False
+    assert interrupted.environment_id is None
+
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 1
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_FULL
+    assert valid.change_set.changes[0].action == ChangeType.DELETE
+
+
+def test_recoverable_error_continues():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_delete(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    _failure = _Fail(
+        error="error for test", exception=UnsuccessfulResponseException(status=408)
+    )
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure, polling_result])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    interrupted = next(sync)
+    valid = next(sync)
+
+    assert interrupted.state == DataSourceState.INTERRUPTED
+    assert interrupted.error is not None
+    assert interrupted.error.kind == DataSourceErrorKind.ERROR_RESPONSE
+    assert interrupted.error.status_code == 408
+    assert interrupted.revert_to_fdv1 is False
+    assert interrupted.environment_id is None
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id is None
+
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 1
+    assert valid.change_set.intent_code == IntentCode.TRANSFER_FULL
+    assert valid.change_set.changes[0].action == ChangeType.DELETE
+
+
+def test_unrecoverable_error_shuts_down():
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_delete(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    _failure = _Fail(
+        error="error for test", exception=UnsuccessfulResponseException(status=401)
+    )
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure, polling_result])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    off = next(sync)
+    assert off.state == DataSourceState.OFF
+    assert off.error is not None
+    assert off.error.kind == DataSourceErrorKind.ERROR_RESPONSE
+    assert off.error.status_code == 401
+    assert off.revert_to_fdv1 is False
+    assert off.environment_id is None
+    assert off.change_set is None
+
+    try:
+        next(sync)
+        assert False, "Expected StopIteration"
+    except StopIteration:
+        pass
+
+
+def test_envid_from_success_headers():
+    """Test that environment ID is captured from successful polling response headers"""
+    change_set = ChangeSetBuilder.no_changes()
+    headers = {_LD_ENVID_HEADER: 'test-env-polling-123'}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.error is None
+    assert valid.revert_to_fdv1 is False
+    assert valid.environment_id == 'test-env-polling-123'
+
+
+def test_envid_from_success_with_changeset():
+    """Test that environment ID is captured from polling response with actual changes"""
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_put(
+        version=100, kind=ObjectKind.FLAG, key="flag-key", obj={"key": "flag-key"}
+    )
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers = {_LD_ENVID_HEADER: 'test-env-456'}
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.environment_id == 'test-env-456'
+    assert valid.change_set is not None
+    assert len(valid.change_set.changes) == 1
+
+
+def test_envid_from_fallback_headers():
+    """Test that environment ID is captured when fallback header is present on success"""
+    change_set = ChangeSetBuilder.no_changes()
+    headers = {
+        _LD_ENVID_HEADER: 'test-env-fallback',
+        _LD_FD_FALLBACK_HEADER: 'true'
+    }
+    polling_result: PollingResult = _Success(value=(change_set, headers))
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01, requester=ListBasedRequester(results=iter([polling_result]))
+    )
+
+    valid = next(synchronizer.sync(MockSelectorStore(Selector.no_selector())))
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.revert_to_fdv1 is True
+    assert valid.environment_id == 'test-env-fallback'
+
+
+def test_envid_from_error_headers_recoverable():
+    """Test that environment ID is captured from error response headers for recoverable errors"""
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    builder.add_delete(version=101, kind=ObjectKind.FLAG, key="flag-key")
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers_success = {_LD_ENVID_HEADER: 'test-env-success'}
+    polling_result: PollingResult = _Success(value=(change_set, headers_success))
+
+    headers_error = {_LD_ENVID_HEADER: 'test-env-408'}
+    _failure = _Fail(
+        error="error for test",
+        exception=UnsuccessfulResponseException(status=408),
+        headers=headers_error
+    )
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure, polling_result])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    interrupted = next(sync)
+    valid = next(sync)
+
+    assert interrupted.state == DataSourceState.INTERRUPTED
+    assert interrupted.environment_id == 'test-env-408'
+    assert interrupted.error is not None
+    assert interrupted.error.status_code == 408
+
+    assert valid.state == DataSourceState.VALID
+    assert valid.environment_id == 'test-env-success'
+
+
+def test_envid_from_error_headers_unrecoverable():
+    """Test that environment ID is captured from error response headers for unrecoverable errors"""
+    headers_error = {_LD_ENVID_HEADER: 'test-env-401'}
+    _failure = _Fail(
+        error="error for test",
+        exception=UnsuccessfulResponseException(status=401),
+        headers=headers_error
+    )
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    off = next(sync)
+
+    assert off.state == DataSourceState.OFF
+    assert off.environment_id == 'test-env-401'
+    assert off.error is not None
+    assert off.error.status_code == 401
+
+
+def test_envid_from_error_with_fallback():
+    """Test that environment ID and fallback are captured from error response"""
+    headers_error = {
+        _LD_ENVID_HEADER: 'test-env-503',
+        _LD_FD_FALLBACK_HEADER: 'true'
+    }
+    _failure = _Fail(
+        error="error for test",
+        exception=UnsuccessfulResponseException(status=503),
+        headers=headers_error
+    )
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    off = next(sync)
+
+    assert off.state == DataSourceState.OFF
+    assert off.revert_to_fdv1 is True
+    assert off.environment_id == 'test-env-503'
+
+
+def test_envid_from_generic_error_with_headers():
+    """Test that environment ID is captured from generic errors with headers"""
+    builder = ChangeSetBuilder()
+    builder.start(intent=IntentCode.TRANSFER_FULL)
+    change_set = builder.finish(selector=Selector(state="p:SOMETHING:300", version=300))
+    headers_success = {}
+    polling_result: PollingResult = _Success(value=(change_set, headers_success))
+
+    headers_error = {_LD_ENVID_HEADER: 'test-env-generic'}
+    _failure = _Fail(error="generic error for test", headers=headers_error)
+
+    synchronizer = PollingDataSource(
+        poll_interval=0.01,
+        requester=ListBasedRequester(results=iter([_failure, polling_result])),
+    )
+    sync = synchronizer.sync(MockSelectorStore(Selector.no_selector()))
+    interrupted = next(sync)
+    valid = next(sync)
+
+    assert interrupted.state == DataSourceState.INTERRUPTED
+    assert interrupted.environment_id == 'test-env-generic'
+    assert interrupted.error is not None
+    assert interrupted.error.kind == DataSourceErrorKind.NETWORK_ERROR
+
+    assert valid.state == DataSourceState.VALID
