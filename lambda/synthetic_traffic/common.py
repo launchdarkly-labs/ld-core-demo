@@ -1,8 +1,8 @@
 """
 Shared infrastructure for ToggleBank synthetic traffic Lambda.
 
-Contains user pool, question pool, LD + OTEL bootstrap, context helpers,
-and trace flush used by the Agent Graph handler.
+Contains user pool, question pool, context helpers, LD client lifecycle,
+and trace flush. LD client is initialized per-project in the handler loop.
 """
 
 import logging
@@ -11,12 +11,12 @@ import time
 from datetime import datetime, timezone
 from uuid import uuid4
 
-import boto3
-
 logger = logging.getLogger(__name__)
 
 ITERATIONS = 10
 POSITIVE_FEEDBACK_RATE = 0.99
+BATCH_SIZE = 5
+DAYS_BEFORE_REGENERATE = 3
 
 BETA_TESTER_USERS = [
     {"name": "Alice Chen", "location": "San Francisco, CA", "tier": "Platinum", "role": "Beta"},
@@ -70,48 +70,35 @@ QUESTION_POOL = [
     "How do I enroll in paperless statements?",
 ]
 
-_initialized = False
 
-
-def ensure_initialized():
-    """Load secrets from SSM and initialize observability (once per cold start)."""
-    global _initialized
-    if _initialized:
-        return
-
-    parameter_prefix = os.environ.get(
-        "PARAMETER_PREFIX", "/togglebank-synthetic/prod"
-    )
-
-    try:
-        ssm = boto3.client("ssm")
-        response = ssm.get_parameter(
-            Name=f"{parameter_prefix}/launchdarkly/sdk-key", WithDecryption=True
-        )
-        os.environ["LAUNCHDARKLY_SDK_KEY"] = response["Parameter"]["Value"]
-    except Exception as e:
-        logger.warning(f"SSM lookup failed ({e}), falling back to env var")
-        if not os.environ.get("LAUNCHDARKLY_SDK_KEY"):
-            raise
-
-    os.environ.setdefault("LAUNCHDARKLY_ENABLED", "true")
-    os.environ.setdefault("LLM_PROVIDER", "bedrock")
-    os.environ.setdefault("LLM_MODEL", "amazon.nova-pro-v1:0")
-    os.environ.setdefault("AWS_REGION", "us-east-1")
-
+def init_ld_client(sdk_key):
+    """Initialize the global LD client for a specific project's SDK key.
+    Returns the client instance, or None if initialization fails."""
     import ldclient
     from ldclient.config import Config
-    from ldobserve import ObservabilityConfig, ObservabilityPlugin
 
-    sdk_key = os.environ["LAUNCHDARKLY_SDK_KEY"]
+    try:
+        from ldobserve import ObservabilityConfig, ObservabilityPlugin
 
-    obs_config = ObservabilityConfig(
-        service_name="togglebank-synthetic-traffic",
-    )
-    config = Config(
-        sdk_key,
-        plugins=[ObservabilityPlugin(obs_config)],
-    )
+        obs_config = ObservabilityConfig(
+            service_name="togglebank-synthetic-agent-graph",
+        )
+        config = Config(
+            sdk_key,
+            plugins=[ObservabilityPlugin(obs_config)],
+            events_max_pending=10000,
+            flush_interval=2,
+            send_events=True,
+        )
+    except ImportError:
+        logger.warning("ldobserve not available, running without observability")
+        config = Config(
+            sdk_key,
+            events_max_pending=10000,
+            flush_interval=2,
+            send_events=True,
+        )
+
     ldclient.set_config(config)
 
     for _ in range(20):
@@ -121,8 +108,23 @@ def ensure_initialized():
 
     if not ldclient.get().is_initialized():
         logger.error("LD client failed to initialize after 10s")
+        return None
 
-    _initialized = True
+    return ldclient.get()
+
+
+def close_ld_client():
+    """Flush and close the global LD client between projects."""
+    try:
+        import ldclient
+
+        client = ldclient.get()
+        if client and client.is_initialized():
+            client.flush()
+            time.sleep(3)
+            client.close()
+    except Exception as e:
+        logger.warning(f"Error closing LD client: {e}")
 
 
 def create_user_context(user_spec: dict) -> dict:
@@ -157,6 +159,7 @@ def build_ld_context(user_context: dict):
 def get_tracer(name: str = "togglebank.agent-graph"):
     """Get an OpenTelemetry tracer for synthetic traffic spans."""
     from opentelemetry import trace
+
     return trace.get_tracer(name, "1.0.0")
 
 
@@ -164,15 +167,17 @@ def flush_traces(timeout_ms: int = 10000):
     """Flush all pending spans and LD client events."""
     try:
         from opentelemetry import trace
+
         provider = trace.get_tracer_provider()
         if hasattr(provider, "force_flush"):
             provider.force_flush(timeout_millis=timeout_ms)
-            logger.info("Trace spans flushed to LaunchDarkly")
+            logger.info("Trace spans flushed")
     except Exception as e:
         logger.warning(f"Failed to flush trace spans: {e}")
 
     try:
         import ldclient
+
         client = ldclient.get()
         if client and client.is_initialized():
             client.flush()

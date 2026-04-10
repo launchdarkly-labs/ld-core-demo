@@ -38,6 +38,8 @@ cmd_build() {
     cp "${SCRIPT_DIR}/common.py" "${PACKAGE_DIR}/"
     cp "${SCRIPT_DIR}/agent_runner.py" "${PACKAGE_DIR}/"
     cp "${SCRIPT_DIR}/handler_agent_graph.py" "${PACKAGE_DIR}/"
+    cp "${SCRIPT_DIR}/DynamoDBUtils.py" "${PACKAGE_DIR}/"
+    cp "${SCRIPT_DIR}/LDAPIUtils.py" "${PACKAGE_DIR}/"
 
     cd "${PACKAGE_DIR}"
     rm -rf *.dist-info __pycache__ tests
@@ -50,8 +52,8 @@ cmd_build() {
 
 cmd_infra() {
     echo "==> Running terraform apply..."
-    if [ -z "${TF_VAR_ld_sdk_key:-}" ]; then
-        echo "Error: TF_VAR_ld_sdk_key must be set"
+    if [ -z "${TF_VAR_ld_api_key:-}" ]; then
+        echo "Error: TF_VAR_ld_api_key must be set"
         exit 1
     fi
 

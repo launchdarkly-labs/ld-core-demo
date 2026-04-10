@@ -37,10 +37,16 @@ variable "environment" {
   default     = "prod"
 }
 
-variable "ld_sdk_key" {
-  description = "LaunchDarkly SDK key"
+variable "ld_api_key" {
+  description = "LaunchDarkly Management API key (used to resolve per-project SDK keys)"
   type        = string
   sensitive   = true
+}
+
+variable "dynamodb_table_name" {
+  description = "DynamoDB table that tracks active demo environments"
+  type        = string
+  default     = "ld-core-demo-environments"
 }
 
 variable "schedule_expression" {
@@ -62,24 +68,13 @@ locals {
     ManagedBy   = "Terraform"
   }
 
-  common_lambda_env = {
-    PARAMETER_PREFIX     = "/${var.project_name}/${var.environment}"
+  lambda_env = {
+    LD_API_KEY           = var.ld_api_key
+    DYNAMODB_TABLE_NAME  = var.dynamodb_table_name
     LAUNCHDARKLY_ENABLED = "true"
     LLM_PROVIDER         = "bedrock"
     LLM_MODEL            = "amazon.nova-pro-v1:0"
   }
-}
-
-# ---------------------------------------------------------------------------
-# SSM Parameter Store (secrets)
-# ---------------------------------------------------------------------------
-
-resource "aws_ssm_parameter" "ld_sdk_key" {
-  name  = "/${var.project_name}/${var.environment}/launchdarkly/sdk-key"
-  type  = "SecureString"
-  value = var.ld_sdk_key
-
-  tags = local.common_tags
 }
 
 # ---------------------------------------------------------------------------
@@ -120,22 +115,13 @@ resource "aws_iam_role_policy" "lambda_policy" {
       {
         Effect = "Allow"
         Action = [
-          "ssm:GetParameter",
-          "ssm:GetParameters"
-        ]
-        Resource = [
-          "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.project_name}/${var.environment}/*"
-        ]
-      },
-      {
-        Effect   = "Allow"
-        Action   = [
           "bedrock:InvokeModel",
           "bedrock:InvokeModelWithResponseStream"
         ]
         Resource = "*"
       },
       {
+        Sid    = "RAGVectorTables"
         Effect = "Allow"
         Action = [
           "dynamodb:Scan",
@@ -143,6 +129,16 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "dynamodb:GetItem"
         ]
         Resource = "arn:aws:dynamodb:${data.aws_region.current.name}:*:table/*RAG*"
+      },
+      {
+        Sid    = "DemoEnvironmentsTable"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Scan",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem"
+        ]
+        Resource = "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}"
       }
     ]
   })
@@ -175,7 +171,7 @@ resource "aws_lambda_function" "agent_graph" {
   source_code_hash = filebase64sha256("${path.module}/../build/deployment.zip")
 
   environment {
-    variables = local.common_lambda_env
+    variables = local.lambda_env
   }
 
   depends_on = [aws_cloudwatch_log_group.agent_graph_logs]
