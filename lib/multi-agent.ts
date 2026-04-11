@@ -5,6 +5,7 @@ import {
 import { LDObserve } from "@launchdarkly/observability-node";
 import type { LDAIConfigTracker } from "@launchdarkly/server-sdk-ai";
 import { pushLog } from "./log-stream";
+import { retrieve, type RagSource } from "./rag/retrieval";
 
 // Types
 
@@ -67,12 +68,13 @@ interface MultiAgentDeps {
 	bedrockClient: BedrockRuntimeClient;
 	openai: any;
 	userInput: string;
-	sourcePassages: string[];
 	sendStatus?: (msg: string) => void;
 	/** Optional request headers to link server-side spans to the same trace as the client */
 	requestHeaders?: RequestHeaders;
 	/** AI Config key used for this request — set on spans so LaunchDarkly AIC view links to this trace */
 	aiConfigKey?: string;
+	/** When true, the Brand Voice agent uses the toxic prompt variation */
+	enableToxicPrompt?: boolean;
 }
 
 // Config keys — must match what DemoBuilder provisions in LD
@@ -95,6 +97,31 @@ const CATEGORY_LABELS: Record<BankingCategory, string> = {
 	investments: "Investments",
 	transfers: "Transfers",
 	customer_support: "Customer Support",
+};
+
+// RAG source mapping — each specialist gets its own DynamoDB vector table
+const CATEGORY_RAG_SOURCE: Record<BankingCategory, RagSource> = {
+	accounts: "accounts",
+	loans_credit: "loans",
+	investments: "investments",
+	transfers: "transfers",
+	customer_support: "support",
+};
+
+const RAG_TOOL_SPEC = {
+	toolSpec: {
+		name: "search_knowledge_base",
+		description: "Search the banking knowledge base for relevant information to answer the customer's question. Always use this before answering factual questions.",
+		inputSchema: {
+			json: {
+				type: "object",
+				properties: {
+					query: { type: "string", description: "The question or topic to search for" },
+				},
+				required: ["query"],
+			},
+		},
+	},
 };
 
 // Helpers
@@ -169,7 +196,10 @@ async function callLLM(
 		let result: LLMCallResult;
 		if (isBedrock) {
 			const systemMsgs = messages.filter((m) => m.role === "system");
-			const nonSystemMsgs = messages.filter((m) => m.role !== "system");
+			let nonSystemMsgs = messages.filter((m) => m.role !== "system");
+			if (nonSystemMsgs.length === 0) {
+				nonSystemMsgs = [{ role: "user", content: "Please respond based on the instructions provided." }];
+			}
 			const bedrockMessages = nonSystemMsgs.map((m) => ({
 				role: m.role as "user" | "assistant",
 				content: [{ text: m.content }],
@@ -193,7 +223,11 @@ async function callLLM(
 				durationMs: Date.now() - callStart,
 			};
 		} else {
-			const openaiMessages = messages.map((m) => ({
+			let finalMessages = messages;
+			if (!messages.some((m) => m.role === "user")) {
+				finalMessages = [...messages, { role: "user", content: "Please respond based on the instructions provided." }];
+			}
+			const openaiMessages = finalMessages.map((m) => ({
 				role: m.role as "system" | "user" | "assistant",
 				content: m.content,
 			}));
@@ -336,9 +370,10 @@ async function runSpecialistAgent(
 	category: BankingCategory,
 	deps: MultiAgentDeps,
 ): Promise<SpecialistResult> {
-	const { aiClient, context, bedrockClient, openai, userInput, sourcePassages } = deps;
+	const { aiClient, context, bedrockClient, userInput } = deps;
 	const configKey = SPECIALIST_CONFIG_KEYS[category];
 	const label = CATEGORY_LABELS[category];
+	const ragSource = CATEGORY_RAG_SOURCE[category];
 
 	pushLog({ level: "INFO", message: `   Pulling AI config (${configKey})...`, name: "specialist" });
 
@@ -363,36 +398,139 @@ async function runSpecialistAgent(
 	}
 
 	const modelName = specialistConfig.model.name;
-	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName})...`, name: "specialist" });
+	const useBedrock = isBedrockModel(modelName);
+	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName}) with RAG tools...`, name: "specialist" });
 
-	let messages = configToMessages(specialistConfig);
+	const configMessages = configToMessages(specialistConfig);
 
-	if (sourcePassages.length > 0) {
-		const ragContext = `\n\nUse the following reference material to inform your answer. Only use facts from this material:\n\n${sourcePassages.join("\n\n---\n\n")}`;
-		messages = messages.map((m: { role: string; content: string }) =>
-			m.role === "system" ? { ...m, content: m.content + ragContext } : m,
-		);
-	}
+	if (useBedrock) {
+		// --- Bedrock path: native tool-use loop with RAG ---
+		let resolvedModelId = modelName;
+		if (!resolvedModelId.startsWith("us.")) {
+			resolvedModelId = "us." + resolvedModelId;
+		}
 
-	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, specialistConfig.tracker, {
-		agentLabel: "specialist",
-		requestHeaders: deps.requestHeaders,
-	});
+		const systemMsgs = configMessages.filter((m) => m.role === "system");
+		const nonSystemMsgs = configMessages.filter((m) => m.role !== "system");
+		if (nonSystemMsgs.length === 0) {
+			nonSystemMsgs.push({ role: "user", content: userInput });
+		}
 
-	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
-	if (isBedrockModel(modelName)) {
+		const bedrockMessages: any[] = nonSystemMsgs.map((m) => ({
+			role: m.role as "user" | "assistant",
+			content: [{ text: m.content }],
+		}));
+
+		const callStart = Date.now();
+		let totalInputTokens = 0;
+		let totalOutputTokens = 0;
+		let finalContent = "";
+		let loopCount = 0;
+		const MAX_TOOL_LOOPS = 3;
+
+		while (loopCount < MAX_TOOL_LOOPS) {
+			loopCount++;
+			const resp: any = await bedrockClient.send(
+				new ConverseCommand({
+					modelId: resolvedModelId,
+					...(systemMsgs.length > 0 ? { system: systemMsgs.map((m) => ({ text: m.content })) } : {}),
+					messages: bedrockMessages,
+					toolConfig: { tools: [RAG_TOOL_SPEC] },
+					inferenceConfig: { temperature: 0.5, maxTokens: 1000 },
+				}),
+			);
+
+			totalInputTokens += resp?.usage?.inputTokens ?? 0;
+			totalOutputTokens += resp?.usage?.outputTokens ?? 0;
+
+			const assistantMessage = resp?.output?.message;
+			if (assistantMessage) bedrockMessages.push(assistantMessage);
+
+			if (resp.stopReason !== "tool_use") {
+				finalContent = assistantMessage?.content?.find((b: any) => b.text)?.text ?? "";
+				break;
+			}
+
+			const toolResults: any[] = [];
+			for (const block of assistantMessage?.content ?? []) {
+				if (!block.toolUse) continue;
+				const { toolUseId, input } = block.toolUse;
+				const query = (input as any)?.query ?? userInput;
+
+				pushLog({ level: "INFO", message: `   🔍 RAG tool call: searching ${ragSource} for "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`, name: "specialist" });
+
+				try {
+					const chunks = await retrieve(query, { source: ragSource, topK: 5 });
+					const resultText = chunks.length > 0
+						? chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n")
+						: "No relevant results found in this knowledge base.";
+					pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+					toolResults.push({ toolResult: { toolUseId, content: [{ text: resultText }] } });
+				} catch (err: any) {
+					pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+					toolResults.push({ toolResult: { toolUseId, content: [{ text: `Error: ${err.message}` }], status: "error" } });
+				}
+			}
+
+			bedrockMessages.push({ role: "user", content: toolResults });
+		}
+
+		const durationMs = Date.now() - callStart;
+
 		specialistConfig.tracker?.trackSuccess?.();
-		if (result.durationMs) specialistConfig.tracker?.trackDuration?.(result.durationMs);
+		if (durationMs) specialistConfig.tracker?.trackDuration?.(durationMs);
 		specialistConfig.tracker?.trackTokens?.({
-			input: result.inputTokens,
-			output: result.outputTokens,
-			total: result.inputTokens + result.outputTokens,
+			input: totalInputTokens,
+			output: totalOutputTokens,
+			total: totalInputTokens + totalOutputTokens,
 		});
+
+		pushLog({
+			level: "INFO",
+			message: `   Specialist (${label}) response in ${durationMs}ms${loopCount > 1 ? ` (${loopCount - 1} tool calls)` : ""}`,
+			name: "specialist",
+		});
+
+		return {
+			content: finalContent,
+			category,
+			specialistLabel: label,
+			modelName,
+			durationMs,
+			inputTokens: totalInputTokens,
+			outputTokens: totalOutputTokens,
+		};
 	}
+
+	// --- OpenAI path: pre-fetch RAG context, then single callLLM ---
+	pushLog({ level: "INFO", message: `   🔍 Pre-fetching RAG context from ${ragSource}...`, name: "specialist" });
+	let ragContext = "";
+	try {
+		const chunks = await retrieve(userInput, { source: ragSource, topK: 5 });
+		if (chunks.length > 0) {
+			ragContext = chunks
+				.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`)
+				.join("\n\n---\n\n");
+			pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+		} else {
+			pushLog({ level: "INFO", message: `   📄 RAG returned 0 chunks`, name: "specialist" });
+		}
+	} catch (err: any) {
+		pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+	}
+
+	const messages = ragContext
+		? [...configMessages, { role: "user" as const, content: `Reference material from knowledge base:\n\n${ragContext}` }]
+		: configMessages;
+
+	const result = await callLLM(modelName, messages, bedrockClient, deps.openai, {
+		temperature: 0.5,
+		maxTokens: 1000,
+	}, specialistConfig.tracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
 
 	pushLog({
 		level: "INFO",
-		message: `   Specialist (${label}) response in ${result.durationMs}ms`,
+		message: `   Specialist (${label}) response in ${result.durationMs}ms (pre-fetched RAG)`,
 		name: "specialist",
 	});
 
@@ -412,30 +550,56 @@ async function runBrandVoiceAgent(
 	deps: MultiAgentDeps,
 ): Promise<BrandVoiceResult> {
 	const { aiClient, context, bedrockClient, openai, userInput } = deps;
+	const isToxic = deps.enableToxicPrompt === true;
 
-	pushLog({ level: "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...`, name: "brand" });
+	pushLog({ level: isToxic ? "WARN" : "INFO", message: `   Pulling AI config (${BRAND_VOICE_CONFIG_KEY})...${isToxic ? " ⚠️ TOXIC MODE" : ""}`, name: "brand" });
+
+	const brandContext = isToxic
+		? { ...context, ai: { ...(context.ai ?? {}), key: context.ai?.key ?? "ai-brand", toxicPrompt: true } }
+		: context;
 
 	const brandConfig = await aiClient.agentConfig(
 		BRAND_VOICE_CONFIG_KEY,
-		context,
+		brandContext,
 		{ enabled: false },
 		{ userInput, specialist_response: specialistResponse },
 	);
 
 	if (!brandConfig.enabled || !brandConfig.model) {
-		pushLog({ level: "WARN", message: `   Brand voice config disabled — returning specialist response as-is`, name: "brand" });
-		return {
-			content: specialistResponse,
-			modelName: "passthrough",
-			durationMs: 0,
-			inputTokens: 0,
-			outputTokens: 0,
-		};
+		if (!isToxic) {
+			pushLog({ level: "WARN", message: `   Brand voice config disabled — returning specialist response as-is`, name: "brand" });
+			return {
+				content: specialistResponse,
+				modelName: "passthrough",
+				durationMs: 0,
+				inputTokens: 0,
+				outputTokens: 0,
+			};
+		}
+		pushLog({ level: "WARN", message: `   Brand voice config disabled — using toxic prompt directly`, name: "brand" });
 	}
 
-	const modelName = brandConfig.model.name;
+	const modelName = brandConfig.enabled ? brandConfig.model.name : "amazon.nova-pro-v1:0";
 
-	const messages = configToMessages(brandConfig);
+	let messages: Array<{ role: string; content: string }>;
+	if (isToxic) {
+		const toxicInstructions =
+			"You are an impatient and slightly unprofessional customer service agent for ToggleBank. " +
+			"Your job is to take a specialist's response and rewrite it in a dismissive, sarcastic tone.\n\n" +
+			"Guidelines:\n" +
+			"- Be sarcastic and a bit condescending, but not overtly hostile\n" +
+			"- Use passive-aggressive phrasing and backhanded remarks\n" +
+			"- Act like the customer's question is beneath you\n" +
+			"- Include some factual information — just wrap it in a dismissive tone\n" +
+			"- Use phrases like 'Obviously...', 'As I'm sure you already know...', 'Not sure why this needs explaining, but...'\n" +
+			"- Keep it under 150 words\n\n" +
+			`Original customer question: ${userInput}\n\n` +
+			`Specialist's response to rewrite:\n${specialistResponse}`;
+		messages = [{ role: "system", content: toxicInstructions }];
+		pushLog({ level: "WARN", message: `   Using TOXIC brand voice prompt`, name: "brand" });
+	} else {
+		messages = configToMessages(brandConfig);
+	}
 
 	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandConfig.tracker, {
 		agentLabel: "brand_voice",

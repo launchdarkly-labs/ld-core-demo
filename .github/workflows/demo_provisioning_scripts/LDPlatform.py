@@ -288,7 +288,7 @@ class LDPlatform:
     # Create AI Config
     ##################################################
     
-    def create_ai_config(self, config_key, config_name, description, tags, mode=None):
+    def create_ai_config(self, config_key, config_name, description, tags, mode=None, evaluation_metric_key=None, is_inverted=None, default_variation=None):
         
         payload = {
             "description": description,
@@ -298,6 +298,12 @@ class LDPlatform:
         }
         if mode:
             payload["mode"] = mode
+        if evaluation_metric_key is not None:
+            payload["evaluationMetricKey"] = evaluation_metric_key
+        if is_inverted is not None:
+            payload["isInverted"] = is_inverted
+        if default_variation is not None:
+            payload["defaultVariation"] = default_variation
         
         headers = {
             "Content-Type": "application/json",
@@ -465,6 +471,43 @@ class LDPlatform:
                 data = json.loads(response.text)
                 if "message" in data:
                     print(f"Error attaching tools to {ai_config_key}/{variation_key}: {data['message']}")
+            except json.JSONDecodeError:
+                pass
+        return response
+
+    ##################################################
+    # Attach judge to AI Config variation
+    ##################################################
+    def attach_judge_to_variation(self, ai_config_key, variation_key, judge_config_key, sampling_rate=1.0):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/variations/"
+            + variation_key
+        )
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        payload = {
+            "judges": [
+                {
+                    "judgeConfigKey": judge_config_key,
+                    "samplingRate": sampling_rate
+                }
+            ]
+        }
+        response = self.getrequest("PATCH", url, json=payload, headers=headers)
+        if response.text.strip():
+            try:
+                data = json.loads(response.text)
+                if "message" in data:
+                    print(f"Error attaching judge to {ai_config_key}/{variation_key}: {data['message']}")
+                else:
+                    print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
             except json.JSONDecodeError:
                 pass
         return response
@@ -1660,6 +1703,8 @@ class LDPlatform:
             stagesWindow = 120960000
         elif days == 4:
             stagesWindow = 1800000  # 30 minutes per stage
+        elif days == 3:
+            stagesWindow = 900000  # 15 minutes per stage
 
         for v in vars:
             if v["value"] == False:
@@ -1861,6 +1906,32 @@ class LDPlatform:
             payload["comment"] = comment
 
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
+
+        # Log semantic patch result
+        try:
+            data = json.loads(res.text)
+            if "message" in data:
+                print(f"  [toggle_flag] Semantic patch for {flag_key}: {data['message']}")
+        except (json.JSONDecodeError, AttributeError):
+            print(f"  [toggle_flag] Semantic patch for {flag_key}: status {res.status_code}")
+
+        # Follow up with JSON Patch to directly set on/off state
+        on_value = flag_state == "on"
+        json_patch_headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        json_patch_payload = [
+            {"op": "replace", "path": "/environments/" + flag_env + "/on", "value": on_value}
+        ]
+        res2 = self.getrequest("PATCH", url, headers=json_patch_headers, json=json_patch_payload)
+        try:
+            data2 = json.loads(res2.text)
+            if "message" in data2:
+                print(f"  [toggle_flag] JSON patch for {flag_key}: {data2['message']}")
+        except (json.JSONDecodeError, AttributeError):
+            print(f"  [toggle_flag] JSON patch for {flag_key}: status {res2.status_code}")
+
         return res
 
     ##################################################
@@ -2202,6 +2273,41 @@ class LDPlatform:
             print("Error updating AI config targeting: " + data["message"])
         return response
     
+    ##################################################
+    # Add targeting rule to AI Config
+    ##################################################
+    def update_ai_config_targeting_add_rule(self, ai_config_key, environment_key, variation_id, clauses):
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+            + "/targeting"
+        )
+        headers = {
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        payload = {
+            "environmentKey": environment_key,
+            "instructions": [
+                {
+                    "kind": "addRule",
+                    "variationId": variation_id,
+                    "clauses": clauses
+                }
+            ]
+        }
+        response = self.getrequest("PATCH", url, headers=headers, json=payload)
+        try:
+            data = json.loads(response.text)
+            if "message" in data:
+                print(f"Error adding targeting rule to {ai_config_key}: {data['message']}")
+        except json.JSONDecodeError:
+            pass
+        return response
+
     ##################################################
     # Toggle AI Config
     ##################################################

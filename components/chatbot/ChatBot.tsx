@@ -48,6 +48,7 @@ type StreamMetrics = {
   sourceFidelity?: number;
   relevance?: number;
   accuracy?: number;
+  toxicity?: number;
   judge?: any;
   sourcePassageCount?: number;
 };
@@ -119,6 +120,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [tokens, setTokens] = useState<StreamTokens | null>(null);
   const [metrics, setMetrics] = useState<StreamMetrics | null>(null);
   const [modelType, setModelType] = useState<'bedrock' | 'openai' | null>(null);
+  const [agentModelName, setAgentModelName] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<ChatTab>("main");
   const [selfHealingMessages, setSelfHealingMessages] = useState<Message[]>([SELF_HEALING_INITIAL_MESSAGE]);
@@ -126,17 +128,17 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [selfHealingLoading, setSelfHealingLoading] = useState(false);
   const [selfHealingStatus, setSelfHealingStatus] = useState("");
   const [enableFallback, setEnableFallback] = useState(true);
+  const [enableToxicPrompt, setEnableToxicPrompt] = useState(false);
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const selfHealingEndRef = useRef<HTMLDivElement | null>(null);
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
   const hasSelfHealing = vertical === "banking";
 
-  // Function to determine model type from feature flag
+  // Function to determine model type from feature flag or agent response
   const getModelTypeFromFlag = (): 'bedrock' | 'openai' => {
-    if (aiNewModelChatbotFlag?.model?.name) {
-      const modelId = aiNewModelChatbotFlag.model.name;
-      // Check if it's a Bedrock model based on model name patterns
+    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+    if (modelId) {
       const bedrockPatterns = [
         'anthropic.claude',
         'amazon.titan',
@@ -265,7 +267,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         body: JSON.stringify({
           aiConfigKey,
           userInput,
-          chatHistory: updatedMessages.filter(msg => msg.role !== "assistant" || msg.id !== assistantMessageId), // Exclude the placeholder assistant message
+          chatHistory: updatedMessages.filter(msg => msg.role !== "assistant" || msg.id !== assistantMessageId),
+          enableToxicPrompt,
         }),
       });
   
@@ -329,6 +332,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               if (data?.tokens) setTokens(data.tokens);
               if (data?.metrics) setMetrics(data.metrics);
               if (data?.modelType) setModelType(data.modelType);
+              if (data?.agentModelName) setAgentModelName(data.agentModelName);
             }
           } catch (err) {
             console.error('Error parsing SSE data:', err, jsonStr);
@@ -538,9 +542,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const chatContentRef = useRef<HTMLDivElement | null>(null);
 
   const aiModelName = () => {
-    // Extract model name from the full model ID
-    if (aiNewModelChatbotFlag?.model?.name) {
-      const modelId = aiNewModelChatbotFlag.model.name;
+    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+    if (modelId) {
       
       // Map of model IDs to friendly names
       // Model name mapping, recognizes both with and without 'us.' prefix
@@ -578,6 +581,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.anthropic.claude-3-haiku-20240307-v1:0': 'Claude 3 Haiku',
         'anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
         'us.anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
+        'anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
+        'us.anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
         'anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
         'us.anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
 
@@ -828,6 +833,26 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 </div>
 
                 <TabsContent value="main" className="flex-1 flex flex-col overflow-hidden mt-0">
+                  <div className="flex items-center justify-between px-3 py-1.5 mx-4 mt-2 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">Toxic Prompt</span>
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400">{enableToxicPrompt ? "Brand voice is toxic" : "Brand voice is safe"}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newVal = !enableToxicPrompt;
+                        setEnableToxicPrompt(newVal);
+                        fetch("/api/logs/stream", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ message: newVal ? "*** Toxic prompt enabled ***" : "*** Toxic prompt disabled ***", level: newVal ? "guardrails-off" : "guardrails-on", name: "brand-voice" }),
+                        }).catch(() => {});
+                      }}
+                      className={`w-8 h-4 rounded-full transition-colors relative ${enableToxicPrompt ? 'bg-red-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+                    >
+                      <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableToxicPrompt ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </button>
+                  </div>
                   <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`} ref={chatContentRef}>
                     <div className="space-y-4">
                       <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
@@ -848,6 +873,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                                   <div className="flex items-center gap-1">
                                     <span className="font-semibold">Relevance:</span>
                                     <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Toxicity:</span>
+                                    <span className={(metrics?.toxicity ?? 0) > 0.5 ? "text-red-500 font-bold" : ""}>{(metrics?.toxicity ?? 0).toFixed(2)}</span>
                                   </div>
                                   {tokens && (
                                     <div className="flex items-center gap-1">
@@ -1166,6 +1195,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                                 <div className="flex items-center gap-1">
                                   <span className="font-semibold">Relevance:</span>
                                   <span>{(metrics?.relevance ?? 0).toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span className="font-semibold">Toxicity:</span>
+                                  <span className={(metrics?.toxicity ?? 0) > 0.5 ? "text-red-500 font-bold" : ""}>{(metrics?.toxicity ?? 0).toFixed(2)}</span>
                                 </div>
                                 {tokens && (
                                   <div className="flex items-center gap-1">
