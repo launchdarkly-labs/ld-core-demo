@@ -1832,6 +1832,15 @@ class DemoBuilder:
         }
         gpt5_mini_config_key = "OpenAI.gpt-5-mini"
 
+        sonnet_config = {
+            "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "parameters": {
+                "maxTokens": 1000,
+                "temperature": 0.5
+            }
+        }
+        sonnet_config_key = "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0"
+
         tags = ["ai-models", "ai-config", "multi-agent", "bank"]
 
         # -----------------------------------------------------------
@@ -1901,6 +1910,19 @@ class DemoBuilder:
             "ai-config--togglebot-triage", "haiku-triage",
             _tools("get-customer-context"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-triage",
+            "sonnet-triage",
+            sonnet_config_key,
+            "Sonnet 3.7 - Triage",
+            sonnet_config,
+            instructions=triage_instructions,
+            description="Premium triage agent using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-triage", "sonnet-triage",
+            _tools("get-customer-context"),
+        )
 
         # -----------------------------------------------------------
         # 2. Accounts Specialist
@@ -1968,6 +1990,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-accounts-specialist", "gpt5-mini-accounts",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-accounts-specialist",
+            "sonnet-accounts",
+            sonnet_config_key,
+            "Sonnet 3.7 - Accounts",
+            sonnet_config,
+            instructions=accounts_instructions,
+            description="Premium accounts specialist using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-accounts-specialist", "sonnet-accounts",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -2040,6 +2075,19 @@ class DemoBuilder:
             "ai-config--togglebot-loans-specialist", "gpt5-mini-loans",
             _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-loans-specialist",
+            "sonnet-loans",
+            sonnet_config_key,
+            "Sonnet 3.7 - Loans",
+            sonnet_config,
+            instructions=loans_instructions,
+            description="Premium loans specialist using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-loans-specialist", "sonnet-loans",
+            _tools("get-customer-context", "search-knowledge-base", "calculate-loan-payment"),
+        )
 
         # -----------------------------------------------------------
         # 4. Investments Specialist
@@ -2108,6 +2156,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-investments-specialist", "gpt5-mini-investments",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-investments-specialist",
+            "sonnet-investments",
+            sonnet_config_key,
+            "Sonnet 3.7 - Investments",
+            sonnet_config,
+            instructions=investments_instructions,
+            description="Premium investments specialist using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-investments-specialist", "sonnet-investments",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -2179,6 +2240,19 @@ class DemoBuilder:
             "ai-config--togglebot-transfers-specialist", "gpt5-mini-transfers",
             _tools("get-customer-context", "search-knowledge-base"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-transfers-specialist",
+            "sonnet-transfers",
+            sonnet_config_key,
+            "Sonnet 3.7 - Transfers",
+            sonnet_config,
+            instructions=transfers_instructions,
+            description="Premium transfers specialist using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-transfers-specialist", "sonnet-transfers",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
 
         # -----------------------------------------------------------
         # 6. Customer Support Specialist
@@ -2245,6 +2319,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-support-specialist", "gpt5-mini-support",
+            _tools("get-customer-context", "search-knowledge-base"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-support-specialist",
+            "sonnet-support",
+            sonnet_config_key,
+            "Sonnet 3.7 - Support",
+            sonnet_config,
+            instructions=support_instructions,
+            description="Premium support specialist using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-support-specialist", "sonnet-support",
             _tools("get-customer-context", "search-knowledge-base"),
         )
 
@@ -2347,6 +2434,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-brand-voice", "haiku-brand",
+            _tools("rewrite-response-for-channel"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-brand-voice",
+            "sonnet-brand",
+            sonnet_config_key,
+            "Sonnet 3.7 - Brand Voice",
+            sonnet_config,
+            instructions=brand_instructions,
+            description="Premium brand voice agent using Claude 3.7 Sonnet",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-brand-voice", "sonnet-brand",
             _tools("rewrite-response-for-channel"),
         )
 
