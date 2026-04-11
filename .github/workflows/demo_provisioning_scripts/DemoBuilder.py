@@ -1888,6 +1888,19 @@ class DemoBuilder:
             "ai-config--togglebot-triage", "gpt5-mini-triage",
             _tools("get-customer-context"),
         )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-triage",
+            "haiku-triage",
+            haiku_config_key,
+            "Haiku - Triage",
+            haiku_config,
+            instructions=triage_instructions,
+            description="Triage agent using Claude 3.5 Haiku",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-triage", "haiku-triage",
+            _tools("get-customer-context"),
+        )
 
         # -----------------------------------------------------------
         # 2. Accounts Specialist
@@ -2321,6 +2334,19 @@ class DemoBuilder:
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-brand-voice", "gpt5-mini-brand",
+            _tools("rewrite-response-for-channel"),
+        )
+        self.ldproject.create_ai_config_versions(
+            "ai-config--togglebot-brand-voice",
+            "haiku-brand",
+            haiku_config_key,
+            "Haiku - Brand Voice",
+            haiku_config,
+            instructions=brand_instructions,
+            description="Brand voice agent using Claude 3.5 Haiku",
+        )
+        self.ldproject.patch_variation_tools(
+            "ai-config--togglebot-brand-voice", "haiku-brand",
             _tools("rewrite-response-for-channel"),
         )
 
