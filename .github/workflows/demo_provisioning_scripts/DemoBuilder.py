@@ -312,6 +312,7 @@ class DemoBuilder:
         self.run_ecommerce_shorten_collection_funnel_experiment()
         self.run_ecommerce_new_search_engine_feature_experiment()
         self.run_togglebank_ai_config_experiment()
+        self.run_togglebank_brand_voice_model_experiment()
         self.run_togglebank_signup_funnel_experiment()
         self.run_togglebank_special_offers_experiment()
         self.run_togglebank_widget_position_experiment()
@@ -485,6 +486,36 @@ class DemoBuilder:
             "production",
             "ai-config--togglebot",
             "This experiment evaluates different AI models for their performance in preventing hallucinations and maintaining response quality. We measure accuracy, source fidelity, relevance, cost efficiency, and user feedback to determine which model configuration provides the most reliable and trustworthy responses while maintaining cost effectiveness.",
+            metrics=metrics,
+            primary_key="ai-accuracy",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_brand_voice_model_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        print(" - Brand Voice Model Comparison: Multi-Agent Prompt Impact")
+        self.create_togglebank_brand_voice_model_experiment()
+        self.ldproject.start_exp_iteration("brand-voice-model-comparison", "production")
+        self.experiment_created = True
+
+    def create_togglebank_brand_voice_model_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-accuracy", False),
+            self.ldproject.exp_metric("ai-source-fidelity", False),
+            self.ldproject.exp_metric("ai-relevance", False),
+            self.ldproject.exp_metric("ai-cost", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "brand-voice-model-comparison",
+            "Brand Voice Model Comparison: Multi-Agent Prompt Impact",
+            "production",
+            "ai-config--togglebot-brand-voice",
+            "This experiment compares four AI models (Nova Pro, Haiku, GPT-5 Mini, Sonnet 3.7) powering the Brand Voice agent in our multi-agent pipeline. We measure accuracy, source fidelity, relevance, cost, and user feedback to determine which model delivers the best brand-consistent responses while balancing quality and cost.",
             metrics=metrics,
             primary_key="ai-accuracy",
             attributes=["device", "location", "tier", "operating_system"],
