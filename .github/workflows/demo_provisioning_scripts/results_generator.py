@@ -536,6 +536,86 @@ def hallucination_detection_experiment_results_generator(client):
             continue
     logging.info("Hallucination detection experiment results generation for ai-config--togglebot completed")
 
+def brand_voice_model_experiment_results_generator(client):
+    LD_FEATURE_FLAG_KEY = "ai-config--togglebot-brand-voice"
+    AI_ACCURACY_KEY = "ai-accuracy"
+    AI_SOURCE_FIDELITY_KEY = "ai-source-fidelity"
+    AI_RELEVANCE_KEY = "ai-relevance"
+    AI_COST_KEY = "ai-cost"
+    AI_CHATBOT_NEGATIVE_FEEDBACK_KEY = "ai-chatbot-negative-feedback"
+    NUM_USERS = 7500
+
+    MODEL_PROFILES = {
+        "sonnet": {
+            "accuracy": (91, 96),
+            "source_fidelity": (86, 92),
+            "relevance": (90, 96),
+            "cost": (0.35, 0.55),
+            "negative_feedback_rate": 0.05,
+        },
+        "nova": {
+            "accuracy": (87, 93),
+            "source_fidelity": (83, 89),
+            "relevance": (86, 92),
+            "cost": (0.10, 0.25),
+            "negative_feedback_rate": 0.08,
+        },
+        "haiku": {
+            "accuracy": (85, 91),
+            "source_fidelity": (81, 87),
+            "relevance": (84, 90),
+            "cost": (0.15, 0.30),
+            "negative_feedback_rate": 0.09,
+        },
+        "gpt": {
+            "accuracy": (84, 90),
+            "source_fidelity": (80, 86),
+            "relevance": (83, 89),
+            "cost": (0.08, 0.18),
+            "negative_feedback_rate": 0.11,
+        },
+    }
+
+    DEFAULT_PROFILE = MODEL_PROFILES["nova"]
+
+    logging.info("Starting brand voice model experiment results generation...")
+
+    for i in range(NUM_USERS):
+        try:
+            user_context = generate_user_context()
+            variation = client.variation(LD_FEATURE_FLAG_KEY, user_context, None)
+
+            model_name = ""
+            if variation and hasattr(variation, "model") and variation.model:
+                model_name = variation.model.get("name", "").lower()
+
+            profile = DEFAULT_PROFILE
+            for key, prof in MODEL_PROFILES.items():
+                if key in model_name:
+                    profile = prof
+                    break
+
+            accuracy = random.uniform(*profile["accuracy"])
+            source_fidelity = random.uniform(*profile["source_fidelity"])
+            relevance = random.uniform(*profile["relevance"])
+            cost = random.uniform(*profile["cost"])
+
+            client.track(AI_ACCURACY_KEY, user_context, None, accuracy)
+            client.track(AI_SOURCE_FIDELITY_KEY, user_context, None, source_fidelity)
+            client.track(AI_RELEVANCE_KEY, user_context, None, relevance)
+            client.track(AI_COST_KEY, user_context, None, cost)
+
+            if random.random() < profile["negative_feedback_rate"]:
+                client.track(AI_CHATBOT_NEGATIVE_FEEDBACK_KEY, user_context)
+
+            if (i + 1) % 100 == 0:
+                logging.info(f"Processed {i + 1} users for brand voice model experiment")
+                client.flush()
+        except Exception as e:
+            logging.error(f"Error processing user {i}: {str(e)}")
+            continue
+    logging.info("Brand voice model experiment results generation completed")
+
 def togglebank_signup_funnel_experiment_results_generator(client):
     LD_FEATURE_FLAG_KEY = "releaseNewSignupPromo"
     SIGNUP_STARTED_KEY = "signup-started"
@@ -1148,6 +1228,7 @@ def generate_results(project_key, api_key):
         hero_image_experiment_results_generator(client)  # showDifferentHeroImageString
         hero_redesign_experiment_results_generator(client)  # showHeroRedesign
         hallucination_detection_experiment_results_generator(client)  # ai-config--togglebot
+        brand_voice_model_experiment_results_generator(client)  # ai-config--togglebot-brand-voice
         togglebank_signup_funnel_experiment_results_generator(client)  # releaseNewSignupPromo
         
         # New experiment generators
