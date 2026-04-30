@@ -513,6 +513,78 @@ class LDPlatform:
         return response
 
     ##################################################
+    # Upload Dataset for Playgrounds / Offline Evaluations
+    ##################################################
+
+    def upload_dataset(self, dataset_name, csv_content, filename=None):
+        """Upload a CSV dataset for Playground offline evaluations.
+
+        Two-step flow:
+          1. POST to /internal/projects/{key}/datasets to create the record
+             and obtain a pre-signed S3 upload URL.
+          2. PUT the raw CSV bytes to that URL.
+
+        Args:
+            dataset_name: Human-readable name shown in the Datasets tab.
+            csv_content: The CSV file content as a string.
+            filename: Optional filename (defaults to dataset_name + '.csv').
+
+        Returns:
+            The dataset ID on success, or None on failure.
+        """
+        if filename is None:
+            filename = dataset_name.replace(" ", "_") + ".csv"
+
+        csv_bytes = csv_content.encode("utf-8")
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+
+        payload = {
+            "name": dataset_name,
+            "filename": filename,
+            "format": "csv",
+            "size_bytes": len(csv_bytes),
+        }
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/datasets",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating dataset '{dataset_name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        dataset_id = data.get("datasetId")
+        upload_info = data.get("upload", {})
+        upload_url = upload_info.get("uploadUrl")
+        upload_method = upload_info.get("uploadMethod", "PUT")
+        upload_headers = upload_info.get("uploadHeaders", {"Content-Type": "text/csv"})
+
+        if not upload_url:
+            print(f"Error: No upload URL returned for dataset '{dataset_name}'")
+            return None
+
+        upload_resp = requests.request(
+            upload_method,
+            upload_url,
+            data=csv_bytes,
+            headers=upload_headers,
+        )
+
+        if upload_resp.status_code in (200, 204):
+            print(f"Uploaded dataset: {dataset_name} ({len(csv_bytes)} bytes, {csv_content.count(chr(10))} rows)")
+            return dataset_id
+        else:
+            print(f"Error uploading CSV to S3 for '{dataset_name}': {upload_resp.status_code}")
+            return None
+
+    ##################################################
     # Create AI Agent
     ##################################################
     

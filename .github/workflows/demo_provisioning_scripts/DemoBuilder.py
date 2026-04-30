@@ -266,6 +266,7 @@ class DemoBuilder:
         self.create_custom_financial_models()
         self.create_togglebank_financial_advisor_agent()
         self.setup_llm_as_judge_ai_config()
+        self.upload_playground_datasets()
         print("Done")
         self.ai_config_created = True
         
@@ -2534,6 +2535,40 @@ class DemoBuilder:
             edges,
             root_config_key="ai-config--togglebot-triage",
         )
+
+    def upload_playground_datasets(self):
+        """Upload evaluation datasets for Playgrounds / offline evaluations."""
+        print("Uploading Playground datasets...")
+
+        datasets_dir = os.path.join(os.path.dirname(__file__), "datasets")
+
+        dataset_files = {
+            "ToggleBank Triage Agent Eval": "triage_agent_eval.csv",
+            "ToggleBank Accounts Specialist Eval": "accounts_specialist_eval.csv",
+            "ToggleBank Loans Specialist Eval": "loans_specialist_eval.csv",
+            "ToggleBank Investments Specialist Eval": "investments_specialist_eval.csv",
+            "ToggleBank Transfers Specialist Eval": "transfers_specialist_eval.csv",
+            "ToggleBank Support Specialist Eval": "support_specialist_eval.csv",
+            "ToggleBank Brand Voice Eval": "brand_voice_eval.csv",
+        }
+
+        for dataset_name, filename in dataset_files.items():
+            filepath = os.path.join(datasets_dir, filename)
+            if not os.path.exists(filepath):
+                print(f"  Warning: dataset file not found: {filepath}")
+                continue
+
+            with open(filepath, "r", encoding="utf-8") as f:
+                csv_content = f.read()
+
+            dataset_id = self.ldproject.upload_dataset(dataset_name, csv_content, filename)
+            if dataset_id:
+                print(f"  ✓ {dataset_name} (id: {dataset_id})")
+            else:
+                print(f"  ✗ Failed to upload {dataset_name}")
+            time.sleep(1)
+
+        print("Playground datasets upload complete.")
 
     def create_llm_as_judge_ai_config(self):
         res = self.ldproject.create_ai_config(
