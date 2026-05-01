@@ -118,6 +118,17 @@ interface LDTool {
 	parameters?: Record<string, unknown>;
 }
 
+function resolveToolsFromConfig(config: any): Record<string, LDTool> {
+	if (config.tools && typeof config.tools === "object" && Object.keys(config.tools).length > 0) {
+		return config.tools;
+	}
+	const paramTools = config.model?.parameters?.tools;
+	if (paramTools && typeof paramTools === "object" && Object.keys(paramTools).length > 0) {
+		return paramTools as Record<string, LDTool>;
+	}
+	return {};
+}
+
 function ldToolsToBedrockToolSpecs(tools: Record<string, LDTool>): any[] {
 	return Object.entries(tools).map(([key, tool]) => {
 		const schema = tool.parameters ?? {};
@@ -415,7 +426,7 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const modelName = triageConfig.model.name;
 	pushLog({ level: "INFO", message: `   Model: ${modelName}`, name: "triage" });
 
-	const triageTools: Record<string, LDTool> = triageConfig.tools ?? {};
+	const triageTools: Record<string, LDTool> = resolveToolsFromConfig(triageConfig);
 	const triageToolNames = Object.keys(triageTools);
 	if (triageToolNames.length > 0) {
 		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${triageToolNames.join(", ")}`, name: "triage" });
@@ -512,8 +523,7 @@ async function runSpecialistAgent(
 	const modelName = specialistConfig.model.name;
 	const useBedrock = isBedrockModel(modelName);
 
-	// Read tools from the LD AI Config — this is what LaunchDarkly provides
-	const ldTools: Record<string, LDTool> = specialistConfig.tools ?? {};
+	const ldTools: Record<string, LDTool> = resolveToolsFromConfig(specialistConfig);
 	const toolNames = Object.keys(ldTools);
 	if (toolNames.length > 0) {
 		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${toolNames.join(", ")}`, name: "specialist" });
@@ -705,7 +715,7 @@ async function runBrandVoiceAgent(
 
 	const modelName = brandConfig.enabled ? brandConfig.model.name : "amazon.nova-pro-v1:0";
 
-	const brandTools: Record<string, LDTool> = brandConfig.tools ?? {};
+	const brandTools: Record<string, LDTool> = resolveToolsFromConfig(brandConfig);
 	const brandToolNames = Object.keys(brandTools);
 	if (brandToolNames.length > 0) {
 		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${brandToolNames.join(", ")}`, name: "brand" });
