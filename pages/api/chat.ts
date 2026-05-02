@@ -278,7 +278,7 @@ Is there a specific service you'd like to know more about?`;
 						try { parsed = JSON.parse(text.slice(start, end + 1)); } catch {}
 					}
 					const score = typeof parsed?.score === 'number' ? parsed.score : (typeof parsed?.toxicity_score === 'number' ? parsed.toxicity_score : 0);
-					toxConfig.tracker?.trackSuccess?.();
+					toxConfig.createTracker?.()?.trackSuccess?.();
 					return score;
 				}
 			} catch (e) {
@@ -501,7 +501,7 @@ Is there a specific service you'd like to know more about?`;
 				throw new Error("AI config messages are undefined or empty");
 			}
 
-			const { tracker } = aiConfig;
+			const tracker = aiConfig.createTracker?.();
 			pushLog({ level: "INFO", message: `📥 Pulled AI config from LaunchDarkly (${aiConfigKey})`, name: "chat" });
 			pushLog({ level: "INFO", message: `   Model: ${aiConfig.model.name}`, name: "chat" });
 
@@ -614,7 +614,7 @@ Is there a specific service you'd like to know more about?`;
 				const totalTokens = totalInputTokens + totalOutputTokens;
 
 				const timeToFirstToken = Date.now() - startTime;
-				tracker.trackTimeToFirstToken(timeToFirstToken);
+				tracker?.trackTimeToFirstToken?.(timeToFirstToken);
 
 				// Send the final response to the client
 				res.write(`data: ${JSON.stringify({ chunk: fullResponse, done: false })}\n\n`);
@@ -624,10 +624,10 @@ Is there a specific service you'd like to know more about?`;
 					output: totalOutputTokens,
 					total: totalTokens,
 				};
-				tracker.trackTokens?.(tokens);
+				tracker?.trackTokens?.(tokens);
 
 		const totalTime = Date.now() - startTime;
-		tracker.trackDuration?.(totalTime);
+		tracker?.trackDuration?.(totalTime);
 
 		pushLog({ level: "INFO", message: `   Response in ${totalTime}ms · ${totalInputTokens} in / ${totalOutputTokens} out tokens`, name: "chat" });
 
@@ -737,11 +737,11 @@ Is there a specific service you'd like to know more about?`;
 				res.end();
 
 				pushLog({ level: "INFO", message: `✅ Chat complete · cost: $${responseCost}`, name: "chat" });
-				tracker.trackSuccess();
+				tracker?.trackSuccess?.();
 			} catch (error: any) {
 				console.error("Error sending request to Bedrock:", error);
 				pushLog({ level: "ERROR", message: `❌ LLM error: ${error?.message ?? "Unknown error"}`, name: "chat" });
-				tracker.trackError();
+				tracker?.trackError?.();
 				const errorObj = error instanceof Error ? error : new Error(error?.message || "Unknown error");
 				await recordErrorToLD(
 					errorObj,

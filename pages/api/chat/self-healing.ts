@@ -317,8 +317,11 @@ export default async function selfHealingChat(
 
       const trackedChat = chat as unknown as TrackedChatWithInternals;
       const internalConfig = trackedChat.aiConfig;
-      const tracker = trackedChat.tracker;
       const judges = trackedChat.judges || {};
+
+      const chatConfig = (chat as any).getConfig?.();
+      const tracker = chatConfig?.createTracker?.();
+      const trackData = tracker?.getTrackData?.();
 
       if (internalConfig && internalConfig.enabled === false) {
         sendSSE({ error: "AI config is disabled", done: true });
@@ -326,15 +329,10 @@ export default async function selfHealingChat(
         return;
       }
 
-      let finalModelName = "unknown";
-      if (tracker && tracker._modelName) {
-        finalModelName = tracker._modelName;
-      } else if (internalConfig?.model?.name) {
-        finalModelName = internalConfig.model.name;
-      }
+      let finalModelName = trackData?.modelName || internalConfig?.model?.name || "unknown";
 
-      if (tracker && typeof tracker._variationKey === "string") {
-        const variationKey = tracker._variationKey;
+      const variationKey = trackData?.variationKey;
+      if (variationKey) {
         if (variationKey.includes("good-prompt")) finalModelName = "GPT Good Prompt";
         else if (variationKey.includes("bad-prompt")) finalModelName = "GPT Test Prompt";
         else finalModelName = variationKey;
@@ -396,14 +394,8 @@ export default async function selfHealingChat(
       judgeScoresBefore = beforeResult.scores;
       if (beforeResult.hasUndefined) hasUndefinedEvalResults = true;
 
-      const isBadPrompt =
-        tracker &&
-        typeof tracker._variationKey === "string" &&
-        tracker._variationKey.includes("bad-prompt");
-      const isGoodPrompt =
-        tracker &&
-        typeof tracker._variationKey === "string" &&
-        tracker._variationKey.includes("good-prompt");
+      const isBadPrompt = typeof variationKey === "string" && variationKey.includes("bad-prompt");
+      const isGoodPrompt = typeof variationKey === "string" && variationKey.includes("good-prompt");
 
       if (isBadPrompt) {
         const validScores: number[] = [];
@@ -456,12 +448,13 @@ export default async function selfHealingChat(
           const { model: fallbackModel } = fallbackConfig;
           finalModelName = fallbackModel?.name || finalModelName;
 
-          const fallbackTracker = fallbackConfig.tracker as unknown as TrackerWithInternals;
-          if (fallbackTracker && typeof fallbackTracker._variationKey === "string") {
-            const variationKey = fallbackTracker._variationKey;
-            if (variationKey.includes("good-prompt")) finalModelName = "GPT Good Prompt";
-            else if (variationKey.includes("bad-prompt")) finalModelName = "GPT Test Prompt";
-            else finalModelName = variationKey;
+          const fallbackTracker = fallbackConfig.createTracker?.();
+          const fallbackTrackData = fallbackTracker?.getTrackData?.();
+          const fallbackVariationKey = fallbackTrackData?.variationKey;
+          if (fallbackVariationKey) {
+            if (fallbackVariationKey.includes("good-prompt")) finalModelName = "GPT Good Prompt";
+            else if (fallbackVariationKey.includes("bad-prompt")) finalModelName = "GPT Test Prompt";
+            else finalModelName = fallbackVariationKey;
           }
 
           const fallbackChat = await (aiClient as any).createChat(

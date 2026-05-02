@@ -443,16 +443,16 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 		} catch {}
 	}
 
+	const triageTracker = triageConfig.createTracker?.();
 	const result = await callLLM(modelName, messages, bedrockClient, openai, {
 		temperature: 0,
 		maxTokens: 256,
-	}, triageConfig.tracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
+	}, triageTracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
 
-	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
 	if (isBedrockModel(modelName)) {
-		triageConfig.tracker?.trackSuccess?.();
-		if (result.durationMs) triageConfig.tracker?.trackDuration?.(result.durationMs);
-		triageConfig.tracker?.trackTokens?.({
+		triageTracker?.trackSuccess?.();
+		if (result.durationMs) triageTracker?.trackDuration?.(result.durationMs);
+		triageTracker?.trackTokens?.({
 			input: result.inputTokens,
 			output: result.outputTokens,
 			total: result.inputTokens + result.outputTokens,
@@ -532,6 +532,7 @@ async function runSpecialistAgent(
 
 	const configMessages = configToMessages(specialistConfig);
 	const toolCtx: ToolContext = { userInput, ragSource, ldContext: context };
+	const specialistTracker = specialistConfig.createTracker?.();
 
 	if (useBedrock) {
 		// --- Bedrock path: tool-use loop with tools from LD AI Config ---
@@ -602,9 +603,9 @@ async function runSpecialistAgent(
 
 		const durationMs = Date.now() - callStart;
 
-		specialistConfig.tracker?.trackSuccess?.();
-		if (durationMs) specialistConfig.tracker?.trackDuration?.(durationMs);
-		specialistConfig.tracker?.trackTokens?.({
+		specialistTracker?.trackSuccess?.();
+		if (durationMs) specialistTracker?.trackDuration?.(durationMs);
+		specialistTracker?.trackTokens?.({
 			input: totalInputTokens,
 			output: totalOutputTokens,
 			total: totalInputTokens + totalOutputTokens,
@@ -660,7 +661,7 @@ async function runSpecialistAgent(
 	const result = await callLLM(modelName, messages, bedrockClient, deps.openai, {
 		temperature: 0.5,
 		maxTokens: 1000,
-	}, specialistConfig.tracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
+	}, specialistTracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
 
 	pushLog({
 		level: "INFO",
@@ -741,16 +742,16 @@ async function runBrandVoiceAgent(
 		messages = configToMessages(brandConfig);
 	}
 
-	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandConfig.tracker, {
+	const brandTracker = brandConfig.createTracker?.();
+	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandTracker, {
 		agentLabel: "brand_voice",
 		requestHeaders: deps.requestHeaders,
 	});
 
-	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
 	if (isBedrockModel(modelName)) {
-		brandConfig.tracker?.trackSuccess?.();
-		if (result.durationMs) brandConfig.tracker?.trackDuration?.(result.durationMs);
-		brandConfig.tracker?.trackTokens?.({
+		brandTracker?.trackSuccess?.();
+		if (result.durationMs) brandTracker?.trackDuration?.(result.durationMs);
+		brandTracker?.trackTokens?.({
 			input: result.inputTokens,
 			output: result.outputTokens,
 			total: result.inputTokens + result.outputTokens,
