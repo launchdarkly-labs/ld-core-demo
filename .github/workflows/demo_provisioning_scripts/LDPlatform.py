@@ -26,6 +26,47 @@ class LDPlatform:
         self.user_id = self.get_user_id(email)
         self._fetch_member_me()
 
+    def _extract_account_id(self, data):
+        if not isinstance(data, dict):
+            return None
+        for key in ("_accountId", "accountId", "account_id"):
+            val = data.get(key)
+            if val:
+                return str(val)
+        acc = data.get("account")
+        if isinstance(acc, dict):
+            for key in ("_id", "id", "key"):
+                val = acc.get(key)
+                if val:
+                    return str(val)
+        return None
+
+    def _fetch_account_id_fallbacks(self):
+        if self.account_id:
+            return
+        try:
+            if self.user_id:
+                res = requests.get(
+                    f"https://app.launchdarkly.com/api/v2/members/{self.user_id}",
+                    headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+                )
+                if res.status_code == 200:
+                    self.account_id = self._extract_account_id(res.json())
+        except Exception as e:
+            print(f"Warning: GET /api/v2/members/{{id}} failed: {e}")
+        if self.account_id:
+            return
+        try:
+            res = requests.get(
+                "https://app.launchdarkly.com/api/v2/account",
+                headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+            )
+            if res.status_code == 200:
+                data = res.json()
+                self.account_id = self._extract_account_id(data) or (str(data["_id"]) if data.get("_id") else None)
+        except Exception:
+            pass
+
     def _fetch_member_me(self):
         try:
             res = requests.get(
@@ -34,13 +75,14 @@ class LDPlatform:
             )
             if res.status_code == 200:
                 data = res.json()
-                self.account_id = data.get("_accountId")
+                self.account_id = self._extract_account_id(data)
                 if not self.user_id:
                     self.user_id = data.get("_id")
             else:
                 print(f"Warning: /api/v2/members/me returned {res.status_code}")
         except Exception as e:
             print(f"Warning: Failed to fetch /api/v2/members/me: {e}")
+        self._fetch_account_id_fallbacks()
 
     def getrequest(self, method, url, json=None, headers=None):
 
@@ -123,6 +165,10 @@ class LDPlatform:
             return
 
         self.project_internal_id = data.get("_id")
+        if not self.account_id:
+            aid = self._extract_account_id(data)
+            if aid:
+                self.account_id = aid
 
         # Extract environment information
         for e in data["environments"]:
@@ -1391,7 +1437,11 @@ class LDPlatform:
         if data["totalCount"] == 0:
             return "6502137e3310e112c47aeb92"
 
-        self.user_id = data["items"][0]["_id"]
+        item = data["items"][0]
+        self.user_id = item["_id"]
+        aid = self._extract_account_id(item)
+        if aid:
+            self.account_id = aid
         return self.user_id
 
     ##################################################
@@ -1407,6 +1457,11 @@ class LDPlatform:
         data = json.loads(res.text)
         if "message" in data:
             return False
+        self.project_internal_id = data.get("_id") or self.project_internal_id
+        if not self.account_id:
+            aid = self._extract_account_id(data)
+            if aid:
+                self.account_id = aid
         return True
     
     ##################################################
