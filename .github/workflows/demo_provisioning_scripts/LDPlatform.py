@@ -14,6 +14,8 @@ class LDPlatform:
     client_id = ""
     sdk_key = ""
     user_id = None
+    account_id = None
+    project_internal_id = None
 
     ##################################################
     # Constructor
@@ -22,6 +24,23 @@ class LDPlatform:
         self.api_key = api_key
         self.api_key_user = api_key_user
         self.user_id = self.get_user_id(email)
+        self._fetch_member_me()
+
+    def _fetch_member_me(self):
+        try:
+            res = requests.get(
+                "https://app.launchdarkly.com/api/v2/members/me",
+                headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+            )
+            if res.status_code == 200:
+                data = res.json()
+                self.account_id = data.get("_accountId")
+                if not self.user_id:
+                    self.user_id = data.get("_id")
+            else:
+                print(f"Warning: /api/v2/members/me returned {res.status_code}")
+        except Exception as e:
+            print(f"Warning: Failed to fetch /api/v2/members/me: {e}")
 
     def getrequest(self, method, url, json=None, headers=None):
 
@@ -102,6 +121,8 @@ class LDPlatform:
             print(f"Response status: {response.status_code}")
             print(f"Response: {response.text[:500]}...")
             return
+
+        self.project_internal_id = data.get("_id")
 
         # Extract environment information
         for e in data["environments"]:
@@ -513,16 +534,19 @@ class LDPlatform:
         return response
 
     ##################################################
-    # Upload Dataset for Playgrounds / Offline Evaluations
+    # Upload dataset for Playgrounds/Offline Evals
     ##################################################
 
     def upload_dataset(self, dataset_name, csv_content, filename=None):
         """Upload a CSV dataset for Playground offline evaluations.
 
         Two-step flow:
-          1. POST to /internal/projects/{key}/datasets to create the record
+          1. POST to /private/projects/{key}/datasets to create the record
              and obtain a pre-signed S3 upload URL.
           2. PUT the raw CSV bytes to that URL.
+
+        Requires account_id, user_id, and project_internal_id to be set
+        (fetched from /api/v2/members/me and project creation).
 
         Args:
             dataset_name: Human-readable name shown in the Datasets tab.
@@ -532,6 +556,10 @@ class LDPlatform:
         Returns:
             The dataset ID on success, or None on failure.
         """
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for dataset upload (account={self.account_id}, member={self.user_id}, project={self.project_internal_id})")
+            return None
+
         if filename is None:
             filename = dataset_name.replace(" ", "_") + ".csv"
 
@@ -540,6 +568,9 @@ class LDPlatform:
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
         }
 
         payload = {
@@ -550,7 +581,7 @@ class LDPlatform:
         }
 
         response = requests.post(
-            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/datasets",
+            f"https://app.launchdarkly.com/private/projects/{self.project_key}/datasets",
             json=payload,
             headers=headers,
         )
