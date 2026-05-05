@@ -267,6 +267,7 @@ class DemoBuilder:
         self.create_togglebank_financial_advisor_agent()
         self.setup_llm_as_judge_ai_config()
         self.upload_playground_datasets()
+        self.create_playgrounds()
         print("Done")
         self.ai_config_created = True
         
@@ -2552,6 +2553,7 @@ class DemoBuilder:
             "ToggleBank Brand Voice Eval": "brand_voice_eval.csv",
         }
 
+        uploaded_datasets = {}
         for dataset_name, filename in dataset_files.items():
             filepath = os.path.join(datasets_dir, filename)
             if not os.path.exists(filepath):
@@ -2564,11 +2566,180 @@ class DemoBuilder:
             dataset_id = self.ldproject.upload_dataset(dataset_name, csv_content, filename)
             if dataset_id:
                 print(f"  ✓ {dataset_name} (id: {dataset_id})")
+                uploaded_datasets[dataset_name] = dataset_id
             else:
                 print(f"  ✗ Failed to upload {dataset_name}")
             time.sleep(1)
 
         print("Playground datasets upload complete.")
+        return uploaded_datasets
+
+    def create_playgrounds(self):
+        """Create Evaluations and Playgrounds for each agent so SEs just click Run."""
+        print("Creating Playgrounds...")
+
+        default_criteria = [
+            {"criterionType": "accuracy"},
+            {"criterionType": "relevance"},
+            {"criterionType": "coherence"},
+        ]
+
+        agents = [
+            {
+                "name": "Triage Agent",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are a banking query classifier for ToggleBank. "
+                        "Classify the customer's query into exactly one category.\n\n"
+                        "Categories:\n"
+                        "- accounts: Checking/savings accounts, balances, transactions, account management\n"
+                        "- loans_credit: Personal loans, home mortgages, auto loans, credit cards\n"
+                        "- investments: Portfolio management, retirement planning, stocks, bonds\n"
+                        "- transfers: Wire transfers, online transfers, bill payments, money movement\n"
+                        "- customer_support: General questions, technical issues, complaints\n\n"
+                        "Return ONLY a JSON object: "
+                        "{\"category\": \"<key>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Accounts Specialist",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Accounts Specialist with expertise in checking accounts, "
+                        "savings accounts, money market accounts, CDs, account fees, and transaction history.\n\n"
+                        "Answer the customer's question thoroughly and accurately. "
+                        "Keep your response factual, helpful, and under 200 words."
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Loans & Credit Specialist",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Loans & Credit Specialist with expertise in personal loans, "
+                        "home mortgages, auto loans, credit cards, interest rates, and payment schedules.\n\n"
+                        "Answer the customer's question thoroughly and accurately. "
+                        "Keep your response factual, helpful, and under 200 words."
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Investments Specialist",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Investment Services Specialist with expertise in portfolio management, "
+                        "retirement planning (401k, IRA), stocks, bonds, mutual funds, and wealth management.\n\n"
+                        "Answer the customer's question thoroughly and accurately. "
+                        "Remind customers that past performance doesn't guarantee future results. "
+                        "Keep your response factual, helpful, and under 200 words."
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Transfers Specialist",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Digital Banking & Transfers Specialist with expertise in "
+                        "wire transfers, ACH transfers, Zelle, bill pay, and mobile deposits.\n\n"
+                        "Answer the customer's question thoroughly and accurately. "
+                        "Include relevant details about transfer limits, processing times, and fees. "
+                        "Keep your response factual, helpful, and under 200 words."
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Customer Support Specialist",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Customer Support Specialist. You handle general banking questions, "
+                        "technical support, account inquiries, complaints, and miscellaneous questions.\n\n"
+                        "Answer the customer's question thoroughly and accurately. Be empathetic and solution-oriented. "
+                        "Keep your response factual, helpful, and under 200 words."
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+            {
+                "name": "Brand Voice",
+                "provider": "Bedrock",
+                "model": "amazon.nova-pro-v1:0",
+                "judge_provider": "OpenAI",
+                "judge_model": "gpt-5-mini",
+                "messages": [
+                    {"role": "system", "content": (
+                        "You are ToggleBank's Brand Voice editor. Rewrite the specialist's response "
+                        "to match ToggleBank's warm, professional, and approachable brand voice.\n\n"
+                        "Guidelines:\n"
+                        "- Address the customer directly using \"you\" / \"your\"\n"
+                        "- Be concise and clear — avoid jargon\n"
+                        "- Maintain ALL factual content from the original response\n"
+                        "- Do NOT add any information that wasn't in the original response"
+                    )},
+                    {"role": "user", "content": "{{ input }}"},
+                ],
+            },
+        ]
+
+        for agent in agents:
+            eval_name = f"ToggleBank {agent['name']} Eval"
+            playground_name = f"ToggleBank {agent['name']} Playground"
+
+            eval_id = self.ldproject.create_evaluation(
+                name=eval_name,
+                generation_provider=agent["provider"],
+                generation_model=agent["model"],
+                messages=agent["messages"],
+                criteria=default_criteria,
+                evaluation_provider=agent["judge_provider"],
+                evaluation_model=agent["judge_model"],
+                parameters={"maxTokens": 1000, "temperature": 0.5},
+            )
+
+            if not eval_id:
+                print(f"  ✗ Failed to create evaluation for {agent['name']}")
+                continue
+
+            print(f"  ✓ Evaluation: {eval_name} (id: {eval_id})")
+
+            playground_id = self.ldproject.create_playground(playground_name, [eval_id])
+            if playground_id:
+                print(f"  ✓ Playground: {playground_name} (id: {playground_id})")
+            else:
+                print(f"  ✗ Failed to create playground for {agent['name']}")
+
+            time.sleep(1)
+
+        print("Playgrounds creation complete.")
 
     def create_llm_as_judge_ai_config(self):
         res = self.ldproject.create_ai_config(

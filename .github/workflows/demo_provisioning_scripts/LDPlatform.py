@@ -661,6 +661,98 @@ class LDPlatform:
             return None
 
     ##################################################
+    # Create Evaluation (for Playgrounds)
+    ##################################################
+
+    def create_evaluation(self, name, generation_provider, generation_model,
+                          messages=None, criteria=None, evaluation_provider=None,
+                          evaluation_model=None, variables=None, parameters=None):
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for evaluation creation")
+            return None
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
+        }
+
+        payload = {
+            "name": name,
+            "generationProvider": generation_provider,
+            "generationModel": generation_model,
+        }
+        if messages is not None:
+            payload["messages"] = messages
+        if criteria is not None:
+            payload["criteria"] = criteria
+        if evaluation_provider is not None:
+            payload["evaluationProvider"] = evaluation_provider
+        if evaluation_model is not None:
+            payload["evaluationModel"] = evaluation_model
+        if variables is not None:
+            payload["variables"] = variables
+        if parameters is not None:
+            payload["parameters"] = parameters
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/evaluations",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating evaluation '{name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        eval_id = data.get("id")
+        return eval_id
+
+    ##################################################
+    # Create Playground
+    ##################################################
+
+    def create_playground(self, name, evaluation_ids):
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for playground creation")
+            return None
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
+        }
+
+        variants = [
+            {"evaluationId": eid, "position": idx}
+            for idx, eid in enumerate(evaluation_ids)
+        ]
+
+        payload = {
+            "name": name,
+            "variants": variants,
+        }
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/playgrounds",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating playground '{name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        playground_id = data.get("id")
+        return playground_id
+
+    ##################################################
     # Create AI Agent
     ##################################################
     
