@@ -587,12 +587,11 @@ class LDPlatform:
         """Upload a CSV dataset for Playground offline evaluations.
 
         Two-step flow:
-          1. POST to /private/projects/{key}/datasets to create the record
+          1. POST to /internal/projects/{key}/datasets to create the record
              and obtain a pre-signed S3 upload URL.
           2. PUT the raw CSV bytes to that URL.
 
-        Requires account_id, user_id, and project_internal_id to be set
-        (fetched from /api/v2/members/me and project creation).
+        Requires account_id, user_id, project_internal_id and X-Ld-* headers.
 
         Args:
             dataset_name: Human-readable name shown in the Datasets tab.
@@ -627,7 +626,7 @@ class LDPlatform:
         }
 
         response = requests.post(
-            f"https://app.launchdarkly.com/private/projects/{self.project_key}/datasets",
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/datasets",
             json=payload,
             headers=headers,
         )
