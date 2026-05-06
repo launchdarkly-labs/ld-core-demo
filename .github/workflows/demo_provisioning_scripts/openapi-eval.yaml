@@ -1,0 +1,3457 @@
+openapi: 3.1.0
+info:
+  title: AI Evaluator API
+  version: 0.1.0
+paths:
+  /projects/{projKey}/datasets:
+    post:
+      tags:
+      - datasets
+      summary: Create Dataset
+      operationId: createDataset
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatasetRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - datasets
+      summary: List Datasets
+      operationId: listDatasets
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Page Size
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/datasets/{dataset_id}:
+    get:
+      tags:
+      - datasets
+      summary: Get Dataset
+      operationId: getDataset
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Dataset Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetMetadataResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - datasets
+      summary: Update a dataset
+      description: Update a dataset's name and/or description. Both fields are optional;
+        at least one must be provided.
+      operationId: patchDataset
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Dataset Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDatasetRequest'
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - datasets
+      summary: Delete Dataset Route
+      description: 'Permanently delete a dataset and its file from S3.
+
+
+        The dataset must not be referenced by any evaluation runs. Invalid datasetId
+
+        returns 400; not found returns 404; in use returns 409. Success returns 204.'
+      operationId: deleteDataset
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Conflict
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/datasets/{dataset_id}/upload-url:
+    post:
+      tags:
+      - datasets
+      summary: Request New Dataset Upload Url
+      operationId: requestNewDatasetUploadUrl
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Dataset Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetUploadInstructions'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Conflict
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/datasets/{dataset_id}/file:
+    get:
+      tags:
+      - datasets
+      summary: Download Dataset File Route
+      description: 'Generate a short-lived presigned URL for downloading the raw dataset
+        file
+
+        (CSV or JSONL) from S3.'
+      operationId: downloadDatasetFileRoute
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Dataset Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetFileDownloadResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Conflict
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/datasets/{dataset_id}/preview:
+    get:
+      tags:
+      - datasets
+      summary: Preview dataset rows
+      description: Preview the dataset rows that would be selected for a given row
+        selection configuration without creating an evaluation run.
+      operationId: previewDatasetRows
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: mode
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/RowSelectionMode'
+          description: 'Row selection mode: "all" (every row), "top" (first N rows),
+            "random" (random sample).'
+        description: 'Row selection mode: "all" (every row), "top" (first N rows),
+          "random" (random sample).'
+      - name: value
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: 'Selection size. Required when mode is top or random. Interpretation
+            depends on unit: a fraction in (0, 1] for percent (e.g. 0.1 = 10%) or
+            a positive integer for count.'
+          title: Value
+        description: 'Selection size. Required when mode is top or random. Interpretation
+          depends on unit: a fraction in (0, 1] for percent (e.g. 0.1 = 10%) or a
+          positive integer for count.'
+      - name: unit
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/RowSelectionUnit'
+          - type: 'null'
+          description: How to interpret value. Required when mode is top or random.
+          title: Unit
+        description: How to interpret value. Required when mode is top or random.
+      - name: seed
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Optional integer seed for deterministic random sampling.
+          title: Seed
+        description: Optional integer seed for deterministic random sampling.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetPreviewResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/datasets/{dataset_id}/errors:
+    get:
+      tags:
+      - datasets
+      summary: List Dataset Errors
+      description: 'Return dataset upload/validation errors for this dataset.
+
+
+        Results are ordered by `created_at` DESC (newest first).'
+      operationId: listDatasetErrors
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Dataset Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetUploadErrorItem'
+                title: Response Listdataseterrors
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Forbidden
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+          description: Internal Server Error
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations:
+    get:
+      tags:
+      - evaluations
+      summary: List evaluations
+      description: Lists all evaluation definitions in a project with pagination support.
+        Returns active evaluations by default, or can filter by archived state. Optional
+        search matches evaluation names (case-insensitive substring). sortBy=lastRun
+        orders by newest run start time (run createdAt); evaluations without runs
+        sort after those with runs.
+      operationId: listEvaluations
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Case-insensitive substring search on evaluation name.
+          title: Search
+        description: Case-insensitive substring search on evaluation name.
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EvaluationListSortByQuery'
+          - type: 'null'
+          description: 'updatedAt (default): sort by latest revision updatedAt. lastRun:
+            sort by the evaluation''s most recently created run.'
+          title: Sortby
+        description: 'updatedAt (default): sort by latest revision updatedAt. lastRun:
+          sort by the evaluation''s most recently created run.'
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - evaluations
+      summary: Create an AI evaluation
+      description: Create a new AI evaluation and return it.
+      operationId: postEvaluation
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/runs:
+    get:
+      tags:
+      - evaluations
+      summary: List evaluation runs
+      description: Returns evaluation runs across all evaluations, newest-first. Supports
+        offset-based pagination, optional dataset filtering, and case-insensitive
+        search on evaluation name, generation provider/model, evaluation provider/model,
+        dataset name, and dataset filename.
+      operationId: listRuns
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: datasetId
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter runs to a specific dataset by ID.
+          title: Datasetid
+        description: Filter runs to a specific dataset by ID.
+      - name: hasDataset
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: Filter by dataset presence. true returns only runs with a dataset,
+            false returns only runs without a dataset. Omit for all runs.
+          title: Hasdataset
+        description: Filter by dataset presence. true returns only runs with a dataset,
+          false returns only runs without a dataset. Omit for all runs.
+      - name: filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Case-insensitive substring search on evaluation name, model
+            names, dataset name, and dataset filename.
+          title: Filter
+        description: Case-insensitive substring search on evaluation name, model names,
+          dataset name, and dataset filename.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      - name: expand
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Comma-separated list of related resources to inline. Supported:
+            playground.'
+          title: Expand
+        description: 'Comma-separated list of related resources to inline. Supported:
+          playground.'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunDetailListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}:
+    get:
+      tags:
+      - evaluations
+      summary: Get evaluation
+      description: Retrieve a specific evaluation by ID. Omit the version query parameter
+        to return the latest revision; set version to fetch a specific revision.
+      operationId: getEvaluation
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: version
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Evaluation revision to return; omit for the latest version.
+          title: Version
+        description: Evaluation revision to return; omit for the latest version.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - evaluations
+      summary: Update an AI evaluation
+      description: Update an existing evaluation definition. All fields are optional;
+        include state to archive or unarchive the evaluation.
+      operationId: patchEvaluation
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}/runs:
+    post:
+      tags:
+      - evaluation-runs
+      summary: Create an evaluation run
+      description: Create a new run of an evaluation by its ID.
+      operationId: createEvaluationRun
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationRunCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunItem'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - evaluation-runs
+      summary: List evaluation runs
+      description: Returns all runs for a given evaluation, newest-first.
+      operationId: listEvaluationRuns
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: evaluationVersion
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Evaluationversion
+      - name: datasetId
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasetid
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: After
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}/runs/{run_id}:
+    get:
+      tags:
+      - evaluation-runs
+      summary: Get evaluation run
+      description: Retrieve a specific evaluation run by ID.
+      operationId: getEvaluationRun
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunItem'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}/runs/{run_id}/cancel:
+    post:
+      tags:
+      - evaluation-runs
+      summary: Cancel an evaluation run
+      description: Cancel a running evaluation. Already-terminal runs cannot be cancelled.
+      operationId: cancelEvaluationRun
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}/runs/{run_id}/rows:
+    get:
+      tags:
+      - evaluation-runs
+      summary: List evaluation run results
+      description: Returns paginated results for an evaluation run.
+      operationId: listEvaluationRunResults
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunResultsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/evaluations/{evaluation_id}/runs/{run_id}/summary:
+    get:
+      tags:
+      - evaluation-runs
+      summary: Get evaluation run progress summary
+      description: Returns a polling-safe, pre-aggregated rollup for an evaluation
+        run.
+      operationId: getEvaluationRunSummary
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: evaluation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Evaluation Id
+      - name: run_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Run Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationRunSummaryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/playgrounds:
+    get:
+      tags:
+      - playgrounds
+      summary: List playgrounds
+      description: List all playgrounds in a project with pagination support. Returns
+        active playgrounds by default, or can filter by archived status. Optional
+        search matches playground names (case-insensitive substring).
+      operationId: listPlaygrounds
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Case-insensitive substring search on playground name.
+          title: Search
+        description: Case-insensitive substring search on playground name.
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/PlaygroundListSortByQuery'
+          - type: 'null'
+          description: 'updatedAt (default): sort by updatedAt. createdAt: sort by
+            creation time.'
+          title: Sortby
+        description: 'updatedAt (default): sort by updatedAt. createdAt: sort by creation
+          time.'
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - playgrounds
+      summary: Create a playground
+      description: Create a new playground and return it.
+      operationId: postPlayground
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaygroundCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /projects/{projKey}/playgrounds/{playground_id}:
+    get:
+      tags:
+      - playgrounds
+      summary: Get playground
+      description: Retrieve a specific playground by ID.
+      operationId: getPlayground
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: playground_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Playground Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - playgrounds
+      summary: Update a playground
+      description: Update a playground's name, variants, or archived status.
+      operationId: patchPlayground
+      parameters:
+      - name: projKey
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Projkey
+      - name: playground_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Playground Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaygroundPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaygroundResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CreateDatasetRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          minLength: 1
+          title: Name
+        filename:
+          anyOf:
+          - type: string
+            maxLength: 256
+            minLength: 1
+          - type: 'null'
+          title: Filename
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+        format:
+          type: string
+          title: Format
+        source_uri:
+          anyOf:
+          - type: string
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Source Uri
+        size_bytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size Bytes
+      type: object
+      required:
+      - name
+      - format
+      title: CreateDatasetRequest
+    CriterionResultMeta:
+      properties:
+        usage:
+          anyOf:
+          - $ref: '#/components/schemas/CriterionResultUsage'
+          - type: 'null'
+      type: object
+      title: CriterionResultMeta
+      description: Metadata for a criterion evaluation result.
+    CriterionResultUsage:
+      properties:
+        inputTokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Inputtokens
+        outputTokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Outputtokens
+        totalTokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Totaltokens
+        latencyMs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Latencyms
+      type: object
+      title: CriterionResultUsage
+      description: Token usage details for a criterion evaluation.
+    CriterionSummary:
+      properties:
+        criterionType:
+          type: string
+          title: Criteriontype
+        criterionThreshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Criterionthreshold
+        criterionPassRateThreshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Criterionpassratethreshold
+        verdictCounts:
+          $ref: '#/components/schemas/VerdictCounts'
+        score:
+          $ref: '#/components/schemas/FloatStats'
+        latencyMs:
+          $ref: '#/components/schemas/IntStats'
+        tokens:
+          $ref: '#/components/schemas/TokenStats'
+      type: object
+      required:
+      - criterionType
+      - verdictCounts
+      title: CriterionSummary
+    DatasetFileDownloadResponse:
+      properties:
+        url:
+          type: string
+          title: Url
+        expiresAt:
+          type: string
+          format: date-time
+          title: Expiresat
+        filename:
+          type: string
+          title: Filename
+        contentType:
+          type: string
+          title: Contenttype
+      type: object
+      required:
+      - url
+      - expiresAt
+      - filename
+      - contentType
+      title: DatasetFileDownloadResponse
+    DatasetListItem:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        filename:
+          type: string
+          title: Filename
+        contentType:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contenttype
+        blobUri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bloburi
+        datasetHash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasethash
+        rowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowcount
+        status:
+          type: string
+          enum:
+          - pending
+          - ready
+          - failed
+          title: Status
+          default: pending
+        createdBy:
+          type: string
+          title: Createdby
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+        sizeBytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sizebytes
+      type: object
+      required:
+      - id
+      - name
+      - filename
+      - createdBy
+      - createdAt
+      - updatedAt
+      title: DatasetListItem
+    DatasetListResponse:
+      properties:
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetListItem'
+          type: array
+          title: Datasets
+        totalCount:
+          type: integer
+          title: Totalcount
+        page:
+          type: integer
+          title: Page
+        pageSize:
+          type: integer
+          title: Pagesize
+      type: object
+      required:
+      - totalCount
+      - page
+      - pageSize
+      title: DatasetListResponse
+    DatasetMetadataLite:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+      type: object
+      required:
+      - id
+      title: DatasetMetadataLite
+      description: Minimal dataset summary for embedding in other responses.
+    DatasetMetadataResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        filename:
+          type: string
+          title: Filename
+        contentType:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contenttype
+        blobUri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bloburi
+        datasetHash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasethash
+        rowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowcount
+        status:
+          type: string
+          enum:
+          - pending
+          - ready
+          - failed
+          title: Status
+          default: pending
+        createdBy:
+          type: string
+          title: Createdby
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+        sizeBytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sizebytes
+      type: object
+      required:
+      - id
+      - name
+      - filename
+      - createdBy
+      - createdAt
+      - updatedAt
+      title: DatasetMetadataResponse
+    DatasetPreviewResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DatasetPreviewRowItem'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        selectedRowCount:
+          type: integer
+          title: Selectedrowcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - totalCount
+      - selectedRowCount
+      - _links
+      title: DatasetPreviewResponse
+      description: Paginated preview of dataset rows matching a row selection.
+    DatasetPreviewRowItem:
+      properties:
+        rowIndex:
+          type: integer
+          title: Rowindex
+        input:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Input
+        expectedOutput:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Expectedoutput
+        variables:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Variables
+        metadata:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Metadata
+      type: object
+      required:
+      - rowIndex
+      title: DatasetPreviewRowItem
+      description: A single dataset row included in the preview.
+    DatasetResponse:
+      properties:
+        datasetId:
+          type: string
+          format: uuid
+          title: Datasetid
+        name:
+          type: string
+          title: Name
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filename
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        format:
+          type: string
+          enum:
+          - csv
+          - jsonl
+          title: Format
+        status:
+          type: string
+          enum:
+          - pending
+          - ready
+          - failed
+          title: Status
+          default: pending
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+        sizeBytes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Sizebytes
+        upload:
+          anyOf:
+          - $ref: '#/components/schemas/DatasetUploadInstructions'
+          - type: 'null'
+      type: object
+      required:
+      - datasetId
+      - name
+      - format
+      title: DatasetResponse
+    DatasetUploadErrorItem:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        errorMessage:
+          type: string
+          title: Errormessage
+        errorDetails:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Errordetails
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+      type: object
+      required:
+      - id
+      - errorMessage
+      - createdAt
+      title: DatasetUploadErrorItem
+    DatasetUploadInstructions:
+      properties:
+        uploadUrl:
+          type: string
+          minLength: 1
+          format: uri
+          title: Uploadurl
+        uploadMethod:
+          type: string
+          const: PUT
+          title: Uploadmethod
+          default: PUT
+        uploadHeaders:
+          additionalProperties:
+            type: string
+          type: object
+          title: Uploadheaders
+        expiresAt:
+          type: string
+          format: date-time
+          title: Expiresat
+      type: object
+      required:
+      - uploadUrl
+      - expiresAt
+      title: DatasetUploadInstructions
+    ErrorSchema:
+      properties:
+        code:
+          type: string
+          title: Code
+        message:
+          type: string
+          title: Message
+      additionalProperties: false
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorSchema
+      description: 'OpenAPI schema definition for error responses.
+
+
+        Do not instantiate directly. To return errors, raise exceptions
+
+        from `app.api.exceptions` (e.g., NotFoundError) instead.'
+    EvaluationCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        messages:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Message'
+            type: array
+          - type: 'null'
+          title: Messages
+        variables:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Variables
+        generationContext:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Generationcontext
+        generationProvider:
+          type: string
+          title: Generationprovider
+        generationModel:
+          type: string
+          title: Generationmodel
+        parameters:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Parameters
+        criteria:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EvaluationCriterionInput'
+            type: array
+          - type: 'null'
+          title: Criteria
+        evaluationProvider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationprovider
+        evaluationModel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationmodel
+      type: object
+      required:
+      - name
+      - generationProvider
+      - generationModel
+      title: EvaluationCreate
+    EvaluationCriterion:
+      properties:
+        criterionType:
+          type: string
+          title: Criteriontype
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - criterionType
+      title: EvaluationCriterion
+      description: A criterion used to evaluate AI-generated content.
+    EvaluationCriterionInput:
+      properties:
+        criterionType:
+          type: string
+          title: Criteriontype
+        options:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Options
+      type: object
+      required:
+      - criterionType
+      title: EvaluationCriterionInput
+    EvaluationCriterionResult:
+      properties:
+        criterionType:
+          type: string
+          title: Criteriontype
+        criterionThreshold:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Criterionthreshold
+        verdict:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Verdict
+        score:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Score
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        meta:
+          anyOf:
+          - $ref: '#/components/schemas/CriterionResultMeta'
+          - type: 'null'
+      type: object
+      required:
+      - criterionType
+      title: EvaluationCriterionResult
+      description: Result of a single criterion evaluation.
+    EvaluationListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EvaluationResponse'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - items
+      - totalCount
+      - _links
+      title: EvaluationListResponse
+    EvaluationListSortByQuery:
+      type: string
+      enum:
+      - updatedAt
+      - lastRun
+      title: EvaluationListSortByQuery
+      description: Accepted ``sortBy`` query values for ``GET .../evaluations``.
+    EvaluationLite:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        version:
+          type: integer
+          title: Version
+        name:
+          type: string
+          title: Name
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+          title: Messages
+        generationProvider:
+          type: string
+          title: Generationprovider
+        generationModel:
+          type: string
+          title: Generationmodel
+        evaluationProvider:
+          type: string
+          title: Evaluationprovider
+        evaluationModel:
+          type: string
+          title: Evaluationmodel
+      type: object
+      required:
+      - id
+      - version
+      - name
+      - generationProvider
+      - generationModel
+      - evaluationProvider
+      - evaluationModel
+      title: EvaluationLite
+      description: Minimal evaluation summary for embedding in other responses.
+    EvaluationPatch:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        messages:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Message'
+            type: array
+          - type: 'null'
+          title: Messages
+        variables:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Variables
+        generationContext:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Generationcontext
+        generationProvider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generationprovider
+        generationModel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generationmodel
+        parameters:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Parameters
+        criteria:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EvaluationCriterionInput'
+            type: array
+          - type: 'null'
+          title: Criteria
+        evaluationProvider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationprovider
+        evaluationModel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationmodel
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+      type: object
+      title: EvaluationPatch
+    EvaluationResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        version:
+          type: integer
+          title: Version
+        name:
+          type: string
+          title: Name
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+          title: Messages
+        variables:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Variables
+        generationContext:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Generationcontext
+        generationProvider:
+          type: string
+          title: Generationprovider
+        generationModel:
+          type: string
+          title: Generationmodel
+        createdAt:
+          type: integer
+          title: Createdat
+          description: Unix timestamp in milliseconds
+        updatedAt:
+          type: integer
+          title: Updatedat
+          description: Unix timestamp in milliseconds
+        archivedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Archivedat
+          description: Unix timestamp in milliseconds
+        parameters:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Parameters
+        criteria:
+          items:
+            $ref: '#/components/schemas/EvaluationCriterion'
+          type: array
+          title: Criteria
+        evaluationProvider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationprovider
+        evaluationModel:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluationmodel
+      type: object
+      required:
+      - id
+      - version
+      - name
+      - generationProvider
+      - generationModel
+      - createdAt
+      - updatedAt
+      title: EvaluationResponse
+      description: Response model for a single AI evaluation.
+    EvaluationRunCreate:
+      properties:
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        datasetId:
+          anyOf:
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Datasetid
+        playgroundId:
+          anyOf:
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Playgroundid
+        rowSelectionMode:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - top
+            - random
+          - type: 'null'
+          title: Rowselectionmode
+        rowSelectionValue:
+          anyOf:
+          - type: number
+          - type: integer
+          - type: 'null'
+          title: Rowselectionvalue
+        rowSelectionUnit:
+          anyOf:
+          - type: string
+            enum:
+            - percent
+            - count
+          - type: 'null'
+          title: Rowselectionunit
+        rowSelectionSeed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowselectionseed
+      type: object
+      title: EvaluationRunCreate
+      description: Request body for creating evaluation run.
+    EvaluationRunDetailItem:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+        evaluation:
+          $ref: '#/components/schemas/EvaluationLite'
+        dataset:
+          anyOf:
+          - $ref: '#/components/schemas/DatasetMetadataLite'
+          - type: 'null'
+        playground:
+          anyOf:
+          - $ref: '#/components/schemas/PlaygroundResponse'
+          - type: 'null'
+        createdAt:
+          type: integer
+          title: Createdat
+        completedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Completedat
+        state:
+          $ref: '#/components/schemas/EvaluationRunStatus'
+        statusReason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statusreason
+        rowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowcount
+        selectedRowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Selectedrowcount
+        completedCount:
+          type: integer
+          title: Completedcount
+          default: 0
+        failedCount:
+          type: integer
+          title: Failedcount
+          default: 0
+      type: object
+      required:
+      - id
+      - evaluation
+      - createdAt
+      - state
+      title: EvaluationRunDetailItem
+      description: An evaluation run enriched with evaluation and dataset context.
+    EvaluationRunDetailListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EvaluationRunDetailItem'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - totalCount
+      - _links
+      title: EvaluationRunDetailListResponse
+      description: Paginated list of evaluation runs with evaluation context.
+    EvaluationRunItem:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+        datasetId:
+          anyOf:
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Datasetid
+        playgroundId:
+          anyOf:
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Playgroundid
+        evaluationId:
+          type: string
+          format: uuid4
+          title: Evaluationid
+        evaluationVersion:
+          type: integer
+          title: Evaluationversion
+        createdAt:
+          type: integer
+          title: Createdat
+        evaluatedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Evaluatedat
+        expiresAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expiresat
+        state:
+          $ref: '#/components/schemas/EvaluationRunStatus'
+        statusReason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statusreason
+        rowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowcount
+        selectedRowCount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Selectedrowcount
+        rowSelectionMode:
+          anyOf:
+          - type: string
+            enum:
+            - all
+            - top
+            - random
+          - type: 'null'
+          title: Rowselectionmode
+        rowSelectionValue:
+          anyOf:
+          - type: number
+          - type: integer
+          - type: 'null'
+          title: Rowselectionvalue
+        rowSelectionUnit:
+          anyOf:
+          - type: string
+            enum:
+            - percent
+            - count
+          - type: 'null'
+          title: Rowselectionunit
+        rowSelectionSeed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowselectionseed
+      type: object
+      required:
+      - id
+      - evaluationId
+      - evaluationVersion
+      - createdAt
+      - state
+      title: EvaluationRunItem
+      description: API response model for a single evaluation run.
+    EvaluationRunListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EvaluationRunItem'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - items
+      - totalCount
+      - _links
+      title: EvaluationRunListResponse
+    EvaluationRunResultItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        accountId:
+          type: string
+          title: Accountid
+        projectId:
+          type: string
+          title: Projectid
+        projectKey:
+          type: string
+          title: Projectkey
+        evaluationId:
+          type: string
+          title: Evaluationid
+        evaluationVersion:
+          type: integer
+          title: Evaluationversion
+        evaluationRunId:
+          type: string
+          title: Evaluationrunid
+        datasetId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasetid
+        rowIndex:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Rowindex
+        input:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Input
+        expectedOutput:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Expectedoutput
+        variables:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Variables
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        context:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Context
+        status:
+          type: string
+          title: Status
+        errorCode:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Errorcode
+        errorMessage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Errormessage
+        generationOutput:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Generationoutput
+        generationLatencyMs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Generationlatencyms
+        generationInputTokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Generationinputtokens
+        generationOutputTokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Generationoutputtokens
+        results:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EvaluationCriterionResult'
+            type: array
+          - type: 'null'
+          title: Results
+        generatedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Generatedat
+        evaluatedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Evaluatedat
+        createdAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Createdat
+      type: object
+      required:
+      - id
+      - accountId
+      - projectId
+      - projectKey
+      - evaluationId
+      - evaluationVersion
+      - evaluationRunId
+      - status
+      title: EvaluationRunResultItem
+      description: 'A single result from an evaluation run.
+
+        Contains all data from the ClickHouse evaluation_results table,
+
+        including input/output fields, generation results, and criterion
+
+        evaluation results.'
+    EvaluationRunResultsResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EvaluationRunResultItem'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - totalCount
+      - _links
+      title: EvaluationRunResultsResponse
+      description: 'Paginated response containing evaluation run results.
+
+        Uses offset-based pagination with limit and offset query parameters.'
+    EvaluationRunStatus:
+      type: string
+      enum:
+      - PENDING
+      - GENERATED
+      - EVALUATED
+      - COMPLETE
+      - CANCELLED
+      - TEMPORARY_ERROR
+      - PERMANENT_ERROR
+      title: EvaluationRunStatus
+    EvaluationRunSummaryResponse:
+      properties:
+        evaluationId:
+          type: string
+          title: Evaluationid
+        evaluationVersion:
+          type: integer
+          title: Evaluationversion
+        evaluationRunId:
+          type: string
+          title: Evaluationrunid
+        datasetId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datasetid
+        statusCounts:
+          $ref: '#/components/schemas/StatusCounts'
+        generationLatencyMs:
+          $ref: '#/components/schemas/IntStats'
+        generationTokens:
+          $ref: '#/components/schemas/TokenStats'
+        criterionSummaries:
+          items:
+            $ref: '#/components/schemas/CriterionSummary'
+          type: array
+          title: Criterionsummaries
+        generatedAt:
+          $ref: '#/components/schemas/TimestampRange'
+        evaluatedAt:
+          $ref: '#/components/schemas/TimestampRange'
+        elapsedWindowMs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Elapsedwindowms
+        avgRowElapsedMs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Avgrowelapsedms
+        estimatedRemainingWindowMs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Estimatedremainingwindowms
+        createdAt:
+          type: integer
+          title: Createdat
+      type: object
+      required:
+      - evaluationId
+      - evaluationVersion
+      - evaluationRunId
+      - statusCounts
+      - createdAt
+      title: EvaluationRunSummaryResponse
+    FloatStats:
+      properties:
+        avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Avg
+        p50:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: P50
+        p95:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: P95
+        min:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Min
+        max:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Max
+      type: object
+      title: FloatStats
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Href:
+      properties:
+        href:
+          type: string
+          title: Href
+      type: object
+      required:
+      - href
+      title: Href
+    IntStats:
+      properties:
+        avg:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Avg
+        p50:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: P50
+        p95:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: P95
+        min:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min
+        max:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+      type: object
+      title: IntStats
+    Links:
+      properties:
+        self:
+          $ref: '#/components/schemas/Href'
+        next:
+          anyOf:
+          - $ref: '#/components/schemas/Href'
+          - type: 'null'
+        prev:
+          anyOf:
+          - $ref: '#/components/schemas/Href'
+          - type: 'null'
+        first:
+          anyOf:
+          - $ref: '#/components/schemas/Href'
+          - type: 'null'
+        last:
+          anyOf:
+          - $ref: '#/components/schemas/Href'
+          - type: 'null'
+      type: object
+      required:
+      - self
+      title: Links
+    Message:
+      properties:
+        role:
+          type: string
+          title: Role
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+      - role
+      - content
+      title: Message
+      description: A message in the AI evaluation prompt chain.
+    PatchDatasetRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 128
+            minLength: 1
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 512
+          - type: 'null'
+          title: Description
+      type: object
+      title: PatchDatasetRequest
+      description: Request body for updating a dataset's name and/or description.
+    PlaygroundCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        variants:
+          items:
+            $ref: '#/components/schemas/PlaygroundVariantSchema'
+          type: array
+          title: Variants
+      type: object
+      required:
+      - name
+      - variants
+      title: PlaygroundCreate
+    PlaygroundListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PlaygroundResponse'
+          type: array
+          title: Items
+        totalCount:
+          type: integer
+          title: Totalcount
+        _links:
+          $ref: '#/components/schemas/Links'
+      type: object
+      required:
+      - items
+      - totalCount
+      - _links
+      title: PlaygroundListResponse
+      description: Paginated list of playgrounds.
+    PlaygroundListSortByQuery:
+      type: string
+      enum:
+      - updatedAt
+      - createdAt
+      title: PlaygroundListSortByQuery
+      description: Accepted ``sortBy`` query values for ``GET .../playgrounds``.
+    PlaygroundPatch:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        variants:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PlaygroundVariantSchema'
+            type: array
+          - type: 'null'
+          title: Variants
+        archived:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Archived
+      type: object
+      title: PlaygroundPatch
+      description: Request body for PATCH /playgrounds/{playground_id}.
+    PlaygroundResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        variants:
+          items:
+            $ref: '#/components/schemas/PlaygroundVariantSchema'
+          type: array
+          title: Variants
+        createdBy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Createdby
+          description: The member who created the playground
+        createdAt:
+          type: integer
+          title: Createdat
+          description: Unix timestamp in milliseconds
+        updatedAt:
+          type: integer
+          title: Updatedat
+          description: Unix timestamp in milliseconds
+        archivedAt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Archivedat
+          description: Unix timestamp in milliseconds
+      type: object
+      required:
+      - id
+      - name
+      - variants
+      - createdAt
+      - updatedAt
+      title: PlaygroundResponse
+      description: Response model for a single playground.
+    PlaygroundVariantSchema:
+      properties:
+        evaluationId:
+          type: string
+          format: uuid
+          title: Evaluationid
+        position:
+          type: integer
+          title: Position
+      type: object
+      required:
+      - evaluationId
+      - position
+      title: PlaygroundVariantSchema
+    RowSelectionMode:
+      type: string
+      enum:
+      - all
+      - top
+      - random
+      title: RowSelectionMode
+    RowSelectionUnit:
+      type: string
+      enum:
+      - percent
+      - count
+      title: RowSelectionUnit
+    StatusCounts:
+      properties:
+        total:
+          type: integer
+          title: Total
+        passed:
+          type: integer
+          title: Passed
+        failed:
+          type: integer
+          title: Failed
+        error:
+          type: integer
+          title: Error
+        pending:
+          type: integer
+          title: Pending
+      type: object
+      required:
+      - total
+      - passed
+      - failed
+      - error
+      - pending
+      title: StatusCounts
+    TimestampRange:
+      properties:
+        min:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min
+        max:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max
+      type: object
+      title: TimestampRange
+    TokenStats:
+      properties:
+        input:
+          $ref: '#/components/schemas/IntStats'
+        output:
+          $ref: '#/components/schemas/IntStats'
+        total:
+          $ref: '#/components/schemas/IntStats'
+      type: object
+      title: TokenStats
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VerdictCounts:
+      properties:
+        total:
+          type: integer
+          title: Total
+        passed:
+          type: integer
+          title: Passed
+        failed:
+          type: integer
+          title: Failed
+        pending:
+          type: integer
+          title: Pending
+      type: object
+      required:
+      - total
+      - passed
+      - failed
+      - pending
+      title: VerdictCounts

@@ -2580,8 +2580,8 @@ class DemoBuilder:
 
         default_criteria = [
             {"criterionType": "accuracy"},
-            {"criterionType": "relevance"},
-            {"criterionType": "coherence"},
+            {"criterionType": "answer_relevancy"},
+            {"criterionType": "likeness"},
         ]
 
         agents = [
