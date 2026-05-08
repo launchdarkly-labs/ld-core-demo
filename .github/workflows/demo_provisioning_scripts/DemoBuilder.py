@@ -2863,6 +2863,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
 
+        # Step 1: Create the judge AI config (without inline variation)
         self.ldproject.create_ai_config(
             "toxicity-judge",
             "Toxicity Judge - ToggleBank",
@@ -2871,28 +2872,31 @@ class DemoBuilder:
             mode="judge",
             evaluation_metric_key="$ld:ai:judge:toxicity",
             is_inverted=True,
-            default_variation={
-                "key": "openai-toxicity",
-                "name": "OpenAI - Toxicity Judge",
-                "modelConfigKey": "OpenAI.gpt-5-mini",
-                "model": {
-                    "modelName": "gpt-5-mini",
-                    "parameters": {
-                        "maxTokens": 300,
-                        "temperature": 0.0
-                    }
-                },
-                "provider": {
-                    "name": "openai"
-                },
-                "messages": [
-                    {"content": toxicity_prompt, "role": "system"},
-                    {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
-                ]
-            }
         )
 
+        # Step 2: Add the OpenAI variation
         time.sleep(1)
+        self.ldproject.create_ai_config_versions(
+            "toxicity-judge",
+            "openai-toxicity",
+            "OpenAI.gpt-5-mini",
+            "OpenAI - Toxicity Judge",
+            {
+                "modelName": "gpt-5-mini",
+                "parameters": {
+                    "maxTokens": 300,
+                    "temperature": 0.0
+                }
+            },
+            messages=[
+                {"content": toxicity_prompt, "role": "system"},
+                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+            ]
+        )
+
+        time.sleep(2)
+
+        # Step 3: Toggle on and set targeting
         self.ldproject.toggle_flag("toxicity-judge", "on", "production")
         toxicity_var_id = self.ldproject.get_ai_config_variation_id("toxicity-judge", "openai-toxicity")
         if toxicity_var_id:
@@ -2901,7 +2905,7 @@ class DemoBuilder:
         else:
             print(" - Warning: Could not find variation for Toxicity Judge")
 
-        # Attach toxicity judge to Brand Voice variations
+        # Step 4: Attach toxicity judge to Brand Voice variations
         self.ldproject.attach_judge_to_variation(
             "ai-config--togglebot-brand-voice", "nova-pro-brand",
             "toxicity-judge", sampling_rate=1.0
