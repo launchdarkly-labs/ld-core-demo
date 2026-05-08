@@ -2872,15 +2872,18 @@ class DemoBuilder:
             evaluation_metric_key="toxicity",
             is_inverted=True,
             default_variation={
-                "key": "haiku-toxicity",
-                "name": "Haiku - Toxicity Judge",
-                "modelConfigKey": "Bedrock.anthropic.claude-3-5-haiku-20241022-v1:0",
+                "key": "openai-toxicity",
+                "name": "OpenAI - Toxicity Judge",
+                "modelConfigKey": "OpenAI.gpt-5-mini",
                 "model": {
-                    "modelName": "anthropic.claude-3-5-haiku-20241022-v1:0",
+                    "modelName": "gpt-5-mini",
                     "parameters": {
                         "maxTokens": 300,
                         "temperature": 0.0
                     }
+                },
+                "provider": {
+                    "name": "openai"
                 },
                 "messages": [
                     {"content": toxicity_prompt, "role": "system"},
@@ -2891,7 +2894,7 @@ class DemoBuilder:
 
         time.sleep(1)
         self.ldproject.toggle_flag("toxicity-judge", "on", "production")
-        toxicity_var_id = self.ldproject.get_ai_config_variation_id("toxicity-judge", "haiku-toxicity")
+        toxicity_var_id = self.ldproject.get_ai_config_variation_id("toxicity-judge", "openai-toxicity")
         if toxicity_var_id:
             self.ldproject.update_ai_config_targeting("toxicity-judge", "production", toxicity_var_id)
             print(" - Toxicity Judge AI config created and enabled")
