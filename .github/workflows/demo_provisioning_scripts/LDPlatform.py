@@ -560,12 +560,14 @@ class LDPlatform:
             "LD-API-Version": "beta",
         }
         payload = {
-            "judges": [
-                {
-                    "judgeConfigKey": judge_config_key,
-                    "samplingRate": sampling_rate
-                }
-            ]
+            "judgeConfiguration": {
+                "judges": [
+                    {
+                        "judgeConfigKey": judge_config_key,
+                        "samplingRate": sampling_rate
+                    }
+                ]
+            }
         }
         response = self.getrequest("PATCH", url, json=payload, headers=headers)
         if response.text.strip():
@@ -577,6 +579,8 @@ class LDPlatform:
                     print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
             except json.JSONDecodeError:
                 pass
+        else:
+            print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
         return response
 
     ##################################################
