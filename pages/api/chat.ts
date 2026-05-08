@@ -729,6 +729,7 @@ Is there a specific service you'd like to know more about?`;
 						cost: responseCost,
 						judge,
 						sourcePassageCount: sourcePassages.length,
+						brandVoiceJudges: agentResult.brandVoice?.judgeResults,
 					},
 					done: true
 				};

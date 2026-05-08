@@ -42,12 +42,22 @@ export interface SpecialistResult {
 	outputTokens: number;
 }
 
+export interface JudgeResult {
+	judgeConfigKey?: string;
+	success: boolean;
+	sampled: boolean;
+	metricKey?: string;
+	score?: number;
+	reasoning?: string;
+}
+
 export interface BrandVoiceResult {
 	content: string;
 	modelName: string;
 	durationMs: number;
 	inputTokens: number;
 	outputTokens: number;
+	judgeResults?: JudgeResult[];
 }
 
 export interface MultiAgentResult {
@@ -680,6 +690,64 @@ async function runSpecialistAgent(
 	};
 }
 
+// ---------------------------------------------------------------------------
+// Judge evaluation: runs judges attached to an agent config via judgeConfiguration
+// ---------------------------------------------------------------------------
+
+async function runAttachedJudges(
+	agentConfig: any,
+	tracker: LDAIConfigTracker | undefined,
+	aiClient: any,
+	context: any,
+	input: string,
+	output: string,
+): Promise<JudgeResult[]> {
+	const judgeConfig = agentConfig.judgeConfiguration;
+	if (!judgeConfig?.judges || judgeConfig.judges.length === 0) {
+		return [];
+	}
+
+	pushLog({ level: "INFO", message: `   ⚖️ Running ${judgeConfig.judges.length} attached judge(s)...`, name: "brand" });
+
+	const results: JudgeResult[] = [];
+
+	for (const judgeDef of judgeConfig.judges) {
+		const { key, samplingRate } = judgeDef;
+		try {
+			const judge = await aiClient.createJudge(key, context);
+			if (!judge) {
+				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" — config disabled or provider unavailable`, name: "brand" });
+				results.push({ judgeConfigKey: key, success: false, sampled: false });
+				continue;
+			}
+
+			const evalResult = await judge.evaluate(input, output, samplingRate);
+			results.push(evalResult);
+
+			if (tracker && evalResult.sampled) {
+				tracker.trackJudgeResult(evalResult);
+			}
+
+			if (evalResult.sampled && evalResult.success) {
+				pushLog({
+					level: "INFO",
+					message: `   ⚖️ Judge "${key}" score: ${evalResult.score?.toFixed(2) ?? "N/A"}${evalResult.metricKey ? ` (${evalResult.metricKey})` : ""}`,
+					name: "brand",
+				});
+			} else if (evalResult.sampled && !evalResult.success) {
+				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" failed: ${evalResult.errorMessage ?? "unknown error"}`, name: "brand" });
+			} else {
+				pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" — skipped (not sampled)`, name: "brand" });
+			}
+		} catch (err: any) {
+			pushLog({ level: "ERROR", message: `   ⚖️ Judge "${key}" error: ${err?.message ?? "unknown"}`, name: "brand" });
+			results.push({ judgeConfigKey: key, success: false, sampled: true });
+		}
+	}
+
+	return results;
+}
+
 async function runBrandVoiceAgent(
 	specialistResponse: string,
 	deps: MultiAgentDeps,
@@ -764,12 +832,16 @@ async function runBrandVoiceAgent(
 		name: "brand",
 	});
 
+	// Run judges attached to the brand voice config
+	const judgeResults = await runAttachedJudges(brandConfig, brandTracker, aiClient, context, userInput, result.content);
+
 	return {
 		content: result.content,
 		modelName,
 		durationMs: result.durationMs,
 		inputTokens: result.inputTokens,
 		outputTokens: result.outputTokens,
+		judgeResults,
 	};
 }
 
