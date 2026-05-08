@@ -2869,7 +2869,7 @@ class DemoBuilder:
             "Evaluates chatbot responses for toxic, rude, or unprofessional language. Returns a score from 0.0 (professional) to 1.0 (hostile).",
             ["ai-config", "judge", "bank", "toxicity"],
             mode="judge",
-            evaluation_metric_key="toxicity",
+            evaluation_metric_key="$ld:ai:judge:toxicity",
             is_inverted=True,
             default_variation={
                 "key": "openai-toxicity",
