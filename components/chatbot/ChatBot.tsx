@@ -682,7 +682,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   return (
     <>
       <div
-        className="fixed bottom-4 z-20 transition-[right] duration-200 ease-linear"
+        className="fixed bottom-4 z-[60] transition-[right] duration-200 ease-linear"
         style={{ right: sidebarOpen ? 'calc(30vw + 1rem)' : '1rem' }}
       >
         <Button
@@ -705,23 +705,23 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       {isOpen && (
          <div
           ref={cardRef}
-          className={`fixed z-50 transition-all duration-500 ease-in-out ${
+          className={`fixed z-[60] transition-all duration-500 ease-in-out ${
             isExpanded
               ? "top-4 bottom-4 left-4 flex items-stretch"
-              : "bottom-16 flex items-end justify-end p-4 max-w-full"
+              : "bottom-16 flex items-end justify-end p-4 sm:p-6 max-w-full"
           }`}
           style={{ right: isExpanded
             ? (sidebarOpen ? 'calc(30vw + 1rem)' : '1rem')
             : (sidebarOpen ? '30vw' : '0px')
           }}
         >
-          <Card className={`transition-all duration-500 ease-in-out flex flex-col ${
+          <Card className={`transition-all duration-500 ease-in-out ${
             isExpanded
-              ? "w-full h-full max-w-none overflow-hidden"
-              : "w-full max-w-md max-h-[calc(100vh-6rem)] overflow-hidden"
+              ? "w-full h-full max-w-none overflow-auto"
+              : "w-full max-w-md mx-auto"
           }`}>
-            <CardHeader className="flex flex-row items-center shrink-0">
-              <div className="flex items-center space-x-4 min-w-0">
+            <CardHeader className="flex flex-row items-center">
+              <div className="flex items-center space-x-4">
                 <Avatar>
                   <img
                     src={
@@ -735,11 +735,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   />{" "}
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium leading-none truncate">
+                <div>
+                  <p className="text-sm font-medium leading-none">
                     ToggleBot - AI Assistant
                   </p>
-                  <p className={"text-sm text-gray-500 dark:text-gray-400 truncate"}>
+                  <p className={"text-sm text-gray-500 dark:text-gray-400"}>
                     Powered by{" "}
                     <span
                       className={`font-bold ${
@@ -856,7 +856,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                       <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableToxicPrompt ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </button>
                   </div>
-                  <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[min(400px,50vh)]"}`} ref={chatContentRef}>
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`} ref={chatContentRef}>
                     <div className="space-y-4">
                       <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                         <Accordion type="single" collapsible defaultValue="metrics">
@@ -1104,7 +1104,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     </div>
                   )}
 
-                  <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[min(350px,45vh)]"}`}>
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[350px]"}`}>
                     {!isSelfHealingEnabled && (
                       <div className="flex items-center justify-center h-full">
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -1206,7 +1206,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               </Tabs>
             ) : (
               <>
-                <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[min(400px,50vh)]"}`} ref={chatContentRef}>
+                <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[400px]"}`} ref={chatContentRef}>
                   <div className="space-y-4">
                     <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                       <Accordion type="single" collapsible defaultValue="metrics">

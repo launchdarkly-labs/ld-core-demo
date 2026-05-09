@@ -2898,7 +2898,7 @@ class DemoBuilder:
             {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
             messages=[
                 {"content": toxicity_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
             ]
         )
         print(" - Created toxicity-judge")
@@ -2929,7 +2929,7 @@ class DemoBuilder:
             {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
             messages=[
                 {"content": relevance_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
             ]
         )
         print(" - Created relevance-judge")
@@ -2960,7 +2960,7 @@ class DemoBuilder:
             {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
             messages=[
                 {"content": accuracy_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
             ]
         )
         print(" - Created accuracy-judge")
