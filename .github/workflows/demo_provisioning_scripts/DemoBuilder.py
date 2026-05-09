@@ -2934,42 +2934,6 @@ class DemoBuilder:
         )
         print(" - Created relevance-judge")
 
-        # --- Brand Adherence Judge ---
-        brand_adherence_prompt = (
-            "You are a brand voice adherence judge for ToggleBank, a modern digital bank. "
-            "Evaluate whether the AI response matches ToggleBank's brand voice guidelines.\n\n"
-            "ToggleBank brand voice guidelines:\n"
-            "- Warm, professional, and approachable tone\n"
-            "- Addresses the customer directly using \"you\" / \"your\"\n"
-            "- Concise and clear — avoids jargon and overly complex language\n"
-            "- Helpful and empathetic — acknowledges the customer's needs\n"
-            "- Confident but not arrogant\n"
-            "- Never condescending, robotic, or overly formal\n\n"
-            "Score from 0.0 to 1.0 where:\n"
-            "- 1.0 = Perfectly matches ToggleBank's warm, professional brand voice\n"
-            "- 0.7 = Mostly on-brand with minor deviations in tone\n"
-            "- 0.5 = Partially on-brand but noticeably off in tone or style\n"
-            "- 0.3 = Significantly off-brand (too robotic, too casual, or too formal)\n"
-            "- 0.0 = Completely off-brand (hostile, unprofessional, or generic)\n\n"
-            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
-        )
-        self.ldproject.create_ai_config(
-            "brand-adherence-judge", "Brand Adherence Judge",
-            "Evaluates whether chatbot responses match ToggleBank's warm, professional brand voice.",
-            ["ai-config", "judge", "bank", "brand-voice"],
-            mode="judge", evaluation_metric_key="$ld:ai:judge:brand-adherence",
-        )
-        time.sleep(1)
-        self.ldproject.create_ai_config_versions(
-            "brand-adherence-judge", "openai-brand-adherence", "OpenAI.gpt-5-mini", "OpenAI - Brand Adherence Judge",
-            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
-            messages=[
-                {"content": brand_adherence_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
-            ]
-        )
-        print(" - Created brand-adherence-judge")
-
         # --- Accuracy Judge ---
         accuracy_prompt = (
             "You are a factual accuracy judge for a banking customer service chatbot. "
@@ -3001,45 +2965,12 @@ class DemoBuilder:
         )
         print(" - Created accuracy-judge")
 
-        # --- Conciseness Judge ---
-        conciseness_prompt = (
-            "You are a conciseness judge for a banking customer service chatbot. "
-            "Evaluate whether the AI response is appropriately concise and well-structured.\n\n"
-            "Score from 0.0 to 1.0 where:\n"
-            "- 1.0 = Response is perfectly concise — answers the question without unnecessary content\n"
-            "- 0.7 = Slightly verbose but still well-organized\n"
-            "- 0.5 = Noticeably wordy with filler or repetition\n"
-            "- 0.3 = Excessively long, includes irrelevant information\n"
-            "- 0.0 = Extremely verbose, rambling, or includes large blocks of unnecessary text\n\n"
-            "A good banking response should be direct and scannable. "
-            "Bullet points and short paragraphs are preferred over walls of text.\n\n"
-            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
-        )
-        self.ldproject.create_ai_config(
-            "conciseness-judge", "Conciseness Judge",
-            "Evaluates whether chatbot responses are appropriately concise and well-structured.",
-            ["ai-config", "judge", "bank", "conciseness"],
-            mode="judge", evaluation_metric_key="$ld:ai:judge:conciseness",
-        )
-        time.sleep(1)
-        self.ldproject.create_ai_config_versions(
-            "conciseness-judge", "openai-conciseness", "OpenAI.gpt-5-mini", "OpenAI - Conciseness Judge",
-            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
-            messages=[
-                {"content": conciseness_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
-            ]
-        )
-        print(" - Created conciseness-judge")
-
         # --- Toggle on all judges ---
         time.sleep(2)
         judge_configs = [
             ("toxicity-judge", "openai-toxicity"),
             ("relevance-judge", "openai-relevance"),
-            ("brand-adherence-judge", "openai-brand-adherence"),
             ("accuracy-judge", "openai-accuracy"),
-            ("conciseness-judge", "openai-conciseness"),
         ]
         for judge_key, variation_key in judge_configs:
             self.ldproject.toggle_flag(judge_key, "on", "production")
@@ -3053,9 +2984,7 @@ class DemoBuilder:
         all_judges = [
             {"judgeConfigKey": "toxicity-judge", "samplingRate": 1.0},
             {"judgeConfigKey": "relevance-judge", "samplingRate": 1.0},
-            {"judgeConfigKey": "brand-adherence-judge", "samplingRate": 1.0},
             {"judgeConfigKey": "accuracy-judge", "samplingRate": 1.0},
-            {"judgeConfigKey": "conciseness-judge", "samplingRate": 1.0},
         ]
         brand_voice_variations = [
             "nova-pro-brand",
