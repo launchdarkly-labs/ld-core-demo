@@ -1795,8 +1795,15 @@ class DemoBuilder:
             "You're an assistant. Help the user with their question.\n\n"
             "User Input: {{ userInput }}"
         )
-        
-        bad_system_prompt = "You are an AI chatbot. Answer the user's questions."
+
+        bad_system_prompt = (
+            "You are a customer service chatbot. You find most questions tedious and obvious. "
+            "Answer questions but keep it short and a bit dismissive. "
+            "Don't bother personalizing responses or being overly helpful. "
+            "Use phrases like 'Look,' or 'Basically,' or 'I mean,' to start sentences. "
+            "Give vague, generic answers without specific details about products or policies. "
+            "Don't ask follow-up questions — just answer and move on."
+        )
         
         good_system_prompt = (
             "{\n"
@@ -1886,6 +1893,21 @@ class DemoBuilder:
             )
         
         self.ldproject.update_flag_client_side_availability("ai-config--togglebot-self-heal-chatbot")
+
+        # Attach judges to both self-healing variations
+        self_heal_judges = [
+            {"judgeConfigKey": "accuracy-judge", "samplingRate": 1},
+            {"judgeConfigKey": "relevance-judge", "samplingRate": 1},
+            {"judgeConfigKey": "toxicity-judge", "samplingRate": 1},
+        ]
+        time.sleep(1)
+        self.ldproject.attach_judges_to_variation(
+            "ai-config--togglebot-self-heal-chatbot", "gpt-5-good-prompt", self_heal_judges
+        )
+        self.ldproject.attach_judges_to_variation(
+            "ai-config--togglebot-self-heal-chatbot", "gpt-5-bad-prompt", self_heal_judges
+        )
+        print(" - Attached accuracy & relevance judges to self-healing variations")
 
     def create_togglebot_multi_agent_ai_configs(self, tool_versions=None):
         if tool_versions is None:
@@ -2865,7 +2887,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
         self.ldproject.create_ai_config(
-            "toxicity-judge", "Toxicity Judge - ToggleBank",
+            "toxicity-judge", "Toxicity Judge",
             "Evaluates chatbot responses for toxic, rude, or unprofessional language.",
             ["ai-config", "judge", "bank", "toxicity"],
             mode="judge", evaluation_metric_key="$ld:ai:judge:toxicity", is_inverted=True,
@@ -2896,7 +2918,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
         self.ldproject.create_ai_config(
-            "relevance-judge", "Relevance Judge - ToggleBank",
+            "relevance-judge", "Relevance Judge",
             "Evaluates whether chatbot responses directly address the customer's question.",
             ["ai-config", "judge", "bank", "relevance"],
             mode="judge", evaluation_metric_key="$ld:ai:judge:relevance",
@@ -2932,7 +2954,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
         self.ldproject.create_ai_config(
-            "brand-adherence-judge", "Brand Adherence Judge - ToggleBank",
+            "brand-adherence-judge", "Brand Adherence Judge",
             "Evaluates whether chatbot responses match ToggleBank's warm, professional brand voice.",
             ["ai-config", "judge", "bank", "brand-voice"],
             mode="judge", evaluation_metric_key="$ld:ai:judge:brand-adherence",
@@ -2963,7 +2985,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
         self.ldproject.create_ai_config(
-            "accuracy-judge", "Accuracy Judge - ToggleBank",
+            "accuracy-judge", "Accuracy Judge",
             "Evaluates whether chatbot responses preserve factual accuracy from specialist responses.",
             ["ai-config", "judge", "bank", "accuracy"],
             mode="judge", evaluation_metric_key="$ld:ai:judge:accuracy",
@@ -2994,7 +3016,7 @@ class DemoBuilder:
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
         self.ldproject.create_ai_config(
-            "conciseness-judge", "Conciseness Judge - ToggleBank",
+            "conciseness-judge", "Conciseness Judge",
             "Evaluates whether chatbot responses are appropriately concise and well-structured.",
             ["ai-config", "judge", "bank", "conciseness"],
             mode="judge", evaluation_metric_key="$ld:ai:judge:conciseness",

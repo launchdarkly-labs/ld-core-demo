@@ -71,10 +71,12 @@ type SelfHealingMetrics = {
   timing?: StreamTiming;
   tokens?: StreamTokens;
   judgeScores?: {
-    before?: { accuracy?: number; relevance?: number };
-    after?: { accuracy?: number; relevance?: number };
+    before?: { accuracy?: number; relevance?: number; toxicity?: number };
+    after?: { accuracy?: number; relevance?: number; toxicity?: number };
   };
   didFallback?: boolean;
+  originalResponse?: string;
+  originalModel?: string;
 };
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
@@ -442,6 +444,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     tokens: data.tokens,
                     judgeScores: data.judgeScores,
                     didFallback: data.didFallback,
+                    originalResponse: data.originalResponse,
+                    originalModel: data.originalModel,
                   });
                 }
 
@@ -467,13 +471,14 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 }
 
                 if (data.fallbackSkipped && data.judgeScores) {
-                  const judgeMessage: Message = {
-                    id: uuidv4().slice(0, 6) + "-judge",
-                    role: "judge",
-                    content: `**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n---\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
-                    judgeScores: data.judgeScores,
-                  };
-                  setSelfHealingMessages((prev) => [...prev, judgeMessage]);
+                  setSelfHealingMessages((prev) => [
+                    ...prev,
+                    {
+                      id: uuidv4().slice(0, 6) + "-info",
+                      role: "assistant",
+                      content: "Scores below threshold (90%) — Self-healing is disabled. Enable fallback in Options to see the self-healing behavior.",
+                    },
+                  ]);
                 }
 
                 setSelfHealingLoading(false);
@@ -1021,55 +1026,83 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                         </div>
                       </div>
                       {selfHealingMetrics && (
-                        <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          {selfHealingMetrics.timing?.totalTime !== undefined && (
-                            <span>Time: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.timing.totalTime}ms</span></span>
-                          )}
-                          {selfHealingMetrics.tokens?.total !== undefined && (
-                            <span>Tokens: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.tokens.total}</span></span>
-                          )}
-                        </div>
-                      )}
-                      {(() => {
-                        const judgeMsg = [...selfHealingMessages].reverse().find((m) => m.role === "judge");
-                        if (!judgeMsg) return null;
-                        return (
-                          <Accordion type="single" collapsible className="mt-1">
-                            <AccordionItem value="judge-eval" className="border-0">
-                              <AccordionTrigger className="py-1 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:no-underline">
-                                AI Judge Evaluation
-                              </AccordionTrigger>
-                              <AccordionContent className="text-xs pb-1">
-                                <div className="max-h-[200px] overflow-y-auto rounded-md border border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 p-2">
-                                  <ReactMarkdown
-                                    components={{
-                                      p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
-                                      strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                                      em: ({ children }) => <em className="italic">{children}</em>,
-                                      ul: ({ children }) => <ul className="list-disc list-inside mb-1.5 space-y-0.5 ml-2">{children}</ul>,
-                                      li: ({ children }) => <li>{children}</li>,
-                                      hr: () => <div className="my-3" />,
-                                      blockquote: ({ children }) => (
-                                        <blockquote className="border-l-2 border-purple-400 pl-2 italic mb-1.5 text-gray-600 dark:text-gray-300">
-                                          {children}
-                                        </blockquote>
-                                      ),
-                                      code: ({ children, className }) => {
-                                        const isBlock = className?.includes("language-");
-                                        return isBlock
-                                          ? <pre className="bg-gray-100 dark:bg-gray-800 rounded p-1.5 overflow-x-auto mb-1.5"><code className={className}>{children}</code></pre>
-                                          : <code className="bg-gray-200 dark:bg-gray-700 rounded px-1 py-0.5 text-[11px] break-all">{children}</code>;
-                                      },
-                                    }}
-                                  >
-                                    {judgeMsg.content}
-                                  </ReactMarkdown>
+                        <Accordion type="single" collapsible defaultValue="sh-metrics" className="mt-1">
+                          <AccordionItem value="sh-metrics" className="border-0">
+                            <AccordionTrigger className="py-1 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:no-underline">
+                              AI Metrics
+                            </AccordionTrigger>
+                            <AccordionContent className="text-xs pb-1">
+                              <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                                <div className="flex flex-wrap gap-3">
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Accuracy:</span>
+                                    <span>{((selfHealingMetrics.judgeScores?.after?.accuracy ?? selfHealingMetrics.judgeScores?.before?.accuracy ?? 0) / 100).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Relevance:</span>
+                                    <span>{((selfHealingMetrics.judgeScores?.after?.relevance ?? selfHealingMetrics.judgeScores?.before?.relevance ?? 0) / 100).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">Toxicity:</span>
+                                    <span className={(selfHealingMetrics.judgeScores?.before?.toxicity ?? 0) > 0.5 ? "text-red-500 font-bold" : ""}>
+                                      {(selfHealingMetrics.judgeScores?.after?.toxicity ?? selfHealingMetrics.judgeScores?.before?.toxicity ?? 0).toFixed(2)}
+                                    </span>
+                                  </div>
+                                  {selfHealingMetrics.tokens && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Tokens:</span>
+                                      <span>{selfHealingMetrics.tokens.total ?? 0} (in {selfHealingMetrics.tokens.input ?? 0}, out {selfHealingMetrics.tokens.output ?? 0})</span>
+                                    </div>
+                                  )}
+                                  {selfHealingMetrics.timing && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Timing:</span>
+                                      <span>Total {selfHealingMetrics.timing.totalTime ?? 0}ms</span>
+                                    </div>
+                                  )}
                                 </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        );
-                      })()}
+
+                                {selfHealingMetrics.didFallback && selfHealingMetrics.judgeScores?.before && (
+                                  <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                    <div className="font-semibold mb-1 text-purple-600 dark:text-purple-400">Initial Model Scores ({selfHealingMetrics.originalModel || "Unknown"})</div>
+                                    <div className="flex flex-wrap gap-3 mb-2">
+                                      <span>Accuracy: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.accuracy ?? 0).toFixed(1)}%</span></span>
+                                      <span>Relevance: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.relevance ?? 0).toFixed(1)}%</span></span>
+                                      <span>Toxicity: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.toxicity ?? 0).toFixed(2)}</span></span>
+                                    </div>
+                                    <div className="font-semibold mb-1 text-green-600 dark:text-green-400">Fallback Model Scores ({selfHealingMetrics.modelName || "Unknown"})</div>
+                                    <div className="flex flex-wrap gap-3">
+                                      <span>Accuracy: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.accuracy ?? 0).toFixed(1)}%</span></span>
+                                      <span>Relevance: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.relevance ?? 0).toFixed(1)}%</span></span>
+                                      <span>Toxicity: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.toxicity ?? 0).toFixed(2)}</span></span>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {selfHealingMetrics.didFallback && selfHealingMetrics.originalResponse && (
+                                  <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                    <div className="font-semibold mb-1 text-red-500">Original Response (Reverted)</div>
+                                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-2 text-xs text-gray-700 dark:text-gray-300 max-h-[100px] overflow-y-auto whitespace-pre-line">
+                                      {selfHealingMetrics.originalResponse}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {!selfHealingMetrics.didFallback && selfHealingMetrics.judgeScores?.before && (
+                                  <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                    <div className="font-semibold mb-1">Model Scores</div>
+                                    <div className="flex flex-wrap gap-3">
+                                      <span>Accuracy: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.accuracy ?? 0).toFixed(1)}%</span></span>
+                                      <span>Relevance: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.relevance ?? 0).toFixed(1)}%</span></span>
+                                      <span>Toxicity: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.toxicity ?? 0).toFixed(2)}</span></span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      )}
                     </div>
                   )}
 
