@@ -261,7 +261,7 @@ class DemoBuilder:
         self.create_togglebot_self_heal_ai_config()
         self.create_togglebot_multi_agent_ai_configs(tool_versions)
         self.create_llm_as_judge_ai_config()
-        self.create_toxicity_judge_ai_config()
+        self.create_brand_voice_judges()
         self.create_government_publicbot_ai_config()
         self.create_custom_financial_models()
         self.create_togglebank_financial_advisor_agent()
@@ -2846,9 +2846,11 @@ class DemoBuilder:
         else:
             print(" - Warning: Could not find claude-sonnet-3-7 variation for LLM as Judge AI config")
 
-    def create_toxicity_judge_ai_config(self):
-        print("Creating Toxicity Judge AI config...")
+    def create_brand_voice_judges(self):
+        """Create all judge AI configs for brand voice evaluation and attach them to all brand voice variations."""
+        print("Creating Brand Voice judges...")
 
+        # --- Toxicity Judge ---
         toxicity_prompt = (
             "You are a toxicity detection judge for a banking customer service chatbot. "
             "Analyze the AI response for toxic, rude, offensive, condescending, passive-aggressive, or unprofessional language.\n\n"
@@ -2862,58 +2864,189 @@ class DemoBuilder:
             "Ignore factual accuracy — only evaluate the professionalism and respectfulness of the language.\n\n"
             "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
         )
-
-        # Step 1: Create the judge AI config (without inline variation)
         self.ldproject.create_ai_config(
-            "toxicity-judge",
-            "Toxicity Judge - ToggleBank",
-            "Evaluates chatbot responses for toxic, rude, or unprofessional language. Returns a score from 0.0 (professional) to 1.0 (hostile).",
+            "toxicity-judge", "Toxicity Judge - ToggleBank",
+            "Evaluates chatbot responses for toxic, rude, or unprofessional language.",
             ["ai-config", "judge", "bank", "toxicity"],
-            mode="judge",
-            evaluation_metric_key="$ld:ai:judge:toxicity",
-            is_inverted=True,
+            mode="judge", evaluation_metric_key="$ld:ai:judge:toxicity", is_inverted=True,
         )
-
-        # Step 2: Add the OpenAI variation
         time.sleep(1)
         self.ldproject.create_ai_config_versions(
-            "toxicity-judge",
-            "openai-toxicity",
-            "OpenAI.gpt-5-mini",
-            "OpenAI - Toxicity Judge",
-            {
-                "modelName": "gpt-5-mini",
-                "parameters": {
-                    "maxTokens": 300,
-                    "temperature": 0.0
-                }
-            },
+            "toxicity-judge", "openai-toxicity", "OpenAI.gpt-5-mini", "OpenAI - Toxicity Judge",
+            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
             messages=[
                 {"content": toxicity_prompt, "role": "system"},
                 {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
             ]
         )
+        print(" - Created toxicity-judge")
 
+        # --- Relevance Judge ---
+        relevance_prompt = (
+            "You are a relevance judge for a banking customer service chatbot. "
+            "Evaluate whether the AI response directly addresses the customer's question.\n\n"
+            "Score from 0.0 to 1.0 where:\n"
+            "- 1.0 = Response directly and completely addresses the customer's question\n"
+            "- 0.7 = Response mostly addresses the question with minor tangents\n"
+            "- 0.5 = Response partially addresses the question but misses key aspects\n"
+            "- 0.3 = Response is loosely related but doesn't answer the question\n"
+            "- 0.0 = Response is completely off-topic or irrelevant\n\n"
+            "Focus on whether the response provides the information the customer actually asked for. "
+            "Ignore tone and style — only evaluate topical alignment and intent coverage.\n\n"
+            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
+        )
+        self.ldproject.create_ai_config(
+            "relevance-judge", "Relevance Judge - ToggleBank",
+            "Evaluates whether chatbot responses directly address the customer's question.",
+            ["ai-config", "judge", "bank", "relevance"],
+            mode="judge", evaluation_metric_key="$ld:ai:judge:relevance",
+        )
+        time.sleep(1)
+        self.ldproject.create_ai_config_versions(
+            "relevance-judge", "openai-relevance", "OpenAI.gpt-5-mini", "OpenAI - Relevance Judge",
+            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            messages=[
+                {"content": relevance_prompt, "role": "system"},
+                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+            ]
+        )
+        print(" - Created relevance-judge")
+
+        # --- Brand Adherence Judge ---
+        brand_adherence_prompt = (
+            "You are a brand voice adherence judge for ToggleBank, a modern digital bank. "
+            "Evaluate whether the AI response matches ToggleBank's brand voice guidelines.\n\n"
+            "ToggleBank brand voice guidelines:\n"
+            "- Warm, professional, and approachable tone\n"
+            "- Addresses the customer directly using \"you\" / \"your\"\n"
+            "- Concise and clear — avoids jargon and overly complex language\n"
+            "- Helpful and empathetic — acknowledges the customer's needs\n"
+            "- Confident but not arrogant\n"
+            "- Never condescending, robotic, or overly formal\n\n"
+            "Score from 0.0 to 1.0 where:\n"
+            "- 1.0 = Perfectly matches ToggleBank's warm, professional brand voice\n"
+            "- 0.7 = Mostly on-brand with minor deviations in tone\n"
+            "- 0.5 = Partially on-brand but noticeably off in tone or style\n"
+            "- 0.3 = Significantly off-brand (too robotic, too casual, or too formal)\n"
+            "- 0.0 = Completely off-brand (hostile, unprofessional, or generic)\n\n"
+            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
+        )
+        self.ldproject.create_ai_config(
+            "brand-adherence-judge", "Brand Adherence Judge - ToggleBank",
+            "Evaluates whether chatbot responses match ToggleBank's warm, professional brand voice.",
+            ["ai-config", "judge", "bank", "brand-voice"],
+            mode="judge", evaluation_metric_key="$ld:ai:judge:brand-adherence",
+        )
+        time.sleep(1)
+        self.ldproject.create_ai_config_versions(
+            "brand-adherence-judge", "openai-brand-adherence", "OpenAI.gpt-5-mini", "OpenAI - Brand Adherence Judge",
+            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            messages=[
+                {"content": brand_adherence_prompt, "role": "system"},
+                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+            ]
+        )
+        print(" - Created brand-adherence-judge")
+
+        # --- Accuracy Judge ---
+        accuracy_prompt = (
+            "You are a factual accuracy judge for a banking customer service chatbot. "
+            "Evaluate whether the AI response preserves factual accuracy from the original specialist response.\n\n"
+            "Score from 0.0 to 1.0 where:\n"
+            "- 1.0 = All facts, numbers, and claims are accurate and properly preserved\n"
+            "- 0.7 = Minor factual omissions but no incorrect information\n"
+            "- 0.5 = Some facts are vague or slightly altered but not dangerously wrong\n"
+            "- 0.3 = Important facts are missing or distorted\n"
+            "- 0.0 = Contains clearly incorrect information that could mislead the customer\n\n"
+            "Focus on: account numbers, monetary amounts, percentages, dates, policy details, "
+            "and procedural steps. Ignore tone and style — only evaluate factual correctness.\n\n"
+            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
+        )
+        self.ldproject.create_ai_config(
+            "accuracy-judge", "Accuracy Judge - ToggleBank",
+            "Evaluates whether chatbot responses preserve factual accuracy from specialist responses.",
+            ["ai-config", "judge", "bank", "accuracy"],
+            mode="judge", evaluation_metric_key="$ld:ai:judge:accuracy",
+        )
+        time.sleep(1)
+        self.ldproject.create_ai_config_versions(
+            "accuracy-judge", "openai-accuracy", "OpenAI.gpt-5-mini", "OpenAI - Accuracy Judge",
+            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            messages=[
+                {"content": accuracy_prompt, "role": "system"},
+                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+            ]
+        )
+        print(" - Created accuracy-judge")
+
+        # --- Conciseness Judge ---
+        conciseness_prompt = (
+            "You are a conciseness judge for a banking customer service chatbot. "
+            "Evaluate whether the AI response is appropriately concise and well-structured.\n\n"
+            "Score from 0.0 to 1.0 where:\n"
+            "- 1.0 = Response is perfectly concise — answers the question without unnecessary content\n"
+            "- 0.7 = Slightly verbose but still well-organized\n"
+            "- 0.5 = Noticeably wordy with filler or repetition\n"
+            "- 0.3 = Excessively long, includes irrelevant information\n"
+            "- 0.0 = Extremely verbose, rambling, or includes large blocks of unnecessary text\n\n"
+            "A good banking response should be direct and scannable. "
+            "Bullet points and short paragraphs are preferred over walls of text.\n\n"
+            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
+        )
+        self.ldproject.create_ai_config(
+            "conciseness-judge", "Conciseness Judge - ToggleBank",
+            "Evaluates whether chatbot responses are appropriately concise and well-structured.",
+            ["ai-config", "judge", "bank", "conciseness"],
+            mode="judge", evaluation_metric_key="$ld:ai:judge:conciseness",
+        )
+        time.sleep(1)
+        self.ldproject.create_ai_config_versions(
+            "conciseness-judge", "openai-conciseness", "OpenAI.gpt-5-mini", "OpenAI - Conciseness Judge",
+            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            messages=[
+                {"content": conciseness_prompt, "role": "system"},
+                {"content": "USER QUESTION:\n{{user_question}}\n\nRESPONSE TO EVALUATE:\n{{response_text}}", "role": "user"}
+            ]
+        )
+        print(" - Created conciseness-judge")
+
+        # --- Toggle on all judges ---
         time.sleep(2)
+        judge_configs = [
+            ("toxicity-judge", "openai-toxicity"),
+            ("relevance-judge", "openai-relevance"),
+            ("brand-adherence-judge", "openai-brand-adherence"),
+            ("accuracy-judge", "openai-accuracy"),
+            ("conciseness-judge", "openai-conciseness"),
+        ]
+        for judge_key, variation_key in judge_configs:
+            self.ldproject.toggle_flag(judge_key, "on", "production")
+            var_id = self.ldproject.get_ai_config_variation_id(judge_key, variation_key)
+            if var_id:
+                self.ldproject.update_ai_config_targeting(judge_key, "production", var_id)
+            time.sleep(0.5)
+        print(" - All judges toggled on")
 
-        # Step 3: Toggle on and set targeting
-        self.ldproject.toggle_flag("toxicity-judge", "on", "production")
-        toxicity_var_id = self.ldproject.get_ai_config_variation_id("toxicity-judge", "openai-toxicity")
-        if toxicity_var_id:
-            self.ldproject.update_ai_config_targeting("toxicity-judge", "production", toxicity_var_id)
-            print(" - Toxicity Judge AI config created and enabled")
-        else:
-            print(" - Warning: Could not find variation for Toxicity Judge")
-
-        # Step 4: Attach toxicity judge to Brand Voice variations
-        self.ldproject.attach_judge_to_variation(
-            "ai-config--togglebot-brand-voice", "nova-pro-brand",
-            "toxicity-judge", sampling_rate=1.0
-        )
-        self.ldproject.attach_judge_to_variation(
-            "ai-config--togglebot-brand-voice", "nova-pro-brand-toxic",
-            "toxicity-judge", sampling_rate=1.0
-        )
+        # --- Attach all judges to all Brand Voice variations ---
+        all_judges = [
+            {"judgeConfigKey": "toxicity-judge", "samplingRate": 1.0},
+            {"judgeConfigKey": "relevance-judge", "samplingRate": 1.0},
+            {"judgeConfigKey": "brand-adherence-judge", "samplingRate": 1.0},
+            {"judgeConfigKey": "accuracy-judge", "samplingRate": 1.0},
+            {"judgeConfigKey": "conciseness-judge", "samplingRate": 1.0},
+        ]
+        brand_voice_variations = [
+            "nova-pro-brand",
+            "nova-pro-brand-toxic",
+            "gpt5-mini-brand",
+            "haiku-brand",
+            "sonnet-brand",
+        ]
+        for variation in brand_voice_variations:
+            self.ldproject.attach_judges_to_variation(
+                "ai-config--togglebot-brand-voice", variation, all_judges
+            )
+        print(" - Attached all judges to all Brand Voice variations")
 
     def create_ai_chatbot_ai_config(self):
         res = self.ldproject.create_ai_config(

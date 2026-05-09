@@ -546,6 +546,12 @@ class LDPlatform:
     # Attach judge to AI Config variation
     ##################################################
     def attach_judge_to_variation(self, ai_config_key, variation_key, judge_config_key, sampling_rate=1.0):
+        """Attach a single judge to a variation. Note: this replaces all existing judges on the variation."""
+        return self.attach_judges_to_variation(ai_config_key, variation_key, [{"judgeConfigKey": judge_config_key, "samplingRate": sampling_rate}])
+
+    def attach_judges_to_variation(self, ai_config_key, variation_key, judges):
+        """Attach multiple judges to a variation. Each judge is a dict with judgeConfigKey and samplingRate.
+        Note: this replaces all existing judges on the variation."""
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
@@ -561,26 +567,22 @@ class LDPlatform:
         }
         payload = {
             "judgeConfiguration": {
-                "judges": [
-                    {
-                        "judgeConfigKey": judge_config_key,
-                        "samplingRate": sampling_rate
-                    }
-                ]
+                "judges": judges
             }
         }
         response = self.getrequest("PATCH", url, json=payload, headers=headers)
+        judge_keys = [j["judgeConfigKey"] for j in judges]
         if response.text.strip():
             try:
                 data = json.loads(response.text)
                 if "message" in data:
-                    print(f"Error attaching judge to {ai_config_key}/{variation_key}: {data['message']}")
+                    print(f"Error attaching judges to {ai_config_key}/{variation_key}: {data['message']}")
                 else:
-                    print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
+                    print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
             except json.JSONDecodeError:
                 pass
         else:
-            print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
+            print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
         return response
 
     ##################################################
