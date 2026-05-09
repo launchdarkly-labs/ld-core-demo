@@ -208,21 +208,19 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      if (showSettingsDropdown && cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setShowSettingsDropdown(false);
       }
     };
 
-    if (isOpen) {
+    if (showSettingsDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [showSettingsDropdown]);
 
   const { userObject } = useContext(LoginContext);
   const { logLDMetricSent } = useContext(LiveLogsContext);
@@ -710,20 +708,20 @@ export default function Chatbot({ vertical }: { vertical: string }) {
           className={`fixed z-50 transition-all duration-500 ease-in-out ${
             isExpanded
               ? "top-4 bottom-4 left-4 flex items-stretch"
-              : "bottom-16 flex items-end justify-end p-4 sm:p-6 max-w-full"
+              : "bottom-16 flex items-end justify-end p-4 max-w-full"
           }`}
           style={{ right: isExpanded
             ? (sidebarOpen ? 'calc(30vw + 1rem)' : '1rem')
             : (sidebarOpen ? '30vw' : '0px')
           }}
         >
-          <Card className={`transition-all duration-500 ease-in-out ${
+          <Card className={`transition-all duration-500 ease-in-out flex flex-col ${
             isExpanded
-              ? "w-full h-full max-w-none overflow-auto"
-              : "w-full max-w-md mx-auto"
+              ? "w-full h-full max-w-none overflow-hidden"
+              : "w-full max-w-md max-h-[calc(100vh-6rem)] overflow-hidden"
           }`}>
-            <CardHeader className="flex flex-row items-center">
-              <div className="flex items-center space-x-4">
+            <CardHeader className="flex flex-row items-center shrink-0">
+              <div className="flex items-center space-x-4 min-w-0">
                 <Avatar>
                   <img
                     src={
@@ -737,11 +735,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   />{" "}
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="text-sm font-medium leading-none">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium leading-none truncate">
                     ToggleBot - AI Assistant
                   </p>
-                  <p className={"text-sm text-gray-500 dark:text-gray-400"}>
+                  <p className={"text-sm text-gray-500 dark:text-gray-400 truncate"}>
                     Powered by{" "}
                     <span
                       className={`font-bold ${
@@ -858,7 +856,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                       <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableToxicPrompt ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </button>
                   </div>
-                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`} ref={chatContentRef}>
+                  <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[min(400px,50vh)]"}`} ref={chatContentRef}>
                     <div className="space-y-4">
                       <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                         <Accordion type="single" collapsible defaultValue="metrics">
@@ -1106,7 +1104,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     </div>
                   )}
 
-                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[350px]"}`}>
+                  <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[min(350px,45vh)]"}`}>
                     {!isSelfHealingEnabled && (
                       <div className="flex items-center justify-center h-full">
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -1208,7 +1206,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               </Tabs>
             ) : (
               <>
-                <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[400px]"}`} ref={chatContentRef}>
+                <CardContent className={`overflow-y-auto flex-1 min-h-0 ${isExpanded ? "h-[calc(100vh-200px)]" : "h-[min(400px,50vh)]"}`} ref={chatContentRef}>
                   <div className="space-y-4">
                     <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
                       <Accordion type="single" collapsible defaultValue="metrics">
