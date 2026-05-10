@@ -282,6 +282,8 @@ export default async function selfHealingChat(
             pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" — config disabled or unavailable`, name: "self-healing" });
             continue;
           }
+          const judgeAiConfig = judge.getAIConfig();
+          pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" using provider=${judgeAiConfig?.provider?.name ?? "unknown"}, model=${judgeAiConfig?.model?.name ?? "unknown"}`, name: "self-healing" });
           const evalResult = await judge.evaluate(userInput, finalResponse, 1);
           if (evalResult.sampled && evalResult.success && typeof evalResult.score === "number") {
             if (judgeKey.includes("accuracy")) {
@@ -295,7 +297,7 @@ export default async function selfHealingChat(
               pushLog({ level: evalResult.score > 0.5 ? "WARN" : "INFO", message: `   ⚖️ toxicity-judge: ${evalResult.score.toFixed(2)}${evalResult.score > 0.5 ? " ⚠️ HIGH" : ""}`, name: "self-healing" });
             }
           } else if (evalResult.sampled && !evalResult.success) {
-            pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" failed: ${(evalResult as any).errorMessage ?? "unknown"}`, name: "self-healing" });
+            pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" failed: ${(evalResult as any).errorMessage ?? "unknown"} (result: ${JSON.stringify(evalResult)})`, name: "self-healing" });
           }
         } catch (err: any) {
           pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" error: ${err?.message ?? "unknown"}`, name: "self-healing" });

@@ -721,7 +721,24 @@ async function runAttachedJudges(
 				continue;
 			}
 
+			const judgeAiCfg = judge.getAIConfig();
+			const providerName = judgeAiCfg?.provider?.name ?? "unknown";
+			const judgeModelName = judgeAiCfg?.model?.name ?? "unknown";
+			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" using provider=${providerName}, model=${judgeModelName}`, name: "brand" });
+			console.log(`[Judge Debug] "${key}" config:`, JSON.stringify({
+				provider: judgeAiCfg?.provider,
+				model: judgeAiCfg?.model,
+				enabled: judgeAiCfg?.enabled,
+				evaluationMetricKey: (judgeAiCfg as any)?.evaluationMetricKey,
+				hasMessages: !!judgeAiCfg?.messages?.length,
+				messageCount: judgeAiCfg?.messages?.length ?? 0,
+			}));
+
+			const provider = judge.getProvider();
+			console.log(`[Judge Debug] "${key}" provider class: ${provider?.constructor?.name ?? "none"}`);
+
 			const evalResult = await judge.evaluate(input, output, samplingRate);
+			console.log(`[Judge Debug] "${key}" evalResult:`, JSON.stringify(evalResult));
 			results.push(evalResult);
 
 			if (tracker && evalResult.sampled) {
@@ -735,6 +752,7 @@ async function runAttachedJudges(
 					name: "brand",
 				});
 			} else if (evalResult.sampled && !evalResult.success) {
+				console.error(`[Judge Debug] "${key}" evalResult:`, JSON.stringify(evalResult));
 				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" failed: ${evalResult.errorMessage ?? "unknown error"}`, name: "brand" });
 			} else {
 				pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" — skipped (not sampled)`, name: "brand" });
