@@ -463,6 +463,19 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   ]);
                 }
 
+                if (!data.didFallback) {
+                  setTimeout(() => {
+                    setSelfHealingMessages((prev) => [
+                      ...prev,
+                      {
+                        id: uuidv4().slice(0, 6) + "-reset",
+                        role: "assistant",
+                        content: "Would you like to reset the context to try again?",
+                      },
+                    ]);
+                  }, 1000);
+                }
+
                 setSelfHealingLoading(false);
                 return;
               }
