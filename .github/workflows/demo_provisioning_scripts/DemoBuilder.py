@@ -1513,10 +1513,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
             "claude-sonnet-4",
-            "anthropic.claude-sonnet-4-20250514-v1:0",
+            "anthropic.claude-sonnet-4-6",
             "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "temperature": 0.5,
                     "maxTokens": 150
@@ -1561,10 +1561,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
             "claude-sonnet-4",
-            "anthropic.claude-sonnet-4-20250514-v1:0",
+            "anthropic.claude-sonnet-4-6",
             "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -1665,10 +1665,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
             "claude-sonnet-4",
-            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Bedrock.anthropic.claude-sonnet-4-6",
             "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "maxTokens": 100,
                     "temperature": 0.7
@@ -1944,13 +1944,13 @@ class DemoBuilder:
         gpt5_mini_config_key = "OpenAI.gpt-5-mini"
 
         sonnet_config = {
-            "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+            "modelName": "anthropic.claude-sonnet-4-6",
             "parameters": {
                 "maxTokens": 1000,
                 "temperature": 0.5
             }
         }
-        sonnet_config_key = "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0"
+        sonnet_config_key = "Bedrock.anthropic.claude-sonnet-4-6"
 
         tags = ["ai-models", "ai-config", "multi-agent", "bank"]
 
@@ -2659,10 +2659,8 @@ class DemoBuilder:
         agents = [
             {
                 "name": "Triage Agent",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are a banking query classifier for ToggleBank. "
@@ -2676,15 +2674,13 @@ class DemoBuilder:
                         "Return ONLY a JSON object: "
                         "{\"category\": \"<key>\", \"confidence\": <0-1>, \"reasoning\": \"<one sentence>\"}"
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Accounts Specialist",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Accounts Specialist with expertise in checking accounts, "
@@ -2692,15 +2688,13 @@ class DemoBuilder:
                         "Answer the customer's question thoroughly and accurately. "
                         "Keep your response factual, helpful, and under 200 words."
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Loans & Credit Specialist",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Loans & Credit Specialist with expertise in personal loans, "
@@ -2708,15 +2702,13 @@ class DemoBuilder:
                         "Answer the customer's question thoroughly and accurately. "
                         "Keep your response factual, helpful, and under 200 words."
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Investments Specialist",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Investment Services Specialist with expertise in portfolio management, "
@@ -2725,15 +2717,13 @@ class DemoBuilder:
                         "Remind customers that past performance doesn't guarantee future results. "
                         "Keep your response factual, helpful, and under 200 words."
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Transfers Specialist",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Digital Banking & Transfers Specialist with expertise in "
@@ -2742,15 +2732,13 @@ class DemoBuilder:
                         "Include relevant details about transfer limits, processing times, and fees. "
                         "Keep your response factual, helpful, and under 200 words."
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Customer Support Specialist",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Customer Support Specialist. You handle general banking questions, "
@@ -2758,15 +2746,13 @@ class DemoBuilder:
                         "Answer the customer's question thoroughly and accurately. Be empathetic and solution-oriented. "
                         "Keep your response factual, helpful, and under 200 words."
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
             {
                 "name": "Brand Voice",
-                "provider": "Bedrock",
-                "model": "amazon.nova-pro-v1:0",
-                "judge_provider": "OpenAI",
-                "judge_model": "gpt-5-mini",
+                "provider": "Anthropic",
+                "model": "claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Brand Voice editor. Rewrite the specialist's response "
@@ -2777,7 +2763,7 @@ class DemoBuilder:
                         "- Maintain ALL factual content from the original response\n"
                         "- Do NOT add any information that wasn't in the original response"
                     )},
-                    {"role": "user", "content": "{{ input }}"},
+                    {"role": "user", "content": "{{input}}"},
                 ],
             },
         ]
@@ -2792,8 +2778,6 @@ class DemoBuilder:
                 generation_model=agent["model"],
                 messages=agent["messages"],
                 criteria=default_criteria,
-                evaluation_provider=agent["judge_provider"],
-                evaluation_model=agent["judge_model"],
                 parameters={"maxTokens": 1000, "temperature": 0.5},
             )
 
@@ -2824,10 +2808,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "llm-as-judge",
             "claude-sonnet-4",
-            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Bedrock.anthropic.claude-sonnet-4-6",
             "Claude Sonnet 3.7",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "maxTokens": 1000,
                     "temperature": 0.9
@@ -3006,10 +2990,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
             "claude-sonnet-4",
-            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Bedrock.anthropic.claude-sonnet-4-6",
             "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -3054,10 +3038,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--publicbot",
             "claude-sonnet-4",
-            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Bedrock.anthropic.claude-sonnet-4-6",
             "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-6",
                 "parameters": {
                     "maxTokens": 100,
                     "temperature": 0.7

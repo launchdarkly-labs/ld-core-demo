@@ -213,7 +213,7 @@ Is there a specific service you'd like to know more about?`;
 				const userMsg = `USER_QUERY: ${userQuery}\n\nRESPONSE: ${responseText}`;
 				
 				// Judge always uses Bedrock - use the relevance model from environment or default
-				let relevanceModelId = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
+				let relevanceModelId = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-6';
 				if (!relevanceModelId.startsWith('us.')) {
 					relevanceModelId = 'us.' + relevanceModelId;
 				}
@@ -580,6 +580,7 @@ Is there a specific service you'd like to know more about?`;
 			// Pricing per 1000 tokens (as of early 2025)
 			const pricing: { [key: string]: { input: number; output: number } } = {
 				// Claude models
+				'claude-sonnet-4-6': { input: 0.003, output: 0.015 },
 				'claude-sonnet-4': { input: 0.003, output: 0.015 },
 				'claude-3-5-sonnet': { input: 0.003, output: 0.015 },
 				'claude-3-haiku': { input: 0.00025, output: 0.00125 },
@@ -628,7 +629,7 @@ Is there a specific service you'd like to know more about?`;
 				});
 				pushLog({ level: "INFO", message: `⚖️ Judge accuracy: ${judge.accuracy?.toFixed(2) ?? "—"}`, name: "chat" });
 
-				const relModel = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-20250514-v1:0';
+				const relModel = process.env.RELEVANCE_MODEL_ID || 'us.anthropic.claude-sonnet-4-6';
 				let relevance: number | null = await computeRelevanceLLM(userInput, fullResponse, relModel);
 				if (relevance === null) relevance = computeRelevanceJaccard(userInput, fullResponse);
 				const sourceFidelity = (judge as any).sourceFidelity ?? judge.accuracy ?? 0;
