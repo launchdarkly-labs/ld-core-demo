@@ -755,11 +755,27 @@ async function runAttachedJudges(
 			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" using provider=${providerName}, model=${judgeModelName}`, name: "brand" });
 
 		let evalResult: any;
+		const capturedLogs: string[] = [];
+		const origLog = console.log;
+		const origWarn = console.warn;
+		const origError = console.error;
+		console.log = (...args: any[]) => { capturedLogs.push(args.map(String).join(" ")); origLog(...args); };
+		console.warn = (...args: any[]) => { capturedLogs.push("[warn] " + args.map(String).join(" ")); origWarn(...args); };
+		console.error = (...args: any[]) => { capturedLogs.push("[error] " + args.map(String).join(" ")); origError(...args); };
 		try {
 			evalResult = await judge.evaluate(input, output, samplingRate);
 		} catch (sdkErr: any) {
 			pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" SDK threw: ${sdkErr?.message ?? sdkErr}`, name: "brand" });
 			evalResult = { sampled: true, success: false };
+		} finally {
+			console.log = origLog;
+			console.warn = origWarn;
+			console.error = origError;
+		}
+		if (capturedLogs.length > 0) {
+			for (const line of capturedLogs) {
+				pushLog({ level: "INFO", message: `   [SDK] ${line}`, name: "brand" });
+			}
 		}
 
 		if (evalResult.sampled && !evalResult.success && openai && judgeAiCfg?.messages?.length) {
