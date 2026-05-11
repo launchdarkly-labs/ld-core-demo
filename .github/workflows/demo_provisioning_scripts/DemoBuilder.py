@@ -257,8 +257,9 @@ class DemoBuilder:
         # print("AI Config: ToggleBot")
         
         ##################################################
-        self.create_togglebot_ai_config()
         self.create_brand_voice_judges()
+        self.create_togglebot_ai_config()
+        self.attach_judges_to_brand_voice()
         self.create_togglebot_self_heal_ai_config()
         self.create_togglebot_multi_agent_ai_configs(tool_versions)
         self.create_llm_as_judge_ai_config()
@@ -2980,7 +2981,8 @@ class DemoBuilder:
             time.sleep(0.5)
         print(" - All judges toggled on")
 
-        # --- Attach all judges to all Brand Voice variations ---
+    def attach_judges_to_brand_voice(self):
+        """Attach all judge configs to all Brand Voice variations. Must run after brand voice AI config is created."""
         all_judges = [
             {"judgeConfigKey": "toxicity-judge", "samplingRate": 1.0},
             {"judgeConfigKey": "relevance-judge", "samplingRate": 1.0},
