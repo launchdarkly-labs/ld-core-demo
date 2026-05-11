@@ -312,7 +312,7 @@ export default async function selfHealingChat(
             continue;
           }
           const judgeAiConfig = judge.getAIConfig();
-          const judgeModelName = judgeAiConfig?.model?.name ?? "gpt-5-mini";
+          const judgeModelName = judgeAiConfig?.model?.name ?? "gpt-4o-mini";
           pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" using provider=${judgeAiConfig?.provider?.name ?? "unknown"}, model=${judgeModelName}`, name: "self-healing" });
           const evalResult = await judge.evaluate(userInput, finalResponse, 1);
 
@@ -453,7 +453,7 @@ export default async function selfHealingChat(
                 } else if (evalResult.sampled && !evalResult.success && judgeAiCfg?.messages?.length) {
                   try {
                     const dr = await evaluateJudgeDirectly(
-                      openaiClient, judgeAiCfg.messages, judgeAiCfg?.model?.name ?? "gpt-5-mini", userInput, finalResponse,
+                      openaiClient, judgeAiCfg.messages, judgeAiCfg?.model?.name ?? "gpt-4o-mini", userInput, finalResponse,
                     );
                     if (dr) { score = dr.score; ok = true; }
                   } catch { /* fallback scores will cover it */ }
