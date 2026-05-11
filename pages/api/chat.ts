@@ -580,7 +580,7 @@ Is there a specific service you'd like to know more about?`;
 			// Pricing per 1000 tokens (as of early 2025)
 			const pricing: { [key: string]: { input: number; output: number } } = {
 				// Claude models
-				'claude-3-7-sonnet': { input: 0.003, output: 0.015 },
+				'claude-sonnet-4': { input: 0.003, output: 0.015 },
 				'claude-3-5-sonnet': { input: 0.003, output: 0.015 },
 				'claude-3-haiku': { input: 0.00025, output: 0.00125 },
 				// Nova models  

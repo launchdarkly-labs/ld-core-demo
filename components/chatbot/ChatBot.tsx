@@ -583,8 +583,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
         'anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
         'us.anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
-        'anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
-        'us.anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
+        'anthropic.claude-sonnet-4-20250514-v1:0': 'Claude Sonnet 4',
+        'us.anthropic.claude-sonnet-4-20250514-v1:0': 'Claude Sonnet 4',
 
         // Meta Llama Models
         'meta.llama2-7b-chat-v1': 'Llama 2 7B',

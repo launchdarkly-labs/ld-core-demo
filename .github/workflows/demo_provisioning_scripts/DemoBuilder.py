@@ -1509,14 +1509,14 @@ class DemoBuilder:
             "This ai config will provide ai models to the destination recommendations component in LaunchAirways",
             ["ai-models", "ai-config"]
         )
-        # Claude 3.7 Sonnet
+        # Claude Sonnet 4
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--destination-picker-new-ai-model",
-            "claude-3-7-sonnet",
-            "anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "Claude 3.7 Sonnet",
+            "claude-sonnet-4",
+            "anthropic.claude-sonnet-4-20250514-v1:0",
+            "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "temperature": 0.5,
                     "maxTokens": 150
@@ -1557,14 +1557,14 @@ class DemoBuilder:
             "This ai config will provide ai prompts to the travel insights component in LaunchAirways",
             ["ai-prompts","ai-config"]
         )
-        # Claude 3.7 Sonnet
+        # Claude Sonnet 4
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-travel-prompt-text",
-            "claude-3-7-sonnet",
-            "anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "Claude 3.7 Sonnet",
+            "claude-sonnet-4",
+            "anthropic.claude-sonnet-4-20250514-v1:0",
+            "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.9
@@ -1661,14 +1661,14 @@ class DemoBuilder:
             "This ai config will provide ai models / prompts to the ToggleBot component in ToggleBank",
             ["ai-models","ai-config", "bank"]
         )
-        # Claude 3.7 Sonnet
+        # Claude Sonnet 4
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
-            "claude-3-7-sonnet",
-            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "Claude 3.7 Sonnet",
+            "claude-sonnet-4",
+            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "maxTokens": 100,
                     "temperature": 0.7
@@ -1944,13 +1944,13 @@ class DemoBuilder:
         gpt5_mini_config_key = "OpenAI.gpt-5-mini"
 
         sonnet_config = {
-            "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
             "parameters": {
                 "maxTokens": 1000,
                 "temperature": 0.5
             }
         }
-        sonnet_config_key = "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0"
+        sonnet_config_key = "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0"
 
         tags = ["ai-models", "ai-config", "multi-agent", "bank"]
 
@@ -2028,7 +2028,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Triage",
             sonnet_config,
             instructions=triage_instructions,
-            description="Premium triage agent using Claude 3.7 Sonnet",
+            description="Premium triage agent using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-triage", "sonnet-triage",
@@ -2110,7 +2110,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Accounts",
             sonnet_config,
             instructions=accounts_instructions,
-            description="Premium accounts specialist using Claude 3.7 Sonnet",
+            description="Premium accounts specialist using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-accounts-specialist", "sonnet-accounts",
@@ -2193,7 +2193,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Loans",
             sonnet_config,
             instructions=loans_instructions,
-            description="Premium loans specialist using Claude 3.7 Sonnet",
+            description="Premium loans specialist using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-loans-specialist", "sonnet-loans",
@@ -2276,7 +2276,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Investments",
             sonnet_config,
             instructions=investments_instructions,
-            description="Premium investments specialist using Claude 3.7 Sonnet",
+            description="Premium investments specialist using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-investments-specialist", "sonnet-investments",
@@ -2358,7 +2358,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Transfers",
             sonnet_config,
             instructions=transfers_instructions,
-            description="Premium transfers specialist using Claude 3.7 Sonnet",
+            description="Premium transfers specialist using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-transfers-specialist", "sonnet-transfers",
@@ -2439,7 +2439,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Support",
             sonnet_config,
             instructions=support_instructions,
-            description="Premium support specialist using Claude 3.7 Sonnet",
+            description="Premium support specialist using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-support-specialist", "sonnet-support",
@@ -2554,7 +2554,7 @@ class DemoBuilder:
             "Sonnet 3.7 - Brand Voice",
             sonnet_config,
             instructions=brand_instructions,
-            description="Premium brand voice agent using Claude 3.7 Sonnet",
+            description="Premium brand voice agent using Claude Sonnet 4",
         )
         self.ldproject.patch_variation_tools(
             "ai-config--togglebot-brand-voice", "sonnet-brand",
@@ -2823,11 +2823,11 @@ class DemoBuilder:
         judge_prompt = "You are a banking safety expert evaluating response quality. Focus on whether the response could HARM or MISLEAD the customer, not minor variations.\n\nUSER CONTEXT: \n{{user_context}}\n\nUSER QUESTION:\n{{user_question}}\n\nSOURCE MATERIAL:\n{{source_passages}}\n\nRESPONSE TO CHECK:\n{{response_text}}\n\nEVALUATION FRAMEWORK:\nRate accuracy from 0.0 to 1.0 based on CUSTOMER IMPACT:\n\n**CRITICAL ERRORS (0.0-0.3):**\n- Wrong monetary amounts, fees, or limits\n- Incorrect security procedures that could compromise accounts  \n- Wrong tier benefits or eligibility requirements\n- Dangerous advice (sharing passwords, ignoring fraud alerts)\n- Contradicts established banking policies\n\n**MODERATE ISSUES (0.4-0.7):**\n- Minor procedural variations that don't affect outcome\n- Missing optional steps that aren't essential\n- Slight differences in navigation paths but correct destination\n\n**GOOD RESPONSES (0.8-1.0):**\n- All critical banking information is accurate\n- Safe and helpful guidance for the customer\n- May include reasonable interpretations or helpful context\n- Personalization elements (greetings, user names) are acceptable\n- Minor wording differences that don't change meaning\n\n**SCORING PRIORITIES:**\n1. **Safety first**: Would this response harm the customer financially or security-wise?\n2. **Core accuracy**: Are the essential banking facts (fees, procedures, requirements) correct?\n3. **Practical utility**: Can the customer successfully complete their goal with this information?\n\n**IGNORE:**\n- Friendly tone or greetings (\"Hi Catherine!\")\n- Emoji usage or formatting differences  \n- Slight variations in step ordering if outcome is same\n- Additional helpful context not in source material\n- Minor wording differences that don't affect meaning\n\nYou are a banking safety expert evaluating response quality. Focus on whether the response could HARM or MISLEAD the customer, not minor variations.\n\n**RETURN THIS EXACT JSON FORMAT:**\n{\n  \"factual_claims\": [\"List each factual claim made in the response\"],\n  \"accurate_claims\": [\"Claims that are correct per source material\"],\n  \"inaccurate_claims\": [\"Claims that are wrong or unsupported\"],\n  \"reasoning\": \"Detailed explanation of your evaluation\",\n  \"accuracy_score\": 0.85\n}"
         res2 = self.ldproject.create_ai_config_versions(
             "llm-as-judge",
-            "claude-sonnet-3-7",
-            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            "claude-sonnet-4",
+            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
             "Claude Sonnet 3.7",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "maxTokens": 1000,
                     "temperature": 0.9
@@ -2849,19 +2849,19 @@ class DemoBuilder:
     def setup_llm_as_judge_ai_config(self):
         print("Setting up LLM as Judge AI config...")
         
-        # Get the variation ID for the claude-sonnet-3-7 variation
-        variation_id = self.ldproject.get_ai_config_variation_id("llm-as-judge", "claude-sonnet-3-7")
+        # Get the variation ID for the claude-sonnet-4 variation
+        variation_id = self.ldproject.get_ai_config_variation_id("llm-as-judge", "claude-sonnet-4")
         
         if variation_id:
-            # Update the AI config targeting to use the claude-sonnet-3-7 variation
+            # Update the AI config targeting to use the claude-sonnet-4 variation
             self.ldproject.update_ai_config_targeting("llm-as-judge", "production", variation_id)
-            print(" - Updated LLM as Judge AI config targeting to claude-sonnet-3-7 variation")
+            print(" - Updated LLM as Judge AI config targeting to claude-sonnet-4 variation")
             
             # Toggle on the AI config
             self.ldproject.toggle_flag("llm-as-judge", "on", "production")
             print(" - Toggled on LLM as Judge AI config")
         else:
-            print(" - Warning: Could not find claude-sonnet-3-7 variation for LLM as Judge AI config")
+            print(" - Warning: Could not find claude-sonnet-4 variation for LLM as Judge AI config")
 
     def create_brand_voice_judges(self):
         """Create all judge AI configs for brand voice evaluation and attach them to all brand voice variations."""
@@ -3002,14 +3002,14 @@ class DemoBuilder:
             "This ai config will provide ai models / prompts to the chatbot component in LaunchAirways",
             ["ai-models","ai-config"]
         )
-        # Claude 3.7 Sonnet
+        # Claude Sonnet 4
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
-            "claude-3-7-sonnet",
-            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "Claude 3.7 Sonnet",
+            "claude-sonnet-4",
+            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "maxTokens": 200,
                     "temperature": 0.5
@@ -3050,14 +3050,14 @@ class DemoBuilder:
             "This ai config will provide ai models / prompts to the PublicBot component for the Government demo",
             ["ai-models","ai-config","public-sector"]
         )
-        # Claude 3.7 Sonnet
+        # Claude Sonnet 4
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--publicbot",
-            "claude-3-7-sonnet",
-            "Bedrock.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "Claude 3.7 Sonnet",
+            "claude-sonnet-4",
+            "Bedrock.anthropic.claude-sonnet-4-20250514-v1:0",
+            "Claude Sonnet 4",
             {
-                "modelName": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "modelName": "anthropic.claude-sonnet-4-20250514-v1:0",
                 "parameters": {
                     "maxTokens": 100,
                     "temperature": 0.7
