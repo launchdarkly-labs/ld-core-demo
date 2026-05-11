@@ -7,6 +7,35 @@ import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
 import { LDObserve } from "@launchdarkly/observability-node";
+const OpenAI = require("openai");
+
+async function evaluateJudgeDirectly(
+  openaiClient: any,
+  judgeMessages: Array<{ role: string; content: string }>,
+  modelName: string,
+  input: string,
+  output: string,
+): Promise<{ score: number; reasoning: string } | null> {
+  const interpolated = judgeMessages.map((m: any) => ({
+    role: m.role as "system" | "user" | "assistant",
+    content: m.content
+      .replace(/\{\{message_history\}\}/g, input)
+      .replace(/\{\{response_to_evaluate\}\}/g, output),
+  }));
+  const resp = await openaiClient.chat.completions.create({
+    model: modelName || "gpt-5-mini",
+    messages: interpolated,
+    max_completion_tokens: 300,
+    temperature: 0,
+    response_format: { type: "json_object" as const },
+  });
+  const raw = resp.choices?.[0]?.message?.content ?? "";
+  const parsed = JSON.parse(raw);
+  if (typeof parsed.score === "number" && parsed.score >= 0 && parsed.score <= 1) {
+    return { score: parsed.score, reasoning: parsed.reasoning ?? "" };
+  }
+  return null;
+}
 
 interface LaunchDarklyContext {
   kind: string;
@@ -176,6 +205,7 @@ export default async function selfHealingChat(
 
     const ldClient = await getServerClient(process.env.LD_SDK_KEY || "");
     const aiClient = initAi(ldClient);
+    const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const templateVariables = { userInput };
     const startTime = Date.now();
     let judgeScoresBefore: JudgeScore = {};
@@ -283,21 +313,44 @@ export default async function selfHealingChat(
             continue;
           }
           const judgeAiConfig = judge.getAIConfig();
-          pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" using provider=${judgeAiConfig?.provider?.name ?? "unknown"}, model=${judgeAiConfig?.model?.name ?? "unknown"}`, name: "self-healing" });
+          const judgeModelName = judgeAiConfig?.model?.name ?? "gpt-5-mini";
+          pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" using provider=${judgeAiConfig?.provider?.name ?? "unknown"}, model=${judgeModelName}`, name: "self-healing" });
           const evalResult = await judge.evaluate(userInput, finalResponse, 1);
-          if (evalResult.sampled && evalResult.success && typeof evalResult.score === "number") {
+
+          let score: number | undefined;
+          let success = evalResult.sampled && evalResult.success && typeof evalResult.score === "number";
+
+          if (success) {
+            score = evalResult.score;
+          } else if (evalResult.sampled && !evalResult.success && judgeAiConfig?.messages?.length) {
+            pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" SDK failed, trying direct OpenAI call...`, name: "self-healing" });
+            try {
+              const directResult = await evaluateJudgeDirectly(
+                openaiClient, judgeAiConfig.messages, judgeModelName, userInput, finalResponse,
+              );
+              if (directResult) {
+                score = directResult.score;
+                success = true;
+                pushLog({ level: "INFO", message: `   ⚖️ Judge "${judgeKey}" direct call succeeded: ${score.toFixed(2)}`, name: "self-healing" });
+              }
+            } catch (directErr: any) {
+              pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" direct call failed: ${directErr?.message ?? "unknown"}`, name: "self-healing" });
+            }
+          }
+
+          if (success && typeof score === "number") {
             if (judgeKey.includes("accuracy")) {
-              judgeScoresBefore.accuracy = evalResult.score * 100;
+              judgeScoresBefore.accuracy = score * 100;
               pushLog({ level: "INFO", message: `   ⚖️ accuracy-judge: ${judgeScoresBefore.accuracy.toFixed(1)}%`, name: "self-healing" });
             } else if (judgeKey.includes("relevance")) {
-              judgeScoresBefore.relevance = evalResult.score * 100;
+              judgeScoresBefore.relevance = score * 100;
               pushLog({ level: "INFO", message: `   ⚖️ relevance-judge: ${judgeScoresBefore.relevance.toFixed(1)}%`, name: "self-healing" });
             } else if (judgeKey.includes("toxicity")) {
-              judgeScoresBefore.toxicity = evalResult.score;
-              pushLog({ level: evalResult.score > 0.5 ? "WARN" : "INFO", message: `   ⚖️ toxicity-judge: ${evalResult.score.toFixed(2)}${evalResult.score > 0.5 ? " ⚠️ HIGH" : ""}`, name: "self-healing" });
+              judgeScoresBefore.toxicity = score;
+              pushLog({ level: score > 0.5 ? "WARN" : "INFO", message: `   ⚖️ toxicity-judge: ${score.toFixed(2)}${score > 0.5 ? " ⚠️ HIGH" : ""}`, name: "self-healing" });
             }
-          } else if (evalResult.sampled && !evalResult.success) {
-            pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" failed: ${(evalResult as any).errorMessage ?? "unknown"} (result: ${JSON.stringify(evalResult)})`, name: "self-healing" });
+          } else if (evalResult.sampled && !success) {
+            pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" failed: ${(evalResult as any).errorMessage ?? "unknown"}`, name: "self-healing" });
           }
         } catch (err: any) {
           pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" error: ${err?.message ?? "unknown"}`, name: "self-healing" });
@@ -392,15 +445,24 @@ export default async function selfHealingChat(
               try {
                 const judge = await aiClient.createJudge(judgeKey, context);
                 if (!judge) continue;
+                const judgeAiCfg = judge.getAIConfig();
                 const evalResult = await judge.evaluate(userInput, finalResponse, 1);
-                if (evalResult.sampled && evalResult.success && typeof evalResult.score === "number") {
-                  if (judgeKey.includes("accuracy")) {
-                    judgeScoresAfter.accuracy = evalResult.score * 100;
-                  } else if (judgeKey.includes("relevance")) {
-                    judgeScoresAfter.relevance = evalResult.score * 100;
-                  } else if (judgeKey.includes("toxicity")) {
-                    judgeScoresAfter.toxicity = evalResult.score;
-                  }
+                let score: number | undefined;
+                let ok = evalResult.sampled && evalResult.success && typeof evalResult.score === "number";
+                if (ok) {
+                  score = evalResult.score;
+                } else if (evalResult.sampled && !evalResult.success && judgeAiCfg?.messages?.length) {
+                  try {
+                    const dr = await evaluateJudgeDirectly(
+                      openaiClient, judgeAiCfg.messages, judgeAiCfg?.model?.name ?? "gpt-5-mini", userInput, finalResponse,
+                    );
+                    if (dr) { score = dr.score; ok = true; }
+                  } catch { /* fallback scores will cover it */ }
+                }
+                if (ok && typeof score === "number") {
+                  if (judgeKey.includes("accuracy")) judgeScoresAfter.accuracy = score * 100;
+                  else if (judgeKey.includes("relevance")) judgeScoresAfter.relevance = score * 100;
+                  else if (judgeKey.includes("toxicity")) judgeScoresAfter.toxicity = score;
                 }
               } catch (err: any) {
                 pushLog({ level: "WARN", message: `   ⚖️ Fallback judge "${judgeKey}" error: ${err?.message ?? "unknown"}`, name: "self-healing" });
