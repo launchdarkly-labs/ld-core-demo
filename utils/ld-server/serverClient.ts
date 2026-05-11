@@ -13,7 +13,7 @@ const getServerClient = async (sdkKey: string, options?: LDOptions) => {
 
         const mergedOptions: LDOptions = {
             ...options,
-            logger: basicLogger({ level: 'warn', destination: console.warn }),
+            logger: basicLogger({ level: 'debug', destination: console.log }),
             plugins: [
                 ...(options?.plugins || []),
                 new Observability(observabilityOptions)
