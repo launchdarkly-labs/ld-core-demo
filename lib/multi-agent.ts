@@ -742,7 +742,7 @@ async function runAttachedJudges(
 	for (const judgeDef of judgeConfig.judges) {
 		const { key, samplingRate } = judgeDef;
 		try {
-			const judge = await aiClient.createJudge(key, context);
+			const judge = await aiClient.createJudge(key, context, undefined, undefined, "openai");
 			if (!judge) {
 				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" — config disabled or provider unavailable`, name: "brand" });
 				results.push({ judgeConfigKey: key, success: false, sampled: false });
@@ -754,10 +754,16 @@ async function runAttachedJudges(
 			const judgeModelName = judgeAiCfg?.model?.name ?? "unknown";
 			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" using provider=${providerName}, model=${judgeModelName}`, name: "brand" });
 
-			const evalResult = await judge.evaluate(input, output, samplingRate);
+		let evalResult: any;
+		try {
+			evalResult = await judge.evaluate(input, output, samplingRate);
+		} catch (sdkErr: any) {
+			pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" SDK threw: ${sdkErr?.message ?? sdkErr}`, name: "brand" });
+			evalResult = { sampled: true, success: false };
+		}
 
-			if (evalResult.sampled && !evalResult.success && openai && judgeAiCfg?.messages?.length) {
-				pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" SDK failed, trying direct OpenAI call...`, name: "brand" });
+		if (evalResult.sampled && !evalResult.success && openai && judgeAiCfg?.messages?.length) {
+			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" SDK failed (result=${JSON.stringify(evalResult)}), trying direct OpenAI call...`, name: "brand" });
 				try {
 					const directResult = await evaluateJudgeDirectly(
 						openai, judgeAiCfg.messages, judgeModelName, input, output,

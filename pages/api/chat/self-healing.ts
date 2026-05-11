@@ -306,7 +306,7 @@ export default async function selfHealingChat(
       pushLog({ level: "INFO", message: `⚖️ Running ${judgeKeys.length} attached judges...`, name: "self-healing" });
       for (const judgeKey of judgeKeys) {
         try {
-          const judge = await aiClient.createJudge(judgeKey, context);
+          const judge = await aiClient.createJudge(judgeKey, context, undefined, undefined, "openai");
           if (!judge) {
             pushLog({ level: "WARN", message: `   ⚖️ Judge "${judgeKey}" — config disabled or unavailable`, name: "self-healing" });
             continue;
@@ -442,7 +442,7 @@ export default async function selfHealingChat(
             pushLog({ level: "INFO", message: `⚖️ Running ${judgeKeys.length} judges on fallback response...`, name: "self-healing" });
             for (const judgeKey of judgeKeys) {
               try {
-                const judge = await aiClient.createJudge(judgeKey, context);
+                const judge = await aiClient.createJudge(judgeKey, context, undefined, undefined, "openai");
                 if (!judge) continue;
                 const judgeAiCfg = judge.getAIConfig();
                 const evalResult = await judge.evaluate(userInput, finalResponse, 1);
