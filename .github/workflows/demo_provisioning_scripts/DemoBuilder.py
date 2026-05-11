@@ -259,9 +259,9 @@ class DemoBuilder:
         ##################################################
         self.create_brand_voice_judges()
         self.create_togglebot_ai_config()
-        self.attach_judges_to_brand_voice()
         self.create_togglebot_self_heal_ai_config()
         self.create_togglebot_multi_agent_ai_configs(tool_versions)
+        self.attach_judges_to_brand_voice()
         self.create_llm_as_judge_ai_config()
         self.create_government_publicbot_ai_config()
         self.create_custom_financial_models()
