@@ -2561,12 +2561,6 @@ class DemoBuilder:
             _tools("rewrite-response-for-channel"),
         )
 
-        time.sleep(1)
-        self.ldproject.toggle_flag("ai-config--togglebot-brand-voice", "on", "production")
-        brand_var_id_recheck = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "nova-pro-brand")
-        if brand_var_id_recheck:
-            self.ldproject.update_ai_config_targeting("ai-config--togglebot-brand-voice", "production", brand_var_id_recheck)
-
         # Add targeting rule: when ai.toxicPrompt is true, serve the toxic variation
         time.sleep(1)
         toxic_var_id = self.ldproject.get_ai_config_variation_id("ai-config--togglebot-brand-voice", "nova-pro-brand-toxic")
