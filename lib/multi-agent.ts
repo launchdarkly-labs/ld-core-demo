@@ -708,7 +708,7 @@ async function evaluateJudgeDirectly(
 			.replace(/\{\{response_to_evaluate\}\}/g, output),
 	}));
 	const resp = await openai.chat.completions.create({
-		model: modelName || "gpt-5-mini",
+		model: modelName || "gpt-4o-mini",
 		messages: interpolated,
 		max_completion_tokens: 300,
 		response_format: { type: "json_object" as const },

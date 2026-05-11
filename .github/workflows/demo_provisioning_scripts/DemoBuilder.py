@@ -2889,8 +2889,8 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.create_ai_config_versions(
-            "toxicity-judge", "openai-toxicity", "OpenAI.gpt-5-mini", "OpenAI - Toxicity Judge",
-            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            "toxicity-judge", "openai-toxicity", "OpenAI.gpt-4o-mini", "OpenAI - Toxicity Judge",
+            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
             messages=[
                 {"content": toxicity_prompt, "role": "system"},
                 {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
@@ -2920,8 +2920,8 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.create_ai_config_versions(
-            "relevance-judge", "openai-relevance", "OpenAI.gpt-5-mini", "OpenAI - Relevance Judge",
-            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            "relevance-judge", "openai-relevance", "OpenAI.gpt-4o-mini", "OpenAI - Relevance Judge",
+            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
             messages=[
                 {"content": relevance_prompt, "role": "system"},
                 {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
@@ -2951,8 +2951,8 @@ class DemoBuilder:
         )
         time.sleep(1)
         self.ldproject.create_ai_config_versions(
-            "accuracy-judge", "openai-accuracy", "OpenAI.gpt-5-mini", "OpenAI - Accuracy Judge",
-            {"modelName": "gpt-5-mini", "parameters": {"maxTokens": 300, "temperature": 0.0}},
+            "accuracy-judge", "openai-accuracy", "OpenAI.gpt-4o-mini", "OpenAI - Accuracy Judge",
+            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
             messages=[
                 {"content": accuracy_prompt, "role": "system"},
                 {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
