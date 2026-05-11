@@ -779,7 +779,8 @@ async function runAttachedJudges(
 		}
 
 		if (evalResult.sampled && !evalResult.success && openai && judgeAiCfg?.messages?.length) {
-			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" SDK failed (result=${JSON.stringify(evalResult)}), trying direct OpenAI call...`, name: "brand" });
+			const metricKeyCheck = (judgeAiCfg as any)?.evaluationMetricKey ?? (judgeAiCfg as any)?.evaluationMetricKeys;
+			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" SDK failed (errorMessage=${evalResult.errorMessage ?? "none"}, evaluationMetricKey=${metricKeyCheck ?? "MISSING"}), trying direct OpenAI call...`, name: "brand" });
 				try {
 					const directResult = await evaluateJudgeDirectly(
 						openai, judgeAiCfg.messages, judgeModelName, input, output,
