@@ -26,7 +26,6 @@ async function evaluateJudgeDirectly(
     model: modelName || "gpt-5-mini",
     messages: interpolated,
     max_completion_tokens: 300,
-    temperature: 0,
     response_format: { type: "json_object" as const },
   });
   const raw = resp.choices?.[0]?.message?.content ?? "";
