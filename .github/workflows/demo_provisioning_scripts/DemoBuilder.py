@@ -2650,11 +2650,7 @@ class DemoBuilder:
         """Create Evaluations and Playgrounds for each agent so SEs just click Run."""
         print("Creating Playgrounds...")
 
-        default_criteria = [
-            {"criterionType": "accuracy"},
-            {"criterionType": "answer_relevancy"},
-            {"criterionType": "likeness"},
-        ]
+        default_criteria = []
 
         agents = [
             {
@@ -2778,8 +2774,8 @@ class DemoBuilder:
                 generation_model=agent["model"],
                 messages=agent["messages"],
                 criteria=default_criteria,
-                variables={"input": "input"},
-                parameters={"maxTokens": 1000, "temperature": 0.5},
+                variables={"input": "default value"},
+                parameters={},
             )
 
             if not eval_id:
