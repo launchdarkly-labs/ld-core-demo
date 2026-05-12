@@ -2660,7 +2660,7 @@ class DemoBuilder:
             {
                 "name": "Triage Agent",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are a banking query classifier for ToggleBank. "
@@ -2680,7 +2680,7 @@ class DemoBuilder:
             {
                 "name": "Accounts Specialist",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Accounts Specialist with expertise in checking accounts, "
@@ -2694,7 +2694,7 @@ class DemoBuilder:
             {
                 "name": "Loans & Credit Specialist",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Loans & Credit Specialist with expertise in personal loans, "
@@ -2708,7 +2708,7 @@ class DemoBuilder:
             {
                 "name": "Investments Specialist",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Investment Services Specialist with expertise in portfolio management, "
@@ -2723,7 +2723,7 @@ class DemoBuilder:
             {
                 "name": "Transfers Specialist",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Digital Banking & Transfers Specialist with expertise in "
@@ -2738,7 +2738,7 @@ class DemoBuilder:
             {
                 "name": "Customer Support Specialist",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Customer Support Specialist. You handle general banking questions, "
@@ -2752,7 +2752,7 @@ class DemoBuilder:
             {
                 "name": "Brand Voice",
                 "provider": "Anthropic",
-                "model": "claude-sonnet-4-5",
+                "model": "Anthropic.claude-sonnet-4-5",
                 "messages": [
                     {"role": "system", "content": (
                         "You are ToggleBank's Brand Voice editor. Rewrite the specialist's response "
@@ -2778,6 +2778,7 @@ class DemoBuilder:
                 generation_model=agent["model"],
                 messages=agent["messages"],
                 criteria=default_criteria,
+                variables={"input": "input"},
                 parameters={"maxTokens": 1000, "temperature": 0.5},
             )
 
