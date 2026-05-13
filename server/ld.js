@@ -167,6 +167,66 @@ export async function getAIConfig(configKey, context, fallbackConfig) {
 }
 
 /**
+ * Inspect `brand_agent` completion evaluation (same call path as chat) for debugging / UI gating.
+ * When the AI Config is disabled in LaunchDarkly, `@launchdarkly/server-sdk-ai` returns a minimal object:
+ * `{ key, enabled: false, tracker: undefined }` (see `createDisabledConfig` in the SDK).
+ */
+export async function peekBrandAgentCompletion(userContext) {
+  const ldClient = await getLdClient();
+  const aiClient = initAi(ldClient);
+  const contextVars = {
+    user_key: userContext.user_key ?? "anonymous",
+    query: "__brand_status_probe__",
+    customer_name: userContext.name ?? "Preview",
+    original_query: "__brand_status_probe__",
+    query_type: "scheduler_agent",
+    specialist_response: "Preview specialist output for template variables.",
+    ...userContext,
+  };
+  const ldContext = {
+    kind: "user",
+    key: (contextVars.user_key || "anonymous").toString(),
+    ...contextVars,
+  };
+  let completion;
+  try {
+    completion = await aiClient.completionConfig(
+      "brand_agent",
+      ldContext,
+      BRAND_COMPLETION_DEFAULT,
+      contextVars
+    );
+  } catch (err) {
+    return {
+      error: err?.message ?? String(err),
+      keys: [],
+      enabled: null,
+      hasTracker: false,
+      hasIsDisabled: false,
+      isDisabledCall: null,
+      brandAgentDisabled: true,
+    };
+  }
+  let isDisabledCall = null;
+  if (typeof completion.IsDisabled === "function") {
+    try {
+      isDisabledCall = completion.IsDisabled();
+    } catch (e) {
+      isDisabledCall = { threw: e?.message ?? String(e) };
+    }
+  }
+  return {
+    keys: Object.keys(completion),
+    enabled: completion.enabled,
+    key: completion.key,
+    hasTracker: completion.tracker != null,
+    hasIsDisabled: typeof completion.IsDisabled === "function",
+    isDisabledCall,
+    brandAgentDisabled: completion.enabled === false,
+  };
+}
+
+/**
  * Fetch completion AI config from LaunchDarkly (messages-based). Returns config with judgeConfiguration when judges are attached.
  */
 export async function getCompletionConfig(configKey, context, fallbackConfig, variables = {}) {
@@ -178,6 +238,8 @@ export async function getCompletionConfig(configKey, context, fallbackConfig, va
     ...context,
   };
   const completion = await aiClient.completionConfig(configKey, ldContext, fallbackConfig, variables);
+  /** Raw `enabled` from LaunchDarkly AI completion (`false` when the config is off for this context). */
+  const ldEnabled = completion.enabled;
   const judges = completion.judgeConfiguration?.judges ?? [];
   const normalizedJudges = judges.map((j) => ({
     ...j,
@@ -202,7 +264,7 @@ export async function getCompletionConfig(configKey, context, fallbackConfig, va
     trackTimeToFirstToken: () => {},
     trackDuration: () => {},
   };
-  return { config, tracker: completion.tracker ?? noopTracker };
+  return { config, tracker: completion.tracker ?? noopTracker, ldEnabled };
 }
 
 const JUDGE_CONFIG_DEFAULT = { enabled: false, model: { name: null }, messages: [], evaluationMetricKey: null };

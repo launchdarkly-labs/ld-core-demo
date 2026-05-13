@@ -15,8 +15,13 @@ const TOXICITY_THRESHOLD = (() => {
 })();
 
 function createUserContext(body = {}) {
+  const rawKey = body.userKey ?? body.user_key;
+  const user_key =
+    typeof rawKey === "string" && rawKey.trim().length > 0
+      ? rawKey.trim().slice(0, 256)
+      : "anonymous";
   return {
-    user_key: "anonymous",
+    user_key,
     name: body.userName ?? "Ellen McLain",
     location: body.location ?? "Cadillac, MI",
     policy_id: body.policyId ?? "TH-HMO-GOLD-2024",
@@ -82,7 +87,7 @@ export async function POST(request) {
   });
   pushLog({
     level: "INFO",
-    message: `   Context: policy=${userContext.policy_id ?? "—"} · ${userContext.location ?? "—"}`,
+    message: `   Context: user_key=${userContext.user_key ?? "—"} · policy=${userContext.policy_id ?? "—"} · ${userContext.location ?? "—"}`,
     name: "chat",
     ...(sessionId && { sessionId }),
   });
@@ -98,90 +103,142 @@ export async function POST(request) {
         const triageResult = await runTriage(query, userContext, { logger, headers });
         triageResult.nextAgent = triageResult.nextAgent ?? "—";
         triageResult.confidence = triageResult.confidence ?? 0;
-      logger({
-        level: "INFO",
-        message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
-        name: "chat",
-      });
+        logger({
+          level: "INFO",
+          message: `✅ Triage ==> ${triageResult.nextAgent} @ ${(triageResult.confidence * 100).toFixed(0)}% confidence`,
+          name: "chat",
+        });
 
-      const specialistResult = await runSpecialist(
-        triageResult.queryType,
-        query,
-        userContext,
-        { logger, headers }
-      );
-
-      let brandSpanResult;
-      {
-        let brandResult = await runBrandAgent(
-          specialistResult.content,
-          query,
+        const specialistResult = await runSpecialist(
           triageResult.queryType,
-          { ...userContext, guardrails: false },
+          query,
+          userContext,
           { logger, headers }
         );
 
-        const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
-        let firstRunJudgeResults = null;
-        let firstRunConfig = null;
-        if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
-          if (userContext.guardrails) {
-            firstRunJudgeResults = brandResult?.judgeResults ?? [];
-            firstRunConfig = brandResult?.config ?? null;
-            logger({
-              level: "WARN",
-              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
-              name: "toxicity-resend",
-            });
-            brandResult = await runBrandAgent(
-              specialistResult.content,
-              query,
-              triageResult.queryType,
-              { ...userContext, guardrails: true },
-              { logger, headers }
-            );
-            const secondJudgeResults = brandResult?.judgeResults ?? [];
-            if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
-              const contextVars = {
-                user_key: userContext.user_key ?? "anonymous",
+        let brandSpanResult;
+        {
+          let brandResult = await runBrandAgent(
+            specialistResult.content,
+            query,
+            triageResult.queryType,
+            { ...userContext, guardrails: false },
+            { logger, headers }
+          );
+
+          const toxicityScore = getToxicityScore(brandResult?.judgeResults ?? []);
+          let firstRunJudgeResults = null;
+          let firstRunConfig = null;
+          if (toxicityScore != null && toxicityScore > TOXICITY_THRESHOLD) {
+            if (userContext.guardrails) {
+              firstRunJudgeResults = brandResult?.judgeResults ?? [];
+              firstRunConfig = brandResult?.config ?? null;
+              logger({
+                level: "WARN",
+                message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} — not returning initial chat; resending to brand_agent with guardrails: true`,
+                name: "toxicity-resend",
+              });
+              brandResult = await runBrandAgent(
+                specialistResult.content,
                 query,
-                customer_name: userContext.name ?? "there",
-                original_query: query,
-                query_type: triageResult.queryType,
-                specialist_response: specialistResult.content,
-                ...userContext,
-              };
-              const fallbackSecondJudges = await runJudgesWithConfig(
-                firstRunConfig,
-                contextVars,
-                brandResult?.content ?? "",
-                logger
+                triageResult.queryType,
+                { ...userContext, guardrails: true },
+                { logger, headers }
               );
-              brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
+              const secondJudgeResults = brandResult?.judgeResults ?? [];
+              if (secondJudgeResults.length === 0 && firstRunConfig?.judgeConfiguration?.judges?.length > 0) {
+                const contextVars = {
+                  user_key: userContext.user_key ?? "anonymous",
+                  query,
+                  customer_name: userContext.name ?? "there",
+                  original_query: query,
+                  query_type: triageResult.queryType,
+                  specialist_response: specialistResult.content,
+                  ...userContext,
+                };
+                const fallbackSecondJudges = await runJudgesWithConfig(
+                  firstRunConfig,
+                  contextVars,
+                  brandResult?.content ?? "",
+                  logger
+                );
+                brandResult = { ...brandResult, judgeResults: fallbackSecondJudges };
+              }
+              logger({
+                level: "INFO",
+                message: `   Returned brand response from second run (with guardrails)`,
+                name: "chat",
+              });
+            } else {
+              logger({
+                level: "INFO",
+                message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
+                name: "toxicity-resend",
+              });
             }
-            logger({
-              level: "INFO",
-              message: `   Returned brand response from second run (with guardrails)`,
-              name: "chat",
-            });
-          } else {
-            logger({
-              level: "INFO",
-              message: `   Toxicity judge score ${toxicityScore} > ${TOXICITY_THRESHOLD} but guardrails off — returning first run`,
-              name: "toxicity-resend",
-            });
           }
+          brandSpanResult = { brandResult, firstRunJudgeResults };
         }
-        brandSpanResult = { brandResult, firstRunJudgeResults };
-      }
 
-      const { brandResult, firstRunJudgeResults } = brandSpanResult;
+        const { brandResult, firstRunJudgeResults } = brandSpanResult;
 
-      return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
+        return { triageResult, specialistResult, brandResult, firstRunJudgeResults };
       });
     });
 
     const { triageResult, specialistResult, brandResult, firstRunJudgeResults } = result;
+
+    if (brandResult?.brandAgentDisabled) {
+      pushLog({
+        level: "WARN",
+        message: "Chat response: brand_agent disabled for this context.",
+        name: "chat",
+        ...(sessionId && { sessionId }),
+      });
+      return Response.json({
+        response: "",
+        requestId,
+        brandAgentDisabled: true,
+        agentFlow: [
+          {
+            agent: "triage_router",
+            name: "Triage Router",
+            status: "complete",
+            confidence: triageResult.confidence,
+            icon: "🔍",
+            duration: triageResult.agentData.triage_router.duration_ms,
+            ttft_ms: triageResult.agentData.triage_router.ttft_ms,
+            tokens: triageResult.agentData.triage_router.tokens,
+          },
+          {
+            agent: triageResult.queryType,
+            name: triageResult.nextAgent,
+            status: "complete",
+            icon: "📋",
+            duration: specialistResult.durationMs,
+            ttft_ms: specialistResult.ttftMs,
+            tokens: specialistResult.usage,
+          },
+          {
+            agent: "brand_agent",
+            name: "Brand Voice",
+            status: "disabled",
+            icon: "✨",
+            duration: 0,
+            ttft_ms: undefined,
+            tokens: undefined,
+          },
+        ],
+        judgeResults: [],
+        metrics: {
+          query_type: triageResult.queryType,
+          confidence: triageResult.confidence,
+          agent_count: 2,
+          rag_enabled: false,
+        },
+      });
+    }
+
     const judgeResultsForResponse =
       firstRunJudgeResults && firstRunJudgeResults.length > 0
         ? [

@@ -216,6 +216,25 @@ body {
   background: #065f46;
 }
 
+.user-dropdown-btn-secondary {
+  margin-top: 8px;
+  width: 100%;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.user-dropdown-btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.user-dropdown-hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
 .user-dropdown-status {
   margin-top: 10px;
   padding: 8px 10px;
@@ -475,6 +494,23 @@ a.user-dropdown-doc-btn {
   right: 24px;
   bottom: 24px;
   z-index: 1000;
+}
+
+.chat-ai-config-disabled-banner {
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #92400e;
+  background: #fffbeb;
+  border-bottom: 1px solid #fcd34d;
+}
+
+.chat-ai-config-disabled-banner strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #78350f;
+  font-size: 0.875rem;
 }
 
 .app-container {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Terminal from "./components/Terminal";
 import { useSession } from "./SessionContext";
@@ -14,9 +14,10 @@ const DOCS = [
   { id: "ld-architecture", label: "LD Architecture", src: "/docs/LD-Architecture.png" },
 ];
 
-function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
+function UserMenu({ sessionProjectKey, sessionUserKey, setSession, setUserKey }) {
   const [open, setOpen] = useState(false);
   const [projectKeyInput, setProjectKeyInput] = useState("");
+  const [userKeyInput, setUserKeyInput] = useState("");
   const [actionStatus, setActionStatus] = useState(null);
   const [connectError, setConnectError] = useState(null);
   const [connecting, setConnecting] = useState(false);
@@ -26,8 +27,9 @@ function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
   useEffect(() => {
     if (open) {
       setProjectKeyInput(sessionProjectKey || "");
+      setUserKeyInput(sessionUserKey || "");
     }
-  }, [open, sessionProjectKey]);
+  }, [open, sessionProjectKey, sessionUserKey]);
 
   useEffect(() => {
     if (!open) return;
@@ -117,6 +119,26 @@ function UserMenu({ sessionProjectKey, sessionSdkKey, setSession }) {
               onChange={(e) => setProjectKeyInput(e.target.value)}
               className="user-dropdown-input"
             />
+          </div>
+          <div className="user-dropdown-field">
+            <label htmlFor="user-menu-ld-user-key">LaunchDarkly user key</label>
+            <input
+              id="user-menu-ld-user-key"
+              type="text"
+              placeholder="Leave empty for anonymous (default)"
+              value={userKeyInput}
+              onChange={(e) => setUserKeyInput(e.target.value)}
+              className="user-dropdown-input"
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              className="user-dropdown-btn user-dropdown-btn-secondary"
+              onClick={() => setUserKey(userKeyInput.trim())}
+            >
+              Apply user key
+            </button>
+            <p className="user-dropdown-hint">Used as the user context key for AI Config targeting and evaluation.</p>
           </div>
           <div className="user-dropdown-actions">
             <button
@@ -279,7 +301,7 @@ function MessageRow({ role, content, markdown }) {
   );
 }
 
-function ChatWidget({ sessionSdkKey, logSessionId }) {
+function ChatWidget({ sessionSdkKey, sessionUserKey, logSessionId }) {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -293,8 +315,49 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
   const [guardrailsOn, setGuardrailsOn] = useState(false);
   const [lastJudgeResults, setLastJudgeResults] = useState([]);
   const [judgeDropdownOpen, setJudgeDropdownOpen] = useState(false);
+  const [brandAgentDisabled, setBrandAgentDisabled] = useState(false);
   const chatContentRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  const fetchBrandStatus = useCallback(async () => {
+    if (!sessionSdkKey) {
+      setBrandAgentDisabled(false);
+      return false;
+    }
+    try {
+      const res = await fetch("/api/chat/brand-status", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sdkKey: sessionSdkKey,
+          ...(sessionUserKey.trim() && { userKey: sessionUserKey.trim() }),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      const disabled = !!(res.ok && data.brandAgentDisabled);
+      setBrandAgentDisabled(disabled);
+      return disabled;
+    } catch {
+      setBrandAgentDisabled(false);
+      return false;
+    }
+  }, [sessionSdkKey, sessionUserKey]);
+
+  useEffect(() => {
+    void fetchBrandStatus();
+  }, [fetchBrandStatus]);
+
+  useEffect(() => {
+    if (!sessionSdkKey) return undefined;
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        void fetchBrandStatus();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [sessionSdkKey, fetchBrandStatus]);
 
   const addMessage = (role, content, markdown = false) => {
     setMessages((prev) => [...prev, { role, content, markdown }]);
@@ -305,28 +368,41 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
     const text = input.trim();
     if (!text || sending) return;
 
-    setInput("");
     setSending(true);
+    const blocked = await fetchBrandStatus();
+    if (blocked) {
+      setSending(false);
+      return;
+    }
+
+    setInput("");
     addMessage("user", text);
     setLastJudgeResults([]);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userInput: text,
           guardrails: guardrailsOn,
           ...(sessionSdkKey && { sdkKey: sessionSdkKey }),
           ...(logSessionId && { sessionId: logSessionId }),
+          ...(sessionUserKey.trim() && { userKey: sessionUserKey.trim() }),
         }),
       });
       const data = await res.json();
 
       if (res.ok) {
-        const reply = (data.response ?? "").trim() || "No response received.";
-        addMessage("assistant", reply, reply.includes("**"));
-        setLastJudgeResults(Array.isArray(data.judgeResults) ? data.judgeResults : []);
+        if (data.brandAgentDisabled) {
+          setBrandAgentDisabled(true);
+        } else {
+          setBrandAgentDisabled(false);
+          const reply = (data.response ?? "").trim() || "No response received.";
+          addMessage("assistant", reply, reply.includes("**"));
+          setLastJudgeResults(Array.isArray(data.judgeResults) ? data.judgeResults : []);
+        }
       } else {
         addMessage(
           "assistant",
@@ -421,6 +497,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
               type="button"
               className={`guardrails-btn ${guardrailsOn ? "guardrails-on" : ""}`}
               onClick={() => {
+                if (brandAgentDisabled) return;
                 const next = !guardrailsOn;
                 setGuardrailsOn(next);
                 fetch("/api/logs/stream", {
@@ -429,7 +506,8 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
                   body: JSON.stringify({ guardrails: next, ...(logSessionId && { sessionId: logSessionId }) }),
                 }).catch(() => {});
               }}
-              title="Guardrails"
+              disabled={brandAgentDisabled}
+              title="Toggle guardrails"
               aria-label="Toggle guardrails"
             >
               <svg
@@ -448,6 +526,11 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
           </div>
         </div>
       </header>
+      {brandAgentDisabled && (
+        <div className="chat-ai-config-disabled-banner" role="alert">
+          <strong>Chat disabled</strong>
+        </div>
+      )}
       <div className="chat-content" ref={chatContentRef}>
         {messages.map((m, i) => (
           <MessageRow
@@ -475,7 +558,7 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
         <input
           type="text"
           className="chat-input"
-          placeholder="Type your message..."
+          placeholder={brandAgentDisabled ? "Chat disabled" : "Type your message..."}
           autoComplete="off"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -485,12 +568,14 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
               sendMessage();
             }
           }}
+          disabled={brandAgentDisabled}
+          aria-disabled={brandAgentDisabled}
         />
         <button
           type="button"
           className="send-button"
           onClick={sendMessage}
-          disabled={sending}
+          disabled={sending || brandAgentDisabled}
         >
           Send
         </button>
@@ -501,7 +586,13 @@ function ChatWidget({ sessionSdkKey, logSessionId }) {
 }
 
 export default function Home() {
-  const { projectKey: sessionProjectKey, sdkKey: sessionSdkKey, setSession } = useSession();
+  const {
+    projectKey: sessionProjectKey,
+    sdkKey: sessionSdkKey,
+    userKey: sessionUserKey,
+    setSession,
+    setUserKey,
+  } = useSession();
   const [logSessionId] = useState(
     () => (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `sess-${Date.now()}-${Math.random().toString(36).slice(2)}`)
   );
@@ -517,8 +608,9 @@ export default function Home() {
           <div className="nav-right">
             <UserMenu
               sessionProjectKey={sessionProjectKey}
-              sessionSdkKey={sessionSdkKey}
+              sessionUserKey={sessionUserKey}
               setSession={setSession}
+              setUserKey={setUserKey}
             />
             <span className="nav-connection-status" aria-live="polite">
               {sessionProjectKey ? (
@@ -599,7 +691,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      <ChatWidget sessionSdkKey={sessionSdkKey} logSessionId={logSessionId} />
+      <ChatWidget sessionSdkKey={sessionSdkKey} sessionUserKey={sessionUserKey} logSessionId={logSessionId} />
     </>
   );
 }

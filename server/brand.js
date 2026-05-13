@@ -37,12 +37,29 @@ export async function runBrandAgent(specialistResponse, query, queryType, userCo
 
   log({ level: "INFO", message: `   Pulling AI config (${CONFIG_KEY})...`, name: "brand" });
 
-  const { config, tracker } = await getCompletionConfig(
+  const { config, tracker, ldEnabled } = await getCompletionConfig(
     CONFIG_KEY,
     contextVars,
     BRAND_COMPLETION_DEFAULT,
     contextVars
   );
+
+  if (ldEnabled === false) {
+    log({
+      level: "WARN",
+      message: `   AI config "${CONFIG_KEY}" is disabled in LaunchDarkly for this context.`,
+      name: "brand",
+    });
+    return {
+      content: "",
+      usage: undefined,
+      ttftMs: undefined,
+      durationMs: 0,
+      judgeResults: [],
+      config,
+      brandAgentDisabled: true,
+    };
+  }
 
   const modelId = config.model?.name ?? DEFAULT_MODEL;
   const messages = ensureUserFirst(config.messages ?? []);
