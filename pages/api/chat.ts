@@ -541,8 +541,10 @@ Is there a specific service you'd like to know more about?`;
 					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
 				};
 
-				// Run multi-agent pipeline: Triage → Specialist → Brand Voice; each agent pulls its own AIC from LD
-				const agentResult = await runMultiAgentPipeline({
+				// Run multi-agent pipeline inside a parent span so server traces link to client (req.headers has traceparent)
+				// and we get child spans: chat.triage, chat.specialist, chat.brand_voice with gen_ai.* attributes.
+				// aiConfigKey on spans links this trace to the AIC in LaunchDarkly so the POST /api/chat trace shows under the AIC.
+				const pipelineDeps = {
 					aiClient,
 					context,
 					bedrockClient,
@@ -550,7 +552,17 @@ Is there a specific service you'd like to know more about?`;
 					userInput,
 					sendStatus,
 					enableToxicPrompt,
-				});
+					requestHeaders: req.headers as Record<string, string>,
+					aiConfigKey,
+				};
+				const agentResult =
+					typeof LDObserve?.runWithHeaders === "function"
+						? await LDObserve.runWithHeaders(
+								"POST - /api/chat",
+								req.headers as Record<string, string>,
+								() => runMultiAgentPipeline(pipelineDeps),
+							)
+						: await runMultiAgentPipeline(pipelineDeps);
 
 				const fullResponse = agentResult.finalResponse;
 				const totalInputTokens = agentResult.totalInputTokens;
