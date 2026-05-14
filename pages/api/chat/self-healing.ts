@@ -25,20 +25,10 @@ interface JudgeScore {
   toxicity?: number;
 }
 
-interface TrackerWithInternals {
-  _variationKey?: string;
-  _modelName?: string;
-}
-
 interface AIConfigInternal {
   enabled?: boolean;
   model?: { name?: string };
   messages?: Array<{ role?: string; content?: string }>;
-}
-
-interface TrackedChatWithInternals {
-  aiConfig?: AIConfigInternal;
-  tracker?: TrackerWithInternals;
 }
 
 const JUDGE_THRESHOLD = 90;
@@ -63,17 +53,17 @@ function isBedrockModel(modelName: string): boolean {
   return patterns.some((p) => modelName.includes(p));
 }
 
-/** Run chat.invoke inside an observability span with gen_ai attributes and request/response event (same as multi-agent). */
-async function invokeWithSpan(
+/** Run model.run() inside an observability span with gen_ai attributes and request/response event. */
+async function runWithSpanWrapper(
   spanName: string,
   headers: Record<string, string | string[] | undefined>,
-  chat: { invoke: (input: string) => Promise<{ message?: { content?: string }; evaluations?: unknown } & Record<string, unknown>> },
+  model: { run: (input: string) => Promise<{ content: string; metrics: any; evaluations?: any; raw?: unknown }> },
   userInput: string,
   configMessages: Array<{ role?: string; content?: string }>,
   modelName: string,
   aiConfigKey: string
-): Promise<{ message?: { content?: string }; evaluations?: unknown } & Record<string, unknown>> {
-  const runWithSpan = async (
+): Promise<{ content: string; metrics: any; evaluations?: any; raw?: unknown }> {
+  const doRun = async (
     span?: { addEvent: (name: string, attributes?: Record<string, string | number | boolean>) => void }
   ) => {
     const isBedrock = isBedrockModel(modelName);
@@ -85,7 +75,6 @@ async function invokeWithSpan(
       })),
       { role: "user" as const, parts: [{ content: truncateForSpan(userInput), type: "text" as const }] },
     ];
-    // Link this span to the AI Config in LaunchDarkly (same as multi-agent so AIC view shows this trace)
     if (aiConfigKey && typeof LDObserve?.setAttributes === "function") {
       LDObserve.setAttributes({
         "feature_flag.key": aiConfigKey,
@@ -100,12 +89,12 @@ async function invokeWithSpan(
       "gen_ai.request.max_tokens": 1000,
       "gen_ai.output.type": "text",
     });
-    const response = await chat.invoke(userInput);
-    const content = response.message?.content ?? "";
-    const metrics = (response as { metrics?: { usage?: { input?: number; output?: number } } }).metrics?.usage;
+    const response = await model.run(userInput);
+    const content = response.content ?? "";
+    const tokens = response.metrics?.tokens;
     LDObserve.setAttributes({
-      "gen_ai.usage.input_tokens": metrics?.input ?? 0,
-      "gen_ai.usage.output_tokens": metrics?.output ?? 0,
+      "gen_ai.usage.input_tokens": tokens?.input ?? 0,
+      "gen_ai.usage.output_tokens": tokens?.output ?? 0,
       "gen_ai.response.model": modelName,
     });
     if (span && typeof span.addEvent === "function") {
@@ -121,9 +110,9 @@ async function invokeWithSpan(
     return response;
   };
   if (typeof LDObserve?.runWithHeaders === "function") {
-    return LDObserve.runWithHeaders(spanName, headers as Record<string, string>, (span) => runWithSpan(span));
+    return LDObserve.runWithHeaders(spanName, headers as Record<string, string>, (span) => doRun(span));
   }
-  return runWithSpan(undefined);
+  return doRun(undefined);
 }
 
 export default async function selfHealingChat(
@@ -206,25 +195,24 @@ export default async function selfHealingChat(
 
     const execute = async () => {
       try {
-        const chat = await (aiClient as any).createChat(
+        const model = await aiClient.createModel(
           aiConfigKey,
           context,
           defaultConfig,
-          templateVariables
+          templateVariables,
+          "openai"
         );
 
-      if (!chat) {
-        sendSSE({ error: "Failed to create chat", done: true });
+      if (!model) {
+        sendSSE({ error: "Failed to create model", done: true });
         res.end();
         return;
       }
 
-      const trackedChat = chat as unknown as TrackedChatWithInternals;
-      const internalConfig = trackedChat.aiConfig;
-
-      const chatConfig = (chat as any).getConfig?.();
-      const tracker = chatConfig?.createTracker?.();
+      const modelConfig = model.getConfig();
+      const tracker = modelConfig?.createTracker?.();
       const trackData = tracker?.getTrackData?.();
+      const internalConfig = modelConfig as unknown as AIConfigInternal;
 
       if (internalConfig && internalConfig.enabled === false) {
         sendSSE({ error: "AI config is disabled", done: true });
@@ -248,25 +236,19 @@ export default async function selfHealingChat(
       pushLog({ level: "INFO", message: `🚀 Generating initial response...`, name: "self-healing" });
       sendSSE({ status: "Generating initial response..." });
 
-      const aiConfigMessages = internalConfig?.messages || [];
-      const trackedChatAny = trackedChat as any;
-      if (trackedChatAny.messages && trackedChatAny.messages.length === 0 && aiConfigMessages.length > 0) {
-        for (const msg of aiConfigMessages) {
-          trackedChatAny.messages.push({ role: msg.role, content: msg.content });
-        }
-      }
+      const aiConfigMessages = (modelConfig as any)?.messages || [];
 
-      const chatResponse = await invokeWithSpan(
+      const chatResponse = await runWithSpanWrapper(
         "chat.self_healing",
         req.headers,
-        chat,
+        model,
         userInput,
         aiConfigMessages,
         finalModelName,
         aiConfigKey
       );
       sendSSE({ status: "Evaluating response quality..." });
-      let finalResponse = chatResponse.message?.content || "";
+      let finalResponse = chatResponse.content || "";
       let originalBadResponse = "";
 
       const isBadPrompt = typeof variationKey === "string" && variationKey.includes("bad-prompt");
@@ -300,7 +282,7 @@ export default async function selfHealingChat(
 
         context.ai = { key: "ai-context", fallback: true };
 
-        const fallbackConfig = await aiClient.config(
+        const fallbackConfig = await aiClient.completionConfig(
           aiConfigKey,
           context,
           defaultConfig,
@@ -320,40 +302,31 @@ export default async function selfHealingChat(
             else finalModelName = fallbackVariationKey;
           }
 
-          const fallbackChat = await (aiClient as any).createChat(
+          const fallbackManagedModel = await aiClient.createModel(
             aiConfigKey,
             context,
             defaultConfig,
-            templateVariables
+            templateVariables,
+            "openai"
           );
 
-          if (fallbackChat) {
+          if (fallbackManagedModel) {
             pushLog({ level: "INFO", message: `🔄 Running fallback model: ${finalModelName}`, name: "self-healing" });
             sendSSE({ status: "Running fallback AI config..." });
 
-            const fallbackInternalConfig = (fallbackChat as any).aiConfig;
-            const fallbackMessages = fallbackInternalConfig?.messages || [];
-            const fallbackChatAny = fallbackChat as any;
-            if (
-              fallbackChatAny.messages &&
-              fallbackChatAny.messages.length === 0 &&
-              fallbackMessages.length > 0
-            ) {
-              for (const msg of fallbackMessages) {
-                fallbackChatAny.messages.push({ role: msg.role, content: msg.content });
-              }
-            }
+            const fallbackModelConfig = fallbackManagedModel.getConfig();
+            const fallbackMessages = (fallbackModelConfig as any)?.messages || [];
 
-            const fallbackResponse = await invokeWithSpan(
+            const fallbackResponse = await runWithSpanWrapper(
               "chat.self_healing.fallback",
               req.headers,
-              fallbackChat,
+              fallbackManagedModel,
               userInput,
               fallbackMessages,
               finalModelName,
               aiConfigKey
             );
-            finalResponse = fallbackResponse.message?.content || finalResponse;
+            finalResponse = fallbackResponse.content || finalResponse;
             didFallback = true;
 
             // Simulated fallback scores (good prompt always passes)
@@ -385,10 +358,7 @@ export default async function selfHealingChat(
       }
       if (userInput) estimatedInputTokens += Math.ceil(userInput.length / 4);
       if (estimatedInputTokens === 0) {
-        const messages = chat.getMessages();
-        estimatedInputTokens = Math.ceil(
-          messages.reduce((sum: number, msg: any) => sum + (msg.content?.length || 0), 0) / 4
-        );
+        estimatedInputTokens = Math.ceil(userInput.length / 4) + 50;
       }
       const estimatedOutputTokens = Math.ceil(finalResponse.length / 4);
 
