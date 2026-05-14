@@ -14,6 +14,8 @@ class LDPlatform:
     client_id = ""
     sdk_key = ""
     user_id = None
+    account_id = None
+    project_internal_id = None
 
     ##################################################
     # Constructor
@@ -22,6 +24,65 @@ class LDPlatform:
         self.api_key = api_key
         self.api_key_user = api_key_user
         self.user_id = self.get_user_id(email)
+        self._fetch_member_me()
+
+    def _extract_account_id(self, data):
+        if not isinstance(data, dict):
+            return None
+        for key in ("_accountId", "accountId", "account_id"):
+            val = data.get(key)
+            if val:
+                return str(val)
+        acc = data.get("account")
+        if isinstance(acc, dict):
+            for key in ("_id", "id", "key"):
+                val = acc.get(key)
+                if val:
+                    return str(val)
+        return None
+
+    def _fetch_account_id_fallbacks(self):
+        if self.account_id:
+            return
+        try:
+            if self.user_id:
+                res = requests.get(
+                    f"https://app.launchdarkly.com/api/v2/members/{self.user_id}",
+                    headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+                )
+                if res.status_code == 200:
+                    self.account_id = self._extract_account_id(res.json())
+        except Exception as e:
+            print(f"Warning: GET /api/v2/members/{{id}} failed: {e}")
+        if self.account_id:
+            return
+        try:
+            res = requests.get(
+                "https://app.launchdarkly.com/api/v2/account",
+                headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+            )
+            if res.status_code == 200:
+                data = res.json()
+                self.account_id = self._extract_account_id(data) or (str(data["_id"]) if data.get("_id") else None)
+        except Exception:
+            pass
+
+    def _fetch_member_me(self):
+        try:
+            res = requests.get(
+                "https://app.launchdarkly.com/api/v2/members/me",
+                headers={"Authorization": self.api_key, "Content-Type": "application/json"},
+            )
+            if res.status_code == 200:
+                data = res.json()
+                self.account_id = self._extract_account_id(data)
+                if not self.user_id:
+                    self.user_id = data.get("_id")
+            else:
+                print(f"Warning: /api/v2/members/me returned {res.status_code}")
+        except Exception as e:
+            print(f"Warning: Failed to fetch /api/v2/members/me: {e}")
+        self._fetch_account_id_fallbacks()
 
     def getrequest(self, method, url, json=None, headers=None):
 
@@ -102,6 +163,12 @@ class LDPlatform:
             print(f"Response status: {response.status_code}")
             print(f"Response: {response.text[:500]}...")
             return
+
+        self.project_internal_id = data.get("_id")
+        if not self.account_id:
+            aid = self._extract_account_id(data)
+            if aid:
+                self.account_id = aid
 
         # Extract environment information
         for e in data["environments"]:
@@ -479,6 +546,12 @@ class LDPlatform:
     # Attach judge to AI Config variation
     ##################################################
     def attach_judge_to_variation(self, ai_config_key, variation_key, judge_config_key, sampling_rate=1.0):
+        """Attach a single judge to a variation. Note: this replaces all existing judges on the variation."""
+        return self.attach_judges_to_variation(ai_config_key, variation_key, [{"judgeConfigKey": judge_config_key, "samplingRate": sampling_rate}])
+
+    def attach_judges_to_variation(self, ai_config_key, variation_key, judges):
+        """Attach multiple judges to a variation. Each judge is a dict with judgeConfigKey and samplingRate.
+        Note: this replaces all existing judges on the variation."""
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
@@ -493,24 +566,197 @@ class LDPlatform:
             "LD-API-Version": "beta",
         }
         payload = {
-            "judges": [
-                {
-                    "judgeConfigKey": judge_config_key,
-                    "samplingRate": sampling_rate
-                }
-            ]
+            "judgeConfiguration": {
+                "judges": judges
+            }
         }
         response = self.getrequest("PATCH", url, json=payload, headers=headers)
+        judge_keys = [j["judgeConfigKey"] for j in judges]
         if response.text.strip():
             try:
                 data = json.loads(response.text)
                 if "message" in data:
-                    print(f"Error attaching judge to {ai_config_key}/{variation_key}: {data['message']}")
+                    print(f"Error attaching judges to {ai_config_key}/{variation_key}: {data['message']}")
                 else:
-                    print(f"Attached judge {judge_config_key} to {ai_config_key}/{variation_key}")
+                    print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
             except json.JSONDecodeError:
                 pass
+        else:
+            print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
         return response
+
+    ##################################################
+    # Upload dataset for Playgrounds/Offline Evals
+    ##################################################
+
+    def upload_dataset(self, dataset_name, csv_content, filename=None):
+        """Upload a CSV dataset for Playground offline evaluations.
+
+        Two-step flow:
+          1. POST to /internal/projects/{key}/datasets to create the record
+             and obtain a pre-signed S3 upload URL.
+          2. PUT the raw CSV bytes to that URL.
+
+        Requires account_id, user_id, project_internal_id and X-Ld-* headers.
+
+        Args:
+            dataset_name: Human-readable name shown in the Datasets tab.
+            csv_content: The CSV file content as a string.
+            filename: Optional filename (defaults to dataset_name + '.csv').
+
+        Returns:
+            The dataset ID on success, or None on failure.
+        """
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for dataset upload (account={self.account_id}, member={self.user_id}, project={self.project_internal_id})")
+            return None
+
+        if filename is None:
+            filename = dataset_name.replace(" ", "_") + ".csv"
+
+        csv_bytes = csv_content.encode("utf-8")
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
+        }
+
+        payload = {
+            "name": dataset_name,
+            "filename": filename,
+            "format": "csv",
+            "size_bytes": len(csv_bytes),
+        }
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/datasets",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating dataset '{dataset_name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        dataset_id = data.get("datasetId")
+        upload_info = data.get("upload", {})
+        upload_url = upload_info.get("uploadUrl")
+        upload_method = upload_info.get("uploadMethod", "PUT")
+        upload_headers = upload_info.get("uploadHeaders", {"Content-Type": "text/csv"})
+
+        if not upload_url:
+            print(f"Error: No upload URL returned for dataset '{dataset_name}'")
+            return None
+
+        upload_resp = requests.request(
+            upload_method,
+            upload_url,
+            data=csv_bytes,
+            headers=upload_headers,
+        )
+
+        if upload_resp.status_code in (200, 204):
+            print(f"Uploaded dataset: {dataset_name} ({len(csv_bytes)} bytes, {csv_content.count(chr(10))} rows)")
+            return dataset_id
+        else:
+            print(f"Error uploading CSV to S3 for '{dataset_name}': {upload_resp.status_code}")
+            return None
+
+    ##################################################
+    # Create Evaluation (for Playgrounds)
+    ##################################################
+
+    def create_evaluation(self, name, generation_provider, generation_model,
+                          messages=None, criteria=None, evaluation_provider=None,
+                          evaluation_model=None, variables=None, parameters=None):
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for evaluation creation")
+            return None
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
+        }
+
+        payload = {
+            "name": name,
+            "generationProvider": generation_provider,
+            "generationModel": generation_model,
+        }
+        if messages is not None:
+            payload["messages"] = messages
+        if criteria is not None:
+            payload["criteria"] = criteria
+        if evaluation_provider is not None:
+            payload["evaluationProvider"] = evaluation_provider
+        if evaluation_model is not None:
+            payload["evaluationModel"] = evaluation_model
+        if variables is not None:
+            payload["variables"] = variables
+        if parameters is not None:
+            payload["parameters"] = parameters
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/evaluations",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating evaluation '{name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        eval_id = data.get("id")
+        return eval_id
+
+    ##################################################
+    # Create Playground
+    ##################################################
+
+    def create_playground(self, name, evaluation_ids):
+        if not self.account_id or not self.user_id or not self.project_internal_id:
+            print(f"Error: Missing required IDs for playground creation")
+            return None
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "X-Ld-Accountid": self.account_id,
+            "X-Ld-Mbrid": self.user_id,
+            "X-Ld-Prjid": self.project_internal_id,
+        }
+
+        variants = [
+            {"evaluationId": eid, "position": idx}
+            for idx, eid in enumerate(evaluation_ids)
+        ]
+
+        payload = {
+            "name": name,
+            "variants": variants,
+        }
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/internal/projects/{self.project_key}/playgrounds",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code not in (200, 201):
+            print(f"Error creating playground '{name}': {response.status_code} {response.text[:300]}")
+            return None
+
+        data = response.json()
+        playground_id = data.get("id")
+        return playground_id
 
     ##################################################
     # Create AI Agent
@@ -1288,7 +1534,11 @@ class LDPlatform:
         if data["totalCount"] == 0:
             return "6502137e3310e112c47aeb92"
 
-        self.user_id = data["items"][0]["_id"]
+        item = data["items"][0]
+        self.user_id = item["_id"]
+        aid = self._extract_account_id(item)
+        if aid:
+            self.account_id = aid
         return self.user_id
 
     ##################################################
@@ -1304,6 +1554,11 @@ class LDPlatform:
         data = json.loads(res.text)
         if "message" in data:
             return False
+        self.project_internal_id = data.get("_id") or self.project_internal_id
+        if not self.account_id:
+            aid = self._extract_account_id(data)
+            if aid:
+                self.account_id = aid
         return True
     
     ##################################################
