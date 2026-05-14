@@ -42,22 +42,12 @@ export interface SpecialistResult {
 	outputTokens: number;
 }
 
-export interface JudgeResult {
-	judgeConfigKey?: string;
-	success: boolean;
-	sampled: boolean;
-	metricKey?: string;
-	score?: number;
-	reasoning?: string;
-}
-
 export interface BrandVoiceResult {
 	content: string;
 	modelName: string;
 	durationMs: number;
 	inputTokens: number;
 	outputTokens: number;
-	judgeResults?: JudgeResult[];
 }
 
 export interface MultiAgentResult {
@@ -690,151 +680,6 @@ async function runSpecialistAgent(
 	};
 }
 
-// ---------------------------------------------------------------------------
-// Judge evaluation: runs judges attached to an agent config via judgeConfiguration
-// ---------------------------------------------------------------------------
-
-async function evaluateJudgeDirectly(
-	openai: any,
-	judgeMessages: Array<{ role: string; content: string }>,
-	modelName: string,
-	input: string,
-	output: string,
-): Promise<{ score: number; reasoning: string } | null> {
-	const interpolated = judgeMessages.map((m) => ({
-		role: m.role as "system" | "user" | "assistant",
-		content: m.content
-			.replace(/\{\{message_history\}\}/g, input)
-			.replace(/\{\{response_to_evaluate\}\}/g, output),
-	}));
-	const resp = await openai.chat.completions.create({
-		model: modelName || "gpt-4o-mini",
-		messages: interpolated,
-		max_completion_tokens: 300,
-		response_format: { type: "json_object" as const },
-	});
-	const raw = resp.choices?.[0]?.message?.content ?? "";
-	const parsed = JSON.parse(raw);
-	if (typeof parsed.score === "number" && parsed.score >= 0 && parsed.score <= 1) {
-		return { score: parsed.score, reasoning: parsed.reasoning ?? "" };
-	}
-	return null;
-}
-
-async function runAttachedJudges(
-	agentConfig: any,
-	tracker: LDAIConfigTracker | undefined,
-	aiClient: any,
-	context: any,
-	input: string,
-	output: string,
-	openai?: any,
-): Promise<JudgeResult[]> {
-	const judgeConfig = agentConfig.judgeConfiguration;
-	if (!judgeConfig?.judges || judgeConfig.judges.length === 0) {
-		return [];
-	}
-
-	pushLog({ level: "INFO", message: `   ⚖️ Running ${judgeConfig.judges.length} attached judge(s)...`, name: "brand" });
-
-	const results: JudgeResult[] = [];
-
-	for (const judgeDef of judgeConfig.judges) {
-		const { key, samplingRate } = judgeDef;
-		try {
-			const judge = await aiClient.createJudge(key, context, undefined, undefined, "openai");
-			if (!judge) {
-				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" — config disabled or provider unavailable`, name: "brand" });
-				results.push({ judgeConfigKey: key, success: false, sampled: false });
-				continue;
-			}
-
-			const judgeAiCfg = judge.getAIConfig();
-			const providerName = judgeAiCfg?.provider?.name ?? "unknown";
-			const judgeModelName = judgeAiCfg?.model?.name ?? "unknown";
-			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" using provider=${providerName}, model=${judgeModelName}`, name: "brand" });
-
-		let evalResult: any;
-		const capturedLogs: string[] = [];
-		const origLog = console.log;
-		const origWarn = console.warn;
-		const origError = console.error;
-		console.log = (...args: any[]) => { capturedLogs.push(args.map(String).join(" ")); origLog(...args); };
-		console.warn = (...args: any[]) => { capturedLogs.push("[warn] " + args.map(String).join(" ")); origWarn(...args); };
-		console.error = (...args: any[]) => { capturedLogs.push("[error] " + args.map(String).join(" ")); origError(...args); };
-		try {
-			evalResult = await judge.evaluate(input, output, samplingRate);
-		} catch (sdkErr: any) {
-			pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" SDK threw: ${sdkErr?.message ?? sdkErr}`, name: "brand" });
-			evalResult = { sampled: true, success: false };
-		} finally {
-			console.log = origLog;
-			console.warn = origWarn;
-			console.error = origError;
-		}
-		if (capturedLogs.length > 0) {
-			for (const line of capturedLogs) {
-				pushLog({ level: "INFO", message: `   [SDK] ${line}`, name: "brand" });
-			}
-		}
-
-		if (evalResult.sampled && !evalResult.success && openai && judgeAiCfg?.messages?.length) {
-			const metricKeyCheck = (judgeAiCfg as any)?.evaluationMetricKey ?? (judgeAiCfg as any)?.evaluationMetricKeys;
-			pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" SDK failed (errorMessage=${evalResult.errorMessage ?? "none"}, evaluationMetricKey=${metricKeyCheck ?? "MISSING"}), trying direct OpenAI call...`, name: "brand" });
-				try {
-					const directResult = await evaluateJudgeDirectly(
-						openai, judgeAiCfg.messages, judgeModelName, input, output,
-					);
-					if (directResult) {
-						const metricKey = (judgeAiCfg as any)?.evaluationMetricKey;
-						const fixedResult: JudgeResult = {
-							judgeConfigKey: key,
-							success: true,
-							sampled: true,
-							score: directResult.score,
-							reasoning: directResult.reasoning,
-							metricKey,
-						};
-						results.push(fixedResult);
-						if (tracker) tracker.trackJudgeResult(fixedResult);
-						pushLog({
-							level: "INFO",
-							message: `   ⚖️ Judge "${key}" score: ${directResult.score.toFixed(2)}${metricKey ? ` (${metricKey})` : ""} (direct)`,
-							name: "brand",
-						});
-						continue;
-					}
-				} catch (directErr: any) {
-					pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" direct call also failed: ${directErr?.message ?? "unknown"}`, name: "brand" });
-				}
-			}
-
-			results.push(evalResult);
-
-			if (tracker && evalResult.sampled) {
-				tracker.trackJudgeResult(evalResult);
-			}
-
-			if (evalResult.sampled && evalResult.success) {
-				pushLog({
-					level: "INFO",
-					message: `   ⚖️ Judge "${key}" score: ${evalResult.score?.toFixed(2) ?? "N/A"}${evalResult.metricKey ? ` (${evalResult.metricKey})` : ""}`,
-					name: "brand",
-				});
-			} else if (evalResult.sampled && !evalResult.success) {
-				pushLog({ level: "WARN", message: `   ⚖️ Judge "${key}" failed: ${evalResult.errorMessage ?? "unknown error"}`, name: "brand" });
-			} else {
-				pushLog({ level: "INFO", message: `   ⚖️ Judge "${key}" — skipped (not sampled)`, name: "brand" });
-			}
-		} catch (err: any) {
-			pushLog({ level: "ERROR", message: `   ⚖️ Judge "${key}" error: ${err?.message ?? "unknown"}`, name: "brand" });
-			results.push({ judgeConfigKey: key, success: false, sampled: true });
-		}
-	}
-
-	return results;
-}
-
 async function runBrandVoiceAgent(
 	specialistResponse: string,
 	deps: MultiAgentDeps,
@@ -919,16 +764,12 @@ async function runBrandVoiceAgent(
 		name: "brand",
 	});
 
-	// Run judges attached to the brand voice config
-	const judgeResults = await runAttachedJudges(brandConfig, brandTracker, aiClient, context, userInput, result.content, openai);
-
 	return {
 		content: result.content,
 		modelName,
 		durationMs: result.durationMs,
 		inputTokens: result.inputTokens,
 		outputTokens: result.outputTokens,
-		judgeResults,
 	};
 }
 

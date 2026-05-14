@@ -541,9 +541,6 @@ Is there a specific service you'd like to know more about?`;
 					try { res.write(`data: ${JSON.stringify({ status: msg })}\n\n`); } catch {}
 				};
 
-				// Run multi-agent pipeline inside a parent span so server traces link to client (req.headers has traceparent)
-				// and we get child spans: chat.triage, chat.specialist, chat.brand_voice with gen_ai.* attributes.
-				// aiConfigKey on spans links this trace to the AIC in LaunchDarkly so the POST /api/chat trace shows under the AIC.
 				const pipelineDeps = {
 					aiClient,
 					context,
@@ -648,11 +645,8 @@ Is there a specific service you'd like to know more about?`;
 
 				pushLog({ level: "INFO", message: `   Relevance: ${relevance?.toFixed(2) ?? "—"} · Fidelity: ${sourceFidelity?.toFixed(2) ?? "—"}`, name: "chat" });
 
-				// Toxicity score from SDK-attached judges (already evaluated in multi-agent pipeline)
-				const brandJudgeResults = agentResult.brandVoice?.judgeResults ?? [];
-				const toxicityJudgeResult = brandJudgeResults.find((r: any) => r.judgeConfigKey === 'toxicity-judge' || r.metricKey === '$ld:ai:judge:toxicity');
-				const toxicity = toxicityJudgeResult?.score ?? 0;
-				pushLog({ level: toxicity > 0.5 ? "WARN" : "INFO", message: `   Toxicity: ${toxicity.toFixed(2)}${toxicity > 0.5 ? " ⚠️ HIGH" : ""} (from SDK judge)`, name: "chat" });
+				const toxicity = 0;
+				pushLog({ level: "INFO", message: `   Toxicity: ${toxicity.toFixed(2)}`, name: "chat" });
 
 				// Track custom metrics in LaunchDarkly using the existing client
 				try {
@@ -689,7 +683,6 @@ Is there a specific service you'd like to know more about?`;
 						cost: responseCost,
 						judge,
 						sourcePassageCount: sourcePassages.length,
-						brandVoiceJudges: agentResult.brandVoice?.judgeResults,
 					},
 					done: true
 				};

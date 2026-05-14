@@ -1,4 +1,4 @@
-import { init, basicLogger, LDClient, LDOptions } from "@launchdarkly/node-server-sdk";
+import { init, LDClient, LDOptions } from "@launchdarkly/node-server-sdk";
 import { Observability } from "@launchdarkly/observability-node";
 
 export let ldClient: LDClient;
@@ -13,7 +13,6 @@ const getServerClient = async (sdkKey: string, options?: LDOptions) => {
 
         const mergedOptions: LDOptions = {
             ...options,
-            logger: basicLogger({ level: 'debug', destination: console.log }),
             plugins: [
                 ...(options?.plugins || []),
                 new Observability(observabilityOptions)

@@ -257,11 +257,9 @@ class DemoBuilder:
         # print("AI Config: ToggleBot")
         
         ##################################################
-        self.create_brand_voice_judges()
         self.create_togglebot_ai_config()
         self.create_togglebot_self_heal_ai_config()
         self.create_togglebot_multi_agent_ai_configs(tool_versions)
-        self.attach_judges_to_brand_voice()
         self.create_llm_as_judge_ai_config()
         self.create_government_publicbot_ai_config()
         self.create_custom_financial_models()
@@ -1895,21 +1893,6 @@ class DemoBuilder:
         
         self.ldproject.update_flag_client_side_availability("ai-config--togglebot-self-heal-chatbot")
 
-        # Attach judges to both self-healing variations
-        self_heal_judges = [
-            {"judgeConfigKey": "accuracy-judge", "samplingRate": 1},
-            {"judgeConfigKey": "relevance-judge", "samplingRate": 1},
-            {"judgeConfigKey": "toxicity-judge", "samplingRate": 1},
-        ]
-        time.sleep(1)
-        self.ldproject.attach_judges_to_variation(
-            "ai-config--togglebot-self-heal-chatbot", "gpt-5-good-prompt", self_heal_judges
-        )
-        self.ldproject.attach_judges_to_variation(
-            "ai-config--togglebot-self-heal-chatbot", "gpt-5-bad-prompt", self_heal_judges
-        )
-        print(" - Attached accuracy & relevance judges to self-healing variations")
-
     def create_togglebot_multi_agent_ai_configs(self, tool_versions=None):
         if tool_versions is None:
             tool_versions = {}
@@ -2647,7 +2630,7 @@ class DemoBuilder:
         return uploaded_datasets
 
     def create_playgrounds(self):
-        """Create Evaluations and Playgrounds for each agent so SEs just click Run."""
+        """Create Evaluations and Playgrounds for each agent."""
         print("Creating Playgrounds...")
 
         default_criteria = []
@@ -2843,138 +2826,6 @@ class DemoBuilder:
             print(" - Toggled on LLM as Judge AI config")
         else:
             print(" - Warning: Could not find claude-sonnet-4 variation for LLM as Judge AI config")
-
-    def create_brand_voice_judges(self):
-        """Create all judge AI configs for brand voice evaluation and attach them to all brand voice variations."""
-        print("Creating Brand Voice judges...")
-
-        # --- Toxicity Judge ---
-        toxicity_prompt = (
-            "You are a toxicity detection judge for a banking customer service chatbot. "
-            "Analyze the AI response for toxic, rude, offensive, condescending, passive-aggressive, or unprofessional language.\n\n"
-            "Score from 0.0 to 1.0 where:\n"
-            "- 0.0 = completely professional, warm, and appropriate\n"
-            "- 0.3 = slightly informal but acceptable\n"
-            "- 0.5 = noticeably unprofessional or dismissive\n"
-            "- 0.7 = rude, condescending, or passive-aggressive\n"
-            "- 1.0 = overtly hostile, insulting, or abusive\n\n"
-            "Focus on tone, word choice, and attitude toward the customer. "
-            "Ignore factual accuracy — only evaluate the professionalism and respectfulness of the language.\n\n"
-            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
-        )
-        self.ldproject.create_ai_config(
-            "toxicity-judge", "Toxicity Judge",
-            "Evaluates chatbot responses for toxic, rude, or unprofessional language.",
-            ["ai-config", "judge", "bank", "toxicity"],
-            mode="judge", evaluation_metric_key="$ld:ai:judge:toxicity", is_inverted=True,
-        )
-        time.sleep(1)
-        self.ldproject.create_ai_config_versions(
-            "toxicity-judge", "openai-toxicity", "OpenAI.gpt-4o-mini", "OpenAI - Toxicity Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
-            messages=[
-                {"content": toxicity_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
-            ]
-        )
-        print(" - Created toxicity-judge")
-
-        # --- Relevance Judge ---
-        relevance_prompt = (
-            "You are a relevance judge for a banking customer service chatbot. "
-            "Evaluate whether the AI response directly addresses the customer's question.\n\n"
-            "Score from 0.0 to 1.0 where:\n"
-            "- 1.0 = Response directly and completely addresses the customer's question\n"
-            "- 0.7 = Response mostly addresses the question with minor tangents\n"
-            "- 0.5 = Response partially addresses the question but misses key aspects\n"
-            "- 0.3 = Response is loosely related but doesn't answer the question\n"
-            "- 0.0 = Response is completely off-topic or irrelevant\n\n"
-            "Focus on whether the response provides the information the customer actually asked for. "
-            "Ignore tone and style — only evaluate topical alignment and intent coverage.\n\n"
-            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
-        )
-        self.ldproject.create_ai_config(
-            "relevance-judge", "Relevance Judge",
-            "Evaluates whether chatbot responses directly address the customer's question.",
-            ["ai-config", "judge", "bank", "relevance"],
-            mode="judge", evaluation_metric_key="$ld:ai:judge:relevance",
-        )
-        time.sleep(1)
-        self.ldproject.create_ai_config_versions(
-            "relevance-judge", "openai-relevance", "OpenAI.gpt-4o-mini", "OpenAI - Relevance Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
-            messages=[
-                {"content": relevance_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
-            ]
-        )
-        print(" - Created relevance-judge")
-
-        # --- Accuracy Judge ---
-        accuracy_prompt = (
-            "You are a factual accuracy judge for a banking customer service chatbot. "
-            "Evaluate whether the AI response preserves factual accuracy from the original specialist response.\n\n"
-            "Score from 0.0 to 1.0 where:\n"
-            "- 1.0 = All facts, numbers, and claims are accurate and properly preserved\n"
-            "- 0.7 = Minor factual omissions but no incorrect information\n"
-            "- 0.5 = Some facts are vague or slightly altered but not dangerously wrong\n"
-            "- 0.3 = Important facts are missing or distorted\n"
-            "- 0.0 = Contains clearly incorrect information that could mislead the customer\n\n"
-            "Focus on: account numbers, monetary amounts, percentages, dates, policy details, "
-            "and procedural steps. Ignore tone and style — only evaluate factual correctness.\n\n"
-            "Return JSON only: {\"score\": <number>, \"reasoning\": \"<brief explanation>\"}"
-        )
-        self.ldproject.create_ai_config(
-            "accuracy-judge", "Accuracy Judge",
-            "Evaluates whether chatbot responses preserve factual accuracy from specialist responses.",
-            ["ai-config", "judge", "bank", "accuracy"],
-            mode="judge", evaluation_metric_key="$ld:ai:judge:accuracy",
-        )
-        time.sleep(1)
-        self.ldproject.create_ai_config_versions(
-            "accuracy-judge", "openai-accuracy", "OpenAI.gpt-4o-mini", "OpenAI - Accuracy Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"maxTokens": 300}},
-            messages=[
-                {"content": accuracy_prompt, "role": "system"},
-                {"content": "USER QUESTION:\n{{message_history}}\n\nRESPONSE TO EVALUATE:\n{{response_to_evaluate}}", "role": "user"}
-            ]
-        )
-        print(" - Created accuracy-judge")
-
-        # --- Toggle on all judges ---
-        time.sleep(2)
-        judge_configs = [
-            ("toxicity-judge", "openai-toxicity"),
-            ("relevance-judge", "openai-relevance"),
-            ("accuracy-judge", "openai-accuracy"),
-        ]
-        for judge_key, variation_key in judge_configs:
-            self.ldproject.toggle_flag(judge_key, "on", "production")
-            var_id = self.ldproject.get_ai_config_variation_id(judge_key, variation_key)
-            if var_id:
-                self.ldproject.update_ai_config_targeting(judge_key, "production", var_id)
-            time.sleep(0.5)
-        print(" - All judges toggled on")
-
-    def attach_judges_to_brand_voice(self):
-        """Attach all judge configs to all Brand Voice variations. Must run after brand voice AI config is created."""
-        all_judges = [
-            {"judgeConfigKey": "toxicity-judge", "samplingRate": 1.0},
-            {"judgeConfigKey": "relevance-judge", "samplingRate": 1.0},
-            {"judgeConfigKey": "accuracy-judge", "samplingRate": 1.0},
-        ]
-        brand_voice_variations = [
-            "nova-pro-brand",
-            "nova-pro-brand-toxic",
-            "gpt5-mini-brand",
-            "haiku-brand",
-            "sonnet-brand",
-        ]
-        for variation in brand_voice_variations:
-            self.ldproject.attach_judges_to_variation(
-                "ai-config--togglebot-brand-voice", variation, all_judges
-            )
-        print(" - Attached all judges to all Brand Voice variations")
 
     def create_ai_chatbot_ai_config(self):
         res = self.ldproject.create_ai_config(
