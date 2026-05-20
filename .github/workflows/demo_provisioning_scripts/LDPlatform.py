@@ -1680,6 +1680,68 @@ class LDPlatform:
         return retval
 
     ##################################################
+    # Build automated release semantic patch instructions
+    ##################################################
+    def _default_guarded_release_stages(self, stages_window):
+        return [
+            {"allocation": 1000, "durationMillis": stages_window},
+            {"allocation": 5000, "durationMillis": stages_window},
+            {"allocation": 10000, "durationMillis": stages_window},
+            {"allocation": 25000, "durationMillis": stages_window},
+            {"allocation": 50000, "durationMillis": stages_window},
+        ]
+
+    def _default_progressive_release_stages(self, duration_ms):
+        return [
+            {"allocation": 1000, "durationMillis": duration_ms},
+            {"allocation": 5000, "durationMillis": duration_ms},
+            {"allocation": 10000, "durationMillis": duration_ms},
+            {"allocation": 25000, "durationMillis": duration_ms},
+            {"allocation": 50000, "durationMillis": duration_ms},
+            {"allocation": 100000, "durationMillis": duration_ms},
+        ]
+
+    def _build_start_automated_release_instruction(
+        self,
+        control_variation_id,
+        target_variation_id,
+        stages,
+        release_kind="guarded",
+        metrics=None,
+        rollback=True,
+        rule_id=None,
+    ):
+        instruction = {
+            "kind": "startAutomatedRelease",
+            "releaseKind": release_kind,
+            "originalVariationId": control_variation_id,
+            "targetVariationId": target_variation_id,
+            "randomizationUnit": "user",
+            "stages": stages,
+        }
+        if rule_id:
+            instruction["ruleId"] = rule_id
+        if metrics:
+            instruction["metrics"] = [
+                {"key": metric, "isGroup": False} for metric in metrics
+            ]
+            instruction["metricMonitoringPreferences"] = {
+                metric: {"autoRollback": rollback} for metric in metrics
+            }
+        return instruction
+
+    def _build_stop_automated_release_instruction(
+        self, final_variation_id, rule_id=None
+    ):
+        instruction = {
+            "kind": "stopAutomatedRelease",
+            "finalVariationId": final_variation_id,
+        }
+        if rule_id:
+            instruction["ruleId"] = rule_id
+        return instruction
+
+    ##################################################
     # Add a guarded rollout to a flag
     ##################################################
     def add_guarded_rollout(
@@ -1727,59 +1789,50 @@ class LDPlatform:
             "comment": "",
             "environmentKey": env_key,
             "instructions": [
-                {
-                    "kind": "turnFlagOn"
-                },
-                {
-                    "kind": "updateFallthroughWithMeasuredRolloutV2",
-                    "testVariationId": test_var,
-                    "metrics": [
-                        {
-                            "metricKey": metric,
-                            "regressionThreshold": 0,
-                            "onRegression": {
-                                "rollback": True,
-                                "notify": True
-                            }
-                        } for metric in metrics
-                    ],
-                    "controlVariationId": control_var,
-                    "randomizationUnit": "user",
-                    "onRegression": {"notify": notify, "rollback": rollback},
-                    "onProgression": {"notify": notify, "rollForward": True},
-                    "monitoringWindowMilliseconds": timeout,
-                    "rolloutWeight": weight,
-                    "metricKeys": metrics,
-                    "stages": [
-                            {
-                                "rolloutWeight": 1000,
-                                "monitoringWindowMilliseconds": stagesWindow
-                            },
-                            {
-                                "rolloutWeight": 5000,
-                                "monitoringWindowMilliseconds": stagesWindow
-                            },
-                            {
-                                "rolloutWeight": 10000,
-                                "monitoringWindowMilliseconds": stagesWindow
-                            },
-                            {
-                                "rolloutWeight": 25000,
-                                "monitoringWindowMilliseconds": stagesWindow
-                            },
-                            {
-                                "rolloutWeight": 50000,
-                                "monitoringWindowMilliseconds": stagesWindow
-                            },         
-                    ]
-                }
+                {"kind": "turnFlagOn"},
+                self._build_start_automated_release_instruction(
+                    control_var,
+                    test_var,
+                    self._default_guarded_release_stages(stagesWindow),
+                    release_kind="guarded",
+                    metrics=metrics,
+                    rollback=rollback,
+                ),
             ],
         }
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
         return res
-    
+
     ##################################################
-    # Add a guarded rollout to a flag
+    # Stop an automated release on a flag
+    ##################################################
+    def stop_automated_release(
+        self, flag_key, env_key, final_variation_id, rule_id=None, comment=""
+    ):
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+            + "?ignoreConflicts=true"
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+        }
+        payload = {
+            "comment": comment,
+            "environmentKey": env_key,
+            "instructions": [
+                self._build_stop_automated_release_instruction(
+                    final_variation_id, rule_id
+                )
+            ],
+        }
+        return self.getrequest("PATCH", url, headers=headers, json=payload)
+
+    ##################################################
+    # Add a progressive rollout to a flag
     ##################################################
     def add_progressive_rollout(
         self,
@@ -1816,70 +1869,27 @@ class LDPlatform:
             "comment": "",
             "environmentKey": env_key,
             "instructions": [
-                {
-                    "kind": "turnFlagOn"
-                },
-                {
-                    "kind": "updateFallthroughVariationOrRollout",
-                    "rolloutContextKind": "user",
-                    "progressiveRolloutConfiguration": {
-                        "controlVariationId": control_var,
-                        "endVariationId": end_var,
-                        "stages": [
-                            {
-                                "displayUnit": "day",
-                                "durationMs": timeout,
-                                "rollout": {
-                                    end_var: 1000,
-                                    control_var: 99000,
-                                }
-                            },
-                            {
-                                "displayUnit": "day",
-                                "durationMs": timeout,
-                                "rollout": {
-                                    end_var: 5000,
-                                    control_var: 95000,
-                                }
-                            },
-                            {
-                                "displayUnit": "day",
-                                "durationMs": timeout,
-                                "rollout": {
-                                    end_var: 10000,
-                                    control_var: 90000,
-                                }
-                            },
-                            {
-                                "displayUnit": "day",
-                                "durationMs": timeout,
-                                "rollout": {
-                                    end_var: 25000,
-                                    control_var: 75000,
-                                }
-                            },
-                            {
-                                "displayUnit": "day",
-                                "durationMs": timeout,
-                                "rollout": {
-                                    end_var: 50000,
-                                    control_var: 50000,
-                                }
-                            },
-                            {
-                                "displayUnit": "day",
-                                "rollout": {
-                                    end_var: 100000,
-                                    control_var: 0,
-                                }
-                            }
-                        ]
-                    }
-                }
+                {"kind": "turnFlagOn"},
+                self._build_start_automated_release_instruction(
+                    control_var,
+                    end_var,
+                    self._default_progressive_release_stages(timeout),
+                    release_kind="progressive",
+                ),
             ],
         }
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
         return res
+
+    ##################################################
+    # Stop a progressive rollout on a flag
+    ##################################################
+    def stop_progressive_rollout(
+        self, flag_key, env_key, final_variation_id, rule_id=None, comment=""
+    ):
+        return self.stop_automated_release(
+            flag_key, env_key, final_variation_id, rule_id, comment
+        )
 
     ##################################################
     # Toggle flag state
@@ -2540,61 +2550,15 @@ class LDPlatform:
             "comment": f"Guarded rollout for AI Agent {ai_config_key}",
             "environmentKey": env_key,
             "instructions": [
-                {
-                    "kind": "updateFallthroughWithMeasuredRolloutV2",
-                    "testVariationId": test_var,
-                    "controlVariationId": control_var,
-                    "randomizationUnit": "user",
-                    "onRegression": {
-                        "notify": notify,
-                        "rollback": rollback
-                    },
-                    "onProgression": {
-                        "notify": notify,
-                        "rollForward": True
-                    },
-                    "monitoringWindowMilliseconds": timeout,
-                    "rolloutWeight": weight,
-                    "stages": [
-                        {
-                            "rolloutWeight": 1000,
-                            "monitoringWindowMilliseconds": stages_window
-                        },
-                        {
-                            "rolloutWeight": 5000,
-                            "monitoringWindowMilliseconds": stages_window
-                        },
-                        {
-                            "rolloutWeight": 10000,
-                            "monitoringWindowMilliseconds": stages_window
-                        },
-                        {
-                            "rolloutWeight": 25000,
-                            "monitoringWindowMilliseconds": stages_window
-                        },
-                        {
-                            "rolloutWeight": 50000,
-                            "monitoringWindowMilliseconds": stages_window
-                        }
-                    ],
-                    "metrics": [
-                        {
-                            "metricKey": metric,
-                            "regressionThreshold": 0,
-                            "onRegression": {
-                                "rollback": True,
-                                "notify": False
-                            }
-                        } for metric in metrics
-                    ],
-                    "metricSources": [
-                        {
-                            "key": metric,
-                            "isGroup": False
-                        } for metric in metrics
-                    ]
-                }
-            ]
+                self._build_start_automated_release_instruction(
+                    control_var,
+                    test_var,
+                    self._default_guarded_release_stages(stages_window),
+                    release_kind="guarded",
+                    metrics=metrics,
+                    rollback=rollback,
+                ),
+            ],
         }
         
         response = self.getrequest("PATCH", url, headers=headers, json=payload)
