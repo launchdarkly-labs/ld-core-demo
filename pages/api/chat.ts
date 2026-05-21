@@ -645,8 +645,8 @@ Is there a specific service you'd like to know more about?`;
 
 				pushLog({ level: "INFO", message: `   Relevance: ${relevance?.toFixed(2) ?? "—"} · Fidelity: ${sourceFidelity?.toFixed(2) ?? "—"}`, name: "chat" });
 
-				const toxicity = 0;
-				pushLog({ level: "INFO", message: `   Toxicity: ${toxicity.toFixed(2)}`, name: "chat" });
+				const toxicity = enableToxicPrompt ? 0.7 + Math.random() * 0.2 : Math.random() * 0.05;
+				pushLog({ level: toxicity > 0.5 ? "WARN" : "INFO", message: `   Toxicity: ${toxicity.toFixed(2)}${toxicity > 0.5 ? " ⚠️ HIGH" : ""}`, name: "chat" });
 
 				// Track custom metrics in LaunchDarkly using the existing client
 				try {
