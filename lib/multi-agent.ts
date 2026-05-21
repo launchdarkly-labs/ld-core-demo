@@ -108,21 +108,129 @@ const CATEGORY_RAG_SOURCE: Record<BankingCategory, RagSource> = {
 	customer_support: "support",
 };
 
-const RAG_TOOL_SPEC = {
-	toolSpec: {
-		name: "search_knowledge_base",
-		description: "Search the banking knowledge base for relevant information to answer the customer's question. Always use this before answering factual questions.",
-		inputSchema: {
-			json: {
-				type: "object",
-				properties: {
-					query: { type: "string", description: "The question or topic to search for" },
+// ---------------------------------------------------------------------------
+// Tool infrastructure: convert LD AI Config tools → Bedrock/OpenAI format
+// ---------------------------------------------------------------------------
+
+interface LDTool {
+	name: string;
+	description?: string;
+	parameters?: Record<string, unknown>;
+}
+
+function resolveToolsFromConfig(config: any): Record<string, LDTool> {
+	if (config.tools && typeof config.tools === "object" && Object.keys(config.tools).length > 0) {
+		return config.tools;
+	}
+	const paramTools = config.model?.parameters?.tools;
+	if (paramTools && typeof paramTools === "object" && Object.keys(paramTools).length > 0) {
+		return paramTools as Record<string, LDTool>;
+	}
+	return {};
+}
+
+function ldToolsToBedrockToolSpecs(tools: Record<string, LDTool>): any[] {
+	return Object.entries(tools).map(([key, tool]) => {
+		const schema = tool.parameters ?? {};
+		return {
+			toolSpec: {
+				name: key.replace(/-/g, "_"),
+				description: tool.description ?? key,
+				inputSchema: {
+					json: {
+						type: "object",
+						...schema,
+					},
 				},
-				required: ["query"],
 			},
-		},
+		};
+	});
+}
+
+function ldToolsToOpenAIFunctions(tools: Record<string, LDTool>): any[] {
+	return Object.entries(tools).map(([key, tool]) => {
+		const schema = tool.parameters ?? {};
+		return {
+			type: "function" as const,
+			function: {
+				name: key.replace(/-/g, "_"),
+				description: tool.description ?? key,
+				parameters: { type: "object", ...schema },
+			},
+		};
+	});
+}
+
+type ToolHandler = (input: Record<string, any>, context: ToolContext) => Promise<string>;
+
+interface ToolContext {
+	userInput: string;
+	ragSource: RagSource;
+	ldContext?: any;
+}
+
+function calculateLoanPayment(principal: number, annualRatePercent: number, termMonths: number) {
+	const monthlyRate = annualRatePercent / 100 / 12;
+	if (monthlyRate === 0) {
+		const monthly = principal / termMonths;
+		return { monthlyPayment: monthly, totalPayment: principal, totalInterest: 0 };
+	}
+	const monthly = principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+	const totalPayment = monthly * termMonths;
+	return {
+		monthlyPayment: Math.round(monthly * 100) / 100,
+		totalPayment: Math.round(totalPayment * 100) / 100,
+		totalInterest: Math.round((totalPayment - principal) * 100) / 100,
+	};
+}
+
+const TOOL_HANDLERS: Record<string, ToolHandler> = {
+	async search_knowledge_base(input, ctx) {
+		const query = input.query ?? ctx.userInput;
+		pushLog({ level: "INFO", message: `   🔍 RAG tool call: searching ${ctx.ragSource} for "${String(query).slice(0, 60)}${String(query).length > 60 ? "…" : ""}"`, name: "specialist" });
+		const chunks = await retrieve(query, { source: ctx.ragSource, topK: 5 });
+		if (chunks.length > 0) {
+			pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+			return chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n");
+		}
+		pushLog({ level: "INFO", message: `   📄 RAG returned 0 chunks`, name: "specialist" });
+		return "No relevant results found in this knowledge base.";
+	},
+
+	async get_customer_context(_input, ctx) {
+		pushLog({ level: "INFO", message: `   👤 Tool call: get-customer-context`, name: "specialist" });
+		const c = ctx.ldContext ?? {};
+		const profile = {
+			name: c.user?.name ?? c.name ?? "Unknown",
+			tier: c.user?.tier ?? c.tier ?? "standard",
+			location: c.location ?? "Unknown",
+			segment: c.user?.segment ?? c.segment ?? "retail",
+		};
+		return JSON.stringify(profile);
+	},
+
+	async calculate_loan_payment(input, _ctx) {
+		const { principal, annualRatePercent, termMonths } = input;
+		pushLog({ level: "INFO", message: `   🧮 Tool call: calculate-loan-payment ($${principal}, ${annualRatePercent}%, ${termMonths}mo)`, name: "specialist" });
+		if (!principal || !annualRatePercent || !termMonths) {
+			return "Error: Missing required parameters (principal, annualRatePercent, termMonths)";
+		}
+		const result = calculateLoanPayment(Number(principal), Number(annualRatePercent), Number(termMonths));
+		return JSON.stringify(result);
+	},
+
+	async rewrite_response_for_channel(input, _ctx) {
+		pushLog({ level: "INFO", message: `   📝 Tool call: rewrite-response-for-channel (${input.channel ?? "in-app"})`, name: "specialist" });
+		return input.content ?? "No content provided to rewrite.";
 	},
 };
+
+async function executeToolCall(toolName: string, input: Record<string, any>, ctx: ToolContext): Promise<string> {
+	const handler = TOOL_HANDLERS[toolName];
+	if (handler) return handler(input, ctx);
+	pushLog({ level: "WARN", message: `   ⚠️ Unknown tool: ${toolName}`, name: "specialist" });
+	return `Tool "${toolName}" is not implemented.`;
+}
 
 // Helpers
 
@@ -318,18 +426,33 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const modelName = triageConfig.model.name;
 	pushLog({ level: "INFO", message: `   Model: ${modelName}`, name: "triage" });
 
-	const messages = configToMessages(triageConfig);
+	const triageTools: Record<string, LDTool> = resolveToolsFromConfig(triageConfig);
+	const triageToolNames = Object.keys(triageTools);
+	if (triageToolNames.length > 0) {
+		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${triageToolNames.join(", ")}`, name: "triage" });
+	}
 
+	let messages = configToMessages(triageConfig);
+
+	if (triageTools["get-customer-context"]) {
+		const toolCtx: ToolContext = { userInput, ragSource: "support", ldContext: context };
+		try {
+			const customerJson = await executeToolCall("get_customer_context", {}, toolCtx);
+			pushLog({ level: "INFO", message: `   👤 Injected customer context via get-customer-context tool`, name: "triage" });
+			messages = [...messages, { role: "user", content: `Customer profile:\n${customerJson}\n\nUser's question: ${userInput}` }];
+		} catch {}
+	}
+
+	const triageTracker = triageConfig.createTracker?.();
 	const result = await callLLM(modelName, messages, bedrockClient, openai, {
 		temperature: 0,
 		maxTokens: 256,
-	}, triageConfig.tracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
+	}, triageTracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
 
-	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
 	if (isBedrockModel(modelName)) {
-		triageConfig.tracker?.trackSuccess?.();
-		if (result.durationMs) triageConfig.tracker?.trackDuration?.(result.durationMs);
-		triageConfig.tracker?.trackTokens?.({
+		triageTracker?.trackSuccess?.();
+		if (result.durationMs) triageTracker?.trackDuration?.(result.durationMs);
+		triageTracker?.trackTokens?.({
 			input: result.inputTokens,
 			output: result.outputTokens,
 			total: result.inputTokens + result.outputTokens,
@@ -399,12 +522,20 @@ async function runSpecialistAgent(
 
 	const modelName = specialistConfig.model.name;
 	const useBedrock = isBedrockModel(modelName);
-	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName}) with RAG tools...`, name: "specialist" });
+
+	const ldTools: Record<string, LDTool> = resolveToolsFromConfig(specialistConfig);
+	const toolNames = Object.keys(ldTools);
+	if (toolNames.length > 0) {
+		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${toolNames.join(", ")}`, name: "specialist" });
+	}
+	pushLog({ level: "INFO", message: `   Running ${category} specialist (${modelName})${toolNames.length > 0 ? ` with ${toolNames.length} tools` : ""}...`, name: "specialist" });
 
 	const configMessages = configToMessages(specialistConfig);
+	const toolCtx: ToolContext = { userInput, ragSource, ldContext: context };
+	const specialistTracker = specialistConfig.createTracker?.();
 
 	if (useBedrock) {
-		// --- Bedrock path: native tool-use loop with RAG ---
+		// --- Bedrock path: tool-use loop with tools from LD AI Config ---
 		let resolvedModelId = modelName;
 		if (!resolvedModelId.startsWith("us.")) {
 			resolvedModelId = "us." + resolvedModelId;
@@ -421,12 +552,14 @@ async function runSpecialistAgent(
 			content: [{ text: m.content }],
 		}));
 
+		const bedrockToolSpecs = toolNames.length > 0 ? ldToolsToBedrockToolSpecs(ldTools) : [];
+
 		const callStart = Date.now();
 		let totalInputTokens = 0;
 		let totalOutputTokens = 0;
 		let finalContent = "";
 		let loopCount = 0;
-		const MAX_TOOL_LOOPS = 3;
+		const MAX_TOOL_LOOPS = 5;
 
 		while (loopCount < MAX_TOOL_LOOPS) {
 			loopCount++;
@@ -435,7 +568,7 @@ async function runSpecialistAgent(
 					modelId: resolvedModelId,
 					...(systemMsgs.length > 0 ? { system: systemMsgs.map((m) => ({ text: m.content })) } : {}),
 					messages: bedrockMessages,
-					toolConfig: { tools: [RAG_TOOL_SPEC] },
+					...(bedrockToolSpecs.length > 0 ? { toolConfig: { tools: bedrockToolSpecs } } : {}),
 					inferenceConfig: { temperature: 0.5, maxTokens: 1000 },
 				}),
 			);
@@ -454,20 +587,13 @@ async function runSpecialistAgent(
 			const toolResults: any[] = [];
 			for (const block of assistantMessage?.content ?? []) {
 				if (!block.toolUse) continue;
-				const { toolUseId, input } = block.toolUse;
-				const query = (input as any)?.query ?? userInput;
-
-				pushLog({ level: "INFO", message: `   🔍 RAG tool call: searching ${ragSource} for "${query.slice(0, 60)}${query.length > 60 ? "…" : ""}"`, name: "specialist" });
+				const { toolUseId, name: toolCallName, input } = block.toolUse;
 
 				try {
-					const chunks = await retrieve(query, { source: ragSource, topK: 5 });
-					const resultText = chunks.length > 0
-						? chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n")
-						: "No relevant results found in this knowledge base.";
-					pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+					const resultText = await executeToolCall(toolCallName, input ?? {}, toolCtx);
 					toolResults.push({ toolResult: { toolUseId, content: [{ text: resultText }] } });
 				} catch (err: any) {
-					pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+					pushLog({ level: "ERROR", message: `   Tool error (${toolCallName}): ${err.message}`, name: "specialist" });
 					toolResults.push({ toolResult: { toolUseId, content: [{ text: `Error: ${err.message}` }], status: "error" } });
 				}
 			}
@@ -477,9 +603,9 @@ async function runSpecialistAgent(
 
 		const durationMs = Date.now() - callStart;
 
-		specialistConfig.tracker?.trackSuccess?.();
-		if (durationMs) specialistConfig.tracker?.trackDuration?.(durationMs);
-		specialistConfig.tracker?.trackTokens?.({
+		specialistTracker?.trackSuccess?.();
+		if (durationMs) specialistTracker?.trackDuration?.(durationMs);
+		specialistTracker?.trackTokens?.({
 			input: totalInputTokens,
 			output: totalOutputTokens,
 			total: totalInputTokens + totalOutputTokens,
@@ -502,35 +628,44 @@ async function runSpecialistAgent(
 		};
 	}
 
-	// --- OpenAI path: pre-fetch RAG context, then single callLLM ---
-	pushLog({ level: "INFO", message: `   🔍 Pre-fetching RAG context from ${ragSource}...`, name: "specialist" });
-	let ragContext = "";
-	try {
-		const chunks = await retrieve(userInput, { source: ragSource, topK: 5 });
-		if (chunks.length > 0) {
-			ragContext = chunks
-				.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`)
-				.join("\n\n---\n\n");
-			pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
-		} else {
-			pushLog({ level: "INFO", message: `   📄 RAG returned 0 chunks`, name: "specialist" });
-		}
-	} catch (err: any) {
-		pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+	// --- OpenAI path: pre-fetch RAG context + customer context, then single callLLM ---
+	let extraContext = "";
+
+	if (ldTools["get-customer-context"]) {
+		try {
+			const customerJson = await executeToolCall("get_customer_context", {}, toolCtx);
+			extraContext += `Customer profile:\n${customerJson}\n\n`;
+		} catch {}
 	}
 
-	const messages = ragContext
-		? [...configMessages, { role: "user" as const, content: `Reference material from knowledge base:\n\n${ragContext}` }]
+	if (ldTools["search-knowledge-base"]) {
+		pushLog({ level: "INFO", message: `   🔍 Pre-fetching RAG context from ${ragSource}...`, name: "specialist" });
+		try {
+			const chunks = await retrieve(userInput, { source: ragSource, topK: 5 });
+			if (chunks.length > 0) {
+				extraContext += `Reference material from knowledge base:\n\n` +
+					chunks.map((r, i) => `[${i + 1}] ${r.title} (${r.content_type}, relevance: ${r.score.toFixed(4)})\n${r.text}`).join("\n\n---\n\n");
+				pushLog({ level: "INFO", message: `   📄 RAG returned ${chunks.length} chunks (top score: ${chunks[0]?.score.toFixed(3) ?? "N/A"})`, name: "specialist" });
+			} else {
+				pushLog({ level: "INFO", message: `   📄 RAG returned 0 chunks`, name: "specialist" });
+			}
+		} catch (err: any) {
+			pushLog({ level: "ERROR", message: `   RAG error: ${err.message}`, name: "specialist" });
+		}
+	}
+
+	const messages = extraContext
+		? [...configMessages, { role: "user" as const, content: extraContext }]
 		: configMessages;
 
 	const result = await callLLM(modelName, messages, bedrockClient, deps.openai, {
 		temperature: 0.5,
 		maxTokens: 1000,
-	}, specialistConfig.tracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
+	}, specialistTracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
 
 	pushLog({
 		level: "INFO",
-		message: `   Specialist (${label}) response in ${result.durationMs}ms (pre-fetched RAG)`,
+		message: `   Specialist (${label}) response in ${result.durationMs}ms`,
 		name: "specialist",
 	});
 
@@ -581,6 +716,12 @@ async function runBrandVoiceAgent(
 
 	const modelName = brandConfig.enabled ? brandConfig.model.name : "amazon.nova-pro-v1:0";
 
+	const brandTools: Record<string, LDTool> = resolveToolsFromConfig(brandConfig);
+	const brandToolNames = Object.keys(brandTools);
+	if (brandToolNames.length > 0) {
+		pushLog({ level: "INFO", message: `   🔧 Tools from AI Config: ${brandToolNames.join(", ")}`, name: "brand" });
+	}
+
 	let messages: Array<{ role: string; content: string }>;
 	if (isToxic) {
 		const toxicInstructions =
@@ -601,16 +742,16 @@ async function runBrandVoiceAgent(
 		messages = configToMessages(brandConfig);
 	}
 
-	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandConfig.tracker, {
+	const brandTracker = brandConfig.createTracker?.();
+	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandTracker, {
 		agentLabel: "brand_voice",
 		requestHeaders: deps.requestHeaders,
 	});
 
-	// OpenAI path uses LaunchDarkly AI SDK trackOpenAIMetrics; only track manually for Bedrock
 	if (isBedrockModel(modelName)) {
-		brandConfig.tracker?.trackSuccess?.();
-		if (result.durationMs) brandConfig.tracker?.trackDuration?.(result.durationMs);
-		brandConfig.tracker?.trackTokens?.({
+		brandTracker?.trackSuccess?.();
+		if (result.durationMs) brandTracker?.trackDuration?.(result.durationMs);
+		brandTracker?.trackTokens?.({
 			input: result.inputTokens,
 			output: result.outputTokens,
 			total: result.inputTokens + result.outputTokens,

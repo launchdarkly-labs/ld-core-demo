@@ -71,10 +71,12 @@ type SelfHealingMetrics = {
   timing?: StreamTiming;
   tokens?: StreamTokens;
   judgeScores?: {
-    before?: { accuracy?: number; relevance?: number };
-    after?: { accuracy?: number; relevance?: number };
+    before?: { accuracy?: number; relevance?: number; toxicity?: number };
+    after?: { accuracy?: number; relevance?: number; toxicity?: number };
   };
   didFallback?: boolean;
+  originalResponse?: string;
+  originalModel?: string;
 };
 
 //https://sdk.vercel.ai/providers/legacy-providers/aws-bedrock
@@ -129,7 +131,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const [selfHealingStatus, setSelfHealingStatus] = useState("");
   const [enableFallback, setEnableFallback] = useState(true);
   const [enableToxicPrompt, setEnableToxicPrompt] = useState(false);
-  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const selfHealingEndRef = useRef<HTMLDivElement | null>(null);
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
@@ -204,23 +205,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
     }
   }, [selfHealingMessages, activeTab]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
 
   const { userObject } = useContext(LoginContext);
   const { logLDMetricSent } = useContext(LiveLogsContext);
@@ -442,6 +426,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                     tokens: data.tokens,
                     judgeScores: data.judgeScores,
                     didFallback: data.didFallback,
+                    originalResponse: data.originalResponse,
+                    originalModel: data.originalModel,
                   });
                 }
 
@@ -467,13 +453,27 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 }
 
                 if (data.fallbackSkipped && data.judgeScores) {
-                  const judgeMessage: Message = {
-                    id: uuidv4().slice(0, 6) + "-judge",
-                    role: "judge",
-                    content: `**Model Scores (${data.modelName || "Unknown"}):**\n- Accuracy: ${data.judgeScores.before?.accuracy?.toFixed(1) || "N/A"}%\n- Relevance: ${data.judgeScores.before?.relevance?.toFixed(1) || "N/A"}%\n\n---\n\n**Scores below threshold (90%)** — Self-healing is disabled.\nEnable fallback in Options to see the self-healing behavior.`,
-                    judgeScores: data.judgeScores,
-                  };
-                  setSelfHealingMessages((prev) => [...prev, judgeMessage]);
+                  setSelfHealingMessages((prev) => [
+                    ...prev,
+                    {
+                      id: uuidv4().slice(0, 6) + "-info",
+                      role: "assistant",
+                      content: "Scores below threshold (90%) — Self-healing is disabled. Enable fallback in Options to see the self-healing behavior.",
+                    },
+                  ]);
+                }
+
+                if (!data.didFallback) {
+                  setTimeout(() => {
+                    setSelfHealingMessages((prev) => [
+                      ...prev,
+                      {
+                        id: uuidv4().slice(0, 6) + "-reset",
+                        role: "assistant",
+                        content: "Would you like to reset the context to try again?",
+                      },
+                    ]);
+                  }, 1000);
                 }
 
                 setSelfHealingLoading(false);
@@ -583,8 +583,10 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'us.anthropic.claude-3-opus-20240229-v1:0': 'Claude 3 Opus',
         'anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
         'us.anthropic.claude-3-5-haiku-20241022-v1:0': 'Claude 3.5 Haiku',
-        'anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
-        'us.anthropic.claude-3-7-sonnet-20250219-v1:0': 'Claude 3.7 Sonnet',
+        'anthropic.claude-sonnet-4-6': 'Claude Sonnet 4.6',
+        'us.anthropic.claude-sonnet-4-6': 'Claude Sonnet 4.6',
+        'anthropic.claude-sonnet-4-20250514-v1:0': 'Claude Sonnet 4',
+        'us.anthropic.claude-sonnet-4-20250514-v1:0': 'Claude Sonnet 4',
 
         // Meta Llama Models
         'meta.llama2-7b-chat-v1': 'Llama 2 7B',
@@ -679,7 +681,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   return (
     <>
       <div
-        className="fixed bottom-4 z-20 transition-[right] duration-200 ease-linear"
+        className="fixed bottom-4 z-[60] transition-[right] duration-200 ease-linear"
         style={{ right: sidebarOpen ? 'calc(30vw + 1rem)' : '1rem' }}
       >
         <Button
@@ -702,7 +704,7 @@ export default function Chatbot({ vertical }: { vertical: string }) {
       {isOpen && (
          <div
           ref={cardRef}
-          className={`fixed z-50 transition-all duration-500 ease-in-out ${
+          className={`fixed z-[60] transition-all duration-500 ease-in-out ${
             isExpanded
               ? "top-4 bottom-4 left-4 flex items-stretch"
               : "bottom-16 flex items-end justify-end p-4 sm:p-6 max-w-full"
@@ -964,116 +966,28 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
                 <TabsContent value="self-healing" className="flex-1 flex flex-col overflow-hidden mt-0">
                   {isSelfHealingEnabled && (
-                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center justify-between flex-wrap gap-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {(selfHealingMetrics?.modelName || selfHealingFlag?.model?.name) && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              Model: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics?.modelName || selfHealingFlag?.model?.name}</span>
-                            </span>
-                          )}
-                          {selfHealingMetrics?.didFallback && (
-                            <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
-                              Self-Healed
-                            </span>
-                          )}
-                        </div>
-                        {/* Settings dropdown */}
-                        <div className="relative">
-                          <button
-                            onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
-                            className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded border border-gray-300 dark:border-gray-600 hover:border-purple-400"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                            Options
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${showSettingsDropdown ? 'rotate-180' : ''}`}><polyline points="6 9 12 15 18 9"/></svg>
-                          </button>
-                          {showSettingsDropdown && (
-                            <div className="absolute right-0 top-full mt-1 w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
-                              <div className="p-2 border-b border-gray-200 dark:border-gray-700">
-                                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Demo Mode</span>
-                              </div>
-                              <div className="p-2">
-                                <button
-                                  onClick={() => {
-                                    const newVal = !enableFallback;
-                                    setEnableFallback(newVal);
-                                    setShowSettingsDropdown(false);
-                                    fetch("/api/logs/stream", {
-                                      method: "POST",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ message: newVal ? "*** Fallback turned on ***" : "*** Fallback turned off ***", level: newVal ? "guardrails-on" : "guardrails-off", name: "self-healing" }),
-                                    }).catch(() => {});
-                                  }}
-                                  className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-                                >
-                                  <div className="flex flex-col items-start">
-                                    <span className="text-xs text-gray-700 dark:text-gray-200">Enable Fallback</span>
-                                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{enableFallback ? "Shows self-healing" : "Bad response only"}</span>
-                                  </div>
-                                  <div className={`w-8 h-4 rounded-full transition-colors relative ${enableFallback ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
-                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableFallback ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                                  </div>
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                    <div className="flex items-center justify-between px-3 py-1.5 mx-4 mt-2 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">Enable Fallback</span>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400">{enableFallback ? "Shows self-healing" : "Bad response only"}</span>
                       </div>
-                      {selfHealingMetrics && (
-                        <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          {selfHealingMetrics.timing?.totalTime !== undefined && (
-                            <span>Time: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.timing.totalTime}ms</span></span>
-                          )}
-                          {selfHealingMetrics.tokens?.total !== undefined && (
-                            <span>Tokens: <span className="font-semibold text-gray-700 dark:text-gray-200">{selfHealingMetrics.tokens.total}</span></span>
-                          )}
-                        </div>
-                      )}
-                      {(() => {
-                        const judgeMsg = [...selfHealingMessages].reverse().find((m) => m.role === "judge");
-                        if (!judgeMsg) return null;
-                        return (
-                          <Accordion type="single" collapsible className="mt-1">
-                            <AccordionItem value="judge-eval" className="border-0">
-                              <AccordionTrigger className="py-1 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:no-underline">
-                                AI Judge Evaluation
-                              </AccordionTrigger>
-                              <AccordionContent className="text-xs pb-1">
-                                <div className="max-h-[200px] overflow-y-auto rounded-md border border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 p-2">
-                                  <ReactMarkdown
-                                    components={{
-                                      p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
-                                      strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                                      em: ({ children }) => <em className="italic">{children}</em>,
-                                      ul: ({ children }) => <ul className="list-disc list-inside mb-1.5 space-y-0.5 ml-2">{children}</ul>,
-                                      li: ({ children }) => <li>{children}</li>,
-                                      hr: () => <div className="my-3" />,
-                                      blockquote: ({ children }) => (
-                                        <blockquote className="border-l-2 border-purple-400 pl-2 italic mb-1.5 text-gray-600 dark:text-gray-300">
-                                          {children}
-                                        </blockquote>
-                                      ),
-                                      code: ({ children, className }) => {
-                                        const isBlock = className?.includes("language-");
-                                        return isBlock
-                                          ? <pre className="bg-gray-100 dark:bg-gray-800 rounded p-1.5 overflow-x-auto mb-1.5"><code className={className}>{children}</code></pre>
-                                          : <code className="bg-gray-200 dark:bg-gray-700 rounded px-1 py-0.5 text-[11px] break-all">{children}</code>;
-                                      },
-                                    }}
-                                  >
-                                    {judgeMsg.content}
-                                  </ReactMarkdown>
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        );
-                      })()}
+                      <button
+                        onClick={() => {
+                          const newVal = !enableFallback;
+                          setEnableFallback(newVal);
+                          fetch("/api/logs/stream", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ message: newVal ? "*** Fallback turned on ***" : "*** Fallback turned off ***", level: newVal ? "guardrails-on" : "guardrails-off", name: "self-healing" }),
+                          }).catch(() => {});
+                        }}
+                        className={`w-8 h-4 rounded-full transition-colors relative ${enableFallback ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+                      >
+                        <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${enableFallback ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                      </button>
                     </div>
                   )}
-
-                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-300px)]" : "h-[350px]"}`}>
+                  <CardContent className={`overflow-y-auto ${isExpanded ? "h-[calc(100vh-240px)]" : "h-[400px]"}`}>
                     {!isSelfHealingEnabled && (
                       <div className="flex items-center justify-center h-full">
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -1084,6 +998,92 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
                     {isSelfHealingEnabled && (
                       <div className="space-y-4">
+                        <div className="sticky top-0 z-10 bg-white dark:bg-gray-900">
+                          <Accordion type="single" collapsible defaultValue="sh-metrics">
+                            <AccordionItem value="sh-metrics">
+                              <AccordionTrigger className="px-2">AI Metrics</AccordionTrigger>
+                              <AccordionContent>
+                                <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
+                                  <div className="flex flex-wrap gap-3">
+                                    {(selfHealingMetrics?.modelName || selfHealingFlag?.model?.name) && (
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-semibold">Model:</span>
+                                        <span>{selfHealingMetrics?.modelName || selfHealingFlag?.model?.name}</span>
+                                        {selfHealingMetrics?.didFallback && (
+                                          <span className="ml-1 px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-[10px] font-medium rounded-full">Self-Healed</span>
+                                        )}
+                                      </div>
+                                    )}
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Accuracy:</span>
+                                      <span>{((selfHealingMetrics?.judgeScores?.after?.accuracy ?? selfHealingMetrics?.judgeScores?.before?.accuracy ?? 0) / 100).toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Relevance:</span>
+                                      <span>{((selfHealingMetrics?.judgeScores?.after?.relevance ?? selfHealingMetrics?.judgeScores?.before?.relevance ?? 0) / 100).toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Toxicity:</span>
+                                      <span className={(selfHealingMetrics?.judgeScores?.before?.toxicity ?? 0) > 0.5 ? "text-red-500 font-bold" : ""}>
+                                        {(selfHealingMetrics?.judgeScores?.after?.toxicity ?? selfHealingMetrics?.judgeScores?.before?.toxicity ?? 0).toFixed(2)}
+                                      </span>
+                                    </div>
+                                    {selfHealingMetrics?.tokens && (
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-semibold">Tokens:</span>
+                                        <span>{selfHealingMetrics.tokens.total ?? 0} (in {selfHealingMetrics.tokens.input ?? 0}, out {selfHealingMetrics.tokens.output ?? 0})</span>
+                                      </div>
+                                    )}
+                                    {selfHealingMetrics?.timing && (
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-semibold">Timing:</span>
+                                        <span>Total {selfHealingMetrics.timing.totalTime ?? 0}ms</span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {selfHealingMetrics?.didFallback && selfHealingMetrics.judgeScores?.before && (
+                                    <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                      <div className="font-semibold mb-1 text-red-500">Initial Model Scores ({selfHealingMetrics.originalModel || "Unknown"})</div>
+                                      <div className="flex flex-wrap gap-3 mb-2">
+                                        <span>Accuracy: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.accuracy ?? 0).toFixed(1)}%</span></span>
+                                        <span>Relevance: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.relevance ?? 0).toFixed(1)}%</span></span>
+                                        <span>Toxicity: <span className="text-red-500 font-bold">{(selfHealingMetrics.judgeScores.before.toxicity ?? 0).toFixed(2)}</span></span>
+                                      </div>
+                                      <div className="font-semibold mb-1 text-green-600 dark:text-green-400">Fallback Model Scores ({selfHealingMetrics.modelName || "Unknown"})</div>
+                                      <div className="flex flex-wrap gap-3">
+                                        <span>Accuracy: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.accuracy ?? 0).toFixed(1)}%</span></span>
+                                        <span>Relevance: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.relevance ?? 0).toFixed(1)}%</span></span>
+                                        <span>Toxicity: <span className="text-green-600 font-bold">{(selfHealingMetrics.judgeScores.after?.toxicity ?? 0).toFixed(2)}</span></span>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {selfHealingMetrics?.didFallback && selfHealingMetrics.originalResponse && (
+                                    <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                      <div className="font-semibold mb-1 text-red-500">Original Response (Reverted)</div>
+                                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-2 text-xs text-gray-700 dark:text-gray-300 max-h-[100px] overflow-y-auto whitespace-pre-line">
+                                        {selfHealingMetrics.originalResponse}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {!selfHealingMetrics?.didFallback && selfHealingMetrics?.judgeScores?.before && (
+                                    <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2">
+                                      <div className="font-semibold mb-1">Model Scores</div>
+                                      <div className="flex flex-wrap gap-3">
+                                        <span>Accuracy: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.accuracy ?? 0).toFixed(1)}%</span></span>
+                                        <span>Relevance: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.relevance ?? 0).toFixed(1)}%</span></span>
+                                        <span>Toxicity: <span className="font-bold">{(selfHealingMetrics.judgeScores.before.toxicity ?? 0).toFixed(2)}</span></span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        </div>
+
                         {selfHealingMessages.map((m) => {
                           if (m.role === "judge") {
                             return null;
