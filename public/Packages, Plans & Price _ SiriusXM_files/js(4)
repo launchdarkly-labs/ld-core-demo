@@ -1,0 +1,172 @@
+(function () {
+    'use strict';
+
+    var PATH_PREFIX = '/profile/visit/';
+    var EXP_SUFFIX = '_exp';
+    var Parameters = {
+      CLEAR_TAG_FLAG: 'clear_tag_flag'
+    };
+
+    function deleteTag() {
+      var scriptElement = document.currentScript;
+      if (scriptElement && scriptElement.src.toLowerCase().includes(PATH_PREFIX)) {
+        scriptElement.parentNode.removeChild(scriptElement);
+      }
+    }
+    function cleanupScript(integration) {
+      var parameters = integration.parameters;
+      if (parameters) {
+        if (parameters.hasOwnProperty(Parameters.CLEAR_TAG_FLAG)) {
+          var clearTagFlag = parameters[Parameters.CLEAR_TAG_FLAG];
+          if (clearTagFlag) {
+            deleteTag();
+          }
+        }
+      }
+    }
+
+    function assign (target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var key in source) {
+          target[key] = source[key];
+        }
+      }
+      return target
+    }
+    var defaultConverter = {
+      read: function (value) {
+        if (value[0] === '"') {
+          value = value.slice(1, -1);
+        }
+        return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
+      },
+      write: function (value) {
+        return encodeURIComponent(value).replace(
+          /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
+          decodeURIComponent
+        )
+      }
+    };
+    function init (converter, defaultAttributes) {
+      function set (name, value, attributes) {
+        if (typeof document === 'undefined') {
+          return
+        }
+        attributes = assign({}, defaultAttributes, attributes);
+        if (typeof attributes.expires === 'number') {
+          attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
+        }
+        if (attributes.expires) {
+          attributes.expires = attributes.expires.toUTCString();
+        }
+        name = encodeURIComponent(name)
+          .replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent)
+          .replace(/[()]/g, escape);
+        var stringifiedAttributes = '';
+        for (var attributeName in attributes) {
+          if (!attributes[attributeName]) {
+            continue
+          }
+          stringifiedAttributes += '; ' + attributeName;
+          if (attributes[attributeName] === true) {
+            continue
+          }
+          stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
+        }
+        return (document.cookie =
+          name + '=' + converter.write(value, name) + stringifiedAttributes)
+      }
+      function get (name) {
+        if (typeof document === 'undefined' || (arguments.length && !name)) {
+          return
+        }
+        var cookies = document.cookie ? document.cookie.split('; ') : [];
+        var jar = {};
+        for (var i = 0; i < cookies.length; i++) {
+          var parts = cookies[i].split('=');
+          var value = parts.slice(1).join('=');
+          try {
+            var found = decodeURIComponent(parts[0]);
+            jar[found] = converter.read(value, found);
+            if (name === found) {
+              break
+            }
+          } catch (e) {}
+        }
+        return name ? jar[name] : jar
+      }
+      return Object.create(
+        {
+          set,
+          get,
+          remove: function (name, attributes) {
+            set(
+              name,
+              '',
+              assign({}, attributes, {
+                expires: -1
+              })
+            );
+          },
+          withAttributes: function (attributes) {
+            return init(this.converter, assign({}, this.attributes, attributes))
+          },
+          withConverter: function (converter) {
+            return init(assign({}, this.converter, converter), this.attributes)
+          }
+        },
+        {
+          attributes: { value: Object.freeze(defaultAttributes) },
+          converter: { value: Object.freeze(converter) }
+        }
+      )
+    }
+    var api = init(defaultConverter, { path: '/' });
+
+    var removeCookie = function removeCookie(name, domain) {
+      var sameSite = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'lax';
+      if (api.get(name) !== undefined) {
+        api.remove(name, {
+          'sameSite': sameSite,
+          'domain': domain,
+          'path': '/'
+        });
+      }
+    };
+
+    function removeStorageItem(key, type) {
+      type = type || 'localStorage';
+      try {
+        var storage = window[type];
+        storage.removeItem(key + EXP_SUFFIX);
+        storage.removeItem(key);
+        return true;
+      } catch (e) {
+        console.debug(e);
+        return false;
+      }
+    }
+
+    function removeValues(identifiersForRemoval, environment) {
+      if (!identifiersForRemoval) {
+        return;
+      }
+      identifiersForRemoval.forEach(function (identifier) {
+        removeStorageItem(identifier, 'localStorage');
+        removeStorageItem(identifier, 'sessionStorage');
+      });
+      if (environment) {
+        identifiersForRemoval.forEach(function (identifier) {
+          removeCookie(identifier, environment.cookieDomain);
+        });
+      }
+    }
+
+    var integration = {"eventType":"reset","env":{"tagProto":"https","tagHost":"login-ds.dotomi.com","tagPath":"/profile/visit/final/js","dcWriteNew":true,"dcWriteExisting":true,"lsWriteNew":true,"lsWriteExisting":true,"fpcRead":true,"fpcTagWrite":false,"fpcAgilityIdWrite":false,"cookieHost":"","cookieProto":"https","cookiePath":"","cookieDomain":".siriusxm.com","cookieTagType":null,"epsilonRP":false,"pollutedFirstPartyDtmUserTkn":false,"pollutedFirstPartyDtmUserTknLs":false,"pollutedFirstPartyDtmUserTknSs":false},"parameters":{},"persistence":[{"key":"dtm_status","expires":395.0,"context":null,"destination":null,"value":null,"noSuffix":false},{"key":"dtm_token","expires":395.0,"context":"server","destination":null,"value":null,"noSuffix":false},{"key":"dtm_persisted_em","expires":395.0,"context":"client","destination":null,"value":null,"noSuffix":false},{"key":"dtm_sync","expires":9.0,"context":"clientStorage","destination":null,"value":null,"noSuffix":false},{"key":"dtm_consent","expires":395.0,"context":"client","destination":null,"value":null,"noSuffix":false}],"identifiersForRemoval":["dtm_token","dtm_token_sc","dtm_status","dtm_consent","dtm_sync","dtm_user_id","dtm_user_id_sc","dtm_persisted_em","dtm_session_83091"]};
+    if (integration.identifiersForRemoval) {
+      removeValues(integration.identifiersForRemoval, integration.env);
+    }
+    cleanupScript(integration);
+
+})();

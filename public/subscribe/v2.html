@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Subscribe to SiriusXM</title>
+    <link rel="icon" type="image/x-icon" href="https://www.siriusxm.com/favicon.ico" />
+    <style>
+      @font-face {
+        font-family: "Geist";
+        src: url("https://care.siriusxm.com/media/Geist-Regular-P2HTHLL5.woff2")
+          format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Geist";
+        src: url("https://care.siriusxm.com/media/Geist-Bold-6G7BMBCD.woff2")
+          format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: "Geist", system-ui, -apple-system, sans-serif;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #000;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .page-header {
+        padding: 1.5rem 1.5rem 0;
+      }
+
+      .logo {
+        display: inline-block;
+        line-height: 0;
+      }
+
+      .logo img {
+        display: block;
+        height: 1.5rem;
+        width: auto;
+        filter: brightness(0);
+      }
+
+      .page-main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        padding: 2.5rem 1.5rem 3rem;
+      }
+
+      .checkout {
+        width: 100%;
+        max-width: 28rem;
+      }
+
+      .steps {
+        margin: 0 0 2rem;
+        padding: 0;
+        font-size: 0.875rem;
+        color: #8a8a8a;
+        letter-spacing: 0.01em;
+      }
+
+      .steps .active {
+        color: #000;
+        font-weight: 700;
+      }
+
+      .steps .sep {
+        margin: 0 0.35rem;
+      }
+
+      .title {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.75rem, 5vw, 2.25rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 0 0 2rem;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      .offer {
+        margin: 0 0 2rem;
+        padding: 1.25rem 1.5rem;
+        background: #f5f5f5;
+        border-radius: 0.5rem;
+      }
+
+      .offer-name {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .offer-price {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      .field {
+        margin: 0 0 1rem;
+      }
+
+      .field input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        font: inherit;
+        font-size: 1rem;
+        color: #000;
+        background: #fff;
+        border: 1px solid #d4d4d4;
+        border-radius: 0.375rem;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .field input::placeholder {
+        color: #8a8a8a;
+      }
+
+      .field input:focus {
+        border-color: #0000eb;
+        box-shadow: 0 0 0 1px #0000eb;
+      }
+
+      .privacy {
+        margin: 0 0 2rem;
+        font-size: 0.875rem;
+      }
+
+      .privacy a {
+        color: #000;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+      }
+
+      .privacy a:hover {
+        color: #0000eb;
+      }
+
+      .continue {
+        display: block;
+        width: 100%;
+        padding: 0.9375rem 1.5rem;
+        font: inherit;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        background: #ff6600;
+        border: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+
+      .continue:hover {
+        background: #e65c00;
+      }
+
+      .continue:focus-visible {
+        outline: 2px solid #ff6600;
+        outline-offset: 3px;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="page-header">
+        <a class="logo" href="/" aria-label="SiriusXM home">
+          <img src="/siriusxm-logo-white.png" alt="SiriusXM" width="120" height="24" />
+        </a>
+      </header>
+
+      <main class="page-main">
+        <div class="checkout">
+          <p class="steps" aria-label="Checkout progress">
+            <span class="active">Account</span>
+            <span class="sep" aria-hidden="true">&gt;</span>
+            <span>Payment</span>
+            <span class="sep" aria-hidden="true">&gt;</span>
+            <span>Review</span>
+          </p>
+
+          <h1 class="title">Let&rsquo;s get started</h1>
+          <p class="subtitle">Please enter your email.</p>
+
+          <div class="offer" role="region" aria-label="Selected plan">
+            <p class="offer-name">All Music</p>
+            <p class="offer-price">$1 for 3 Months. Then $11.99/mo.</p>
+          </div>
+
+          <form action="#" method="get" novalidate>
+            <div class="field">
+              <label class="visually-hidden" for="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="Email"
+                required
+              />
+            </div>
+
+            <p class="privacy">
+              <a href="https://www.siriusxm.com/privacy" target="_blank" rel="noopener noreferrer"
+                >Privacy Policy</a
+              >
+            </p>
+
+            <button type="submit" class="continue">Continue</button>
+          </form>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,30 +1,18 @@
+import "./fonts.css";
 import "./globals.css";
-import { Outfit } from "next/font/google";
-import { SessionProvider, LDClientWrapper } from "./SessionContext";
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-hero",
-});
+import LaunchDarklyProvider from "./providers/LaunchDarklyProvider";
 
 export const metadata = {
-  title: "ToggleHealth – Coverage Concierge",
-  description: "Powered by Amazon Bedrock · Triage only",
+  title: "Packages, Plans & Price | SiriusXM",
+  description:
+    "Music, Sports, News, Talk. Choose the variety you're looking for—and where you want to listen.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={outfit.variable}>
+    <html lang="en">
       <body>
-        <SessionProvider>
-          <LDClientWrapper
-            observabilityServiceName={process.env.LD_OBSERVABILITY_SERVICE_NAME}
-            sessionReplayPrivacy={process.env.LD_SESSION_REPLAY_PRIVACY}
-          >
-            {children}
-          </LDClientWrapper>
-        </SessionProvider>
+        <LaunchDarklyProvider>{children}</LaunchDarklyProvider>
       </body>
     </html>
   );

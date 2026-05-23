@@ -1,0 +1,28 @@
+@font-face {
+  font-family: "Geist";
+  src: url("https://care.siriusxm.com/media/Geist-Regular-P2HTHLL5.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("https://care.siriusxm.com/media/Geist-Bold-6G7BMBCD.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("https://care.siriusxm.com/ngapp/media/Geist-Black-F6CWIAAX.woff2")
+      format("woff2"),
+    url("https://www.siriusxm.com/app-download/fonts/geist/Geist-Black.woff2")
+      format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}

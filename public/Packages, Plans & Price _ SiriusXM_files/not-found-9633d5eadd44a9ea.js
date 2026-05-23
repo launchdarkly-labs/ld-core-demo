@@ -1,0 +1,2 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[5271],{27367:e=>{e.exports={iframe:"error_iframe__sqHPw"}},54188:(e,r,s)=>{Promise.resolve().then(s.bind(s,70291))},70291:(e,r,s)=>{"use strict";s.r(r),s.d(r,{default:()=>t});var a=s(95155),n=s(27367),i=s.n(n);function t(){return(0,a.jsx)("body",{children:(0,a.jsx)("iframe",{src:"/404",title:"page not found",className:i().iframe})})}}},e=>{e.O(0,[3632,8441,3794,7358],()=>e(e.s=54188)),_N_E=e.O()}]);
+//# sourceMappingURL=not-found-9633d5eadd44a9ea.js.map
