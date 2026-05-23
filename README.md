@@ -6,7 +6,7 @@ A static Next.js recreation of the [SiriusXM plans page](https://www.siriusxm.co
 
 ```bash
 cp .env.example .env.local
-# Set NEXT_PUBLIC_LD_CLIENT_SIDE_ID from LaunchDarkly → nteixeira-ld-demo → Production
+# Set SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID from LaunchDarkly → nteixeira-ld-demo → Production
 npm install
 npm run dev
 ```
@@ -29,7 +29,7 @@ Checkout HTML lives under `public/subscribe/`:
 
 These URLs work without LaunchDarkly; CTAs still default to v1 when the SDK is absent.
 
-In LaunchDarkly, create **`subscriber-flow-version`** in the **same project** as your `NEXT_PUBLIC_LD_CLIENT_SIDE_ID`, then change fallthrough or add a targeting rule to serve `v2` for testing.
+In LaunchDarkly, create **`subscriber-flow-version`** in the **same project** as your `SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID`, then change fallthrough or add a targeting rule to serve `v2` for testing.
 
 ### UTM context attributes
 
@@ -46,5 +46,7 @@ docker run -p 3000:3000 siriusxm-plans-demo
 ## Deploy
 
 Cloud demo environments are provisioned via GitHub Actions (`.github/workflows/cloud_demo_environment_*.yaml`), which build this image, push to ECR, and apply `.github/workflows/deploy_files/deploy.yaml` to the cluster.
+
+Add a repository secret **`SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID`** (LaunchDarkly → your project → Production → Client-side ID). The provision workflows write it into `.env.production` at image build time. LaunchDarkly projects are not auto-created; use your shared project (e.g. `nteixeira-ld-demo`) for flags.
 
 Health check: `GET /api/health` returns `{ "status": "ok" }`.

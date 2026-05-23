@@ -2,10 +2,10 @@
  * Client-side SDK smoke test (no API key).
  * Uses the same eval endpoint the browser SDK fetches.
  *
- * Usage: NEXT_PUBLIC_LD_CLIENT_SIDE_ID=... node scripts/test-ld-client.mjs
+ * Usage: SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID=... node scripts/test-ld-client.mjs
  */
 
-const clientSideID = process.env.NEXT_PUBLIC_LD_CLIENT_SIDE_ID;
+const clientSideID = process.env.SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID;
 const flagKey = "subscriber-flow-version";
 const context = {
   kind: "user",
@@ -14,7 +14,7 @@ const context = {
 };
 
 if (!clientSideID) {
-  console.error("Set NEXT_PUBLIC_LD_CLIENT_SIDE_ID");
+  console.error("Set SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID");
   process.exit(1);
 }
 

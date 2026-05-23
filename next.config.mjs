@@ -5,6 +5,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID:
+      process.env.SIRIUS_PUBLIC_LD_CLIENT_SIDE_ID,
+  },
   outputFileTracingRoot: __dirname,
   async rewrites() {
     return [
