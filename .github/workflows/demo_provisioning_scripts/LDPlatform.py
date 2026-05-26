@@ -1682,23 +1682,13 @@ class LDPlatform:
     ##################################################
     # Build automated release semantic patch instructions
     ##################################################
-    def _default_guarded_release_stages(self, stages_window):
-        return [
-            {"allocation": 1000, "durationMillis": stages_window},
-            {"allocation": 5000, "durationMillis": stages_window},
-            {"allocation": 10000, "durationMillis": stages_window},
-            {"allocation": 25000, "durationMillis": stages_window},
-            {"allocation": 50000, "durationMillis": stages_window},
-        ]
-
-    def _default_progressive_release_stages(self, duration_ms):
+    def _default_automated_release_stages(self, duration_ms):
         return [
             {"allocation": 1000, "durationMillis": duration_ms},
             {"allocation": 5000, "durationMillis": duration_ms},
             {"allocation": 10000, "durationMillis": duration_ms},
             {"allocation": 25000, "durationMillis": duration_ms},
             {"allocation": 50000, "durationMillis": duration_ms},
-            {"allocation": 100000, "durationMillis": duration_ms},
         ]
 
     def _build_start_automated_release_instruction(
@@ -1793,7 +1783,7 @@ class LDPlatform:
                 self._build_start_automated_release_instruction(
                     control_var,
                     test_var,
-                    self._default_guarded_release_stages(stagesWindow),
+                    self._default_automated_release_stages(stagesWindow),
                     release_kind="guarded",
                     metrics=metrics,
                     rollback=rollback,
@@ -1873,7 +1863,7 @@ class LDPlatform:
                 self._build_start_automated_release_instruction(
                     control_var,
                     end_var,
-                    self._default_progressive_release_stages(timeout),
+                    self._default_automated_release_stages(timeout),
                     release_kind="progressive",
                 ),
             ],
@@ -2553,7 +2543,7 @@ class LDPlatform:
                 self._build_start_automated_release_instruction(
                     control_var,
                     test_var,
-                    self._default_guarded_release_stages(stages_window),
+                    self._default_automated_release_stages(stages_window),
                     release_kind="guarded",
                     metrics=metrics,
                     rollback=rollback,
