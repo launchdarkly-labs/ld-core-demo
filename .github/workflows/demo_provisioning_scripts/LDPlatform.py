@@ -1740,8 +1740,6 @@ class LDPlatform:
         env_key,
         timeout=604800000,
         rollback=True,
-        weight=50000,
-        notify=True,
         days=1,
         metrics=[],
     ):
