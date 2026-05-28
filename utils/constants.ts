@@ -24,14 +24,6 @@ import hapticgloves from "@/public/marketplace/vrgalaxy_image/hapticgloves.svg";
 import vrheadsetcleaningkit from "@/public/marketplace/vrgalaxy_image/vrheadsetcleaningkit.svg";
 import vrcontrollers from "@/public/marketplace/vrgalaxy_image/vrcontrollers.svg";
 import { InventoryItem } from "@/utils/typescriptTypesInterfaceIndustry";
-import releaseHoverImage from "@/public/homepage/release-card-hovering.svg";
-import releaseNoHoverImage from "@/public/homepage/release-card-not-hovering.svg";
-import monitorHoverImage from "@/public/homepage/card-demo-desktop-monitorfeatures-hover.svg";
-import monitorNoHoverImage from "@/public/homepage/card-demo-desktop-monitorfeatures.svg";
-import aiHoverImage from "@/public/homepage/card-demo-desktop-accelerateai-hover.svg";
-import aiNoHoverImage from "@/public/homepage/card-demo-desktop-accelerateai.svg";
-import experimentHoverImage from "@/public/homepage/card-demo-desktop-experimenteverywhere-hover.svg";
-import experimentNoHoverImage from "@/public/homepage/card-demo-desktop-experimenteverywhere.svg";
 import architectureIconCSNAV from "@/public/sidenav/architecture-icon.svg";
 import aiHoverCSNAV from "@/public/sidenav/card-demo-sidenav-accelerateai-hover.svg";
 import aiNoHoverCSNAV from "@/public/sidenav/card-demo-sidenav-accelerateai.svg";
@@ -325,36 +317,26 @@ export const MACROCENTER_DATA: InventoryItem[] = [
 
 
 export const HOMEPAGE_CARDS = {
-  monitor: {
-    name: "Guarded Releases",
+  codeControl: {
+    name: "CodeControl",
+    tagline: "Ship confidently, with automated control built in.",
     description:
-      "With LaunchDarkly, you can Guard your releases by progressively rolling out features, monitoring critical metrics in real-time, and instantly rolling back changes if needed, taking the risk out of every release.",
-    desktopNoHoveringImage: monitorNoHoverImage,
-    desktopHoveringImage: monitorHoverImage,
+      "Control your code in production. Ship confidently with automatic recovery and continuous improvement built in.",
+    features: ["Feature Flags", "Progressive Rollouts", "Automated Rollbacks", "Observability", "Experimentation", "Self-Healing"],
+    gradient: "from-[#1a1a2e] to-[#16213e]",
+    accentColor: "from-indigo-500 to-purple-600",
+    cardImage: "/homepage/bg-corner-01.png",
     link: "/bank",
   },
-  ai: {
-    name: "AI Configurations",
+  agentControl: {
+    name: "AgentControl",
+    tagline: "One place to keep your agent behavior under control.",
     description:
-      "Use LaunchDarkly to bring great AI products to market faster. Iterate quickly on system prompts and model configurations to build the ideal customer experience, all without redeploying. Test and experiment with different configurations to deliver the right experience to the right audience, and preserve your end-user experience when issues occur with kill switches and model fallbacks.",
-    desktopNoHoveringImage: aiNoHoverImage,
-    desktopHoveringImage: aiHoverImage,
-    link: "/bank",
-  },
-  experiment: {
-    name: "Experimentation",
-    description:
-      "LaunchDarkly empowers engineering, product, and data teams to seamlessly unify feature delivery and experimentation. By leveraging the same feature flags engineers rely on, engineering teams can run experiments that deliver real-time insights for product managers to act on and statistical rigor that data scientists trust, providing the data needed to make informed decisions and optimize business outcomes.",
-    desktopNoHoveringImage: experimentNoHoverImage,
-    desktopHoveringImage: experimentHoverImage,
-    link: "/marketplace",
-  },
-  release: {
-    name: "Developer Productivity",
-    description:
-      "Improve developer productivity and accelerate your release velocity by implementing standardized release pipelines and leveraging automated flag clean-up recommendations and team-level release health insights to ensure consistent release processes across every team.",
-    desktopNoHoveringImage: releaseNoHoverImage,
-    desktopHoveringImage: releaseHoverImage,
+      "Control your agents in production. Automatically keep agents on track, mitigating bad behavior and steering responses in real time.",
+    features: ["Online Evals", "Adaptive Triggers", "Agent Observability", "LLM Playground", "A/B/n Testing", "Experimentation"],
+    gradient: "from-[#0a1628] to-[#1a2d4a]",
+    accentColor: "from-emerald-400 to-teal-500",
+    cardImage: "/homepage/bg-corner-03.png",
     link: "/bank",
   },
 };
