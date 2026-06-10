@@ -3183,7 +3183,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank"],
             on_variation=1,
         )
-        res = self.ldproject.add_guarded_rollout("togglebankDBGuardedRelease", "production", metrics=["recent-trades-db-latency","recent-trades-db-errors"], days=7)
+        res = self.ldproject.add_guarded_rollout("togglebankDBGuardedRelease", "production", metrics=["recent-trades-db-latency","recent-trades-db-errors"], days=1)
     
     def flag_togglebank_api_guarded_release(self):
         res = self.ldproject.create_flag(
@@ -3245,7 +3245,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "payment-transactions-processed", "payment-revenue-protected"])
-        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"], days=3)
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"], days=1)
         
     def flag_payment_processing_interactive_demo(self):
         res = self.ldproject.create_flag(
@@ -3298,7 +3298,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.attach_metric_to_flag("investment-recent-trade-db",["recent-trades-db-latency","recent-trades-db-errors"])
-        res = self.ldproject.add_guarded_rollout("investment-recent-trade-db", "production", days=7)
+        res = self.ldproject.add_guarded_rollout("investment-recent-trade-db", "production", days=1)
     
     def flag_api_guarded_release(self):
         res = self.ldproject.create_flag(
@@ -4091,7 +4091,7 @@ class DemoBuilder:
             tags=["guarded-release", "public-sector"],
             on_variation=1,
         )
-        res = self.ldproject.add_guarded_rollout("riskmgmtbureauDBGuardedRelease", "production", metrics=["rm-db-latency","rm-db-errors"], days=7)
+        res = self.ldproject.add_guarded_rollout("riskmgmtbureauDBGuardedRelease", "production", metrics=["rm-db-latency","rm-db-errors"], days=1)
 
     def flag_government_rm_api_guarded_release(self):
         res = self.ldproject.create_flag(
@@ -4199,7 +4199,7 @@ class DemoBuilder:
             tags=["guarded-release", "bank", "observability"],
             on_variation=0,
         )
-        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=4)
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=1)
 
 ############################################################################################################
 ############################################################################################################
