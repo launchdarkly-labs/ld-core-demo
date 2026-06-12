@@ -3042,48 +3042,41 @@ class LDPlatform:
             return False
 
     ##################################################
-    # Attach Judges to AI Config Variations
+    # Create Prompt Snippet (AI Config Library)
     ##################################################
 
-    def attach_judge_to_variation(self, ai_config_key, variation_key, judge_config_key, sampling_rate=1.0):
-        """Attach a single judge to a variation."""
-        return self.attach_judges_to_variation(
-            ai_config_key, variation_key,
-            [{"judgeConfigKey": judge_config_key, "samplingRate": sampling_rate}]
-        )
-
-    def attach_judges_to_variation(self, ai_config_key, variation_key, judges):
-        """Attach multiple judges to a variation. Each judge dict has judgeConfigKey and samplingRate.
-        Note: this replaces all existing judges on the variation."""
-        url = (
-            "https://app.launchdarkly.com/api/v2/projects/"
-            + self.project_key
-            + "/ai-configs/"
-            + ai_config_key
-            + "/variations/"
-            + variation_key
-        )
+    def create_snippet(self, key, name, text, description=None, tags=None):
+        """Create a reusable prompt snippet in the AI Configs Library."""
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.api_key,
-            "LD-API-Version": "beta",
         }
+
         payload = {
-            "judgeConfiguration": {
-                "judges": judges
-            }
+            "key": key,
+            "name": name,
+            "text": text,
         }
-        response = self.getrequest("PATCH", url, json=payload, headers=headers)
-        judge_keys = [j["judgeConfigKey"] for j in judges]
-        if response.text.strip():
-            try:
-                data = json.loads(response.text)
-                if "message" in data:
-                    print(f"Error attaching judges to {ai_config_key}/{variation_key}: {data['message']}")
-                else:
-                    print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
-            except json.JSONDecodeError:
-                pass
+        if description:
+            payload["description"] = description
+        if tags:
+            payload["tags"] = tags
+
+        response = self.getrequest(
+            "POST",
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/ai-configs/prompt-snippets",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (200, 201):
+            data = json.loads(response.text)
+            version = data.get("version", 1)
+            print(f"Created snippet: {name} (key: {key}, version: {version})")
+            return data
+        elif response.status_code == 409:
+            print(f"Snippet '{key}' already exists, skipping")
+            return {"key": key, "version": 1}
         else:
-            print(f"Attached {len(judges)} judge(s) to {ai_config_key}/{variation_key}: {', '.join(judge_keys)}")
-        return response
+            print(f"Error creating snippet '{key}': {response.status_code} {response.text[:300]}")
+            return None

@@ -259,6 +259,7 @@ class DemoBuilder:
         # print("AI Config: ToggleBot")
         
         ##################################################
+        self.create_prompt_snippets()
         self.create_togglebot_ai_config()
         self.create_togglebot_self_heal_ai_config()
         self.create_togglebot_multi_agent_ai_configs(tool_versions)
@@ -1657,6 +1658,72 @@ class DemoBuilder:
         print("Done creating foundational AI tools.")
         return tool_versions
 
+    def create_prompt_snippets(self):
+        """Create reusable prompt snippets in the AI Configs Library."""
+        print("Creating Prompt Snippets...")
+
+        self.ldproject.create_snippet(
+            key="togglebank-brand-guidelines",
+            name="ToggleBank Brand Guidelines",
+            text=(
+                "Brand guidelines:\n"
+                "- Tone: Warm, professional, and empathetic — like a trusted financial advisor who genuinely cares\n"
+                "- Voice: Confident and knowledgeable without being condescending or overly formal\n"
+                "- Style: Clear, concise language. Avoid excessive financial jargon. Explain terms when used\n"
+                "- Personality: Helpful, proactive, and security-conscious. Always prioritize the customer's financial wellbeing\n"
+                "- Format: Short paragraphs, bullet points for lists, bold for key figures and product names\n"
+                "- Address customers directly using \"you\" and \"your\"\n"
+                "- End interactions with a helpful next step or follow-up offer"
+            ),
+            description="Shared brand voice and tone guidelines used across all ToggleBank AI agents",
+            tags=["brand", "togglebank", "shared"],
+        )
+        time.sleep(0.5)
+
+        self.ldproject.create_snippet(
+            key="togglebank-product-catalog",
+            name="ToggleBank Product Catalog",
+            text=(
+                "ToggleBank product catalog:\n"
+                "- Premier Checking: $0 monthly fee (waived at $1,500+ balance), free bill pay, mobile deposit, 0.01% APY\n"
+                "- Premium Checking: $15/month (waived at $5,000+ combined balance), free wires, no ATM fees worldwide, no foreign transaction fees\n"
+                "- Basic Savings: 0.50% APY, $0 minimum, $5/month fee (waived at $300+), 6 transfers/month\n"
+                "- Premium Savings: 2.75% APY, $1,000 minimum, no monthly fee, 12 transfers/month\n"
+                "- High-Yield Savings: 4.50% APY, $10,000 minimum, no monthly fee, unlimited transfers\n"
+                "- Standard Credit Card: 1x points, no annual fee, 19.99% APR\n"
+                "- Platinum Rewards Card: 3x points, $195/year, airport lounge access, $200 travel credit\n"
+                "- 30-Year Fixed Mortgage: 6.25% APR\n"
+                "- 15-Year Fixed Mortgage: 5.75% APR\n"
+                "- 5/1 ARM: 5.50% APR (initial)\n"
+                "- Personal Loan: 7.99%-15.99% APR, $5,000-$50,000\n"
+                "- 401(k): Employer match up to 4%, self-directed or managed options\n"
+                "- IRA (Traditional/Roth): $7,000 annual contribution limit"
+            ),
+            description="Reference catalog of all ToggleBank financial products with rates and key details",
+            tags=["products", "togglebank", "shared"],
+        )
+        time.sleep(0.5)
+
+        self.ldproject.create_snippet(
+            key="togglebank-response-format",
+            name="ToggleBank Response Format",
+            text=(
+                "Response formatting rules:\n"
+                "- Keep responses under 150 words unless the customer asks for detailed information\n"
+                "- Use bullet points for lists of 3+ items\n"
+                "- Bold product names and key figures (rates, fees, limits) on first mention\n"
+                "- Include specific numbers — rates, fees, timelines, limits — whenever relevant\n"
+                "- End with a follow-up question or actionable next step\n"
+                "- Never fabricate account details, rates, or policies\n"
+                "- For sensitive topics (fraud, disputes, account closures), provide step-by-step instructions\n"
+                "- Include appropriate disclaimers for investment advice or rate quotes"
+            ),
+            description="Shared response formatting rules for all ToggleBank AI agents",
+            tags=["format", "togglebank", "shared"],
+        )
+
+        print("Prompt Snippets created.")
+
     def create_togglebot_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--togglebot",
@@ -2029,10 +2096,11 @@ class DemoBuilder:
         accounts_instructions = (
             "You are ToggleBank's Accounts Specialist. You have deep expertise in checking accounts, savings accounts, "
             "money market accounts, CDs, account fees, transaction history, and account management.\n\n"
+            "{{snippet.togglebank-product-catalog#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "Answer the customer's question thoroughly and accurately. Use specific details when possible. "
             "If the question requires account-specific information you don't have, explain what the customer should do "
             "to get that information (e.g., log in to online banking, visit a branch, call support).\n\n"
-            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
             "Customer context: {{ customer_context }}\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
@@ -2112,10 +2180,11 @@ class DemoBuilder:
             "You are ToggleBank's Loans & Credit Specialist. You have deep expertise in personal loans, home mortgages, "
             "auto loans, credit cards, lines of credit, interest rates, loan applications, payment schedules, and "
             "credit-related policies.\n\n"
+            "{{snippet.togglebank-product-catalog#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "Answer the customer's question thoroughly and accurately. Provide specific rate ranges or policy details "
             "when relevant. If the question requires application-specific information, guide the customer on next steps.\n\n"
             "If a loan payment estimate is provided below, use it in your response: {{ loan_payment_result }}\n\n"
-            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
             "Customer context: {{ customer_context }}\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
@@ -2195,10 +2264,11 @@ class DemoBuilder:
             "You are ToggleBank's Investment Services Specialist. You have deep expertise in portfolio management, "
             "retirement planning (401k, IRA), stocks, bonds, mutual funds, ETFs, investment advisory services, "
             "and wealth management.\n\n"
+            "{{snippet.togglebank-product-catalog#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "Answer the customer's question thoroughly and accurately. When discussing investments, remind customers "
             "that past performance doesn't guarantee future results when appropriate. Guide them to speak with a "
             "financial advisor for personalized advice.\n\n"
-            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
             "Customer context: {{ customer_context }}\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
@@ -2278,9 +2348,10 @@ class DemoBuilder:
             "You are ToggleBank's Digital Banking & Transfers Specialist. You have deep expertise in wire transfers, "
             "ACH transfers, Zelle payments, bill pay, mobile deposits, online banking features, and money movement "
             "between accounts.\n\n"
+            "{{snippet.togglebank-product-catalog#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "Answer the customer's question thoroughly and accurately. Include relevant details about transfer limits, "
             "processing times, and fees when applicable.\n\n"
-            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
             "Customer context: {{ customer_context }}\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
@@ -2359,9 +2430,10 @@ class DemoBuilder:
         support_instructions = (
             "You are ToggleBank's Customer Support Specialist. You handle general banking questions, technical support "
             "for online and mobile banking, account inquiries, complaints, and any questions that don't fit a specific domain.\n\n"
+            "{{snippet.togglebank-product-catalog#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "Answer the customer's question thoroughly and accurately. Be empathetic and solution-oriented. "
             "If the issue requires escalation, explain the process clearly.\n\n"
-            "Keep your response factual, helpful, and under 200 words unless the question requires a longer explanation.\n\n"
             "Customer context: {{ customer_context }}\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
@@ -2441,13 +2513,8 @@ class DemoBuilder:
             "You are ToggleBank's Brand Voice editor. Your job is to take a specialist's response and rewrite it "
             "for the target channel so it matches ToggleBank's brand voice.\n\n"
             "Target channel: {{ channel }}. Rewrite the specialist response for this channel.\n\n"
-            "Brand guidelines:\n"
-            "- Warm, professional, and approachable tone\n"
-            "- Address the customer directly using \"you\" / \"your\"\n"
-            "- Be concise and clear — avoid jargon\n"
-            "- Maintain ALL factual content from the specialist response\n"
-            "- Format for readability (short paragraphs, bullet points where helpful)\n"
-            "- End with a helpful next step or offer for further assistance when appropriate\n\n"
+            "{{snippet.togglebank-brand-guidelines#1}}\n\n"
+            "{{snippet.togglebank-response-format#1}}\n\n"
             "IMPORTANT: Do NOT add any information that wasn't in the specialist's response. Only adjust tone and formatting.\n\n"
             "User Context:\n"
             "- User Name: {{ ldctx.user.name }}\n"
