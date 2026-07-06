@@ -2907,3 +2907,176 @@ class LDPlatform:
             print(f"✅ Alert created: {alert_name}")
         
         return response
+
+    ##################################################
+    # Agent Optimization API methods
+    ##################################################
+
+    def create_agent_optimization(self, key, ai_config_key, max_attempts, judge_model,
+                                   model_choices=None, acceptance_statements=None,
+                                   judges=None, user_input_options=None,
+                                   ground_truth_responses=None, metric_key=None,
+                                   token_limit=None, variable_choices=None):
+        """Create an agent optimization config via POST /api/v2/projects/{projectKey}/agent-optimizations."""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        payload = {
+            "key": key,
+            "aiConfigKey": ai_config_key,
+            "maxAttempts": max_attempts,
+            "judgeModel": judge_model,
+        }
+        if model_choices is not None:
+            payload["modelChoices"] = model_choices
+        if acceptance_statements is not None:
+            payload["acceptanceStatements"] = acceptance_statements
+        if judges is not None:
+            payload["judges"] = judges
+        if user_input_options is not None:
+            payload["userInputOptions"] = user_input_options
+        if ground_truth_responses is not None:
+            payload["groundTruthResponses"] = ground_truth_responses
+        if metric_key is not None:
+            payload["metricKey"] = metric_key
+        if token_limit is not None:
+            payload["tokenLimit"] = token_limit
+        if variable_choices is not None:
+            payload["variableChoices"] = variable_choices
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (200, 201):
+            data = response.json()
+            print(f"Created agent optimization: {key}")
+            return data
+        elif response.status_code == 409:
+            print(f"Agent optimization '{key}' already exists, skipping")
+            return {"key": key}
+        else:
+            print(f"Error creating agent optimization '{key}': {response.status_code} {response.text[:300]}")
+            return None
+
+    def post_agent_optimization_result(self, optimization_key, run_id, version, iteration, instructions, user_input, parameters=None):
+        """Create a new result (iteration) for an agent optimization run."""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        payload = {
+            "runId": run_id,
+            "agentOptimizationVersion": version,
+            "iteration": iteration,
+            "instructions": instructions,
+            "userInput": user_input,
+        }
+        if parameters is not None:
+            payload["parameters"] = parameters
+
+        response = requests.post(
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations/{optimization_key}/results",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (200, 201):
+            data = response.json()
+            return data.get("id")
+        else:
+            print(f"Error creating optimization result (iter {iteration}): {response.status_code} {response.text[:300]}")
+            return None
+
+    def patch_agent_optimization_result(self, optimization_key, result_id,
+                                         status=None, activity=None, completion_response=None,
+                                         variation=None, scores=None, generation_tokens=None,
+                                         evaluation_tokens=None, generation_latency=None,
+                                         evaluation_latencies=None, created_variation_key=None):
+        """Update an agent optimization result with scores, status, response, etc."""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+
+        payload = {}
+        if status is not None:
+            payload["status"] = status
+        if activity is not None:
+            payload["activity"] = activity
+        if completion_response is not None:
+            payload["completionResponse"] = completion_response
+        if variation is not None:
+            payload["variation"] = variation
+        if scores is not None:
+            payload["scores"] = scores
+        if generation_tokens is not None:
+            payload["generationTokens"] = generation_tokens
+        if evaluation_tokens is not None:
+            payload["evaluationTokens"] = evaluation_tokens
+        if generation_latency is not None:
+            payload["generationLatency"] = generation_latency
+        if evaluation_latencies is not None:
+            payload["evaluationLatencies"] = evaluation_latencies
+        if created_variation_key is not None:
+            payload["createdVariationKey"] = created_variation_key
+
+        response = requests.patch(
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations/{optimization_key}/results/{result_id}",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (200, 204):
+            return True
+        else:
+            print(f"Error updating optimization result {result_id}: {response.status_code} {response.text[:300]}")
+            return False
+
+    ##################################################
+    # Create Prompt Snippet (AI Config Library)
+    ##################################################
+
+    def create_snippet(self, key, name, text, description=None, tags=None):
+        """Create a reusable prompt snippet in the AI Configs Library."""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+        }
+
+        payload = {
+            "key": key,
+            "name": name,
+            "text": text,
+        }
+        if description:
+            payload["description"] = description
+        if tags:
+            payload["tags"] = tags
+
+        response = self.getrequest(
+            "POST",
+            f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/ai-configs/prompt-snippets",
+            json=payload,
+            headers=headers,
+        )
+
+        if response.status_code in (200, 201):
+            data = json.loads(response.text)
+            version = data.get("version", 1)
+            print(f"Created snippet: {name} (key: {key}, version: {version})")
+            return data
+        elif response.status_code == 409:
+            print(f"Snippet '{key}' already exists, skipping")
+            return {"key": key, "version": 1}
+        else:
+            print(f"Error creating snippet '{key}': {response.status_code} {response.text[:300]}")
+            return None

@@ -1271,26 +1271,28 @@ def generate_results(project_key, api_key):
         payment_healthy_thread.start()
         payment_failed_thread.start()
         
-        # let generators run continuously until measured rollouts complete
         logging.info("All guarded release generators are now running...")
-        logging.info("They will continue generating data until their measured rollouts complete.")
-        logging.info("Generators will automatically stop when rollouts finish (typically 10-15 minutes).")
-        logging.info("Press Ctrl+C to stop early if needed.")
+        logging.info("Generators will stop when rollouts complete or after 20 minutes (safety cap).")
         logging.info("")
         
-        # Wait for all generators to complete naturally (no timeout)
-        # Each generator will exit when its measured rollout is complete
+        MAX_GENERATOR_WAIT = 1200  # 20 minutes
         # a4_thread.join()  # Old A4 - Commented out
-        risk_mgmt_thread.join()
-        financial_agent_thread.join()
+        risk_mgmt_thread.join(timeout=MAX_GENERATOR_WAIT)
+        financial_agent_thread.join(timeout=MAX_GENERATOR_WAIT)
         # togglebank_db_thread.join()  # Old A3 - Commented out
-        investment_db_thread.join()
-        investment_api_thread.join()
-        risk_mgmt_db_thread.join()
-        payment_healthy_thread.join()
-        payment_failed_thread.join()
+        investment_db_thread.join(timeout=MAX_GENERATOR_WAIT)
+        investment_api_thread.join(timeout=MAX_GENERATOR_WAIT)
+        risk_mgmt_db_thread.join(timeout=MAX_GENERATOR_WAIT)
+        payment_healthy_thread.join(timeout=MAX_GENERATOR_WAIT)
+        payment_failed_thread.join(timeout=MAX_GENERATOR_WAIT)
         
-        logging.info("All guarded release generators have completed.")
+        still_running = [t for t in [risk_mgmt_thread, financial_agent_thread, investment_db_thread,
+                                      investment_api_thread, risk_mgmt_db_thread, payment_healthy_thread,
+                                      payment_failed_thread] if t.is_alive()]
+        if still_running:
+            logging.warning(f"{len(still_running)} generator(s) still running after timeout — proceeding anyway.")
+        else:
+            logging.info("All guarded release generators have completed.")
         
         client.flush()
         client.close()

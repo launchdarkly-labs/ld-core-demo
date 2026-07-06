@@ -99,6 +99,36 @@
 }
 
 @font-face {
+  font-family: "Sora";
+  src: url("/fonts/Sora-Light.ttf");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("/fonts/Sora-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("/fonts/Sora-Medium.ttf");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("/fonts/Sora-Bold.ttf");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("/fonts/Sora-ExtraBold.ttf");
+  font-weight: 800;
+}
+
+@font-face {
   font-family: "Sohne Mono";
   src: url("/fonts/sohne-mono.otf");
 }

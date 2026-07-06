@@ -1,11 +1,7 @@
 //@ts-nocheck
-import Image from "next/image";
-import { Inter } from "next/font/google";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import NavBar from "@/components/ui/navbar";
 import Script from "next/script";
-import HomePageImage from "@/public/homepage/homepage-title.svg";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import NavbarRightSideWrapper from "@/components/ui/NavComponent/NavbarRightSideWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
@@ -13,88 +9,38 @@ import NavLogo from "@/components/ui/NavComponent/NavLogo";
 import { CSNav } from "@/components/ui/csnav";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { HOMEPAGE_CARDS } from "@/utils/constants";
-import { useState, useEffect, use } from "react";
-import { CSNAV_ITEMS } from "@/utils/constants";
-import arrow from "@/public/sidenav/arrow.svg";
-import LaunchDarklyLogo from "@/public/ld-logo.svg";
-import { CSCard } from "@/components/ui/ldcscard";
+import { useEffect } from "react";
 import QRCodeImage from "@/components/ui/QRCodeImage";
-
 import Head from "next/head";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter();
   const { demoMode } = useFlags();
-  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1024);
 
-  const goToBank = () => {
-    router.push("/bank");
-  };
-  
   useEffect(() => {
-    const handleResize = () => {
-      setIsLargeScreen(window.innerWidth > 1024);
-    };
-
-    // Set initial value
-    handleResize();
-
-    // Add event listener
-    window.addEventListener("resize", handleResize);
-
-    // Clean up event listener
-    return () => window.removeEventListener("resize", handleResize);
+    if (!demoMode) {
+      router.push("/bank");
+    }
   }, []);
 
-  const goToNext = () => {
-    router.push("/devs");
-  };
-
-  const variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.5, // This will create the staggered effect
-      },
-    },
-  };
-
-  const childVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-
   const pageVariants = {
-    initial: { x: 0 },
-    in: { x: 0 },
-    out: { x: "-100%" },
+    initial: { opacity: 0 },
+    in: { opacity: 1 },
+    out: { opacity: 0 },
   };
 
   const pageTransition = {
     type: "tween",
-    ease: "anticipate",
-    duration: 0.5,
+    ease: "easeInOut",
+    duration: 0.4,
   };
 
   function goToVertical(link: string) {
     router.push(link);
   }
 
-  useEffect(() => {
-    if(demoMode){
-      router.push('/');
-    }
-    else{
-      router.push('/bank');
-    }
-  }, []);
-
   return (
     <>
-      {/* <!-- Google tag (gtag.js) --> */}
       <Script
         strategy="lazyOnload"
         async
@@ -104,149 +50,164 @@ export default function Home() {
         {`window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-2ZW2MJ75NL');`}
       </Script>
       <Head>
-        <link
-          rel="preload"
-          href={"@/public/banking/backgrounds/bank-homepage-background-right.svg"}
-          as="image"
-        />
-        <link
-          rel="preload"
-          href={"@/public/banking/backgrounds/bank-homepage-background-left.svg"}
-          as="image"
-        />
+        <title>LaunchDarkly Core Demo</title>
       </Head>
 
-      
-      {/* This is hidden for now, remove useEffect router.push('/bank') to see */}
       <AnimatePresence>
-        <motion.main className="min-h-screen w-full flex-col items-center justify-center bg-ldblack ">
-          <div className="w-full text-white flex h-20 shadow-2xl">
+        <motion.main
+          className="min-h-screen w-full flex flex-col relative overflow-hidden"
+          style={{
+            backgroundImage: "url('/homepage/ld-slide-bg-lime.png')",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center top",
+            backgroundRepeat: "no-repeat",
+            backgroundColor: "#c8e600",
+          }}
+          initial="initial"
+          animate="in"
+          exit="out"
+          variants={pageVariants}
+          transition={pageTransition}
+        >
+          {/* Grid lines overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundSize: "120px 120px",
+              backgroundImage: `
+                linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
+              `,
+            }}
+          />
+
+          {/* Navbar */}
+          <div className="w-full flex h-20 shadow-2xl">
             <NavWrapper>
               <>
                 <CSNavWrapper>
-                  <CSNav />
+                  <CSNav color="black" />
                 </CSNavWrapper>
-
-                <NavLogo />
+                <NavLogo srcHref="ldLogo_black.svg" />
               </>
-
-              {/* right side navbar template */}
               <NavbarRightSideWrapper>
-                <QRCodeImage textColor="text-white" />
+                <QRCodeImage textColor="text-black" />
               </NavbarRightSideWrapper>
             </NavWrapper>
           </div>
 
-          <header className="relative banner mx-auto w-full sm:w-1/3 sm:h-[24rem] flex items-center bg-ldblack justify-center z-0">
-            <div className="">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Image
-                  src={LaunchDarklyLogo}
-                  alt="Homepage Image"
-                  layout="fixed"
-                  objectFit="fill"
-                  width={700}
-                  height={800}
-                  className="rounded-3xl"
-                />
-              </motion.div>
+          {/* Hero Text - centered */}
+          <div className="px-4 pt-12 sm:pt-20">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-4xl mx-auto"
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-sora font-extrabold text-black leading-tight mb-3">
+                Move at AI speed.
+                <br />
+                Stay in control.
+              </h1>
+              <p className="text-base sm:text-lg font-sora font-normal text-gray-700 max-w-2xl mx-auto mt-8">
+                The runtime control layer for AI development, de-risking releases
+                and enabling systems that heal and optimize themselves.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* AI-Bert Marquee */}
+          <div className="w-full overflow-hidden py-3 sm:py-5">
+            <div className="flex animate-marquee whitespace-nowrap">
+              {[...Array(2)].map((_, setIndex) => (
+                <div key={setIndex} className="flex items-center gap-12 sm:gap-20 px-6 sm:px-10 shrink-0">
+                  {[
+                    { src: "/homepage/aibert-waving.png", alt: "AI-Bert waving" },
+                    { src: "/homepage/aibert-juggling.png", alt: "AI-Bert juggling" },
+                    { src: "/homepage/aibert-speeding.png", alt: "AI-Bert speeding" },
+                    { src: "/homepage/aibert-hallucinating.png", alt: "AI-Bert hallucinating" },
+                    { src: "/homepage/aibert-proud.png", alt: "AI-Bert proud" },
+                  ].map((mascot) => (
+                    <img
+                      key={`${setIndex}-${mascot.alt}`}
+                      src={mascot.src}
+                      alt={mascot.alt}
+                      className="h-28 sm:h-36 w-auto object-contain"
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
-          </header>
-          {isLargeScreen ? (
-            <section className="flex flex-col lg:flex-row mx-8 pt-6 gap-3 ">
+          </div>
+
+          {/* Spacer */}
+          <div className="min-h-[5px] max-h-[10px]" />
+
+          {/* Two Pillar Cards - aligned lower, around the 3rd grid line */}
+          <div className="px-4 pb-6 sm:pb-8">
+            <div className="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-6">
               {Object.entries(HOMEPAGE_CARDS).map(([key, card], index) => (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative rounded-3xl w-full lg:w-1/4 h-32 lg:h-96 overflow-hidden transition-transform duration-300 hover:-translate-y-16"
+                  key={key}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 + index * 0.15 }}
+                  className="flex-1"
                 >
-                  <Image
-                    src={card.desktopNoHoveringImage}
-                    alt={`${card.name} Card`}
-                    layout="fill"
-                    objectFit="cover"
-                    className="transition-opacity duration-300 hover:opacity-0 rounded-3xl"
-                  />
-                  <div className="absolute inset-0 mx-10 mt-10 justify-center transition-opacity duration-300 hover:opacity-0 z-10">
-                    <span className="text-white lg:text-3xl sm:text-sm font-sohne">
-                      {card.name}
-                    </span>
-                  </div>
-
                   <div
                     onClick={() => goToVertical(card.link)}
-                    className="absolute cursor-pointer inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 hover:opacity-100 z-30 group-hover:opacity-100"
+                    className={`
+                      relative rounded-3xl cursor-pointer
+                      border border-white/10
+                      transition-all duration-300 ease-out
+                      overflow-hidden
+                      min-h-[200px] sm:min-h-[260px]
+                      bg-cover bg-center
+                      hover:-translate-y-2
+                      hover:shadow-[0_20px_60px_-10px_rgba(255,255,255,0.5)]
+                    `}
+                    style={{ backgroundImage: `url('${card.cardImage}')` }}
                   >
-                    <Image
-                      src={card.desktopHoveringImage}
-                      alt={`${card.name} Card Hover`}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-3xl"
-                    />
-                    <div className="absolute inset-0 flex flex-col overflow-auto z-40">
-                      <span className="text-white lg:text-3xl sm:text-sm mx-10 mt-10 font-sohne">
-                        {card.name}
-                      </span>
-                      <span className="text-white lg:text-lg sm:text-sm mx-10 mt-4">
-                        {card.description}
-                      </span>
-                      <span className="text-white text-2xl absolute bottom-10 right-10">
-                        &#8594;
+                  {/* Text content - always visible */}
+                  <div className="relative z-10 p-8">
+                    <h2 className="text-2xl sm:text-3xl font-sohne text-white mb-2">
+                      {card.name}
+                    </h2>
+                    <p className="text-white/70 font-sohnelight text-sm sm:text-base mb-6">
+                      {card.tagline}
+                    </p>
+
+                    {/* Feature chips */}
+                    <div className="flex flex-wrap gap-2">
+                      {card.features.map((feature: string) => (
+                        <span
+                          key={feature}
+                          className="text-xs px-3 py-1 rounded-full bg-white/10 text-white/80 border border-white/10"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Explore button with slide-up fill effect */}
+                    <div className="mt-6">
+                      <span className="relative inline-flex items-center px-5 py-2.5 border border-white/40 rounded-full text-sm font-sohnelight text-white overflow-hidden group/btn">
+                        <span className="absolute inset-0 bg-white translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
+                        <span className="relative z-10 group-hover/btn:text-black transition-colors duration-300">Explore demo</span>
+                        <span className="relative z-10 ml-2 group-hover/btn:text-black transition-colors duration-300 group-hover/btn:translate-x-1 transform duration-300">&#8594;</span>
                       </span>
                     </div>
                   </div>
+                  </div>
                 </motion.div>
               ))}
-            </section>
-          ) : (
-            <div className="grid gap-4 py-4 mx-10">
-              <div className="grid items-center gap-4">
-                {Object.entries(CSNAV_ITEMS).map(([key, item]) => {
-                  if (item.type === "usecase") {
-                    return (
-                      <motion.div
-                        key={key}
-                        initial={{ x: -100, opacity: 0 }}
-                        whileHover={{ scale: 1.05 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.05, duration: 0.2 }}
-                        className="cursor-pointer"
-                      >
-                        <div
-                          onClick={() => router.push(item.link)}
-                          className={`bg-gradient-to-r from-${key}-start to-${key}-end rounded-3xl`}
-                        >
-                          <CSCard
-                            className="cursor-pointer"
-                            cardTitle={item.title}
-                            icon={item.icon}
-                            iconHover={item.iconHover}
-                            hoverBackground={item.hoverBackground}
-                            noHoverBackground={item.noHoverBackground}
-                          />
-                        </div>
-                      </motion.div>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
             </div>
-          )}
+          </div>
         </motion.main>
       </AnimatePresence>
-      
     </>
   );
 }
