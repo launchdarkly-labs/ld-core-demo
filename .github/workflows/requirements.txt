@@ -1,6 +1,6 @@
-PyYAML==6.0
+PyYAML==6.0.2
 ruamel.yaml==0.17.21
-ruamel.yaml.clib==0.2.6
+ruamel.yaml.clib==0.2.12
 randomname==0.2.1
 requests==2.33.0
 python-dotenv==1.2.2
