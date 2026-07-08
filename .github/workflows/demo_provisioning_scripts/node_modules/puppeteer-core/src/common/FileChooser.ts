@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {Protocol} from 'devtools-protocol';
-
 import type {ElementHandle} from '../api/ElementHandle.js';
 import {assert} from '../util/assert.js';
 
@@ -39,12 +37,9 @@ export class FileChooser {
   /**
    * @internal
    */
-  constructor(
-    element: ElementHandle<HTMLInputElement>,
-    event: Protocol.Page.FileChooserOpenedEvent
-  ) {
+  constructor(element: ElementHandle<HTMLInputElement>, multiple: boolean) {
     this.#element = element;
-    this.#multiple = event.mode !== 'selectSingle';
+    this.#multiple = multiple;
   }
 
   /**
@@ -68,7 +63,7 @@ export class FileChooser {
   async accept(paths: string[]): Promise<void> {
     assert(
       !this.#handled,
-      'Cannot accept FileChooser which is already handled!'
+      'Cannot accept FileChooser which is already handled!',
     );
     this.#handled = true;
     await this.#element.uploadFile(...paths);
@@ -80,7 +75,7 @@ export class FileChooser {
   async cancel(): Promise<void> {
     assert(
       !this.#handled,
-      'Cannot cancel FileChooser which is already handled!'
+      'Cannot cancel FileChooser which is already handled!',
     );
     this.#handled = true;
     // XXX: These events should converted to trusted events. Perhaps do this

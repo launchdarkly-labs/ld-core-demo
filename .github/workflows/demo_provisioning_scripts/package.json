@@ -1,0 +1,7 @@
+{
+  "name": "ld-demo-provisioning",
+  "version": "1.0.0",
+  "dependencies": {
+    "puppeteer": "^25.3.0"
+  }
+}

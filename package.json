@@ -10,7 +10,7 @@
     "upload-sourcemaps": "ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks --base-path _next/static/chunks && ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks/pages --base-path _next/static/chunks/pages"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.0.14",
+    "@ai-sdk/openai": "^4.0.9",
     "@aws-sdk/client-bedrock-agent-runtime": "^3.922.0",
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@aws-sdk/client-dynamodb": "^3.1027.0",
@@ -25,7 +25,7 @@
     "@launchdarkly/server-sdk-ai-openai": "^0.6.0",
     "@launchdarkly/session-replay": "^0.4.7",
     "@launchdarkly/toolbar": "^2.3.1",
-    "@opentelemetry/sdk-node": "^0.218.0",
+    "@opentelemetry/sdk-node": "^0.220.0",
     "@playwright/test": "^1.39.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
@@ -85,8 +85,11 @@
     "sharp": "^0.33.4",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^9.0.1",
+    "uuid": "^11.1.1",
     "zod": "^3.22.4"
+  },
+  "overrides": {
+    "postcss": "$postcss"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
@@ -96,10 +99,10 @@
     "@types/prismjs": "^1.26.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^10.0.0",
     "drizzle-kit": "^0.31.10",
     "esbuild": "^0.25.0",
-    "postcss": "^8",
+    "postcss": "^8.5.10",
     "postcss-cli": "^9.1.0",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"

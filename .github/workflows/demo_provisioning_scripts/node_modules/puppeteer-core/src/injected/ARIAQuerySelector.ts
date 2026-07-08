@@ -16,16 +16,26 @@ declare global {
     __ariaQuerySelectorAll(root: Node, selector: string): Promise<Node[]>;
   }
 }
-
+/**
+ * @internal
+ */
 export const ariaQuerySelector = (
   root: Node,
-  selector: string
+  selector: string,
 ): Promise<Node | null> => {
-  return window.__ariaQuerySelector(root, selector);
+  // In Firefox sandboxes globalThis !== window and we expose bindings on globalThis.
+  return (globalThis as unknown as Window).__ariaQuerySelector(root, selector);
 };
+/**
+ * @internal
+ */
 export const ariaQuerySelectorAll = async function* (
   root: Node,
-  selector: string
+  selector: string,
 ): AsyncIterable<Node> {
-  yield* await window.__ariaQuerySelectorAll(root, selector);
+  // In Firefox sandboxes globalThis !== window and we expose bindings on globalThis.
+  yield* await (globalThis as unknown as Window).__ariaQuerySelectorAll(
+    root,
+    selector,
+  );
 };

@@ -38,6 +38,7 @@ export class WaitTask<T = unknown> {
   #args: unknown[];
 
   #timeout?: NodeJS.Timeout;
+  #genericError = new Error('Waiting failed');
   #timeoutError?: TimeoutError;
 
   #result = Deferred.create<HandleFor<T>>();
@@ -56,15 +57,9 @@ export class WaitTask<T = unknown> {
     this.#polling = options.polling;
     this.#root = options.root;
     this.#signal = options.signal;
-    this.#signal?.addEventListener(
-      'abort',
-      () => {
-        void this.terminate(this.#signal?.reason);
-      },
-      {
-        once: true,
-      }
-    );
+    this.#signal?.addEventListener('abort', this.#onAbortSignal, {
+      once: true,
+    });
 
     switch (typeof fn) {
       case 'string':
@@ -80,7 +75,7 @@ export class WaitTask<T = unknown> {
 
     if (options.timeout) {
       this.#timeoutError = new TimeoutError(
-        `Waiting failed: ${options.timeout}ms exceeded`
+        `Waiting failed: ${options.timeout}ms exceeded`,
       );
       this.#timeout = setTimeout(() => {
         void this.terminate(this.#timeoutError);
@@ -115,7 +110,7 @@ export class WaitTask<T = unknown> {
               return context.puppeteerUtil;
             }),
             this.#fn,
-            ...this.#args
+            ...this.#args,
           );
           break;
         case 'mutation':
@@ -131,7 +126,7 @@ export class WaitTask<T = unknown> {
             }),
             this.#root,
             this.#fn,
-            ...this.#args
+            ...this.#args,
           );
           break;
         default:
@@ -147,7 +142,7 @@ export class WaitTask<T = unknown> {
             }),
             this.#polling,
             this.#fn,
-            ...this.#args
+            ...this.#args,
           );
           break;
       }
@@ -168,13 +163,16 @@ export class WaitTask<T = unknown> {
       }
       const badError = this.getBadError(error);
       if (badError) {
-        await this.terminate(badError);
+        this.#genericError.cause = badError;
+        await this.terminate(this.#genericError);
       }
     }
   }
 
   async terminate(error?: Error): Promise<void> {
     this.#world.taskManager.delete(this);
+
+    this.#signal?.removeEventListener('abort', this.#onAbortSignal);
 
     clearTimeout(this.#timeout);
 
@@ -184,7 +182,7 @@ export class WaitTask<T = unknown> {
 
     if (this.#poller) {
       try {
-        await this.#poller.evaluateHandle(async poller => {
+        await this.#poller.evaluate(async poller => {
           await poller.stop();
         });
         if (this.#poller) {
@@ -207,7 +205,7 @@ export class WaitTask<T = unknown> {
       // so we terminate here instead.
       if (
         error.message.includes(
-          'Execution context is not available in detached frame'
+          'Execution context is not available in detached frame',
         )
       ) {
         return new Error('Waiting failed: Frame detached');
@@ -227,11 +225,7 @@ export class WaitTask<T = unknown> {
 
       // Errors coming from WebDriver BiDi. TODO: Adjust messages after
       // https://github.com/w3c/webdriver-bidi/issues/540 is resolved.
-      if (
-        error.message.includes(
-          "AbortError: Actor 'MessageHandlerFrame' destroyed"
-        )
-      ) {
+      if (error.message.includes('DiscardedBrowsingContextError')) {
         return;
       }
 
@@ -242,6 +236,10 @@ export class WaitTask<T = unknown> {
       cause: error,
     });
   }
+
+  #onAbortSignal = () => {
+    void this.terminate(this.#signal?.reason);
+  };
 }
 
 /**
@@ -269,7 +267,7 @@ export class TaskManager {
     await Promise.all(
       [...this.#tasks].map(task => {
         return task.rerun();
-      })
+      }),
     );
   }
 }

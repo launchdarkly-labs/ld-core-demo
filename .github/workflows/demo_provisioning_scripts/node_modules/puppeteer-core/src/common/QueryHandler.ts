@@ -8,10 +8,11 @@ import type {ElementHandle} from '../api/ElementHandle.js';
 import {_isElementHandle} from '../api/ElementHandleSymbol.js';
 import type {Frame} from '../api/Frame.js';
 import type {WaitForSelectorOptions} from '../api/Page.js';
-import type PuppeteerUtil from '../injected/injected.js';
+import type {PuppeteerInjectedUtil} from '../injected/injected.js';
 import {isErrorLike} from '../util/ErrorLike.js';
 import {interpolateFunction, stringifyFunction} from '../util/Function.js';
 
+import {TimeoutError} from './Errors.js';
 import {transposeIterableHandle} from './HandleIterator.js';
 import {LazyArg} from './LazyArg.js';
 import type {Awaitable, AwaitableIterable} from './types.js';
@@ -22,7 +23,7 @@ import type {Awaitable, AwaitableIterable} from './types.js';
 export type QuerySelectorAll = (
   node: Node,
   selector: string,
-  PuppeteerUtil: PuppeteerUtil
+  PuppeteerUtil: PuppeteerInjectedUtil,
 ) => AwaitableIterable<Node>;
 
 /**
@@ -31,8 +32,16 @@ export type QuerySelectorAll = (
 export type QuerySelector = (
   node: Node,
   selector: string,
-  PuppeteerUtil: PuppeteerUtil
+  PuppeteerUtil: PuppeteerInjectedUtil,
 ) => Awaitable<Node | null>;
+
+/**
+ * @internal
+ */
+export const enum PollingOptions {
+  RAF = 'raf',
+  MUTATION = 'mutation',
+}
 
 /**
  * @internal
@@ -62,7 +71,7 @@ export class QueryHandler {
       },
       {
         querySelectorAll: stringifyFunction(this.querySelectorAll),
-      }
+      },
     ));
   }
 
@@ -84,7 +93,7 @@ export class QueryHandler {
       },
       {
         querySelector: stringifyFunction(this.querySelector),
-      }
+      },
     ));
   }
 
@@ -95,14 +104,14 @@ export class QueryHandler {
    */
   static async *queryAll(
     element: ElementHandle<Node>,
-    selector: string
+    selector: string,
   ): AwaitableIterable<ElementHandle<Node>> {
     using handle = await element.evaluateHandle(
       this._querySelectorAll,
       selector,
       LazyArg.create(context => {
         return context.puppeteerUtil;
-      })
+      }),
     );
     yield* transposeIterableHandle(handle);
   }
@@ -114,14 +123,14 @@ export class QueryHandler {
    */
   static async queryOne(
     element: ElementHandle<Node>,
-    selector: string
+    selector: string,
   ): Promise<ElementHandle<Node> | null> {
     using result = await element.evaluateHandle(
       this._querySelector,
       selector,
       LazyArg.create(context => {
         return context.puppeteerUtil;
-      })
+      }),
     );
     if (!(_isElementHandle in result)) {
       return null;
@@ -139,7 +148,9 @@ export class QueryHandler {
   static async waitFor(
     elementOrFrame: ElementHandle<Node> | Frame,
     selector: string,
-    options: WaitForSelectorOptions
+    options: WaitForSelectorOptions & {
+      polling?: PollingOptions;
+    },
   ): Promise<ElementHandle<Node> | null> {
     let frame!: Frame;
     using element = await (async () => {
@@ -152,6 +163,7 @@ export class QueryHandler {
     })();
 
     const {visible = false, hidden = false, timeout, signal} = options;
+    const polling = visible || hidden ? PollingOptions.RAF : options.polling;
 
     try {
       signal?.throwIfAborted();
@@ -159,17 +171,17 @@ export class QueryHandler {
       using handle = await frame.isolatedRealm().waitForFunction(
         async (PuppeteerUtil, query, selector, root, visible) => {
           const querySelector = PuppeteerUtil.createFunction(
-            query
+            query,
           ) as QuerySelector;
           const node = await querySelector(
             root ?? document,
             selector,
-            PuppeteerUtil
+            PuppeteerUtil,
           );
           return PuppeteerUtil.checkVisibility(node, visible);
         },
         {
-          polling: visible || hidden ? 'raf' : 'mutation',
+          polling,
           root: element,
           timeout,
           signal,
@@ -180,7 +192,7 @@ export class QueryHandler {
         stringifyFunction(this._querySelector),
         selector,
         element,
-        visible ? true : hidden ? false : undefined
+        visible ? true : hidden ? false : undefined,
       );
 
       if (signal?.aborted) {
@@ -198,8 +210,11 @@ export class QueryHandler {
       if (error.name === 'AbortError') {
         throw error;
       }
-      error.message = `Waiting for selector \`${selector}\` failed: ${error.message}`;
-      throw error;
+      const waitForSelectorError = new (
+        error instanceof TimeoutError ? TimeoutError : Error
+      )(`Waiting for selector \`${selector}\` failed`);
+      waitForSelectorError.cause = error;
+      throw waitForSelectorError;
     }
   }
 }

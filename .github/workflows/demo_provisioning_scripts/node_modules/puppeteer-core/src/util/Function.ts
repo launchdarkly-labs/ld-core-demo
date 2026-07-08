@@ -11,7 +11,7 @@ const createdFunctions = new Map<string, (...args: unknown[]) => unknown>();
  * @internal
  */
 export const createFunction = (
-  functionValue: string
+  functionValue: string,
 ): ((...args: unknown[]) => unknown) => {
   let fn = createdFunctions.get(functionValue);
   if (fn) {
@@ -29,25 +29,29 @@ export const createFunction = (
  */
 export function stringifyFunction(fn: (...args: never) => unknown): string {
   let value = fn.toString();
-  try {
-    new Function(`(${value})`);
-  } catch {
-    // This means we might have a function shorthand (e.g. `test(){}`). Let's
-    // try prefixing.
-    let prefix = 'function ';
-    if (value.startsWith('async ')) {
-      prefix = `async ${prefix}`;
-      value = value.substring('async '.length);
-    }
-    value = `${prefix}${value}`;
-    try {
-      new Function(`(${value})`);
-    } catch {
-      // We tried hard to serialize, but there's a weird beast here.
-      throw new Error('Passed function cannot be serialized!');
-    }
+  if (
+    value.match(/^(async )*function(\(|\s)/) ||
+    value.match(/^(async )*function\s*\*\s*/)
+  ) {
+    return value;
   }
-  return value;
+  const isArrow =
+    value.startsWith('(') ||
+    value.match(/^async\s*\(/) ||
+    value.match(
+      /^(async)*\s*(?:[$_\p{ID_Start}])(?:[$\u200C\u200D\p{ID_Continue}])*\s*=>/u,
+    );
+  if (isArrow) {
+    return value;
+  }
+  // This means we might have a function shorthand (e.g. `test(){}`). Let's
+  // try prefixing.
+  let prefix = 'function ';
+  if (value.startsWith('async ')) {
+    prefix = `async ${prefix}`;
+    value = value.substring('async '.length);
+  }
+  return `${prefix}${value}`;
 }
 
 /**
@@ -66,16 +70,16 @@ export function stringifyFunction(fn: (...args: never) => unknown): string {
  */
 export const interpolateFunction = <T extends (...args: never[]) => unknown>(
   fn: T,
-  replacements: Record<string, string>
+  replacements: Record<string, string>,
 ): T => {
   let value = stringifyFunction(fn);
   for (const [name, jsValue] of Object.entries(replacements)) {
     value = value.replace(
       new RegExp(`PLACEHOLDER\\(\\s*(?:'${name}'|"${name}")\\s*\\)`, 'g'),
-      // Wrapping this ensures tersers that accidently inline PLACEHOLDER calls
+      // Wrapping this ensures tersers that accidentally inline PLACEHOLDER calls
       // are still valid. Without, we may get calls like ()=>{...}() which is
       // not valid.
-      `(${jsValue})`
+      `(${jsValue})`,
     );
   }
   return createFunction(value) as unknown as T;

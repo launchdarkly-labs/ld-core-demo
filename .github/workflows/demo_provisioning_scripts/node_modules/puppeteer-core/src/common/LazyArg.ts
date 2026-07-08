@@ -5,13 +5,13 @@
  */
 
 import type {JSHandle} from '../api/JSHandle.js';
-import type PuppeteerUtil from '../injected/injected.js';
+import type {PuppeteerInjectedUtil} from '../injected/injected.js';
 
 /**
  * @internal
  */
 export interface PuppeteerUtilWrapper {
-  puppeteerUtil: Promise<JSHandle<PuppeteerUtil>>;
+  puppeteerUtil: Promise<JSHandle<PuppeteerInjectedUtil>>;
 }
 
 /**
@@ -19,7 +19,7 @@ export interface PuppeteerUtilWrapper {
  */
 export class LazyArg<T, Context = PuppeteerUtilWrapper> {
   static create = <T>(
-    get: (context: PuppeteerUtilWrapper) => Promise<T> | T
+    get: (context: PuppeteerUtilWrapper) => Promise<T> | T,
   ): T => {
     // We don't want to introduce LazyArg to the type system, otherwise we would
     // have to make it public.

@@ -6,7 +6,7 @@
 
 import type {Protocol} from 'devtools-protocol';
 
-import type {CdpHTTPRequest} from './HTTPRequest.js';
+import {CdpHTTPRequest} from './HTTPRequest.js';
 
 /**
  * @internal
@@ -83,7 +83,10 @@ export class NetworkEventManager {
     Protocol.Fetch.RequestPausedEvent
   >();
   #httpRequestsMap = new Map<NetworkRequestId, CdpHTTPRequest>();
-
+  #requestWillBeSentExtraInfoMap = new Map<
+    NetworkRequestId,
+    Protocol.Network.RequestWillBeSentExtraInfoEvent[]
+  >();
   /*
    * The below maps are used to reconcile Network.responseReceivedExtraInfo
    * events with their corresponding request. Each response and redirect
@@ -103,19 +106,31 @@ export class NetworkEventManager {
   forget(networkRequestId: NetworkRequestId): void {
     this.#requestWillBeSentMap.delete(networkRequestId);
     this.#requestPausedMap.delete(networkRequestId);
+    this.#requestWillBeSentExtraInfoMap.delete(networkRequestId);
     this.#queuedEventGroupMap.delete(networkRequestId);
     this.#queuedRedirectInfoMap.delete(networkRequestId);
     this.#responseReceivedExtraInfoMap.delete(networkRequestId);
   }
 
+  requestExtraInfo(
+    networkRequestId: NetworkRequestId,
+  ): Protocol.Network.RequestWillBeSentExtraInfoEvent[] {
+    if (!this.#requestWillBeSentExtraInfoMap.has(networkRequestId)) {
+      this.#requestWillBeSentExtraInfoMap.set(networkRequestId, []);
+    }
+    return this.#requestWillBeSentExtraInfoMap.get(
+      networkRequestId,
+    ) as Protocol.Network.RequestWillBeSentExtraInfoEvent[];
+  }
+
   responseExtraInfo(
-    networkRequestId: NetworkRequestId
+    networkRequestId: NetworkRequestId,
   ): Protocol.Network.ResponseReceivedExtraInfoEvent[] {
     if (!this.#responseReceivedExtraInfoMap.has(networkRequestId)) {
       this.#responseReceivedExtraInfoMap.set(networkRequestId, []);
     }
     return this.#responseReceivedExtraInfoMap.get(
-      networkRequestId
+      networkRequestId,
     ) as Protocol.Network.ResponseReceivedExtraInfoEvent[];
   }
 
@@ -128,13 +143,13 @@ export class NetworkEventManager {
 
   queueRedirectInfo(
     fetchRequestId: FetchRequestId,
-    redirectInfo: RedirectInfo
+    redirectInfo: RedirectInfo,
   ): void {
     this.queuedRedirectInfo(fetchRequestId).push(redirectInfo);
   }
 
   takeQueuedRedirectInfo(
-    fetchRequestId: FetchRequestId
+    fetchRequestId: FetchRequestId,
   ): RedirectInfo | undefined {
     return this.queuedRedirectInfo(fetchRequestId).shift();
   }
@@ -151,13 +166,13 @@ export class NetworkEventManager {
 
   storeRequestWillBeSent(
     networkRequestId: NetworkRequestId,
-    event: Protocol.Network.RequestWillBeSentEvent
+    event: Protocol.Network.RequestWillBeSentEvent,
   ): void {
     this.#requestWillBeSentMap.set(networkRequestId, event);
   }
 
   getRequestWillBeSent(
-    networkRequestId: NetworkRequestId
+    networkRequestId: NetworkRequestId,
   ): Protocol.Network.RequestWillBeSentEvent | undefined {
     return this.#requestWillBeSentMap.get(networkRequestId);
   }
@@ -167,7 +182,7 @@ export class NetworkEventManager {
   }
 
   getRequestPaused(
-    networkRequestId: NetworkRequestId
+    networkRequestId: NetworkRequestId,
   ): Protocol.Fetch.RequestPausedEvent | undefined {
     return this.#requestPausedMap.get(networkRequestId);
   }
@@ -178,7 +193,7 @@ export class NetworkEventManager {
 
   storeRequestPaused(
     networkRequestId: NetworkRequestId,
-    event: Protocol.Fetch.RequestPausedEvent
+    event: Protocol.Fetch.RequestPausedEvent,
   ): void {
     this.#requestPausedMap.set(networkRequestId, event);
   }
@@ -189,7 +204,7 @@ export class NetworkEventManager {
 
   storeRequest(
     networkRequestId: NetworkRequestId,
-    request: CdpHTTPRequest
+    request: CdpHTTPRequest,
   ): void {
     this.#httpRequestsMap.set(networkRequestId, request);
   }
@@ -199,19 +214,54 @@ export class NetworkEventManager {
   }
 
   getQueuedEventGroup(
-    networkRequestId: NetworkRequestId
+    networkRequestId: NetworkRequestId,
   ): QueuedEventGroup | undefined {
     return this.#queuedEventGroupMap.get(networkRequestId);
   }
 
   queueEventGroup(
     networkRequestId: NetworkRequestId,
-    event: QueuedEventGroup
+    event: QueuedEventGroup,
   ): void {
     this.#queuedEventGroupMap.set(networkRequestId, event);
   }
 
   forgetQueuedEventGroup(networkRequestId: NetworkRequestId): void {
     this.#queuedEventGroupMap.delete(networkRequestId);
+  }
+
+  printState(): void {
+    function replacer(_key: unknown, value: unknown) {
+      if (value instanceof Map) {
+        return {
+          dataType: 'Map',
+          value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
+      } else if (value instanceof CdpHTTPRequest) {
+        return {
+          dataType: 'CdpHTTPRequest',
+          value: `${value.id}: ${value.url()}`,
+        };
+      }
+      {
+        return value;
+      }
+    }
+    console.log(
+      'httpRequestsMap',
+      JSON.stringify(this.#httpRequestsMap, replacer, 2),
+    );
+    console.log(
+      'requestWillBeSentMap',
+      JSON.stringify(this.#requestWillBeSentMap, replacer, 2),
+    );
+    console.log(
+      'requestWillBeSentMap',
+      JSON.stringify(this.#responseReceivedExtraInfoMap, replacer, 2),
+    );
+    console.log(
+      'requestWillBeSentMap',
+      JSON.stringify(this.#requestPausedMap, replacer, 2),
+    );
   }
 }
