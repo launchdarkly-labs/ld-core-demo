@@ -23,17 +23,6 @@ class LDPlatform:
     def __init__(self, api_key, api_key_user, email):
         self.api_key = api_key
         self.api_key_user = api_key_user
-        # One shared connection pool for all API calls (avoids a new TLS
-        # handshake per request)
-        self._session = requests.Session()
-        # Caches for resources that are stable for the lifetime of a
-        # provisioning run — used to avoid re-fetching the same objects
-        self._flag_cache = {}            # flag_key -> flag JSON (variations/defaults only change at create time)
-        self._ai_config_cache = {}       # ai_config_key -> ai config JSON (invalidated on variation writes)
-        self._ai_variation_ids = {}      # (ai_config_key, variation_key) -> variation _id
-        self._pipeline_phase_cache = {}  # pipeline_key -> phase id dict
-        self._metric_group_known = {}    # group_key -> bool (existence)
-        self._exp_settings = None        # experimentation-settings randomizationUnits list
         self.user_id = self.get_user_id(email)
         self._fetch_member_me()
 
@@ -57,8 +46,7 @@ class LDPlatform:
             return
         try:
             if self.user_id:
-                res = self.getrequest(
-                    "GET",
+                res = requests.get(
                     f"https://app.launchdarkly.com/api/v2/members/{self.user_id}",
                     headers={"Authorization": self.api_key, "Content-Type": "application/json"},
                 )
@@ -69,8 +57,7 @@ class LDPlatform:
         if self.account_id:
             return
         try:
-            res = self.getrequest(
-                "GET",
+            res = requests.get(
                 "https://app.launchdarkly.com/api/v2/account",
                 headers={"Authorization": self.api_key, "Content-Type": "application/json"},
             )
@@ -82,8 +69,7 @@ class LDPlatform:
 
     def _fetch_member_me(self):
         try:
-            res = self.getrequest(
-                "GET",
+            res = requests.get(
                 "https://app.launchdarkly.com/api/v2/members/me",
                 headers={"Authorization": self.api_key, "Content-Type": "application/json"},
             )
@@ -98,73 +84,48 @@ class LDPlatform:
             print(f"Warning: Failed to fetch /api/v2/members/me: {e}")
         self._fetch_account_id_fallbacks()
 
-    # Rate limit tuning
-    MAX_RETRIES = 5                # retries for 429 responses
-    LOW_REMAINING_THRESHOLD = 2    # preemptive throttle when bucket nearly empty
-    MAX_PREEMPTIVE_SLEEP = 10.0    # cap (seconds) on preemptive waits
+    def getrequest(self, method, url, json=None, headers=None):
 
-    def getrequest(self, method, url, json=None, headers=None, data=None):
-        """Make an API request with connection reuse and rate-limit handling.
+        response = requests.request(method, url, json=json, headers=headers)
 
-        - Retries on HTTP 429 up to MAX_RETRIES times, honoring the
-          Retry-After / X-Ratelimit-Reset headers with capped backoff.
-        - If the route bucket is nearly empty after a successful call,
-          sleeps only until the advertised reset time (capped) so the
-          next call doesn't hit a 429.
-        - Always returns a requests.Response (never a string).
-        """
-        response = None
-        for attempt in range(self.MAX_RETRIES + 1):
-            response = self._session.request(
-                method, url, json=json, headers=headers, data=data
-            )
+        #########################
+        # Rate limiting Logic
+        #########################
 
-            if response.status_code != 429:
-                break
-            if attempt == self.MAX_RETRIES:
-                print(f"Rate limit exceeded after {self.MAX_RETRIES} retries: {method} {url}")
-                break
-            time.sleep(self._rate_limit_delay(response, attempt))
+        if "X-Ratelimit-Route-Remaining" in response.headers:
+            # Completely stolen from Tom Totenberg :)
+            call_limit = 5
+            delay = 5
+            tries = 5
+            limit_remaining = response.headers["X-Ratelimit-Route-Remaining"]
 
-        # Preemptive throttle: wait for the route bucket to refill when
-        # it is nearly empty, but never longer than the reset window.
-        remaining = response.headers.get("X-Ratelimit-Route-Remaining")
-        if remaining is not None:
-            try:
-                if int(remaining) <= self.LOW_REMAINING_THRESHOLD:
-                    reset_ms = int(response.headers.get("X-Ratelimit-Reset", 0))
-                    delay = (reset_ms - time.time() * 1000) / 1000.0
-                    if delay > 0:
-                        time.sleep(min(delay, self.MAX_PREEMPTIVE_SLEEP))
-            except ValueError:
-                pass
+            if int(limit_remaining) <= call_limit:
+                resetTime = int(response.headers["X-Ratelimit-Reset"])
+                currentMilliTime = round(time.time() * 1000)
+                if resetTime - currentMilliTime > 0:
+                    delay = round((resetTime - currentMilliTime) // 1000)
+                else:
+                    delay = 0
+
+                if delay < 1:
+                    delay = 0.5
+
+                tries -= 1
+                time.sleep(delay)
+                if tries == 0:
+                    return "Rate limit exceeded. Please try again later."
+            else:
+                tries = 5
 
         return response
-
-    def _rate_limit_delay(self, response, attempt):
-        """Seconds to wait before retrying a 429 response."""
-        retry_after = response.headers.get("Retry-After")
-        if retry_after:
-            try:
-                return max(float(retry_after), 0.5)
-            except ValueError:
-                pass
-        reset_ms = response.headers.get("X-Ratelimit-Reset")
-        if reset_ms:
-            try:
-                delay = (int(reset_ms) - time.time() * 1000) / 1000.0
-                if delay > 0:
-                    return min(max(delay, 0.5), 30.0)
-            except ValueError:
-                pass
-        # Fallback: exponential backoff
-        return min(0.5 * (2 ** attempt), 30.0)
 
     ##################################################
     # Create a project
     ##################################################
     def create_project(self, project_key, project_name):
         self.project_key = project_key
+        if self.project_exists(project_key):
+            return
         payload = {
             "key": project_key,
             "name": project_name, 
@@ -180,11 +141,6 @@ class LDPlatform:
             json=payload,
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
-
-        # Project already exists — fetch its IDs instead of creating
-        if response.status_code == 409:
-            self.project_exists(project_key)
-            return
 
         # Check if the response is successful
         if response.status_code != 200 and response.status_code != 201:
@@ -286,6 +242,9 @@ class LDPlatform:
         prerequisites=[],
         temporary=False,
     ):
+        if self.flag_exists(flag_key):
+            return
+
         payload = {
             "key": flag_key,
             "name": flag_name,
@@ -331,15 +290,9 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Flag already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            return
         data = json.loads(response.text)
         if "message" in data:
             print("Error creating flag: " + data["message"])
-        else:
-            # Seed the flag cache so later variation lookups skip the GET
-            self._flag_cache[flag_key] = data
         return response
     
     ##################################################
@@ -536,20 +489,13 @@ class LDPlatform:
                 data = json.loads(response.text)
                 if "message" in data:
                     print("Error creating AI config version: " + data["message"])
-                elif data.get("_id"):
-                    # Seed the variation ID map so later lookups skip the GET
-                    self._ai_variation_ids[
-                        (ai_config_key, data.get("key", ai_config_version_key))
-                    ] = data["_id"]
             except json.JSONDecodeError as e:
                 print(f"JSON decode error: {e}")
                 print(f"Response status: {response.status_code}")
                 print(f"Response text: {response.text[:500]}...")
         else:
             print("Empty response received from AI config version API")
-
-        # The config's variation list changed — drop any cached copy
-        self._ai_config_cache.pop(ai_config_key, None)
+            
         return response
 
     ##################################################
@@ -587,7 +533,6 @@ class LDPlatform:
             + variation_key
         )
         response = self.getrequest("PATCH", url, json=payload, headers=headers)
-        self._ai_config_cache.pop(ai_config_key, None)
         if response.text.strip():
             try:
                 data = json.loads(response.text)
@@ -626,7 +571,6 @@ class LDPlatform:
             }
         }
         response = self.getrequest("PATCH", url, json=payload, headers=headers)
-        self._ai_config_cache.pop(ai_config_key, None)
         judge_keys = [j["judgeConfigKey"] for j in judges]
         if response.text.strip():
             try:
@@ -687,8 +631,7 @@ class LDPlatform:
             "size_bytes": len(csv_bytes),
         }
 
-        response = self.getrequest(
-            "POST",
+        response = requests.post(
             f"https://app.launchdarkly.com/internal/projects/{self.project_key}/datasets",
             json=payload,
             headers=headers,
@@ -709,7 +652,7 @@ class LDPlatform:
             print(f"Error: No upload URL returned for dataset '{dataset_name}'")
             return None
 
-        upload_resp = self.getrequest(
+        upload_resp = requests.request(
             upload_method,
             upload_url,
             data=csv_bytes,
@@ -760,8 +703,7 @@ class LDPlatform:
         if parameters is not None:
             payload["parameters"] = parameters
 
-        response = self.getrequest(
-            "POST",
+        response = requests.post(
             f"https://app.launchdarkly.com/internal/projects/{self.project_key}/evaluations",
             json=payload,
             headers=headers,
@@ -802,8 +744,7 @@ class LDPlatform:
             "variants": variants,
         }
 
-        response = self.getrequest(
-            "POST",
+        response = requests.post(
             f"https://app.launchdarkly.com/internal/projects/{self.project_key}/playgrounds",
             json=payload,
             headers=headers,
@@ -902,20 +843,13 @@ class LDPlatform:
                 data = json.loads(response.text)
                 if "message" in data:
                     print("Error creating AI Agent variation: " + data["message"])
-                elif data.get("_id"):
-                    # Seed the variation ID map so later lookups skip the GET
-                    self._ai_variation_ids[
-                        (agent_key, data.get("key", variation["key"]))
-                    ] = data["_id"]
             except json.JSONDecodeError as e:
                 print(f"JSON decode error: {e}")
                 print(f"Response status: {response.status_code}")
                 print(f"Response text: {response.text[:500]}...")
         else:
             print("Empty response received from AI agent variation API")
-
-        # The config's variation list changed — drop any cached copy
-        self._ai_config_cache.pop(agent_key, None)
+            
         return response
     
     ##################################################
@@ -975,6 +909,9 @@ class LDPlatform:
     ##################################################
 
     def create_segment(self, segment_key, segment_name, env_key, description=""):
+        if self.segment_exists(segment_key, env_key):
+            return
+
         payload = {
             "key": segment_key,
             "name": segment_name,
@@ -995,9 +932,6 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Segment already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            return
         data = json.loads(response.text)
         if "message" in data:
             print("Error creating segment: " + data["message"])
@@ -1067,6 +1001,9 @@ class LDPlatform:
         randomization_units=[],
         tags=[],
     ):
+        if self.metric_exists(metric_key):
+            return
+
         payload = {
             "key": metric_key,
             "name": metric_name,
@@ -1098,9 +1035,6 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Metric already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            return
         data = json.loads(response.text)
         if "message" in data:
             print("Error creating metric: " + data["message"])
@@ -1112,6 +1046,9 @@ class LDPlatform:
     def create_metric_group(
         self, group_key, group_name, metrics, kind="funnel", description=""
     ):
+        if self.metric_group_exists(group_key):
+            return
+
         payload = {
             "key": group_key,
             "name": group_name,
@@ -1135,15 +1072,9 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Metric group already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            self._metric_group_known[group_key] = True
-            return
         data = json.loads(response.text)
         if "message" in data:
             print("Error creating metric group: " + data["message"])
-        else:
-            self._metric_group_known[group_key] = True
         return response
 
     ##################################################
@@ -1173,52 +1104,48 @@ class LDPlatform:
             print("Error creating context: " + data["message"])
 
         if for_experiment:
-            if self._exp_settings is not None:
-                # Reuse the settings we already know from earlier in the run
-                settings = [dict(s) for s in self._exp_settings]
-            else:
-                settings = []
-                response = self.getrequest(
-                    "GET",
-                    "https://app.launchdarkly.com/api/v2/projects/"
-                    + self.project_key
-                    + "/experimentation-settings",
-                    headers=headers,
-                )
+            settings = []
+            response = self.getrequest(
+                "GET",
+                "https://app.launchdarkly.com/api/v2/projects/"
+                + self.project_key
+                + "/experimentation-settings",
+                headers=headers,
+            )
+            
+            # Check if the response is successful
+            if response.status_code != 200:
+                print(f"Error getting experimentation settings: HTTP {response.status_code}")
+                print(f"Response: {response.text}")
+                return
+            
+            # Parse response with error handling
+            try:
+                data = json.loads(response.text)
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+                print(f"Response status: {response.status_code}")
+                print(f"Response text: {response.text[:500]}...")
+                return
+            
+            if "message" in data:
+                print("Error getting experimentation settings: " + data["message"])
+                return
 
-                # Check if the response is successful
-                if response.status_code != 200:
-                    print(f"Error getting experimentation settings: HTTP {response.status_code}")
-                    print(f"Response: {response.text}")
-                    return
+            # Check if response contains expected data structure
+            if "randomizationUnits" not in data:
+                print(f"Error: Response does not contain 'randomizationUnits' key")
+                print(f"Response status: {response.status_code}")
+                print(f"Response: {response.text[:500]}...")
+                return
 
-                # Parse response with error handling
-                try:
-                    data = json.loads(response.text)
-                except json.JSONDecodeError as e:
-                    print(f"JSON decode error: {e}")
-                    print(f"Response status: {response.status_code}")
-                    print(f"Response text: {response.text[:500]}...")
-                    return
-
-                if "message" in data:
-                    print("Error getting experimentation settings: " + data["message"])
-                    return
-
-                # Check if response contains expected data structure
-                if "randomizationUnits" not in data:
-                    print(f"Error: Response does not contain 'randomizationUnits' key")
-                    print(f"Response status: {response.status_code}")
-                    print(f"Response: {response.text[:500]}...")
-                    return
-
-                for ru in data["randomizationUnits"]:
-                    item = {
-                        "randomizationUnit": ru["randomizationUnit"],
-                        "standardRandomizationUnit": ru["standardRandomizationUnit"],
-                        "default": ru["default"],
-                    }
-                    settings.append(item)
+            for ru in data["randomizationUnits"]:
+                item = {
+                    "randomizationUnit": ru["randomizationUnit"],
+                    "standardRandomizationUnit": ru["standardRandomizationUnit"],
+                    "default": ru["default"],
+                }
+                settings.append(item)
 
             settings.append(
                 {
@@ -1243,9 +1170,6 @@ class LDPlatform:
             data = json.loads(response.text)
             if "message" in data:
                 print("Error setting experimentation settings: " + data["message"])
-            else:
-                # Remember the applied settings so the next call skips the GET
-                self._exp_settings = settings
         return response
 
     ##################################################
@@ -1267,6 +1191,9 @@ class LDPlatform:
         analysisConfig={"bayesianThreshold": "95"},
         flagConfigVersion=1,
     ):
+        if self.experiment_exists(exp_key, exp_env):
+            return
+
         treatments = self.get_treatments(flag_key, custom_treatment_names)
 
         payload = {
@@ -1314,9 +1241,6 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Experiment already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            return
         data = json.loads(response.text)
         if "message" in data:
             print("Error creating experiment: " + data["message"])
@@ -1450,6 +1374,9 @@ class LDPlatform:
     # Create a release pipeline
     ##################################################
     def create_release_pipeline(self, pipeline_key, pipeline_name):
+        if self.release_pipeline_exists(pipeline_key):
+            return
+
         payload = {
             "description": "Standard pipeline to roll out to production",
             "key": pipeline_key,
@@ -1511,9 +1438,6 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        # Pipeline already exists — nothing to do (replaces the GET pre-check)
-        if response.status_code == 409:
-            return
         if response.text.strip():
             try:
                 data = json.loads(response.text)
@@ -1669,7 +1593,18 @@ class LDPlatform:
     # Check if a flag exists
     ##################################################
     def flag_exists(self, flag_key):
-        return self._get_flag_json(flag_key) is not None
+        res = self.getrequest(
+            "GET",
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key,
+            headers={"Authorization": self.api_key},
+        )
+        data = json.loads(res.text)
+        if "message" in data:
+            return False
+        return True
 
     ##################################################
     # Check if a segment exists
@@ -1711,10 +1646,6 @@ class LDPlatform:
     # Check if a metric group exists
     ##################################################
     def metric_group_exists(self, group_key):
-        # Seeded by create_metric_group; negative results are cached too,
-        # since groups are only created through this class during a run
-        if group_key in self._metric_group_known:
-            return self._metric_group_known[group_key]
         res = self.getrequest(
             "GET",
             "https://app.launchdarkly.com/api/v2/projects/"
@@ -1724,9 +1655,9 @@ class LDPlatform:
             headers={"Authorization": self.api_key, "LD-API-Version": "beta"},
         )
         data = json.loads(res.text)
-        exists = "message" not in data
-        self._metric_group_known[group_key] = exists
-        return exists
+        if "message" in data:
+            return False
+        return True
 
     ##################################################
     # Check if an experiment exists
@@ -1754,7 +1685,7 @@ class LDPlatform:
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
-            + "/release-pipelines/"
+            + "/release-pipelines"
             + pipeline_key
         )
         res = self.getrequest(
@@ -1787,56 +1718,45 @@ class LDPlatform:
         }
 
     #########################################################
-    # Fetch a flag's JSON, with caching
-    #########################################################
-    def _get_flag_json(self, flag_key):
-        """Fetch (and cache) a flag's JSON representation.
-
-        The cache is seeded by create_flag and only read for fields that
-        are stable after creation (variations, defaults), so targeting
-        patches made during a run do not invalidate it.
-        """
-        if flag_key in self._flag_cache:
-            return self._flag_cache[flag_key]
-
-        res = self.getrequest(
-            "GET",
-            "https://app.launchdarkly.com/api/v2/flags/"
-            + self.project_key
-            + "/"
-            + flag_key,
-            headers={
-                "Authorization": self.api_key,
-                "Content-Type": "application/json",
-            },
-        )
-        if res.status_code == 404:
-            return None
-        if res.status_code != 200:
-            print(f"Error getting flag {flag_key}: HTTP {res.status_code}")
-            print(f"Response: {res.text[:500]}")
-            return None
-        try:
-            data = json.loads(res.text)
-        except json.JSONDecodeError as e:
-            print(f"JSON decode error getting flag {flag_key}: {e}")
-            return None
-        if "message" in data:
-            return None
-        self._flag_cache[flag_key] = data
-        return data
-
-    #########################################################
     # Get the flag variation IDs with values, returns a list
     #########################################################
     def get_flag_variation_values(self, flag_key):
         var_ids = []
 
-        data = self._get_flag_json(flag_key)
-        if data is None or "defaults" not in data or "variations" not in data:
-            print(f"Error getting flag variation values for {flag_key}")
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        
+        # Check if the response is successful
+        if res.status_code != 200:
+            print(f"Error getting flag variation values: HTTP {res.status_code}")
+            print(f"Response: {res.text}")
             return [], {"onVariation": 0, "offVariation": 0}
-
+        
+        # Parse response with error handling
+        try:
+            data = json.loads(res.text)
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")
+            print(f"Response status: {res.status_code}")
+            print(f"Response text: {res.text[:500]}...")
+            return [], {"onVariation": 0, "offVariation": 0}
+        
+        # Check if response contains expected data structure
+        if "defaults" not in data or "variations" not in data:
+            print(f"Error: Response does not contain expected keys")
+            print(f"Response status: {res.status_code}")
+            print(f"Response: {res.text[:500]}...")
+            return [], {"onVariation": 0, "offVariation": 0}
+        
         defaults = {
             "onVariation": data["defaults"]["onVariation"],
             "offVariation": data["defaults"]["offVariation"],
@@ -1858,8 +1778,19 @@ class LDPlatform:
         Get the names of flag variations from LaunchDarkly API
         Returns a list of variation names (excluding 'disabled' unless segment=True)
         """
-        data = self._get_flag_json(flag_key)
-        if data is None or "variations" not in data:
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        data = json.loads(res.text)
+        if "variations" not in data:
             return []
         
         variation_names = []
@@ -1879,8 +1810,19 @@ class LDPlatform:
         Get both names and IDs of flag variations from LaunchDarkly API
         Returns a list of dictionaries with 'name' and 'id' keys
         """
-        data = self._get_flag_json(flag_key)
-        if data is None or "variations" not in data:
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        data = json.loads(res.text)
+        if "variations" not in data:
             return []
         
         variation_details = []
@@ -1901,8 +1843,19 @@ class LDPlatform:
     ##################################################
     def get_flag_variations(self, flag_key, filter=None, segment=False):
         var_ids = []
-        data = self._get_flag_json(flag_key)
-        if data is None or "variations" not in data:
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        res = self.getrequest("GET", url, headers=headers)
+        data = json.loads(res.text)
+        if "variations" not in data:
             return []
         for var in data["variations"]:
             # If segment is True, include all variations (including "disabled")
@@ -2207,33 +2160,30 @@ class LDPlatform:
 
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
 
-        # Check semantic patch result; only fall back to a JSON Patch if it failed
-        semantic_ok = 200 <= res.status_code < 300
+        # Log semantic patch result
         try:
             data = json.loads(res.text)
             if "message" in data:
-                semantic_ok = False
                 print(f"  [toggle_flag] Semantic patch for {flag_key}: {data['message']}")
         except (json.JSONDecodeError, AttributeError):
             print(f"  [toggle_flag] Semantic patch for {flag_key}: status {res.status_code}")
 
-        if not semantic_ok:
-            # Fallback: JSON Patch to directly set on/off state
-            on_value = flag_state == "on"
-            json_patch_headers = {
-                "Authorization": self.api_key,
-                "Content-Type": "application/json",
-            }
-            json_patch_payload = [
-                {"op": "replace", "path": "/environments/" + flag_env + "/on", "value": on_value}
-            ]
-            res2 = self.getrequest("PATCH", url, headers=json_patch_headers, json=json_patch_payload)
-            try:
-                data2 = json.loads(res2.text)
-                if "message" in data2:
-                    print(f"  [toggle_flag] JSON patch for {flag_key}: {data2['message']}")
-            except (json.JSONDecodeError, AttributeError):
-                print(f"  [toggle_flag] JSON patch for {flag_key}: status {res2.status_code}")
+        # Follow up with JSON Patch to directly set on/off state
+        on_value = flag_state == "on"
+        json_patch_headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        json_patch_payload = [
+            {"op": "replace", "path": "/environments/" + flag_env + "/on", "value": on_value}
+        ]
+        res2 = self.getrequest("PATCH", url, headers=json_patch_headers, json=json_patch_payload)
+        try:
+            data2 = json.loads(res2.text)
+            if "message" in data2:
+                print(f"  [toggle_flag] JSON patch for {flag_key}: {data2['message']}")
+        except (json.JSONDecodeError, AttributeError):
+            print(f"  [toggle_flag] JSON patch for {flag_key}: status {res2.status_code}")
 
         return res
 
@@ -2416,16 +2366,13 @@ class LDPlatform:
             "releasePipelineKey": pipeline_key,
         }
 
-        response = self.getrequest("PUT", url, json=payload, headers=headers)
+        response = requests.put(url, json=payload, headers=headers)
         return response
 
     ##################################################
     # Get pipeline phase IDs
     ##################################################
     def get_pipeline_phase_ids(self, pipeline_key):
-        # Phase IDs are fixed once a pipeline is created — cache them
-        if pipeline_key in self._pipeline_phase_cache:
-            return self._pipeline_phase_cache[pipeline_key]
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
@@ -2460,8 +2407,6 @@ class LDPlatform:
             id = p["id"]
             phase_ids.update({phases[c]: id})
             c += 1
-        if phase_ids:
-            self._pipeline_phase_cache[pipeline_key] = phase_ids
         return phase_ids
 
     ##################################################
@@ -2484,7 +2429,7 @@ class LDPlatform:
 
         payload = {"metricKeys": metric_keys}
 
-        response = self.getrequest("PUT", url, json=payload, headers=headers)
+        response = requests.put(url, json=payload, headers=headers)
         return response
 
     ##################################################
@@ -2529,7 +2474,7 @@ class LDPlatform:
                 "LD-API-Version": "beta",
             }
 
-            response = self.getrequest("PUT", url, json=payload, headers=headers)
+            response = requests.put(url, json=payload, headers=headers)
             status_code = response.status_code
             if counter > 8:
                 break
@@ -2652,60 +2597,35 @@ class LDPlatform:
         return response
     
     ##################################################
-    # Fetch an AI Config's JSON, with caching
+    # Get AI Config Variation ID
     ##################################################
-    def _get_ai_config_json(self, ai_config_key):
-        """Fetch (and cache) an AI Config's JSON. The cache is invalidated
-        whenever this run writes to the config's variations."""
-        if ai_config_key in self._ai_config_cache:
-            return self._ai_config_cache[ai_config_key]
-
+    def get_ai_config_variation_id(self, ai_config_key, variation_key):
         url = (
             "https://app.launchdarkly.com/api/v2/projects/"
             + self.project_key
             + "/ai-configs/"
             + ai_config_key
         )
+        
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.api_key,
             "LD-API-Version": "beta",
         }
+        
         response = self.getrequest("GET", url, headers=headers)
         data = json.loads(response.text)
         if "message" in data:
             print("Error getting AI config: " + data["message"])
             return None
-        self._ai_config_cache[ai_config_key] = data
-        return data
-
-    ##################################################
-    # Get AI Config Variation ID
-    ##################################################
-    def get_ai_config_variation_id(self, ai_config_key, variation_key):
-        # Seeded by create_ai_config_versions / create_ai_agent_variation,
-        # so most lookups need no API call at all
-        cached_id = self._ai_variation_ids.get((ai_config_key, variation_key))
-        if cached_id:
-            return cached_id
-
-        data = self._get_ai_config_json(ai_config_key)
-        if data is None:
-            return None
-
-        # Find the variation with the matching key (and seed the ID map)
-        result = None
+            
+        # Find the variation with the matching key
         for variation in data.get("variations", []):
-            var_key = variation.get("key")
-            var_id = variation.get("_id")
-            if var_key and var_id:
-                self._ai_variation_ids[(ai_config_key, var_key)] = var_id
-            if var_key == variation_key:
-                result = var_id
-
-        if result is None:
-            print(f"Variation with key '{variation_key}' not found")
-        return result
+            if variation.get("key") == variation_key:
+                return variation.get("_id")
+        
+        print(f"Variation with key '{variation_key}' not found")
+        return None
 
     ##################################################
     # Create Agent Graph
@@ -2905,10 +2825,25 @@ class LDPlatform:
     # Get AI Config Variations (excluding disabled)
     ##################################################
     def get_ai_config_variations(self, ai_config_key):
-        data = self._get_ai_config_json(ai_config_key)
-        if data is None:
+        url = (
+            "https://app.launchdarkly.com/api/v2/projects/"
+            + self.project_key
+            + "/ai-configs/"
+            + ai_config_key
+        )
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self.api_key,
+            "LD-API-Version": "beta",
+        }
+        
+        response = self.getrequest("GET", url, headers=headers)
+        data = json.loads(response.text)
+        if "message" in data:
+            print("Error getting AI config variations: " + data["message"])
             return []
-
+            
         # Filter out disabled variations
         variations = []
         for variation in data.get("variations", []):
@@ -3012,8 +2947,7 @@ class LDPlatform:
         if variable_choices is not None:
             payload["variableChoices"] = variable_choices
 
-        response = self.getrequest(
-            "POST",
+        response = requests.post(
             f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations",
             json=payload,
             headers=headers,
@@ -3048,8 +2982,7 @@ class LDPlatform:
         if parameters is not None:
             payload["parameters"] = parameters
 
-        response = self.getrequest(
-            "POST",
+        response = requests.post(
             f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations/{optimization_key}/results",
             json=payload,
             headers=headers,
@@ -3096,8 +3029,7 @@ class LDPlatform:
         if created_variation_key is not None:
             payload["createdVariationKey"] = created_variation_key
 
-        response = self.getrequest(
-            "PATCH",
+        response = requests.patch(
             f"https://app.launchdarkly.com/api/v2/projects/{self.project_key}/agent-optimizations/{optimization_key}/results/{result_id}",
             json=payload,
             headers=headers,

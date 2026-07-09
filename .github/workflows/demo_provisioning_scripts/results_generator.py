@@ -42,6 +42,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s'
 )
+# The SDK's event sender keeps a small connection pool to
+# events.launchdarkly.com; concurrent flushes from the generator threads
+# make urllib3 discard and reopen connections, which is harmless churn but
+# floods the log with "Connection pool is full" warnings.
+logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 
 def get_all_flags_by_tag(tag):
     url = f"{LD_API_URL}/flags/{PROJECT_KEY}?limit=100"
@@ -1212,7 +1217,14 @@ def generate_results(project_key, api_key):
     print(f"Generating flags for project {project_key} with API key {api_key} (stub)")
     sdk_key = os.getenv("LD_SDK_KEY")
     if sdk_key:
-        ldclient.set_config(Config(sdk_key=sdk_key, events_max_pending=1000))
+        # ~8 generator threads all track events on this one client; the queue
+        # must absorb their combined burst rate between flushes or the SDK
+        # drops events ("Exceeded event queue capacity"), thinning demo data.
+        ldclient.set_config(Config(
+            sdk_key=sdk_key,
+            events_max_pending=50000,
+            flush_interval=1,
+        ))
         client = ldclient.get()
         
         # Evaluate all flags by their tags
