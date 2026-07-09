@@ -1,0 +1,90 @@
+name: Cloud Demo Environment Recreate All
+
+run-name: Recreate All Environments (excluding ${{ github.event.inputs.exclude || 'none' }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      exclude:
+        description: 'Comma-separated usernames to skip (e.g. alice,bob)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Only list the environments that would be recreated'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  KUBECTL_VERSION: "v1.23.0"
+
+jobs:
+
+  discover-environments:
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{ steps.build_list.outputs.environments }}
+    steps:
+      - name: List demo namespaces in Kubernetes
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: get deployments --all-namespaces -o jsonpath='{range .items[?(@.metadata.name=="ld-core-demo-deployment")]}{.metadata.namespace}{"\n"}{end}' > namespaces.txt
+
+      - name: Build environment list with exclusions
+        id: build_list
+        run: |
+          echo "Discovered namespaces:"
+          cat namespaces.txt
+
+          # Parse the exclude input into a JSON array, trimming whitespace
+          EXCLUDED=$(echo "${{ github.event.inputs.exclude }}" | jq -R -c 'split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
+          echo "Excluded usernames: $EXCLUDED"
+
+          # Safety net: never touch system namespaces even if they somehow match
+          SYSTEM='["default","kube-system","kube-public","kube-node-lease","ingress-nginx"]'
+
+          ENVIRONMENTS=$(jq -R -s -c --argjson excluded "$EXCLUDED" --argjson system "$SYSTEM" '
+            split("\n")
+            | map(select(length > 0))
+            | unique
+            | map(select(. as $ns | ($excluded + $system) | index($ns) | not))
+          ' namespaces.txt)
+
+          echo "Environments to recreate: $ENVIRONMENTS"
+          echo "environments=$ENVIRONMENTS" >> $GITHUB_OUTPUT
+
+          {
+            echo "## Environments to recreate"
+            echo "$ENVIRONMENTS" | jq -r '.[] | "- \(.)"'
+            echo ""
+            echo "## Excluded"
+            echo "$EXCLUDED" | jq -r 'if length == 0 then "- none" else .[] | "- \(.)" end'
+          } >> $GITHUB_STEP_SUMMARY
+
+  recreate-environments:
+    runs-on: ubuntu-latest
+    needs: [discover-environments]
+    if: ${{ github.event.inputs.dry_run != 'true' && needs.discover-environments.outputs.environments != '[]' }}
+    permissions:
+      actions: write
+    steps:
+      - name: Trigger recreate workflow for each environment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ENVIRONMENTS: ${{ needs.discover-environments.outputs.environments }}
+        run: |
+          echo "## Triggered recreates" >> $GITHUB_STEP_SUMMARY
+          for env_name in $(echo "$ENVIRONMENTS" | jq -r '.[]'); do
+            echo "Triggering recreate for: $env_name"
+            gh workflow run cloud_demo_environment_recreate.yaml \
+              --repo ${{ github.repository }} \
+              --ref ${{ github.ref_name }} \
+              -f name="$env_name"
+            echo "- $env_name" >> $GITHUB_STEP_SUMMARY
+            # Stagger dispatches to avoid API rate limits
+            sleep 5
+          done
