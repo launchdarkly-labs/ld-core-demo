@@ -29,14 +29,16 @@ jobs:
     outputs:
       environments: ${{ steps.build_list.outputs.environments }}
     steps:
-      - name: List demo namespaces in Kubernetes
+      - name: List demo deployments in Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: get deployments --all-namespaces -o jsonpath='{range .items[?(@.metadata.name=="ld-core-demo-deployment")]}{.metadata.namespace}{"\n"}{end}' > namespaces.txt
+          args: get deployments --all-namespaces --no-headers -o custom-columns=NS:.metadata.namespace,NAME:.metadata.name > deployments.txt
 
       - name: Build environment list with exclusions
         id: build_list
         run: |
+          # Keep only namespaces that contain the demo deployment
+          awk '$2 == "ld-core-demo-deployment" {print $1}' deployments.txt > namespaces.txt
           echo "Discovered namespaces:"
           cat namespaces.txt
 
