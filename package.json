@@ -55,7 +55,7 @@
     "drizzle-orm": "^0.45.2",
     "flatted": "^3.3.2",
     "framer-motion": "^12.23.26",
-    "launchdarkly-js-client-sdk": "^3.8.1",
+    "launchdarkly-js-client-sdk": "^3.9.3",
     "launchdarkly-react-client-sdk": "^3.8.1",
     "ldrs": "^1.0.1",
     "lodash": "^4.17.21",
@@ -85,7 +85,7 @@
     "sharp": "^0.33.4",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^9.0.1",
+    "uuid": "^14.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
