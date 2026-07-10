@@ -2045,6 +2045,11 @@ class LDPlatform:
         days=1,
         metrics=[],
     ):
+        # Since this is likely going to be added immediately after
+        # creating a flag, we're going to sleep for 2 seconds. Otherwise
+        # adding the rollout doesn't consistently take.
+        time.sleep(2)
+        
         vars, defaults = self.get_flag_variation_values(flag_key)
 
         control_var = ""
@@ -2137,6 +2142,11 @@ class LDPlatform:
 
         control_var = ""
         end_var = ""
+
+        # Since this is likely going to be added immediately after
+        # creating a flag, we're going to sleep for 2 seconds. Otherwise
+        # adding the rollout doesn't consistently take.
+        time.sleep(2)
 
         for v in vars:
             if v["value"] == False:
@@ -2837,6 +2847,11 @@ class LDPlatform:
         notify=True,
         days=1,
     ):
+        # Since this is likely going to be added immediately after
+        # creating an AI config, we're going to sleep for 2 seconds. Otherwise
+        # adding the guarded rollout doesn't consistently take.
+        time.sleep(2)
+        
         # Get AI config variations (excluding disabled)
         variations = self.get_ai_config_variations(ai_config_key)
         
