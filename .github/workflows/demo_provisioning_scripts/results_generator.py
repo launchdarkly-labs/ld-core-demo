@@ -1232,16 +1232,23 @@ def generate_results(project_key, api_key):
         # ~8 generator threads all track events on this one client; the queue
         # must absorb their combined burst rate between flushes or the SDK
         # drops events ("Exceeded event queue capacity"), thinning demo data.
-        # Don't raise events_max_pending above the SDK default: the SDK posts
-        # the ENTIRE queue as one request and permanently discards it if the
-        # events endpoint rejects it as too large (HTTP 413). 10000 events is
-        # the largest batch that reliably fits; the 1s flush keeps up with
-        # the generators' burst rate.
-        ldclient.set_config(Config(
+        # But keep events_max_pending modest: the SDK posts the ENTIRE queue
+        # as one request, and if the events endpoint rejects it as too large
+        # (HTTP 413) the SDK permanently disables event delivery — which also
+        # leaves the guarded-rollout generators looping forever, since the
+        # release guardian never receives the metric events it needs to
+        # finish the rollout. Compression shrinks payloads ~10x; the small
+        # queue caps worst-case payload size on older SDKs without it.
+        config_kwargs = dict(
             sdk_key=sdk_key,
-            events_max_pending=10000,
+            events_max_pending=2000,
             flush_interval=1,
-        ))
+        )
+        try:
+            ldclient.set_config(Config(enable_event_compression=True, **config_kwargs))
+        except TypeError:
+            # SDK version without compression support
+            ldclient.set_config(Config(**config_kwargs))
         client = ldclient.get()
         
         # Evaluate all flags by their tags
