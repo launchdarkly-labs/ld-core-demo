@@ -48,22 +48,34 @@ logging.basicConfig(
 # floods the log with "Connection pool is full" warnings.
 logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 
+def _get_json(url, retries=3):
+    """GET a LaunchDarkly API URL with a timeout and transient-error retries.
+
+    The generator threads run for many minutes and poll flag state in loops;
+    without a timeout a single network blip kills the whole thread, and a
+    single failed poll makes the rollout generators exit early.
+    """
+    for attempt in range(retries):
+        try:
+            response = requests.get(url, headers=HEADERS, timeout=(10, 30))
+        except requests.RequestException as e:
+            logging.error(f"Request failed ({url}), attempt {attempt + 1}/{retries}: {e}")
+            time.sleep(2 * (attempt + 1))
+            continue
+        if not response.ok:
+            logging.error(f"Failed to fetch {url}: {response.status_code} {response.text}")
+            return None
+        return response.json()
+    return None
+
 def get_all_flags_by_tag(tag):
-    url = f"{LD_API_URL}/flags/{PROJECT_KEY}?limit=100"
-    response = requests.get(url, headers=HEADERS)
-    if not response.ok:
-        logging.error(f"Failed to fetch flags: {response.status_code} {response.text}")
+    data = _get_json(f"{LD_API_URL}/flags/{PROJECT_KEY}?limit=100")
+    if data is None:
         return []
-    data = response.json()
     return [flag['key'] for flag in data.get('items', []) if tag in flag.get("tags", [])]
 
 def get_flag_details(flag_key):
-    url = f"{LD_API_URL}/flags/{PROJECT_KEY}/{flag_key}"
-    response = requests.get(url, headers=HEADERS)
-    if not response.ok:
-        logging.error(f"Failed to fetch flag details: {response.status_code} {response.text}")
-        return None
-    return response.json()
+    return _get_json(f"{LD_API_URL}/flags/{PROJECT_KEY}/{flag_key}")
 
 def is_measured_rollout(flag_details):
     # Check for measured rollout attribute in flag details
@@ -1220,9 +1232,14 @@ def generate_results(project_key, api_key):
         # ~8 generator threads all track events on this one client; the queue
         # must absorb their combined burst rate between flushes or the SDK
         # drops events ("Exceeded event queue capacity"), thinning demo data.
+        # Don't raise events_max_pending above the SDK default: the SDK posts
+        # the ENTIRE queue as one request and permanently discards it if the
+        # events endpoint rejects it as too large (HTTP 413). 10000 events is
+        # the largest batch that reliably fits; the 1s flush keeps up with
+        # the generators' burst rate.
         ldclient.set_config(Config(
             sdk_key=sdk_key,
-            events_max_pending=50000,
+            events_max_pending=10000,
             flush_interval=1,
         ))
         client = ldclient.get()
