@@ -1,5 +1,6 @@
 import os
 import logging
+import math
 import requests
 import uuid
 import ldclient
@@ -1114,19 +1115,34 @@ def payment_engine_healthy_scenario_generator(client, stop_event):
     logging.info("Payment Engine Healthy scenario generator finished.")
 
 def payment_engine_failed_scenario_generator(client, stop_event):
-    """Static data generator for failed payment processing v2.0 rollout with automatic rollback"""
+    """Generates realistic failed rollout data with smooth organic chart curves.
+
+    Root cause of previous flat/step charts: error-rate and success-rate were
+    CONVERSION metrics (binary yes/no per user). Now they're NUMERIC metrics
+    tracking 100/0 per event so the chart shows smooth MEAN values per bucket.
+
+    With numeric metrics, the chart mean naturally produces smooth organic lines
+    because each 30s bucket averages many 100/0 values. At 10% allocation with
+    3 events/sec, each bucket gets ~9 test events — enough for smooth means but
+    few enough that LD's detector needs many minutes to reach significance.
+
+    Visual story:
+    - Latency: control ~110ms flat, test starts ~120ms and GRADUALLY climbs
+    - Error rate: control ~4pp flat, test starts ~18pp and GRADUALLY climbs  
+    - Success rate: control ~93pp flat, test starts ~76pp and GRADUALLY falls
+    - After 8+ min: catastrophic spike triggers rollback
+    """
     if not client.is_initialized():
         logging.error("LaunchDarkly client is not initialized for Payment Processing v2.0 Failed scenario")
         return
-    
+
     logging.info("Starting Payment Processing v2.0 Failed scenario generator...")
-    
-    # Wait for rollout to be fully initialized with retry logic (same as healthy scenario)
+
     logging.info("Waiting for flag rollout to be ready...")
     max_retries = 6
     retry_count = 0
     rollout_ready = False
-    
+
     while retry_count < max_retries and not rollout_ready:
         time.sleep(5)
         flag_details = get_flag_details("paymentProcessingV2FailedRollout")
@@ -1136,90 +1152,146 @@ def payment_engine_failed_scenario_generator(client, stop_event):
         else:
             retry_count += 1
             logging.info(f"Rollout not ready yet, retrying... ({retry_count}/{max_retries})")
-    
+
     if not rollout_ready:
         logging.error("Payment Processing v2.0 Failed rollout failed to initialize after 30 seconds. Exiting.")
         return
-    
-    user_counter = 0
+
     status_check_counter = 0
+    iteration = 0
+    start_time = time.time()
+
+    SUSTAIN_END = 540.0
+    CATASTROPHE_END = 780.0
+
+    walk_test_lat = 0.0
+    walk_ctrl_lat = 0.0
 
     while True:
-        if status_check_counter >= 100:
+        if status_check_counter >= 50:
             flag_details = get_flag_details("paymentProcessingV2FailedRollout")
             if not flag_details or not is_measured_rollout(flag_details):
-                logging.info("Measured rollout is over or flag details unavailable. Exiting Payment Processing v2.0 Failed generator.")
+                logging.info("Measured rollout is over. Exiting Payment Processing v2.0 Failed generator.")
                 stop_event.set()
                 break
             status_check_counter = 0
         try:
             user_context = generate_user_context()
             flag_value = client.variation("paymentProcessingV2FailedRollout", user_context, False)
+
+            elapsed = time.time() - start_time
+
+            walk_test_lat += random.uniform(-3, 3)
+            walk_test_lat = max(-12, min(12, walk_test_lat))
+            walk_ctrl_lat += random.uniform(-3, 3)
+            walk_ctrl_lat = max(-12, min(12, walk_ctrl_lat))
+
             if flag_value:
-                if user_counter < 10000:
-                    progress = 0.0
+                t_osc = (12 * math.sin(elapsed / 45)
+                         + 8 * math.sin(elapsed / 19)
+                         + 4 * math.sin(elapsed / 8))
+
+                if elapsed < SUSTAIN_END:
+                    progress = elapsed / SUSTAIN_END
+
+                    error_mean = 18 + (14 * progress)
+                    error_osc = 4 * math.sin(elapsed / 35) + 3 * math.sin(elapsed / 15)
+                    error_pct = error_mean + error_osc + random.uniform(-3, 3)
+                    error_pct = max(8, min(42, error_pct))
+
+                    success_mean = 76 - (14 * progress)
+                    success_osc = 3 * math.sin(elapsed / 30) + 2 * math.sin(elapsed / 13)
+                    success_pct = success_mean + success_osc + random.uniform(-3, 3)
+                    success_pct = max(52, min(84, success_pct))
+
+                    latency_base = 125 + (45 * progress)
+                    latency_center = latency_base + t_osc + walk_test_lat
+                    latency = int(random.gauss(latency_center, 28))
+                    latency = max(60, min(300, latency))
+
                 else:
-                    progress = min((user_counter - 10000) / 10000.0, 1.0)
+                    cat_progress = min((elapsed - SUSTAIN_END) / (CATASTROPHE_END - SUSTAIN_END), 1.0)
+                    curve = 1.0 - ((1.0 - cat_progress) ** 2)
 
-                error_chance = 0.08 + (0.64 * progress) + random.uniform(-0.08, 0.08)
-                error_chance = max(0.05, min(0.80, error_chance))
-                success_chance = 0.90 - (0.60 * progress) + random.uniform(-0.05, 0.05)
-                success_chance = max(0.15, min(0.92, success_chance))
+                    error_mean = 32 + (40 * curve)
+                    error_pct = error_mean + 2 * math.sin(elapsed / 20) + random.uniform(-2, 2)
+                    error_pct = max(28, min(80, error_pct))
 
-                lat_progress = max(0.0, (progress - 0.4) / 0.6) if progress > 0.4 else 0.0
-                latency_low = int(80 + (270 * lat_progress))
-                latency_high = int(180 + (570 * lat_progress))
+                    success_mean = 62 - (35 * curve)
+                    success_pct = success_mean + random.uniform(-2, 2)
+                    success_pct = max(20, min(66, success_pct))
 
-                if random.random() < error_chance:
-                    client.track("payment-v2-error-rate", user_context)
-                    if progress > 0.2:
-                        error_types = [
-                            "PaymentGatewayTimeout",
-                            "TransactionValidationError",
-                            "DatabaseConnectionError",
-                            "PaymentProcessorException",
-                            "InsufficientFundsError"
-                        ]
-                        error_messages = [
-                            "Payment gateway timed out after 30 seconds",
-                            "Transaction validation failed: invalid card number format",
-                            "Database connection pool exhausted",
-                            "Payment processor returned 500 Internal Server Error",
-                            "Insufficient funds for transaction amount"
-                        ]
-                        error_idx = random.randint(0, len(error_types) - 1)
-                        error_data = {
-                            "error.kind": error_types[error_idx],
-                            "error.message": error_messages[error_idx],
-                            "service.name": "payment-processing-v2",
-                            "component": "PaymentEngine",
-                            "transaction.id": f"txn-{user_counter}",
-                            "user.id": user_context.key,
-                            "flag.key": "paymentProcessingV2FailedRollout",
-                            "severity": "high"
-                        }
-                        client.track("$ld:telemetry:error", user_context, error_data, 1)
+                    latency_base = 170 + (250 * curve)
+                    latency_center = latency_base + t_osc * 0.4 + walk_test_lat
+                    latency = int(random.gauss(latency_center, 40 + 25 * curve))
+                    latency = max(100, min(650, latency))
 
-                if random.random() < success_chance:
-                    client.track("payment-v2-success-rate", user_context)
-                latency = random.randint(latency_low, latency_high)
+                error_val = 100 if random.random() * 100 < error_pct else 0
+                success_val = 100 if random.random() * 100 < success_pct else 0
+
+                client.track("payment-v2-error-rate", user_context, None, error_val)
+                client.track("payment-v2-success-rate", user_context, None, success_val)
                 client.track("payment-v2-latency", user_context, None, latency)
                 client.track("payment-transactions-processed", user_context, None, 1)
-                if random.random() < max(0.10, 0.85 - (0.60 * progress)):
-                    client.track("payment-revenue-protected", user_context, None, random.randint(50, int(500 + 500 * (1 - progress))))
+
+                if error_val == 100:
+                    error_types = [
+                        "PaymentGatewayTimeout",
+                        "TransactionValidationError",
+                        "DatabaseConnectionError",
+                        "PaymentProcessorException",
+                        "InsufficientFundsError"
+                    ]
+                    error_messages = [
+                        "Payment gateway timed out after 30 seconds",
+                        "Transaction validation failed: invalid card number format",
+                        "Database connection pool exhausted",
+                        "Payment processor returned 500 Internal Server Error",
+                        "Insufficient funds for transaction amount"
+                    ]
+                    error_idx = random.randint(0, len(error_types) - 1)
+                    error_data = {
+                        "error.kind": error_types[error_idx],
+                        "error.message": error_messages[error_idx],
+                        "service.name": "payment-processing-v2",
+                        "component": "PaymentEngine",
+                        "transaction.id": f"txn-{iteration}",
+                        "user.id": user_context.key,
+                        "flag.key": "paymentProcessingV2FailedRollout",
+                        "severity": "high"
+                    }
+                    client.track("$ld:telemetry:error", user_context, error_data, 1)
+
+                rev_chance = max(0.10, 0.70 - (0.45 * (elapsed / CATASTROPHE_END)))
+                if random.random() < rev_chance:
+                    client.track("payment-revenue-protected", user_context, None, random.randint(50, 600))
             else:
-                if random.random() < 0.08:
-                    client.track("payment-v2-error-rate", user_context)
-                if random.random() < 0.90:
-                    client.track("payment-v2-success-rate", user_context)
-                latency = random.randint(80, 180)
-                client.track("payment-v2-latency", user_context, None, latency)
+                c_osc = (10 * math.sin(elapsed / 50)
+                         + 6 * math.sin(elapsed / 22)
+                         + 3 * math.sin(elapsed / 10))
+
+                ctrl_latency_center = 110 + c_osc + walk_ctrl_lat
+                ctrl_latency = int(random.gauss(ctrl_latency_center, 25))
+                ctrl_latency = max(55, min(200, ctrl_latency))
+
+                ctrl_error_pct = 4 + 1.5 * math.sin(elapsed / 28) + random.uniform(-1.5, 1.5)
+                ctrl_error_pct = max(1, min(9, ctrl_error_pct))
+                ctrl_error_val = 100 if random.random() * 100 < ctrl_error_pct else 0
+
+                ctrl_success_pct = 93 + 1.2 * math.sin(elapsed / 24) + random.uniform(-1.2, 1.2)
+                ctrl_success_pct = max(88, min(97, ctrl_success_pct))
+                ctrl_success_val = 100 if random.random() * 100 < ctrl_success_pct else 0
+
+                client.track("payment-v2-error-rate", user_context, None, ctrl_error_val)
+                client.track("payment-v2-success-rate", user_context, None, ctrl_success_val)
+                client.track("payment-v2-latency", user_context, None, ctrl_latency)
                 client.track("payment-transactions-processed", user_context, None, 1)
                 if random.random() < 0.85:
-                    client.track("payment-revenue-protected", user_context, None, random.randint(200, 1000))
-            user_counter += 1
+                    client.track("payment-revenue-protected", user_context, None, random.randint(200, 900))
+
+            iteration += 1
             status_check_counter += 1
-            time.sleep(0.03)
+            time.sleep(0.33)
         except Exception as e:
             logging.error(f"Error generating payment v2 failed metrics: {str(e)}")
             continue

@@ -159,6 +159,173 @@ class DemoBuilder:
         print("Done")
         self.flags_created = True
 
+    def flag_federated_account(self):
+        """A2: Create flag with progressive rollout (7-day stages).
+
+        Extracts variation IDs directly from the create response to avoid
+        propagation delays that cause add_progressive_rollout to fail.
+        """
+        res = self.ldproject.create_flag(
+            "federatedAccounts",
+            "A2 - Release: Federated Account Component",
+            "Releasing new federated account component on ToggleBank",
+            [
+                {"value": True, "name": "Release Federated Accounts Component"},
+                {"value": False, "name": "Hide Federated Accounts Component"},
+            ],
+            tags=["release", "bank"],
+            on_variation=1,
+        )
+
+        control_var_id = None
+        target_var_id = None
+        if res and hasattr(res, 'text'):
+            try:
+                flag_data = json.loads(res.text)
+                for var in flag_data.get("variations", []):
+                    if var.get("value") is False:
+                        control_var_id = var.get("_id")
+                    elif var.get("value") is True:
+                        target_var_id = var.get("_id")
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        time.sleep(3)
+
+        if control_var_id and target_var_id:
+            url = (
+                "https://app.launchdarkly.com/api/v2/flags/"
+                + self.ldproject.project_key
+                + "/federatedAccounts?ignoreConflicts=true"
+            )
+            headers = {
+                "Authorization": self.ldproject.api_key,
+                "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+            }
+            stages = [
+                {"allocation": 5000, "durationMillis": 604800000},
+                {"allocation": 10000, "durationMillis": 604800000},
+                {"allocation": 25000, "durationMillis": 604800000},
+                {"allocation": 50000, "durationMillis": 604800000},
+            ]
+            payload = {
+                "comment": "",
+                "environmentKey": "production",
+                "instructions": [
+                    {"kind": "turnFlagOn"},
+                    {
+                        "kind": "startAutomatedRelease",
+                        "releaseKind": "progressive",
+                        "originalVariationId": control_var_id,
+                        "targetVariationId": target_var_id,
+                        "randomizationUnit": "user",
+                        "stages": stages,
+                    },
+                ],
+            }
+            rollout_res = self.ldproject.getrequest("PATCH", url, headers=headers, json=payload)
+            if hasattr(rollout_res, 'status_code') and rollout_res.status_code in (200, 204):
+                print("  ✓ A2: Progressive rollout attached (flag ON, 7-day stages)")
+            else:
+                status = rollout_res.status_code if hasattr(rollout_res, 'status_code') else 'unknown'
+                body = rollout_res.text[:500] if hasattr(rollout_res, 'text') else str(rollout_res)
+                print(f"  ✗ A2: Progressive rollout FAILED (HTTP {status}): {body}")
+                self.ldproject.toggle_flag("federatedAccounts", "on", "production")
+        else:
+            print("  ⚠ A2: Could not extract variation IDs, falling back...")
+            time.sleep(5)
+            self.ldproject.add_progressive_rollout("federatedAccounts", "production")
+
+    def flag_payment_engine_failed_rollout(self):
+        """A4: Create flag with custom guarded rollout (25%/50% stages, 5-min windows).
+
+        Uses higher starting allocation so the chart has visible test data from
+        the beginning, and longer stage windows to allow enough time for the
+        data generator to produce a realistic curve before regression detection.
+        """
+        res = self.ldproject.create_flag(
+            "paymentProcessingV2FailedRollout",
+            "A4 - Release: Payment Processing v2.0 - Failed Rollout - ToggleBank",
+            "Releases new payment processing v2.0 system with enhanced transaction "
+            "handling. Demonstrates automatic rollback on error detection.",
+            [
+                {"value": True, "name": "Show Failed Rollout Scenario"},
+                {"value": False, "name": "Hide Scenario"},
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+
+        self.ldproject.attach_metric_to_flag(
+            "paymentProcessingV2FailedRollout",
+            ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate",
+             "payment-transactions-processed", "payment-revenue-protected"],
+        )
+
+        time.sleep(3)
+        vars, defaults = self.ldproject.get_flag_variation_values("paymentProcessingV2FailedRollout")
+        control_var = ""
+        test_var = ""
+        for v in vars:
+            if v["value"] is False:
+                control_var = v["id"]
+            else:
+                test_var = v["id"]
+
+        if control_var and test_var:
+            url = (
+                "https://app.launchdarkly.com/api/v2/flags/"
+                + self.ldproject.project_key
+                + "/paymentProcessingV2FailedRollout?ignoreConflicts=true"
+            )
+            headers = {
+                "Authorization": self.ldproject.api_key,
+                "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+            }
+            custom_stages = [
+                {"allocation": 10000, "durationMillis": 1200000},
+                {"allocation": 25000, "durationMillis": 1200000},
+            ]
+            payload = {
+                "comment": "",
+                "environmentKey": "production",
+                "instructions": [
+                    {"kind": "turnFlagOn"},
+                    {
+                        "kind": "startAutomatedRelease",
+                        "releaseKind": "guarded",
+                        "originalVariationId": control_var,
+                        "targetVariationId": test_var,
+                        "randomizationUnit": "user",
+                        "stages": custom_stages,
+                        "monitoredMetrics": [
+                            {"metricKey": "payment-v2-success-rate", "enabled": True, "rollbackOnRegression": True},
+                            {"metricKey": "payment-v2-latency", "enabled": True, "rollbackOnRegression": True},
+                            {"metricKey": "payment-v2-error-rate", "enabled": True, "rollbackOnRegression": True},
+                        ],
+                    },
+                ],
+            }
+            rollout_res = self.ldproject.getrequest("PATCH", url, headers=headers, json=payload)
+            if hasattr(rollout_res, 'status_code') and rollout_res.status_code in (200, 204):
+                print("  ✓ A4: Custom guarded rollout attached (10%→25%, 20-min stages)")
+            else:
+                status = rollout_res.status_code if hasattr(rollout_res, 'status_code') else 'unknown'
+                body = rollout_res.text[:500] if hasattr(rollout_res, 'text') else str(rollout_res)
+                print(f"  ✗ A4: Custom guarded rollout FAILED (HTTP {status}): {body}")
+                self.ldproject.add_guarded_rollout(
+                    "paymentProcessingV2FailedRollout", "production",
+                    metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
+                    days=1,
+                )
+        else:
+            print("  ⚠ A4: Could not get variation IDs, using default guarded rollout...")
+            self.ldproject.add_guarded_rollout(
+                "paymentProcessingV2FailedRollout", "production",
+                metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
+                days=1,
+            )
+
     def create_ai_config(self):
         print("Creating AI Config...")
         
