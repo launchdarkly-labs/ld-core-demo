@@ -1166,9 +1166,11 @@ def payment_engine_failed_scenario_generator(client, stop_event):
 
     walk_test_lat = 0.0
     walk_ctrl_lat = 0.0
+    walk_test_err = 0.0
+    walk_test_suc = 0.0
 
     while True:
-        if status_check_counter >= 50:
+        if status_check_counter >= 80:
             flag_details = get_flag_details("paymentProcessingV2FailedRollout")
             if not flag_details or not is_measured_rollout(flag_details):
                 logging.info("Measured rollout is over. Exiting Payment Processing v2.0 Failed generator.")
@@ -1182,49 +1184,57 @@ def payment_engine_failed_scenario_generator(client, stop_event):
             elapsed = time.time() - start_time
 
             walk_test_lat += random.uniform(-3, 3)
-            walk_test_lat = max(-12, min(12, walk_test_lat))
+            walk_test_lat = max(-15, min(15, walk_test_lat))
             walk_ctrl_lat += random.uniform(-3, 3)
             walk_ctrl_lat = max(-12, min(12, walk_ctrl_lat))
+            walk_test_err += random.uniform(-0.8, 0.8)
+            walk_test_err = max(-3, min(3, walk_test_err))
+            walk_test_suc += random.uniform(-0.8, 0.8)
+            walk_test_suc = max(-3, min(3, walk_test_suc))
 
             if flag_value:
-                t_osc = (12 * math.sin(elapsed / 45)
-                         + 8 * math.sin(elapsed / 19)
-                         + 4 * math.sin(elapsed / 8))
+                t_osc_lat = (10 * math.sin(elapsed / 45)
+                             + 7 * math.sin(elapsed / 19)
+                             + 4 * math.sin(elapsed / 8))
+                t_osc_err = (2.0 * math.sin(elapsed / 40)
+                             + 1.5 * math.sin(elapsed / 17)
+                             + 1.0 * math.sin(elapsed / 7))
+                t_osc_suc = (2.0 * math.sin(elapsed / 36)
+                             + 1.5 * math.sin(elapsed / 15)
+                             + 1.0 * math.sin(elapsed / 6))
 
                 if elapsed < SUSTAIN_END:
                     progress = elapsed / SUSTAIN_END
 
-                    error_mean = 18 + (14 * progress)
-                    error_osc = 4 * math.sin(elapsed / 35) + 3 * math.sin(elapsed / 15)
-                    error_pct = error_mean + error_osc + random.uniform(-3, 3)
-                    error_pct = max(8, min(42, error_pct))
+                    error_mean = 11 + (5 * progress)
+                    error_pct = error_mean + t_osc_err + walk_test_err + random.uniform(-1.2, 1.2)
+                    error_pct = max(6, min(22, error_pct))
 
-                    success_mean = 76 - (14 * progress)
-                    success_osc = 3 * math.sin(elapsed / 30) + 2 * math.sin(elapsed / 13)
-                    success_pct = success_mean + success_osc + random.uniform(-3, 3)
-                    success_pct = max(52, min(84, success_pct))
+                    success_mean = 84 - (5 * progress)
+                    success_pct = success_mean + t_osc_suc + walk_test_suc + random.uniform(-1.2, 1.2)
+                    success_pct = max(74, min(90, success_pct))
 
-                    latency_base = 125 + (45 * progress)
-                    latency_center = latency_base + t_osc + walk_test_lat
-                    latency = int(random.gauss(latency_center, 28))
-                    latency = max(60, min(300, latency))
+                    latency_base = 148 + (25 * progress)
+                    latency_center = latency_base + t_osc_lat + walk_test_lat
+                    latency = int(random.gauss(latency_center, 26))
+                    latency = max(90, min(280, latency))
 
                 else:
                     cat_progress = min((elapsed - SUSTAIN_END) / (CATASTROPHE_END - SUSTAIN_END), 1.0)
-                    curve = 1.0 - ((1.0 - cat_progress) ** 2)
+                    curve = 1.0 - ((1.0 - cat_progress) ** 2.2)
 
-                    error_mean = 32 + (40 * curve)
-                    error_pct = error_mean + 2 * math.sin(elapsed / 20) + random.uniform(-2, 2)
-                    error_pct = max(28, min(80, error_pct))
+                    error_mean = 18 + (48 * curve)
+                    error_pct = error_mean + 2 * math.sin(elapsed / 20) + random.uniform(-1.5, 1.5)
+                    error_pct = max(16, min(80, error_pct))
 
-                    success_mean = 62 - (35 * curve)
-                    success_pct = success_mean + random.uniform(-2, 2)
-                    success_pct = max(20, min(66, success_pct))
+                    success_mean = 78 - (48 * curve)
+                    success_pct = success_mean + 1.5 * math.sin(elapsed / 22) + random.uniform(-1.5, 1.5)
+                    success_pct = max(18, min(82, success_pct))
 
-                    latency_base = 170 + (250 * curve)
-                    latency_center = latency_base + t_osc * 0.4 + walk_test_lat
-                    latency = int(random.gauss(latency_center, 40 + 25 * curve))
-                    latency = max(100, min(650, latency))
+                    latency_base = 175 + (340 * curve)
+                    latency_center = latency_base + t_osc_lat * 0.5 + walk_test_lat
+                    latency = int(random.gauss(latency_center, 40 + 30 * curve))
+                    latency = max(120, min(750, latency))
 
                 error_val = 100 if random.random() * 100 < error_pct else 0
                 success_val = 100 if random.random() * 100 < success_pct else 0
@@ -1291,7 +1301,7 @@ def payment_engine_failed_scenario_generator(client, stop_event):
 
             iteration += 1
             status_check_counter += 1
-            time.sleep(0.33)
+            time.sleep(0.12)
         except Exception as e:
             logging.error(f"Error generating payment v2 failed metrics: {str(e)}")
             continue

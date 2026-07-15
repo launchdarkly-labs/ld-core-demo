@@ -316,14 +316,14 @@ class DemoBuilder:
                 self.ldproject.add_guarded_rollout(
                     "paymentProcessingV2FailedRollout", "production",
                     metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
-                    days=1,
+                    days=4,
                 )
         else:
             print("  ⚠ A4: Could not get variation IDs, using default guarded rollout...")
             self.ldproject.add_guarded_rollout(
                 "paymentProcessingV2FailedRollout", "production",
                 metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
-                days=1,
+                days=4,
             )
 
     def create_ai_config(self):
