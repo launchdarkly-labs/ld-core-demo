@@ -270,8 +270,9 @@ async function callLLM(
 	openai: any,
 	params?: { temperature?: number; maxTokens?: number },
 	tracker?: LDAIConfigTracker,
-	/** Agent label for span name (e.g. triage, specialist, brand_voice) and request headers for trace linking */
-	options?: { agentLabel?: string; requestHeaders?: RequestHeaders },
+	/** Agent label for span name (e.g. triage, specialist, brand_voice), request headers for trace linking,
+	 * and aiConfigKey so this LLM call's span appears under the correct AI Config's Monitoring/Traces tab. */
+	options?: { agentLabel?: string; requestHeaders?: RequestHeaders; aiConfigKey?: string },
 ): Promise<LLMCallResult> {
 	// OpenTelemetry GenAI semantic conventions: https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans
 	const runWithSpan = async (span?: { addEvent: (name: string, attributes?: Record<string, string | number | boolean>) => void }) => {
@@ -300,6 +301,17 @@ async function callLLM(
 			"gen_ai.request.max_tokens": maxTokens,
 			"gen_ai.output.type": "text",
 		});
+
+		// Route this span to the specific sub-agent's AI Config Monitoring/Traces tab.
+		// Without this, all sub-agent spans inherit only the parent chat config
+		// (ai-config--togglebot) and the Brand Voice / Triage / Specialist configs
+		// show "No traces detected".
+		if (options?.aiConfigKey) {
+			LDObserve.setAttributes({
+				"feature_flag.key": options.aiConfigKey,
+				"feature_flag.provider.name": "LaunchDarkly",
+			});
+		}
 
 		let result: LLMCallResult;
 		if (isBedrock) {
@@ -447,7 +459,11 @@ async function runTriageAgent(deps: MultiAgentDeps): Promise<TriageResult> {
 	const result = await callLLM(modelName, messages, bedrockClient, openai, {
 		temperature: 0,
 		maxTokens: 256,
-	}, triageTracker, { agentLabel: "triage", requestHeaders: deps.requestHeaders });
+	}, triageTracker, {
+		agentLabel: "triage",
+		requestHeaders: deps.requestHeaders,
+		aiConfigKey: TRIAGE_CONFIG_KEY,
+	});
 
 	if (isBedrockModel(modelName)) {
 		triageTracker?.trackSuccess?.();
@@ -661,7 +677,11 @@ async function runSpecialistAgent(
 	const result = await callLLM(modelName, messages, bedrockClient, deps.openai, {
 		temperature: 0.5,
 		maxTokens: 1000,
-	}, specialistTracker, { agentLabel: `specialist_${category}`, requestHeaders: deps.requestHeaders });
+	}, specialistTracker, {
+		agentLabel: `specialist_${category}`,
+		requestHeaders: deps.requestHeaders,
+		aiConfigKey: configKey,
+	});
 
 	pushLog({
 		level: "INFO",
@@ -746,6 +766,7 @@ async function runBrandVoiceAgent(
 	const result = await callLLM(modelName, messages, bedrockClient, openai, undefined, brandTracker, {
 		agentLabel: "brand_voice",
 		requestHeaders: deps.requestHeaders,
+		aiConfigKey: BRAND_VOICE_CONFIG_KEY,
 	});
 
 	if (isBedrockModel(modelName)) {

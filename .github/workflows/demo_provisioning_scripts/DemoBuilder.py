@@ -1118,13 +1118,13 @@ class DemoBuilder:
         nova_pro_config_key = "Bedrock.amazon.nova-pro-v1:0"
 
         haiku_config = {
-            "modelName": "anthropic.claude-3-5-haiku-20241022-v1:0",
+            "modelName": "anthropic.claude-haiku-4-5-20251001-v1:0",
             "parameters": {
                 "maxTokens": 1000,
                 "temperature": 0.5
             }
         }
-        haiku_config_key = "Bedrock.anthropic.claude-3-5-haiku-20241022-v1:0"
+        haiku_config_key = "Bedrock.anthropic.claude-haiku-4-5-20251001-v1:0"
 
         gpt5_mini_config = {
             "modelName": "gpt-5-mini",

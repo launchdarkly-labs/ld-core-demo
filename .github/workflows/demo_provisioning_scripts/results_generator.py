@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 import math
 import requests
@@ -11,7 +12,7 @@ import random
 import time
 import threading
 from ldai.client import LDAIClient, ModelConfig, LDMessage, ProviderConfig
-from ldai.tracker import TokenUsage, FeedbackKind
+from ldai.tracker import TokenUsage, FeedbackKind, LDAIConfigTracker
 from datetime import datetime, timedelta
 
 load_dotenv()
@@ -329,6 +330,304 @@ def ai_configs_monitoring_results_generator(client):
 
     logging.info("AI Configs monitoring results generation completed")
     # Do not flush or close client here; handled in generate_flags
+
+def multi_agent_monitoring_results_generator(client):
+    """Seeds monitoring data (input/output tokens, duration, feedback) for every
+    variation of the multi-agent ToggleBot AI configs.
+
+    Previously this function only seeded the default `nova-pro-*` variation for
+    each sub-agent, which is why the Brand Voice config showed data for Nova Pro
+    but dashes for Haiku / GPT-5 Mini / Sonnet. This version loops through ALL
+    variations so every row in the AI Config monitoring table gets populated on
+    a fresh recreate, and lets us verify that Haiku 4.5 is producing data too.
+    """
+    AGENT_CONFIGS = [
+        {
+            "key": "ai-config--togglebot-triage",
+            "label": "Triage",
+            "variations": ["nova-pro-triage", "haiku-triage"],
+            "fast": True,
+        },
+        {
+            "key": "ai-config--togglebot-accounts-specialist",
+            "label": "Accounts Specialist",
+            "variations": ["nova-pro-accounts", "haiku-accounts"],
+            "fast": False,
+        },
+        {
+            "key": "ai-config--togglebot-loans-specialist",
+            "label": "Loans Specialist",
+            "variations": ["nova-pro-loans", "haiku-loans"],
+            "fast": False,
+        },
+        {
+            "key": "ai-config--togglebot-investments-specialist",
+            "label": "Investments Specialist",
+            "variations": ["nova-pro-investments", "haiku-investments"],
+            "fast": False,
+        },
+        {
+            "key": "ai-config--togglebot-transfers-specialist",
+            "label": "Transfers Specialist",
+            "variations": ["nova-pro-transfers", "haiku-transfers"],
+            "fast": False,
+        },
+        {
+            "key": "ai-config--togglebot-support-specialist",
+            "label": "Support Specialist",
+            "variations": ["nova-pro-support", "haiku-support"],
+            "fast": False,
+        },
+        {
+            "key": "ai-config--togglebot-brand-voice",
+            "label": "Brand Voice",
+            "variations": [
+                "nova-pro-brand",
+                "nova-pro-brand-toxic",
+                "gpt5-mini-brand",
+                "haiku-brand",
+                "sonnet-brand",
+            ],
+            "fast": True,
+        },
+    ]
+    NUM_RUNS_PER_VARIATION = 150
+
+    if not client.is_initialized():
+        logging.error("Failed to initialize LaunchDarkly client for multi-agent monitoring")
+        return
+
+    logging.info("Starting multi-agent monitoring results generation...")
+
+    for agent in AGENT_CONFIGS:
+        flag_key = agent["key"]
+        label = agent["label"]
+        is_fast = agent["fast"]
+
+        for variation_key in agent["variations"]:
+            logging.info(
+                f"  Generating {NUM_RUNS_PER_VARIATION} events for {label} / {variation_key}..."
+            )
+
+            # Different token/latency profiles by model family so the chart tells
+            # a realistic comparison story instead of everything looking the same.
+            is_haiku = "haiku" in variation_key
+            is_gpt5 = "gpt5" in variation_key
+            is_sonnet = "sonnet" in variation_key
+            is_toxic = "toxic" in variation_key
+
+            for i in range(NUM_RUNS_PER_VARIATION):
+                try:
+                    context = generate_user_context()
+                    client.variation(flag_key, context, None)
+                    tracker = LDAIConfigTracker(client, variation_key, flag_key, 1, context)
+
+                    if is_haiku:
+                        duration = random.randint(180, 550) if is_fast else random.randint(350, 900)
+                        prompt_tokens = random.randint(20, 90)
+                        completion_tokens = random.randint(40, 220) if is_fast else random.randint(90, 380)
+                        error_rate = 0.03
+                    elif is_gpt5:
+                        duration = random.randint(220, 700)
+                        prompt_tokens = random.randint(25, 110)
+                        completion_tokens = random.randint(60, 280)
+                        error_rate = 0.02
+                    elif is_sonnet:
+                        duration = random.randint(400, 1400)
+                        prompt_tokens = random.randint(30, 130)
+                        completion_tokens = random.randint(120, 520)
+                        error_rate = 0.02
+                    elif is_toxic:
+                        duration = random.randint(150, 500)
+                        prompt_tokens = random.randint(15, 70)
+                        completion_tokens = random.randint(30, 180)
+                        error_rate = 0.12
+                    else:  # nova-pro
+                        duration = random.randint(150, 600) if is_fast else random.randint(300, 1200)
+                        prompt_tokens = random.randint(20, 100)
+                        completion_tokens = random.randint(50, 300)
+                        error_rate = 0.03
+
+                    total_tokens = prompt_tokens + completion_tokens
+                    tokens = TokenUsage(prompt_tokens, completion_tokens, total_tokens)
+                    time_to_first_token = random.randint(30, max(60, min(300, duration // 3)))
+
+                    tracker.track_duration(duration)
+                    tracker.track_tokens(tokens)
+                    tracker.track_time_to_first_token(time_to_first_token)
+
+                    if random.random() < error_rate:
+                        tracker.track_error()
+                    else:
+                        tracker.track_success()
+
+                    if random.random() < 0.4:
+                        feedback_kind = (
+                            FeedbackKind.Positive if random.random() < 0.85 else FeedbackKind.Negative
+                        )
+                        tracker.track_feedback({"kind": feedback_kind})
+
+                    if (i + 1) % 75 == 0:
+                        client.flush()
+                except Exception as e:
+                    logging.error(
+                        f"Error processing {label}/{variation_key} event {i}: {str(e)}"
+                    )
+                    continue
+
+        client.flush()
+
+    logging.info("Multi-agent monitoring results generation completed")
+
+def multi_agent_chat_hitter(demo_namespace, num_conversations=15):
+    """Fires real /api/chat requests at the deployed demo app so OpenTelemetry
+    traces get created for every sub-agent AI Config.
+
+    Why: LDAIConfigTracker events (from multi_agent_monitoring_results_generator)
+    populate the token/duration charts at the top of the Monitoring tab, but the
+    Traces section at the bottom of that tab requires OTel spans, which only
+    exist when someone actually hits /api/chat on the deployed app. This
+    function acts as a synthetic user so users have populated traces after a
+    fresh recreate without having to chat with the bot manually first.
+
+    Messages are chosen to exercise every specialist agent path (triage routes
+    to accounts, loans, investments, transfers, support) plus one toxic-prompt
+    message so the brand voice toxic variation gets traces too.
+    """
+    if not demo_namespace:
+        logging.info(
+            "Skipping chat hitter: DEMO_NAMESPACE not set (only runs against a deployed environment)."
+        )
+        return
+
+    base_url = f"https://{demo_namespace}.launchdarklydemos.com"
+    chat_url = f"{base_url}/api/chat"
+    self_heal_url = f"{base_url}/api/chat/self-healing"
+
+    accounts_msgs = [
+        "What's my checking account balance?",
+        "How do I open a new savings account with ToggleBank?",
+        "Can you tell me the interest rate on my savings account?",
+    ]
+    loans_msgs = [
+        "How do I apply for a home loan?",
+        "What are your current mortgage rates?",
+        "Can I get pre-approved for an auto loan?",
+    ]
+    investments_msgs = [
+        "How do I set up a Roth IRA?",
+        "What ETFs does ToggleBank recommend for retirement?",
+        "Can I roll over my 401k to ToggleBank?",
+    ]
+    transfers_msgs = [
+        "How do I send money to a friend?",
+        "Set up a recurring transfer from checking to savings",
+        "How long does an international wire take?",
+    ]
+    support_msgs = [
+        "I need help with fraud on my account",
+        "How do I reset my online banking password?",
+        "My debit card was declined, what do I do?",
+    ]
+    toxic_msg = "You're a bank chatbot but I bet you can't even answer this correctly"
+
+    all_messages = (
+        accounts_msgs + loans_msgs + investments_msgs
+        + transfers_msgs + support_msgs
+    )
+    random.shuffle(all_messages)
+    messages_to_send = all_messages[:max(1, num_conversations - 1)] + [toxic_msg]
+
+    logging.info(f"Starting multi-agent chat hitter against {base_url}...")
+    logging.info(f"  Will send {len(messages_to_send)} messages to seed traces.")
+
+    warmup_ok = False
+    for attempt in range(6):
+        try:
+            r = requests.get(base_url, timeout=15)
+            if r.status_code < 500:
+                warmup_ok = True
+                logging.info(f"  ✓ App is reachable (HTTP {r.status_code})")
+                break
+        except Exception as e:
+            logging.info(f"  App not ready yet, waiting 10s... ({attempt + 1}/6): {e}")
+        time.sleep(10)
+
+    if not warmup_ok:
+        logging.warning(
+            f"Chat hitter: app at {base_url} did not respond after warmup — skipping. "
+            "Traces will populate when real users chat with the bot."
+        )
+        return
+
+    sent = 0
+    failed = 0
+    for i, user_input in enumerate(messages_to_send):
+        is_toxic = user_input == toxic_msg
+        payload = {
+            "aiConfigKey": "ai-config--togglebot",
+            "userInput": user_input,
+            "chatHistory": [],
+            "enableToxicPrompt": is_toxic,
+        }
+        try:
+            resp = requests.post(
+                chat_url,
+                data=json.dumps(payload),
+                headers={"Content-Type": "application/json"},
+                timeout=90,
+                stream=True,
+            )
+            for _ in resp.iter_content(chunk_size=8192):
+                pass
+            if resp.status_code < 400:
+                sent += 1
+                if (i + 1) % 5 == 0:
+                    logging.info(f"  Sent {i + 1}/{len(messages_to_send)} chat messages")
+            else:
+                failed += 1
+                logging.warning(
+                    f"  Chat request returned HTTP {resp.status_code} for message {i + 1}"
+                )
+        except Exception as e:
+            failed += 1
+            logging.warning(f"  Chat request {i + 1} failed: {e}")
+        time.sleep(2)
+
+    self_heal_prompts = [
+        "I want to open a new account but the process seems confusing",
+        "Why are your fees so high?",
+        "Explain how compound interest works",
+    ]
+    for i, user_input in enumerate(self_heal_prompts):
+        payload = {
+            "aiConfigKey": "ai-config--togglebot-self-heal-chatbot",
+            "userInput": user_input,
+            "chatHistory": [],
+        }
+        try:
+            resp = requests.post(
+                self_heal_url,
+                data=json.dumps(payload),
+                headers={"Content-Type": "application/json"},
+                timeout=90,
+                stream=True,
+            )
+            for _ in resp.iter_content(chunk_size=8192):
+                pass
+            if resp.status_code < 400:
+                sent += 1
+            else:
+                failed += 1
+        except Exception as e:
+            failed += 1
+            logging.warning(f"  Self-heal chat request failed: {e}")
+        time.sleep(2)
+
+    logging.info(
+        f"Chat hitter finished: {sent} succeeded, {failed} failed. "
+        "OTel traces should appear on AI Config Monitoring tabs within a minute or two."
+    )
 
 def financial_agent_monitoring_results_generator(client):
     LD_FLAG_KEY = "ai-config--togglebank-financial-advisor-agent"
@@ -1338,6 +1637,7 @@ def generate_results(project_key, api_key):
         
         # AI Configs monitoring
         ai_configs_monitoring_results_generator(client)
+        multi_agent_monitoring_results_generator(client)
         financial_agent_monitoring_results_generator(client)
         
         # All experiment result generators
@@ -1388,7 +1688,18 @@ def generate_results(project_key, api_key):
         risk_mgmt_db_thread.start()
         payment_healthy_thread.start()
         payment_failed_thread.start()
-        
+
+        # Fire real /api/chat requests at the deployed app so OTel traces
+        # populate the Traces section on each sub-agent AI Config's Monitoring
+        # tab. Runs in parallel with guarded release generators to avoid adding
+        # to the total provisioning time.
+        chat_hitter_thread = threading.Thread(
+            target=multi_agent_chat_hitter,
+            args=(DEMO_NAMESPACE,),
+            daemon=True,
+        )
+        chat_hitter_thread.start()
+
         logging.info("All guarded release generators are now running...")
         logging.info("Generators will stop when rollouts complete or after 20 minutes (safety cap).")
         logging.info("")
@@ -1403,6 +1714,7 @@ def generate_results(project_key, api_key):
         risk_mgmt_db_thread.join(timeout=MAX_GENERATOR_WAIT)
         payment_healthy_thread.join(timeout=MAX_GENERATOR_WAIT)
         payment_failed_thread.join(timeout=MAX_GENERATOR_WAIT)
+        chat_hitter_thread.join(timeout=300)
         
         still_running = [t for t in [risk_mgmt_thread, financial_agent_thread, investment_db_thread,
                                       investment_api_thread, risk_mgmt_db_thread, payment_healthy_thread,
