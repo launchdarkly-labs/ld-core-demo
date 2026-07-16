@@ -574,12 +574,16 @@ def multi_agent_chat_hitter(demo_namespace, num_conversations=15):
             resp = requests.post(
                 chat_url,
                 data=json.dumps(payload),
-                headers={"Content-Type": "application/json"},
                 timeout=90,
                 stream=True,
             )
-            for _ in resp.iter_content(chunk_size=8192):
-                pass
+            body_preview = ""
+            for chunk in resp.iter_content(chunk_size=8192):
+                if len(body_preview) < 400 and chunk:
+                    try:
+                        body_preview += chunk.decode("utf-8", errors="replace")
+                    except Exception:
+                        pass
             if resp.status_code < 400:
                 sent += 1
                 if (i + 1) % 5 == 0:
@@ -587,7 +591,8 @@ def multi_agent_chat_hitter(demo_namespace, num_conversations=15):
             else:
                 failed += 1
                 logging.warning(
-                    f"  Chat request returned HTTP {resp.status_code} for message {i + 1}"
+                    f"  Chat request returned HTTP {resp.status_code} for message {i + 1}: "
+                    f"{body_preview[:200]}"
                 )
         except Exception as e:
             failed += 1
@@ -609,16 +614,23 @@ def multi_agent_chat_hitter(demo_namespace, num_conversations=15):
             resp = requests.post(
                 self_heal_url,
                 data=json.dumps(payload),
-                headers={"Content-Type": "application/json"},
                 timeout=90,
                 stream=True,
             )
-            for _ in resp.iter_content(chunk_size=8192):
-                pass
+            body_preview = ""
+            for chunk in resp.iter_content(chunk_size=8192):
+                if len(body_preview) < 400 and chunk:
+                    try:
+                        body_preview += chunk.decode("utf-8", errors="replace")
+                    except Exception:
+                        pass
             if resp.status_code < 400:
                 sent += 1
             else:
                 failed += 1
+                logging.warning(
+                    f"  Self-heal chat returned HTTP {resp.status_code}: {body_preview[:200]}"
+                )
         except Exception as e:
             failed += 1
             logging.warning(f"  Self-heal chat request failed: {e}")
