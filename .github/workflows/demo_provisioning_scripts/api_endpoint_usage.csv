@@ -1,0 +1,53 @@
+Count,HTTP Method,Endpoint,Notes
+123,PATCH,https://app.launchdarkly.com/api/v2/flags/{proj}/{flag},
+100,GET,https://app.launchdarkly.com/api/v2/flags/{proj}/{flag},mostly internal existence/variation lookups before writes
+52,POST,https://app.launchdarkly.com/api/v2/flags/{proj},
+47,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/{key}/variations,
+41,GET,https://app.launchdarkly.com/api/v2/metrics/{proj}/{key},
+41,POST,https://app.launchdarkly.com/api/v2/metrics/{proj},
+31,PATCH,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/{key}/variations/{vkey},
+22,PUT,https://app.launchdarkly.com/api/v2/projects/{proj}/flags/{flag}/release/phases/{phaseId},
+19,PUT,https://app.launchdarkly.com/api/v2/projects/{proj}/flags/{flag}/release,
+19,GET,https://app.launchdarkly.com/api/v2/segments/{proj}/{env}/{key},
+19,POST,https://app.launchdarkly.com/api/v2/segments/{proj}/{env},
+19,PATCH,https://app.launchdarkly.com/api/v2/segments/{proj}/{env}/{key},
+18,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs,
+17,PUT,https://app.launchdarkly.com/api/v2/projects/{proj}/flags/{flag}/measured-rollout-configuration,
+15,GET,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/{key},
+15,GET,https://app.launchdarkly.com/api/v2/projects/{proj}/metric-groups/{key},
+15,PATCH,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/{key}/targeting,
+14,GET,https://app.launchdarkly.com/api/v2/projects/{proj}/release-pipelines/{key},
+12,GET,https://app.launchdarkly.com/api/v2/projects/{proj}/environments/{env}/experiments/{key},
+12,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/environments/{env}/experiments,
+12,PATCH,https://app.launchdarkly.com/api/v2/projects/{proj}/environments/{env}/experiments/{key},
+10,PATCH,https://app.launchdarkly.com/api/v2/flags/{proj}/{flag}?ignoreConflicts=true,
+8,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/agent-optimizations/{key}/results,
+8,PATCH,https://app.launchdarkly.com/api/v2/projects/{proj}/agent-optimizations/{key}/results/{id},
+7,POST,https://app.launchdarkly.com/api/v2/flags/{proj}/{flag}/copy,
+5,PUT,https://app.launchdarkly.com/api/v2/projects/{proj}/context-kinds/{key},
+5,GET,https://app.launchdarkly.com/api/v2/projects/{proj}/experimentation-settings,
+5,PUT,https://app.launchdarkly.com/api/v2/projects/{proj}/experimentation-settings,
+3,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/prompt-snippets,
+3,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/agent-optimizations,
+3,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/metric-groups,
+2,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-configs/model-configs,
+2,GET,https://app.launchdarkly.com/api/v2/projects/{key},
+1,POST,https://app.launchdarkly.com/api/v2/projects,
+1,PATCH,https://app.launchdarkly.com/api/v2/projects/{key}/environments/production,
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/environments,
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/environments/{env}/holdouts,
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/layers,
+1,PATCH,https://app.launchdarkly.com/api/v2/projects/{proj}/layers/{key},
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/alerts,
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/agent-graphs,
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/release-pipelines,
+1,DELETE,https://app.launchdarkly.com/api/v2/projects/{proj},
+1,POST,https://app.launchdarkly.com/api/v2/projects/{proj}/ai-tools,
+1,POST,https://app.launchdarkly.com/internal/projects/{proj}/datasets,internal (undocumented) LD API
+1,PUT,{presigned upload URL},S3 presigned URL returned by the datasets call
+1,POST,https://app.launchdarkly.com/internal/projects/{proj}/evaluations,internal (undocumented) LD API
+1,POST,https://app.launchdarkly.com/internal/projects/{proj}/playgrounds,internal (undocumented) LD API
+1,GET,https://app.launchdarkly.com/api/v2/members?filter={email},"constructor, once per run"
+1,GET,https://app.launchdarkly.com/api/v2/members/me,"constructor, once per run"
+
+741,,TOTAL (static call-site count; loops mean runtime is higher),

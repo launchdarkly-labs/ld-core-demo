@@ -1,21 +1,5 @@
-"""DemoBuilder — data-driven demo environment builder.
-
-All of the repetitive resource definitions (metrics, metric groups, flags,
-segments, context kinds, experiments and release-pipeline rollouts) live in
-the declarative tables in demo_resources.py.  To add or change one of those
-resources, edit the table — no new method or orchestrator registration is
-needed.
-
-Complex one-off builders (AI Configs, agents, judges, optimizations,
-playgrounds, datasets, holdouts, layers, template environment) are unchanged
-from the original implementation (kept as DemoBuilderv1.py).
-
-Equivalence of the produced LaunchDarkly API call sequence against
-DemoBuilderv1.py is verified by test_demobuilder_equivalence.py.
-"""
-
 import json
-import LDPlatform
+import LDPlatformv1
 import time
 import os
 import uuid
@@ -24,20 +8,6 @@ from dotenv import load_dotenv
 import subprocess
 # Load environment variables from .env file
 load_dotenv()
-
-
-# Resource definitions live in demo_resources.py — edit the tables there
-# to add or change demo resources.
-from demo_resources import (
-    METRICS,
-    METRIC_GROUPS,
-    FLAGS,
-    SEGMENTS,
-    CONTEXT_KINDS,
-    EXPERIMENTS,
-    PIPELINE_FLAGS,
-)
-
 
 class DemoBuilder:
     project_created = False
@@ -49,18 +19,21 @@ class DemoBuilder:
     experiment_created = False
     ai_config_created = False
     email = None
-    client_id = ''
-    sdk_key = ''
+    client_id = ""
+    sdk_key = ""
     phase_ids = {}
+
+    # InitializeDemoBuilder
     def __init__(self, api_key, email, api_key_user, project_key, project_name):
         self.api_key = api_key
         self.email = email
         self.api_key_user = api_key_user
         self.project_key = project_key
         self.project_name = project_name
-        self.ldproject = LDPlatform.LDPlatform(api_key, api_key_user, email)
+        self.ldproject = LDPlatformv1.LDPlatform(api_key, api_key_user, email)
         self.ldproject.project_key = project_key
-
+        
+    
     def build(self):
         self.create_project()
         self.create_segments()
@@ -92,7 +65,10 @@ class DemoBuilder:
         
         # self.setup_release_pipeline()  # Release Assistant removed (no longer supported)
         proc.wait()
-
+     
+############################################################################################################
+   
+    # Create the project
     def create_project(self):
         if self.ldproject.project_exists(self.project_key):
             self.ldproject.delete_project()
@@ -117,215 +93,155 @@ class DemoBuilder:
                 print(f"Unable to write to environment file: {e}")
         else:
             print("GITHUB_ENV not set")
-
-    # Create all the metrics (definitions live in the METRICS table above)
+            
+############################################################################################################     
+        
+    # Create all the metrics
     def create_metrics(self):
         print("Creating metrics...")
-        for spec in METRICS:
-            self.ldproject.create_metric(**spec)
+        self.metric_chatbot_positive()
+        self.metric_chatbot_negative()
+        self.metric_ai_accuracy()
+        self.metric_ai_source_fidelity()
+        self.metric_ai_relevance()
+        self.metric_ai_cost()
+        self.metric_financial_agent_accuracy()
+        self.metric_financial_agent_negative_feedback()
+        self.metric_in_cart_total_price()
+        self.metric_in_cart_total_items()
+        self.metric_database_error_rates()
+        self.metric_database_latency()
+        self.metric_api_error_rates()
+        self.metric_api_latency()
+        self.metric_store_accessed()
+        self.metric_items_added_to_cart()
+        self.metric_cart_accessed()
+        self.metric_store_checkout_completed()
+        self.metric_search_engine()
+        self.metric_government_signup_click()
+        self.metric_togglebank_signup_started()
+        self.metric_togglebank_initial_signup_completed()
+        self.metric_togglebank_personal_details_completed()
+        self.metric_togglebank_services_completed()
+        self.metric_togglebank_signup_flow_completed()
+        self.metric_government_rm_db_latency()
+        self.metric_government_rm_db_errors()
+        self.metric_government_rm_api_latency()
+        self.metric_government_rm_api_errors()
+        self.metric_payment_success_rate()
+        self.metric_payment_latency()
+        self.metric_payment_error_rate()
+        self.metric_payment_v2_success_rate()
+        self.metric_payment_v2_latency()
+        self.metric_payment_v2_error_rate()
+        self.metric_payment_interactive_success_rate()  # A4.1
+        self.metric_payment_interactive_latency()       # A4.1
+        self.metric_payment_interactive_error_rate()    # A4.1
+        self.metric_payment_transactions_processed()
+        self.metric_payment_revenue_protected()
+        self.metric_telemetry_error()                   # A8 - Observability
+        
         print("Done")
         self.metrics_created = True
 
-    # Create all the metric groups (definitions live in the METRIC_GROUPS table above)
+############################################################################################################      
+
+    # Create all the metric groups
     def create_metric_groups(self):
         if not self.metrics_created:
             print("Error: Metrics not created")
             return
         print("Creating metric groups...")
-        for spec in METRIC_GROUPS:
-            self.ldproject.create_metric_group(**spec)
+        self.metgroup_store_purchases()
+        self.metgroup_shorten_collection_page()
+        self.metgroup_togglebank_signup_funnel()
         print("Done")
         self.metric_groups_created = True
+        
+############################################################################################################
 
+    # Create all alerts
     def create_alerts(self):
         print("Creating alerts...")
         self.alert_notification_spam_error()
         print("Done")
+        
+############################################################################################################
 
-    # Create all the flags (definitions live in the FLAGS table above)
+    # Create all the flags
     def create_flags(self):
         if not self.project_created:
             print("Error: Project not created")
             return
         print("Creating flags...")
-        for spec in FLAGS:
-            if "custom" in spec:
-                getattr(self, spec["custom"])()
-                continue
-            self.ldproject.create_flag(**spec["flag"])
-            # Follow-up actions (guarded/progressive rollouts, metric attachments)
-            for method, args, kwargs in spec.get("post", []):
-                getattr(self.ldproject, method)(*args, **kwargs)
+        self.flag_wealth_management()
+        self.flag_notification_error_simulator()  # A1.1 - Observability
+        self.flag_federated_account()
+        # self.flag_togglebank_database_guarded_release()  # Old A3 - Commented out
+        # self.flag_togglebank_api_guarded_release()  # Old A4 - Commented out
+        self.flag_payment_engine_healthy_rollout()  # Now A3
+        self.flag_payment_engine_failed_rollout()  # Now A4
+        self.flag_payment_processing_interactive_demo()  # A4.1 - Interactive Demo
+        self.flag_togglebank_show_different_special_offer_string()
+        self.flag_togglebank_release_new_signup_promo()
+        self.flag_togglebank_swap_widget_positions()
+        self.flag_transaction_monitoring()  # A8 - Transaction Monitoring
+        self.flag_database_guarded_release()
+        self.flag_api_guarded_release()
+        #print(" - C1 - Experiment: AI Models for Chatbot")
+        #self.flag_exp_chatbot_ai_models()
+        self.flag_exp_suggestions_carousel()
+        self.flag_exp_promotion_banner()
+        self.flag_exp_new_search_engine()
+        self.flag_exp_shorten_collections_page()
+        self.flag_holdout_q4_increase_incart_price()
+        self.flag_database_migration()
+        
+        #Feature Flags for Release Pipeline
+        self.enhanced_user_authentication()
+        self.biometric_login_support()
+        self.customizable_account_dashboards()
+        self.real_time_transaction_alerts()
+        self.ai_powered_expense_categorization()
+        self.fraud_detection_alerts()
+        self.dark_mode_interface_option()
+        self.automated_savings_goals()
+        self.multi_currency_support()
+        self.peer_to_peer_payment_transfers()
+        self.credit_score_monitoring_tool()
+        self.voice_command_banking_assistant()
+        self.loan_application_tracker()
+        self.detailed_spending_insights_reports()
+        self.scheduled_bill_payments()
+        self.cross_border_payment_simplification()
+        self.merchant_rewards_integration()
+        self.virtual_card_issuance()
+        self.api_support_for_third_party_applications()
+        
+        #Government Demo Flags
+        self.flag_government_show_cards_component()
+        self.flag_government_patch_show_cards_component()
+        self.flag_government_show_hero_redesign()
+        self.flag_government_show_different_hero_image_string()
+        self.flag_government_rm_database_guarded_release()
+        self.flag_government_rm_api_guarded_release()
+        
+        #For Demo Engineering Team Use
+        self.demo_mode()
+        
+        # Temporary Feature Flags
+        self.beta_dark_mode()
+        self.experimental_payment_gateway()
+        self.limited_time_offer_banner()
+        self.early_access_feature_toggle()
+        self.debugging_mode_for_developers()
+
         print("Done")
         self.flags_created = True
 
-    def flag_federated_account(self):
-        """A2: Create flag with progressive rollout (7-day stages).
-
-        Extracts variation IDs directly from the create response to avoid
-        propagation delays that cause add_progressive_rollout to fail.
-        """
-        res = self.ldproject.create_flag(
-            "federatedAccounts",
-            "A2 - Release: Federated Account Component",
-            "Releasing new federated account component on ToggleBank",
-            [
-                {"value": True, "name": "Release Federated Accounts Component"},
-                {"value": False, "name": "Hide Federated Accounts Component"},
-            ],
-            tags=["release", "bank"],
-            on_variation=1,
-        )
-
-        control_var_id = None
-        target_var_id = None
-        if res and hasattr(res, 'text'):
-            try:
-                flag_data = json.loads(res.text)
-                for var in flag_data.get("variations", []):
-                    if var.get("value") is False:
-                        control_var_id = var.get("_id")
-                    elif var.get("value") is True:
-                        target_var_id = var.get("_id")
-            except (json.JSONDecodeError, TypeError):
-                pass
-
-        time.sleep(3)
-
-        if control_var_id and target_var_id:
-            url = (
-                "https://app.launchdarkly.com/api/v2/flags/"
-                + self.ldproject.project_key
-                + "/federatedAccounts?ignoreConflicts=true"
-            )
-            headers = {
-                "Authorization": self.ldproject.api_key,
-                "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
-            }
-            stages = [
-                {"allocation": 5000, "durationMillis": 604800000},
-                {"allocation": 10000, "durationMillis": 604800000},
-                {"allocation": 25000, "durationMillis": 604800000},
-                {"allocation": 50000, "durationMillis": 604800000},
-            ]
-            payload = {
-                "comment": "",
-                "environmentKey": "production",
-                "instructions": [
-                    {"kind": "turnFlagOn"},
-                    {
-                        "kind": "startAutomatedRelease",
-                        "releaseKind": "progressive",
-                        "originalVariationId": control_var_id,
-                        "targetVariationId": target_var_id,
-                        "randomizationUnit": "user",
-                        "stages": stages,
-                    },
-                ],
-            }
-            rollout_res = self.ldproject.getrequest("PATCH", url, headers=headers, json=payload)
-            if hasattr(rollout_res, 'status_code') and rollout_res.status_code in (200, 204):
-                print("  ✓ A2: Progressive rollout attached (flag ON, 7-day stages)")
-            else:
-                status = rollout_res.status_code if hasattr(rollout_res, 'status_code') else 'unknown'
-                body = rollout_res.text[:500] if hasattr(rollout_res, 'text') else str(rollout_res)
-                print(f"  ✗ A2: Progressive rollout FAILED (HTTP {status}): {body}")
-                self.ldproject.toggle_flag("federatedAccounts", "on", "production")
-        else:
-            print("  ⚠ A2: Could not extract variation IDs, falling back...")
-            time.sleep(5)
-            self.ldproject.add_progressive_rollout("federatedAccounts", "production")
-
-    def flag_payment_engine_failed_rollout(self):
-        """A4: Create flag with custom guarded rollout (25%/50% stages, 5-min windows).
-
-        Uses higher starting allocation so the chart has visible test data from
-        the beginning, and longer stage windows to allow enough time for the
-        data generator to produce a realistic curve before regression detection.
-        """
-        res = self.ldproject.create_flag(
-            "paymentProcessingV2FailedRollout",
-            "A4 - Release: Payment Processing v2.0 - Failed Rollout - ToggleBank",
-            "Releases new payment processing v2.0 system with enhanced transaction "
-            "handling. Demonstrates automatic rollback on error detection.",
-            [
-                {"value": True, "name": "Show Failed Rollout Scenario"},
-                {"value": False, "name": "Hide Scenario"},
-            ],
-            tags=["guarded-release", "bank", "scenario"],
-            on_variation=1,
-        )
-
-        self.ldproject.attach_metric_to_flag(
-            "paymentProcessingV2FailedRollout",
-            ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate",
-             "payment-transactions-processed", "payment-revenue-protected"],
-        )
-
-        time.sleep(3)
-        vars, defaults = self.ldproject.get_flag_variation_values("paymentProcessingV2FailedRollout")
-        control_var = ""
-        test_var = ""
-        for v in vars:
-            if v["value"] is False:
-                control_var = v["id"]
-            else:
-                test_var = v["id"]
-
-        if control_var and test_var:
-            url = (
-                "https://app.launchdarkly.com/api/v2/flags/"
-                + self.ldproject.project_key
-                + "/paymentProcessingV2FailedRollout?ignoreConflicts=true"
-            )
-            headers = {
-                "Authorization": self.ldproject.api_key,
-                "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
-            }
-            custom_stages = [
-                {"allocation": 10000, "durationMillis": 1200000},
-                {"allocation": 25000, "durationMillis": 1200000},
-            ]
-            payload = {
-                "comment": "",
-                "environmentKey": "production",
-                "instructions": [
-                    {"kind": "turnFlagOn"},
-                    {
-                        "kind": "startAutomatedRelease",
-                        "releaseKind": "guarded",
-                        "originalVariationId": control_var,
-                        "targetVariationId": test_var,
-                        "randomizationUnit": "user",
-                        "stages": custom_stages,
-                        "monitoredMetrics": [
-                            {"metricKey": "payment-v2-success-rate", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-latency", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-error-rate", "enabled": True, "rollbackOnRegression": True},
-                        ],
-                    },
-                ],
-            }
-            rollout_res = self.ldproject.getrequest("PATCH", url, headers=headers, json=payload)
-            if hasattr(rollout_res, 'status_code') and rollout_res.status_code in (200, 204):
-                print("  ✓ A4: Custom guarded rollout attached (10%→25%, 20-min stages)")
-            else:
-                status = rollout_res.status_code if hasattr(rollout_res, 'status_code') else 'unknown'
-                body = rollout_res.text[:500] if hasattr(rollout_res, 'text') else str(rollout_res)
-                print(f"  ✗ A4: Custom guarded rollout FAILED (HTTP {status}): {body}")
-                self.ldproject.add_guarded_rollout(
-                    "paymentProcessingV2FailedRollout", "production",
-                    metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
-                    days=4,
-                )
-        else:
-            print("  ⚠ A4: Could not get variation IDs, using default guarded rollout...")
-            self.ldproject.add_guarded_rollout(
-                "paymentProcessingV2FailedRollout", "production",
-                metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"],
-                days=4,
-            )
-
+############################################################################################################
+   
+    #Create AI Config
     def create_ai_config(self):
         print("Creating AI Config...")
         
@@ -359,61 +275,469 @@ class DemoBuilder:
         self.create_agent_optimizations()
         print("Done")
         self.ai_config_created = True
-
-    # Create all the segments (definitions live in the SEGMENTS table above)
+        
+############################################################################################################
+  
+    # Create all the segments
     def create_segments(self):
         print("Creating segments...")
-        for spec in SEGMENTS:
-            if "custom" in spec:
-                getattr(self, spec["custom"])()
-                continue
-            for env in spec["environments"]:
-                self.ldproject.create_segment(
-                    spec["key"], spec["name"], env, spec["description"]
-                )
-                for context_kind, attribute, op, values in spec["rules"]:
-                    self.ldproject.add_segment_rule(
-                        spec["key"], env, context_kind, attribute, op, values
-                    )
+        self.segment_mobile_users()
+        self.segment_development_team()
+        self.segment_launch_airways_members()
+        self.segment_launch_airways_platinum_members()
+        self.segment_beta_users()
+        self.segment_blocked_users()
+        self.segment_ai_fallback()
         print("Done")
         self.segments_created = True
 
-    # Create all the context kinds (definitions live in the CONTEXT_KINDS table above)
+############################################################################################################       
+    
+    # Create all the contexts
     def create_contexts(self):
         print("Creating contexts...")
-        for context_key, for_experiment in CONTEXT_KINDS:
-            self.ldproject.create_context(context_key, for_experiment=for_experiment)
+        self.context_audience()
+        self.context_location()
+        self.context_device()
+        self.context_experience()
         print("Done")
         self.contexts_created = True
 
-    # Create and run all the experiments (definitions live in the EXPERIMENTS table above)
-    def create_and_run_experiments(self):
-        for spec in EXPERIMENTS:
-            if "custom" in spec:
-                getattr(self, spec["custom"])()
-                continue
-            self.run_experiment(spec)
+############################################################################################################
 
-    def run_experiment(self, spec):
-        if not getattr(self, spec["requires"]):
-            print(f"Error: prerequisite '{spec['requires']}' not met")
+    ##################################################
+    # Experiments Definitions
+    # ----------------
+    # Each experiment is defined in its own function below
+    
+    ##################################################
+    # Create all the experiments         
+    
+    def create_and_run_experiments(self):
+        self.run_ecommerce_collection_banner_funnel_experiment()
+        self.run_ecommerce_upsell_component_feature_experiment()
+        self.run_ecommerce_shorten_collection_funnel_experiment()
+        self.run_ecommerce_new_search_engine_feature_experiment()
+        self.run_togglebank_ai_config_experiment()
+        self.run_togglebank_brand_voice_model_experiment()
+        self.run_togglebank_signup_funnel_experiment()
+        self.run_togglebank_special_offers_experiment()
+        self.run_togglebank_widget_position_experiment()
+        self.run_government_ai_config_experiment()
+        self.run_government_hero_redesign_experiment()
+        self.run_government_show_different_hero_image_experiment()
+        
+    def run_ecommerce_collection_banner_funnel_experiment(self):
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
             return
-        exp = spec["experiment"]
         print("Creating experiment: ")
-        if spec["toggle_flag"]:
-            self.ldproject.toggle_flag(*spec["toggle_flag"])
-        print(f" - {exp['exp_name']}")
-        metrics = [self.ldproject.exp_metric(key, is_group) for key, is_group in spec["metrics"]]
-        self.ldproject.create_experiment(metrics=metrics, **exp)
-        if spec["start_iteration"]:
-            self.ldproject.start_exp_iteration(exp["exp_key"], exp["exp_env"])
+        self.ldproject.toggle_flag(
+            "storeAttentionCallout",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Funnel Experiment: New Collection Promotion Banner")
+        self.create_ecommerce_collection_banner_funnel_experiment()
         print("Done creating experiment")
         self.experiment_created = True
+        
+    def create_ecommerce_collection_banner_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("store-purchases", True),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "new-collection-promotion-banner",
+            "(Bayesian) Funnel Experiment: New Collection Promotion Banner",
+            "production",
+            "storeAttentionCallout",
+            "If we adjust the header text to better copy we can drive greater attention into the stores in question, and greater conversion of checkout activities.",
+            metrics=metrics,
+            primary_key="store-purchases",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )   
+    
+    def run_ecommerce_upsell_component_feature_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "cartSuggestedItems",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: Suggested Items Carousel")
+        self.create_ecommerce_upsell_component_feature_experiment()
+        self.experiment_created = True
+        
+    def create_ecommerce_upsell_component_feature_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("in-cart-total-items", False),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "suggested-items-carousel",
+            "(Bayesian) Feature Experiment: Suggested Items Carousel",
+            "production",
+            "cartSuggestedItems",
+            "If we enable the new cart suggested items feature, we can drive greater upsell conversion.",
+            metrics=metrics,
+            primary_key="in-cart-total-items",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )  
+    
+    def run_ecommerce_shorten_collection_funnel_experiment(self):
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "release-new-shorten-collections-page",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Frequentist) Funnel Experiment: New Shorten Collection Pages")
+        self.create_ecommerce_shorten_collection_funnel_experiment()
+        self.ldproject.start_exp_iteration("new-shorten-collection-pages", "production")
+        print("Done")
+        self.experiment_created = True
+    
+    def create_ecommerce_shorten_collection_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("shorten-collection-page-metric-group", True), 
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "new-shorten-collection-pages",
+            "(Frequentist) Funnel Experiment: New Shorten Collection Pages",
+            "production",
+            "release-new-shorten-collections-page",
+            "We would want to reduce the collection page to the top three items to reduce customer decision fatigue in order to increase checkout and overall revenue.",
+            metrics=metrics,
+            primary_key="shorten-collection-page-metric-group",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )   
+
+    def run_ecommerce_new_search_engine_feature_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "release-new-search-engine",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Frequentist) Feature Experiment: New Search Engine")
+        self.create_ecommerce_new_search_engine_feature_experiment()
+        self.ldproject.start_exp_iteration("new-search-engine", "production")
+        self.experiment_created = True
+        
+    def create_ecommerce_new_search_engine_feature_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("search-engine-add-to-cart", False),
+            self.ldproject.exp_metric("in-cart-total-price", False)
+        ]
+        res = self.ldproject.create_experiment(
+            exp_key="new-search-engine",
+            exp_name="(Frequentist) Feature Experiment: New Search Engine",
+            exp_env="production",
+            flag_key="release-new-search-engine",
+            hypothesis="We want to a new search engine that is more ranks search results diffrently and have an Add To Cart button built inside the component in order to increase ease of adding items to cart and increasing revenue.",
+            metrics=metrics,
+            primary_key="search-engine-add-to-cart",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )  
+        
+    def run_togglebank_ai_config_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "ai-config--togglebot",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - Hallucination Detection: AI Model Performance Evaluation")
+        self.create_togglebank_ai_config_experiment()
+        self.ldproject.start_exp_iteration("hallucination-detection-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_ai_config_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-accuracy", False),
+            self.ldproject.exp_metric("ai-source-fidelity", False),
+            self.ldproject.exp_metric("ai-relevance", False),
+            self.ldproject.exp_metric("ai-cost", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "hallucination-detection-experiment",
+            "Hallucination Detection: AI Model Performance Evaluation",
+            "production",
+            "ai-config--togglebot",
+            "This experiment evaluates different AI models for their performance in preventing hallucinations and maintaining response quality. We measure accuracy, source fidelity, relevance, cost efficiency, and user feedback to determine which model configuration provides the most reliable and trustworthy responses while maintaining cost effectiveness.",
+            metrics=metrics,
+            primary_key="ai-accuracy",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_brand_voice_model_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        print(" - Brand Voice Model Comparison: Multi-Agent Prompt Impact")
+        self.create_togglebank_brand_voice_model_experiment()
+        self.ldproject.start_exp_iteration("brand-voice-model-comparison", "production")
+        self.experiment_created = True
+
+    def create_togglebank_brand_voice_model_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-accuracy", False),
+            self.ldproject.exp_metric("ai-source-fidelity", False),
+            self.ldproject.exp_metric("ai-relevance", False),
+            self.ldproject.exp_metric("ai-cost", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "brand-voice-model-comparison",
+            "Brand Voice Model Comparison: Multi-Agent Prompt Impact",
+            "production",
+            "ai-config--togglebot-brand-voice",
+            "This experiment compares four AI models (Nova Pro, Haiku, GPT-5 Mini, Sonnet 4.6) powering the Brand Voice agent in our multi-agent pipeline. We measure accuracy, source fidelity, relevance, cost, and user feedback to determine which model delivers the best brand-consistent responses while balancing quality and cost.",
+            metrics=metrics,
+            primary_key="ai-accuracy",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_signup_funnel_experiment(self):
+        if not self.metric_groups_created:
+            print("Error: Metric groups not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "releaseNewSignupPromo",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Funnel Experiment: ToggleBank Signup Flow")
+        self.create_togglebank_signup_funnel_experiment()
+        self.ldproject.start_exp_iteration("togglebank-signup-funnel-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_signup_funnel_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("togglebank-signup-funnel", True)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-signup-funnel-experiment",
+            "(Bayesian) Funnel Experiment: ToggleBank Multi-Step Signup Flow",
+            "production",
+            "releaseNewSignupPromo",
+            "Testing which marketing banner offer (credit card, mortgage, or cashback) drives the most signup conversions in ToggleBank.",
+            metrics=metrics,
+            primary_key="togglebank-signup-funnel",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_special_offers_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showDifferentSpecialOfferString",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Special Offers")
+        self.create_togglebank_special_offers_experiment()
+        self.ldproject.start_exp_iteration("togglebank-special-offers-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_special_offers_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-special-offers-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Special Offers Rotation",
+            "production",
+            "showDifferentSpecialOfferString",
+            "Testing which special offer variation (credit card, car loan, or platinum rewards) generates more signup conversions.",
+            metrics=metrics,
+            primary_key="signup-started",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_togglebank_widget_position_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "swapWidgetPositions",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: ToggleBank Widget Position")
+        self.create_togglebank_widget_position_experiment()
+        self.ldproject.start_exp_iteration("togglebank-widget-position-experiment", "production")
+        self.experiment_created = True
+        
+    def create_togglebank_widget_position_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-started", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "togglebank-widget-position-experiment",
+            "(Bayesian) Feature Experiment: ToggleBank Widget Position Swap",
+            "production",
+            "swapWidgetPositions",
+            "Testing whether swapping the positions of mortgage and retirement widgets improves signup conversion rates.",
+            metrics=metrics,
+            primary_key="signup-started",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+    def run_government_ai_config_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "ai-config--publicbot",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - AI Config: PublicBot Experiment")
+        self.create_government_ai_config_experiment()
+        self.ldproject.start_exp_iteration("government-ai-config-experiment", "production")
+        self.experiment_created = True
+        
+    def create_government_ai_config_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("ai-chatbot-positive-feedback", False),
+            self.ldproject.exp_metric("ai-chatbot-negative-feedback", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "government-ai-config-experiment",
+            "AI Config: PublicBot Experiment - Public Sector",
+            "production",
+            "ai-config--publicbot",
+            "Which AI Models are providing best experiences to users and delivering best responses for government services",
+            metrics=metrics,
+            primary_key="ai-chatbot-positive-feedback",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=1
+        )
+
+    def run_government_hero_redesign_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showHeroRedesign",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Bayesian) Feature Experiment: Show Hero Redesign")
+        self.create_government_hero_redesign_experiment()
+        self.ldproject.start_exp_iteration("government-hero-redesign", "production")
+        self.experiment_created = True
+        
+    def create_government_hero_redesign_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-clicked", False)
+        ]
+        res = self.ldproject.create_experiment(
+            "government-hero-redesign",
+            "(Bayesian) Feature Experiment: Show Hero Redesign",
+            "production",
+            "showHeroRedesign",
+            "Testing whether the new hero design leads to increased signup conversion on the government demo page",
+            metrics=metrics,
+            primary_key="signup-clicked",
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+        
+    def run_government_show_different_hero_image_experiment(self):
+        if not self.metrics_created:
+            print("Error: Metric not created")
+            return
+        print("Creating experiment: ")
+        self.ldproject.toggle_flag(
+            "showDifferentHeroImageString",
+            "on",
+            "production",
+            "Turn on flag for experiment",
+        )
+        print(" - (Frequentist) Feature Experiment: Show Different Hero Image")
+        self.create_government_show_different_hero_image_experiment()
+        self.ldproject.start_exp_iteration("government-show-different-hero-image", "production")
+        self.experiment_created = True
+        
+    def create_government_show_different_hero_image_experiment(self):
+        metrics = [
+            self.ldproject.exp_metric("signup-clicked", False)
+        ]
+        res = self.ldproject.create_experiment(
+            exp_key="government-show-different-hero-image",
+            exp_name="(Frequentist) Feature Experiment: Show Different Hero Image",
+            exp_env="production",
+            flag_key="showDifferentHeroImageString",
+            hypothesis="Testing different hero images to see which leads to increased signup conversion on the government demo page",
+            metrics=metrics,
+            primary_key="signup-clicked",
+            methodology="frequentist",
+            analysisConfig={"significanceThreshold": "5", "testDirection": "two-sided"},
+            attributes=["device", "location", "tier", "operating_system"],
+            flagConfigVersion=2
+        )
+
+############################################################################################################
+
+    ##################################################
+    # Holdout Definitions
+    # ----------------
+    # Each holdout is defined in its own function below
+    
+    ##################################################
+    # Create all the experiment holdouts   
 
     def create_and_run_holdout(self):
         print(" - Creating holdout: ")
         self.run_q4_increase_incart_price_holdout()
-
+     
     def run_q4_increase_incart_price_holdout(self):
         metrics = [
                 {
@@ -433,6 +757,15 @@ class DemoBuilder:
             attributes=["tier"],
             prerequisiteflagkey="q-4-increase-average-total-in-cart-price-ld-holdout"
         )
+############################################################################################################
+
+    ##################################################
+    # Layers Definitions
+    # ----------------
+    # Each layer is defined in its own function below
+    
+    ##################################################
+    # Create all the experiment layers     
 
     def create_and_run_layer(self):
         print(" - Creating checkout_experiment layer: ")
@@ -471,11 +804,17 @@ class DemoBuilder:
             environmentKey="production",
             instructions=instructionsLayer
         )
+# ############################################################################################################
 
+    # Add user id to flags    
     def update_add_userid_to_flags(self):
         print("Adding maintainerId to flags", end="...")
         self.add_userid_to_flags()
         print("Done")
+        
+##################################################
+    # Attach Maintainer to Flags
+    ##################################################
 
     def add_userid_to_flags(self):
         res = self.ldproject.add_maintainer_to_flag("wealthManagement")
@@ -539,14 +878,17 @@ class DemoBuilder:
         res = self.ldproject.add_maintainer_to_flag("riskmgmtbureauDBGuardedRelease")
         res = self.ldproject.add_maintainer_to_flag("riskmgmtbureauAPIGuardedRelease")
         res = self.ldproject.add_maintainer_to_flag("ai-config--publicbot")
+# ############################################################################################################
 
+    # Update project settings
     def project_settings(self):
         print("Updating project settings:")
         print("  - Toggling flags")
         self.toggle_flags()
         print("  - Add targeting")
         self.add_targeting_rules()
-
+        
+        
     def add_targeting_rules(self):
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
@@ -565,7 +907,7 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("patchShowCardsSectionComponent", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauDBGuardedRelease", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("riskmgmtbureauAPIGuardedRelease", "development-team", "production")
-
+        
     def toggle_flags(self):
         res = self.ldproject.toggle_flag(
             "financialDBMigration",
@@ -615,7 +957,8 @@ class DemoBuilder:
             "production",
             "Turn on flag for API support for third-party applications",
         )
-
+        
+        
     def enable_csa_shadow_ai_feature_flags(self):
         
         res = self.ldproject.update_flag_client_side_availability("ai-config--destination-picker-new-ai-model")
@@ -631,7 +974,521 @@ class DemoBuilder:
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-brand-voice")
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-new-model-chatbot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--publicbot")
+        
+############################################################################################################
 
+    ##################################################
+    # Metrics Definitions
+    # ----------------
+    # Each metric is defined in its own function below
+    ##################################################
+        
+    def metric_chatbot_positive(self):
+        res = self.ldproject.create_metric(
+            "ai-chatbot-positive-feedback",
+            "AI Chatbot Positive Feedback",
+            "ai-chatbot-positive-feedback",
+            "This metric will track positive feedback given to AI Model used in chatbot for the good responses provided.",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_chatbot_negative(self):
+        res = self.ldproject.create_metric(
+            "ai-chatbot-negative-feedback",
+            "AI Chatbot Negative Feedback",
+            "ai-chatbot-negative-feedback",
+            "This metric will track negative feedback given to AI Model used in chatbot for the bad responses provided.",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_ai_accuracy(self):
+        res = self.ldproject.create_metric(
+            "ai-accuracy",
+            "AI Response Accuracy",
+            "ai-accuracy",
+            "This metric will track the factual accuracy of AI responses as evaluated by the LLM judge.",
+            numeric=True,
+            unit="%",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment", "ai-metrics"]
+        )
+    
+    def metric_ai_source_fidelity(self):
+        res = self.ldproject.create_metric(
+            "ai-source-fidelity",
+            "AI Source Fidelity",
+            "ai-source-fidelity", 
+            "This metric will track how well AI responses adhere to source material and factual grounding.",
+            numeric=True,
+            unit="%",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment", "ai-metrics"]
+        )
+    
+    def metric_ai_relevance(self):
+        res = self.ldproject.create_metric(
+            "ai-relevance",
+            "AI Response Relevance",
+            "ai-relevance",
+            "This metric will track how relevant AI responses are to the user's query.",
+            numeric=True,
+            unit="%", 
+            success_criteria="HigherThanBaseline",
+            tags=["experiment", "ai-metrics"]
+        )
+    
+    def metric_ai_cost(self):
+        res = self.ldproject.create_metric(
+            "ai-cost",
+            "AI Response Cost",
+            "ai-cost",
+            "This metric will track the cost per AI response based on token usage and model pricing.",
+            numeric=True,
+            unit="$",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment", "ai-metrics"]
+        )
+    
+    def metric_financial_agent_accuracy(self):
+        res = self.ldproject.create_metric(
+            "financial-agent-accuracy",
+            "Financial Agent Accuracy",
+            "financial-agent-accuracy",
+            "This metric will track the accuracy of financial advice provided by the Financial Advisor Agent.",
+            numeric=True,
+            unit="%",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment", "ai-metrics", "financial-advisor"]
+        )
+    
+    def metric_financial_agent_negative_feedback(self):
+        res = self.ldproject.create_metric(
+            "financial-agent-negative-feedback",
+            "Financial Agent Negative Feedback",
+            "financial-agent-negative-feedback",
+            "This metric will track negative feedback given to the Financial Advisor Agent for poor financial advice.",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment", "ai-metrics", "financial-advisor"]
+        )
+    
+    def metric_in_cart_total_price(self):
+        res = self.ldproject.create_metric(
+            "in-cart-total-price",
+            "In-Cart Total Price",
+            "in-cart-total-price",
+            "This metric will track the total price of items in the cart.",
+            numeric=True,
+            unit="$",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_in_cart_total_items(self):
+        res = self.ldproject.create_metric(
+            "in-cart-total-items",
+            "In-Cart Total Items",
+            "in-cart-total-items",
+            metric_description="This metric will track the number of up-sell items in the cart.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_database_error_rates(self):
+        res = self.ldproject.create_metric(
+            "recent-trades-db-errors",
+            "Database Error Rates",
+            "recent-trades-db-errors",
+            "This metric will track the error rates in the database",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"]
+        )
+        
+    def metric_database_latency(self):
+        res = self.ldproject.create_metric(
+            "recent-trades-db-latency",
+            "Database Latency",
+            "recent-trades-db-latency",
+            "This metric will track the latency in the database",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_api_error_rates(self):
+        res = self.ldproject.create_metric(
+            "stocks-api-error-rates",
+            "API Error Rates",
+            "stocks-api-error-rates",
+            "This metric will track the error rates in the API",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"]
+        )
+        
+    def metric_api_latency(self):
+        res = self.ldproject.create_metric(
+            "stocks-api-latency",
+            "API Latency",
+            "stocks-api-latency",
+            "This metric will track the latency in the API",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_store_accessed(self):
+        res = self.ldproject.create_metric(
+            "store-accessed",
+            "Store Accessed",
+            "store-accessed",
+            "This metric will track the number of times the store is accessed",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_items_added_to_cart(self):
+        res = self.ldproject.create_metric(
+            "item-added",
+            "Items Added to Cart",
+            "item-added",
+            "This metric will track the number of items added to the cart",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_cart_accessed(self):
+        res = self.ldproject.create_metric(
+            "cart-accessed",
+            "Store Cart Accessed",
+            "cart-accessed",
+            "This metric will track the number of times the cart is accessed",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+    
+    def metric_store_checkout_completed(self):
+        res = self.ldproject.create_metric(
+            "customer-checkout",
+            "Store Checkout Completed",
+            "customer-checkout",
+            "This metric will track the number of times the store checkout is completed",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["experiment"]
+        )
+
+    def metric_search_engine(self):
+        res = self.ldproject.create_metric(
+            metric_key="search-engine-add-to-cart",
+            metric_name="New Search Engine Add To Cart is Clicked",
+            event_key="search-engine-add-to-cart",
+            metric_description="This metric will track the number of times the new add to cart button within the new search engine is clicked.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["experiment"]
+        )
+
+    def metric_government_signup_click(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-clicked",
+            metric_name="Signup Click in Home Page - Public Sector",
+            event_key="signup clicked",
+            metric_description="This metric will track signup button clicks on the government home page for the Public Sector demo.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["public-sector"]
+        )
+
+    def metric_togglebank_signup_started(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-started",
+            metric_name="ToggleBank Signup Started",
+            event_key="signup-started",
+            metric_description="This metric tracks when users click Join Now to start the signup process in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_initial_signup_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="initial-signup-completed",
+            metric_name="ToggleBank Initial Signup Completed",
+            event_key="initial-signup-completed", 
+            metric_description="This metric tracks when users complete the first signup step (email/password) in ToggleBank.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_personal_details_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-personal-details-completed",
+            metric_name="ToggleBank Personal Details Completed",
+            event_key="signup-personal-details-completed",
+            metric_description="This metric tracks when users complete the personal details step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_services_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-services-completed",
+            metric_name="ToggleBank Services Selection Completed",
+            event_key="signup-services-completed",
+            metric_description="This metric tracks when users complete the services selection step in ToggleBank signup.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+    def metric_togglebank_signup_flow_completed(self):
+        res = self.ldproject.create_metric(
+            metric_key="signup-flow-completed",
+            metric_name="ToggleBank Full Signup Flow Completed", 
+            event_key="signup-flow-completed",
+            metric_description="This metric tracks when users complete the entire ToggleBank signup flow and are logged in.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            randomization_units=["user"],
+            tags=["bank", "signup-funnel"]
+        )
+
+
+
+
+
+    def metric_government_rm_db_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-db-latency",
+            metric_name="Risk Management Database Latency - Public Sector",
+            event_key="rm-db-latency",
+            metric_description="This metric will track database latency for the Risk Management Database in the Public Sector demo.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_db_errors(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-db-errors",
+            metric_name="Risk Management Database Errors - Public Sector",
+            event_key="rm-db-errors",
+            metric_description="This metric will track database errors for the Risk Management Database in the Public Sector demo.",
+            numeric=True,
+            unit="errors",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_api_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-api-latency",
+            metric_name="Risk Management API Latency - Public Sector",
+            event_key="rm-api-latency",
+            metric_description="This metric will track API latency for the Risk Management API in the Public Sector demo.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            randomization_units=["user"],
+            tags=["guarded-release", "public-sector"]
+        )
+
+    def metric_government_rm_api_errors(self):
+        res = self.ldproject.create_metric(
+            metric_key="rm-api-errors",
+            metric_name="Risk Management API Errors - Public Sector",
+            event_key="rm-api-errors",
+            metric_description="This metric will track API errors for the Risk Management API in the Public Sector demo.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "public-sector"]
+        )
+        
+    def metric_payment_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-success-rate",
+            metric_name="Payment Success Rate - ToggleBank",
+            event_key="payment-success-rate",
+            metric_description="Tracks successful payment transactions in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-latency",
+            metric_name="Payment Latency - ToggleBank",
+            event_key="payment-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment engine upgrade.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-error-rate",
+            metric_name="Payment Error Rate - ToggleBank",
+            event_key="payment-error-rate",
+            metric_description="Tracks payment processing errors in the payment engine upgrade.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-success-rate",
+            metric_name="Payment v2 Success Rate - ToggleBank",
+            event_key="payment-v2-success-rate",
+            metric_description="Tracks successful payment transactions in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-latency",
+            metric_name="Payment v2 Latency - ToggleBank",
+            event_key="payment-v2-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the payment processing v2.0 system.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_v2_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-v2-error-rate",
+            metric_name="Payment v2 Error Rate - ToggleBank",
+            event_key="payment-v2-error-rate",
+            metric_description="Tracks payment processing errors in the payment processing v2.0 system.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment"]
+        )
+    
+    def metric_payment_interactive_success_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-success-rate",
+            metric_name="Payment Interactive Demo Success Rate - ToggleBank",
+            event_key="payment-interactive-success-rate",
+            metric_description="Tracks successful payment transactions in the interactive demo system.",
+            numeric=False,
+            unit="",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_interactive_latency(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-latency",
+            metric_name="Payment Interactive Demo Latency - ToggleBank",
+            event_key="payment-interactive-latency",
+            metric_description="Tracks payment processing latency in milliseconds for the interactive demo system.",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_interactive_error_rate(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-interactive-error-rate",
+            metric_name="Payment Interactive Demo Error Rate - ToggleBank",
+            event_key="payment-interactive-error-rate",
+            metric_description="Tracks payment processing errors in the interactive demo system.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "payment", "interactive-demo"]
+        )
+    
+    def metric_payment_transactions_processed(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-transactions-processed",
+            metric_name="Payment Transactions Processed - ToggleBank",
+            event_key="payment-transactions-processed",
+            metric_description="Tracks total number of payment transactions successfully processed.",
+            numeric=True,
+            unit="transactions",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
+        )
+    
+    def metric_payment_revenue_protected(self):
+        res = self.ldproject.create_metric(
+            metric_key="payment-revenue-protected",
+            metric_name="Payment Revenue Protected - ToggleBank",
+            event_key="payment-revenue-protected",
+            metric_description="Tracks estimated revenue protected by automatic rollback during payment engine failures.",
+            numeric=True,
+            unit="USD",
+            success_criteria="HigherThanBaseline",
+            tags=["guarded-release", "bank", "payment", "business"]
+        )
+    
+    def metric_telemetry_error(self):
+        res = self.ldproject.create_metric(
+            metric_key="telemetry-error-metric",
+            metric_name="Telemetry Errors",
+            event_key="$ld:telemetry:error",
+            metric_description="Tracks frontend errors captured by the Observability SDK for regression debugging.",
+            numeric=False,
+            unit="",
+            success_criteria="LowerThanBaseline",
+            tags=["guarded-release", "bank", "observability", "transaction-monitoring"]
+        )
+        
+############################################################################################################
+
+    ##################################################
+    # Alert Definitions
+    ##################################################
+    
     def alert_notification_spam_error(self):
         res = self.ldproject.create_alert(
             alert_name="Enhanced Notification Center - Error Detected",
@@ -640,6 +1497,14 @@ class DemoBuilder:
             flag_key="enhancedNotificationCenter",
             environment="production"
         )
+        
+############################################################################################################
+
+    ##################################################
+    # AI Config Definitions
+    # ----------------
+    # Each AI Config and its versions is defined in its own function below
+    ##################################################        
 
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
@@ -1118,13 +1983,13 @@ class DemoBuilder:
         nova_pro_config_key = "Bedrock.amazon.nova-pro-v1:0"
 
         haiku_config = {
-            "modelName": "anthropic.claude-haiku-4-5-20251001-v1:0",
+            "modelName": "anthropic.claude-3-5-haiku-20241022-v1:0",
             "parameters": {
                 "maxTokens": 1000,
                 "temperature": 0.5
             }
         }
-        haiku_config_key = "Bedrock.anthropic.claude-haiku-4-5-20251001-v1:0"
+        haiku_config_key = "Bedrock.anthropic.claude-3-5-haiku-20241022-v1:0"
 
         gpt5_mini_config = {
             "modelName": "gpt-5-mini",
@@ -3603,6 +4468,123 @@ class DemoBuilder:
         except Exception as e:
             print(f"Warning: Failed to setup guarded rollout for Financial Advisor Agent: {e}")
 
+############################################################################################################
+
+    ##################################################
+    # Metrics Group Definitions
+    # ----------------
+    # Each metric group is defined in its own function below
+    ################################################## 
+    
+    def metgroup_store_purchases(self):
+        res = self.ldproject.create_metric_group(
+            "store-purchases",
+            "Store Purchases",
+            [
+                {"key": "store-accessed", "nameInGroup": "1"},
+                {"key": "item-added", "nameInGroup": "2"},
+                {"key": "cart-accessed", "nameInGroup": "3"},
+                {"key": "customer-checkout", "nameInGroup": "4"},
+            ],
+            kind="funnel",
+            description="This metric group will track the store purchases",
+        )
+           
+    def metgroup_shorten_collection_page(self):
+        res = self.ldproject.create_metric_group(
+            "shorten-collection-page-metric-group",
+            "Shorten Collection Page Metric Group",
+            [
+                {"key": "item-added", "nameInGroup": "1"},
+                {"key": "cart-accessed", "nameInGroup": "2"},
+                {"key": "customer-checkout", "nameInGroup": "3"},
+            ],
+            kind="funnel",
+            description="This metric group will track the store purchases relating to the new shorten collection page.",
+        )
+           
+    def metgroup_togglebank_signup_funnel(self):
+        res = self.ldproject.create_metric_group(
+            "togglebank-signup-funnel",
+            "ToggleBank Signup Funnel",
+            [
+                {"key": "signup-started", "nameInGroup": "1"},
+                {"key": "initial-signup-completed", "nameInGroup": "2"},
+                {"key": "signup-personal-details-completed", "nameInGroup": "3"},
+                {"key": "signup-services-completed", "nameInGroup": "4"},
+                {"key": "signup-flow-completed", "nameInGroup": "5"},
+            ],
+            kind="funnel",
+            description="This metric group will track the ToggleBank signup funnel conversion flow.",
+        )
+           
+        
+############################################################################################################
+
+    ##################################################
+    # Flag Definitions
+    # ----------------
+    # Each flag is defined in its own function below
+    ##################################################
+
+    def flag_wealth_management(self):
+        res = self.ldproject.create_flag(
+            "wealthManagement",
+            "A1 - Release: Wealth Management Component",
+            "Releasing new wealth management component on ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Release Wealth Management Component"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Wealth Management Component"
+                }
+            ],
+            tags=["release", "bank"],
+            on_variation=1,
+        )
+
+    def flag_notification_error_simulator(self):
+        res = self.ldproject.create_flag(
+            "enhancedNotificationCenter",
+            "A1.1 - Release: Enhanced Notification Center - ToggleBank",
+            "Releases new enhanced notification center with real-time updates and improved UI",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Enhanced Notification Center"
+                },
+                {
+                    "value": False,
+                    "name": "Use Legacy Notifications"
+                }
+            ],
+            tags=["release", "bank", "observability"],
+            on_variation=1,
+        )
+
+    def flag_federated_account(self):
+        res = self.ldproject.create_flag(
+            "federatedAccounts",
+            "A2 - Release: Federated Account Component",
+            "Releasing new federated account component on ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Release Federated Accounts Component"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Federated Accounts Component"
+                }
+            ],
+            tags=["release", "bank"],
+            on_variation=1,
+        )
+        res = self.ldproject.add_progressive_rollout("federatedAccounts", "production")
+
     def flag_togglebank_database_guarded_release(self):
         res = self.ldproject.create_flag(
             "togglebankDBGuardedRelease",
@@ -3622,7 +4604,7 @@ class DemoBuilder:
             on_variation=1,
         )
         res = self.ldproject.add_guarded_rollout("togglebankDBGuardedRelease", "production", metrics=["recent-trades-db-latency","recent-trades-db-errors"], days=1)
-
+    
     def flag_togglebank_api_guarded_release(self):
         res = self.ldproject.create_flag(
             "togglebankAPIGuardedRelease",
@@ -3642,7 +4624,123 @@ class DemoBuilder:
             on_variation=0,
         )
         res = self.ldproject.add_guarded_rollout("togglebankAPIGuardedRelease", "production", metrics=["stocks-api-latency","stocks-api-error-rates"], days=1)
-
+        
+    def flag_payment_engine_healthy_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentEngineHealthyRollout",
+            "A3 - Release: Payment Engine Upgrade - Healthy Rollout - ToggleBank",
+            "Releases upgraded payment engine with improved performance and reliability. Demonstrates smooth deployment with healthy metrics.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Healthy Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentEngineHealthyRollout", ["payment-success-rate", "payment-latency", "payment-error-rate", "payment-transactions-processed"])
+        res = self.ldproject.add_guarded_rollout("paymentEngineHealthyRollout", "production", metrics=["payment-success-rate", "payment-latency", "payment-error-rate"], days=1)
+        
+    def flag_payment_engine_failed_rollout(self):
+        res = self.ldproject.create_flag(
+            "paymentProcessingV2FailedRollout",
+            "A4 - Release: Payment Processing v2.0 - Failed Rollout - ToggleBank",
+            "Releases new payment processing v2.0 system with enhanced transaction handling. Demonstrates automatic rollback on error detection.",
+            [
+                {
+                    "value": True,
+                    "name": "Show Failed Rollout Scenario"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Scenario"
+                }
+            ],
+            tags=["guarded-release", "bank", "scenario"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingV2FailedRollout", ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate", "payment-transactions-processed", "payment-revenue-protected"])
+        res = self.ldproject.add_guarded_rollout("paymentProcessingV2FailedRollout", "production", metrics=["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"], days=1)
+        
+    def flag_payment_processing_interactive_demo(self):
+        res = self.ldproject.create_flag(
+            "paymentProcessingInteractiveDemo",
+            "A4.1 - Interactive Demo: Payment Processing - ToggleBank",
+            "Interactive flag for live demos of guarded rollouts. Can be manually configured for healthy OR failed scenarios during presentations.",
+            [
+                {
+                    "value": True,
+                    "name": "Enable New Payment Processing"
+                },
+                {
+                    "value": False,
+                    "name": "Use Legacy Payment Processing"
+                }
+            ],
+            tags=["guarded-release", "bank", "demo", "interactive"],
+            on_variation=1,
+        )
+        # attach unique metrics for A4.1
+        res = self.ldproject.attach_metric_to_flag("paymentProcessingInteractiveDemo", ["payment-interactive-success-rate", "payment-interactive-latency", "payment-interactive-error-rate", "payment-transactions-processed", "payment-revenue-protected", "$ld:telemetry:error"])
+        
+    def flag_database_migration(self):
+        res = self.ldproject.create_flag(
+            "financialDBMigration",
+            "E1 - Migration: Database (Migration Tool)",
+            "This feature flag will trigger the database migration tool in LaunchAirways",
+            purpose="migration",
+            migration_stages=6,
+            tags=["release", "migration-assistant", "optional"],
+            temporary=True
+        )
+            
+    def flag_database_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "investment-recent-trade-db",
+            "B1 - Release: New Database (Guarded Release) - Investment",
+            "Release new database for recent trading component",
+            [
+                {
+                    "value": True,
+                    "name": "Add New Database"
+                },
+                {
+                    "value": False,
+                    "name": "Remove New Database"
+                }
+            ],
+            tags=["guarded-release", "investment"],
+            on_variation=1,
+        )
+        res = self.ldproject.attach_metric_to_flag("investment-recent-trade-db",["recent-trades-db-latency","recent-trades-db-errors"])
+        res = self.ldproject.add_guarded_rollout("investment-recent-trade-db", "production", days=1)
+    
+    def flag_api_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "release-new-investment-stock-api",
+            "B2 - Release: New API (Guarded Release) - Investment",
+            "Release new API for stocks component",
+            [
+                {
+                    "value": True,
+                    "name": "Release New API 2.0"
+                },
+                {
+                    "value": False,
+                    "name": "Revert to Old API 1.0"
+                }
+            ],
+            tags=["guarded-release", "investment"],
+            on_variation=0,
+        )
+        res = self.ldproject.attach_metric_to_flag("release-new-investment-stock-api",["stocks-api-latency","stocks-api-error-rates"]) 
+        res = self.ldproject.add_guarded_rollout("release-new-investment-stock-api", "production", days=1)             
+    
     def flag_exp_chatbot_ai_models(self):
         res = self.ldproject.create_flag(
             "ai-chatbot",
@@ -3677,18 +4775,1330 @@ class DemoBuilder:
             on_variation=0,
             off_variation=1,
         )
+        
+    def flag_exp_promotion_banner(self):
+        res = self.ldproject.create_flag(
+            "storeAttentionCallout",
+            "D2 - Funnel Experiment: Promotion Banner",
+            "Releasing New Collection Promotion Banner for the Galaxy Marketplace",
+            [
+                {
+                    "value": "New Items",
+                    "name": "(Control) New Items"
+                },
+                {
+                    "value": "Sale",
+                    "name": "Sale"
+                },
+                {
+                    "value": "Final Hours!",
+                    "name": "Final Hours!"
+                }
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+        
+    def flag_exp_suggestions_carousel(self):
+        res = self.ldproject.create_flag(
+            "cartSuggestedItems",
+            "D1 - Feature Experiment: Suggested Items Carousel",
+            "Releasing New Suggested Items Carousel Component for the cart component in Galaxy Marketplace",
+            [
+                {
+                    "value": True,
+                    "name": "New Suggested Items Carousel"
+                },
+                {
+                    "value": False,
+                    "name": "Old Continue Shopping Button"
+                }
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_exp_shorten_collections_page(self):
+        res = self.ldproject.create_flag(
+            "release-new-shorten-collections-page",
+            "D4 - Funnel Experiment: New Shorten Collection Pages",
+            "Release New Shorten Collections Page in Galaxy Marketplace",
+            [
+                {
+                    "value": "new-shorten-collections-page",
+                    "name": "New Shorten Collections Page"
+                },
+                {
+                    "value": "old-long-collections-page",
+                    "name": "Old Longer Collections Page"
+                }
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_exp_new_search_engine(self):
+        res = self.ldproject.create_flag(
+            "release-new-search-engine",
+            "D3 - Feature Experiment: New Search Engine",
+            "Release New Search Engine in Galaxy Marketplace",
+            [
+                 {
+                    "value": True,
+                    "name": "New Search Engine"
+                },
+                {
+                    "value": False,
+                    "name": "Old Search Engine"
+                },
+            ],
+            tags=["experiment", "ecommerce"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_holdout_q4_increase_incart_price(self):
+        res = self.ldproject.create_flag(
+            "q-4-increase-average-total-in-cart-price-ld-holdout",
+            "Flag to Create Q4 Increase Total Price Holdout",
+            "Description: Flag to create holdout for q4 increase incart price",
+            [
+                 {
+                    "value": True,
+                    "name": "In holdout"
+                },
+                {
+                    "value": False,
+                    "name": "Not In holdout"
+                },
+            ],
+            purpose="holdout",
+            on_variation=0,
+            off_variation=1,
+        )
+
+  
+############################################################################################################
+############################################################################################################
+
+
+    #### Flags created below are not used in the demo
+    #### These are created for release pipeline setup
+
+    def enhanced_user_authentication(self):
+        res = self.ldproject.create_flag(
+            "enhancedUserAuthentication",
+            "F1 - Enhanced User Authentication",
+            "This feature flag will trigger the enhanced user authentication in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Enhanced User Authentication"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Enhanced User Authentication"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def biometric_login_support(self):
+        res = self.ldproject.create_flag(
+            "biometricLoginSupport",
+            "F2 - Biometric Login Support",
+            "This feature flag will enable biometric login support in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Biometric Login"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Biometric Login"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def customizable_account_dashboards(self):
+        res = self.ldproject.create_flag(
+            "customizableAccountDashboards",
+            "F3 - Customizable Account Dashboards",
+            "This feature flag will allow users to customize their account dashboards in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Customizable Dashboards"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Customizable Dashboards"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def real_time_transaction_alerts(self):
+        res = self.ldproject.create_flag(
+            "realTimeTransactionAlerts",
+            "F4 - Real-Time Transaction Alerts",
+            "This feature flag will enable real-time transaction alerts in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Real-Time Alerts"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Real-Time Alerts"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def ai_powered_expense_categorization(self):
+        res = self.ldproject.create_flag(
+            "aiPoweredExpenseCategorization",
+            "F5 - AI-Powered Expense Categorization",
+            "This feature flag will enable AI-powered expense categorization in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable AI Expense Categorization"
+                },
+                {
+                    "value": False,
+                    "name": "Disable AI Expense Categorization"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def fraud_detection_alerts(self):
+        res = self.ldproject.create_flag(
+            "fraudDetectionAlerts",
+            "F6 - Fraud Detection Alerts",
+            "This feature flag will enable fraud detection alerts in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Fraud Detection Alerts"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Fraud Detection Alerts"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def dark_mode_interface_option(self):
+        res = self.ldproject.create_flag(
+            "darkModeInterfaceOption",
+            "F7 - Dark Mode Interface Option",
+            "This feature flag will enable the dark mode interface option in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Dark Mode"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Dark Mode"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+
+    def automated_savings_goals(self):
+        res = self.ldproject.create_flag(
+            "automatedSavingsGoals",
+            "F8 - Automated Savings Goals",
+            "This feature flag will enable automated savings goals in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Automated Savings Goals"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Automated Savings Goals"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def multi_currency_support(self):
+        res = self.ldproject.create_flag(
+            "multiCurrencySupport",
+            "F9 - Multi-Currency Support",
+            "This feature flag will enable multi-currency support in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Multi-Currency Support"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Multi-Currency Support"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def peer_to_peer_payment_transfers(self):
+        res = self.ldproject.create_flag(
+            "peerToPeerPaymentTransfers",
+            "F10 - Peer-to-Peer Payment Transfers",
+            "This feature flag will enable peer-to-peer payment transfers in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Peer-to-Peer Payment Transfers"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Peer-to-Peer Payment Transfers"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def credit_score_monitoring_tool(self):
+        res = self.ldproject.create_flag(
+            "creditScoreMonitoringTool",
+            "F12 - Credit Score Monitoring Tool",
+            "This feature flag will enable the credit score monitoring tool in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Credit Score Monitoring Tool"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Credit Score Monitoring Tool"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def voice_command_banking_assistant(self):
+        res = self.ldproject.create_flag(
+            "voiceCommandBankingAssistant",
+            "F13 - Voice Command Banking Assistant",
+            "This feature flag will enable the voice command banking assistant in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Voice Command Banking Assistant"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Voice Command Banking Assistant"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def loan_application_tracker(self):
+        res = self.ldproject.create_flag(
+            "loanApplicationTracker",
+            "F14 - Loan Application Tracker",
+            "This feature flag will enable the loan application tracker in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Loan Application Tracker"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Loan Application Tracker"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def detailed_spending_insights_reports(self):
+        res = self.ldproject.create_flag(
+            "detailedSpendingInsightsReports",
+            "F15 - Detailed Spending Insights & Reports",
+            "This feature flag will enable detailed spending insights and reports in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Detailed Spending Insights & Reports"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Detailed Spending Insights & Reports"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def scheduled_bill_payments(self):
+        res = self.ldproject.create_flag(
+            "scheduledBillPayments",
+            "F15 - Scheduled Bill Payments",
+            "This feature flag will enable scheduled bill payments in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Scheduled Bill Payments"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Scheduled Bill Payments"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def cross_border_payment_simplification(self):
+        res = self.ldproject.create_flag(
+            "crossBorderPaymentSimplification",
+            "F16 - Cross-Border Payment Simplification",
+            "This feature flag will simplify cross-border payments in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Cross-Border Payment Simplification"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Cross-Border Payment Simplification"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def merchant_rewards_integration(self):
+        res = self.ldproject.create_flag(
+            "merchantRewardsIntegration",
+            "F17 - Merchant Rewards Integration",
+            "This feature flag will enable merchant rewards integration in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Merchant Rewards Integration"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Merchant Rewards Integration"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def virtual_card_issuance(self):
+        res = self.ldproject.create_flag(
+            "virtualCardIssuance",
+            "F18 - Virtual Card Issuance",
+            "This feature flag will enable virtual card issuance in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Virtual Card Issuance"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Virtual Card Issuance"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def api_support_for_third_party_applications(self):
+        res = self.ldproject.create_flag(
+            "apiSupportForThirdPartyApplications",
+            "F19 - API Support for Third-Party Applications",
+            "This feature flag will enable API support for third-party applications in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable API Support for Third-Party Applications"
+                },
+                {
+                    "value": False,
+                    "name": "Disable API Support for Third-Party Applications"
+                }
+            ],
+            tags=["release", "release-pipeline", "utils"],
+            on_variation=0,
+            off_variation=1,
+        )
+        
+############################################################################################################
+############################################################################################################
+
+    ## Creating feature flags for Demo Engineering Use Case
+    ## These flags are for internal use only by Demo team
+    
+    def demo_mode(self):
+        res = self.ldproject.create_flag(
+            "demoMode",
+            "X1 - Demo Mode (Demo Engineering Team Use Only)",
+            "This feature flag is used to determine whether an environment is for demo purposes for events",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Demo Mode"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Demo Mode"
+                }
+            ],
+            tags=["demo", "events", "demoengineering"],
+            on_variation=0,
+            off_variation=1,
+        )
+        
+############################################################################################################
+############################################################################################################
+
+    ## Creating Temporary Feature Flags for the demo
+    ## These flags are not used in the demo
+    
+    def beta_dark_mode(self):
+        res = self.ldproject.create_flag(
+            "betaDarkMode",
+            "T1 - Beta: Dark Mode",
+            "This feature flag will enable dark mode in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Dark Mode"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Dark Mode"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def experimental_payment_gateway(self):
+        res = self.ldproject.create_flag(
+            "experimentalPaymentGateway",
+            "T2 - Experimental Payment Gateway",
+            "This feature flag will enable experimental payment gateway in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Experimental Payment Gateway"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Experimental Payment Gateway"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def limited_time_offer_banner(self):
+        res = self.ldproject.create_flag(
+            "limitedTimeOfferBanner",
+            "T3 - Limited Time Offer Banner",
+            "This feature flag will enable limited time offer banner in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Limited Time Offer Banner"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Limited Time Offer Banner"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+        
+    def early_access_feature_toggle(self):
+        res = self.ldproject.create_flag(
+            "earlyAccessFeatureToggle",
+            "T4 - Early Access Feature Toggle",
+            "This feature flag will enable early access feature toggle in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Early Access Feature Toggle"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Early Access Feature Toggle"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+    
+    def debugging_mode_for_developers(self):
+        res = self.ldproject.create_flag(
+            "debuggingModeForDevelopers",
+            "T5 - Debugging Mode for Developers",
+            "This feature flag will enable debugging mode for developers in ToggleBank",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Debugging Mode for Developers"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Debugging Mode for Developers"
+                }
+            ],
+            tags=["temporary"],
+            on_variation=0,
+            off_variation=1,
+            temporary=True
+        )
+
+############################################################################################################
+############################################################################################################
+
+    ## Government Demo Flags
+
+    def flag_government_show_cards_component(self):
+        res = self.ldproject.create_flag(
+            "showCardsSectionComponent",
+            "P1 - Release: Show Cards Section Component - Public Sector",
+            "This feature flag controls the visibility of service cards on the government demo page",
+            [
+                {
+                    "value": True,
+                    "name": "Show Card Section"
+                },
+                {
+                    "value": False,
+                    "name": "Hide Card Section"
+                }
+            ],
+            tags=["public-sector", "release"],
+            on_variation=1,
+        )
+
+    def flag_government_patch_show_cards_component(self):
+        res = self.ldproject.create_flag(
+            "patchShowCardsSectionComponent",
+            "P2 - Release: Patch Show Cards Section Component - Public Sector",
+            "Controls patch behavior for the first news card in the government cards section.",
+            [
+                {
+                    "value": True,
+                    "name": "Apply Patch"
+                },
+                {
+                    "value": False,
+                    "name": "Not Apply Patch"
+                }
+            ],
+            tags=["public-sector", "release"],
+            on_variation=1,
+        )
+
+    def flag_government_show_hero_redesign(self):
+        res = self.ldproject.create_flag(
+            "showHeroRedesign",
+            "P3 - Feature Experiment: Show Hero Redesign - Public Sector",
+            "This feature flag enables the hero redesign experiment for the government demo page",
+            [
+                {
+                    "value": "text-left",
+                    "name": "Show Text Left In Hero Component"
+                },
+                {
+                    "value": "text-right",
+                    "name": "Show Text Right In Hero Component"
+                }
+            ],
+            tags=["Experimentation", "public-sector"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_government_show_different_hero_image_string(self):
+        res = self.ldproject.create_flag(
+            "showDifferentHeroImageString",
+            "P4 - Feature Experiment: Show Different Hero Image - Public Sector",
+            "This feature flag controls which hero image variant is displayed on the government demo page",
+            [
+                {
+                    "value": "imageA",
+                    "name": "imageA"
+                },
+                {
+                    "value": "imageB", 
+                    "name": "imageB"
+                },
+                {
+                    "value": "imageC",
+                    "name": "imageC"
+                }
+            ],
+            tags=["Experimentation", "public-sector"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_government_rm_database_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "riskmgmtbureauDBGuardedRelease",
+            "P5 - Release: Add New Database (Guarded Release) - Public Sector",
+            "Release new Risk Management Database for Public Sector demo",
+            [
+                {
+                    "value": True,
+                    "name": "Added Risk Management Database"
+                },
+                {
+                    "value": False,
+                    "name": "Removed Risk Management Database"
+                }
+            ],
+            tags=["guarded-release", "public-sector"],
+            on_variation=1,
+        )
+        res = self.ldproject.add_guarded_rollout("riskmgmtbureauDBGuardedRelease", "production", metrics=["rm-db-latency","rm-db-errors"], days=1)
+
+    def flag_government_rm_api_guarded_release(self):
+        res = self.ldproject.create_flag(
+            "riskmgmtbureauAPIGuardedRelease",
+            "P6 - Release: API v2.0 (Guarded Release) - Public Sector",
+            "Release new Risk Management API v2.0 for Public Sector demo",
+            [
+                {
+                    "value": True,
+                    "name": "Release Risk Management API v2.0"
+                },
+                {
+                    "value": False,
+                    "name": "Rollback to Risk Management API v1.0"
+                }
+            ],
+            tags=["guarded-release", "public-sector"],
+            on_variation=0,
+        )
+        res = self.ldproject.add_guarded_rollout("riskmgmtbureauAPIGuardedRelease", "production", metrics=["rm-api-latency","rm-api-errors"], days=1)
+
+    def flag_togglebank_show_different_special_offer_string(self):
+        res = self.ldproject.create_flag(
+            "showDifferentSpecialOfferString",
+            "A5 - Feature Experiment: Show Different Special Offer - ToggleBank",
+            "This feature flag controls which special offer variant is displayed on the ToggleBank home page",
+            [
+                {
+                    "value": "offerA",
+                    "name": "offerA"
+                },
+                {
+                    "value": "offerB", 
+                    "name": "offerB"
+                },
+                {
+                    "value": "offerC",
+                    "name": "offerC"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_togglebank_release_new_signup_promo(self):
+        res = self.ldproject.create_flag(
+            "releaseNewSignupPromo",
+            "A6 - Funnel Experiment: New Signup Flow - ToggleBank",
+            "This feature flag controls which promotional offer is displayed in the marketing banner to test which offer drives the most signup conversions",
+            [
+                {
+                    "value": "creditCardOffer",
+                    "name": "Credit Card: 0% APR for 12 months"
+                },
+                {
+                    "value": "mortgageOffer", 
+                    "name": "Mortgage: 0.50% off 30 year loan"
+                },
+                {
+                    "value": "cashbackOffer",
+                    "name": "Checking: $200 cashback when you spend $2500+"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=2,
+        )
+
+    def flag_togglebank_swap_widget_positions(self):
+        res = self.ldproject.create_flag(
+            "swapWidgetPositions",
+            "A7 - Feature Experiment: Widget Position Swap - ToggleBank",
+            "This feature flag controls whether the mortgage and retirement widgets are swapped on the ToggleBank home page",
+            [
+                {
+                    "value": True,
+                    "name": "Retirement Left, Mortgage Right"
+                },
+                {
+                    "value": False,
+                    "name": "Mortgage Left, Retirement Right"
+                }
+            ],
+            tags=["Experimentation", "bank"],
+            on_variation=0,
+            off_variation=1,
+        )
+
+    def flag_transaction_monitoring(self):
+        res = self.ldproject.create_flag(
+            "transactionMonitoring",
+            "A8 - Release: Transaction Monitoring System - ToggleBank",
+            "Demo flag for regression debug feature enabling real-time transaction monitoring and observability insights.",
+            [
+                {
+                    "value": True,
+                    "name": "Enable Transaction Monitoring"
+                },
+                {
+                    "value": False,
+                    "name": "Disable Transaction Monitoring"
+                }
+            ],
+            tags=["guarded-release", "bank", "observability"],
+            on_variation=0,
+        )
+        res = self.ldproject.add_guarded_rollout("transactionMonitoring", "production", metrics=["telemetry-error-metric"], days=1)
+
+############################################################################################################
+############################################################################################################
+
+    ## Adding flags to right phases
+    
+    ##Test Phase
+    def rp_enhanced_user_authentication(self):
+        res = self.ldproject.add_pipeline_flag("enhancedUserAuthentication", "togglebank-v2-pipeline")
+        
+    def rp_biometric_login_support(self):
+        res = self.ldproject.add_pipeline_flag("biometricLoginSupport", "togglebank-v2-pipeline")
+
+    def rp_customizable_account_dashboards(self):
+        res = self.ldproject.add_pipeline_flag("customizableAccountDashboards", "togglebank-v2-pipeline")
+
+    def rp_real_time_transaction_alerts(self):
+        res = self.ldproject.add_pipeline_flag("realTimeTransactionAlerts", "togglebank-v2-pipeline")
+
+    def rp_ai_powered_expense_categorization(self):
+        res = self.ldproject.add_pipeline_flag("aiPoweredExpenseCategorization", "togglebank-v2-pipeline")
+
+    def rp_fraud_detection_alerts(self):
+        res = self.ldproject.add_pipeline_flag("fraudDetectionAlerts", "togglebank-v2-pipeline")
+
+    def rp_dark_mode_interface_option(self):
+        res = self.ldproject.add_pipeline_flag("darkModeInterfaceOption", "togglebank-v2-pipeline")
+  
+    ## Guarded Release
+
+    def rp_auto_savings_goals(self):
+        res = self.ldproject.add_pipeline_flag("automatedSavingsGoals", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("automatedSavingsGoals",["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("automatedSavingsGoals", "active", self.phase_ids["test"])
+
+
+    def rp_multi_currency_support(self):
+        res = self.ldproject.add_pipeline_flag("multiCurrencySupport", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("multiCurrencySupport", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("multiCurrencySupport", "active", self.phase_ids["test"])
+
+    def rp_peer_to_peer_payment_transfers(self):
+        res = self.ldproject.add_pipeline_flag("peerToPeerPaymentTransfers", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("peerToPeerPaymentTransfers", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("peerToPeerPaymentTransfers", "active", self.phase_ids["test"])
+
+    def rp_credit_score_monitoring_tool(self):
+        res = self.ldproject.add_pipeline_flag("creditScoreMonitoringTool", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("creditScoreMonitoringTool", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("creditScoreMonitoringTool", "active", self.phase_ids["test"])
+
+    def rp_voice_command_banking_assistant(self):
+        res = self.ldproject.add_pipeline_flag("voiceCommandBankingAssistant", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("voiceCommandBankingAssistant", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("voiceCommandBankingAssistant", "active", self.phase_ids["test"])
+
+    def rp_loan_application_tracker(self):
+        res = self.ldproject.add_pipeline_flag("loanApplicationTracker", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("loanApplicationTracker", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("loanApplicationTracker", "active", self.phase_ids["test"])
+
+    ## GA Release
+    def rp_detailed_spending_insights_reports(self):
+        res = self.ldproject.add_pipeline_flag("detailedSpendingInsightsReports", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("detailedSpendingInsightsReports", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("detailedSpendingInsightsReports", "active", self.phase_ids["ga"])
+
+    def rp_scheduled_bill_payments(self):
+        res = self.ldproject.add_pipeline_flag("scheduledBillPayments", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("scheduledBillPayments", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("scheduledBillPayments", "active", self.phase_ids["ga"])
+
+    def rp_cross_border_payment_simplification(self):
+        res = self.ldproject.add_pipeline_flag("crossBorderPaymentSimplification", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("crossBorderPaymentSimplification", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("crossBorderPaymentSimplification", "active", self.phase_ids["guard"])
+
+    def rp_merchant_rewards_integration(self):
+        res = self.ldproject.add_pipeline_flag("merchantRewardsIntegration", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("merchantRewardsIntegration", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("merchantRewardsIntegration", "active", self.phase_ids["guard"])
+
+    def rp_virtual_card_issuance(self):
+        res = self.ldproject.add_pipeline_flag("virtualCardIssuance", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("virtualCardIssuance", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("virtualCardIssuance", "active", self.phase_ids["ga"])
+
+    def rp_api_support_for_third_party_applications(self):
+        res = self.ldproject.add_pipeline_flag("apiSupportForThirdPartyApplications", "togglebank-v2-pipeline")
+        self.ldproject.attach_metric_to_flag("apiSupportForThirdPartyApplications", ["stocks-api-latency","stocks-api-error-rates"])
+        if not self.phase_ids:
+            self.phase_ids = self.ldproject.get_pipeline_phase_ids("togglebank-v2-pipeline")
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["test"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["guard"])
+        self.ldproject.advance_flag_phase("apiSupportForThirdPartyApplications", "active", self.phase_ids["ga"])
+
+############################################################################################################
+
+    ##################################################
+    # Segments Definitions
+    # ----------------
+    # Each segment is defined in its own function below
+    ################################################## 
+    
+    
+    def segment_mobile_users(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "mobile-users",
+            "Mobile Users",
+            "test",
+            "Users who have accessed the application via mobile device"
+        )
+        res = self.ldproject.add_segment_rule(
+            "mobile-users",
+            "test",
+            "device",
+            "platform",
+            "in",
+            ["Mobile"]
+        )
+        
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "mobile-users",
+            "Mobile Users",
+            "production",
+            "Users who have accessed the application via mobile device"
+        )
+        res = self.ldproject.add_segment_rule(
+            "mobile-users",
+            "production",
+            "device",
+            "platform",
+            "in",
+            ["Mobile"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "mobile-users",
+            "Mobile Users",
+            "template-env",
+            "Users who have accessed the application via mobile device"
+        )
+        res = self.ldproject.add_segment_rule(
+            "mobile-users",
+            "template-env",
+            "device",
+            "platform",
+            "in",
+            ["Mobile"]
+        )
+    
+    def segment_development_team(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "development-team",
+            "Development Team",
+            "test",
+            "Users who are part of the development team"
+        )
+        res = self.ldproject.add_segment_rule(
+            "development-team",
+            "test",
+            "user",
+            "role",
+            "in",
+            ["Developer"]
+        )
+        
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "development-team",
+            "Development Team",
+            "production",
+            "Users who are part of the development team"
+        )
+        res = self.ldproject.add_segment_rule(
+            "development-team",
+            "production",
+            "user",
+            "role",
+            "in",
+            ["Developer"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "development-team",
+            "Development Team",
+            "template-env",
+            "Users who are part of the development team"
+        )
+        res = self.ldproject.add_segment_rule(
+            "development-team",
+            "template-env",
+            "user",
+            "role",
+            "in",
+            ["Developer"]
+        )
+    
+    def segment_launch_airways_members(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-all-members",
+            "Launch Airways All Members",
+            "test",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-all-members",
+            "test",
+            "user",
+            "launchclub",
+            "in",
+            ["standard", "platinum"]
+        )
+
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-all-members",
+            "Launch Airways All Members",
+            "production",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-all-members",
+            "production",
+            "user",
+            "launchclub",
+            "in",
+            ["standard", "platinum"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-all-members",
+            "Launch Airways All Members",
+            "template-env",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-all-members",
+            "template-env",
+            "user",
+            "launchclub",
+            "in",
+            ["standard", "platinum"]
+        )
+    
+    def segment_launch_airways_platinum_members(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-platinum-members",
+            "Launch Airways Platinum Members",
+            "test",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-platinum-members",
+            "test",
+            "user",
+            "launchclub",
+            "in",
+            ["platinum"]
+        )
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-platinum-members",
+            "Launch Airways Platinum Members",
+            "production",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-platinum-members",
+            "production",
+            "user",
+            "launchclub",
+            "in",
+            ["platinum"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "launch-airways-platinum-members",
+            "Launch Airways Platinum Members",
+            "template-env",
+            "Users who are part of the LaunchAirways Club Membership"
+        )
+        res = self.ldproject.add_segment_rule(
+            "launch-airways-platinum-members",
+            "template-env",
+            "user",
+            "launchclub",
+            "in",
+            ["platinum"]
+        )
+        
+    def segment_beta_users(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "beta-users",
+            "Beta Users",
+            "test",
+            "Users who are part of the beta program"
+        )
+        res = self.ldproject.add_segment_rule(
+            "beta-users",
+            "test",
+            "user",
+            "role",
+            "in",
+            ["Beta"]
+        )
+
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "beta-users",
+            "Beta Users",
+            "production",
+            "Users who are part of the beta program"
+        )
+        res = self.ldproject.add_segment_rule(
+            "beta-users",
+            "production",
+            "user",
+            "role",
+            "in",
+            ["Beta"]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "beta-users",
+            "Beta Users",
+            "template-env",
+            "Users who are part of the beta program"
+        )
+        res = self.ldproject.add_segment_rule(
+            "beta-users",
+            "template-env",
+            "user",
+            "role",
+            "in",
+            ["Beta"]
+        )
+        
+    def segment_blocked_users(self):
+        ################ Test Environment ################
+        res = self.ldproject.create_segment(
+            "blocked-users",
+            "Blocked Users",
+            "test",
+            "Users blocked by guardrails due to unsafe prompts"
+        )
+        res = self.ldproject.add_segment_rule(
+            "blocked-users",
+            "test",
+            "user",
+            "key",
+            "in",
+            [""]
+        )
+        
+        ################ Production Environment ################
+        res = self.ldproject.create_segment(
+            "blocked-users",
+            "Blocked Users",
+            "production",
+            "Users blocked by guardrails due to unsafe prompts"
+        )
+        res = self.ldproject.add_segment_rule(
+            "blocked-users",
+            "production",
+            "user",
+            "key",
+            "in",
+            [""]
+        )
+        
+        ################ Template Environment ################
+        res = self.ldproject.create_segment(
+            "blocked-users",
+            "Blocked Users",
+            "template-env",
+            "Users blocked by guardrails due to unsafe prompts"
+        )
+        res = self.ldproject.add_segment_rule(
+            "blocked-users",
+            "template-env",
+            "user",
+            "key",
+            "in",
+            [""]
+        )
 
     def segment_ai_fallback(self):
         res = self.ldproject.create_context("ai", for_experiment=False)
         res = self.ldproject.create_ai_fallback_segment("production")
+        
+############################################################################################################
+
+    ##################################################
+    # Context Definitions
+    # ----------------
+    # Each context is defined in its own function below
+    ##################################################
+    
+    def context_audience(self):
+        res = self.ldproject.create_context(
+            "audience",
+            for_experiment=True,
+        )
+    
+    def context_location(self):
+        res = self.ldproject.create_context(
+            "location",
+            for_experiment=True,
+        )
+    
+    def context_device(self):
+        res = self.ldproject.create_context(
+            "device",
+            for_experiment=True,
+        )
+    
+    def context_experience(self):
+        res = self.ldproject.create_context(
+            "experience",
+            for_experiment=True,
+        )
+        
+############################################################################################################
+
+    ##################################################
+    # Release Pipelines Definitions
+    # ----------------
+    # Each release pipeline is defined in its own function below
+    ##################################################
 
     def setup_release_pipeline(self):
         print("Creating release pipeline", end="...")
         self.rp_toggle_bank_release_pipeline()
         print("Done")
-
-    # Release pipeline flag rollout (definitions live in the PIPELINE_FLAGS table above)
+        
     def rp_toggle_bank_release_pipeline(self):
+        # Default Releases
         res = self.ldproject.create_release_pipeline(
             "togglebank-v2-pipeline", "ToggleBank v2.0 Release"
         )
@@ -3699,17 +6109,36 @@ class DemoBuilder:
         if not self.phase_ids:
             print("Skipping release pipeline steps (could not retrieve phase IDs)")
             return
-        for spec in PIPELINE_FLAGS:
-            if "custom" in spec:
-                getattr(self, spec["custom"])()
-                continue
-            self.ldproject.add_pipeline_flag(spec["flag_key"], spec["pipeline_key"])
-            if spec.get("metrics"):
-                self.ldproject.attach_metric_to_flag(spec["flag_key"], spec["metrics"])
-            for status, phase_name, kwargs in spec.get("advance_phases", []):
-                self.ldproject.advance_flag_phase(
-                    spec["flag_key"], status, self.phase_ids[phase_name], **kwargs
-                )
+        self.rp_enhanced_user_authentication()
+        self.rp_biometric_login_support()
+        self.rp_customizable_account_dashboards()
+        self.rp_real_time_transaction_alerts()  
+        self.rp_ai_powered_expense_categorization()
+        self.rp_fraud_detection_alerts()
+        self.rp_dark_mode_interface_option()
+        self.rp_auto_savings_goals()
+        self.rp_multi_currency_support()
+        self.rp_peer_to_peer_payment_transfers()
+        self.rp_credit_score_monitoring_tool()
+        self.rp_voice_command_banking_assistant()
+        self.rp_loan_application_tracker()
+        self.rp_detailed_spending_insights_reports()
+        self.rp_scheduled_bill_payments()
+        self.rp_cross_border_payment_simplification()
+        self.rp_merchant_rewards_integration()
+        self.rp_virtual_card_issuance()
+        self.rp_api_support_for_third_party_applications()
+
+
+
+        
+############################################################################################################
+
+    ##################################################
+    # Template Environment Definitions
+    # ----------------
+    # Each release pipeline is defined in its own function below
+    ##################################################
 
     def setup_template_environment(self):
         
@@ -3722,8 +6151,6 @@ class DemoBuilder:
         self.ldproject.copy_flag_settings("storeAttentionCallout", "production", "template-env")
         self.ldproject.copy_flag_settings("cartSuggestedItems", "production", "template-env")        
         print("Done")
-
-
     
 
 
