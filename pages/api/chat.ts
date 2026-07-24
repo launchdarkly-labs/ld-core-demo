@@ -600,10 +600,12 @@ Is there a specific service you'd like to know more about?`;
 				'gpt-4o': { input: 0.005, output: 0.015 },
 				'gpt-4o-mini': { input: 0.00015, output: 0.0006 },
 				'gpt-5-mini': { input: 0.0002, output: 0.0008 },
-				// GPT-5.6 family (replacements for retired gpt-5-chat-latest / gpt-5 / gpt-5-mini / gpt-4o)
-				'gpt-5.6-sol': { input: 0.005, output: 0.015 },
-				'gpt-5.6-terra': { input: 0.00015, output: 0.0006 },
-				'gpt-5.6-luna': { input: 0.00008, output: 0.00032 },
+				// GPT-5.4 / 5.5 family (replacements for retired gpt-5-chat-latest / gpt-5 / gpt-5-mini / gpt-4o)
+				'gpt-5.5': { input: 0.005, output: 0.015 },
+				'gpt-5.4': { input: 0.0025, output: 0.010 },
+				'gpt-5.4-mini': { input: 0.00015, output: 0.0006 },
+				'gpt-5.4-nano': { input: 0.00008, output: 0.00032 },
+				'gpt-5.4-pro': { input: 0.010, output: 0.030 },
 				// Fallback pricing
 				'default': { input: 0.002, output: 0.008 }
 			};

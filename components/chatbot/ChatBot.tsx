@@ -663,10 +663,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'gpt-5-nano': 'GPT-5 Nano',
         'gpt-5-mini': 'GPT-5 Mini',
         'gpt-5': 'GPT-5',
-        // GPT-5.6 family (replacements for retired gpt-5/gpt-5-mini/gpt-5-chat-latest/gpt-4o)
-        'gpt-5.6-sol': 'GPT-5.6 Sol',
-        'gpt-5.6-terra': 'GPT-5.6 Terra',
-        'gpt-5.6-luna': 'GPT-5.6 Luna',
+        // GPT-5.4 / 5.5 family (replacements for retired gpt-5/gpt-5-mini/gpt-5-chat-latest/gpt-4o)
+        'gpt-5.5': 'GPT-5.5',
+        'gpt-5.4': 'GPT-5.4',
+        'gpt-5.4-mini': 'GPT-5.4 Mini',
+        'gpt-5.4-nano': 'GPT-5.4 Nano',
+        'gpt-5.4-pro': 'GPT-5.4 Pro',
       };
       
       const mapped = (modelNameMap as Record<string, string>)[modelId as string];
