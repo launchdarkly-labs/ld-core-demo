@@ -917,11 +917,11 @@ class DemoBuilder:
         # OpenAI GPT-5 Mini
         res4 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot",
-            "open-ai-gpt-5-mini",
-            "OpenAI.gpt-5-mini",
+            "open-ai-gpt-5.6-terra",
+            "OpenAI.gpt-5.6-terra",
             "OpenAI GPT-5 Mini",
             {
-                "modelName": "gpt-5-mini",
+                "modelName": "gpt-5.6-terra",
                 "parameters": {},
                 "custom": {}
             },
@@ -1049,10 +1049,10 @@ class DemoBuilder:
         res2 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-self-heal-chatbot",
             "gpt-5-good-prompt",
-            "OpenAI.gpt-5-chat-latest",
+            "OpenAI.gpt-5.6-sol",
             "GPT 5 Chat - Good Prompt",
             {
-                "modelName": "gpt-5-chat-latest",
+                "modelName": "gpt-5.6-sol",
                 "parameters": {
                     "max_completion_tokens": 200
                 }
@@ -1066,10 +1066,10 @@ class DemoBuilder:
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--togglebot-self-heal-chatbot",
             "gpt-5-bad-prompt",
-            "OpenAI.gpt-5-chat-latest",
+            "OpenAI.gpt-5.6-sol",
             "GPT-5 Chat - Bad Prompt",
             {
-                "modelName": "gpt-5-chat-latest",
+                "modelName": "gpt-5.6-sol",
                 "parameters": {
                     "max_completion_tokens": 200
                 }
@@ -1127,11 +1127,11 @@ class DemoBuilder:
         haiku_config_key = "Bedrock.anthropic.claude-haiku-4-5-20251001-v1:0"
 
         gpt5_mini_config = {
-            "modelName": "gpt-5-mini",
+            "modelName": "gpt-5.6-terra",
             "parameters": {},
             "custom": {}
         }
-        gpt5_mini_config_key = "OpenAI.gpt-5-mini"
+        gpt5_mini_config_key = "OpenAI.gpt-5.6-terra"
 
         sonnet_config = {
             "modelName": "anthropic.claude-sonnet-4-6",
@@ -2051,9 +2051,9 @@ class DemoBuilder:
         self.ldproject.create_ai_config_versions(
             "togglebank-accuracy-judge",
             "accuracy-judge-v1",
-            "OpenAI.gpt-4o-mini",
+            "OpenAI.gpt-5.6-terra",
             "GPT-4o Mini - Accuracy Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"max_tokens": 500, "temperature": 0.0}},
+            {"modelName": "gpt-5.6-terra", "parameters": {"max_tokens": 500, "temperature": 0.0}},
             messages=[
                 {
                     "role": "system",
@@ -2091,9 +2091,9 @@ class DemoBuilder:
         self.ldproject.create_ai_config_versions(
             "togglebank-relevance-judge",
             "relevance-judge-v1",
-            "OpenAI.gpt-4o-mini",
+            "OpenAI.gpt-5.6-terra",
             "GPT-4o Mini - Relevance Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"max_tokens": 500, "temperature": 0.0}},
+            {"modelName": "gpt-5.6-terra", "parameters": {"max_tokens": 500, "temperature": 0.0}},
             messages=[
                 {
                     "role": "system",
@@ -2132,9 +2132,9 @@ class DemoBuilder:
         self.ldproject.create_ai_config_versions(
             "togglebank-toxicity-judge",
             "toxicity-judge-v1",
-            "OpenAI.gpt-4o-mini",
+            "OpenAI.gpt-5.6-terra",
             "GPT-4o Mini - Toxicity Judge",
-            {"modelName": "gpt-4o-mini", "parameters": {"max_tokens": 500, "temperature": 0.0}},
+            {"modelName": "gpt-5.6-terra", "parameters": {"max_tokens": 500, "temperature": 0.0}},
             messages=[
                 {
                     "role": "system",
@@ -2201,10 +2201,10 @@ class DemoBuilder:
             key="brand-voice-optimization",
             ai_config_key="ai-config--togglebot-brand-voice",
             max_attempts=10,
-            judge_model="gpt-4o",
+            judge_model="gpt-5.6-sol",
             model_choices=[
                 "amazon.nova-pro-v1:0",
-                "gpt-5-mini",
+                "gpt-5.6-terra",
                 "claude-sonnet-4-20250514",
             ],
             acceptance_statements=[
@@ -2252,11 +2252,11 @@ class DemoBuilder:
             key="chatbot-response-optimization",
             ai_config_key="ai-config--togglebot",
             max_attempts=8,
-            judge_model="gpt-4o",
+            judge_model="gpt-5.6-sol",
             model_choices=[
                 "claude-sonnet-4-20250514",
                 "amazon.nova-pro-v1:0",
-                "gpt-5",
+                "gpt-5.6-sol",
             ],
             acceptance_statements=[
                 {
@@ -2297,10 +2297,10 @@ class DemoBuilder:
             key="financial-advisor-optimization",
             ai_config_key="ai-config--togglebank-financial-advisor-agent",
             max_attempts=10,
-            judge_model="gpt-4o",
+            judge_model="gpt-5.6-sol",
             model_choices=[
                 "claude-sonnet-4-20250514",
-                "gpt-5",
+                "gpt-5.6-sol",
                 "amazon.nova-pro-v1:0",
             ],
             acceptance_statements=[
@@ -2379,7 +2379,7 @@ class DemoBuilder:
                     "using a warm, professional tone. Avoid slang but keep it friendly."
                 ),
                 "user_input": "I want to transfer $5000 to another bank. What are my options?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "Happy to help with that transfer! You have a few options for moving $5,000:\n\n"
                     "- **ACH Transfer** (free, 1-3 business days)\n"
@@ -2433,7 +2433,7 @@ class DemoBuilder:
                     "details from the original response. Use short paragraphs."
                 ),
                 "user_input": "My debit card was declined but I have funds. What happened?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "That's frustrating — let's figure this out. A few common reasons your card might "
                     "decline even with available funds:\n\n"
@@ -2552,7 +2552,7 @@ class DemoBuilder:
                     "Use contractions, short sentences. Feel free to use casual language."
                 ),
                 "user_input": "Can I get a cashier's check from my savings account?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "Yeah totally! You can grab a cashier's check from savings no prob. "
                     "Just swing by any branch with your ID — they'll cut one for ya on the spot. "
@@ -2657,7 +2657,7 @@ class DemoBuilder:
                     "like timelines, fees, and specific steps."
                 ),
                 "user_input": "How do I add a beneficiary to my account?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "Adding a beneficiary is straightforward — here's what you need:\n\n"
                     "1. Log in to online banking or the app\n"
@@ -2689,7 +2689,7 @@ class DemoBuilder:
                     "- Keep responses under 200 words"
                 ),
                 "user_input": "What happens if I overdraft my checking account?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "If your checking goes below $0, here's what happens:\n\n"
                     "**Standard Overdraft Protection** (if enrolled):\n"
@@ -2727,7 +2727,7 @@ class DemoBuilder:
                     "- End with a helpful next step or follow-up offer"
                 ),
                 "user_input": "I want to open a joint account with my spouse. What do we need?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "Great choice — a joint account makes managing shared finances so much easier!\n\n"
                     "**What you'll both need:**\n"
@@ -2810,7 +2810,7 @@ class DemoBuilder:
                     "specific details like amounts, timelines, and next steps."
                 ),
                 "user_input": "Tell me about the ToggleBank Platinum rewards program — is it worth upgrading?",
-                "model": "gpt-5",
+                "model": "gpt-5.6-sol",
                 "response": (
                     "The Platinum rewards program is our premium tier — here's what you get:\n\n"
                     "- **3x points** on all purchases (vs 1x on Standard)\n"
@@ -2930,7 +2930,7 @@ class DemoBuilder:
                     "Consider their stated risk tolerance."
                 ),
                 "user_input": "I have $10,000 to invest. What do you recommend for a moderate risk tolerance?",
-                "model": "gpt-5",
+                "model": "gpt-5.6-sol",
                 "response": (
                     "Based on your moderate risk profile, here's a suggested allocation for $10,000:\n\n"
                     "- **US Index Fund (VOO/VTI)**: $5,000 (50%)\n"
@@ -3005,7 +3005,7 @@ class DemoBuilder:
                     "- Never guarantee returns or make promises about market performance"
                 ),
                 "user_input": "What's my projected retirement timeline based on current contributions?",
-                "model": "gpt-5",
+                "model": "gpt-5.6-sol",
                 "response": (
                     "Based on your current profile, here's your retirement projection:\n\n"
                     "**Current snapshot:**\n"
@@ -3176,7 +3176,7 @@ class DemoBuilder:
                     "focused on what the customer actually asked."
                 ),
                 "user_input": "Can I increase my daily ATM withdrawal limit?",
-                "model": "gpt-5-mini",
+                "model": "gpt-5.6-terra",
                 "response": (
                     "Yes! Your default daily ATM limit is $500, but you can increase it:\n\n"
                     "- **Temporary increase**: Up to $1,500/day for 24 hours — do it right in the app "
@@ -3333,7 +3333,7 @@ class DemoBuilder:
                     "based on the customer's age and goals. Include specific fund suggestions."
                 ),
                 "user_input": "I'm considering refinancing my mortgage. Is now a good time?",
-                "model": "gpt-5",
+                "model": "gpt-5.6-sol",
                 "response": (
                     "Based on current market conditions, refinancing could make sense if your current "
                     "rate is above 7%. Current 30-year rates are around 6.25%. For a $350,000 mortgage, "
@@ -3655,19 +3655,19 @@ class DemoBuilder:
                     "value": 
                         {
                             "max_tokens_to_sample": 500,
-                            "modelId": "anthropic.claude-instant-v1",
+                            "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
                             "temperature": 0.3,
                             "top_p": 1
                         }
                     
                 },
                 {
-                    "name": "Cohere Coral",
-                    "description": "This is Cohere Coral AI model for balance between precision and creativity",
+                    "name": "Amazon Nova Lite",
+                    "description": "Amazon Nova Lite — a fast, cost-effective model balancing precision and creativity",
                     "value": 
                         {
                             "max_tokens": 500,
-                            "modelId": "cohere.command-text-v14",
+                            "modelId": "amazon.nova-lite-v1:0",
                             "p": 1,
                             "temperature": 0.5
                         }
