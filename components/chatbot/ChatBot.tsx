@@ -762,13 +762,20 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   //
                   // Airways / Government verticals don't have tabs (no self-healing),
                   // so we keep the existing "Powered by X · Provider" line so users can
-                  // still see the model at a glance.
+                  // still see the model at a glance. We also give each vertical its own
+                  // title so users don't see "ToggleBot" on a travel site.
                   const isSelfHealingTab = activeTab === "self-healing";
-                  const headerTitle = hasSelfHealing
-                    ? (isSelfHealingTab
-                        ? "ToggleBot - Self-Healing Assistant"
-                        : "ToggleBot - AI Assistant")
+                  const bankingTitle = isSelfHealingTab
+                    ? "ToggleBot - Self-Healing Assistant"
                     : "ToggleBot - AI Assistant";
+                  const airwaysTitle = "LaunchAirways - AI Travel Assistant";
+                  const governmentTitle = "Bureau of Risk Reduction - AI Assistant";
+                  const headerTitle =
+                    vertical === "airways"
+                      ? airwaysTitle
+                      : vertical === "government"
+                      ? governmentTitle
+                      : bankingTitle;
                   const headerModelType = getModelTypeFromFlag();
                   return (
                     <div>

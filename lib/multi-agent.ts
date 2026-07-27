@@ -794,6 +794,122 @@ async function runBrandVoiceAgent(
 	};
 }
 
+// Direct LLM pipeline — used by non-banking verticals (Airways, Government) that
+// don't have their own triage/specialist/brand-voice stacks. Takes the vertical's
+// own AI Config and calls its model directly with chat history support, then
+// returns a MultiAgentResult-compatible shape so downstream code in /api/chat
+// (cost calculation, judge scoring, token tracking, response streaming, LD
+// tracker) works unchanged.
+//
+// Why this exists: before commit ae1b8e10, /api/chat did direct LLM calls per
+// vertical using each vertical's own AI Config. That commit replaced the direct
+// path with runMultiAgentPipeline() unconditionally, which uses HARDCODED
+// ToggleBot config keys — so Airways and Government users started getting
+// banking-flavored answers to travel/gov questions. This function restores the
+// direct path for those verticals without disturbing the banking multi-agent flow.
+export async function runDirectLLMPipeline(
+	deps: MultiAgentDeps,
+	aiConfig: any,
+	chatHistory: Array<{ role: string; content: string }> = [],
+): Promise<MultiAgentResult> {
+	const { bedrockClient, openai, userInput, aiConfigKey } = deps;
+
+	if (deps.aiConfigKey && typeof LDObserve?.setAttributes === "function") {
+		LDObserve.setAttributes({
+			"feature_flag.key": deps.aiConfigKey,
+			"feature_flag.provider.name": "LaunchDarkly",
+		});
+	}
+
+	const modelName: string = aiConfig?.model?.name ?? "amazon.nova-pro-v1:0";
+	pushLog({ level: "INFO", message: `📥 Direct LLM path · model: ${modelName}`, name: "chat" });
+
+	// Build the message list:
+	//   1. System messages from the vertical's AI Config (its own prompt)
+	//   2. Prior chat history (multi-turn context)
+	//   3. Current user input
+	// Any user/assistant messages already baked into the AI Config are dropped
+	// because we're supplying multi-turn history explicitly.
+	const configMessages = configToMessages(aiConfig).filter(
+		(m) => m.role === "system",
+	);
+	const historyMessages = (chatHistory ?? [])
+		.filter((m) => m.role === "user" || m.role === "assistant")
+		.map((m) => ({ role: m.role, content: m.content }));
+	const messages = [
+		...configMessages,
+		...historyMessages,
+		{ role: "user", content: userInput },
+	];
+
+	const tracker = aiConfig?.createTracker?.();
+	const params = {
+		temperature: aiConfig?.model?.parameters?.temperature,
+		maxTokens: aiConfig?.model?.parameters?.maxTokens,
+	};
+
+	const result = await callLLM(modelName, messages, bedrockClient, openai, params, tracker, {
+		agentLabel: "direct",
+		requestHeaders: deps.requestHeaders,
+		aiConfigKey,
+	});
+
+	// Bedrock tracker: model wrappers auto-track for OpenAI; for Bedrock we track manually
+	// (mirrors the pattern in runBrandVoiceAgent above).
+	if (isBedrockModel(modelName)) {
+		tracker?.trackSuccess?.();
+		if (result.durationMs) tracker?.trackDuration?.(result.durationMs);
+		tracker?.trackTokens?.({
+			input: result.inputTokens,
+			output: result.outputTokens,
+			total: result.inputTokens + result.outputTokens,
+		});
+	}
+
+	pushLog({
+		level: "INFO",
+		message: `   Direct response in ${result.durationMs}ms · ${result.inputTokens} in / ${result.outputTokens} out tokens`,
+		name: "chat",
+	});
+
+	// Return the result shaped like a MultiAgentResult so downstream code
+	// (`agentResult.brandVoice?.modelName`, `agentResult.totalInputTokens`, etc.)
+	// keeps working without any special-casing. The `brandVoice` slot holds the
+	// actual response model — that's what the cost calculator and UI both key off,
+	// which happens to work perfectly here since it IS the final model.
+	// `triage` and `specialist` are zero-valued placeholders — those slots aren't
+	// consumed by the downstream chat.ts flow but we fill them in for type safety.
+	return {
+		finalResponse: result.content,
+		triage: {
+			category: "customer_support",
+			confidence: 0,
+			reasoning: "n/a — direct LLM pipeline (non-banking vertical)",
+			durationMs: 0,
+			inputTokens: 0,
+			outputTokens: 0,
+		},
+		specialist: {
+			content: "",
+			category: "customer_support",
+			specialistLabel: "n/a",
+			modelName,
+			durationMs: 0,
+			inputTokens: 0,
+			outputTokens: 0,
+		},
+		brandVoice: {
+			content: result.content,
+			modelName,
+			durationMs: result.durationMs,
+			inputTokens: result.inputTokens,
+			outputTokens: result.outputTokens,
+		},
+		totalInputTokens: result.inputTokens,
+		totalOutputTokens: result.outputTokens,
+	};
+}
+
 // Pipeline orchestrator
 
 export async function runMultiAgentPipeline(

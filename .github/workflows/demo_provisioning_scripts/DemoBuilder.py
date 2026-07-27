@@ -338,11 +338,18 @@ class DemoBuilder:
         # self.create_destination_recommendation_ai_config()
         # print("AI Prompts: Travel Insights")
         # self.create_travel_insights_ai_config()
-        # print("AI Config: LaunchAirways AI Chatbot")
-        # self.create_ai_chatbot_ai_config()
         # print("AI Config: ToggleBot")
         
         ##################################################
+        # LaunchAirways AI Chatbot — was previously commented out, which meant
+        # fresh demo environments had no ai-config--ai-new-model-chatbot config
+        # provisioned. The Airways chatbot UI still referenced that flag and
+        # relied on client fallback to DEFAULT_AI_MODEL. Now that /api/chat has
+        # a direct-LLM path for non-banking verticals, this config actually gets
+        # used to generate responses — so it MUST be provisioned or Airways users
+        # hit a disabled/missing-config error path.
+        print("AI Config: LaunchAirways AI Chatbot")
+        self.create_ai_chatbot_ai_config()
         self.create_prompt_snippets()
         self.create_togglebot_ai_config()
         self.create_togglebot_self_heal_ai_config()
@@ -3501,6 +3508,25 @@ class DemoBuilder:
                 }
             ]
         )
+        # OpenAI GPT-5.4 Mini — added for parity with ToggleBot's OpenAI option
+        # and to give AEs a cross-provider demo story (Bedrock vs OpenAI) on Airways.
+        res4 = self.ldproject.create_ai_config_versions(
+            "ai-config--ai-new-model-chatbot",
+            "open-ai-gpt-5.4-mini",
+            "OpenAI.gpt-5.4-mini",
+            "OpenAI GPT-5.4 Mini",
+            {
+                "modelName": "gpt-5.4-mini",
+                "parameters": {},
+                "custom": {}
+            },
+            [
+                {
+                    "content": "As an AI bot for a travel airline LaunchAirways your purpose is to answer questions related to flights and traveling. Act as customer representative. Only answer queries related to traveling and airlines. Remove quotation in response. Limit response to 20 words. Do not exceed this limit and do not specify any limits in responses. Here is the user prompt: ${userInput}.",
+                    "role": "system"
+                }
+            ]
+        )
 
     def create_government_publicbot_ai_config(self):
         res = self.ldproject.create_ai_config(
@@ -3541,6 +3567,26 @@ class DemoBuilder:
                     "maxTokens": 200,
                     "temperature": 0.5
                 }
+            },
+            [
+                {
+                    "content": "You are an AI assistant for a public sector agency, providing expert guidance on government services and programs. Act as a professional public service representative. Only respond to government-related queries.\n\n- Response Format:\n- Keep answers concise (maximum 20 words).\n- Do not include quotations in responses.\n- Avoid mentioning response limitations.\n\nUser Context:\n- City: {{ ldctx.location }}\n- Account Tier: {{ ldctx.user.tier }}\n- User Name: {{ ldctx.user.name }}\n\nUser Query: {{ userInput }}",
+                    "role": "system"
+                }
+            ]
+        )
+        # OpenAI GPT-5.4 Mini — added for parity with ToggleBot's OpenAI option
+        # and to give AEs a cross-provider demo story (Bedrock vs OpenAI) for
+        # the Public Sector vertical.
+        res4 = self.ldproject.create_ai_config_versions(
+            "ai-config--publicbot",
+            "open-ai-gpt-5.4-mini",
+            "OpenAI.gpt-5.4-mini",
+            "OpenAI GPT-5.4 Mini",
+            {
+                "modelName": "gpt-5.4-mini",
+                "parameters": {},
+                "custom": {}
             },
             [
                 {

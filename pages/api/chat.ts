@@ -19,7 +19,7 @@ import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
-import { runMultiAgentPipeline } from "@/lib/multi-agent";
+import { runMultiAgentPipeline, runDirectLLMPipeline } from "@/lib/multi-agent";
 import { LDObserve } from "@launchdarkly/observability-node";
 
 export default async function chatResponse(
@@ -552,14 +552,30 @@ Is there a specific service you'd like to know more about?`;
 					requestHeaders: req.headers as Record<string, string>,
 					aiConfigKey,
 				};
+
+				// Vertical-aware pipeline selection:
+				//   - Banking (`ai-config--togglebot`) runs the full multi-agent pipeline
+				//     (triage → specialist → brand voice) with its dedicated sub-configs
+				//     and ToggleBank RAG. This is the intentional heavy demo path.
+				//   - Everything else (Airways `ai-config--ai-new-model-chatbot`, Government
+				//     `ai-config--publicbot`, or any future vertical) uses the direct LLM
+				//     path so the response is generated from THAT config's own system prompt
+				//     and model. Prior to this branch, all non-banking chats were forced
+				//     through the ToggleBot pipeline and got banking-flavored answers to
+				//     off-domain questions.
+				const isBankingMultiAgent = aiConfigKey === "ai-config--togglebot";
+				const runPipeline = () =>
+					isBankingMultiAgent
+						? runMultiAgentPipeline(pipelineDeps)
+						: runDirectLLMPipeline(pipelineDeps, aiConfig, chatHistory);
 				const agentResult =
 					typeof LDObserve?.runWithHeaders === "function"
 						? await LDObserve.runWithHeaders(
 								"POST - /api/chat",
 								req.headers as Record<string, string>,
-								() => runMultiAgentPipeline(pipelineDeps),
+								runPipeline,
 							)
-						: await runMultiAgentPipeline(pipelineDeps);
+						: await runPipeline();
 
 				const fullResponse = agentResult.finalResponse;
 				const totalInputTokens = agentResult.totalInputTokens;
