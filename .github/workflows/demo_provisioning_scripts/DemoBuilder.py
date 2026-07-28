@@ -3528,6 +3528,28 @@ class DemoBuilder:
             ]
         )
 
+        # Set a default variation and turn the config ON so fresh environments
+        # don't see the LaunchAirways chatbot as "disabled" in the LD UI (and so
+        # the direct-LLM path in /api/chat has a variation to serve). Nova Pro
+        # chosen as default because it's Bedrock-native (no OpenAI key required)
+        # and lines up with the vertical's existing Amazon branding.
+        time.sleep(2)
+        try:
+            default_variation_id = self.ldproject.get_ai_config_variation_id(
+                "ai-config--ai-new-model-chatbot", "amazon-nova-pro"
+            )
+            if default_variation_id:
+                self.ldproject.update_ai_config_targeting(
+                    "ai-config--ai-new-model-chatbot",
+                    "production",
+                    default_variation_id,
+                )
+            self.ldproject.toggle_flag(
+                "ai-config--ai-new-model-chatbot", "on", "production"
+            )
+        except Exception as e:
+            print("Warning: failed to set default variation / enable LaunchAirways AI Chatbot:", e)
+
     def create_government_publicbot_ai_config(self):
         res = self.ldproject.create_ai_config(
             "ai-config--publicbot",
@@ -3595,6 +3617,27 @@ class DemoBuilder:
                 }
             ]
         )
+
+        # Set a default variation and turn the config ON so fresh environments
+        # don't see the Public Sector chatbot as "disabled" in the LD UI. Nova Pro
+        # chosen as default because it's Bedrock-native (no OpenAI key required)
+        # and matches the pattern used for other verticals.
+        time.sleep(2)
+        try:
+            default_variation_id = self.ldproject.get_ai_config_variation_id(
+                "ai-config--publicbot", "amazon-nova-pro"
+            )
+            if default_variation_id:
+                self.ldproject.update_ai_config_targeting(
+                    "ai-config--publicbot",
+                    "production",
+                    default_variation_id,
+                )
+            self.ldproject.toggle_flag(
+                "ai-config--publicbot", "on", "production"
+            )
+        except Exception as e:
+            print("Warning: failed to set default variation / enable Public Sector AI Chatbot:", e)
 
     def create_custom_financial_models(self):
         """
