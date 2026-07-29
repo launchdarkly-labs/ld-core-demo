@@ -3492,7 +3492,7 @@ class DemoBuilder:
         res3 = self.ldproject.create_ai_config_versions(
             "ai-config--ai-new-model-chatbot",
             "amazon-nova-pro",
-            "amazon.nova-pro-v1:0",
+            "Bedrock.amazon.nova-pro-v1:0",
             "AWS Nova Pro",
             {
                 "modelName": "amazon.nova-pro-v1:0",
