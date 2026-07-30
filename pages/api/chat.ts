@@ -553,16 +553,7 @@ Is there a specific service you'd like to know more about?`;
 					aiConfigKey,
 				};
 
-				// Vertical-aware pipeline selection:
-				//   - Banking (`ai-config--togglebot`) runs the full multi-agent pipeline
-				//     (triage → specialist → brand voice) with its dedicated sub-configs
-				//     and ToggleBank RAG. This is the intentional heavy demo path.
-				//   - Everything else (Airways `ai-config--ai-new-model-chatbot`, Government
-				//     `ai-config--publicbot`, or any future vertical) uses the direct LLM
-				//     path so the response is generated from THAT config's own system prompt
-				//     and model. Prior to this branch, all non-banking chats were forced
-				//     through the ToggleBot pipeline and got banking-flavored answers to
-				//     off-domain questions.
+				// Banking runs the full multi-agent pipeline; other verticals use the direct LLM path.
 				const isBankingMultiAgent = aiConfigKey === "ai-config--togglebot";
 				const runPipeline = () =>
 					isBankingMultiAgent
@@ -641,18 +632,7 @@ Is there a specific service you'd like to know more about?`;
 			return Number((inputCost + outputCost).toFixed(6));
 		}
 
-		// Cost attribution: the orchestrator config (ai-config--togglebot) doesn't
-		// actually generate any text — it just provides KB / enable gate / guardrails.
-		// The tokens counted here came from the multi-agent pipeline whose final
-		// (visible-to-user) output is produced by the Brand Voice agent. So we price
-		// against that model instead of the orchestrator's placeholder model, which
-		// would otherwise report misleading cost numbers (e.g. Nova Pro pricing on a
-		// GPT-5.5 response). Falls back to the orchestrator's model if for any reason
-		// the Brand Voice model name isn't available.
-		//
-		// Note: this is still an approximation. Triage + Specialist agents also
-		// consume tokens that aren't priced separately here — see agentResult for
-		// per-agent breakdown if precise per-agent costs are ever needed.
+		// Price against Brand Voice's model (the actual response generator), not the orchestrator.
 		const costModelId = agentResult.brandVoice?.modelName || modelId;
 		const responseCost = calculateModelCost(costModelId, totalInputTokens, totalOutputTokens);
 

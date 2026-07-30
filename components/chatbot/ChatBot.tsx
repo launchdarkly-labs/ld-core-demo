@@ -136,9 +136,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
   const hasSelfHealing = vertical === "banking";
 
-  // Function to determine model type from feature flag or agent response.
-  // Optional overrideModelId lets the header switch to the self-healing model
-  // when that tab is active (see headerModelId below).
   const getModelTypeFromFlag = (overrideModelId?: string): 'bedrock' | 'openai' => {
     const modelId = overrideModelId || agentModelName || aiNewModelChatbotFlag?.model?.name;
     if (modelId) {
@@ -201,12 +198,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const selfHealingFlag = useFlags()[selfHealingAiConfigKey] as any;
   const isSelfHealingEnabled = hasSelfHealing && selfHealingFlag?._ldMeta?.enabled !== false;
 
-  // Brand Voice is the FINAL agent in the ToggleBot multi-agent pipeline — it
-  // rewrites the specialist's draft in ToggleBank's voice and its output is what
-  // the user actually reads. So the AI Chatbot tab should reflect Brand Voice's
-  // model, not the orchestrator (ai-config--togglebot) which just controls KB /
-  // enable gate / guardrails and never generates text. Banking-only; harmless
-  // undefined for other verticals.
   const brandVoiceFlag = useFlags()["ai-config--togglebot-brand-voice"] as any;
 
   useEffect(() => {
@@ -753,17 +744,6 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
                 {(() => {
-                  // Banking vertical has tabs (AI Chatbot / AI Self-Healing) below the
-                  // header, and each tab already shows its own model + provider as a
-                  // subtitle. Rendering "Powered by X" up here duplicates that info AND
-                  // was previously misleading — it showed the orchestrator config's
-                  // model even though the real response came from Brand Voice. So for
-                  // banking we keep only the title (which flips per active tab).
-                  //
-                  // Airways / Government verticals don't have tabs (no self-healing),
-                  // so we keep the existing "Powered by X · Provider" line so users can
-                  // still see the model at a glance. We also give each vertical its own
-                  // title so users don't see "ToggleBot" on a travel site.
                   const isSelfHealingTab = activeTab === "self-healing";
                   const bankingTitle = isSelfHealingTab
                     ? "ToggleBot - Self-Healing Assistant"
@@ -868,21 +848,11 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                 <div className="px-4 border-b border-gray-200 dark:border-gray-700">
                   <TabsList className="w-full bg-transparent p-0 h-auto">
                     {(() => {
-                      // Each tab shows its own model + provider as a subtitle so it's
-                      // obvious what backs each mode before you click.
-                      //
-                      // Main (AI Chatbot) tab: shows the BRAND VOICE model — the agent
-                      // that actually produces the final text users read. Priority:
-                      //   1. Live agent model from the last response (agentModelName)
-                      //   2. Brand Voice AI Config's currently-assigned variation
-                      //   3. Orchestrator's placeholder model as a last-resort fallback
-                      //
-                      // Self-Healing tab: for that config, orchestrator IS the response
-                      // generator (no sub-pipeline), so reading the flag directly is
-                      // already accurate.
+                      // LD flag first so targeting changes reflect live in the subtitle;
+                      // agentModelName is the fallback if the flag hasn't resolved yet.
                       const mainModelId =
-                        agentModelName ||
                         brandVoiceFlag?.model?.name ||
+                        agentModelName ||
                         aiNewModelChatbotFlag?.model?.name;
                       const mainType = getModelTypeFromFlag(mainModelId);
                       const mainModel = aiModelName(mainModelId);
@@ -956,6 +926,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                             <AccordionContent>
                               <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
                                 <div className="flex flex-wrap gap-3">
+                                  {agentModelName && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Response Model:</span>
+                                      <span>{aiModelName(agentModelName)}</span>
+                                    </div>
+                                  )}
                                   <div className="flex items-center gap-1">
                                     <span className="font-semibold">Accuracy:</span>
                                     <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>
