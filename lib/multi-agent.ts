@@ -794,6 +794,96 @@ async function runBrandVoiceAgent(
 	};
 }
 
+// Direct LLM path for non-banking verticals. Returns a MultiAgentResult-shaped
+// object so downstream /api/chat logic (cost, judge, tracker) works unchanged.
+export async function runDirectLLMPipeline(
+	deps: MultiAgentDeps,
+	aiConfig: any,
+	chatHistory: Array<{ role: string; content: string }> = [],
+): Promise<MultiAgentResult> {
+	const { bedrockClient, openai, userInput, aiConfigKey } = deps;
+
+	if (deps.aiConfigKey && typeof LDObserve?.setAttributes === "function") {
+		LDObserve.setAttributes({
+			"feature_flag.key": deps.aiConfigKey,
+			"feature_flag.provider.name": "LaunchDarkly",
+		});
+	}
+
+	const modelName: string = aiConfig?.model?.name ?? "amazon.nova-pro-v1:0";
+	pushLog({ level: "INFO", message: `📥 Direct LLM path · model: ${modelName}`, name: "chat" });
+
+	const configMessages = configToMessages(aiConfig).filter(
+		(m) => m.role === "system",
+	);
+	const historyMessages = (chatHistory ?? [])
+		.filter((m) => m.role === "user" || m.role === "assistant")
+		.map((m) => ({ role: m.role, content: m.content }));
+	const messages = [
+		...configMessages,
+		...historyMessages,
+		{ role: "user", content: userInput },
+	];
+
+	const tracker = aiConfig?.createTracker?.();
+	const params = {
+		temperature: aiConfig?.model?.parameters?.temperature,
+		maxTokens: aiConfig?.model?.parameters?.maxTokens,
+	};
+
+	const result = await callLLM(modelName, messages, bedrockClient, openai, params, tracker, {
+		agentLabel: "direct",
+		requestHeaders: deps.requestHeaders,
+		aiConfigKey,
+	});
+
+	if (isBedrockModel(modelName)) {
+		tracker?.trackSuccess?.();
+		if (result.durationMs) tracker?.trackDuration?.(result.durationMs);
+		tracker?.trackTokens?.({
+			input: result.inputTokens,
+			output: result.outputTokens,
+			total: result.inputTokens + result.outputTokens,
+		});
+	}
+
+	pushLog({
+		level: "INFO",
+		message: `   Direct response in ${result.durationMs}ms · ${result.inputTokens} in / ${result.outputTokens} out tokens`,
+		name: "chat",
+	});
+
+	return {
+		finalResponse: result.content,
+		triage: {
+			category: "customer_support",
+			confidence: 0,
+			reasoning: "n/a — direct LLM pipeline (non-banking vertical)",
+			durationMs: 0,
+			inputTokens: 0,
+			outputTokens: 0,
+		},
+		specialist: {
+			content: "",
+			category: "customer_support",
+			specialistLabel: "n/a",
+			modelName,
+			durationMs: 0,
+			inputTokens: 0,
+			outputTokens: 0,
+		},
+		brandVoice: {
+			content: result.content,
+			modelName,
+			durationMs: result.durationMs,
+			inputTokens: result.inputTokens,
+			outputTokens: result.outputTokens,
+		},
+		totalInputTokens: result.inputTokens,
+		totalOutputTokens: result.outputTokens,
+	};
+}
+
 // Pipeline orchestrator
 
 export async function runMultiAgentPipeline(

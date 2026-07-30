@@ -19,7 +19,7 @@ import { LD_CONTEXT_COOKIE_KEY } from "@/utils/constants";
 import { v4 as uuidv4 } from "uuid";
 import { recordErrorToLD } from "@/utils/observability/server";
 import { pushLog } from "@/lib/log-stream";
-import { runMultiAgentPipeline } from "@/lib/multi-agent";
+import { runMultiAgentPipeline, runDirectLLMPipeline } from "@/lib/multi-agent";
 import { LDObserve } from "@launchdarkly/observability-node";
 
 export default async function chatResponse(
@@ -552,14 +552,21 @@ Is there a specific service you'd like to know more about?`;
 					requestHeaders: req.headers as Record<string, string>,
 					aiConfigKey,
 				};
+
+				// Banking runs the full multi-agent pipeline; other verticals use the direct LLM path.
+				const isBankingMultiAgent = aiConfigKey === "ai-config--togglebot";
+				const runPipeline = () =>
+					isBankingMultiAgent
+						? runMultiAgentPipeline(pipelineDeps)
+						: runDirectLLMPipeline(pipelineDeps, aiConfig, chatHistory);
 				const agentResult =
 					typeof LDObserve?.runWithHeaders === "function"
 						? await LDObserve.runWithHeaders(
 								"POST - /api/chat",
 								req.headers as Record<string, string>,
-								() => runMultiAgentPipeline(pipelineDeps),
+								runPipeline,
 							)
-						: await runMultiAgentPipeline(pipelineDeps);
+						: await runPipeline();
 
 				const fullResponse = agentResult.finalResponse;
 				const totalInputTokens = agentResult.totalInputTokens;
@@ -600,6 +607,12 @@ Is there a specific service you'd like to know more about?`;
 				'gpt-4o': { input: 0.005, output: 0.015 },
 				'gpt-4o-mini': { input: 0.00015, output: 0.0006 },
 				'gpt-5-mini': { input: 0.0002, output: 0.0008 },
+				// GPT-5.4 / 5.5 family (replacements for retired gpt-5-chat-latest / gpt-5 / gpt-5-mini / gpt-4o)
+				'gpt-5.5': { input: 0.005, output: 0.015 },
+				'gpt-5.4': { input: 0.0025, output: 0.010 },
+				'gpt-5.4-mini': { input: 0.00015, output: 0.0006 },
+				'gpt-5.4-nano': { input: 0.00008, output: 0.00032 },
+				'gpt-5.4-pro': { input: 0.010, output: 0.030 },
 				// Fallback pricing
 				'default': { input: 0.002, output: 0.008 }
 			};
@@ -619,7 +632,9 @@ Is there a specific service you'd like to know more about?`;
 			return Number((inputCost + outputCost).toFixed(6));
 		}
 
-		const responseCost = calculateModelCost(modelId, totalInputTokens, totalOutputTokens);
+		// Price against Brand Voice's model (the actual response generator), not the orchestrator.
+		const costModelId = agentResult.brandVoice?.modelName || modelId;
+		const responseCost = calculateModelCost(costModelId, totalInputTokens, totalOutputTokens);
 
 		// Notify client that validation is in progress
 				try {

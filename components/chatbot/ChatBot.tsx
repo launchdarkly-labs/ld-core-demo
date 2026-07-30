@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useLDClient, useFlags } from "launchdarkly-react-client-sdk";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
-import { BatteryCharging } from "lucide-react";
+import { BatteryCharging, MessageSquare, ShieldCheck } from "lucide-react";
 import {
   PERSONA_ROLE_DEVELOPER,
   COHERE,
@@ -136,9 +136,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
   const selfHealingAiConfigKey = "ai-config--togglebot-self-heal-chatbot";
   const hasSelfHealing = vertical === "banking";
 
-  // Function to determine model type from feature flag or agent response
-  const getModelTypeFromFlag = (): 'bedrock' | 'openai' => {
-    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+  const getModelTypeFromFlag = (overrideModelId?: string): 'bedrock' | 'openai' => {
+    const modelId = overrideModelId || agentModelName || aiNewModelChatbotFlag?.model?.name;
     if (modelId) {
       const bedrockPatterns = [
         'anthropic.claude',
@@ -198,6 +197,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
   const selfHealingFlag = useFlags()[selfHealingAiConfigKey] as any;
   const isSelfHealingEnabled = hasSelfHealing && selfHealingFlag?._ldMeta?.enabled !== false;
+
+  const brandVoiceFlag = useFlags()["ai-config--togglebot-brand-voice"] as any;
 
   useEffect(() => {
     if (selfHealingEndRef.current && activeTab === "self-healing") {
@@ -541,8 +542,8 @@ export default function Chatbot({ vertical }: { vertical: string }) {
 
   const chatContentRef = useRef<HTMLDivElement | null>(null);
 
-  const aiModelName = () => {
-    const modelId = agentModelName || aiNewModelChatbotFlag?.model?.name;
+  const aiModelName = (overrideModelId?: string) => {
+    const modelId = overrideModelId || agentModelName || aiNewModelChatbotFlag?.model?.name;
     if (modelId) {
       
       // Map of model IDs to friendly names
@@ -663,6 +664,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
         'gpt-5-nano': 'GPT-5 Nano',
         'gpt-5-mini': 'GPT-5 Mini',
         'gpt-5': 'GPT-5',
+        // GPT-5.4 / 5.5 family (replacements for retired gpt-5/gpt-5-mini/gpt-5-chat-latest/gpt-4o)
+        'gpt-5.5': 'GPT-5.5',
+        'gpt-5.4': 'GPT-5.4',
+        'gpt-5.4-mini': 'GPT-5.4 Mini',
+        'gpt-5.4-nano': 'GPT-5.4 Nano',
+        'gpt-5.4-pro': 'GPT-5.4 Pro',
       };
       
       const mapped = (modelNameMap as Record<string, string>)[modelId as string];
@@ -736,35 +743,54 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                   />{" "}
                   <AvatarFallback>CB</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    ToggleBot - AI Assistant
-                  </p>
-                  <p className={"text-sm text-gray-500 dark:text-gray-400"}>
-                    Powered by{" "}
-                    <span
-                      className={`font-bold ${
-                        getModelTypeFromFlag() === 'openai' 
-                          ? 'text-black dark:text-white' 
-                          : 'text-orange-600'
-                      }`}
-                    >
-                      {aiModelName()}
-                    </span>{" "}
-                    {getModelTypeFromFlag() === 'openai' ? (
-                      <span className="text-black dark:text-white font-bold">
-                        OpenAI
-                      </span>
-                    ) : (
-                      <>
-                        with{" "}
-                        <span className="text-amazonColor font-bold">
-                          Amazon Bedrock
-                        </span>
-                      </>
-                    )}
-                  </p>
-                </div>
+                {(() => {
+                  const isSelfHealingTab = activeTab === "self-healing";
+                  const bankingTitle = isSelfHealingTab
+                    ? "ToggleBot - Self-Healing Assistant"
+                    : "ToggleBot - AI Assistant";
+                  const airwaysTitle = "LaunchAirways - AI Travel Assistant";
+                  const governmentTitle = "Bureau of Risk Reduction - AI Assistant";
+                  const headerTitle =
+                    vertical === "airways"
+                      ? airwaysTitle
+                      : vertical === "government"
+                      ? governmentTitle
+                      : bankingTitle;
+                  const headerModelType = getModelTypeFromFlag();
+                  return (
+                    <div>
+                      <p className="text-sm font-medium leading-none">
+                        {headerTitle}
+                      </p>
+                      {!hasSelfHealing && (
+                        <p className={"text-sm text-gray-500 dark:text-gray-400"}>
+                          Powered by{" "}
+                          <span
+                            className={`font-bold ${
+                              headerModelType === 'openai'
+                                ? 'text-black dark:text-white'
+                                : 'text-orange-600'
+                            }`}
+                          >
+                            {aiModelName()}
+                          </span>{" "}
+                          {headerModelType === 'openai' ? (
+                            <span className="text-black dark:text-white font-bold">
+                              OpenAI
+                            </span>
+                          ) : (
+                            <>
+                              with{" "}
+                              <span className="text-amazonColor font-bold">
+                                Amazon Bedrock
+                              </span>
+                            </>
+                          )}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
               <div className="ml-auto flex items-center space-x-2">
                 <Button
@@ -821,18 +847,52 @@ export default function Chatbot({ vertical }: { vertical: string }) {
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ChatTab)} className="flex flex-col flex-1 overflow-hidden">
                 <div className="px-4 border-b border-gray-200 dark:border-gray-700">
                   <TabsList className="w-full bg-transparent p-0 h-auto">
-                    <TabsTrigger
-                      value="main"
-                      className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none text-xs font-medium"
-                    >
-                      AI Chatbot
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="self-healing"
-                      className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none text-xs font-medium"
-                    >
-                      AI Self-Healing
-                    </TabsTrigger>
+                    {(() => {
+                      // LD flag first so targeting changes reflect live in the subtitle;
+                      // agentModelName is the fallback if the flag hasn't resolved yet.
+                      const mainModelId =
+                        brandVoiceFlag?.model?.name ||
+                        agentModelName ||
+                        aiNewModelChatbotFlag?.model?.name;
+                      const mainType = getModelTypeFromFlag(mainModelId);
+                      const mainModel = aiModelName(mainModelId);
+                      const mainProvider = mainType === 'openai' ? 'OpenAI' : 'Amazon Bedrock';
+                      const shModelId = selfHealingFlag?.model?.name || "gpt-5.5";
+                      const shModel = aiModelName(shModelId);
+                      const shProvider = getModelTypeFromFlag(shModelId) === 'openai' ? 'OpenAI' : 'Amazon Bedrock';
+                      return (
+                        <>
+                          <TabsTrigger
+                            value="main"
+                            className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none py-2 h-auto"
+                          >
+                            <div className="flex flex-col items-center gap-0.5">
+                              <div className="flex items-center gap-1.5 text-xs font-medium">
+                                <MessageSquare className="h-3.5 w-3.5" />
+                                <span>AI Chatbot</span>
+                              </div>
+                              <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400 leading-tight">
+                                {mainModel} · {mainProvider}
+                              </span>
+                            </div>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="self-healing"
+                            className="flex-1 rounded-none border-b-2 data-[state=active]:border-purple-500 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=inactive]:border-transparent data-[state=active]:shadow-none py-2 h-auto"
+                          >
+                            <div className="flex flex-col items-center gap-0.5">
+                              <div className="flex items-center gap-1.5 text-xs font-medium">
+                                <ShieldCheck className="h-3.5 w-3.5" />
+                                <span>AI Self-Healing</span>
+                              </div>
+                              <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400 leading-tight">
+                                {shModel} · {shProvider}
+                              </span>
+                            </div>
+                          </TabsTrigger>
+                        </>
+                      );
+                    })()}
                   </TabsList>
                 </div>
 
@@ -866,6 +926,12 @@ export default function Chatbot({ vertical }: { vertical: string }) {
                             <AccordionContent>
                               <div className="rounded-md border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900">
                                 <div className="flex flex-wrap gap-3">
+                                  {agentModelName && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-semibold">Response Model:</span>
+                                      <span>{aiModelName(agentModelName)}</span>
+                                    </div>
+                                  )}
                                   <div className="flex items-center gap-1">
                                     <span className="font-semibold">Accuracy:</span>
                                     <span>{(metrics?.accuracy ?? 0).toFixed(2)}</span>

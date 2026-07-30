@@ -351,7 +351,7 @@ export const DEFAULT_AI_MODEL = {
   ],
   model: {
     parameters: { temperature: 0.5, maxTokens: 500 },
-    id: "cohere.command-text-v14",
+    id: "amazon.nova-lite-v1:0",
   },
 };
 
