@@ -102,22 +102,60 @@ class LDPlatform:
     MAX_RETRIES = 5                # retries for 429 responses
     LOW_REMAINING_THRESHOLD = 2    # preemptive throttle when bucket nearly empty
     MAX_PREEMPTIVE_SLEEP = 10.0    # cap (seconds) on preemptive waits
+    # Transient-failure retries (5xx responses and network errors) are separate
+    # from 429 rate-limit retries so a single bad API call doesn't burn the
+    # whole 429 budget.
+    MAX_TRANSIENT_RETRIES = 3
+    TRANSIENT_STATUS_CODES = (500, 502, 503, 504)
 
     def getrequest(self, method, url, json=None, headers=None, data=None):
         """Make an API request with connection reuse and rate-limit handling.
 
         - Retries on HTTP 429 up to MAX_RETRIES times, honoring the
           Retry-After / X-Ratelimit-Reset headers with capped backoff.
+        - Retries on HTTP 5xx and network errors (ConnectionError, Timeout)
+          up to MAX_TRANSIENT_RETRIES times with exponential backoff. This
+          protects against the transient "empty body" responses that were
+          causing json.loads() to blow up downstream.
         - If the route bucket is nearly empty after a successful call,
           sleeps only until the advertised reset time (capped) so the
           next call doesn't hit a 429.
         - Always returns a requests.Response (never a string).
         """
         response = None
+        transient_attempts = 0
         for attempt in range(self.MAX_RETRIES + 1):
-            response = self._session.request(
-                method, url, json=json, headers=headers, data=data
-            )
+            try:
+                response = self._session.request(
+                    method, url, json=json, headers=headers, data=data
+                )
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout) as e:
+                if transient_attempts >= self.MAX_TRANSIENT_RETRIES:
+                    print(f"Network error after {transient_attempts} retries: "
+                          f"{method} {url}: {e}")
+                    raise
+                delay = min(0.5 * (2 ** transient_attempts), 10.0)
+                print(f"Network error on {method} {url} (attempt "
+                      f"{transient_attempts + 1}/{self.MAX_TRANSIENT_RETRIES}), "
+                      f"retrying in {delay:.1f}s: {e}")
+                transient_attempts += 1
+                time.sleep(delay)
+                continue
+
+            if response.status_code in self.TRANSIENT_STATUS_CODES:
+                if transient_attempts < self.MAX_TRANSIENT_RETRIES:
+                    delay = min(0.5 * (2 ** transient_attempts), 10.0)
+                    print(f"Transient {response.status_code} on {method} {url} "
+                          f"(attempt {transient_attempts + 1}/"
+                          f"{self.MAX_TRANSIENT_RETRIES}), retrying in {delay:.1f}s")
+                    transient_attempts += 1
+                    time.sleep(delay)
+                    continue
+                print(f"Transient error persisted after "
+                      f"{self.MAX_TRANSIENT_RETRIES} retries: "
+                      f"HTTP {response.status_code} {method} {url}")
+                break
 
             if response.status_code != 429:
                 break
@@ -159,6 +197,31 @@ class LDPlatform:
                 pass
         # Fallback: exponential backoff
         return min(0.5 * (2 ** attempt), 30.0)
+
+    def _parse_json_response(self, response, context=""):
+        """Safely parse a response body as JSON.
+
+        Returns {} on empty or invalid bodies (with a warning log) instead
+        of raising JSONDecodeError. This keeps downstream ``if "message"
+        in data`` checks working as no-ops when the body is unusable,
+        instead of the whole provisioning run crashing.
+        """
+        if response is None:
+            print(f"Warning: no response object to parse{' for ' + context if context else ''}")
+            return {}
+        text = response.text or ""
+        if not text.strip():
+            print(f"Warning: empty response body{' for ' + context if context else ''} "
+                  f"(HTTP {response.status_code})")
+            return {}
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError as e:
+            print(f"Warning: could not decode JSON response"
+                  f"{' for ' + context if context else ''} "
+                  f"(HTTP {response.status_code}): {e}")
+            print(f"Response text (first 500 chars): {text[:500]}")
+            return {}
 
     ##################################################
     # Create a project
@@ -253,7 +316,7 @@ class LDPlatform:
             json=payload,
             headers={"Authorization": self.api_key, "Content-Type": "application/json"},
         )
-        data = json.loads(response.text)
+        data = self._parse_json_response(response, context=f"create_environment {env_key}")
         if "message" in data:
             print("Error creating environment: " + data["message"])
         return response
@@ -998,7 +1061,9 @@ class LDPlatform:
         # Segment already exists — nothing to do (replaces the GET pre-check)
         if response.status_code == 409:
             return
-        data = json.loads(response.text)
+        data = self._parse_json_response(
+            response, context=f"create_segment {segment_key} in {env_key}"
+        )
         if "message" in data:
             print("Error creating segment: " + data["message"])
         return response
@@ -1045,7 +1110,9 @@ class LDPlatform:
             json=payload,
             headers=headers,
         )
-        data = json.loads(response.text)
+        data = self._parse_json_response(
+            response, context=f"add_segment_rule {segment_key} in {env_key}"
+        )
         if "message" in data:
             print("Error creating segment: " + data["message"])
         return response
