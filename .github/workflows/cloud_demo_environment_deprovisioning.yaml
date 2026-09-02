@@ -41,6 +41,7 @@ jobs:
           curl -X POST "${{ inputs.webhook_url }}" \
             -H "Content-Type: application/json" \
             -H "User-Agent: GitHub-Actions" \
+            -H "x-api-key: ${{ secrets.WEBHOOK_API_KEY }}" \
             -d '{
               "event": "workflow_started",
               "run_id": "${{ github.run_id }}",
@@ -152,6 +153,7 @@ jobs:
           curl -X POST "${{ inputs.webhook_url }}" \
             -H "Content-Type: application/json" \
             -H "User-Agent: GitHub-Actions" \
+            -H "x-api-key: ${{ secrets.WEBHOOK_API_KEY }}" \
             -d '{
               "event": "workflow_completed",
               "run_id": "${{ github.run_id }}",
