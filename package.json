@@ -10,7 +10,7 @@
     "upload-sourcemaps": "ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks --base-path _next/static/chunks && ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks/pages --base-path _next/static/chunks/pages"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.0.14",
+    "@ai-sdk/openai": "^4.0.60",
     "@aws-sdk/client-bedrock-agent-runtime": "^3.922.0",
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@aws-sdk/client-dynamodb": "^3.1027.0",
