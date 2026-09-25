@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "upload-sourcemaps": "ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks --base-path _next/static/chunks && ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks/pages --base-path _next/static/chunks/pages"
+    "upload-sourcemaps": "ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks --base-path _next/static/chunks && ldcli sourcemaps upload --app-version 2.9.8 --path .next/static/chunks/pages --base-path _next/static/chunks/pages",
+    "noise": "node --env-file=.env.local scripts/generate-audience-noise.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.14",
@@ -89,6 +90,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@launchdarkly/node-client-sdk": "^4.1.3",
     "@types/crypto-js": "^4.2.2",
     "@types/lodash": "^4.14.201",
     "@types/node": "^20",

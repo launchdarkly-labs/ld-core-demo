@@ -416,21 +416,36 @@ METRIC_GROUPS = [
 # Feature flags. "flag" -> create_flag kwargs; optional "post" -> follow-up
 # LDPlatform calls as [method, args, kwargs] (rollouts, metric attachments).
 FLAGS = [
+    # 50/50 rollout on A1 ensures the A0 prereq is satisfied for ~half of
+    # traffic, giving the prerequisite demo a meaningful audience out of the box.
     {'flag': {'flag_key': 'wealthManagement',
               'flag_name': 'A1 - Release: Wealth Management Component',
               'description': 'Releasing new wealth management component on ToggleBank',
               'variations': [{'value': True, 'name': 'Release Wealth Management Component'},
                              {'value': False, 'name': 'Hide Wealth Management Component'}],
               'tags': ['release', 'bank'],
-              'on_variation': 1}},
-    {'flag': {'flag_key': 'enhancedNotificationCenter',
-              'flag_name': 'A1.1 - Release: Enhanced Notification Center - ToggleBank',
-              'description': 'Releases new enhanced notification center with real-time updates and '
-                             'improved UI',
-              'variations': [{'value': True, 'name': 'Enable Enhanced Notification Center'},
-                             {'value': False, 'name': 'Use Legacy Notifications'}],
-              'tags': ['release', 'bank', 'observability'],
-              'on_variation': 1}},
+              'on_variation': 1},
+     'post': [['set_default_percentage_rollout',
+               ['wealthManagement', 'production'],
+               {'weights': {True: 50000, False: 50000}}],
+              ['toggle_flag',
+               ['wealthManagement', 'on', 'production'],
+               {}]]},
+    {'flag': {'flag_key': 'wealthManagementLearnMoreOverlay',
+              'flag_name': 'A0 - Companion: Wealth Management Learn More Overlay - ToggleBank',
+              'description': 'Educational callout shown to users who received the wealth '
+                             'management rollout. Prerequisite-gated so it automatically '
+                             'follows the wealthManagement flag population.',
+              'variations': [{'value': True, 'name': 'True - Show Learn More Overlay'},
+                             {'value': False, 'name': 'False - Hide Overlay'}],
+              'tags': ['release', 'bank', 'prerequisite-demo'],
+              'on_variation': 0},
+     'post': [['add_prerequisite_to_flag',
+               ['wealthManagementLearnMoreOverlay', 'wealthManagement', 0, 'production'],
+               {}],
+              ['toggle_flag',
+               ['wealthManagementLearnMoreOverlay', 'on', 'production'],
+               {}]]},
     {'custom': 'flag_federated_account'},
     {'flag': {'flag_key': 'paymentEngineHealthyRollout',
               'flag_name': 'A3 - Release: Payment Engine Upgrade - Healthy Rollout - ToggleBank',
@@ -512,6 +527,37 @@ FLAGS = [
      'post': [['add_guarded_rollout',
                ['transactionMonitoring', 'production'],
                {'metrics': ['telemetry-error-metric'], 'days': 1}]]},
+    {'flag': {'flag_key': 'paymentKillSwitch',
+              'flag_name': 'A9 - Trigger: Payment Kill Switch - ToggleBank',
+              'description': 'Fires from an LaunchDarkly Observability alert to '
+                             'automatically disable payments when error thresholds '
+                             'are breached. Demonstrates the "take action on events" pattern.',
+              'variations': [{'value': True, 'name': 'Payments Enabled'},
+                             {'value': False, 'name': 'Payments Disabled (Kill Switch)'}],
+              'tags': ['release', 'bank', 'observability', 'trigger-demo'],
+              'on_variation': 0},
+     'post': [['create_flag_trigger',
+               ['paymentKillSwitch', 'production'],
+               {'action': 'turnFlagOff',
+                'comment': 'Auto-created by demo provisioning. Fires from LD '
+                           'Observability alert to kill-switch payments.'}],
+              ['toggle_flag',
+               ['paymentKillSwitch', 'on', 'production'],
+               {}]]},
+    {'flag': {'flag_key': 'enhancedFraudMonitoring',
+              'flag_name': 'A10 - Trigger: Auto-Enable Enhanced Fraud Monitoring - ToggleBank',
+              'description': 'Fires from a LaunchDarkly Observability alert to '
+                             'automatically enable deeper fraud monitoring when '
+                             'suspicious patterns are detected. Demonstrates trigger-on flow.',
+              'variations': [{'value': True, 'name': 'Enhanced Fraud Monitoring Enabled'},
+                             {'value': False, 'name': 'Basic Monitoring Only'}],
+              'tags': ['release', 'bank', 'observability', 'trigger-demo'],
+              'on_variation': 0},
+     'post': [['create_flag_trigger',
+               ['enhancedFraudMonitoring', 'production'],
+               {'action': 'turnFlagOn',
+                'comment': 'Auto-created by demo provisioning. Fires from LD '
+                           'Observability alert to enable enhanced fraud monitoring.'}]]},
     {'flag': {'flag_key': 'investment-recent-trade-db',
               'flag_name': 'B1 - Release: New Database (Guarded Release) - Investment',
               'description': 'Release new database for recent trading component',

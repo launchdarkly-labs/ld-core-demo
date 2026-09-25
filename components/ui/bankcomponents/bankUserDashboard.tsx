@@ -14,6 +14,7 @@ import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
 import { motion } from "framer-motion";
+import { TrendingUp } from "lucide-react";
 import { BANK } from "@/utils/constants";
 import NavWrapper from "@/components/ui/NavComponent/NavWrapper";
 import CSNavWrapper from "@/components/ui/NavComponent/CSNavWrapper";
@@ -35,7 +36,12 @@ export default function BankUserDashboard() {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [aiResponse, setAIResponse] = useState<string>("");
 	const { isLoggedIn } = useContext(LoginContext);
-	const { wealthManagement, federatedAccounts } = useFlags();
+	const {
+		wealthManagement,
+		wealthManagementLearnMoreOverlay,
+		federatedAccounts,
+		paymentKillSwitch,
+	} = useFlags();
 	const money = JSON.stringify(oldCheckingData);
 	const prompt: string = `Playing the role of a financial analyst, using the data contained within this information set: ${money}, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be tuned to talking directly to the requestor.`;
 	const viewPrompt: string = 'Playing the role of a financial analyst, write me 50 word of an analysis of the data and highlight the item I spend most on. Skip any unnecessary explanations. Summarize the mostly costly area im spending at. Your response should be personalized for the user requesting the information.'
@@ -109,6 +115,30 @@ export default function BankUserDashboard() {
 			/>
 
 			<main className="w-full px-4 xl:px-0 mx-auto max-w-7xl relative ">
+				{paymentKillSwitch === false ? (
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.35 }}
+						className="mt-4 mx-4 xl:mx-0 p-4 rounded-xl bg-red-50 border border-red-300 shadow-sm flex items-center gap-3"
+						role="alert"
+					>
+						<div className="flex h-9 w-9 rounded-full bg-red-600 text-white items-center justify-center font-sohne text-lg shrink-0">
+							!
+						</div>
+						<div>
+							<p className="text-red-900 font-sohne font-semibold text-[15px]">
+								Payments temporarily unavailable
+							</p>
+							<p className="text-red-700 font-sohne text-[13px] mt-0.5">
+								An automated safety trigger from LaunchDarkly Observability
+								has disabled payments while we investigate elevated error
+								rates. Service will resume automatically once metrics recover.
+							</p>
+						</div>
+					</motion.div>
+				) : null}
+
 				<NavWrapper>
 					<>
 						<CSNavWrapper>
@@ -215,6 +245,37 @@ export default function BankUserDashboard() {
 						<p className="text-blue-600 font-sohne mb-6 ml-6 text-[24px]">
 							Wealth Management
 						</p>
+
+						{/* Prereq'd on wealthManagement=true, so audience follows A1's rollout. */}
+						{wealthManagementLearnMoreOverlay ? (
+							<motion.div
+								initial={{ opacity: 0, y: -10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.4 }}
+								className="mx-6 mb-6 p-5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+							>
+								<div className="flex items-start gap-3">
+									<div className="hidden sm:flex h-10 w-10 rounded-full bg-blue-600 text-white items-center justify-center shrink-0">
+										<TrendingUp className="h-5 w-5" strokeWidth={2.25} />
+									</div>
+									<div>
+										<p className="text-blue-900 font-sohne font-semibold text-[16px]">
+											New to Wealth Management? Learn how it works.
+										</p>
+										<p className="text-blue-700 font-sohne text-[14px] mt-1">
+											Discover how our advisors can help you plan for retirement, savings goals, and long-term investing — all in one place.
+										</p>
+									</div>
+								</div>
+								<button
+									type="button"
+									className="bg-blue-600 hover:bg-blue-700 text-white font-sohne text-[14px] font-medium px-5 py-2.5 rounded-lg whitespace-nowrap transition-colors shrink-0"
+								>
+									Take the tour →
+								</button>
+							</motion.div>
+						) : null}
+
 						<section className="flex flex-col xl:flex-row w-full gap-y-8 sm:gap-x-8 mb-10 h-full">
 							<div className={`w-full xl:w-[60%]`}>
 								<AccountTrends data={data} />
