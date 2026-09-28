@@ -2563,14 +2563,13 @@ class LDPlatform:
             payload["comment"] = comment
 
         res = self.getrequest("POST", url, headers=headers, json=payload)
-        try:
-            data = json.loads(res.text) if hasattr(res, "text") else {}
-            if data.get("triggerURL"):
-                print(
-                    f"  Trigger for {flag_key} ({action}): {data['triggerURL']}"
-                )
-        except (json.JSONDecodeError, TypeError):
-            pass
+        # Trigger URLs are secrets and only visible at creation time. We intentionally
+        # do NOT print them to stdout so they don't leak into GitHub Actions logs.
+        # Retrieve a URL by resetting the trigger in the LD UI when needed.
+        if res.status_code >= 400:
+            print(f"  [create_flag_trigger] {flag_key} ({action}): HTTP {res.status_code} {res.text[:300]}")
+        else:
+            print(f"  Trigger created: {flag_key} ({action})")
         return res
 
     ##################################################

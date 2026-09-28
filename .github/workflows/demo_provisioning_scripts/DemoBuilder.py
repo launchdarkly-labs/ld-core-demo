@@ -288,11 +288,11 @@ class DemoBuilder:
             self.ldproject.add_progressive_rollout("federatedAccounts", "production")
 
     def flag_payment_engine_failed_rollout(self):
-        """A4: Create flag with custom guarded rollout (25%/50% stages, 5-min windows).
+        """A4: Create flag with custom guarded rollout (10%/25% stages, 20-min windows).
 
-        Uses higher starting allocation so the chart has visible test data from
-        the beginning, and longer stage windows to allow enough time for the
-        data generator to produce a realistic curve before regression detection.
+        Higher starting allocation gives the chart visible test data from the
+        beginning; longer stage windows give the data generator time to produce
+        a realistic curve before regression detection triggers rollback.
         """
         res = self.ldproject.create_flag(
             "paymentProcessingV2FailedRollout",
@@ -337,6 +337,7 @@ class DemoBuilder:
                 {"allocation": 10000, "durationMillis": 1200000},
                 {"allocation": 25000, "durationMillis": 1200000},
             ]
+            a4_metrics = ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"]
             payload = {
                 "comment": "",
                 "environmentKey": "production",
@@ -349,11 +350,10 @@ class DemoBuilder:
                         "targetVariationId": test_var,
                         "randomizationUnit": "user",
                         "stages": custom_stages,
-                        "monitoredMetrics": [
-                            {"metricKey": "payment-v2-success-rate", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-latency", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-error-rate", "enabled": True, "rollbackOnRegression": True},
-                        ],
+                        "metrics": [{"key": m, "isGroup": False} for m in a4_metrics],
+                        "metricMonitoringPreferences": {
+                            m: {"autoRollback": True} for m in a4_metrics
+                        },
                     },
                 ],
             }
@@ -2138,7 +2138,7 @@ class DemoBuilder:
         print("Creating Judge Configs...")
         judge_tags = ["ai-config", "judge", "togglebank"]
 
-        # 1. Accuracy Judge
+        # 1. Accuracy Judge (higher score = better)
         self.ldproject.create_ai_config(
             "togglebank-accuracy-judge",
             "ToggleBank Accuracy Judge",
@@ -2146,6 +2146,7 @@ class DemoBuilder:
             judge_tags,
             mode="judge",
             evaluation_metric_key="$ld:ai:judge:accuracy",
+            is_inverted=False,
         )
         self.ldproject.create_ai_config_versions(
             "togglebank-accuracy-judge",
@@ -2178,7 +2179,7 @@ class DemoBuilder:
             self.ldproject.update_ai_config_targeting("togglebank-accuracy-judge", "production", acc_var_id)
         print("  Created Accuracy Judge")
 
-        # 2. Relevance Judge
+        # 2. Relevance Judge (higher score = better)
         self.ldproject.create_ai_config(
             "togglebank-relevance-judge",
             "ToggleBank Relevance Judge",
@@ -2186,6 +2187,7 @@ class DemoBuilder:
             judge_tags,
             mode="judge",
             evaluation_metric_key="$ld:ai:judge:relevance",
+            is_inverted=False,
         )
         self.ldproject.create_ai_config_versions(
             "togglebank-relevance-judge",
