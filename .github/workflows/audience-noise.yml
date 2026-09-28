@@ -124,7 +124,7 @@ jobs:
       - name: Install noise generator dependency
         # Install only what the script needs; skipping the full install
         # saves ~90 sec per matrix job.
-        run: npm install --no-save --no-audit --no-fund @launchdarkly/node-client-sdk
+        run: npm install --no-save --no-audit --no-fund --legacy-peer-deps @launchdarkly/node-client-sdk
 
       - name: Run burst against ${{ matrix.project }}
         env:
