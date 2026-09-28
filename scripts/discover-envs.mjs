@@ -12,6 +12,8 @@
  *   LD_INCLUDE_PATTERN  Regex; only projects with matching keys are kept.
  *   LD_EXCLUDE_PATTERN  Regex; matching projects are skipped.
  *   LD_API_BASE         API host override (default: https://app.launchdarkly.com).
+ *   MAX_MATRIX_SIZE     Matrix window size (default: 256, GH Actions hard limit).
+ *   GITHUB_RUN_NUMBER   Rotation index; set automatically in GH Actions.
  */
 
 const API_BASE = process.env.LD_API_BASE ?? 'https://app.launchdarkly.com';
@@ -23,6 +25,8 @@ const INCLUDE_PATTERN = process.env.LD_INCLUDE_PATTERN
 const EXCLUDE_PATTERN = process.env.LD_EXCLUDE_PATTERN
   ? new RegExp(process.env.LD_EXCLUDE_PATTERN)
   : null;
+const MAX_MATRIX_SIZE = Number(process.env.MAX_MATRIX_SIZE ?? 256);
+const RUN_NUMBER = Number(process.env.GITHUB_RUN_NUMBER ?? 0);
 
 if (!API_KEY) {
   console.error('ERROR: LD_API_KEY is not set.');
@@ -99,11 +103,30 @@ async function main() {
     });
   }
 
+  results.sort((a, b) => a.project.localeCompare(b.project));
+
+  const totalFound = results.length;
+  let emitted = results;
+
+  if (totalFound > MAX_MATRIX_SIZE) {
+    const offset = (RUN_NUMBER * MAX_MATRIX_SIZE) % totalFound;
+    emitted = [];
+    for (let i = 0; i < MAX_MATRIX_SIZE; i++) {
+      emitted.push(results[(offset + i) % totalFound]);
+    }
+    const runsToCover = Math.ceil(totalFound / MAX_MATRIX_SIZE);
+    console.error(
+      `Discovered ${totalFound} projects; GH Actions matrix caps at ${MAX_MATRIX_SIZE}. ` +
+      `Emitting rotating window starting at offset ${offset} (run #${RUN_NUMBER}). ` +
+      `Full coverage every ${runsToCover} run(s).`,
+    );
+  }
+
   // JSON on stdout so CI can pipe it into a matrix; summary on stderr so
   // it doesn't pollute the JSON.
-  process.stdout.write(JSON.stringify(results, null, 2) + '\n');
+  process.stdout.write(JSON.stringify(emitted, null, 2) + '\n');
   console.error(
-    `Discovered ${results.length} project(s) with a "${TARGET_ENV}" environment.`,
+    `Emitting ${emitted.length} of ${totalFound} project(s) with a "${TARGET_ENV}" environment.`,
   );
 }
 
