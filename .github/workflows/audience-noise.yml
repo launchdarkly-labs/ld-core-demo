@@ -52,7 +52,7 @@ jobs:
         id: discover
         env:
           LD_API_KEY: ${{ secrets.LD_API_KEY }}
-          LD_INCLUDE_PATTERN: ${{ inputs.include_pattern }}
+          LD_INCLUDE_PATTERN: ${{ inputs.include_pattern || '-ld-demo$' }}
         run: |
           node scripts/discover-envs.mjs > envs.json
           echo "--- Discovered envs ---"
