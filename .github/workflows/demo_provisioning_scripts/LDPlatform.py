@@ -2410,6 +2410,12 @@ class LDPlatform:
 
     def add_prerequisite_to_flag(self, flag_key, prerequisite_key, var_id, env_key):
         varids = self.get_flag_variations(prerequisite_key)
+        if not varids:
+            print(
+                f"  [add_prerequisite_to_flag] {flag_key}: prerequisite "
+                f"{prerequisite_key} has no variations, cannot add prereq"
+            )
+            return None
 
         url = (
             "https://app.launchdarkly.com/api/v2/flags/"
@@ -2426,13 +2432,144 @@ class LDPlatform:
             "instructions": [
                 {
                     "kind": "addPrerequisite",
-                    "prerequisiteKey": prerequisite_key,
+                    "key": prerequisite_key,
                     "variationId": varids[var_id],
                 }
             ],
         }
 
         res = self.getrequest("PATCH", url, headers=headers, json=payload)
+        if res.status_code >= 400:
+            print(
+                f"  [add_prerequisite_to_flag] {flag_key} <- {prerequisite_key}: "
+                f"HTTP {res.status_code} {res.text[:300]}"
+            )
+        return res
+
+    ##################################################
+    # Set default rule to a manual percentage rollout
+    ##################################################
+    def set_default_percentage_rollout(
+        self,
+        flag_key,
+        env_key,
+        weights=None,
+        rollout_context_kind="user",
+        rollout_bucket_by="key",
+    ):
+        """Set a flag's fallthrough to a manual percentage rollout.
+
+        weights maps variation value (True/False, or ordinal int) to weight
+        in thousandths (0-100000). Defaults to an even split across all
+        variations if omitted.
+        """
+        # Newly-created flags need a beat before they'll accept a PATCH.
+        time.sleep(2)
+
+        vars = self.get_flag_variation_values(flag_key)[0]
+        if not vars:
+            print(f"Error: no variations found for {flag_key}, cannot set rollout")
+            return None
+
+        default_weights = {}
+        if weights is None:
+            share = 100000 // len(vars)
+            remainder = 100000 - (share * len(vars))
+            for i, v in enumerate(vars):
+                default_weights[v["id"]] = share + (remainder if i == 0 else 0)
+        else:
+            for key, weight in weights.items():
+                matched = None
+                for v in vars:
+                    # Strict type match on value first: True == 1 in Python
+                    # so a loose == would misroute bool keys via ordinal.
+                    if type(v["value"]) is type(key) and v["value"] == key:
+                        matched = v["id"]
+                        break
+                if matched is None and isinstance(key, int) and not isinstance(key, bool):
+                    for v in vars:
+                        if v["ordinal"] == key:
+                            matched = v["id"]
+                            break
+                if matched is None:
+                    print(
+                        f"Warning: could not match rollout key {key!r} to a "
+                        f"variation on {flag_key}"
+                    )
+                    continue
+                default_weights[matched] = weight
+
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json; domain-model=launchdarkly.semanticpatch",
+        }
+        payload = {
+            "environmentKey": env_key,
+            "instructions": [
+                {
+                    "kind": "updateFallthroughVariationOrRollout",
+                    "rolloutContextKind": rollout_context_kind,
+                    "rolloutBucketBy": rollout_bucket_by,
+                    "rolloutWeights": default_weights,
+                },
+            ],
+        }
+
+        res = self.getrequest("PATCH", url, headers=headers, json=payload)
+        if res.status_code >= 400:
+            print(
+                f"  [set_default_percentage_rollout] {flag_key}: HTTP "
+                f"{res.status_code} {res.text[:300]}"
+            )
+        return res
+
+    ##################################################
+    # Create a flag trigger (generic webhook)
+    ##################################################
+    def create_flag_trigger(self, flag_key, env_key, action="turnFlagOff", comment=None):
+        """Create a generic webhook trigger on a flag.
+
+        action must be 'turnFlagOn' or 'turnFlagOff'. Returns the parsed
+        JSON response, which includes the trigger URL under `triggerURL`.
+        """
+        if action not in ("turnFlagOn", "turnFlagOff"):
+            raise ValueError(
+                f"action must be turnFlagOn or turnFlagOff, got {action!r}"
+            )
+
+        url = (
+            "https://app.launchdarkly.com/api/v2/flags/"
+            + self.project_key
+            + "/"
+            + flag_key
+            + "/triggers/"
+            + env_key
+        )
+        headers = {
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "integrationKey": "generic-trigger",
+            "instructions": [{"kind": action}],
+        }
+        if comment:
+            payload["comment"] = comment
+
+        res = self.getrequest("POST", url, headers=headers, json=payload)
+        # Trigger URLs are secrets and only visible at creation time. We intentionally
+        # do NOT print them to stdout so they don't leak into GitHub Actions logs.
+        # Retrieve a URL by resetting the trigger in the LD UI when needed.
+        if res.status_code >= 400:
+            print(f"  [create_flag_trigger] {flag_key} ({action}): HTTP {res.status_code} {res.text[:300]}")
+        else:
+            print(f"  Trigger created: {flag_key} ({action})")
         return res
 
     ##################################################

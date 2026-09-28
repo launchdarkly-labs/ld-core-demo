@@ -68,7 +68,6 @@ class DemoBuilder:
         self.create_metric_groups()
         self.create_flags()
         self.update_add_userid_to_flags()
-        #self.create_alerts()
         self.create_ai_config()
         self.enable_csa_shadow_ai_feature_flags()
         self.create_and_run_experiments() 
@@ -92,6 +91,63 @@ class DemoBuilder:
         
         # self.setup_release_pipeline()  # Release Assistant removed (no longer supported)
         proc.wait()
+
+        # Populate the Audience tab immediately; cron takes over from here.
+        # Never fatal — failures fall through to the next cron cycle.
+        self.fire_initial_audience_noise_burst()
+
+    def fire_initial_audience_noise_burst(self):
+        script_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..", "..", "..",
+                "scripts", "generate-audience-noise.mjs",
+            )
+        )
+        if not os.path.isfile(script_path):
+            print(
+                f"[audience-noise] Skipping initial burst: script not found at "
+                f"{script_path}"
+            )
+            return
+        if not self.client_id:
+            print("[audience-noise] Skipping initial burst: client_id is empty")
+            return
+
+        print("Firing initial audience noise burst", end="...")
+        noise_env = os.environ.copy()
+        noise_env.update({
+            "NEXT_PUBLIC_LD_CLIENT_KEY": self.client_id,
+            "NUM_CONTEXTS": "1200",
+            "REPEAT_RATE": "0.3",
+            # Spread the burst so the graph shows a curve, not a spike.
+            "DURATION_MINUTES": "10",
+            "FLUSH_EVERY": "25",
+            "LOG_EVERY": "500",
+            "EVENTS_CAPACITY": "20000",
+        })
+
+        try:
+            subprocess.run(
+                ["node", script_path],
+                env=noise_env,
+                timeout=1200,
+                check=False,
+            )
+            print("Done")
+        except FileNotFoundError:
+            print(
+                "\n[audience-noise] Skipping initial burst: `node` is not "
+                "installed on this runner. The cron workflow will still "
+                "populate the Audience tab within ~90 minutes."
+            )
+        except subprocess.TimeoutExpired:
+            print(
+                "\n[audience-noise] Initial burst timed out after 20 min. "
+                "Continuing — cron will keep the Audience tab fresh."
+            )
+        except Exception as exc:
+            print(f"\n[audience-noise] Initial burst failed: {exc!r}")
 
     def create_project(self):
         if self.ldproject.project_exists(self.project_key):
@@ -136,11 +192,6 @@ class DemoBuilder:
             self.ldproject.create_metric_group(**spec)
         print("Done")
         self.metric_groups_created = True
-
-    def create_alerts(self):
-        print("Creating alerts...")
-        self.alert_notification_spam_error()
-        print("Done")
 
     # Create all the flags (definitions live in the FLAGS table above)
     def create_flags(self):
@@ -237,11 +288,11 @@ class DemoBuilder:
             self.ldproject.add_progressive_rollout("federatedAccounts", "production")
 
     def flag_payment_engine_failed_rollout(self):
-        """A4: Create flag with custom guarded rollout (25%/50% stages, 5-min windows).
+        """A4: Create flag with custom guarded rollout (10%/25% stages, 20-min windows).
 
-        Uses higher starting allocation so the chart has visible test data from
-        the beginning, and longer stage windows to allow enough time for the
-        data generator to produce a realistic curve before regression detection.
+        Higher starting allocation gives the chart visible test data from the
+        beginning; longer stage windows give the data generator time to produce
+        a realistic curve before regression detection triggers rollback.
         """
         res = self.ldproject.create_flag(
             "paymentProcessingV2FailedRollout",
@@ -286,6 +337,7 @@ class DemoBuilder:
                 {"allocation": 10000, "durationMillis": 1200000},
                 {"allocation": 25000, "durationMillis": 1200000},
             ]
+            a4_metrics = ["payment-v2-success-rate", "payment-v2-latency", "payment-v2-error-rate"]
             payload = {
                 "comment": "",
                 "environmentKey": "production",
@@ -298,11 +350,10 @@ class DemoBuilder:
                         "targetVariationId": test_var,
                         "randomizationUnit": "user",
                         "stages": custom_stages,
-                        "monitoredMetrics": [
-                            {"metricKey": "payment-v2-success-rate", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-latency", "enabled": True, "rollbackOnRegression": True},
-                            {"metricKey": "payment-v2-error-rate", "enabled": True, "rollbackOnRegression": True},
-                        ],
+                        "metrics": [{"key": m, "isGroup": False} for m in a4_metrics],
+                        "metricMonitoringPreferences": {
+                            m: {"autoRollback": True} for m in a4_metrics
+                        },
                     },
                 ],
             }
@@ -479,7 +530,6 @@ class DemoBuilder:
 
     def add_userid_to_flags(self):
         res = self.ldproject.add_maintainer_to_flag("wealthManagement")
-        res = self.ldproject.add_maintainer_to_flag("enhancedNotificationCenter")  # A1.1
         res = self.ldproject.add_maintainer_to_flag("federatedAccounts")
         # res = self.ldproject.add_maintainer_to_flag("togglebankDBGuardedRelease")  # Old A3 - Commented out
         # res = self.ldproject.add_maintainer_to_flag("togglebankAPIGuardedRelease")  # Old A4 - Commented out
@@ -551,8 +601,6 @@ class DemoBuilder:
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("federatedAccounts", "development-team", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "beta-users", "production")
-        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "beta-users", "production")  # A1.1
-        res = self.ldproject.add_segment_to_flag("enhancedNotificationCenter", "development-team", "production")  # A1.1
         res = self.ldproject.add_segment_to_flag("cartSuggestedItems", "beta-users", "production")
         res = self.ldproject.add_segment_to_flag("wealthManagement", "mobile-users", "production")
         # res = self.ldproject.add_segment_to_flag("togglebankDBGuardedRelease", "beta-users", "production")  # Old A3 - Commented out
@@ -631,15 +679,6 @@ class DemoBuilder:
         res = self.ldproject.update_flag_client_side_availability("ai-config--togglebot-brand-voice")
         res = self.ldproject.update_flag_client_side_availability("ai-config--ai-new-model-chatbot")
         res = self.ldproject.update_flag_client_side_availability("ai-config--publicbot")
-
-    def alert_notification_spam_error(self):
-        res = self.ldproject.create_alert(
-            alert_name="Enhanced Notification Center - Error Detected",
-            description="Alerts when an error is detected for the Enhanced Notification Center feature",
-            alert_type="anomaly",
-            flag_key="enhancedNotificationCenter",
-            environment="production"
-        )
 
     def create_destination_recommendation_ai_config(self):
         res = self.ldproject.create_ai_config(
@@ -2099,7 +2138,7 @@ class DemoBuilder:
         print("Creating Judge Configs...")
         judge_tags = ["ai-config", "judge", "togglebank"]
 
-        # 1. Accuracy Judge
+        # 1. Accuracy Judge (higher score = better)
         self.ldproject.create_ai_config(
             "togglebank-accuracy-judge",
             "ToggleBank Accuracy Judge",
@@ -2107,6 +2146,7 @@ class DemoBuilder:
             judge_tags,
             mode="judge",
             evaluation_metric_key="$ld:ai:judge:accuracy",
+            is_inverted=False,
         )
         self.ldproject.create_ai_config_versions(
             "togglebank-accuracy-judge",
@@ -2139,7 +2179,7 @@ class DemoBuilder:
             self.ldproject.update_ai_config_targeting("togglebank-accuracy-judge", "production", acc_var_id)
         print("  Created Accuracy Judge")
 
-        # 2. Relevance Judge
+        # 2. Relevance Judge (higher score = better)
         self.ldproject.create_ai_config(
             "togglebank-relevance-judge",
             "ToggleBank Relevance Judge",
@@ -2147,6 +2187,7 @@ class DemoBuilder:
             judge_tags,
             mode="judge",
             evaluation_metric_key="$ld:ai:judge:relevance",
+            is_inverted=False,
         )
         self.ldproject.create_ai_config_versions(
             "togglebank-relevance-judge",
