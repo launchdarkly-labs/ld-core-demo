@@ -28,6 +28,10 @@ concurrency:
   group: audience-noise
   cancel-in-progress: false
 
+# Least-privilege token: this workflow only needs to read the checked-out repo.
+permissions:
+  contents: read
+
 jobs:
   discover:
     runs-on: ubuntu-latest
