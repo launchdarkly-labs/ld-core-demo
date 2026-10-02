@@ -236,6 +236,11 @@ class DemoBuilder:
         self.early_access_feature_toggle()
         self.debugging_mode_for_developers()
 
+        # Conference rollout map and shared beat
+        self.flag_canada_octogon_rollout_map()
+        self.flag_octogon_deploy_color()
+        self.flag_music_community_playback_enabled()
+
         print("Done")
         self.flags_created = True
 
@@ -5405,6 +5410,54 @@ class DemoBuilder:
             off_variation=1,
             temporary=True
         )
+
+    def flag_canada_octogon_rollout_map(self):
+        self.ldproject.create_flag(
+            "canada-octogon-rollout-map",
+            "Canada octogon rollout map",
+            "Shows the Canada deployment map of rollout octogons on the logged-out ToggleBank splash.",
+            [
+                {"value": True, "name": "Show Canada rollout map"},
+                {"value": False, "name": "Hide Canada rollout map"},
+            ],
+            tags=["bank", "demo"],
+            on_variation=0,
+            off_variation=1,
+        )
+        self.ldproject.toggle_flag("canada-octogon-rollout-map", "on", "production")
+
+    def flag_octogon_deploy_color(self):
+        self.ldproject.create_flag(
+            "octogon-deploy-color",
+            "Octogon deploy color",
+            "Color served to each Canada map octogon. Evaluate with a user context whose map-octogon attribute is the region number.",
+            [
+                {"value": "grey", "name": "Grey"},
+                {"value": "green", "name": "Green"},
+                {"value": "red", "name": "Red"},
+                {"value": "yellow", "name": "Yellow"},
+                {"value": "orange", "name": "Orange"},
+            ],
+            tags=["bank", "demo"],
+            on_variation=1,
+            off_variation=0,
+        )
+        self.ldproject.toggle_flag("octogon-deploy-color", "on", "production")
+
+    def flag_music_community_playback_enabled(self):
+        self.ldproject.create_flag(
+            "music-community-playback-enabled",
+            "Music community playback enabled",
+            "Controls whether the conference demo server kicks off the shared beat. When off, the room clock does not start.",
+            [
+                {"value": True, "name": "Kick off the shared beat"},
+                {"value": False, "name": "Do not start the beat"},
+            ],
+            tags=["bank", "demo", "music"],
+            on_variation=0,
+            off_variation=1,
+        )
+        self.ldproject.toggle_flag("music-community-playback-enabled", "on", "production")
 
 ############################################################################################################
 ############################################################################################################
