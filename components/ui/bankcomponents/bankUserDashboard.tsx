@@ -10,6 +10,7 @@ import WealthManagementSheet from "@/components/ui/bankcomponents/wealthManageme
 import { AccountTrends } from "@/components/ui/bankcomponents/accounttrends";
 import FederatedAccountModule from "@/components/ui/bankcomponents/federatedAccountModule";
 import NotificationCenter from "@/components/ui/bankcomponents/NotificationCenter";
+import UserRolloutOctogon from "@/components/ui/bankcomponents/UserRolloutOctogon";
 import Image from "next/image";
 import bankDashboardBackgroundLeft from "@/public/banking/backgrounds/bank-dashboard-background-left.svg";
 import bankDashboardBackgroundRight from "@/public/banking/backgrounds/bank-dashboard-background-right.svg";
@@ -197,6 +198,8 @@ export default function BankUserDashboard() {
 						</NavbarRightSideWrapper>
 					</>
 				</NavWrapper>
+
+				<UserRolloutOctogon />
 
 				<section
 					className={`flex flex-col xl:flex-row py-8 ${federatedAccounts ? "gap-y-8 sm:gap-x-8" : ""
