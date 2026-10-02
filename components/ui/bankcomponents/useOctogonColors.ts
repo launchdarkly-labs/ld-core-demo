@@ -11,6 +11,7 @@ const EMPTY_COLORS: DeployColor[] = Array.from(
 
 export function useOctogonColors() {
   const [colors, setColors] = useState<DeployColor[]>(EMPTY_COLORS);
+  const [playbackEnabled, setPlaybackEnabled] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,9 +19,12 @@ export function useOctogonColors() {
 
     source.onmessage = (event) => {
       try {
-        const data = JSON.parse(event.data) as { colors?: DeployColor[] };
+        const data = JSON.parse(event.data) as { colors?: DeployColor[]; playbackEnabled?: boolean };
         if (Array.isArray(data.colors) && data.colors.length === CANADA_OCTOGON_COUNT) {
           setColors(data.colors);
+        }
+        if (typeof data.playbackEnabled === "boolean") {
+          setPlaybackEnabled(data.playbackEnabled);
         }
       } catch (error) {
         console.warn("Octogon colors received an unreadable update.", error);
@@ -36,5 +40,5 @@ export function useOctogonColors() {
     return () => source.close();
   }, []);
 
-  return { colors, isLoading };
+  return { colors, isLoading, playbackEnabled };
 }

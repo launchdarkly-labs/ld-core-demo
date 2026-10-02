@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { LDClient, LDContext } from "@launchdarkly/node-server-sdk";
 import getServerClient from "@/utils/ld-server/serverClient";
+import { BEAT_PLAYBACK_FLAG_KEY, isBeatKickoffEnabled } from "@/utils/beatPlayback";
 import {
   CANADA_OCTOGON_COUNT,
   DEPLOY_COLORS,
@@ -49,8 +50,11 @@ export default async function handler(request: NextApiRequest, response: NextApi
   });
 
   const sendColors = async () => {
-    const colors = await evaluateColors(client);
-    response.write(`data: ${JSON.stringify({ colors })}\n\n`);
+    const [colors, playbackEnabled] = await Promise.all([
+      evaluateColors(client),
+      isBeatKickoffEnabled(client),
+    ]);
+    response.write(`data: ${JSON.stringify({ colors, playbackEnabled })}\n\n`);
   };
 
   let closed = false;
@@ -76,6 +80,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
   }
 
   client.on(`update:${COLOR_FLAG_KEY}`, onFlagUpdate);
+  client.on(`update:${BEAT_PLAYBACK_FLAG_KEY}`, onFlagUpdate);
 
   const heartbeat = setInterval(() => {
     if (!closed) response.write(": keepalive\n\n");
@@ -87,6 +92,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     clearInterval(heartbeat);
     clearTimeout(refreshTimer);
     client.off(`update:${COLOR_FLAG_KEY}`, onFlagUpdate);
+    client.off(`update:${BEAT_PLAYBACK_FLAG_KEY}`, onFlagUpdate);
   };
 
   response.on("close", cleanup);
