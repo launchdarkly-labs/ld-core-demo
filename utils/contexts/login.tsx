@@ -1,5 +1,5 @@
 import { useLDClient } from "launchdarkly-react-client-sdk";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from "react-device-detect";
@@ -46,6 +46,34 @@ const operatingSystem = isAndroid
   : "";
 const device = isMobile ? "Mobile" : isBrowser ? "Desktop" : "";
 
+const createAnonymousContext = (audienceKey?: string) => ({
+  kind: "multi",
+  user: {
+    anonymous: true,
+    key: uuidv4().slice(0, 10),
+  },
+  device: {
+    key: device,
+    name: device,
+    operating_system: operatingSystem,
+    platform: device,
+  },
+  location: {
+    key: "America/New_York",
+    name: "America/New_York",
+    timeZone: "America/New_York",
+    country: "US",
+  },
+  experience: {
+    key: "a380",
+    name: "a380",
+    airplane: "a380",
+  },
+  audience: {
+    key: audienceKey || uuidv4().slice(0, 10),
+  },
+});
+
 export const LoginProvider = ({ children }: { children: any }) => {
   const client = useLDClient();
 const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -54,9 +82,22 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     ...client?.getContext(),
   });
   const [allUsers, setAllUsers] = useState<Persona[]>(STARTER_PERSONAS);
+  const hasAutoLoggedIn = useRef(false);
+  const suppressAutoLogin = useRef(false);
 
   const hashEmail = async (email: string): Promise<string> => {
     return CryptoJS.SHA256(email).toString();
+  };
+
+  const getMutableContext = (audienceKey?: string) => {
+    const current = (client?.getContext() as any) ?? createAnonymousContext(audienceKey);
+    if (!current.user) {
+      current.user = { anonymous: true, key: uuidv4().slice(0, 10) };
+    }
+    if (!current.audience) {
+      current.audience = { key: audienceKey || uuidv4().slice(0, 10) };
+    }
+    return current;
   };
 
   const getLocation = async (): Promise<{
@@ -89,7 +130,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
       ]);
     }
 
-    const context: any = await client?.getContext();
+    const context: any = getMutableContext(existingAudienceKey);
     //don't know how to fix this without using undefined
     const foundPersona: Persona = allUsers?.find((persona) =>
       persona?.personaemail?.includes(email)
@@ -105,7 +146,9 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     context.user.device = device;
     context.user.operating_system = operatingSystem;
     context.user.location = await getLocation();
-    context.audience.key = existingAudienceKey;
+    if (existingAudienceKey) {
+      context.audience.key = existingAudienceKey;
+    }
     context.location = await getLocation();
     context.user.launchclub = foundPersona?.personalaunchclubstatus;
     setAppMultiContext(context);
@@ -116,8 +159,15 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     setIsLoggedIn(true);
   };
 
+  useEffect(() => {
+    if (!client || hasAutoLoggedIn.current || suppressAutoLogin.current || isLoggedIn) return;
+    hasAutoLoggedIn.current = true;
+    const persona = STARTER_PERSONAS[Math.floor(Math.random() * STARTER_PERSONAS.length)];
+    void loginUser(persona.personaemail);
+  }, [client, isLoggedIn]);
+
   const updateAudienceContext = async (): Promise<void> => {
-    const context = await client?.getContext();
+    const context = getMutableContext();
     console.log("updateAudienceContext", context);
     context.audience.key = uuidv4().slice(0, 10);
     setAppMultiContext(context);
@@ -126,7 +176,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
   };
 
   const updateUserContext = async (): Promise<void> => {
-    const context = await client?.getContext();
+    const context = getMutableContext();
     context.user.key = uuidv4();
     context.user.device = Math.random() < 0.5 ? "Mobile" : "Desktop";
     const osOptions = context.user.device === "Mobile" ? ["iOS", "Android"] : ["macOS", "Windows"];
@@ -141,7 +191,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
   };
 
   const updateUserContextWithUserId = async (userId) => {
-    const context = await client?.getContext();
+    const context = getMutableContext();
     console.log("updateUserContext", context);
     context.user.key = userId;
     setAppMultiContext(context);
@@ -150,6 +200,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
   };
 
   const logoutUser = async () => {
+    suppressAutoLogin.current = true;
     const existingAudienceKey =
       getCookie(LD_CONTEXT_COOKIE_KEY) &&
       JSON.parse(getCookie(LD_CONTEXT_COOKIE_KEY))?.audience?.key;
@@ -157,34 +208,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
     setUserObject(startingUserObject);
     setAllUsers(STARTER_PERSONAS);
     //need to keep this here in order to pull getcookie and get same audience key as you initialized it
-    const createAnonymousContext = {
-      kind: "multi",
-      user: {
-        anonymous: true,
-        key: uuidv4().slice(0, 10),
-      },
-      device: {
-        key: device,
-        name: device,
-        operating_system: operatingSystem,
-        platform: device,
-      },
-      location: {
-        key: "America/New_York",
-        name: "America/New_York",
-        timeZone: "America/New_York",
-        country: "US",
-      },
-      experience: {
-        key: "a380",
-        name: "a380",
-        airplane: "a380",
-      },
-      audience: {
-        key: existingAudienceKey,
-      },
-    };
-    const context = createAnonymousContext;
+    const context = createAnonymousContext(existingAudienceKey);
     setAppMultiContext(context);
     await client?.identify(context);
     setCookie(LD_CONTEXT_COOKIE_KEY, context);
@@ -200,7 +224,7 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
   // };
 
   const upgradeLaunchClubStatus = async (): Promise<void> => {
-    const context = await client?.getContext();
+    const context = getMutableContext();
     console.log("upgradeLaunchClubStatus", context);
     setUserObject((prevObj) => ({ ...prevObj, personalaunchclubstatus: LAUNCH_CLUB_PLATINUM }));
     context.user.launchclub = LAUNCH_CLUB_PLATINUM;

@@ -39,6 +39,7 @@ import { useRouter } from "next/router";
 import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automation/experimentationConstants";
 import { RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
+import CanadaRolloutMap from "@/components/ui/bankcomponents/CanadaRolloutMap";
 
 export default function BankHomePage() {
 
@@ -124,6 +125,7 @@ export default function BankHomePage() {
     // widget position experiment
     const widgetPositionFlag = flags["swapWidgetPositions"];
     const shouldSwapWidgets = widgetPositionFlag === true;
+    const showCanadaRolloutMap = flags["canada-octogon-rollout-map"] === true;
 
 
     return (
@@ -218,7 +220,13 @@ export default function BankHomePage() {
                 <Image src={heroBackgroundDollarSign} className='absolute left-0 bottom-0 w-2/6 xl:w-2/6 max-w-lg' alt="Icon Background" />
 
                 <div
-                    className="w-full max-w-7xl py-14 sm:py-[8rem] px-4 xl:px-0 xl:mx-auto flex flex-col sm:flex-row justify-between items-center">
+                    className="w-full max-w-7xl py-10 sm:py-16 px-4 xl:px-0 xl:mx-auto flex flex-col justify-between items-center">
+                    {!isLoggedIn && showCanadaRolloutMap && (
+                        <div className="z-10 w-full">
+                            <CanadaRolloutMap />
+                        </div>
+                    )}
+                    <div className="flex w-full flex-col sm:flex-row justify-between items-center">
                     <div className="grid grid-cols-2 sm:flex flex-row sm:flex-col text-white w-full sm:w-1/2 justify-start mb-4 pr-10 sm:mb-0 gap-y-10 z-10">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl  font-audimat col-span-1 sm:col-span-0 w-full bg-bank-gradient-text-color bg-clip-text text-transparent px-2 sm:px-6 md:px-8 lg:px-10 xl:px-8">
                             Spend smart with Toggle Bank
@@ -241,6 +249,7 @@ export default function BankHomePage() {
 
                     <div className="w-full sm:w-auto z-10">
                         {/* <BankLoginComponent /> */}
+                    </div>
                     </div>
                 </div>
             </header>
