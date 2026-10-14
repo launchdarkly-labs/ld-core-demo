@@ -40,6 +40,7 @@ import { SIGN_UP_STARTED } from "@/components/generators/experimentation-automat
 import { RELEASE_NEW_SIGNUP_PROMO_LDFLAG_KEY } from "@/utils/constants";
 import LiveLogsContext from "@/utils/contexts/LiveLogsContext";
 import CanadaRolloutMap from "@/components/ui/bankcomponents/CanadaRolloutMap";
+import LiveRolloutDirection from "@/components/ui/bankcomponents/LiveRolloutDirection";
 
 export default function BankHomePage() {
 
@@ -219,9 +220,10 @@ export default function BankHomePage() {
                 <Image src={heroBackgroundCreditcard} className='absolute right-0 w-2/6 xl:w-2/6 min-w-lg max-w-lg' alt="Icon Background" />
                 <Image src={heroBackgroundDollarSign} className='absolute left-0 bottom-0 w-2/6 xl:w-2/6 max-w-lg' alt="Icon Background" />
 
-                {!isLoggedIn && showCanadaRolloutMap && (
+                {!isLoggedIn && (
                     <div className="relative z-10 mx-auto w-full max-w-[96rem] px-4 pt-10 sm:px-8 sm:pt-14">
-                        <CanadaRolloutMap />
+                        {showCanadaRolloutMap && <CanadaRolloutMap />}
+                        <LiveRolloutDirection />
                     </div>
                 )}
                 <div

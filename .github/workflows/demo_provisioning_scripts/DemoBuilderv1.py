@@ -113,6 +113,9 @@ class DemoBuilder:
         self.metric_database_latency()
         self.metric_api_error_rates()
         self.metric_api_latency()
+        self.metric_rollout_error()
+        self.metric_rollout_latency()
+        self.metric_rollout_database_warning()
         self.metric_store_accessed()
         self.metric_items_added_to_cart()
         self.metric_cart_accessed()
@@ -1138,6 +1141,40 @@ class DemoBuilder:
             tags=["experiment"]
         )
         
+    def metric_rollout_error(self):
+        self.ldproject.create_metric(
+            "error",
+            "Error",
+            "error",
+            "Recorded when a red rollout region triggers an error",
+            numeric=False,
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"],
+        )
+
+    def metric_rollout_latency(self):
+        self.ldproject.create_metric(
+            "latency",
+            "Latency",
+            "latency",
+            "Latency in milliseconds recorded when a red rollout region triggers an error",
+            numeric=True,
+            unit="ms",
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"],
+        )
+
+    def metric_rollout_database_warning(self):
+        self.ldproject.create_metric(
+            "database-warning",
+            "Database warning",
+            "database-warning",
+            "Recorded when a red rollout region triggers a database warning",
+            numeric=False,
+            success_criteria="LowerThanBaseline",
+            tags=["experiment"],
+        )
+
     def metric_api_latency(self):
         res = self.ldproject.create_metric(
             "stocks-api-latency",
