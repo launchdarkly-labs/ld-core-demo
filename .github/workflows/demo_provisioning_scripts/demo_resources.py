@@ -930,14 +930,22 @@ FLAGS = [
                ['canada-octogon-rollout-map', 'on', 'production'],
                {}]]},
     {'flag': {'flag_key': 'octogon-deploy-color',
-              'flag_name': 'Octogon deploy color',
-              'description': 'Color served to each Canada map octogon. Evaluate with a user '
-                             'context whose map-octogon attribute is the region number.',
-              'variations': [{'value': 'grey', 'name': 'Grey'},
-                             {'value': 'green', 'name': 'Green'},
-                             {'value': 'red', 'name': 'Red'},
-                             {'value': 'yellow', 'name': 'Yellow'},
-                             {'value': 'orange', 'name': 'Orange'}],
+              'flag_name': 'Octogon fanfare voice',
+              'description': 'Voice served to each Canada map octogon for the Also sprach '
+                             'Zarathustra opening. Grey is C, green is G, red is high C, '
+                             'yellow is the major-to-minor shift from E to E-flat, and orange '
+                             'is drums. Evaluate with a user context whose map-octogon '
+                             'attribute is the region number.',
+              'variations': [{'value': 'grey', 'name': 'Grey — C',
+                              'description': 'Opening C, with the low C pedal.'},
+                             {'value': 'green', 'name': 'Green — G',
+                              'description': 'The second tone, G.'},
+                             {'value': 'red', 'name': 'Red — high C',
+                              'description': 'The octave C.'},
+                             {'value': 'yellow', 'name': 'Yellow — E to E-flat',
+                              'description': 'Major chord, then the minor shift.'},
+                             {'value': 'orange', 'name': 'Orange — drums',
+                              'description': 'Timpani on the fanfare accents.'}],
               'tags': ['bank', 'demo'],
               'on_variation': 1,
               'off_variation': 0},
@@ -945,11 +953,13 @@ FLAGS = [
                ['octogon-deploy-color', 'on', 'production'],
                {}]]},
     {'flag': {'flag_key': 'music-community-playback-enabled',
-              'flag_name': 'Music community playback enabled',
-              'description': 'Controls whether the conference demo server kicks off the shared '
-                             'beat. When off, the room clock does not start.',
-              'variations': [{'value': True, 'name': 'Kick off the shared beat'},
-                             {'value': False, 'name': 'Do not start the beat'}],
+              'flag_name': 'Zarathustra fanfare',
+              'description': 'Turns the Also sprach Zarathustra opening on or off in the '
+                             'browser. When off, the fanfare stays silent. Octogon color '
+                             'chooses the voice: C, G, high C, the major-to-minor shift, or '
+                             'drums.',
+              'variations': [{'value': True, 'name': 'Play the fanfare'},
+                             {'value': False, 'name': 'Silence the fanfare'}],
               'tags': ['bank', 'demo', 'music'],
               'on_variation': 0,
               'off_variation': 1},

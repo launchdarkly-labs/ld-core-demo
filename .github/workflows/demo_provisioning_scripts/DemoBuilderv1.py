@@ -5429,14 +5429,14 @@ class DemoBuilder:
     def flag_octogon_deploy_color(self):
         self.ldproject.create_flag(
             "octogon-deploy-color",
-            "Octogon deploy color",
-            "Color served to each Canada map octogon. Evaluate with a user context whose map-octogon attribute is the region number.",
+            "Octogon fanfare voice",
+            "Voice served to each Canada map octogon for the Also sprach Zarathustra opening. Grey is C, green is G, red is high C, yellow is the major-to-minor shift from E to E-flat, and orange is drums. Evaluate with a user context whose map-octogon attribute is the region number.",
             [
-                {"value": "grey", "name": "Grey"},
-                {"value": "green", "name": "Green"},
-                {"value": "red", "name": "Red"},
-                {"value": "yellow", "name": "Yellow"},
-                {"value": "orange", "name": "Orange"},
+                {"value": "grey", "name": "Grey — C", "description": "Opening C, with the low C pedal."},
+                {"value": "green", "name": "Green — G", "description": "The second tone, G."},
+                {"value": "red", "name": "Red — high C", "description": "The octave C."},
+                {"value": "yellow", "name": "Yellow — E to E-flat", "description": "Major chord, then the minor shift."},
+                {"value": "orange", "name": "Orange — drums", "description": "Timpani on the fanfare accents."},
             ],
             tags=["bank", "demo"],
             on_variation=1,
@@ -5447,11 +5447,11 @@ class DemoBuilder:
     def flag_music_community_playback_enabled(self):
         self.ldproject.create_flag(
             "music-community-playback-enabled",
-            "Music community playback enabled",
-            "Controls whether the conference demo server kicks off the shared beat. When off, the room clock does not start.",
+            "Zarathustra fanfare",
+            "Turns the Also sprach Zarathustra opening on or off in the browser. When off, the fanfare stays silent. Octogon color chooses the voice: C, G, high C, the major-to-minor shift, or drums.",
             [
-                {"value": True, "name": "Kick off the shared beat"},
-                {"value": False, "name": "Do not start the beat"},
+                {"value": True, "name": "Play the fanfare"},
+                {"value": False, "name": "Silence the fanfare"},
             ],
             tags=["bank", "demo", "music"],
             on_variation=0,

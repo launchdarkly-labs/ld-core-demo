@@ -19,9 +19,13 @@ export default function Home() {
 
   useEffect(() => {
     if (!demoMode) {
-      router.push("/bank");
+      router.replace("/bank");
     }
-  }, []);
+  }, [demoMode, router]);
+
+  if (!demoMode) {
+    return null;
+  }
 
   const pageVariants = {
     initial: { opacity: 0 },

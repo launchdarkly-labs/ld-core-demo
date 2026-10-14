@@ -37,12 +37,12 @@ const NavbarLogin = ({ variant }) => {
   };
 
   return (
-    <Button
+    <button
+      type="button"
       onClick={handleLogout}
-      className="bg-loginComponentBlue text-white font-audimat rounded-none px-4"
-    >
-      Logout
-    </Button>
+      aria-label="Switch to admin"
+      className="h-3.5 w-3.5 rounded-full bg-purple-600"
+    />
   );
 };
 

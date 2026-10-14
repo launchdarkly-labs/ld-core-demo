@@ -11,6 +11,7 @@ import {
   CANADA_OCTOGON_POSITIONS,
   CANADA_OUTLINE_PATH,
 } from "@/utils/canadaOctogonPositions";
+import { ZARATHUSTRA_VOICES } from "@/utils/zarathustra";
 
 type PlacedOctogon = {
   number: number;
@@ -93,7 +94,7 @@ export default function CanadaRolloutMap() {
                 initial={{ opacity: 0, scale: 0.2 }}
                 animate={{ opacity: isLoading ? 0.45 : 1, scale: 1 }}
                 transition={{ delay: (index % 24) * 0.012, duration: 0.22 }}
-                title={`Octogon ${number}: ${color}`}
+                title={`Octogon ${number}: ${ZARATHUSTRA_VOICES[color].label}`}
                 className={`h-2.5 w-2.5 shadow-sm transition-colors duration-500 sm:h-3 sm:w-3 lg:h-3.5 lg:w-3.5 ${DEPLOY_COLOR_STYLES[color]} ${
                   isLoading ? "animate-pulse" : ""
                 }`}
@@ -112,7 +113,7 @@ export default function CanadaRolloutMap() {
           <div key={color} className="flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-sm ${DEPLOY_COLOR_STYLES[color]}`} />
             <span className="font-sohnelight text-xs uppercase tracking-wider text-slate-500">
-              {color}
+              {ZARATHUSTRA_VOICES[color].label}
             </span>
           </div>
         ))}
