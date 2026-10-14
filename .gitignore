@@ -17,6 +17,7 @@ terraform.tfstate.backup
 terraform.tfstate
 terraform.tfstate.d
 .terraform.lock.hcl
+key.txt
 
 # next.js
 /.next/
