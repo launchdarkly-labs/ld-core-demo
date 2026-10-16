@@ -143,7 +143,7 @@ const RecentTradesCard = () => {
       </h3>
       {runDemo ? (
         <div className="flex justify-center items-center h-full  flex-col gap-y-2">
-          <h2 className=" font-bold font-sohne text-center text-xl">Generating Data</h2>
+          <h2 className=" font-bold font-sohne text-center text-xl">Generating Trade Data</h2>
           <div className="flex ">
             <InfinityLoader />
           </div>
