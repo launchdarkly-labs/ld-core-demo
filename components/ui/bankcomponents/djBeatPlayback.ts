@@ -196,7 +196,11 @@ export function followDjTempo(bpm: number) {
 export function leaveDjBeat() {
   if (!joined) return;
   joined = false;
+  const now = Tone.now();
   const transport = Tone.getTransport();
   transport.stop();
   transport.position = 0;
+  scratchGain.gain.cancelScheduledValues(now);
+  scratchGain.gain.setValueAtTime(0, now);
+  keys.releaseAll(now);
 }

@@ -7,9 +7,11 @@ import bankHomePageBackgroundRight from "@/public/banking/backgrounds/bank-homep
 import bankHomePageBackgroundLeft from "@/public/banking/backgrounds/bank-homepage-background-left.svg";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { PERSONA_ROLE_ADMIN } from "@/utils/constants";
 
 export default function Bank() {
-  const { isLoggedIn } = useContext(LoginContext);
+  const { isLoggedIn, userObject } = useContext(LoginContext);
+  const showDeployScreen = isLoggedIn && userObject?.personarole === PERSONA_ROLE_ADMIN;
   return (
     <>
       <motion.main
@@ -18,7 +20,7 @@ export default function Bank() {
         transition={{ duration: 0.5 }}
         className={` w-full min-h-screen  bg-cover bg-center bg-no-repeat pb-10`}
       >
-        {!isLoggedIn ? (
+        {!isLoggedIn || showDeployScreen ? (
           <>
             <Image
               src={bankHomePageBackgroundRight}

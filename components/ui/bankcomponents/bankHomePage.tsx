@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/NavComponent/NavbarSignUpInButton";
 import { NAV_ELEMENTS_VARIANT } from "@/utils/constants";
 import Image from "next/image";
-import { BANK } from "@/utils/constants";
+import { BANK, PERSONA_ROLE_ADMIN } from "@/utils/constants";
 import LoginContext from "@/utils/contexts/login";
 import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import { useRouter } from "next/router";
@@ -44,7 +44,8 @@ import LiveRolloutDirection from "@/components/ui/bankcomponents/LiveRolloutDire
 
 export default function BankHomePage() {
 
-    const { isLoggedIn } = useContext(LoginContext);
+    const { isLoggedIn, userObject } = useContext(LoginContext);
+    const showDeployScreen = isLoggedIn && userObject?.personarole === PERSONA_ROLE_ADMIN;
     const ldClient = useLDClient();
     const { logLDMetricSent } = useContext(LiveLogsContext);
     const router = useRouter();
@@ -220,7 +221,7 @@ export default function BankHomePage() {
                 <Image src={heroBackgroundCreditcard} className='absolute right-0 w-2/6 xl:w-2/6 min-w-lg max-w-lg' alt="Icon Background" />
                 <Image src={heroBackgroundDollarSign} className='absolute left-0 bottom-0 w-2/6 xl:w-2/6 max-w-lg' alt="Icon Background" />
 
-                {!isLoggedIn && (
+                {showDeployScreen && (
                     <div className="relative z-10 mx-auto w-full max-w-[96rem] px-4 pt-10 sm:px-8 sm:pt-14">
                         {showCanadaRolloutMap && <CanadaRolloutMap />}
                         <LiveRolloutDirection />

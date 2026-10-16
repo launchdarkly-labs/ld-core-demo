@@ -5,7 +5,7 @@ import CryptoJS from "crypto-js";
 import { isAndroid, isIOS, isBrowser, isMobile, isMacOs, isWindows } from "react-device-detect";
 import { setCookie, getCookie } from "cookies-next";
 import { LD_CONTEXT_COOKIE_KEY, LAUNCH_CLUB_PLATINUM } from "../constants";
-import { STARTER_PERSONAS } from "./StarterUserPersonas";
+import { ADMIN_PERSONA, STARTER_PERSONAS } from "./StarterUserPersonas";
 import { Persona } from "../typescriptTypesInterfaceLogin";
 import type { LoginContextType } from "@/utils/typescriptTypesInterfaceLogin";
 import { LDContext } from "launchdarkly-js-client-sdk";
@@ -132,9 +132,10 @@ const [userObject, setUserObject] = useState<Persona | {}>({});
 
     const context: any = getMutableContext(existingAudienceKey);
     //don't know how to fix this without using undefined
-    const foundPersona: Persona = allUsers?.find((persona) =>
-      persona?.personaemail?.includes(email)
-    );
+    const foundPersona: Persona | undefined =
+      email === ADMIN_PERSONA.personaemail
+        ? ADMIN_PERSONA
+        : allUsers?.find((persona) => persona?.personaemail?.includes(email));
     await setUserObject(foundPersona);
     context.user.name = foundPersona?.personaname;
     context.user.email = foundPersona?.personaemail;

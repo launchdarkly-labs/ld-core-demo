@@ -6,6 +6,7 @@ import { Search, PanelTopOpen } from "lucide-react";
 import { AvatarImage, Avatar } from "../avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import LoginContext from "@/utils/contexts/login";
+import { ADMIN_PERSONA } from "@/utils/contexts/StarterUserPersonas";
 import { Button } from "@/components/ui/button";
 import BookedFlights from "@/components/ui/airwayscomponents/bookedFlights";
 import { StoreCart } from "@/components/ui/marketcomponents/stores/storecart";
@@ -26,20 +27,22 @@ import { COMPANY_LOGOS } from "@/utils/constants";
 import { useRouter } from "next/router";
 
 const NavbarLogin = ({ variant }) => {
-  const { isLoggedIn, logoutUser } = useContext(LoginContext);
+  const { isLoggedIn, loginUser } = useContext(LoginContext);
   const router = useRouter();
 
   if (!isLoggedIn) return null;
 
-  const handleLogout = async () => {
-    await logoutUser();
+  const handleAdminLogin = async () => {
+    await loginUser(ADMIN_PERSONA.personaemail);
     router.push("/bank");
   };
 
   return (
     <button
       type="button"
-      onClick={handleLogout}
+      onClick={() => {
+        void handleAdminLogin();
+      }}
       aria-label="Switch to admin"
       className="h-3.5 w-3.5 rounded-full bg-purple-600"
     />

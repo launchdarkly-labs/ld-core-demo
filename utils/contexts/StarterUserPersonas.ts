@@ -4,6 +4,7 @@ import {
   PERSONA_ROLE_DEVELOPER,
   PERSONA_TIER_PLATINUM,
   PERSONA_ROLE_USER,
+  PERSONA_ROLE_ADMIN,
   LAUNCH_CLUB_STANDARD,
   LAUNCH_CLUB_PLATINUM
 } from "../constants";
@@ -57,3 +58,13 @@ export const STARTER_PERSONAS: Persona[] = [
     personaEnrolledInLaunchClub: false
   },
 ];
+
+export const ADMIN_PERSONA: Persona = {
+  personaname: "Admin",
+  personatier: PERSONA_TIER_STANARD,
+  personaimage: "/personas/persona3.png",
+  personaemail: "admin@launchmail.io",
+  personarole: PERSONA_ROLE_ADMIN,
+  personalaunchclubstatus: LAUNCH_CLUB_STANDARD,
+  personaEnrolledInLaunchClub: false,
+};

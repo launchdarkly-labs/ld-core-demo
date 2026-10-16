@@ -20,6 +20,8 @@ const DEPLOY_COLOR_BORDERS: Record<DeployColor, string> = {
 
 const CHOICE_KEY = "dj-beat-choice";
 const RESET_KEY = "dj-beat-reset-at";
+const BEAT_BUTTON_CLIP =
+  "polygon(1.4rem 0, calc(100% - 1.4rem) 0, 100% 1.4rem, 100% calc(100% - 1.4rem), calc(100% - 1.4rem) 100%, 1.4rem 100%, 0 calc(100% - 1.4rem), 0 1.4rem)";
 
 const readStoredChoice = (): BeatChoice | "" => {
   const stored = window.localStorage.getItem(CHOICE_KEY);
@@ -38,6 +40,7 @@ export default function UserRolloutOctogon() {
   const [incidentState, setIncidentState] = useState<"idle" | "sending" | "tracked" | "failed">("idle");
   const appliedBpm = useRef<number | null>(null);
   const seenReset = useRef<number | null>(null);
+  const joinedRef = useRef(false);
 
   useEffect(() => {
     setChoice(readStoredChoice());
@@ -64,12 +67,14 @@ export default function UserRolloutOctogon() {
 
   useEffect(() => {
     if (color !== "grey") return;
+    joinedRef.current = false;
     leaveDjBeat();
     setJoined(false);
   }, [color]);
 
   useEffect(() => {
     if (!joined || playbackEnabled) return;
+    joinedRef.current = false;
     leaveDjBeat();
   }, [joined, playbackEnabled]);
 
@@ -80,15 +85,30 @@ export default function UserRolloutOctogon() {
     followDjTempo(snapshot.bpm);
   }, [joined, snapshot]);
 
-  useEffect(() => () => leaveDjBeat(), []);
+  useEffect(
+    () => () => {
+      joinedRef.current = false;
+      leaveDjBeat();
+    },
+    []
+  );
+
+  const leave = () => {
+    joinedRef.current = false;
+    leaveDjBeat();
+    appliedBpm.current = null;
+    setJoined(false);
+  };
 
   const join = async () => {
     if (!snapshot) return;
+    joinedRef.current = true;
     const starting = playbackEnabled ? joinDjBeat(snapshot) : Promise.resolve();
     appliedBpm.current = snapshot.bpm;
     setJoined(true);
     try {
       await starting;
+      if (!joinedRef.current) leaveDjBeat();
     } catch (error) {
       console.warn("The shared beat could not start.", error);
     }
@@ -152,15 +172,20 @@ export default function UserRolloutOctogon() {
           }}
           disabled={!snapshot}
           className={`grid min-h-24 place-items-center px-8 py-5 text-center font-sohne text-lg text-slate-900 shadow-lg disabled:opacity-50 ${DEPLOY_COLOR_STYLES[color]}`}
-          style={{
-            clipPath:
-              "polygon(1.4rem 0, calc(100% - 1.4rem) 0, 100% 1.4rem, 100% calc(100% - 1.4rem), calc(100% - 1.4rem) 100%, 1.4rem 100%, 0 calc(100% - 1.4rem), 0 1.4rem)",
-          }}
+          style={{ clipPath: BEAT_BUTTON_CLIP }}
         >
           Join the Beat
         </button>
       ) : (
         <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={leave}
+            className={`grid min-h-24 place-items-center px-8 py-5 text-center font-sohne text-lg text-slate-900 shadow-lg ${DEPLOY_COLOR_STYLES[color]}`}
+            style={{ clipPath: BEAT_BUTTON_CLIP }}
+          >
+            Leave the Beat
+          </button>
           <button
             type="button"
             aria-pressed={choice === "speed"}
