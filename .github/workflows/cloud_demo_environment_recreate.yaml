@@ -8,9 +8,11 @@ on:
         description: 'Username'
         required: true
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   ECR_REPOSITORY: ld-core-demo
@@ -31,10 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
           aws-region: us-east-1
 
       - name: Create Workflow Record in Database
@@ -62,6 +63,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
+          aws-region: us-east-1
 
       - name: Update Workflow Record Status to In Progress
         run: |
@@ -98,13 +105,6 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: delete namespace ${{ env.DEMO_NAMESPACE }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
 
       - name: Delete any existing Route53 records
         run: |
@@ -187,6 +187,12 @@ jobs:
           echo AWS_REGION=us-east-1 >> ./.env.production
           echo AWS_DEFAULT_REGION=us-east-1 >> ./.env.production
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
+          aws-region: us-east-1
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -232,13 +238,6 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         with:
           args: apply -f ./.github/workflows/deploy_files/deploy.yaml -n ${{ env.DEMO_NAMESPACE }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
 
       - name: Get NGINX Ingress Controller Load Balancer IP
         id: get-nginx-lb
@@ -327,6 +326,12 @@ jobs:
     needs: [delete-existing-environment, create-new-environment]
     if: ${{ always() && needs.create-new-environment.result == 'success' }}
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
+          aws-region: us-east-1
+
       - name: Update Workflow Record Status to Completed
         run: |
           echo "Updating workflow record status to completed..."
@@ -345,6 +350,12 @@ jobs:
     needs: [delete-existing-environment, create-new-environment]
     if: ${{ always() && needs.create-new-environment.result == 'failure' }}
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
+          aws-region: us-east-1
+
       - name: Update Workflow Record Status to Failed
         run: |
           echo "Updating workflow record status to failed..."
