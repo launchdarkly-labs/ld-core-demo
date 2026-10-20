@@ -46,8 +46,12 @@ jobs:
           EXCLUDED=$(echo "${{ github.event.inputs.exclude }}" | jq -R -c 'split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
           echo "Excluded usernames: $EXCLUDED"
 
-          # Safety net: never touch system namespaces even if they somehow match
-          SYSTEM='["default","kube-system","kube-public","kube-node-lease","ingress-nginx"]'
+          # Safety net: never touch system namespaces even if they somehow match.
+          # mydemo/mydemo-staging host the provisioning app itself — its
+          # deployment is also named ld-core-demo-deployment, so discovery
+          # matches it and a recreate would destroy the provisioning app
+          # (this happened on 2026-07-09).
+          SYSTEM='["default","kube-system","kube-public","kube-node-lease","ingress-nginx","mydemo","mydemo-staging"]'
 
           ENVIRONMENTS=$(jq -R -s -c --argjson excluded "$EXCLUDED" --argjson system "$SYSTEM" '
             split("\n")
