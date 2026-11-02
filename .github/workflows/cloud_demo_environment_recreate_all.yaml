@@ -15,9 +15,11 @@ on:
         type: boolean
         default: false
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
   KUBECTL_VERSION: "v1.23.0"
@@ -29,6 +31,12 @@ jobs:
     outputs:
       environments: ${{ steps.build_list.outputs.environments }}
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::955116512041:role/github-actions-ld-core-demo
+          aws-region: us-east-1
+
       - name: List demo deployments in Kubernetes
         uses: kodermax/kubectl-aws-eks@master
         with:
