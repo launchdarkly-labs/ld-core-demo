@@ -11,7 +11,7 @@
     "noise": "node --env-file=.env.local scripts/generate-audience-noise.mjs"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.0.14",
+    "@ai-sdk/openai": "^4.0.60",
     "@aws-sdk/client-bedrock-agent-runtime": "^3.922.0",
     "@aws-sdk/client-bedrock-runtime": "^3.629.0",
     "@aws-sdk/client-dynamodb": "^3.1027.0",
